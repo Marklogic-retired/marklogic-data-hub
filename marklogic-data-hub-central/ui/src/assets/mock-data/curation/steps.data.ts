@@ -1,4 +1,4 @@
-// Shared properties across steps
+// Shared properties across ALL steps
 const stepData = {
   description: "",
   additionalCollections: ["addedCollection"],
@@ -13,7 +13,7 @@ const stepData = {
   }
 };
 
-// Step data
+// Step data (Load, Mapping, Matching, Merging, Custom)
 const stepLoad = {
   ...stepData,
   name: "AdvancedLoad",
@@ -105,7 +105,7 @@ const defaultTargetCollections = {"data":
 "status": 200
 };
 
-// Shared edit props
+// Shared edit props across ALL steps
 const stepsProps = {
   isEditing: true,
   createStep: jest.fn(),
@@ -122,6 +122,7 @@ const stepsProps = {
   openStepDetails: jest.fn()
 };
 
+// Mocks for EDIT steps
 const editLoad = {
   ...stepsProps,
   activityType: "ingestion",
@@ -153,6 +154,7 @@ const editCustom = {
   stepData: stepCustom
 };
 
+// Mocks for NEW steps
 const newLoad = {
   ...editLoad,
   isEditing: false,

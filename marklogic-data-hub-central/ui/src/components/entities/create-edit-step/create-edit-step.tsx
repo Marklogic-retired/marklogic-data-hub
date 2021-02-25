@@ -4,7 +4,7 @@ import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
 import {UserContext} from "../../../util/user-context";
-import {NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
+import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {StepType} from "../../../types/curation-types";
 
@@ -217,6 +217,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     let database: string = "";
     if (!props.isEditing && props.stepType === StepType.Matching || props.stepType === StepType.Merging) {
       database = "final";
+    } else if (!props.isEditing && props.stepType === StepType.Mapping) {
+      database = "staging";
     } else if (props.isEditing) {
       database = props.editStepArtifactObject["sourceDatabase"] === "data-hub-FINAL" ? "final" : "staging";
     }
@@ -426,7 +428,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />}&nbsp;&nbsp;
-          { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
+          { props.stepType === StepType.Mapping ? <MLTooltip title={NewMapTooltips.name} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>: props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>:
             <MLTooltip title={NewMergeTooltips.name} placement={"right"}>
@@ -447,7 +451,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />&nbsp;&nbsp;
-          { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.description} placement={"right"}>
+          { props.stepType === StepType.Mapping ? <MLTooltip title={NewMapTooltips.description} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>: props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>:
             <MLTooltip title={NewMergeTooltips.description} placement={"right"}>
