@@ -26,6 +26,7 @@ declare variable $UNSOURCED-DATA :=
   ));
 
 declare variable $OPTIONS-NAME := "test-options";
+declare variable $OPTIONS-NAME2 := "test-options2";
 declare variable $OPTIONS-NAME-STRATEGIES := "test-options-with-strategies";
 declare variable $OPTIONS-NAME-COMPLETE := "test-options-stock";
 declare variable $OPTIONS-NAME-CUST-XQY := "cust-xqy-test-options";

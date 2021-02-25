@@ -3,7 +3,7 @@ const lib = require('/test/suites/data-hub/5/smart-mastering/merging-json/lib/li
 const merging = require('/com.marklogic.smart-mastering/merging.xqy');
 const con = require('/com.marklogic.smart-mastering/constants.xqy')
 
-const actual = fn.head(merging.getOptions(lib['OPTIONS-NAME'], con['FORMAT-JSON'])).toObject();
+const actual = fn.head(merging.getJsonOptions(lib['OPTIONS-NAME'])).toObject();
 
 let assertions = [];
 

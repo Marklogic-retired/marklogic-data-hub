@@ -33,7 +33,7 @@ let $merged-doc :=
     function() {
       merging:save-merge-models-by-uri(
         map:keys($lib:TEST-DATA),
-        merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML))
+        merging:get-JSON-options($lib:OPTIONS-NAME))
     },
     $lib:INVOKE_OPTIONS
   )
@@ -71,7 +71,7 @@ let $assertions := xdmp:eager(
         </sm:source>
       </sm:sources>
       <sm:merge-options xml:lang="zxx">
-        <sm:value>/com.marklogic.smart-mastering/options/merging/{$lib:OPTIONS-NAME}.xml</sm:value>
+        <sm:value>/com.marklogic.smart-mastering/options/merging/{$lib:OPTIONS-NAME}.json</sm:value>
       </sm:merge-options>
       <shallow>shallow value 1</shallow>
       <shallow>shallow value 2</shallow>

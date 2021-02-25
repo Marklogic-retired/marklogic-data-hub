@@ -1,0 +1,110 @@
+{
+  "options": {
+    "matchOptions": "basic",
+    "merging": [
+      {
+        "propertyName": "ssn",
+        "sourceRef": {
+          "documentUri": "docA"
+        }
+      },
+      {
+        "propertyName": "name",
+        "maxValues": "1",
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        },
+        "synonymsSupport": "true",
+        "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+        "length": {
+          "weight": "8"
+        }
+      },
+      {
+        "propertyName": "address",
+        "maxValues": "1",
+        "length": {
+          "weight": "8"
+        },
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        }
+      },
+      {
+        "propertyName": "shallow",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "sourceWeights": [
+          {
+            "source": {
+              "name": "SOURCE1",
+              "weight": "10"
+            }
+          }
+        ]
+      },
+      {
+        "propertyName": "deep",
+        "algorithmRef": "combine",
+        "maxValues": "1"
+      },
+      {
+        "propertyName": "endswithns",
+        "algorithmRef": "standard"
+      }
+    ],
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "IdentificationID",
+          "name": "ssn"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonName",
+          "name": "name"
+        },
+        {
+          "namespace": "",
+          "localname": "Address",
+          "name": "address"
+        },
+        {
+          "path": "/es:envelope/es:headers/shallow",
+          "name": "shallow"
+        },
+        {
+          "path": "/es:envelope/es:headers/custom/this/has:a/deep/path",
+          "name": "deep"
+        },
+        {
+          "path": "/es:envelope/es:headers/custom/this/has:a/deep/endswith:ns",
+          "name": "endswithns"
+        }
+      ],
+      "namespaces": {
+        "endswith": "endswith",
+        "has": "has",
+        "m": "http://marklogic.com/smart-mastering/merging",
+        "es": "http://marklogic.com/entity-services"
+      }
+    },
+    "algorithms": {
+      "collections": {
+        "onMerge": "",
+        "onNotification": "",
+        "onArchive": "",
+        "onNoMatch": ""
+      },
+      "custom": [
+        {
+          "name": "combine",
+          "function": "combine",
+          "at": "/combine.xqy",
+          "namespace": "http://marklogic.com/smart-mastering/merging"
+        }
+      ]
+    }
+  }
+}

@@ -18,7 +18,7 @@ let mergedDoc =
       declare variable $uris as xs:string* := fn:tokenize($uri-str, "##");
       declare variable $options-name as xs:string external;
 
-      let $options as element() := merging:get-options($options-name, $const:FORMAT-XML)
+      let $options := merging:get-JSON-options($options-name)
       return
         merging:save-merge-models-by-uri(
           $uris,

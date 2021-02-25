@@ -22,7 +22,7 @@ declare option xdmp:update "false";
 
 declare option xdmp:mapping "false";
 
-declare variable $options := merging:get-options($lib:OPTIONS-NAME-CUST-ACTION-SJS-MERGE, $const:FORMAT-XML);
+declare variable $options := merging:get-JSON-options($lib:OPTIONS-NAME-CUST-ACTION-SJS-MERGE);
 
 declare variable $expected-options :=
   object-node {
@@ -91,9 +91,7 @@ declare function local:run-case($uri, $expected)
     )
   let $actual :=
     xdmp:invoke-function(function() {
-      let $actual := fn:doc("/sjs-action-output.json")/object-node()
-      return
-        $actual
+      fn:doc("/sjs-action-output.json")/object-node()
     }, $lib:INVOKE_OPTIONS)
   return
     test:assert-equal-json($expected, $actual)

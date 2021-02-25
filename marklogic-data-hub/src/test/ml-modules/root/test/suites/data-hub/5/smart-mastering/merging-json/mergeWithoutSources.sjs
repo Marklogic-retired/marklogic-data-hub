@@ -6,7 +6,7 @@ const lib = require("/test/suites/data-hub/5/smart-mastering/merging-json/lib/li
 
 let uris = ["/unsourced/doc1.json", "/unsourced/doc2.json"];
 let uriStr = uris.join('##');
-let optionsName = lib['OPTIONS-NAME'];
+let optionsName = lib['OPTIONS-NAME2'];
 // Merge the nested docs
 let mergedDoc =
   fn.head(xdmp.xqueryEval(
@@ -19,7 +19,7 @@ let mergedDoc =
       declare variable $uris as xs:string* := fn:tokenize($uri-str, "##");
       declare variable $options-name as xs:string external;
 
-      let $options as element() := merging:get-options($options-name, $const:FORMAT-XML)
+      let $options := merging:get-JSON-options($options-name)
       return
         merging:save-merge-models-by-uri(
           $uris,

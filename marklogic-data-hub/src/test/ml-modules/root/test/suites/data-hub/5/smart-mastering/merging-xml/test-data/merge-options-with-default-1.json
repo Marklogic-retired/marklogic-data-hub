@@ -1,36 +1,31 @@
 {
-  "options":
-  {
+  "options": {
     "matchOptions": "basic",
     "merging": [
       {
         "propertyName": "ssn",
-        "algorithmRef": "user-defined",
-        "sourceRef":
-        {
+        "sourceRef": {
           "documentUri": "docA"
         }
       },
       {
         "propertyName": "name",
         "maxValues": "1",
-        "doubleMetaphone":
-        {
+        "doubleMetaphone": {
           "distanceThreshold": "50"
         },
         "synonymsSupport": "true",
         "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
-        "length":
-        {
+        "length": {
           "weight": "8"
         }
       },
       {
         "default": "true",
         "strategy": "default-standard"
-      }],
-    "propertyDefs":
-    {
+      }
+    ],
+    "propertyDefs": {
       "properties": [
         {
           "namespace": "",
@@ -46,33 +41,41 @@
           "namespace": "",
           "localname": "Address",
           "name": "address"
-        }]
+        }
+      ]
     },
     "mergeStrategies": [
       {
         "name": "default-standard",
         "algorithmRef": "standard",
         "maxValues": "1",
-        "sourceWeights":[
+        "sourceWeights": [
           {
-            "source":
-            {
+            "source": {
               "name": "SOURCE1",
               "weight": "10"
             }
           }
         ]
-      }],
-    "algorithms":
-    {
-      "stdAlgorithm":{"namespaces":{}, "timestamp":{"path": null}},
-      "custom": [],
+      }
+    ],
+    "algorithms": {
       "collections": {
         "onMerge": "",
-        "onNoMatch": "",
+        "onNotification": "",
         "onArchive": "",
-        "onNotification": ""
-      }
+        "onNoMatch": ""
+      },
+      "stdAlgorithm": {
+        "namespaces": {
+          "sm": "http://marklogic.com/smart-mastering",
+          "es": "http://marklogic.com/entity-services"
+        },
+        "timestamp": {
+          "path": "/es:envelope/es:headers/sm:sources/sm:source/sm:one-first"
+        }
+      },
+      "custom": []
     }
   }
 }

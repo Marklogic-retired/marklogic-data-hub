@@ -48,7 +48,7 @@ declare option xdmp:mapping "false";
 declare function proc-impl:process-match-and-merge($input as item()*)
   as item()*
 {
-  let $merging-options := merging:get-options($const:FORMAT-XML)
+  let $merging-options := merging:get-JSON-options()
   return
     if (fn:exists($merging-options)) then
       for $merge-options in $merging-options
@@ -65,14 +65,19 @@ declare function proc-impl:process-match-and-merge(
   $filter-query as cts:query)
   as item()*
 {
-  let $all-options := xdmp:invoke-function(function() {
-      let $merge-options := merging:get-options($option-name, $const:FORMAT-XML)
-      let $match-options := matcher:get-options(fn:string($merge-options/merging:match-options), $const:FORMAT-XML)
-      return
-        map:map()
-          => map:with("merge-options", $merge-options)
-          => map:with("match-options", $match-options)
-    }, map:entry("update", "false"))
+  let $all-options :=
+    xdmp:invoke-function(
+      function() {
+        let $merge-options := merging:get-JSON-options($option-name)
+        let $match-options-name := $merge-options/options/matchOptions/fn:string()
+        let $match-options := matcher:get-options($match-options-name, $const:FORMAT-XML)
+        return
+          map:map()
+            => map:with("merge-options", $merge-options)
+            => map:with("match-options", $match-options)
+      },
+      map:entry("update", "false")
+    )
   return
     proc-impl:process-match-and-merge-with-options-save(
       $input,
@@ -778,39 +783,44 @@ declare function proc-impl:build-content-objects-from-match-summary(
                     else ()
                   let $custom-action-options :=
                     let $match-results := $custom-action => map:get("matchResults")
-                    let $custom-action-options := map:new(
-                        if (fn:ends-with(xdmp:function-module($action-func), "js")) then (
-                          map:entry("match-results",$match-results),
-                          map:entry("merge-options",
-                              typeswitch($merge-options)
-                              case object-node() return
-                                xdmp:from-json($merge-options)
-                              case element() return
-                                merge-impl:options-to-json($merge-options)
-                              default return
-                                $merge-options
-                          )
-                        ) else (
-                          map:entry("match-results",proc-impl:matches-to-xml($match-results)),
-                          map:entry("merge-options",
-                              typeswitch($merge-options)
-                              case element() return
-                                $merge-options
-                              case object-node() return
-                                if ($is-hub-central-format) then
+                    let $custom-action-options :=
+                        map:new(
+                          if (fn:ends-with(xdmp:function-module($action-func), "js")) then (
+                            map:entry("match-results",$match-results),
+                            map:entry("merge-options",
+                                typeswitch($merge-options)
+                                case object-node() return
+                                  xdmp:from-json($merge-options)
+                                case element() return
+                                  merge-impl:options-to-json($merge-options)
+                                default return
                                   $merge-options
-                                else
-                                  merge-impl:options-from-json($merge-options)
-                              default return
-                                let $merge-node := xdmp:to-json($merge-options)
-                                return
+                            )
+                          )
+                          else (
+                            map:entry("match-results", proc-impl:matches-to-xml($match-results)),
+                            map:entry("merge-options",
+                                typeswitch($merge-options)
+                                case element() return
+                                  (fn:error((), "Should never hit this case"), $merge-options)
+                                case object-node() return
                                   if ($is-hub-central-format) then
-                                    $merge-node
+                                    $merge-options
                                   else
-                                    merge-impl:options-from-json($merge-node)
+                                    (: FSnow 2/24/2021: one of the only places where we want to convert options from
+                                       JSON to XML is here, where we are calling a custom XQuery merge action :)
+                                    merge-impl:options-from-json($merge-options)
+                                default return
+                                  let $merge-node := xdmp:to-json($merge-options)
+                                  return
+                                    if ($is-hub-central-format) then
+                                      $merge-node
+                                    else
+                                      merge-impl:options-from-json($merge-node)
+                                      (: $merge-node :)
+                            )
                           )
                         )
-                    )
                     return $custom-action-options
                   return
                       xdmp:apply(

@@ -27,7 +27,7 @@ let $merged-doc :=
     function() {
       merging:save-merge-models-by-uri(
         map:keys($lib:TEST-DATA),
-        merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-JSON))
+        merging:get-JSON-options($lib:OPTIONS-NAME2))
     },
     $lib:INVOKE_OPTIONS
   )
