@@ -1,8 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Modal, Row, Col, Card} from "antd";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
-import {MLPageHeader, MLButton} from "@marklogic/design-system";
+import {MLPageHeader, MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
+import "./matching-step-detail.scss";
 
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import MultiSlider from "../multi-slider/multi-slider";
@@ -55,6 +59,10 @@ const MatchingStepDetail: React.FC = () => {
   const [showDeleteModal, toggleShowDeleteModal] = useState(false);
 
   const [matchingActivity, setMatchingActivity] = useState<any>({scale: {}, thresholdActions: []});
+
+  const [value, setValue] = React.useState(1);
+  const [UriTableData, setUriTableData] = useState<any[]>([]);
+  const [uriContent, setUriContent] = useState("");
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -230,6 +238,49 @@ const MatchingStepDetail: React.FC = () => {
     return rulesetName;
   };
 
+  const onTestMatchRadioChange = event => {
+    setValue(event.target.value);
+  };
+
+  const handleUriInputChange = (event) => {
+    setUriContent(event.target.value);
+  };
+
+  const handleClickAddUri = (event) => {
+    let data = [...UriTableData];
+    data.push({uriContent});
+    setUriTableData(data);
+    setUriContent("");
+  };
+
+  const renderUriTableData = UriTableData.map((uriData) => {
+    return {
+      key: uriData.uriContent,
+      uriValue: uriData.uriContent,
+    };
+  });
+
+  const UriColumns = [{
+    key: "uriValue",
+    title: "uriValues",
+    dataIndex: "uriValue",
+    render: (text, key) => (
+      <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg"/></i></span>
+    ),
+  }];
+
+  const handleDeleteUri = (event) => {
+    let uriValue = event.uriValue;
+    let data = [...UriTableData];
+    for (let i =0; i < data.length; i++) {
+      if (data[i].uriContent === uriValue) {
+        data.splice(i, 1);
+        break;
+      }
+    }
+    setUriTableData(data);
+  };
+
   return (
     <>
       <MLPageHeader
@@ -330,6 +381,39 @@ const MatchingStepDetail: React.FC = () => {
             </div>
           </div>
           <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
+        </div>
+
+        <div className={styles.stepNumberContainer}>
+          <NumberIcon value={3} />
+          <div className={styles.stepText}>Test and review matched entities</div>
+        </div>
+
+        <div className={styles.testMatch} aria-label="testMatch">
+          <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}>
+            <MLRadio value={1} aria-label="inputUriRadio">
+              <MLInput
+                placeholder="Enter URI or Paste URIs"
+                className={styles.uriInput}
+                value={uriContent}
+                onChange={handleUriInputChange}
+                aria-label="UriInput"
+              />
+              <FontAwesomeIcon icon={faPlusSquare} className={styles.addIcon} onClick={handleClickAddUri} aria-label="addUriIcon"/>
+              <div className={styles.UriTable}>
+                {UriTableData.length > 0 ? <MLTable
+                  columns={UriColumns}
+                  className={styles.tableContent}
+                  dataSource={renderUriTableData}
+                  rowKey="key"
+                  id="uriData"
+                  pagination={false}
+                />:""}
+              </div>
+              <div className={UriTableData.length > 0 ? styles.testButton:""}>
+                <MLButton type="primary" htmlType="submit" size="default">Test</MLButton>
+              </div>
+            </MLRadio>
+          </MLRadio.MLGroup>
         </div>
 
       </div>

@@ -56,7 +56,7 @@
   }
 
   .hideText {
-    white-space: nowrap; 
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
@@ -84,12 +84,12 @@
     .matchCombinationsColsContainer {
       display: flex;
 
-      .matchCombinationsCardStyle { 
+      .matchCombinationsCardStyle {
         width: 35em;
         min-height: 6em;
         text-align: left;
         align-content: left;
-        background-color: #E5E7F0; 
+        background-color: #E5E7F0;
         border: 1px dashed #CCCCCC;
 
         .colsWithoutDivider {
@@ -97,13 +97,13 @@
           white-space: normal;
           margin-top: -10px;
           margin-left: -10px;
-  
+
           .combinationlabel {
             font-weight: 500;
             padding-bottom: 15px;
           }
         }
-  
+
         .colsWithSingleMatch {
           min-width: fit-content;
           white-space: normal;
@@ -134,4 +134,62 @@
 
 .deleteMessage {
   margin: 4% 0 8% 0;
+}
+
+.addIcon {
+    cursor: pointer;
+    font-size: 21px;
+    margin-left: 6px;
+    color: #5B69AF;
+    &:hover {
+        color: var(--hoverColor);
+    }
+}
+
+.testMatch {
+    padding-left: 44px;
+    padding-top: 10px;
+}
+
+.uriInput {
+    width: 29vw;
+    height: 4vh;
+}
+
+.testButton {
+    padding-top: 23px;
+}
+
+.UriTable {
+    padding-top: 20px;
+    width: 32.5vw;
+    overflow-y: auto;
+    max-height: 30vh;
+}
+
+.tableContent {
+    border-top: 1px solid #e8e8e8;
+}
+
+.tableRow {
+    display: flex;
+    height: 1em;
+}
+
+.deleteIcon {
+    color: #B32424;
+    font-size: 21px;
+    cursor: pointer;
+    padding-bottom: 2px;
+    &:hover{
+        color: var(--hoverColor) !important;
+    }
+}
+
+.positionDeleteIcon {
+    float: right;
+    padding-right: 0.2vw;
+    padding-left: 1vw;
+    line-break: auto;
+    margin-left: auto;
 }

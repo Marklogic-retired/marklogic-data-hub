@@ -18,9 +18,9 @@ describe("Matching Step Detail view component", () => {
     jest.clearAllMocks();
   });
 
-  it("can render matching step with no rulesets or thresholds and click less/more text", () => {
+  it("can render matching step with no rulesets or thresholds and click less/more text", async () => {
 
-    const {getByLabelText, queryByLabelText, getByTestId} =  render(
+    const {getByLabelText, queryByLabelText, getByTestId, getByPlaceholderText, getByText, queryByText} =  render(
       <CurationContext.Provider value={customerMatchingStepEmpty}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
@@ -43,11 +43,23 @@ describe("Matching Step Detail view component", () => {
 
     expect(getByLabelText("matchCombinationsHeading")).toBeInTheDocument();
     expect(getByLabelText("noMatchedCombinations")).toBeInTheDocument();
+
+    expect(getByLabelText("testMatch")).toBeInTheDocument();
+    userEvent.click(getByLabelText("inputUriRadio"));
+    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeInTheDocument();
+
+    expect(getByLabelText("UriInput")).toBeInTheDocument();
+    expect(queryByLabelText("deleteIcon")).not.toBeInTheDocument();
+    await userEvent.type(getByPlaceholderText("Enter URI or Paste URIs"), "/test/Uri1");
+    userEvent.click(getByLabelText("addUriIcon"));
+    userEvent.click(getByLabelText("deleteIcon"));
+    expect(queryByText("/test/Uri1")).not.toBeInTheDocument();
+    expect(getByText("Test")).toBeInTheDocument();
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
 
-    const {getByLabelText, getByText, queryByLabelText} =  render(
+    const {getByLabelText, getByText, queryByLabelText, getByPlaceholderText} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
@@ -77,6 +89,13 @@ describe("Matching Step Detail view component", () => {
     fireEvent.dragStart(screen.getByTestId("sameThreshold-active"), {clientX: 0, clientY: 0});
     fireEvent.drop(screen.getByTestId("sameThreshold-active"), {clientX: 0, clientY: 1});
     expect(screen.getByText("Select property")).toBeInTheDocument();
+
+    //Verify test match related fields are rendered properly
+    expect(getByLabelText("testMatch")).toBeInTheDocument();
+    userEvent.click(getByLabelText("inputUriRadio"));
+    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeInTheDocument();
+    expect(getByLabelText("UriInput")).toBeInTheDocument();
+    expect(getByText("Test")).toBeInTheDocument();
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
@@ -157,6 +176,5 @@ describe("Matching Step Detail view component", () => {
 
     expect(getByLabelText("matchCombinationsHeading")).toBeInTheDocument();
     expect(getByLabelText("noMatchedCombinations")).toBeInTheDocument();
-    expect(mockCalculateMatchingActivity).toHaveBeenCalledTimes(1);
   });
 });
