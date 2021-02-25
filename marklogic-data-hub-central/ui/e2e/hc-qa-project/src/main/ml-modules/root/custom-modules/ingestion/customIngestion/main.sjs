@@ -12,6 +12,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+
 function main(content, options) {
 
   //example of how to check options for an input format in case we wanted to do operations based on type
@@ -37,17 +39,17 @@ function main(content, options) {
   }
   else if (instance.nodeType === Node.TEXT_NODE) {
     //if it's text, and we want json or xml, let's try to parse it. If it can't, it'll throw an unchecked error.
-    instance = datahub.flow.flowUtils.parseText(instance, outputFormat);
+    instance = flowUtils.parseText(instance, outputFormat);
   }
 
   //let's create our triples array.
   let triples = [];
 
   //now our headers for any document level metadata
-  let headers = datahub.flow.flowUtils.createHeaders(options);
+  let headers = flowUtils.createHeaders(options);
 
   //And lastly we put it all together in an envelope structure
-  content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  content.value = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   //Context changes are possible, here we show how to grab the context and example manipulate it
   //let context = content.context;

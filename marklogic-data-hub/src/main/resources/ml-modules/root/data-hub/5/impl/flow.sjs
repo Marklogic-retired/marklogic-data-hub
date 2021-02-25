@@ -14,7 +14,6 @@
  limitations under the License.
  */
 'use strict';
-const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
@@ -47,7 +46,11 @@ class Flow {
     }
     this.datahub = datahub;
     this.stepDefinition = new StepDefinition(config, datahub);
-    this.flowUtils = new FlowUtils();
+
+    // Starting in 5.5, this is needed for backwards compatibility so that scaffolded modules can still 
+    // refer to datahub.flow.flowUtils . 
+    this.flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+    
     this.consts = datahub.consts;
     this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
     this.writeQueue = [];

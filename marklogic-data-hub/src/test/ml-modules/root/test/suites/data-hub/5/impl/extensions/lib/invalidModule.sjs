@@ -25,6 +25,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+
 function main(content, options)
 
   //grab the doc id/uri
@@ -73,13 +75,13 @@ function main(content, options)
   }
 
   //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
-  let instance = datahub.flow.flowUtils.getInstanceAsObject(doc) || {};
+  let instance = flowUtils.getInstanceAsObject(doc) || {};
 
   // get triples, return null if empty or cannot be found
-  let triples = datahub.flow.flowUtils.getTriplesAsObject(doc) || [];
+  let triples = flowUtils.getTriplesAsObject(doc) || [];
 
   //gets headers, return null if cannot be found
-  let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
+  let headers = flowUtils.getHeadersAsObject(doc) || {};
 
   //If you want to set attachments, uncomment here
   // instance['$attachments'] = doc;
@@ -93,11 +95,11 @@ function main(content, options)
 
 
   //form our envelope here now, specifying our output format
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  let envelope = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   //create our return content object, we have a handy helper function for creating a json scaffolding, but you
   //can also do a node-based one by using nodebuilder, especially if you're dealing with xml!
-  let newContent = datahub.flow.flowUtils.createContentAsObject();
+  let newContent = flowUtils.createContentAsObject();
 
   //assign our envelope value
   newContent.value = envelope;

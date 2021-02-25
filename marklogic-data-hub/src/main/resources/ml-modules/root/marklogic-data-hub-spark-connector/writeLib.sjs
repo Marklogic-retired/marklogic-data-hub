@@ -20,7 +20,8 @@
  * a new endpoint for writing records.
  */
 const consts = require("/data-hub/5/impl/consts.sjs");
-const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const temporal = require("/MarkLogic/temporal.xqy");
 
 function buildHeaders(endpointConstants) {
@@ -37,7 +38,7 @@ function buildHeaders(endpointConstants) {
     headers.sources = sources
   }
 
-  return new FlowUtils().createHeaders({headers});
+  return flowUtils.createHeaders({headers});
 }
 
 function buildInsertOptions(endpointConstants) {
@@ -56,7 +57,7 @@ function buildInsertOptions(endpointConstants) {
 
   // To ensure this endpoint can work with DHF 5.2.x, must use data-hub-operator, which is the least-privileged role in 5.2.x
   const permissions = endpointConstants.permissions != null ? endpointConstants.permissions : 'data-hub-operator,read,data-hub-operator,update'
-  const permissionsArray = parsePermissions(permissions);
+  const permissionsArray = hubUtils.parsePermissions(permissions);
 
   return {
     temporalCollection,
@@ -65,23 +66,6 @@ function buildInsertOptions(endpointConstants) {
       collections: collectionsToUse,
       metadata: buildMetadata(endpointConstants)
     }
-  }
-}
-
-// Intentionally duplicated from hub-utils.sjs to avoid changes in that library where the module no longer has a
-// constructor.
-function parsePermissions(permissionsString = "") {
-  try {
-    let permissionParts = permissionsString.split(",").filter((val) => val);
-    let permissions = [];
-    let permissionRoles = permissionParts.filter((val, index) => !(index % 2));
-    let permissionCapabilities = permissionParts.filter((val, index) => index % 2);
-    for (let i = 0; i < permissionRoles.length; i++) {
-      permissions.push(xdmp.permission(permissionRoles[i], permissionCapabilities[i]));
-    }
-    return permissions;
-  } catch (e) {
-    throw Error("Unable to parse permissions: " + permissionsString + "; it must fit the pattern of role1,capability1,role2,capability2,etc; cause: " + e.stack);
   }
 }
 
