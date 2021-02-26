@@ -14,10 +14,12 @@
  limitations under the License.
  */
 'use strict';
-const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
-const jobsMod = require("/data-hub/5/impl/jobs.sjs");
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const jobsMod = require("/data-hub/5/impl/jobs.sjs");
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
@@ -34,7 +36,7 @@ const defaultGlobalContext = {
 
 class Flow {
 
-  constructor(config = null, globalContext = null, datahub = null, artifactsCore = null) {
+  constructor(config = null, globalContext = null, datahub = null) {
     if (!config) {
       config = require("/com.marklogic.hub/config.sjs");
     }
@@ -52,7 +54,6 @@ class Flow {
     this.flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
     
     this.consts = datahub.consts;
-    this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
     this.writeQueue = [];
     if (globalContext) {
       this.globalContext = globalContext;
@@ -104,7 +105,7 @@ class Flow {
 
   getFlow(name) {
     if (cachedFlows[name] === undefined) {
-      cachedFlows[name] =  this.artifactsCore.getFullFlow(name);
+      cachedFlows[name] = Artifacts.getFullFlow(name);
     }
     return cachedFlows[name];
   }
@@ -370,7 +371,8 @@ class Flow {
       try {
         const results = hubUtils.normalizeToSequence(flowInstance.runMain(hubUtils.normalizeToSequence(content), combinedOptions, processor.run));
         for (const result of results) {
-          this.addMetadataToContent(result, combinedOptions, flowName, flowStep);
+          content.previousUri = this.globalContext.uri;
+          flowRunner.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
           contentArray.push(result);
         }
         flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(items);
@@ -383,7 +385,7 @@ class Flow {
         try {
           const results = hubUtils.normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
           for (const result of results) {
-            this.addMetadataToContent(result, combinedOptions, flowName, flowStep);
+            flowRunner.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
             contentArray.push(result);
           }
           flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
@@ -467,24 +469,6 @@ class Flow {
         vars.options = combinedOptions;
         xdmp.invoke(interceptor.path, vars);
       });
-    }
-  }
-
-  addMetadataToContent(content, combinedOptions, flowName, flowStep) {
-    if (!combinedOptions.acceptsBatch) {
-      content.previousUri = this.globalContext.uri;
-    }
-    //add our metadata to this
-    content.context = content.context || {};
-    content.context.metadata = this.flowUtils.createMetadata(content.context.metadata ? content.context.metadata : {}, flowName, flowStep.name, this.globalContext.jobId);
-    // normalize context values to arrays
-    if (content.context.collections) {
-      content.context.collections = hubUtils.normalizeToArray(content.context.collections);
-    }
-    if (content.context.permissions) {
-      // normalize permissions to array of JSON permissions
-      content.context.permissions = hubUtils.normalizeToArray(content.context.permissions)
-        .map((perm) => (perm instanceof Element) ? xdmp.permission(xdmp.roleName(fn.string(perm.xpath('*:role-id'))), fn.string(perm.xpath('*:capability')), "object") : perm);
     }
   }
 

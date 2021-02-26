@@ -21,8 +21,13 @@ var permissions,
   writeQueue,
   baseCollections;
 
+const consts = require("/data-hub/5/impl/consts.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const temporal = require("/MarkLogic/temporal.xqy");
 const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
+
+const traceEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER);
+const dbName = traceEnabled ? xdmp.databaseName(xdmp.database()) : null;
 
 const temporalCollections = temporalLib.getTemporalCollections().toArray().reduce((acc, col) => {
     acc[col] = true;
@@ -52,6 +57,9 @@ for (let content of writeQueue) {
                 delete metadata.temporalDocURI;
             }
             const collectionsReservedForTemporal = ['latest', content.uri];
+            if (traceEnabled) {
+                hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting temporal document ${content.uri} into database ${dbName}`);
+            }
             temporal.documentInsert(temporalCollection, content.uri, content.value,
                 {
                     permissions: fullPermissions,
@@ -60,6 +68,9 @@ for (let content of writeQueue) {
                 }
             );
         } else {
+            if (traceEnabled) {
+                hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting document ${content.uri} into database ${dbName}`);
+            }
             xdmp.documentInsert(content.uri, content.value, {permissions: fullPermissions, collections, metadata});
         }
     }

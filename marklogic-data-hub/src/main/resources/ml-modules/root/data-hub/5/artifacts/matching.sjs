@@ -15,17 +15,15 @@
  */
 'use strict';
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-
-// define constants for caching expensive operations
-const dataHub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
 
 const collections = ['http://marklogic.com/data-hub/steps/matching', 'http://marklogic.com/data-hub/steps'];
-const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
+const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
 const permissions =
   [
-    xdmp.permission(dataHub.consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'),
-    xdmp.permission(dataHub.consts.DATA_HUB_MATCHING_READ_ROLE, 'read')
+    xdmp.permission(consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'),
+    xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, 'read')
   ];
 const requiredProperties = ['name'];
 
@@ -70,8 +68,8 @@ function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   let artifact = {
     batchSize: 100,
-    sourceDatabase: dataHub.config.FINALDATABASE,
-    targetDatabase: dataHub.config.FINALDATABASE,
+    sourceDatabase: config.FINALDATABASE,
+    targetDatabase: config.FINALDATABASE,
     targetEntity: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('Change this to a valid collection name; e.g. Customer')",
     collections: [

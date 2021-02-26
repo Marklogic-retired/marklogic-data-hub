@@ -1,0 +1,11 @@
+{
+  "name": "ingestAndMap",
+  "steps": {
+    "1": {
+      "stepId": "ingestCustomer-ingestion"
+    },
+    "2": {
+      "stepId": "mapCustomer-mapping"
+    }
+  }
+}

@@ -17,7 +17,7 @@ function createMappingWithSameNameButDifferentEntityType(artifactName) {
     return new Error("Expected a failure because another mapping exists with the same name but a different entity type. " +
       "Mapping names must be globally unique.");
   } catch (e) {
-    let msg = e.data[2];
+    let msg = e.data[1];
     return test.assertEqual("A mapping with the same name but for a different entity type already exists. Please choose a different name.", msg);
   }
 }

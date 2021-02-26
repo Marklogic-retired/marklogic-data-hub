@@ -15,17 +15,15 @@
  */
 'use strict';
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-
-// define constants for caching expensive operations
-const dataHub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
 
 const collections = ['http://marklogic.com/data-hub/steps/merging', 'http://marklogic.com/data-hub/steps'];
-const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
+const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
 const permissions =
   [
-    xdmp.permission(dataHub.consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'),
-    xdmp.permission(dataHub.consts.DATA_HUB_MATCHING_READ_ROLE, 'read')
+    xdmp.permission(consts.DATA_HUB_MATCHING_WRITE_ROLE, 'update'),
+    xdmp.permission(consts.DATA_HUB_MATCHING_READ_ROLE, 'read')
   ];
 const requiredProperties = ['name'];
 
@@ -71,8 +69,8 @@ function defaultArtifact(artifactName) {
   let artifact = {
     // defaulting to batch size one, since a single match summary document updates multiple other documents
     batchSize: 1,
-    sourceDatabase: dataHub.config.FINALDATABASE,
-    targetDatabase: dataHub.config.FINALDATABASE,
+    sourceDatabase: config.FINALDATABASE,
+    targetDatabase: config.FINALDATABASE,
     permissions: defaultPermissions,
     targetEntity: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('mastering-summary')",

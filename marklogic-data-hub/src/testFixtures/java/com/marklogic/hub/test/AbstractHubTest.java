@@ -162,20 +162,38 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         installProjectInFolder(folderInClasspath, false);
     }
 
+    protected void installProjectFromUnitTestFolder(String folderPath) {
+        Path projectPath = Paths.get("marklogic-data-hub");
+        if (!projectPath.toFile().exists()) {
+            projectPath = Paths.get(".");
+        }
+        Path modulesPath = projectPath.resolve("src").resolve("test").resolve("ml-modules");
+        File testDir = modulesPath.resolve("root").resolve("test").resolve("suites").resolve(folderPath).resolve("test-data").toFile();
+        installProjectInFolder(testDir, false);
+    }
+
+    protected void installProjectInFolder(String folderInClasspath, boolean loadQueryOptions) {
+        File dir;
+        try {
+            dir = new ClassPathResource(folderInClasspath).getFile();
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to resolve: " + folderInClasspath, ex);
+        }
+        installProjectInFolder(dir, loadQueryOptions);
+    }
+
     /**
      * Intended to make it easy to specify a set of project files to load for a particular test. You likely will want to
      * call "resetProject" before calling this.
      *
-     * @param folderInClasspath
+     * @param testProjectDir
      * @param loadQueryOptions
      */
-    protected void installProjectInFolder(String folderInClasspath, boolean loadQueryOptions) {
+    protected void installProjectInFolder(File testProjectDir, boolean loadQueryOptions) {
         long start = System.currentTimeMillis();
         boolean loadModules = false;
         HubProject hubProject = getHubConfig().getHubProject();
         try {
-            File testProjectDir = new ClassPathResource(folderInClasspath).getFile();
-
             File dataDir = new File(testProjectDir, "data");
             if (dataDir.exists()) {
                 FileUtils.copyDirectory(dataDir, new File(hubProject.getProjectDir().toFile(), "data"));
@@ -236,7 +254,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
             installUserArtifacts();
         }
 
-        logger.info("Installed project from folder in classpath: " + folderInClasspath + "; time: " +
+        logger.info("Installed project from folder in classpath: " + testProjectDir + "; time: " +
             (System.currentTimeMillis() - start));
     }
 
