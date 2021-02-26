@@ -1,0 +1,15 @@
+{
+  "name": "ingestCustomer",
+  "stepId": "ingestCustomer-ingestion",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "collections": [
+    "ingestCustomer"
+  ],
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "off",
+  "disableJobOutput": true
+}

@@ -28,6 +28,23 @@ function deleteDocument(docUri, database) {
   });
 }
 
+/**
+ * @param event 
+ * @param message Expected to be a string; if you have JSON, call hubTraceJson
+ */
+function hubTrace(event, message) {
+  xdmp.trace(event, `[Request:${xdmp.request()}] ${message}`);
+}
+
+/**
+ * Convenience method for logging a JSON node.
+ * @param event
+ * @param json
+ */
+function hubTraceJson(event, json) {
+  hubTrace(event, xdmp.toJsonString(json));
+}
+
 function invokeFunction(queryFunction, database) {
   return xdmp.invokeFunction(queryFunction, {
     commit: 'auto',
@@ -75,7 +92,6 @@ function parsePermissions(permissionsString = "") {
 }
 
 function queryToContentDescriptorArray(query, options = {}, database) {
-  let hubUtils = this;
   let content = [];
   invokeFunction(function () {
     let results = cts.search(query, cts.indexOrder(cts.uriReference()));
@@ -146,6 +162,8 @@ function writeDocuments(writeQueue, permissions = xdmp.defaultPermissions(), col
 module.exports = {
   capitalize,
   deleteDocument,
+  hubTrace,
+  hubTraceJson,
   invokeFunction,
   normalizeToArray,
   normalizeToSequence,

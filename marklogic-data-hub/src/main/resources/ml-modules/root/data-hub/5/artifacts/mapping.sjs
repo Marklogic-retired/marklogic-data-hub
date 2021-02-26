@@ -15,15 +15,13 @@
  */
 'use strict';
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-
-// define constants for caching expensive operations
-const dataHub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
 const hubEs = require("/data-hub/5/impl/hub-es.sjs");
 
 const collections = ['http://marklogic.com/data-hub/steps/mapping', 'http://marklogic.com/data-hub/steps', 'http://marklogic.com/data-hub/mappings'];
-const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
+const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
+const permissions = [xdmp.permission(consts.DATA_HUB_MAPPING_WRITE_ROLE, 'update'), xdmp.permission(consts.DATA_HUB_MAPPING_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'targetEntityType', 'selectedSource'];
 
 function getNameProperty() {

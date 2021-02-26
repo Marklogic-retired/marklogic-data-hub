@@ -4,6 +4,7 @@ Contains helper functions that are best written in SJS instead of XQuery.
 
 'use strict';
 
+const config = require("/com.marklogic.hub/config.sjs");
 const hubTest = require("/test/data-hub-test-helper.xqy");
 const test = require("/test/test-helper.xqy");
 
@@ -59,10 +60,15 @@ function verifyJson(expectedObject, actualObject, assertions) {
  * assertions on specific indexes in the arrays.
  *
  * @param uri
+ * @param databaseName optional, defaults to database the test is running against
  * @returns {*|this|this}
  */
-function getRecord(uri) {
+function getRecord(uri, databaseName = null) {
+  databaseName = databaseName || xdmp.databaseName(xdmp.database());
   return fn.head(xdmp.invokeFunction(function() {
+    if (!fn.docAvailable(uri)) {
+      throw Error(`Did not find document with URI: ${uri}; database: ${databaseName}`);
+    }
     return {
       uri : uri.toString(),
       document : cts.doc(uri).toObject(),
@@ -70,7 +76,11 @@ function getRecord(uri) {
       permissions : buildPermissionsMap(xdmp.documentGetPermissions(uri)),
       metadata : xdmp.documentGetMetadata(uri)
     }
-  }));
+  }, {database: xdmp.database(databaseName)}));
+}
+
+function getStagingRecord(uri) {
+  return getRecord(uri, config.STAGINGDATABASE);
 }
 
 /**
@@ -112,6 +122,7 @@ function buildPermissionsMap(permissions) {
 module.exports = {
   getRecord,
   getRecordInCollection,
+  getStagingRecord,
   verifyJson,
   runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
 };

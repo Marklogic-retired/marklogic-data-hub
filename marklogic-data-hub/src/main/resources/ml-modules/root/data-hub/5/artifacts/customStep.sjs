@@ -15,12 +15,12 @@
  */
 'use strict';
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-const dataHub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
 
 const collections = ['http://marklogic.com/data-hub/steps/custom', 'http://marklogic.com/data-hub/steps'];
-const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_CUSTOM_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_CUSTOM_READ_ROLE, 'read')];
+const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
+const permissions = [xdmp.permission(consts.DATA_HUB_CUSTOM_WRITE_ROLE, 'update'), xdmp.permission(consts.DATA_HUB_CUSTOM_READ_ROLE, 'read')];
 const requiredProperties = ['name', 'selectedSource'];
 
 function getNameProperty() {
@@ -76,8 +76,8 @@ function defaultArtifact(artifactName, entityTypeId) {
     collections: defaultCollections,
     permissions: defaultPermissions,
     batchSize: 100,
-    sourceDatabase: dataHub.config.STAGINGDATABASE,
-    targetDatabase: dataHub.config.FINALDATABASE,
+    sourceDatabase: config.STAGINGDATABASE,
+    targetDatabase: config.FINALDATABASE,
     provenanceGranularityLevel: 'coarse',
   };
 }
