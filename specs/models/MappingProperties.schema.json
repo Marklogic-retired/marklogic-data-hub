@@ -1,0 +1,22 @@
+{
+  "title": "MappingProperties",
+  "type": "object",
+  "additionalProperties": false,
+  "patternProperties": {
+    "^[a-zA-Z0-9]+$": {
+      "type": "object",
+      "properties": {
+        "sourcedFrom": {
+          "type": "string"
+        },
+        "targetEntityType": {
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#"
+        }
+      },
+      "required": ["sourcedFrom"]
+    }
+  }
+}
