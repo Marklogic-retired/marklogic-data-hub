@@ -1,5 +1,6 @@
 {
   "title": "Step",
+  "id": "http://marklogic.com/data-hub/Step.schema.json",
   "type": "object",
   "properties": {
     "interceptors": {

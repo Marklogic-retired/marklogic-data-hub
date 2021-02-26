@@ -3,7 +3,7 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
-import com.marklogic.hub.central.schemas.StepSchema;
+import com.marklogic.hub.central.schemas.MappingStepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MappingService;
 import com.marklogic.hub.dataservices.StepService;
@@ -35,14 +35,14 @@ public class MappingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get a step", response = StepSchema.class)
+    @ApiOperation(value = "Get a step", response = MappingStepSchema.class)
     @Secured("ROLE_readMapping")
     public ResponseEntity<JsonNode> getStep(@PathVariable String stepName) {
         return ResponseEntity.ok(newService().getStep(STEP_DEFINITION_TYPE, stepName));
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "MappingStepSchema")
     @Secured("ROLE_writeMapping")
     public ResponseEntity<Void> createMappingStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign) {
         String stepName = propertiesToAssign.get("name").asText();
@@ -52,7 +52,7 @@ public class MappingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "MappingStepSchema")
     @Secured("ROLE_writeMapping")
     public ResponseEntity<Void> updateMappingStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
@@ -102,7 +102,7 @@ public class MappingStepController extends BaseController {
         return StepService.on(getHubClient().getStagingClient());
     }
 
-    public static class MappingSteps extends ArrayList<StepSchema> {
+    public static class MappingSteps extends ArrayList<MappingStepSchema> {
     }
 
 }
