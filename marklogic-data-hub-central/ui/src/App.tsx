@@ -123,6 +123,9 @@ const App: React.FC<Props> = ({history, location}) => {
                     <PrivateRoute path="/tiles/curate/merge" exact>
                       <TilesView id="curate"/>
                     </PrivateRoute>
+                    <PrivateRoute path="/tiles/curate/map" exact>
+                      <TilesView id="curate"/>
+                    </PrivateRoute>
                     <PrivateRoute path="/tiles/run" exact>
                       <TilesView id="run"/>
                     </PrivateRoute>

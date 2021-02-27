@@ -1,4 +1,4 @@
-class SourceToEntityMap {
+class MappingStepDetail {
   clearMap() {
     return cy.findByTestId("Clear-btn");
   }
@@ -67,10 +67,6 @@ class SourceToEntityMap {
     return cy.findByLabelText(`stepSettings`);
   }
 
-  modalCloseButton() {
-    return cy.findByLabelText(`Close`);
-  }
-
   /**
    * Get property icon from dropdown list by Entity type property name
    * @param propertyName
@@ -130,7 +126,15 @@ class SourceToEntityMap {
   validateMapValues(propertyName: string, value:string) {
     cy.findByTestId(`${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
   }
+
+  goBackToCurateHomePage() {
+    cy.findByLabelText("Back").click();
+  }
+
+  noDataAvailable() {
+    return cy.get("#noData");
+  }
 }
 
-const sourceToEntityMap = new SourceToEntityMap();
-export default sourceToEntityMap;
+const mappingStepDetail = new MappingStepDetail();
+export default mappingStepDetail;

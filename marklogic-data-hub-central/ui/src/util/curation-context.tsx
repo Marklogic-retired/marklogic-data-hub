@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import {
   CurationOptionsInterface,
-  CurationContextInterface
+  CurationContextInterface,
+  MappingOptionsInterface
 } from "../types/curation-types";
 import {definitionsParser} from "./data-conversion";
 
@@ -14,15 +15,27 @@ const DEFAULT_CURATION_OPTIONS = {
   }
 };
 
+const DEFAULT_MAPPING_OPTIONS: MappingOptionsInterface = {
+  openStepSettings: false,
+  openStep: {},
+  isEditing: false
+};
+
 export const CurationContext = React.createContext<CurationContextInterface>({
   curationOptions: DEFAULT_CURATION_OPTIONS,
   setActiveStep: () => {},
-  updateActiveStepArtifact: () => {}
+  updateActiveStepArtifact: () => {},
+  mappingOptions: DEFAULT_MAPPING_OPTIONS,
+  setOpenStepSettings: () => {},
+  setOpenStep: () => {},
+  setIsEditing: () => {},
+  setStepOpenOptions: () => {}
 });
 
 const CurationProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [curationOptions, setCurationOptions] = useState<CurationOptionsInterface>(DEFAULT_CURATION_OPTIONS);
+  const [mappingOptions, setMappingOptions] = useState<MappingOptionsInterface>(DEFAULT_MAPPING_OPTIONS);
 
   /**
     * Sets the current active step in the curate tile
@@ -50,11 +63,46 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
       activeStep: updatedStep,
     });
   };
+
+  const setOpenStepSettings = (openStepSettings: boolean) => {
+    setMappingOptions({
+      ...mappingOptions,
+      openStepSettings: openStepSettings
+    });
+  };
+
+  const setOpenStep = (openStep: any) => {
+    setMappingOptions({
+      ...mappingOptions,
+      openStep: openStep
+    });
+  };
+
+  const setIsEditing = (isEditing: boolean) => {
+    setMappingOptions({
+      ...mappingOptions,
+      isEditing: isEditing
+    });
+  };
+
+  const setStepOpenOptions = (stepOpenOptions: any) => {
+    setMappingOptions({
+      ...mappingOptions,
+      openStepSettings: stepOpenOptions.openStepSettings,
+      isEditing: stepOpenOptions.isEditing,
+    });
+  };
+
   return (
     <CurationContext.Provider value={{
       curationOptions,
       setActiveStep,
       updateActiveStepArtifact,
+      mappingOptions,
+      setOpenStepSettings,
+      setOpenStep,
+      setIsEditing,
+      setStepOpenOptions
     }}>
       {children}
     </CurationContext.Provider>

@@ -10,11 +10,22 @@ export interface CurationContextInterface {
   curationOptions: CurationOptionsInterface;
   setActiveStep: (stepArtifact: any, modelDefinition: any, entityType: string) => void;
   updateActiveStepArtifact: (stepArtifact: any) => void;
+  mappingOptions: MappingOptionsInterface;
+  setOpenStepSettings: (openStepSettings: boolean) => void;
+  setOpenStep: (openStep: any) => void;
+  setIsEditing: (isEditing: boolean) => void;
+  setStepOpenOptions: (stepOpenOptions: any) => void;
 }
 
 export interface CurationOptionsInterface {
   entityDefinitionsArray: Definition[],
   activeStep: ActiveStep
+}
+
+export interface MappingOptionsInterface {
+  openStepSettings: boolean,
+  openStep: any,
+  isEditing: boolean
 }
 
 export type ActiveStep ={
@@ -104,3 +115,27 @@ export const defaultPriorityOption = {
   }],
   value: 0
 };
+
+export interface MappingStep {
+  name: string,
+  description: string,
+  additionalCollections: any,
+  collections: any,
+  lastUpdated: string,
+  permissions: string,
+  properties: any,
+  provenanceGranularityLevel: string,
+  selectedSource: string,
+  sourceDatabase: string,
+  sourceQuery: string,
+  stepDefinitionName: string,
+  stepDefinitionType: string,
+  stepId: string,
+  targetDatabase: string,
+  targetEntityType: string,
+  targetFormat: string,
+  batchSize: number,
+  interceptors: any,
+  customHook: any,
+  validateEntity: string
+}

@@ -347,6 +347,32 @@ const mappings = {"data":
       "validateEntity": false,
       "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
     }
+  ]},
+{
+  "entityType": "Person",
+  "entityTypeId": "Person",
+  "artifacts": [
+    {
+      "name": "Mapping4",
+      "targetEntityType": "Person",
+      "description": "",
+      "selectedSource": "collection",
+      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+      "properties": {
+        "customerId": {
+          "sourcedFrom": "PIN"
+        }
+      },
+      "provenanceGranularityLevel": "coarse",
+      "batchSize": 50,
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "sourceDatabase": "data-hub-STAGING",
+      "targetDatabase": "data-hub-FINAL",
+      "collections": ["Mapping4", "Person"],
+      "additionalCollections": ["personCollection"],
+      "validateEntity": false,
+      "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
+    }
   ]}
 ],
 "status": 200

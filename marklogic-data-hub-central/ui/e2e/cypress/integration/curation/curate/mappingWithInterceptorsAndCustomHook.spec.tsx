@@ -3,7 +3,7 @@ import {tiles, toolbar} from "../../../support/components/common";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
-  sourceToEntityMap
+  mappingStepDetail
 } from "../../../support/components/mapping/index";
 import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
@@ -11,7 +11,6 @@ import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
-import { wait } from "@testing-library/dom";
 
 const flowName = "orderFlow";
 const loadStep = "loadOrder";
@@ -129,44 +128,44 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     curatePage.xpathExpression("shippedDate").should("have.value", "");
   });
   it("Map source to entity and Test the mappings", () => {
-    sourceToEntityMap.setXpathExpressionInput("orderId", "OrderID");
-    sourceToEntityMap.setXpathExpressionInput("address", "/");
-    sourceToEntityMap.setXpathExpressionInput("city", "ShipCity");
-    sourceToEntityMap.setXpathExpressionInput("state", "ShipAddress");
-    sourceToEntityMap.setXpathExpressionInput("orderDetails", "/");
-    sourceToEntityMap.setXpathExpressionInput("productID", "OrderDetails/ProductID");
-    sourceToEntityMap.setXpathExpressionInput("unitPrice", "head(OrderDetails/UnitPrice)");
-    sourceToEntityMap.setXpathExpressionInput("quantity", "OrderDetails/Quantity");
-    sourceToEntityMap.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
-    sourceToEntityMap.setXpathExpressionInput("shipRegion", "ShipRegion");
-    sourceToEntityMap.setXpathExpressionInput("shippedDate", "ShippedDate");
+    mappingStepDetail.setXpathExpressionInput("orderId", "OrderID");
+    mappingStepDetail.setXpathExpressionInput("address", "/");
+    mappingStepDetail.setXpathExpressionInput("city", "ShipCity");
+    mappingStepDetail.setXpathExpressionInput("state", "ShipAddress");
+    mappingStepDetail.setXpathExpressionInput("orderDetails", "/");
+    mappingStepDetail.setXpathExpressionInput("productID", "OrderDetails/ProductID");
+    mappingStepDetail.setXpathExpressionInput("unitPrice", "head(OrderDetails/UnitPrice)");
+    mappingStepDetail.setXpathExpressionInput("quantity", "OrderDetails/Quantity");
+    mappingStepDetail.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
+    mappingStepDetail.setXpathExpressionInput("shipRegion", "ShipRegion");
+    mappingStepDetail.setXpathExpressionInput("shippedDate", "ShippedDate");
     curatePage.dataPresent().should("be.visible");
-    cy.waitUntil(() => sourceToEntityMap.expandEntity()).click();
+    cy.waitUntil(() => mappingStepDetail.expandEntity()).click();
     // Test the mappings
-    cy.waitUntil(() => sourceToEntityMap.testMap().should("be.enabled"));
-    sourceToEntityMap.testMap().click();
-    sourceToEntityMap.validateMapValues("orderId", "10259");
-    sourceToEntityMap.validateMapValues("address", "");
-    sourceToEntityMap.validateMapValues("city", "Houston");
-    sourceToEntityMap.validateMapValues("state", "100 Main Street");
-    sourceToEntityMap.validateMapValues("orderDetails", "");
-    sourceToEntityMap.validateMapValues("productID", "77");
-    sourceToEntityMap.validateMapValues("unitPrice", "70.4");
-    sourceToEntityMap.validateMapValues("quantity", "72");
-    sourceToEntityMap.validateMapValues("discount", "0");
-    sourceToEntityMap.validateMapValues("shipRegion", "region1\nregion4\n");
-    sourceToEntityMap.validateMapValues("shippedDate", "1996-07-17T00:28:30");
-    //close modal
-    cy.get("body").type("{esc}");
-    curatePage.verifyStepNameIsVisible(mapStep);
+    cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
+    mappingStepDetail.testMap().click();
+    mappingStepDetail.validateMapValues("orderId", "10259");
+    mappingStepDetail.validateMapValues("address", "");
+    mappingStepDetail.validateMapValues("city", "Houston");
+    mappingStepDetail.validateMapValues("state", "100 Main Street");
+    mappingStepDetail.validateMapValues("orderDetails", "");
+    mappingStepDetail.validateMapValues("productID", "77");
+    mappingStepDetail.validateMapValues("unitPrice", "70.4");
+    mappingStepDetail.validateMapValues("quantity", "72");
+    mappingStepDetail.validateMapValues("discount", "0");
+    mappingStepDetail.validateMapValues("shipRegion", "region1\nregion4\n");
+    mappingStepDetail.validateMapValues("shippedDate", "1996-07-17T00:28:30");
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
   });
   it("Edit Map step", () => {
+    curatePage.toggleEntityTypeId("Order");
     // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
-    sourceToEntityMap.testMap().click();
-    sourceToEntityMap.validateMapValues("orderId", "10259");
-    sourceToEntityMap.stepSettingsLink().click();
+    mappingStepDetail.testMap().click();
+    mappingStepDetail.validateMapValues("orderId", "10259");
+    mappingStepDetail.stepSettingsLink().click();
     curatePage.switchEditAdvanced().click();
     //interceptor should already be set during creation
     cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
@@ -175,8 +174,41 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setCustomHook("curateTile/customUriHook");
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+
+    //verify that step details page remains opens when step settings was opened from within the step details page
+    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    curatePage.verifyStepDetailsOpen(mapStep);
+  });
+  it("verify Map step settings change from within map step details page", () => {
+    //Check that the source data is visible
+    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    // Open step settings and switch to Advanced tab in step settings
+    mappingStepDetail.stepSettingsLink().click();
+    curatePage.switchEditAdvanced().click();
+    // change source database
+    advancedSettingsDialog.setSourceDatabase("data-hub-FINAL");
+    advancedSettingsDialog.saveSettings(mapStep).click();
+    advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+    //verify that step details is updated based on recent changes
+    cy.waitUntil(() => mappingStepDetail.noDataAvailable().should("be.visible"));
+    curatePage.verifyStepDetailsOpen(mapStep);
+
+    //Change the source Database again to see if the previous data comes back
+    mappingStepDetail.stepSettingsLink().click();
+    curatePage.switchEditAdvanced().click();
+    // change source database
+    advancedSettingsDialog.setSourceDatabase("data-hub-STAGING");
+    advancedSettingsDialog.saveSettings(mapStep).click();
+    advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+    //Step source data is present now.
+    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    curatePage.verifyStepDetailsOpen(mapStep);
+
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
   });
   it("Verify mapping step with duplicate name cannot be created", () => {
+    curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep().click());
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setSourceRadio("Query");
@@ -190,14 +222,20 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
   it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
     // link to settings and back
-    curatePage.openSourceToEntityMap("Order", mapStep);
-    sourceToEntityMap.stepSettingsLink().click();
+    curatePage.openMappingStepDetail("Order", mapStep);
+    cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible")).click();
+    mappingStepDetail.stepSettingsLink().click();
     cy.waitUntil(() => createEditMappingDialog.stepDetailsLink().click());
+
     cy.wait(1000);
     cy.waitForAsyncRequest();
-    
-    // close modal
-    cy.waitUntil(() => sourceToEntityMap.modalCloseButton()).click();
+    cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible"));
+
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
+
+    //open the order entity panel
+    curatePage.toggleEntityTypeId("Order");
 
     curatePage.openExistingFlowDropdown("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();
@@ -229,7 +267,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     createEditMappingDialog.saveButton().click({force: true});
     cy.waitForAsyncRequest();
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
-    //close modal
-    cy.get("body").type("{esc}");
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
   });
 });
