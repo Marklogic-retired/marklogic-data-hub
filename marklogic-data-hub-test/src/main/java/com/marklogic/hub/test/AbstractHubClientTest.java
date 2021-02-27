@@ -9,6 +9,7 @@ import com.marklogic.client.io.*;
 import com.marklogic.hub.HubClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
+import com.marklogic.rest.util.Fragment;
 import org.w3c.dom.Document;
 
 import java.net.ConnectException;
@@ -189,16 +190,29 @@ public abstract class AbstractHubClientTest extends TestObject {
         return getHubClient().getStagingClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
     }
 
+
     protected JsonNode getFinalDoc(String uri) {
         return getHubClient().getFinalClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
     }
 
-    protected Document getStagingXmlDoc(String uri) {
-        return getHubClient().getStagingClient().newXMLDocumentManager().read(uri, new DOMHandle()).get();
+    /**
+     *
+     * @param uri
+     * @return an ml-app-deployer Fragment object, which understands common ML namespace prefixes and has some methods
+     * that make assertions easy
+     */
+    protected Fragment getStagingXmlDoc(String uri) {
+        return new Fragment(getHubClient().getStagingClient().newXMLDocumentManager().read(uri, new StringHandle()).get());
     }
 
-    protected Document getFinalXmlDoc(String uri) {
-        return getHubClient().getFinalClient().newXMLDocumentManager().read(uri, new DOMHandle()).get();
+    /**
+     *
+     * @param uri
+     * @return an ml-app-deployer Fragment object, which understands common ML namespace prefixes and has some methods
+     * that make assertions easy
+     */
+    protected Fragment getFinalXmlDoc(String uri) {
+        return new Fragment(getHubClient().getFinalClient().newXMLDocumentManager().read(uri, new StringHandle()).get());
     }
 
     protected void writeFinalJsonDoc(String uri, String content, String... collections) {
