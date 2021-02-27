@@ -127,12 +127,7 @@ public class FlowController extends BaseController {
         return ResponseEntity.ok(runFlowResponse);
     }
 
-    /**
-     * Included for testing purposes.
-     *
-     * @return
-     */
-
+    //Included for testing purposes.
     public void setFlowRunnerConsumer(Consumer<FlowRunner> flowRunnerConsumer) {
         this.flowRunnerConsumer = flowRunnerConsumer;
     }
