@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {Collapse, Menu, Modal} from "antd";
 import axios from "axios";
-import {createStep, updateStep, getSteps, getStep, deleteStep} from "../../api/steps";
+import {createStep, updateStep, getSteps, deleteStep} from "../../api/steps";
 import {sortStepsByUpdated} from "../../util/conversionFunctions";
 import styles from "./entity-tiles.module.scss";
 import MappingCard from "./mapping/mapping-card";
@@ -97,23 +97,6 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error;
       console.error("Error while fetching the mappings!", message);
-    }
-  };
-
-  const getMappingArtifactByMapName = async (entityTypeId, mapName) => {
-    try {
-      let response = await getStep(mapName, "mapping");
-      if (response.status === 200) {
-        let mapArtifacts = response.data;
-
-        if (mapArtifacts.targetEntityType === entityTypeId) {
-          return mapArtifacts;
-        }
-
-      }
-    } catch (error) {
-      let message = error;
-      console.error("Error getting mapping", message);
     }
   };
 
@@ -310,7 +293,6 @@ const EntityTiles = (props) => {
         <MappingCard data={mappingCardData ? sortStepsByUpdated(mappingCardData.artifacts) : []}
           flows={props.flows}
           entityTypeTitle={entityType}
-          getMappingArtifactByMapName={getMappingArtifactByMapName}
           deleteMappingArtifact={deleteMappingArtifact}
           createMappingArtifact={createMappingArtifact}
           updateMappingArtifact={updateMappingArtifact}

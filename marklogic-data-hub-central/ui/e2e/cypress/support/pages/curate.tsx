@@ -27,7 +27,7 @@ class CuratePage {
     return cy.findByTestId(`${entityTypeId}-${stepName}-step`);
   }
 
-  openSourceToEntityMap(entityTypeId: string, stepName: string) {
+  openMappingStepDetail(entityTypeId: string, stepName: string) {
     cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
     cy.waitUntil(() => cy.findByTestId(`${stepName}-stepDetails`)).click();
     this.verifyStepDetailsOpen(stepName);

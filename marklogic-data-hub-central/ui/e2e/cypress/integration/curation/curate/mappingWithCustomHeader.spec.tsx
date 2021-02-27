@@ -3,7 +3,7 @@ import {tiles, toolbar} from "../../../support/components/common";
 import {
   advancedSettingsDialog,
   createEditMappingDialog,
-  sourceToEntityMap
+  mappingStepDetail
 } from "../../../support/components/mapping/index";
 import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
@@ -87,11 +87,11 @@ describe("Create and verify load steps, map step and flows with a custom header"
     createEditMappingDialog.saveButton().click({force: true});
     //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
-    //close modal
-    cy.get("body").type("{esc}");
-    curatePage.verifyStepNameIsVisible(mapStep);
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
   });
   it("Edit Map step", () => {
+    curatePage.toggleEntityTypeId("Order");
     // Open step settings and switch to Advanced tab
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
@@ -100,23 +100,25 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => advancedSettingsDialog.saveSettings(mapStep).click({force: true}));
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     // map source to entity
-    curatePage.openSourceToEntityMap("Order", mapStep);
-    cy.waitUntil(() => sourceToEntityMap.expandEntity());
-    sourceToEntityMap.setXpathExpressionInput("orderId", "OrderID");
-    sourceToEntityMap.setXpathExpressionInput("address", "/");
-    sourceToEntityMap.setXpathExpressionInput("city", "ShipCity");
-    sourceToEntityMap.setXpathExpressionInput("state", "ShipAddress");
-    sourceToEntityMap.setXpathExpressionInput("orderDetails", "/");
-    sourceToEntityMap.setXpathExpressionInput("productID", "OrderDetails/ProductID");
-    sourceToEntityMap.setXpathExpressionInput("unitPrice", "head(OrderDetails/UnitPrice)");
-    sourceToEntityMap.setXpathExpressionInput("quantity", "OrderDetails/Quantity");
-    sourceToEntityMap.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
-    sourceToEntityMap.setXpathExpressionInput("shipRegion", "ShipRegion");
-    sourceToEntityMap.setXpathExpressionInput("shippedDate", "ShippedDate");
-    // close modal
-    cy.get("body").type("{esc}");
+    curatePage.openMappingStepDetail("Order", mapStep);
+    cy.waitUntil(() => mappingStepDetail.expandEntity());
+    mappingStepDetail.setXpathExpressionInput("orderId", "OrderID");
+    mappingStepDetail.setXpathExpressionInput("address", "/");
+    mappingStepDetail.setXpathExpressionInput("city", "ShipCity");
+    mappingStepDetail.setXpathExpressionInput("state", "ShipAddress");
+    mappingStepDetail.setXpathExpressionInput("orderDetails", "/");
+    mappingStepDetail.setXpathExpressionInput("productID", "OrderDetails/ProductID");
+    mappingStepDetail.setXpathExpressionInput("unitPrice", "head(OrderDetails/UnitPrice)");
+    mappingStepDetail.setXpathExpressionInput("quantity", "OrderDetails/Quantity");
+    mappingStepDetail.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
+    mappingStepDetail.setXpathExpressionInput("shipRegion", "ShipRegion");
+    mappingStepDetail.setXpathExpressionInput("shippedDate", "ShippedDate");
+
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
   });
   it("Add Map step to new flow and Run", () => {
+    curatePage.toggleEntityTypeId("Order");
     //Cancel add to new flow
     curatePage.addToNewFlow("Order", mapStep);
     cy.findByText("New Flow").should("be.visible");

@@ -18,6 +18,7 @@ import {SearchContext} from "../util/search-context";
 import {useHistory, useLocation} from "react-router-dom";
 import MergingStepDetail from "../components/entities/merging/merging-step-detail/merging-step-detail";
 import {ConfigProvider} from "antd";
+import MappingStepDetail from "../components/entities/mapping/mapping-step-detail/mapping-step-detail";
 
 export type TileId = "load" | "model" | "curate" | "run" | "explore";
 export type IconType = "fa" | "custom";
@@ -45,6 +46,8 @@ const TilesView = (props) => {
       return <MatchingDetailStep/>;
     } else if (location.pathname.startsWith("/tiles/curate/merge")) {
       return <MergingStepDetail/>;
+    } else if (location.pathname.startsWith("/tiles/curate/map")) {
+      return <MappingStepDetail/>;
     } else {
       return <Curate/>;
     }

@@ -9,7 +9,6 @@ import styles from "./steps.module.scss";
 import "./steps.scss";
 import {StepType} from "../../types/curation-types";
 import {MLTooltip} from "@marklogic/design-system";
-
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ErrorTooltips} from "../../config/tooltips.config";

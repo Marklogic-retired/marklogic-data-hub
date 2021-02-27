@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router, MemoryRouter} from "react-router-dom";
-import {fireEvent, render, wait, cleanup, waitForElement} from "@testing-library/react";
+import {fireEvent, render, wait, cleanup, waitForElement, screen} from "@testing-library/react";
 import MappingCard from "./mapping-card";
 import axiosMock from "axios";
 import data from "../../../assets/mock-data/curation/flows.data";
@@ -8,6 +8,8 @@ import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
 import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
+import {CurationContext} from "../../../util/curation-context";
+import {customerMappingStep} from "../../../assets/mock-data/curation/curation-context-mock";
 
 jest.mock("axios");
 
@@ -40,7 +42,6 @@ describe("Mapping Card component", () => {
     entityModel: entityModel,
     openStep: {},
     deleteMappingArtifact: jest.fn(() => {}),
-    getMappingArtifactByMapName: () => {},
     createMappingArtifact: () => {},
     updateMappingArtifact: () => {},
     addStepToFlow: () => {},
@@ -134,88 +135,88 @@ describe("Mapping Card component", () => {
   });
 
   test("Mapping card parses XML appropriately", async () => {
-    const mappingArtifactByNameFunction = () => {
-      return {sourceDatabase: "data-hub-STAGING"};
-    };
-    let getByTestId, findByText;
+    let getByTestId;
     await act(async () => {
       const renderResults = render(
         <Router><MappingCard
           {...mappingProps}
-          getMappingArtifactByMapName={mappingArtifactByNameFunction}
           canReadOnly={true}
           canReadWrite={true}
         /></Router>);
       getByTestId = renderResults.getByTestId;
-      findByText = renderResults.findByText;
     });
 
     await act(async () => {
       await fireEvent.click(getByTestId("Mapping1-stepDetails"));
     });
 
-    const orderDetailsNode = await findByText("OrderDetails");
-    expect(orderDetailsNode.parentNode).toHaveTextContent("OrderNS:");
+    expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/curate/map"});
 
+    wait(async () => {
+      const orderDetailsNode = await screen.findByText("OrderDetails");
+      expect(orderDetailsNode.parentNode).toHaveTextContent("OrderNS:");
+    });
   });
 
   test("Open step settings", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["writeMapping", "readMapping"]);
     const {getByText, getByLabelText, getByTestId, getByPlaceholderText} = render(
-      <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard
-        {...mappingProps}
-        canReadWrite={true}
-        canWriteFlow={true}
-      /></AuthoritiesContext.Provider></Router>
+      <Router><AuthoritiesContext.Provider value={authorityService}>
+        <CurationContext.Provider value={customerMappingStep}><MappingCard
+          {...mappingProps}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></CurationContext.Provider></AuthoritiesContext.Provider></Router>
     );
 
     // Open default Basic settings
     await wait(() => {
       fireEvent.click(getByTestId("Mapping1-edit"));
     });
-    expect(getByText("Mapping Step Settings")).toBeInTheDocument();
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    wait(async () => {
+      expect(screen.getByText("Mapping Step Settings")).toBeInTheDocument();
+      expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+      expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
-    // Basic settings values
-    expect(getByPlaceholderText("Enter name")).toHaveValue("Mapping1");
-    expect(getByPlaceholderText("Enter name")).toBeDisabled();
-    expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
+      // Basic settings values
+      expect(getByPlaceholderText("Enter name")).toHaveValue("Mapping1");
+      expect(getByPlaceholderText("Enter name")).toBeDisabled();
+      expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
 
-    expect(getByLabelText("Collection")).toBeChecked();
-    const collInput = document.querySelector(("#collList .ant-input"));
-    expect(collInput).toHaveValue("default-ingestion");
+      expect(getByLabelText("Collection")).toBeChecked();
+      const collInput = document.querySelector(("#collList .ant-input"));
+      expect(collInput).toHaveValue("default-ingestion");
 
-    fireEvent.click(getByLabelText("Query"));
-    expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['default-ingestion'])");
+      fireEvent.click(getByLabelText("Query"));
+      expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['default-ingestion'])");
 
-    // Switch to Advanced settings
-    await wait(() => {
-      fireEvent.click(getByText("Advanced"));
+      // Switch to Advanced settings
+      await wait(() => {
+        fireEvent.click(getByText("Advanced"));
+      });
+      expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+      expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+
+      // Advanced settings values
+      expect(getByText("Source Database")).toBeInTheDocument();
+      expect(getByText("data-hub-STAGING")).toBeInTheDocument();
+      expect(getByText("Target Database")).toBeInTheDocument();
+      expect(getByText("data-hub-FINAL")).toBeInTheDocument();
+      expect(getByText("Batch Size")).toBeInTheDocument();
+      expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
+      expect(getByText("Target Permissions")).toBeInTheDocument();
+      expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
+      expect(getByText("Entity Validation")).toBeInTheDocument();
+      expect(getByText("Please select Entity Validation")).toBeInTheDocument();
+      expect(getByText("Header Content")).toBeInTheDocument();
+      expect(getByText("Interceptors")).toBeInTheDocument();
+      expect(getByText("Custom Hook")).toBeInTheDocument();
+
+      await wait(() => {
+        fireEvent.click(getByLabelText("Close"));
+      });
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
-
-    // Advanced settings values
-    expect(getByText("Source Database")).toBeInTheDocument();
-    expect(getByText("data-hub-STAGING")).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
-    expect(getByText("data-hub-FINAL")).toBeInTheDocument();
-    expect(getByText("Batch Size")).toBeInTheDocument();
-    expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
-    expect(getByText("Target Permissions")).toBeInTheDocument();
-    expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
-    expect(getByText("Entity Validation")).toBeInTheDocument();
-    expect(getByText("Please select Entity Validation")).toBeInTheDocument();
-    expect(getByText("Header Content")).toBeInTheDocument();
-    expect(getByText("Interceptors")).toBeInTheDocument();
-    expect(getByText("Custom Hook")).toBeInTheDocument();
-
-    await wait(() => {
-      fireEvent.click(getByLabelText("Close"));
-    });
-
   });
 
   test("Verify Card sort order, adding the step to an existing flow, and running the step in an existing flow where step DOES NOT exist", async () => {

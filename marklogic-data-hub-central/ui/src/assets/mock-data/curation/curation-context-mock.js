@@ -1,9 +1,12 @@
 import {matchingStep} from "./matching.data";
-import {customerEntityDef} from "./entity-definitions-mock";
+import {customerEntityDef, personNestedEntityDef} from "./entity-definitions-mock";
 import {definitionsParser} from "../../../util/data-conversion";
 import {mergingStep} from "./merging.data";
+import {mappingStep} from "./mapping.data";
+import curateData from "./flows.data";
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
+const personNestedEntityDefArray = definitionsParser(personNestedEntityDef.definitions);
 
 export const customerMatchingStep = {
   curationOptions: {
@@ -115,3 +118,68 @@ export const matchThresholdArtifact = {
   updateActiveStepArtifact: jest.fn()
 };
 
+export const customerMappingStep = {
+  curationOptions: {
+    entityDefinitionsArray: customerEntityDefsArray,
+    activeStep: {
+      stepArtifact: curateData.mappings.data[0],
+      entityName: curateData.mappings.data[0].entityType,
+      isModified: false
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
+};
+
+export const personMappingStepEmpty = {
+  curationOptions: {
+    entityDefinitionsArray: personNestedEntityDefArray,
+    activeStep: {
+      stepArtifact: mappingStep.artifacts[1],
+      entityName: mappingStep.entityType,
+      isModified: false
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
+};
+
+export const personMappingStepWithData = {
+  curationOptions: {
+    entityDefinitionsArray: personNestedEntityDefArray,
+    activeStep: {
+      stepArtifact: mappingStep.artifacts[0],
+      entityName: mappingStep.entityType,
+      isModified: false
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
+};

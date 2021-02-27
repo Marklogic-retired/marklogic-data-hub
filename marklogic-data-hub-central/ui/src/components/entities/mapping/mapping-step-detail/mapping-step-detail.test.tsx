@@ -1,22 +1,100 @@
 import React from "react";
+import {BrowserRouter as Router} from "react-router-dom";
 import {waitForElement, waitForElementToBeRemoved, render, wait, cleanup, fireEvent, within} from "@testing-library/react";
-import SourceToEntityMap from "./source-to-entity-map";
+import MappingStepDetail from "./mapping-step-detail";
 import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
-import SplitPane from "react-split-pane";
-import axiosMock from "axios";
 import {validateMappingTableRow, onClosestTableRow} from "../../../../util/test-utils";
+import {CurationContext} from "../../../../util/curation-context";
+import {personMappingStepEmpty, personMappingStepWithData} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {updateMappingArtifact, getMappingArtifactByMapName, getMappingFunctions} from "../../../../api/mapping";
+import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curation/mapping.data";
+import {getUris, getDoc} from "../../../../util/search-service";
+import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
+import {act} from "react-dom/test-utils";
+import {personEntityDef, personNestedEntityDef, personNestedEntityDefSameNames} from "../../../../assets/mock-data/curation/entity-definitions-mock";
+import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authorities";
+import SplitPane from "react-split-pane";
+import userEvent from "@testing-library/user-event";
 
 jest.mock("axios");
+jest.mock("../../../../api/mapping");
+jest.mock("../../../../util/search-service");
+jest.mock("../../../../util/manageArtifacts-service");
 
+const mockGetMapArtifactByName = getMappingArtifactByMapName as jest.Mock;
+const mockUpdateMapArtifact = updateMappingArtifact as jest.Mock;
+const mockGetSourceDoc = getDoc as jest.Mock;
+const mockGetUris = getUris as jest.Mock;
+const mockGetNestedEntities = getNestedEntities as jest.Mock;
+const mockGetMappingValidationResp = getMappingValidationResp as jest.Mock;
+const mockGetMappingFunctions = getMappingFunctions as jest.Mock;
+
+
+const mockHistoryPush = jest.fn();
+
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
+
+const defaultRender = (curationContextValue: any) => {
+  return render(
+    <CurationContext.Provider value={curationContextValue}>
+      <MappingStepDetail />
+    </CurationContext.Provider>
+  );
+};
+
+const renderWithAuthorities = (curationContextValue, authorityService) => {
+  return render(
+    <AuthoritiesContext.Provider value={authorityService}>
+      <CurationContext.Provider value={curationContextValue}>
+        <MappingStepDetail />
+      </CurationContext.Provider>
+    </AuthoritiesContext.Provider>
+  );
+};
+
+const renderWithRouter = (curationContextValue, authorityService) => {
+  return render(
+    <Router>
+      <AuthoritiesContext.Provider value={authorityService}>
+        <CurationContext.Provider value={curationContextValue}>
+          <MappingStepDetail />
+        </CurationContext.Provider>
+      </AuthoritiesContext.Provider>
+    </Router>
+  );
+};
+
+const renderWithRouterNoAuthorities = (curationContextValue) => {
+  return render(
+    <Router>
+      <CurationContext.Provider value={curationContextValue}>
+        <MappingStepDetail />
+      </CurationContext.Provider>
+    </Router>
+  );
+};
 
 describe("RTL Source-to-entity map tests", () => {
   afterEach(cleanup);
 
   beforeEach(() => jest.setTimeout(20000));
 
-  test("RTL tests with no source data", () => {
-    const {getByTestId,  getByText, getByRole} = render(<SourceToEntityMap {... {mapData: data.mapProps.mapData, entityTypeProperties: data.mapProps.entityTypeProperties, entityTypeTitle: data.mapProps.entityTypeTitle, sourceData: [], extractCollectionFromSrcQuery: jest.fn()}} mappingVisible={true}/>);
+  test("RTL tests with no source data", async () => {
+    mockGetUris.mockResolvedValueOnce({status: 200, data: []});
+
+    let getByText, getByRole, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepEmpty);
+      getByText = renderResults.getByText;
+      getByRole = renderResults.getByRole;
+      getByTestId = renderResults.getByTestId;
+    });
     expect(getByText("Source Data")).toBeInTheDocument();
     expect(getByText("Test")).toBeDisabled;
     expect(getByText("Clear")).toBeDisabled;
@@ -28,8 +106,21 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByRole("presentation").className).toEqual("Resizer vertical ");
   });
 
-  test("RTL tests with source data",  () => {
-    const {getByTestId, getByText, getByLabelText, queryByText, rerender} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+  test("RTL tests with source data", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText, queryByText, getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      queryByText = renderResults.queryByText;
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId;
+    });
+
     expect(getByText("Source Data")).toBeInTheDocument();
     expect(getByText("proteinId")).toBeInTheDocument();
     expect(getByText("emptyString")).toBeInTheDocument();
@@ -58,9 +149,20 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("whitespaceValue-srcValue").children[0].className.includes("datatype-string")).toBe(true);
     expect(getByTestId("emptyArrayValue-srcValue").children[0].className.includes("datatype-object")).toBe(true);
 
-    rerender(<SourceToEntityMap{...data.mapProps} mappingVisible={true} isLoading={true} />);
-    expect(getByTestId("spinTest")).toBeInTheDocument();
-    rerender(<SourceToEntityMap{...data.mapProps} mappingVisible={true} isLoading={false} />);
+    //rerender(<MappingStepDetail{...data.mapProps} mappingVisible={true} isLoading={true} />);
+    //await act(async () => {
+    // rerender(<CurationContext.Provider value={personMappingStepWithData}><MappingStepDetail />
+    //   </CurationContext.Provider>)
+
+    //await(waitForElement(() => getByTestId("spinTest")));
+
+    //await(waitForElementToBeRemoved(() => getByTestId("spinTest")));
+    //});
+    //expect(getByTestId("spinTest")).toBeInTheDocument();
+    //rerender(<MappingStepDetail{...data.mapProps} mappingVisible={true} isLoading={false} />);
+    // rerender(<CurationContext.Provider value={personMappingStepEmpty}><MappingStepDetail />
+    //   </CurationContext.Provider>)
+    //await act(() => Promise.resolve())
     expect(queryByText("Unable to find source records using the specified collection or query.")).not.toBeInTheDocument();
     let exp = getByText("testNameInExp");
     expect(exp).toBeInTheDocument();
@@ -71,43 +173,35 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("concat(name,'-NEW')")).toBeInTheDocument();
   });
 
-  test("Filtering Name column in Source data table for array type data", () => {
-    let arrayData = [{rowKey: 1, key: "email", val: "test1@gmail.com"},
-      {rowKey: 2, key: "email", val: "test2@gmail.com"},
-      {rowKey: 3, key: "email", val: "test3@gmail.com"},
-      {rowKey: 4, key: "forSearch", val: "shouldBeFilteredOut"}
-    ];
+  test("Filtering Name column in Source data table for array type data", async () => {
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
 
-    const {getAllByText, getByTestId, queryByText} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-      sourceData={arrayData}
-      entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
-    />);
+    let getAllByText, queryByText, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getAllByText = renderResults.getAllByText;
+      queryByText = renderResults.queryByText;
+      getByTestId = renderResults.getByTestId;
+    });
 
     fireEvent.click(getByTestId("filterIcon-key"));
-    fireEvent.change(getByTestId("searchInput-key"), {target: {value: "email"}});
+    fireEvent.change(getByTestId("searchInput-key"), {target: {value: "protein"}});
     fireEvent.click(getByTestId("submitSearch-key"));
-    expect(getAllByText("email")).toHaveLength(3);
-    expect(queryByText("forSearch")).not.toBeInTheDocument();
+    expect(getAllByText("protein")).toHaveLength(4);
+    expect(queryByText("whitespaceValue")).not.toBeInTheDocument();
   });
 
   test("Mapping expression for a nested entity property with same name should be saved appropriately", async () => {
-    const nestedEntityWithSameName = [
-      {key: 1, name: "propId", type: "int"},
-      {key: 2, name: "propName", type: "parent-Name", children: [
-        {key: 3, name: "propName/propName", type: "parent-FirstName", children: [
-          {key: 4, name: "propName/propName/propName", type: "string"},
-          {key: 5, name: "propPrefix", type: "string"}
-        ]},
-        {key: 6, name: "propMiddle", type: "string"}
-      ]},
-      {key: 7, name: "gender", type: "string"}
-    ];
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDefSameNames});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    const {getByTestId, getAllByTestId} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-      entityTypeProperties={nestedEntityWithSameName}
-    />);
+    let getAllByTestId, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepEmpty);
+      getAllByTestId = renderResults.getAllByTestId;
+      getByTestId = renderResults.getByTestId;
+    });
 
     fireEvent.change(getAllByTestId("propName-mapexpression")[0], {target: {value: "concat(propName,'-NEW')"}});
     fireEvent.blur(getAllByTestId("propName-mapexpression")[0]);
@@ -118,13 +212,20 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getAllByTestId("propName-mapexpression")[1]).toHaveTextContent("");
   });
 
-  test("Filtering Name column in Source (JSON Source Data) and Entity tables", () => {
+  test("Filtering Name column in Source (JSON Source Data) and Entity tables", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
 
-    const {getByText, getByTestId, getAllByText, queryByText} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-      sourceData={data.jsonSourceDataMultipleSiblings}
-      entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
-    />);
+    let getByText, getAllByText, queryByText, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      getAllByText = renderResults.getAllByText;
+      queryByText = renderResults.queryByText;
+      getByTestId = renderResults.getByTestId;
+    });
 
     //For Source table testing
     let sourcefilterIcon = getByTestId("filterIcon-key");
@@ -237,13 +338,20 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByText("windscreen")).not.toBeInTheDocument();
   });
 
-  test("Filtering of Name column in XML Source data", () => {
+  test("Filtering of Name column in XML Source data", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
 
-    const {getByText, getByTestId, getAllByText, queryByText} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-      sourceData={data.xmlSourceDataMultipleSiblings}
-      entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
-    />);
+    let getByText, getByTestId, getAllByText, queryByText;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      getAllByText = renderResults.getAllByText;
+      queryByText = renderResults.queryByText;
+      getByTestId = renderResults.getByTestId;
+    });
 
     /* Test filter on Source table with XML data  */
     let sourcefilterIcon = getByTestId("filterIcon-key");
@@ -287,11 +395,18 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByText("LastName")).not.toBeInTheDocument();
   });
 
-  test("Column option selector in Entity table", () => {
+  test("Column option selector in Entity table", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
 
-    const {getByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-    />);
+    let getByText, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+    });
 
     //Set the data for testing in xpath expression
 
@@ -335,14 +450,19 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(XPathExpression); //Check XPathExpression column
     //Props below should be available now
     expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
-
   });
 
-  test("Sorting in Source and Entity table", () => {
+  test("Sorting in Source and Entity table", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personEntityDef});
 
-    const {getByTestId} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-    />);
+    let getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+    });
 
     //Expanding all the nested levels first
     fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
@@ -430,9 +550,21 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify evaluation of valid expression for mapping writer user", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.testJSONResponse})));
-    const {getByText, getByTestId, queryByTestId, queryAllByText} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[1]});
 
+    let getByText, getByTestId, queryAllByText, queryByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      queryAllByText = renderResults.queryAllByText;
+      queryByTestId = renderResults.queryByTestId;
+      getByTestId = renderResults.getByTestId;
+    });
     await(waitForElement(() => getByTestId("proteinId-srcValue")));
     expect(getByTestId("proteinId-srcValue")).toHaveTextContent("123EAC");
 
@@ -477,8 +609,21 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Truncation in case of responses for Array datatype", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.truncatedJSONResponse})));
-    const {getByText, getByTestId, queryByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} sourceData = {data.JSONSourceDataToTruncate}/>);
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.JSONSourceDataToTruncate});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[0]});
+
+    let getByText, getByTestId, queryByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      queryByTestId = renderResults.queryByTestId;
+      getByTestId = renderResults.getByTestId;
+    });
+
     let propNameExpression = getByText("testNameInExp");
     let propAttributeExpression = getByText("placeholderAttribute");
 
@@ -524,9 +669,24 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify evaluation of valid expression for mapping reader user", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.testJSONResponse})));
     //Updating mapping expression as a mapping writer user first
-    const {getByText, getByTestId, rerender} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[1]});
+
+    let getByText, getByTestId, rerender;
+    await act(async () => {
+      const renderResults = renderWithAuthorities(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      rerender = renderResults.rerender;
+    });
     let propAttributeExpression = getByText("placeholderAttribute");
 
     fireEvent.change(propAttributeExpression, {target: {value: "proteinType"}});
@@ -536,7 +696,12 @@ describe("RTL Source-to-entity map tests", () => {
     await(waitForElement(() => (getByTestId("successMessage"))));
 
     //Rerendering as a mapping reader user
-    rerender(<SourceToEntityMap {...data.mapProps} canReadWrite={false} canReadOnly={true} mappingVisible={true}/>);
+    authorityService.setAuthorities(["readMapping"]);
+    rerender(
+      <AuthoritiesContext.Provider value={authorityService}>
+        <CurationContext.Provider value={personMappingStepWithData}><MappingStepDetail /></CurationContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
@@ -553,8 +718,24 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify evaluation of invalid expression for mapping writer user", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.errorJSONResponse})));
-    const {getByText, getByTestId, queryByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[3]});
+
+    let getByText, getByTestId, queryByTestId;
+    await act(async () => {
+      const renderResults = renderWithAuthorities(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      queryByTestId = renderResults.queryByTestId;
+    });
+
     let propIdExpression = getByText("id");
 
     fireEvent.change(propIdExpression, {target: {value: "proteinID"}});
@@ -568,7 +749,8 @@ describe("RTL Source-to-entity map tests", () => {
     await(waitForElement(() => getByTestId("propId-expErr")));
 
     //debug(onClosestTableRow(getByTestId('propId-value')))
-    expect(getByTestId("propId-expErr")).toHaveTextContent(data.errorJSONResponse.properties.propId.errorMessage);
+    let errorMessage = mappingStepPerson.artifacts[3].properties.propId ? mappingStepPerson.artifacts[3].properties.propId.errorMessage : "";
+    expect(getByTestId("propId-expErr")).toHaveTextContent(errorMessage);
     expect(getByTestId("propId-value")).toHaveTextContent("");
 
     //SCROLL TEST FOR BUG DHFPROD-4743
@@ -589,9 +771,26 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify evaluation of invalid expression for mapping reader user", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.errorJSONResponse})));
     //Updating mapping expression as a mapping writer user first
-    const {getByText, getByTestId, rerender, queryByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[3]});
+
+    let getByText, getByTestId, queryByTestId, rerender;
+    await act(async () => {
+      const renderResults = renderWithAuthorities(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      queryByTestId = renderResults.queryByTestId;
+      rerender = renderResults.rerender;
+    });
+
     let propIdExpression = getByText("id");
 
     fireEvent.change(propIdExpression, {target: {value: "proteinID"}});
@@ -601,14 +800,20 @@ describe("RTL Source-to-entity map tests", () => {
     await(waitForElement(() => (getByTestId("successMessage"))));
 
     //Rerendering as a mapping reader user
-    rerender(<SourceToEntityMap {...data.mapProps} canReadWrite={false} canReadOnly={true} mappingVisible={true} />);
+    authorityService.setAuthorities(["readMapping"]);
+    rerender(
+      <AuthoritiesContext.Provider value={authorityService}>
+        <CurationContext.Provider value={personMappingStepWithData}><MappingStepDetail /></CurationContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
     await(waitForElement(() => getByTestId("propId-expErr")));
 
     //debug(onClosestTableRow(getByTestId('propId-value')))
-    expect(getByTestId("propId-expErr")).toHaveTextContent(data.errorJSONResponse.properties.propId.errorMessage);
+    let errorMessage = mappingStepPerson.artifacts[3].properties.propId ? mappingStepPerson.artifacts[3].properties.propId.errorMessage : "";
+    expect(getByTestId("propId-expErr")).toHaveTextContent(errorMessage);
     expect(getByTestId("propId-value")).toHaveTextContent("");
 
     //Verify Clear button click
@@ -617,17 +822,30 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   xtest("Verify evaluation of valid expression for XML source document", () => {
-    // const { getByText } = render(<SourceToEntityMap {...data.mapProps} sourceData={data.xmlSourceData} mappingVisible={true} />);
+    // const { getByText } = render(<MappingStepDetail {...data.mapProps} sourceData={data.xmlSourceData} mappingVisible={true} />);
     /**
          * TODO once DHFPROD-4845 is implemented
          */
 
   });
 
-  test("CollapseAll/Expand All feature in JSON Source data table", () => {
-    const {getByText, queryByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-    />);
+  test("CollapseAll/Expand All feature in JSON Source data table", async () => {
+
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText, getByTestId, queryByText;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      queryByText = renderResults.queryByText;
+    });
 
     /* Validate collapse-expand in source table */
     //Check if the expected source table elements are present in the DOM before hittting the Expan/Collapse button
@@ -661,10 +879,23 @@ describe("RTL Source-to-entity map tests", () => {
     expect(onClosestTableRow(getByText("LastName"))?.style.display).toBe("none");
   });
 
-  test("CollapseAll/Expand All feature in JSON Entity table", () => {
-    const {getByText, queryByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-    />);
+  test("CollapseAll/Expand All feature in JSON Entity table", async () => {
+
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText, getByTestId, queryByText;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      queryByText = renderResults.queryByText;
+    });
 
     /* Validate collapse-expand in Entity table */
     //Check if the expected Entity table elements are present in the DOM before hittting the Expand/Collapse button
@@ -698,11 +929,23 @@ describe("RTL Source-to-entity map tests", () => {
     expect(onClosestTableRow(getByText("itemCategory"))?.style.display).toBe("none");
   });
 
-  test("CollapseAll/Expand All feature in XML Source data table", () => {
-    const {getByText, getAllByText, queryByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-      sourceData={data.xmlSourceData}
-    />);
+  test("CollapseAll/Expand All feature in XML Source data table", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText, getByTestId, queryByText, getAllByText;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      queryByText = renderResults.queryByText;
+      getAllByText = renderResults.getAllByText;
+    });
 
     //Check if the expected elements are present in the DOM before hittting the Expand/Collapse button
     expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument();
@@ -742,8 +985,26 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Function selector dropdown in entity table", async () => {
-    axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.testJSONResponseWithFunctions})));
-    const {getByText, getByTestId, getAllByRole, queryByText, queryByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockGetMappingFunctions.mockResolvedValue({status: 200, data: data.mapProps.mapFunctions});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[2]});
+
+    let getByText, getByTestId, queryByText, getAllByRole, queryByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      queryByText = renderResults.queryByText;
+      getAllByRole = renderResults.getAllByRole;
+      queryByTestId = renderResults.queryByTestId;
+    });
 
     //Prepare the map expression field for function signature later
     let propAttributeExpression = getByTestId("propAttribute-mapexpression");
@@ -805,7 +1066,16 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("URI nav index resets on close of mapping",  async() => {
-    const {getByLabelText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataDefault});
+
+    let getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouterNoAuthorities(personMappingStepWithData);
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId;
+    });
 
     // URI index starts at 1
     let uriIndex = within(getByLabelText("uriIndex"));
@@ -814,10 +1084,10 @@ describe("RTL Source-to-entity map tests", () => {
     // Click next, URI index is 2
     fireEvent.click(getByTestId("navigate-uris-right"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    expect(uriIndex.getByText("2")).toBeInTheDocument();
+    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
 
-    // Close mapping modal
-    fireEvent.click(getByLabelText("icon: close"));
+    // Going back to curate home page
+    fireEvent.click(getByLabelText("Back"));
 
     // URI index reset to 1
     uriIndex = within(getByLabelText("uriIndex"));
@@ -829,7 +1099,11 @@ describe("RTL Source-to-entity map tests", () => {
 describe("Enzyme Source-to-entity map tests", () => {
   let wrapper: any;
   beforeEach(() => {
-    wrapper = shallow(<SourceToEntityMap {...data.mapProps} />);
+    wrapper = shallow(
+      <MappingStepDetail />, {
+        context: {CurationContext}
+      }
+    );
   });
   afterEach(cleanup);
 
@@ -838,8 +1112,6 @@ describe("Enzyme Source-to-entity map tests", () => {
     expect(wrapper.find("#srcContainer").length).toEqual(1);
     expect(wrapper.find("#srcDetails").length).toEqual(1);
     expect(wrapper.find("#entityContainer").length).toEqual(1);
-    expect(wrapper.find("#noData").length).toEqual(0);
-    expect(wrapper.find("#dataPresent").length).toEqual(1);
     //Success and Error message are shown only when a mapping expression is being saved
     expect(wrapper.find("#successMessage").length).toEqual(0);
     expect(wrapper.find("#errorMessage").length).toEqual(0);
@@ -863,7 +1135,7 @@ describe("Enzyme Source-to-entity map tests", () => {
     let noDataMessage = "Unable to find source records using the specified collection or query." +
             "Load some data that mapping can use as reference and/or edit the step settings to use a " +
             "source collection or query that will return some results.";
-    wrapper.setProps({sourceData: []});
+    //wrapper.setProps({sourceData: []});
     expect(wrapper.find("#noData").length).toEqual(1);
     expect(wrapper.find(".emptyText").text().includes(noDataMessage)).toBeTruthy();
     expect(wrapper.find("#dataPresent").length).toEqual(0);
@@ -872,10 +1144,20 @@ describe("Enzyme Source-to-entity map tests", () => {
   });
 
   test("XML source data renders properly", async () => {
-    const {getByText, getAllByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataDefault});
+
+    let getByText, getByTestId, getAllByText;
+    await act(async () => {
+      const renderResults = renderWithRouterNoAuthorities(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByText = renderResults.getAllByText;
+    });
 
     //Expanding all the nested levels first
-    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    await wait(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     expect(getByText("Source Data")).toBeInTheDocument();
@@ -890,11 +1172,23 @@ describe("Enzyme Source-to-entity map tests", () => {
     await waitForElement(() => getByText("retriever, , golden, labrador"));
   });
 
-  test("Nested entity data renders properly", () => {
-    const {getByText, getAllByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+  test("Nested entity data renders properly", async () => {
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText, getByTestId, getAllByText;
+    await act(async () => {
+      const renderResults = renderWithRouterNoAuthorities(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByText = renderResults.getAllByText;
+    });
 
     //Expanding all the nested levels first
-    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    await wait(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     expect(getByText("propId")).toBeInTheDocument();
@@ -902,7 +1196,7 @@ describe("Enzyme Source-to-entity map tests", () => {
     expect(getByText("items")).toBeInTheDocument();
     expect(getByText("itemTypes")).toBeInTheDocument();
     expect(getByText("itemCategory")).toBeInTheDocument();
-    expect(getAllByText("Context").length).toBe(2);
+    expect(getAllByText("Context").length).toBe(3);
     expect(getByText("ItemType [ ]")).toBeInTheDocument();
     expect(getByText("artCraft")).toBeInTheDocument();
     expect(getByText("automobile")).toBeInTheDocument();
@@ -920,11 +1214,25 @@ describe("RTL Source Selector/Source Search tests", () => {
   beforeEach(() => jest.setTimeout(20000));
 
   test("Search source",  async() => {
-    axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
 
-    const {getByText, getAllByText, getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let sourceSelector = getByTestId("itemTypes-listIcon");
+    let getByText, getByTestId, getAllByText, getAllByRole;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByText = renderResults.getAllByText;
+      getAllByRole = renderResults.getAllByRole;
+    });
+
+    let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
 
     //corresponds to 'itemTypes' source selector
     fireEvent.click(sourceSelector);
@@ -964,10 +1272,25 @@ describe("RTL Source Selector/Source Search tests", () => {
   });
 
   test("JSON source data with objects - Right display of objects and icons in source dropdown", async() => {
-    axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
-    const {getByText, getByTestId, getAllByTestId} = render(<SourceToEntityMap {...data.mapProps} sourceData = {data.jsonSourceDataMultipleSiblings} mappingVisible={true}/>);
-    let sourceSelector = getByTestId("itemTypes-listIcon");
-    fireEvent.click(sourceSelector);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+
+    let getByText, getByTestId, getAllByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByTestId = renderResults.getAllByTestId;
+    });
+
+    let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
+    await wait(() => fireEvent.click(sourceSelector));
 
     //Verify object properties in source dropdown only appear once when data is an array of Objects
     expect(getAllByTestId("nutFreeName-option").length).toEqual(1);
@@ -990,10 +1313,25 @@ describe("RTL Source Selector/Source Search tests", () => {
   });
 
   test("XML source data with objects - Right display of objects and icons in source dropdown", async() => {
-    axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
-    const {getByText, getByTestId, getAllByTestId} = render(<SourceToEntityMap {...data.mapProps} sourceData = {data.xmlSourceDataMultipleSiblings} mappingVisible={true}/>);
-    let sourceSelector = getByTestId("itemTypes-listIcon");
-    fireEvent.click(sourceSelector);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+
+    let getByText, getByTestId, getAllByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByTestId = renderResults.getAllByTestId;
+    });
+
+    let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
+    await wait(() => fireEvent.click(sourceSelector));
 
     //Verify object properties in source dropdown only appear once when data is an array of Objects
     expect(getAllByTestId("nutFree:name-option").length).toEqual(1);
@@ -1012,11 +1350,27 @@ describe("RTL Source Selector/Source Search tests", () => {
   });
 
   test("Nested JSON source data - Right XPATH expression",  async() => {
-    axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
-    const {getByText, getAllByText, getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+
+    let getByText, getByTestId, getAllByText, getAllByRole;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByText = renderResults.getAllByText;
+      getAllByRole = renderResults.getAllByRole;
+    });
+
     expect(getByText("Source Data")).toBeInTheDocument();
     expect(getByText("Entity Type: Person")).toBeInTheDocument();
-    expect(getByText("Test")).toBeEnabled();
+    await wait(() => expect(getByText("Test")).toBeEnabled());
 
     let sourceSelector = getByTestId("itemTypes-listIcon");
 
@@ -1050,11 +1404,27 @@ describe("RTL Source Selector/Source Search tests", () => {
   });
 
   test("Nested XML source data - Right XPATH expression",  async() => {
-    axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
-    const {getAllByText, getByTestId, getAllByTestId, getByText, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+
+    let getByText, getByTestId, getAllByText, getAllByRole, getAllByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByText = renderResults.getAllByText;
+      getAllByRole = renderResults.getAllByRole;
+      getAllByTestId = renderResults.getAllByTestId;
+    });
 
     //Expanding all the nested levels first
-    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    await wait(() => fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand")));
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
     let sourceSelector = getByTestId("itemTypes-listIcon");
 
@@ -1112,10 +1482,27 @@ describe("RTL Source Selector/Source Search tests", () => {
   });
 
   test("Right XPATH with source context",  async() => {
-    axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
-    const {getAllByText, getAllByRole, getByTestId, queryByTestId, findByTestId} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
 
-    let sourceSelector = getByTestId("items-listIcon");
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValueOnce({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+
+    let queryByTestId, findByTestId, getByTestId, getAllByText, getAllByRole;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      queryByTestId = renderResults.queryByTestId;
+      findByTestId = renderResults.findByTestId;
+      getByTestId = renderResults.getByTestId;
+      getAllByText = renderResults.getAllByText;
+      getAllByRole = renderResults.getAllByRole;
+    });
+
+
+    let sourceSelector = await waitForElement(() =>  getByTestId("items-listIcon"));
 
     //corresponds to 'items' source selector
     fireEvent.click(sourceSelector);
@@ -1149,32 +1536,39 @@ describe("RTL Source Selector/Source Search tests", () => {
   });
 
   test("Verify the index value changes correspondently to left or right document uri button click",  async() => {
-    const {getByLabelText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
 
+    let getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouterNoAuthorities(personMappingStepWithData);
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId;
+    });
     // URI index starts at 1
-    let uriIndex = within(getByLabelText("uriIndex"));
+    let uriIndex = await waitForElement(() =>  within(getByLabelText("uriIndex")));
     expect(uriIndex.getByText("1")).toBeInTheDocument();
 
     // Click next, URI index is 2
-    fireEvent.click(getByTestId("navigate-uris-right"));
+    userEvent.click(getByTestId("navigate-uris-right"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    expect(uriIndex.getByText("2")).toBeInTheDocument();
+    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
 
     // Click next, URI index is 3
-    fireEvent.click(getByTestId("navigate-uris-right"));
+    userEvent.click(getByTestId("navigate-uris-right"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    expect(uriIndex.getByText("3")).toBeInTheDocument();
+    wait(() => expect(uriIndex.getByText("3")).toBeInTheDocument());
 
     // Click previous, URI index is 2
     fireEvent.click(getByTestId("navigate-uris-left"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    expect(uriIndex.getByText("2")).toBeInTheDocument();
+    wait(() => expect(uriIndex.getByText("2")).toBeInTheDocument());
 
     // Click previous, URI index is 1
     fireEvent.click(getByTestId("navigate-uris-left"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
-    expect(uriIndex.getByText("1")).toBeInTheDocument();
+    wait(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
   });
 
 });
-

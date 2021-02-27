@@ -1,22 +1,65 @@
 
-import React, {useState, useEffect, CSSProperties, useRef} from "react";
-import {Card, Modal, Table, Icon, Popover, Input, Alert, Dropdown, Menu} from "antd";
-import styles from "./source-to-entity-map.module.scss";
-import "./source-to-entity-map.scss";
+import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
+import {Card, Table, Icon, Popover, Input, Alert, Dropdown, Menu} from "antd";
+import styles from "./mapping-step-detail.module.scss";
+import "./mapping-step-detail.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faObjectUngroup, faList, faPencilAlt, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
-import {getInitialChars, convertDateFromISO, getLastChars} from "../../../../util/conversionFunctions";
-import {getMappingValidationResp} from "../../../../util/manageArtifacts-service";
+import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFromSrcQuery} from "../../../../util/conversionFunctions";
+import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
-import {MLButton, MLTooltip, MLCheckbox, MLSpin} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLCheckbox, MLSpin, MLPageHeader} from "@marklogic/design-system";
 import SourceNavigation from "../source-navigation/source-navigation";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
+import {useHistory} from "react-router-dom";
+import {getUris, getDoc} from "../../../../util/search-service";
+import {xmlParserForMapping} from "../../../../util/record-parser";
+import {CurationContext} from "../../../../util/curation-context";
+import {AuthoritiesContext} from "../../../../util/authorities";
+import {MappingStep, StepType} from "../../../../types/curation-types";
+import {getMappingArtifactByMapName, getMappingFunctions, updateMappingArtifact} from "../../../../api/mapping";
+import Steps from "../../../steps/steps";
+import {AdvMapTooltips} from "../../../../config/tooltips.config";
 
+const DEFAULT_MAPPING_STEP: MappingStep = {
+  name: "",
+  description: "",
+  additionalCollections: [],
+  collections: [],
+  lastUpdated: "",
+  permissions: "",
+  properties: {},
+  provenanceGranularityLevel: "",
+  selectedSource: "",
+  sourceDatabase: "",
+  sourceQuery: "",
+  stepDefinitionName: "",
+  stepDefinitionType: "",
+  stepId: "",
+  targetDatabase: "",
+  targetEntityType: "",
+  targetFormat: "",
+  validateEntity: "",
+  batchSize: 100,
+  interceptors: [],
+  customHook: {}
+};
 
-const SourceToEntityMap = (props) => {
+const MappingStepDetail: React.FC = () => {
 
+  const history = useHistory<any>();
+  const {curationOptions,
+    mappingOptions,
+    updateActiveStepArtifact,
+    setOpenStepSettings,
+    setStepOpenOptions} = useContext(CurationContext);
+
+  //Role based access
+  const authorityService = useContext(AuthoritiesContext);
+  const canReadOnly = authorityService.canReadMapping();
+  const canReadWrite = authorityService.canWriteMapping();
   const [mapExp, setMapExp] = useState({});
   const [sourceContext, setSourceContext] = useState({});
   let mapExpUI: any = {};
@@ -44,10 +87,6 @@ const SourceToEntityMap = (props) => {
   const [mapSaved, setMapSaved] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [errorInSaving, setErrorInSaving] = useState("");
 
-  const [srcData, setSrcData] = useState<any[]>([]);
-  const [srcURI, setSrcURI] = useState(props.sourceURI);
-  const [srcFormat, setSrcFormat] = useState(props.sourceFormat);
-
   //For source dropdown search menu
   const [flatArray, setFlatArray]   = useState<any[]>([]);
   const [sourcePropName, setSourcePropName] = useState("");
@@ -61,7 +100,7 @@ const SourceToEntityMap = (props) => {
   //For TEST and Clear buttons
   const [mapResp, setMapResp] = useState({});
   const [isTestClicked, setIsTestClicked] = useState(false);
-  const [savedMappingArt, setSavedMappingArt] = useState(props.mapData);
+  const [savedMappingArt, setSavedMappingArt] = useState(DEFAULT_MAPPING_STEP);
 
   //Navigate URI buttons
   const [uriIndex, setUriIndex] = useState(0);
@@ -90,6 +129,30 @@ const SourceToEntityMap = (props) => {
 
   const {TextArea} = Input;
 
+  //For Entity table
+  const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
+  const [tgtEntityReferences, setTgtEntityReferences] = useState({});
+  let EntitYTableKeyIndex = 0;
+  let sourceTableKeyIndex = 0;
+  let tgtRefs:any = {};
+
+  //For storing docURIs
+  const [docUris, setDocUris] = useState<any[]>([]);
+
+  //For storing  mapping functions
+  const [mapFunctions, setMapFunctions] = useState<any>([]);
+
+  //For storing namespaces
+  const [namespaces, setNamespaces] = useState({});
+  let nmspaces: any = {};
+  let namespaceString = "";
+  const [isLoading, setIsLoading] = useState(false);
+  const [sourceData, setSourceData] = useState<any[]>([]);
+  const [sourceURI, setSourceURI] = useState("");
+  const [sourceFormat, setSourceFormat] = useState("");
+  const [docNotFound, setDocNotFound] = useState(false);
+  const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
+
   //For Column Option dropdown checkboxes
   const [checkedEntityColumns, setCheckedEntityColumns] = useState({
     "name": true,
@@ -112,7 +175,7 @@ const SourceToEntityMap = (props) => {
   };
 
   const handleURIEditing = (e) => {
-    setSrcURI(e.target.value);
+    setSourceURI(e.target.value);
 
   };
 
@@ -121,113 +184,491 @@ const SourceToEntityMap = (props) => {
   };
 
   const handleCloseEditOption = (srcURI) => {
-    setSrcURI(srcURI);
+    setSourceURI(srcURI);
     setEditingUri(false);
   };
 
+  const getSourceData = async (stepName) => {
+    try {
+      setIsLoading(true);
+      let response = await getUris(stepName, 20);
+      if (response && response.status === 200) {
+        if (response.data.length > 0) {
+          setDocUris(response.data);
+          setSourceURI(response.data[0]);
+          fetchSrcDocFromUri(stepName, response.data[0]);
+        } else {
+          setIsLoading(false);
+        }
+      }
+    } catch (error)  {
+      let message = error;
+      console.error("Error While loading the source data!", message);
+      setIsLoading(false);
+      setDocNotFound(true);
+    }
+  };
+
+  const fetchSrcDocFromUri = async (stepName, uri) => {
+    try {
+      let srcDocResp = await getDoc(stepName, uri);
+      if (srcDocResp && srcDocResp.status === 200) {
+        let parsedDoc: any;
+        if (typeof(srcDocResp.data) === "string") {
+          parsedDoc = getParsedXMLDoc(srcDocResp);
+          setSourceFormat("xml");
+        } else {
+          parsedDoc = srcDocResp.data;
+          setSourceFormat("json");
+        }
+        if (parsedDoc["envelope"]) {
+          if (parsedDoc["envelope"].hasOwnProperty("@xmlns")) {
+
+            let nmspcURI = parsedDoc["envelope"]["@xmlns"];
+            let indCheck = nmspcURI.lastIndexOf("/");
+            let ind = indCheck !== -1 ? indCheck + 1 : 0;
+            let nmspcString = nmspcURI.slice(ind);
+            namespaceString = nmspcString;
+            nmspaces = {...nmspaces, [namespaceString]: nmspcURI};
+            setNamespaces({...namespaces, [namespaceString]: nmspcURI});
+          }
+        }
+        let nestedDoc: any = [];
+        let docRoot = parsedDoc["envelope"] ? parsedDoc["envelope"]["instance"] : parsedDoc;
+        let sDta = generateNestedDataSource(docRoot, nestedDoc);
+        setSourceData([]);
+        setSourceData([...sDta]);
+        if (typeof(srcDocResp.data) === "string") {
+          let mData = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
+          updateMappingWithNamespaces(mData);
+        }
+      }
+      setIsLoading(false);
+    } catch (error)  {
+      let message = error;//.response.data.message;
+      setIsLoading(false);
+      console.error("Error While loading the Doc from URI!", message);
+      setDocNotFound(true);
+    }
+  };
+
+  const getParsedXMLDoc = (xmlDoc) => {
+    let parsedDoc = xmlParserForMapping(xmlDoc.data);
+    return parsedDoc;
+  };
+
+  const updateMappingWithNamespaces = async (mapDataLocal) => {
+    let {lastUpdated, ...dataPayload} = mapDataLocal;
+    dataPayload["namespaces"] = nmspaces;
+    setMapData({...dataPayload});
+  };
+
+  const getNamespaceKey = (namespace) => {
+    let indCheck = namespace.lastIndexOf("/");
+    let ind = indCheck !== -1 ? indCheck + 1 : 0;
+    return namespace.slice(ind);
+  };
+
+  //Generate namespaces for source properties
+  const getNamespace = (key, val, parentNamespacePrefix, defaultNamespace = "") => {
+    let objWithNmspace = "";
+    let keyParts = key.split(":");
+    let currentPrefix = keyParts.length > 1 ? keyParts[0] : "";
+    // set context namespaces first
+    if (val && val.constructor && val.constructor.name === "Object") {
+      let valObject = Object.keys(val).filter((el) => /^@xmlns/.test(el));
+      defaultNamespace = valObject.filter((ns) => val === "@xmlns")[0] || defaultNamespace;
+      let count = valObject.length;
+      if (count === 1) {
+        valObject.forEach(el => {
+          let nsObj = getNamespaceObject(val, el);
+          if (el === "@xmlns" || el === `@xmlns:${currentPrefix}`) {
+            if (objWithNmspace === "") {
+              if (keyParts.length > 1) {
+                let keyArr = key.split(":");
+                objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ":" + keyArr[1] : keyArr[1];
+              } else {
+                objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ":" + key : key;
+              }
+            }
+          }
+          nmspaces = {...nmspaces, ...nsObj.obj};
+          setNamespaces({...nmspaces, ...nsObj.obj});
+        });
+      } else if (count > 1) {
+        valObject.forEach(el => {
+          let nsObj = getNamespaceObject(val, el);
+          nmspaces = {...nmspaces, ...nsObj.obj};
+          setNamespaces({...nmspaces, ...nsObj.obj});
+        });
+      }
+    }
+    if (keyParts.length > 1) {
+      if (nmspaces.hasOwnProperty(keyParts[0]) && nmspaces[keyParts[0]] !== keyParts[0]) {
+        objWithNmspace = getNamespaceKey(nmspaces[keyParts[0]]) + ":" + keyParts[1];
+      }
+    }
+    currentPrefix = defaultNamespace !== "" && objWithNmspace === "" ? getNamespaceKey(defaultNamespace) : parentNamespacePrefix;
+    return objWithNmspace === "" ? (currentPrefix !== "" ? currentPrefix +":"+ key : key) : objWithNmspace;
+  };
+
+  const getNamespaceObject = (val, el) => {
+    let indCheck = val[el].lastIndexOf("/");
+    let ind = indCheck !== -1 ? indCheck + 1 : 0;
+    let obj: any = {};
+    let nmspace = val[el].slice(ind);
+    if (nmspace && !nmspaces.hasOwnProperty(nmspace)) {
+      obj[nmspace] = val[el];
+    }
+    let colonIndex = el.indexOf(":");
+    if (colonIndex !== -1) {
+      if (!obj.hasOwnProperty(el.slice(colonIndex + 1)) && !nmspaces.hasOwnProperty(el.slice(colonIndex + 1))) {
+        if (el.slice(colonIndex + 1) !== nmspace) {
+          obj[el.slice(colonIndex + 1)] = nmspace;
+        }
+      }
+    }
+    return {
+      nmspace: nmspace,
+      obj: obj
+    };
+  };
+
+  //Generate property object to push into deeply nested source data
+  const getPropertyObject = (key, obj) => {
+    let propty: any;
+    if (obj.hasOwnProperty("#text")) {
+      if (Object.keys(obj).filter((el) => /^@xmlns/.test(el) || el === "#text").length === Object.keys(obj).length) {
+        sourceTableKeyIndex = sourceTableKeyIndex + 1;
+        propty = {
+          rowKey: sourceTableKeyIndex,
+          key: key,
+          val: String(obj["#text"]),
+          datatype: getValDatatype(obj["#text"])
+        };
+      } else {
+        sourceTableKeyIndex = sourceTableKeyIndex + 1;
+        propty = {
+          rowKey: sourceTableKeyIndex,
+          key: key,
+          val: String(obj["#text"]),
+          "children": [],
+          datatype: getValDatatype(obj["#text"])
+        };
+      }
+    } else {
+      sourceTableKeyIndex = sourceTableKeyIndex + 1;
+      propty = {
+        rowKey: sourceTableKeyIndex,
+        key: key,
+        "children": []
+      };
+    }
+    return propty;
+  };
+
+  const getValDatatype = (val) => {
+    let result: any = typeof val;
+    result = val === null ? "null" : result; // null returns typeof 'object', handle that
+    return result;
+  };
+
+  // construct infinitely nested source Data
+  const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString, defaultNamespace = "") => {
+    Object.keys(respData).forEach(key => {
+      let val = respData[key];
+      let currentDefaultNamespace = defaultNamespace;
+      if (val !== null && val !== "") {
+
+        if (val && val.constructor && val.constructor.name === "Object") {
+          let tempNS = parentNamespace;
+          if (val.hasOwnProperty("@xmlns")) {
+            parentNamespace = updateParentNamespace(val);
+            currentDefaultNamespace = val["@xmlns"];
+          }
+
+          let finalKey = getNamespace(key, val, parentNamespace, currentDefaultNamespace);
+          let propty = getPropertyObject(finalKey, val);
+
+          generateNestedDataSource(val, propty.children, parentNamespace, currentDefaultNamespace);
+          nestedDoc.push(propty);
+
+          if (parentNamespace !== tempNS) {
+            parentNamespace = tempNS;
+          }
+        } else if (val && Array.isArray(val)) {
+          if (val.length === 0) {
+            sourceTableKeyIndex = sourceTableKeyIndex + 1;
+            let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
+            let propty = {
+              rowKey: sourceTableKeyIndex,
+              key: finalKey,
+              val: "[ ]",
+              array: true,
+              datatype: getValDatatype(val)
+            };
+            nestedDoc.push(propty);
+          } else if (val[0].constructor.name !== "Object") {
+            let joinValues = val.join(", ");
+            sourceTableKeyIndex = sourceTableKeyIndex + 1;
+            let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
+            let propty = {
+              rowKey: sourceTableKeyIndex,
+              key: finalKey,
+              val: joinValues,
+              array: true,
+              datatype: val[0].constructor.name.toLowerCase()
+            };
+            nestedDoc.push(propty);
+          } else {
+            val.forEach(obj => {
+              let tempNS = parentNamespace;
+              let childDefaultNamespace = currentDefaultNamespace;
+              if (obj.constructor.name === "Object" && obj.hasOwnProperty("@xmlns")) {
+                parentNamespace = updateParentNamespace(obj);
+                childDefaultNamespace = obj["@xmlns"];
+              }
+              let finalKey = getNamespace(key, obj, parentNamespace, childDefaultNamespace);
+              let propty = getPropertyObject(finalKey, obj);
+
+              generateNestedDataSource(obj, propty.children, parentNamespace, childDefaultNamespace);
+              nestedDoc.push(propty);
+              if (parentNamespace !== tempNS) {
+                parentNamespace = tempNS;
+              }
+            });
+          }
+
+        } else {
+
+          if (key !== "#text" && !/^@xmlns/.test(key)) {
+            let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
+            let propty: any;
+            sourceTableKeyIndex = sourceTableKeyIndex + 1;
+            propty = {
+              rowKey: sourceTableKeyIndex,
+              key: finalKey,
+              val: String(val),
+              datatype: getValDatatype(val)
+            };
+            nestedDoc.push(propty);
+          }
+        }
+      } else {      // val is null or ""
+        if (!/^@xmlns/.test(key)) {
+          let finalKey = getNamespace(key, val, parentNamespace, currentDefaultNamespace);
+
+          sourceTableKeyIndex = sourceTableKeyIndex + 1;
+          let propty = {
+            rowKey: sourceTableKeyIndex,
+            key: finalKey,
+            val: String(val),
+            datatype: getValDatatype(val)
+          };
+          nestedDoc.push(propty);
+        }
+      }
+    });
+    return nestedDoc;
+  };
+
+  const updateParentNamespace = (val) => {
+    let nmspcURI = val["@xmlns"];
+    let indCheck = nmspcURI.lastIndexOf("/");
+    let ind = indCheck !== -1 ? indCheck + 1 : 0;
+    let nmspcString = nmspcURI.slice(ind);
+    return nmspcString;
+  };
+
+  const setMappingFunctions = async () => {
+    let mappingFuncResponse= await getMappingFunctions();
+    if (mappingFuncResponse) {
+      setMapFunctions(mappingFuncResponse.data);
+    }
+  };
+
+  const extractEntityInfoForTable = async () => {
+    let resp = await getNestedEntities(curationOptions.activeStep.entityName);
+    if (resp && resp.status === 200) {
+      let entProps = resp.data && resp.data.definitions ? resp.data.definitions[curationOptions.activeStep.entityName].properties : {};
+      let entEntityTempData: any = [];
+      let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
+      setEntityTypeProperties([...nestedEntityProps]);
+      setTgtEntityReferences({...tgtRefs});
+    }
+  };
+
+
+  const extractNestedEntityData = (entProps, nestedEntityData: Array<any>, parentKey = "") => {
+
+    Object.keys(entProps).forEach(key => {
+      let val = entProps[key];
+
+      if (val.hasOwnProperty("subProperties")) {
+        let dataTp = getDatatype(val);
+        parentKey = parentKey ? parentKey + "/" + key : key;
+        EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
+        if (val.$ref || val.items.$ref) {
+          let ref = val.$ref ? val.$ref : val.items.$ref;
+          tgtRefs[parentKey] = ref;
+        }
+
+        let propty = {
+          key: EntitYTableKeyIndex,
+          name: parentKey,
+          type: dataTp,
+          children: []
+        };
+        nestedEntityData.push(propty);
+        extractNestedEntityData(val.subProperties, propty.children, parentKey);
+        parentKey = (parentKey.indexOf("/")!==-1)?parentKey.substring(0, parentKey.lastIndexOf("/")):"";
+
+      } else {
+        let dataTp = getDatatype(val);
+        EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
+        let propty = {
+          key: EntitYTableKeyIndex,
+          name: parentKey ? parentKey + "/" + key : key,
+          type: dataTp
+        };
+        nestedEntityData.push(propty);
+      }
+    });
+
+    return nestedEntityData;
+  };
+
+  const getDatatype = (prop) => {
+    if (prop.datatype === "array") {
+      if (prop.items && prop.items.$ref) {
+        let s = prop.items.$ref.split("/");
+        return "parent-" + s.slice(-1).pop() + " [ ]";
+      } else if (prop.items && prop.items.datatype) {
+        return "parent-" + prop.items.datatype + " [ ]";
+      }
+    } else if (prop.hasOwnProperty("$ref") && prop.$ref !== null) {
+      let s = prop.$ref.split("/");
+      return "parent-" + s.slice(-1).pop();
+    } else {
+      return prop.datatype;
+    }
+    return null;
+  };
+
+  const setMappingStepDetailPageData = async (mappingStepArtifact) => {
+    await getSourceData(mappingStepArtifact.name);
+    extractEntityInfoForTable();
+    setMappingFunctions();
+  };
+
   const handleSubmitUri = (uri) => {
-    props.getMappingArtifactByMapName(props.mapData.targetEntityType, props.mapData.name);
-    props.fetchSrcDocFromUri(props.mapData.name, uri, props.mapIndex);
+    getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, curationOptions.activeStep.stepArtifact.name);
+    fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
     if (isTestClicked) {
       getMapValidationResp(uri);
     }
     setEditingUri(false);
   };
 
-  const srcDetails = props.mapData && props.mapData.sourceQuery && props.mapData.selectedSource ? <div className={styles.xpathDoc}>
-    {props.mapData.selectedSource === "collection" ? <div className={styles.sourceQuery}>Collection: {props.extractCollectionFromSrcQuery(props.mapData.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(props.mapData.sourceQuery, 32, "...")}</div>}
+  const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
+    {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(mapData["sourceQuery"], 32, "...")}</div>}
     {!editingURI ? <div
       onMouseOver={(e) => handleMouseOver(e)}
-      onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(srcURI, 42, "...")}</span></span> :
-        <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI, 42, "...")}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
-        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)}/></span></div>}
+      onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 42, "...")}</span></span> :
+        <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(sourceURI, 42, "...")}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
+        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={sourceURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(sourceURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/></span></div>}
   </div> : "";
 
+  useEffect(() => {
+    if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
+      const mappingStepArtifact: MappingStep = curationOptions.activeStep.stepArtifact;
+      setMapData(mappingStepArtifact);
+      setSavedMappingArt(mappingStepArtifact);
+      setMappingStepDetailPageData(mappingStepArtifact);
+    } else {
+      history.push("/tiles/curate");
+    }
+    return (() => {
+      setSourceExpandedKeys([]);
+      setEntityExpandedKeys([]);
+      setExpandedSourceFlag(false);
+      setExpandedEntityFlag(false);
+      setSourceURI("");
+      setDocUris([]);
+      setUriIndex(0);
+      setSourceData([]);
+      setEntityTypeProperties([]);
+    });
+  }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
 
   useEffect(() => {
     initializeMapExpressions();
     onClear();
-    setSavedMappingArt(props.mapData);
     initializeEntityExpandKeys();
-    initializeSourceExpandKeys();
     return (() => {
       setMapExp({});
-      setSearchSourceText("");
-      setSearchedSourceColumn("");
       setSearchEntityText("");
       setSearchedEntityColumn("");
     });
-  }, [props.mappingVisible, props.entityTypeProperties]);
-
-  useEffect(() => {
-    setSrcData([...props.sourceData]);
-    setFlatArray(flattenSourceDoc([...props.sourceData], [], ""));
-  }, [props.sourceData]);
-
-  useEffect(() => {
-    if (props.sourceURI) {
-      setSrcURI(props.sourceURI);
-    }
-  }, [props.sourceURI]);
-
-  useEffect(() => {
-    if (props.sourceFormat) {
-      setSrcFormat(props.sourceFormat);
-    }
-  }, [props.sourceFormat]);
+  }, [entityTypeProperties, mapData]);
 
   useEffect(() => {
     initializeSourceExpandKeys();
-  }, [srcData]);
+    setFlatArray(flattenSourceDoc([...sourceData], [], ""));
+    return (() => {
+      setSearchSourceText("");
+      setSearchedSourceColumn("");
+    });
+  }, [sourceData]);
 
   //Set the collapse/Expand options for Source table, when mapping opens up.
   const initializeSourceExpandKeys = () => {
     let initialKeysToExpand:any = [];
-    props.sourceData.forEach(obj => {
+    sourceData.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.rowKey);
       }
     });
     setSourceExpandedKeys([...initialKeysToExpand]);
     setInitialSourceKeys([...initialKeysToExpand]);
-    setAllSourceKeys([...getKeysToExpandFromTable(srcData, "rowKey")]);
+    setAllSourceKeys([...getKeysToExpandFromTable(sourceData, "rowKey")]);
   };
 
   //Set the collapse/Expand options for Entity table, when mapping opens up.
   const initializeEntityExpandKeys = () => {
     let initialKeysToExpand:any = [];
-    props.entityTypeProperties.forEach(obj => {
+    entityTypeProperties.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.key);
       }
     });
     setEntityExpandedKeys([...initialKeysToExpand]);
     setInitialEntityKeys([...initialKeysToExpand]);
-    setAllEntityKeys([...getKeysToExpandFromTable(props.entityTypeProperties, "key")]);
+    setAllEntityKeys([...getKeysToExpandFromTable(entityTypeProperties, "key")]);
   };
 
   //To handle navigation buttons
   const onNavigateURIList = (index) => {
-    onUpdateURINavButtons(props.docUris[index]).then(() => {
+    onUpdateURINavButtons(docUris[index]).then(() => {
       setUriIndex(index);
-      setSrcURI(props.docUris[index]);
+      setSourceURI(docUris[index]);
     });
   };
   const onUpdateURINavButtons = async (uri) => {
-    await props.fetchSrcDocFromUri(props.mapData.name, uri, props.mapIndex);
+    await fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
     if (isTestClicked) {
       getMapValidationResp(uri);
     }
   };
 
-  const navigationButtons = <SourceNavigation currentIndex={uriIndex} startIndex={0} endIndex={props.docUris && props.docUris.length - 1} handleSelection={onNavigateURIList} />;
+  const navigationButtons = <SourceNavigation currentIndex={uriIndex} startIndex={0} endIndex={docUris && docUris.length - 1} handleSelection={onNavigateURIList} />;
 
   //Set the mapping expressions, if already exists.
   const initializeMapExpressions = () => {
-    if (props.mapData && props.mapData.properties) {
-      initializeMapExpForUI(props.mapData.properties);
+    if (mapData && mapData["properties"]) {
+      initializeMapExpForUI(mapData["properties"]);
       setMapExp({...mapExpUI});
-      updateSourceContext({...mapExpUI}, props.entityTypeProperties);
+      updateSourceContext({...mapExpUI}, entityTypeProperties);
       setSourceContext({...tempSourceContext});
     }
   };
@@ -291,10 +732,10 @@ const SourceToEntityMap = (props) => {
     });
   };
 
-  const onCancel = () => {
+  const onBack = () => {
+    history.push("/tiles/curate");
     setExpandedSourceFlag(false);
     setExpandedEntityFlag(false);
-    props.setMappingVisible(false);
     setUriIndex(0);
   };
 
@@ -316,7 +757,7 @@ const SourceToEntityMap = (props) => {
       if (val.constructor.name === "Object") {
         if (val.hasOwnProperty("properties")) {
           let tempKey = parentKey ? parentKey + "/" + key : key;
-          val["targetEntityType"] = props.tgtEntityReferences[tempKey];
+          val["targetEntityType"] = tgtEntityReferences[tempKey];
           getTgtEntityTypesInMap(val.properties, tempKey);
         }
       }
@@ -381,20 +822,20 @@ const SourceToEntityMap = (props) => {
       setSearchSourceText(selectedKeys[0]);
       setSearchedSourceColumn(dataIndex);
 
-      if (srcData.length === 1 && srcData[0].hasOwnProperty("children")) {
-        setSourceExpandedKeys([1, ...getKeysToExpandForFilter(srcData, "rowKey", selectedKeys[0])]);
+      if (sourceData.length === 1 && sourceData[0].hasOwnProperty("children")) {
+        setSourceExpandedKeys([1, ...getKeysToExpandForFilter(sourceData, "rowKey", selectedKeys[0])]);
       } else {
-        setSourceExpandedKeys([...getKeysToExpandForFilter(srcData, "rowKey", selectedKeys[0])]);
+        setSourceExpandedKeys([...getKeysToExpandForFilter(sourceData, "rowKey", selectedKeys[0])]);
       }
 
     } else {
       setSearchEntityText(selectedKeys[0]);
       setSearchedEntityColumn(dataIndex);
 
-      if (props.entityTypeProperties.length === 1 && props.entityTypeProperties[0].hasOwnProperty("children")) {
-        setEntityExpandedKeys([1, ...getKeysToExpandForFilter(props.entityTypeProperties, "key", selectedKeys[0])]);
+      if (entityTypeProperties.length === 1 && entityTypeProperties[0].hasOwnProperty("children")) {
+        setEntityExpandedKeys([1, ...getKeysToExpandForFilter(entityTypeProperties, "key", selectedKeys[0])]);
       } else {
-        setEntityExpandedKeys([...getKeysToExpandForFilter(props.entityTypeProperties, "key", selectedKeys[0])]);
+        setEntityExpandedKeys([...getKeysToExpandForFilter(entityTypeProperties, "key", selectedKeys[0])]);
       }
     }
   };
@@ -517,7 +958,7 @@ const SourceToEntityMap = (props) => {
       defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
       render: (text) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0]+": "+text?.split(":")[1] : text;
-        let valueToDisplay = <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+props.namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        let valueToDisplay = <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText);
       }
     },
@@ -585,14 +1026,14 @@ const SourceToEntityMap = (props) => {
           onChange={(e) => handleMapExp(row.name, e)}
           onBlur={handleExpSubmit}
           autoSize={{minRows: 1}}
-          disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
+          disabled={!canReadWrite}></TextArea>&nbsp;&nbsp;
         <span>
-          <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+          <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!canReadWrite}>
             <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
           </Dropdown>
         </span>
                 &nbsp;&nbsp;
-        <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
+        <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
       {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>)
     },
     {
@@ -622,8 +1063,8 @@ const SourceToEntityMap = (props) => {
       requiresToolTip = (arr[0] ? arr[0].length > stringLenWithoutEllipsis : false) || (arr[1] ? arr[1].length > stringLenWithoutEllipsis : false);
       if (arr.length >= 2) {
         let xMore = <span className="moreVal">{"(" + (arr.length - 2) + " more)"}</span>;
-        let itemOne = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
-        let itemTwo = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[1], stringLenWithoutEllipsis, "...")}</span>;
+        let itemOne = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
+        let itemTwo = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[1], stringLenWithoutEllipsis, "...")}</span>;
         let fullItem = <span>{itemOne}{"\n"}{itemTwo}</span>;
         if (arr.length === 2) {
           response =  <p>{fullItem}</p>;
@@ -633,12 +1074,12 @@ const SourceToEntityMap = (props) => {
           response =  <p>{fullItem}{"\n"}{xMore}</p>;
         }
       } else {
-        response = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
+        response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
       }
 
     } else {
       requiresToolTip = text.length > stringLenWithoutEllipsis;
-      response = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
+      response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
     return requiresToolTip ?  <MLTooltip placement="bottom" title={text}>{response}</MLTooltip> : response;
   };
@@ -704,7 +1145,7 @@ const SourceToEntityMap = (props) => {
 
   };
 
-  const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
+  const emptyData = (JSON.stringify(sourceData) === JSON.stringify([]) && !docNotFound);
 
   const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
 
@@ -740,8 +1181,8 @@ const SourceToEntityMap = (props) => {
   const getMapValidationResp = async (uri) => {
     setIsTestClicked(true);
     try {
-      let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, props.sourceDatabaseName);
-      if (resp.status === 200) {
+      let resp = await getMappingValidationResp(curationOptions.activeStep.stepArtifact.name, savedMappingArt, uri, curationOptions.activeStep.stepArtifact.sourceDatabase);
+      if (resp && resp.status === 200) {
         setMapResp({...resp.data});
       }
     } catch (err) {
@@ -757,7 +1198,7 @@ const SourceToEntityMap = (props) => {
 
   const handleFunctionsList = async (name) => {
     let funcArr: any[]= [];
-    props.mapFunctions.forEach(element => {
+    mapFunctions.forEach(element => {
       funcArr.push({"key": element.functionName, "value": element.functionName});
     });
     setPropListForDropDown(funcArr);
@@ -774,7 +1215,7 @@ const SourceToEntityMap = (props) => {
   };
 
   const functionsDef = (functionName) => {
-    return props.mapFunctions.find(func => {
+    return mapFunctions.find(func => {
       return func.functionName === functionName;
     }).signature;
 
@@ -929,20 +1370,20 @@ const SourceToEntityMap = (props) => {
       convertMapExpToMapArt(obj, key, {"sourcedFrom": mapObject[key]});
     });
     await getTgtEntityTypesInMap(obj);
-    let {lastUpdated, properties, ...dataPayload} = props.mapData;
+    let {lastUpdated, properties, ...dataPayload} = mapData;
 
     dataPayload = {...dataPayload, properties: obj};
 
-    let mapSavedResult = await props.updateMappingArtifact(dataPayload);
+    let mapSavedResult = await updateMappingArtifact(dataPayload);
     tempSourceContext = {};
-    updateSourceContext(mapObject, props.entityTypeProperties);
+    updateSourceContext(mapObject, entityTypeProperties);
     setSourceContext({...tempSourceContext});
     if (mapSavedResult) {
       setErrorInSaving("noError");
     } else {
       setErrorInSaving("error");
     }
-    let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType, props.mapName);
+    let mapArt = await getMappingArtifactByMapName(dataPayload.targetEntityType, curationOptions.activeStep.stepArtifact.name);
     if (mapArt) {
       await setSavedMappingArt({...mapArt});
     }
@@ -1053,7 +1494,7 @@ const SourceToEntityMap = (props) => {
   };
 
   const handleSourceExpandCollapse = (id) => {
-    let keys = getKeysToExpandFromTable(srcData, "rowKey");
+    let keys = getKeysToExpandFromTable(sourceData, "rowKey");
     if (id === "collapse") {
       setSourceExpandedKeys([]);
       setExpandedSourceFlag(false);
@@ -1064,7 +1505,7 @@ const SourceToEntityMap = (props) => {
   };
 
   const handleEntityExpandCollapse = (id) => {
-    let keys = getKeysToExpandFromTable(props.entityTypeProperties, "key");
+    let keys = getKeysToExpandFromTable(entityTypeProperties, "key");
     if (id === "collapse") {
       setEntityExpandedKeys([]);
       setExpandedEntityFlag(false);
@@ -1118,142 +1559,178 @@ const SourceToEntityMap = (props) => {
   };
 
   const handleStepSettings = () => {
-    onCancel();
-    props.openStepSettings(props.mapIndex);
+    OpenStepSettings();
   };
 
-  return (<Modal
-    visible={props.mappingVisible}
-    onCancel={() => onCancel()}
-    width={"96vw"}
-    maskClosable={false}
-    footer={null}
-    className={styles.mapContainer}
-    bodyStyle={{paddingBottom: 0}}
-    destroyOnClose={true}
-  >
+  const UpdateMappingArtifact = async (payload) => {
+    // Update local form state
+    let mapSavedResult = await updateMappingArtifact(payload);
+    if (mapSavedResult) {
+      let mapArt = await getMappingArtifactByMapName(payload.targetEntityType, payload.name);
+      if (mapArt) {
+        updateActiveStepArtifact({...mapArt});
+      }
+    }
+  };
 
-    <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
-      <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
-      <span className={styles.stepSettingsLabel}>Step Settings</span>
-    </div>
+  const OpenStepSettings = () => {
+    let stepOpenOptions = {
+      isEditing: true,
+      openStepSettings: true
+    };
+    setStepOpenOptions(stepOpenOptions);
+  };
 
-    <div className={styles.header}>
-      <span className={styles.headerTitle} aria-label={`${props.mapName}-details-header`}>{props.mapName}</span>
-      {errorInSaving ? success() : <span className={styles.noMessage}></span>}
-    </div>
-    <br/>
-    <span className={styles.btn_icons}>
-      <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+  const openStepDetails = (name) => {
+    setOpenStepSettings(false);
+  };
+
+  return (
+    <>
+      <MLPageHeader
+        className={styles.pageHeader}
+        onBack={onBack}
+        title={<span aria-label={`${curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}-details-header`}>{curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}</span>}
+      />
+      <div className={styles.mapContainer}>
+        <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
+          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
+          <span className={styles.stepSettingsLabel}>Step Settings</span>
+        </div>
+
+        <div className={styles.header}>
+          {errorInSaving ? success() : <span className={styles.noMessage}></span>}
+        </div>
+        <br/>
+        <span className={styles.btn_icons}>
+          <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
                         Clear
-      </MLButton>
+          </MLButton>
                 &nbsp;&nbsp;
-      <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
+          <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
                         Test
-      </MLButton>
-    </span>
-    <br/>
-    <hr/>
-    <div id="parentContainer" className={styles.parentContainer}>
-      <SplitPane
-        style={splitStyle}
-        paneStyle={splitPaneStyles.pane}
-        allowResize={true}
-        resizerStyle={resizerStyle}
-        pane1Style={splitPaneStyles.pane1}
-        pane2Style={splitPaneStyles.pane2}
-        split="vertical"
-        primary="second"
-        defaultSize="70%"
-      >
-        <div
-          id="srcContainer"
-          data-testid="srcContainer"
-          className={styles.sourceContainer}>
-          <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
-            <p className={styles.sourceName}
-            ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
-              /></i> Source Data <Popover
-                content={srcDetails}
-                trigger="click"
-                placement="right"
-                getPopupContainer={() => document.getElementById("parentContainer") || document.body}
-              ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
-          </div>
-          {props.isLoading === true ? <div className={styles.spinRunning}>
-            <MLSpin size={"large"} data-testid="spinTest"/>
-          </div>:
-            emptyData ?
-              <div id="noData">
-                <br/><br/>
-                <Card className={styles.emptyCard} size="small">
-                  <div className={styles.emptyText}>
-                    <p>Unable to find source records using the specified collection or query.</p>
-                    <p>Load some data that mapping can use as reference and/or edit the step
-                                            settings to use a source collection or query that will return some results.</p>
-                  </div>
-                </Card>
+          </MLButton>
+        </span>
+        <br/>
+        <hr/>
+        <div id="parentContainer" className={styles.parentContainer}>
+          <SplitPane
+            style={splitStyle}
+            paneStyle={splitPaneStyles.pane}
+            allowResize={true}
+            resizerStyle={resizerStyle}
+            pane1Style={splitPaneStyles.pane1}
+            pane2Style={splitPaneStyles.pane2}
+            split="vertical"
+            primary="second"
+            defaultSize="70%"
+          >
+            <div
+              id="srcContainer"
+              data-testid="srcContainer"
+              className={styles.sourceContainer}>
+              <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
+                <p className={styles.sourceName}
+                ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
+                  /></i> Source Data <Popover
+                    content={srcDetails}
+                    trigger="click"
+                    placement="right"
+                    getPopupContainer={() => document.getElementById("parentContainer") || document.body}
+                  ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
               </div>
-              :
-              <div id="dataPresent">
-                <div className={styles.navigationCollapseButtons}>
-                  <span><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} />
-                    <span>{navigationButtons}</span>
-                  </span>
-                </div>
+              {isLoading === true ? <div className={styles.spinRunning}>
+                <MLSpin size={"large"} data-testid="spinTest"/>
+              </div>:
+                emptyData ?
+                  <div id="noData">
+                    <br/><br/>
+                    <Card className={styles.emptyCard} size="small">
+                      <div className={styles.emptyText}>
+                        <p>Unable to find source records using the specified collection or query.</p>
+                        <p>Load some data that mapping can use as reference and/or edit the step
+                                            settings to use a source collection or query that will return some results.</p>
+                      </div>
+                    </Card>
+                  </div>
+                  :
+                  <div id="dataPresent">
 
-                <Table
-                  pagination={false}
-                  expandIcon={(props) => customExpandIcon(props)}
-                  onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "rowKey")}
-                  expandedRowKeys={sourceExpandedKeys}
-                  className={styles.sourceTable}
-                  rowClassName={() => styles.sourceTableRows}
-                  scroll={{y: "60vh", x: 300}}
-                  indentSize={20}
-                  //defaultExpandAllRows={true}
-                  //size="small"
-                  columns={columns}
-                  dataSource={srcData}
-                  tableLayout="unset"
-                  rowKey={(record) => record.rowKey}
-                  getPopupContainer={() => document.getElementById("srcContainer") || document.body}
-                />
-              </div> }
+                    <div className={styles.navigationCollapseButtons}>
+                      <span><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
+                      <span>{navigationButtons}</span>
+                    </div>
+                    <Table
+                      pagination={false}
+                      expandIcon={(props) => customExpandIcon(props)}
+                      onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "rowKey")}
+                      expandedRowKeys={sourceExpandedKeys}
+                      className={styles.sourceTable}
+                      rowClassName={() => styles.sourceTableRows}
+                      scroll={{y: "60vh", x: 300}}
+                      indentSize={20}
+                      //defaultExpandAllRows={true}
+                      //size="small"
+                      columns={columns}
+                      dataSource={sourceData}
+                      tableLayout="unset"
+                      rowKey={(record) => record.rowKey}
+                      getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                    />
+                  </div> }
+            </div>
+            <div
+              id="entityContainer"
+              data-testid="entityContainer"
+              className={styles.entityContainer}>
+              <div className={styles.entityDetails}>
+                <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity Type: {curationOptions.activeStep.entityName}</p></span>
+              </div>
+              <div ref={dummyNode}></div>
+              <div className={styles.columnOptionsSelectorContainer}>
+                <span><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
+                <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
+              </div>
+              <Table
+                pagination={false}
+                className={styles.entityTable}
+                expandIcon={(props) => customExpandIcon(props)}
+                onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
+                expandedRowKeys={entityExpandedKeys}
+                indentSize={14}
+                //defaultExpandAllRows={true}
+                columns={getColumnsForEntityTable()}
+                scroll={{y: "60vh", x: 1000}}
+                dataSource={entityTypeProperties}
+                tableLayout="unset"
+                rowKey={(record: any) => record.key}
+                getPopupContainer={() => document.getElementById("entityContainer") || document.body}
+              />
+            </div>
+          </SplitPane>
         </div>
-        <div
-          id="entityContainer"
-          data-testid="entityContainer"
-          className={styles.entityContainer}>
-          <div className={styles.entityDetails}>
-            <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity Type: {props.entityTypeTitle}</p></span>
-          </div>
-          <div ref={dummyNode}></div>
-          <div className={styles.columnOptionsSelectorContainer}>
-            <span><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
-            <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
-          </div>
-          <Table
-            pagination={false}
-            className={styles.entityTable}
-            expandIcon={(props) => customExpandIcon(props)}
-            onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
-            expandedRowKeys={entityExpandedKeys}
-            indentSize={14}
-            //defaultExpandAllRows={true}
-            columns={getColumnsForEntityTable()}
-            scroll={{y: "60vh", x: 1000}}
-            dataSource={props.entityTypeProperties}
-            tableLayout="unset"
-            rowKey={(record: any) => record.key}
-            getPopupContainer={() => document.getElementById("entityContainer") || document.body}
-          />
-        </div>
-      </SplitPane>
-    </div>
-  </Modal>
+      </div>
+      <Steps
+        // Basic Settings
+        isEditing={mappingOptions.isEditing}
+        stepData={mapData}
+        canReadOnly={canReadOnly}
+        canReadWrite={canReadWrite}
+        canWrite={canReadWrite}
+        // Advanced Settings
+        tooltipsData={AdvMapTooltips}
+        openStepSettings={mappingOptions.openStepSettings}
+        setOpenStepSettings={setOpenStepSettings}
+        updateStep={UpdateMappingArtifact}
+        activityType={StepType.Mapping}
+        targetEntityType={curationOptions.activeStep.stepArtifact.targetEntityType}
+        targetEntityName={curationOptions.activeStep.entityName}
+        openStepDetails={openStepDetails}
+      />
+    </>
+
   );
 };
 
-export default SourceToEntityMap;
+export default MappingStepDetail;
 

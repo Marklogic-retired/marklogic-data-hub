@@ -1,10 +1,13 @@
 
 .mapContainer{
-    top: 8px;
+    margin-top: -40px;
+    width: 92.8vw;
 }
+
 .header{
     display:inline-flex;
 }
+
 .headerTitle{
     font-size: 1.5em;
     width: fit-content;
@@ -15,7 +18,7 @@
     margin-left: 30em;
 }
 .noMessage{
-    padding: 19.5px 0vh;
+    padding: 16.5px 0vh;
 }
 .parentContainer{
     display: flex;
@@ -82,7 +85,6 @@
     flex: 9;
     display: flex;
     flex-direction: column;
-    padding-right: 20px;
     padding-left: 20px;
     word-break: break-all;
 
@@ -141,7 +143,6 @@
 
 .btn_icons{
     float: right;
-    padding-right: 4px;
 }
 hr {
     display: block;
@@ -442,7 +443,7 @@ hr {
   .stepSettingsLink {
     position: absolute;
     top: 18px;
-    right: 66px;
+    right: 24px;
     color: #44499C;
     cursor: pointer;
     .stepSettingsLabel {

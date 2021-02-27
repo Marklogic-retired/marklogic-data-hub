@@ -136,84 +136,94 @@ const loadData = {
 
 };
 
-const jsonSourceDataMultipleSiblings = [
-  {rowKey: 1, key: "proteinId", val: "123EAC"},
-  {rowKey: 2, key: "proteinType", val: "home"},
-  {
-    rowKey: 3, key: "nutFreeName", children: [
-      {rowKey: 4, key: "FirstNamePreferred", val: "John"},
-      {rowKey: 5, key: "LastName", val: "Smith", children: [
-        {rowKey: 6, key: "suffix", val: "Sr."}
-      ]}
-    ]
-  },
-  {
-    rowKey: 7, key: "nutFreeName", children: [
-      {rowKey: 8, key: "FirstNamePreferred", val: "Eric"},
-      {rowKey: 9, key: "LastName", val: "Johnson", children: [
-        {rowKey: 10, key: "suffix", val: "Jr."}
-      ]}
-    ]
-  },
-  {rowKey: 11, key: "proteinCat", val: "commercial"},
-  {
-    rowKey: 12, key: "withNutsOrganism", children: [
-      {rowKey: 13, key: "OrganismName", val: "Frog virus 3"},
-      {rowKey: 14, key: "OrganismType", val: "scientific"}
-    ]
+const jsonSourceDataMultipleSiblings = {
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        },
+        {
+          "datahubSourceName": "personSourceName",
+          "datahubSourceType": "personSourceType"
+        }
+      ],
+      "createdOn": "2021-02-26T14:09:05.061291-08:00",
+      "createdBy": "hc-developer"
+    },
+    "triples": [],
+    "instance": {
+      "proteinId": "123EAC",
+      "proteinType": "home",
+      "nutFreeName": [
+        {
+          "FirstNamePreferred": "John",
+          "LastName": {
+            "#text": "Smith",
+            "suffix": "Sr."
+          }
+        },
+        {
+          "FirstNamePreferred": "Eric",
+          "LastName": {
+            "#text": "Johnson",
+            "suffix": "Jr."
+          }
+        }
+      ],
+      "proteinCat": "commercial",
+      "withNutsOrganism": {
+        "OrganismName": "Frog virus 3",
+        "OrganismType": "scientific"
+      },
+      "proteinDog": "retriever, golden, labrador",
+      "emptyString": "",
+      "nullValue": null,
+      "numberValue": 321,
+      "booleanValue": true,
+      "whitespaceValue": " ",
+      "emptyArrayValue": [],
+      "numberArray": [1, 2, 3],
+      "booleanArray": [true, false, true]
+    },
+    "attachments": null
   }
-];
+};
 
-const xmlSourceDataMultipleSiblings = [
-  {
-    rowKey: 1, key: "sampleProtein", children: [
-      {rowKey: 2, key: "proteinId", val: "123EAC"},
-      {rowKey: 3, key: "@proteinType", val: "home"},
-      {
-        rowKey: 4, key: "nutFree:name", children: [
-          {rowKey: 5, key: "FirstNamePreferred", val: "John"},
-          {rowKey: 6, key: "LastName", val: "Smith"}
-        ]
-      },
-      {
-        rowKey: 7, key: "nutFree:name", children: [
-          {rowKey: 8, key: "FirstNamePreferred", val: "Eric"},
-          {rowKey: 9, key: "LastName", val: "Johnson"}
-        ]
-      },
-      {rowKey: 10, key: "proteinCat", val: "commercial"},
-      {
-        rowKey: 11, key: "withNuts:Organism", children: [
-          {rowKey: 12, key: "OrganismName", val: "Frog virus 3"},
-          {rowKey: 13, key: "OrganismType", val: "scientific"}
-        ]
-      }
-    ]
+const jsonSourceDataDefault = {
+  "envelope": {
+    "headers": {},
+    "triples": [],
+    "instance": {
+      "proteinId": "123EAC",
+      "proteinType": "home",
+      "nutFreeName": [
+        {
+          "FirstNamePreferred": "John",
+          "LastName": {
+            "#text": "Smith",
+            "suffix": "Sr."
+          }
+        }
+      ],
+      "proteinCat": "commercial",
+      "proteinDog": ["retriever, golden, labrador"],
+      "emptyString": "",
+      "nullValue": null,
+      "numberValue": 321,
+      "booleanValue": true,
+      "whitespaceValue": " ",
+      "emptyArrayValue": [],
+      "numberArray": [1, 2, 3],
+      "booleanArray": [true, false, true]
+    },
+    "attachments": null
   }
-];
+};
 
-const entityTypePropertiesMultipleSiblings = [
-  {key: 1, name: "propId", type: "int"},
-  {key: 2, name: "propName", type: "string"},
-  {key: 3, name: "propAttribute", type: "string"},
-  {
-    key: 4, name: "items", type: "parent-ItemType [ ]", children: [
-      {key: 5, name: "items/itemTypes", type: "string"},
-      {
-        key: 6, name: "items/itemCategory", type: "parent-catItem", children: [
-          {key: 7, name: "items/itemCategory/artCraft", type: "string"},
-          {key: 8, name: "items/itemCategory/automobile", type: "string"}
-        ]
-      },
-      {
-        key: 9, name: "items/productCategory", type: "parent-catProduct", children: [
-          {key: 10, name: "items/productCategory/speedometer", type: "string"},
-          {key: 11, name: "items/productCategory/windscreen", type: "string"}
-        ]
-      }]
-  },
-  {key: 12, name: "gender", type: "string"}
-];
+const xmlSourceDataMultipleSiblings = "<envelope><headers><sources xmlns=\"\"><name>loadPersonXML</name></sources><createdOn xmlns=\"\">2021-02-26T14:09:13.783548-08:00</createdOn><createdBy xmlns=\"\">hc-developer</createdBy></headers><triples/><instance xmlns=\"\"><sampleProtein proteinType=\"home\" xmlns:nutFree=\"http://uniprot.org/nutFree\" xmlns:withNuts=\"http://uniprot.org/withNuts\"><proteinId>123EAC</proteinId><nutFree:name><FirstNamePreferred>John</FirstName><LastName>Smith</LastName></nutFree:name><nutFree:name><FirstNamePreferred>Eric</FirstName><LastName>Johnson</LastName></nutFree:name><proteinCat><withNuts:Organism><OrganismName>Frog virus 3</OrganismName><OrganismType>scientific</OrganismType></withNuts:Organism></proteinCat></sampleProtein></instance><attachments/></envelope>";
+
+const xmlSourceDataDefault = "<envelope><headers><sources xmlns=\"\"><name>loadPersonXML</name></sources><createdOn xmlns=\"\">2021-02-26T14:09:13.783548-08:00</createdOn><createdBy xmlns=\"\">hc-developer</createdBy></headers><triples/><instance><sampleProtein proteinType=\"home\" xmlns:nutFree=\"http://uniprot.org/nutFree\" xmlns:withNuts=\"http://uniprot.org/withNuts\"><proteinId>123EAC</proteinId><nutFree:name><FirstNamePreferred>John</FirstName><LastName>Smith</LastName></nutFree:name><proteinCat>commercial</proteinCat><nutFree:proteinDog>retriever</nutFree:proteinDog><nutFree:proteinDog> </nutFree:proteinDog><nutFree:proteinDog>golden</nutFree:proteinDog><nutFree:proteinDog>labrador</nutFree:proteinDog></sampleProtein></instance><attachments/></envelope>";
 
 const xmlSourceData = [
   {
@@ -272,48 +282,23 @@ const entityTypeProperties = [
   {key: 9, name: "gender", type: "string"}
 ];
 
-const testJSONResponse = {
-  properties: {
-    propName: {output: "123EAC", sourcedFrom: "proteinId"},
-    propAttribute: {output: "home", sourcedFrom: "proteinType"},
-  },
-  targetEntityType: "Person"
+const JSONSourceDataToTruncate = {
+  "envelope": {
+    "headers": {},
+    "triples": [],
+    "instance": {
+      "proteinId": "extremelylongusername@marklogic.com",
+      "proteinType": "s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com"
+    },
+    "attachments": null
+  }
 };
-
-const truncatedJSONResponse = {
-  properties: {
-    propName: {output: "extremelylongusername@marklogic.com", sourcedFrom: "proteinId"},
-    propAttribute: {output: ["s@ml.com", "", "t@ml.com", "u@ml.com", "v@ml.com", "w@ml.com", "x@ml.com", "y@ml.com", "z@ml.com"], sourcedFrom: "proteinType"},
-  },
-  targetEntityType: "Person"
-};
-
-const JSONSourceDataToTruncate = [
-  {rowKey: 1, key: "proteinId", val: "extremelylongusername@marklogic.com"},
-  {rowKey: 2, key: "proteinType", val: "s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com"}
-];
 
 const truncatedEntityProps = [
   {key: 1, name: "propId", type: "int"},
   {key: 2, name: "propName", type: "string [ ]"},
   {key: 3, name: "propAttribute", type: "string [ ]"}
 ];
-
-const testJSONResponseWithFunctions = {
-  properties: {
-    propName: {output: "123EAC", sourcedFrom: "proteinId"},
-    propAttribute: {output: "home-NEW", sourcedFrom: "concat(proteinType,'NEW')"},
-  },
-  targetEntityType: "Person"
-};
-
-const errorJSONResponse = {
-  properties: {
-    propId: {errorMessage: "Invalid lexical value: \"123EACtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest\"", sourcedFrom: "proteinId"},
-    propAttribute: {output: "home", sourcedFrom: "proteinType"},
-  },
-  targetEntityType: "Person"
-};
 
 const mapFunctions = [
   {"functionName": "echo", "category": "custom", "signature": "echo(input)"},
@@ -617,13 +602,8 @@ const data = {
   editMap: editMap,
   dropDownWithSearch: dropDownWithSearch,
   xmlSourceData: xmlSourceData,
-  testJSONResponse: testJSONResponse,
-  errorJSONResponse: errorJSONResponse,
-  testJSONResponseWithFunctions: testJSONResponseWithFunctions,
   xmlSourceDataMultipleSiblings: xmlSourceDataMultipleSiblings,
-  entityTypePropertiesMultipleSiblings: entityTypePropertiesMultipleSiblings,
   jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings,
-  truncatedJSONResponse: truncatedJSONResponse,
   JSONSourceDataToTruncate: JSONSourceDataToTruncate,
   truncatedEntityProps: truncatedEntityProps,
   customData: customData,
@@ -631,6 +611,8 @@ const data = {
   namespacedXmlInstance: namespacedXmlInstance,
   noNamespaceXmlInstance: noNamespaceXmlInstance,
   loadDataPagination: loadDataPagination,
+  jsonSourceDataDefault: jsonSourceDataDefault,
+  xmlSourceDataDefault: xmlSourceDataDefault
 };
 
 export default data;
