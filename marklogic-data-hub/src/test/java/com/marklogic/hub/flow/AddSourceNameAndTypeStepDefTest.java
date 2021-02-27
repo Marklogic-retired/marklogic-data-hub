@@ -3,10 +3,9 @@ package com.marklogic.hub.flow;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.rest.util.Fragment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,13 +36,11 @@ public class AddSourceNameAndTypeStepDefTest extends AbstractHubCoreTest {
         assertEquals("test-source-name", sources.get(1).get("datahubSourceName").asText());
         assertEquals("test-source-type", sources.get(1).get("datahubSourceType").asText());
 
-        Document xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
-        NodeList sourcesList = xmlRecord.getElementsByTagName("sources");
-        assertEquals("ingest-customer-xml", sourcesList.item(0).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceName", sourcesList.item(1).getChildNodes().item(0).getNodeName());
-        assertEquals("test-source-name", sourcesList.item(1).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceType", sourcesList.item(1).getChildNodes().item(1).getNodeName());
-        assertEquals("test-source-type", sourcesList.item(1).getChildNodes().item(1).getTextContent());
+        Fragment xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
+        assertEquals(2, xmlRecord.getElements("/es:envelope/es:headers/sources").size());
+        assertEquals("ingest-customer-xml", xmlRecord.getElementValue("/es:envelope/es:headers/sources[1]/name"));
+        assertEquals("test-source-name", xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceName"));
+        assertEquals("test-source-type", xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceType"));
 
         // Add additional datahubSourceName and datahubSourceType when already a datahubSourceName and datahubSourceTypes object exists
         options.put("sourceNameToAdd", "additional-test-source-name");
@@ -60,16 +57,12 @@ public class AddSourceNameAndTypeStepDefTest extends AbstractHubCoreTest {
         assertEquals("additional-test-source-type", sources.get(2).get("datahubSourceType").asText());
 
         xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
-        sourcesList = xmlRecord.getElementsByTagName("sources");
-        assertEquals("ingest-customer-xml", sourcesList.item(0).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceName", sourcesList.item(1).getChildNodes().item(0).getNodeName());
-        assertEquals("test-source-name", sourcesList.item(1).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceType", sourcesList.item(1).getChildNodes().item(1).getNodeName());
-        assertEquals("test-source-type", sourcesList.item(1).getChildNodes().item(1).getTextContent());
-        assertEquals("datahubSourceName", sourcesList.item(2).getChildNodes().item(0).getNodeName());
-        assertEquals("additional-test-source-name", sourcesList.item(2).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceType", sourcesList.item(2).getChildNodes().item(1).getNodeName());
-        assertEquals("additional-test-source-type", sourcesList.item(2).getChildNodes().item(1).getTextContent());
+        assertEquals(3, xmlRecord.getElements("/es:envelope/es:headers/sources").size());
+        assertEquals("ingest-customer-xml", xmlRecord.getElementValue("/es:envelope/es:headers/sources[1]/name"));
+        assertEquals("test-source-name", xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceName"));
+        assertEquals("test-source-type", xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceType"));
+        assertEquals("additional-test-source-name", xmlRecord.getElementValue("/es:envelope/es:headers/sources[3]/datahubSourceName"));
+        assertEquals("additional-test-source-type", xmlRecord.getElementValue("/es:envelope/es:headers/sources[3]/datahubSourceType"));
     }
 
     @Test
@@ -86,14 +79,11 @@ public class AddSourceNameAndTypeStepDefTest extends AbstractHubCoreTest {
         assertEquals("test-source-name", sources.get(1).get("datahubSourceName").asText());
         assertNull(sources.get(1).get("datahubSourceType"));
 
-        Document xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
-        NodeList sourcesList = xmlRecord.getElementsByTagName("sources");
-        assertEquals(2, sourcesList.getLength(), "There are two sources");
-        assertEquals("name", sourcesList.item(0).getChildNodes().item(0).getNodeName());
-        assertEquals("ingest-customer-xml", sourcesList.item(0).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceName", sourcesList.item(1).getChildNodes().item(0).getNodeName());
-        assertEquals("test-source-name", sourcesList.item(1).getChildNodes().item(0).getTextContent());
-        assertEquals(1, sourcesList.item(1).getChildNodes().getLength(), "only datahubSourceName exists");
+        Fragment xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
+        assertEquals(2, xmlRecord.getElements("/es:envelope/es:headers/sources").size());
+        assertEquals("ingest-customer-xml", xmlRecord.getElementValue("/es:envelope/es:headers/sources[1]/name"));
+        assertEquals("test-source-name", xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceName"));
+        assertNull(xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceType"));
     }
 
     @Test
@@ -110,14 +100,11 @@ public class AddSourceNameAndTypeStepDefTest extends AbstractHubCoreTest {
         assertEquals("test-source-type", sources.get(1).get("datahubSourceType").asText());
         assertNull(sources.get(1).get("datahubSourceName"));
 
-        Document xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
-        NodeList sourcesList = xmlRecord.getElementsByTagName("sources");
-        assertEquals(2, sourcesList.getLength(), "There are two sources");
-        assertEquals("name", sourcesList.item(0).getChildNodes().item(0).getNodeName());
-        assertEquals("ingest-customer-xml", sourcesList.item(0).getChildNodes().item(0).getTextContent());
-        assertEquals("datahubSourceType", sourcesList.item(1).getChildNodes().item(0).getNodeName());
-        assertEquals("test-source-type", sourcesList.item(1).getChildNodes().item(0).getTextContent());
-        assertEquals(1, sourcesList.item(1).getChildNodes().getLength(), "only datahubSourceName exists");
+        Fragment xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
+        assertEquals(2, xmlRecord.getElements("/es:envelope/es:headers/sources").size());
+        assertEquals("ingest-customer-xml", xmlRecord.getElementValue("/es:envelope/es:headers/sources[1]/name"));
+        assertNull(xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceName"));
+        assertEquals("test-source-type", xmlRecord.getElementValue("/es:envelope/es:headers/sources[2]/datahubSourceType"));
     }
 
     @Test
@@ -129,11 +116,9 @@ public class AddSourceNameAndTypeStepDefTest extends AbstractHubCoreTest {
         assertEquals(1, sources.size());
         assertEquals("ingest-customer", sources.get(0).get("name").asText(), "only source with name exists");
 
-        Document xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
-        NodeList sourcesList = xmlRecord.getElementsByTagName("sources");
-        assertEquals(1, sourcesList.getLength());
-        assertEquals("name", sourcesList.item(0).getChildNodes().item(0).getNodeName());
-        assertEquals("ingest-customer-xml", sourcesList.item(0).getChildNodes().item(0).getTextContent());
+        Fragment xmlRecord = getStagingXmlDoc("/sources-test/customer1.xml");
+        assertEquals(1, xmlRecord.getElements("/es:envelope/es:headers/sources").size());
+        assertEquals("ingest-customer-xml", xmlRecord.getElementValue("/es:envelope/es:headers/sources[1]/name"));
     }
 
     @Test

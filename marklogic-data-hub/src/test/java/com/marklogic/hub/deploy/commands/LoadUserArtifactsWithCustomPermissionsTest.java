@@ -34,19 +34,19 @@ public class LoadUserArtifactsWithCustomPermissionsTest extends AbstractHubCoreT
 
         Stream.of(getHubClient().getStagingClient(), getHubClient().getStagingClient()).forEach(client -> {
             DocumentMetadataHelper metadata = getMetadata(client, "/flows/echoFlow.flow.json");
-            metadata.assertInCollection("http://marklogic.com/data-hub/flow");
-            metadata.assertHasPermission("data-hub-common", DocumentMetadataHandle.Capability.READ);
-            metadata.assertHasPermission("data-hub-common", DocumentMetadataHandle.Capability.UPDATE);
+            metadata.assertInCollections("http://marklogic.com/data-hub/flow");
+            metadata.assertHasPermissions("data-hub-common", DocumentMetadataHandle.Capability.READ);
+            metadata.assertHasPermissions("data-hub-common", DocumentMetadataHandle.Capability.UPDATE);
 
             metadata = getMetadata(client, "/step-definitions/custom/echo-step/echo-step.step.json");
-            metadata.assertInCollection("http://marklogic.com/data-hub/step-definition");
-            metadata.assertHasPermission("data-hub-module-reader", DocumentMetadataHandle.Capability.READ);
-            metadata.assertHasPermission("data-hub-module-writer", DocumentMetadataHandle.Capability.UPDATE);
+            metadata.assertInCollections("http://marklogic.com/data-hub/step-definition");
+            metadata.assertHasPermissions("data-hub-module-reader", DocumentMetadataHandle.Capability.READ);
+            metadata.assertHasPermissions("data-hub-module-writer", DocumentMetadataHandle.Capability.UPDATE);
 
             metadata = getMetadata(client, "/entities/Customer.entity.json");
-            metadata.assertInCollection("http://marklogic.com/entity-services/models");
-            metadata.assertHasPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ);
-            metadata.assertHasPermission("data-hub-operator", DocumentMetadataHandle.Capability.UPDATE);
+            metadata.assertInCollections("http://marklogic.com/entity-services/models");
+            metadata.assertHasPermissions("data-hub-operator", DocumentMetadataHandle.Capability.READ);
+            metadata.assertHasPermissions("data-hub-operator", DocumentMetadataHandle.Capability.UPDATE);
         });
     }
 
@@ -66,16 +66,16 @@ public class LoadUserArtifactsWithCustomPermissionsTest extends AbstractHubCoreT
 
         Stream.of(getHubClient().getStagingClient(), getHubClient().getStagingClient()).forEach(client -> {
             DocumentMetadataHelper metadata = getMetadata(client, "/flows/echoFlow.flow.json");
-            metadata.assertHasPermission("data-hub-flow-reader", DocumentMetadataHandle.Capability.READ);
-            metadata.assertHasPermission("data-hub-flow-writer", DocumentMetadataHandle.Capability.UPDATE);
+            metadata.assertHasPermissions("data-hub-flow-reader", DocumentMetadataHandle.Capability.READ);
+            metadata.assertHasPermissions("data-hub-flow-writer", DocumentMetadataHandle.Capability.UPDATE);
 
             metadata = getMetadata(client, "/step-definitions/custom/echo-step/echo-step.step.json");
-            metadata.assertHasPermission("data-hub-step-definition-reader", DocumentMetadataHandle.Capability.READ);
-            metadata.assertHasPermission("data-hub-step-definition-writer", DocumentMetadataHandle.Capability.UPDATE);
+            metadata.assertHasPermissions("data-hub-step-definition-reader", DocumentMetadataHandle.Capability.READ);
+            metadata.assertHasPermissions("data-hub-step-definition-writer", DocumentMetadataHandle.Capability.UPDATE);
 
             metadata = getMetadata(client, "/entities/Customer.entity.json");
-            metadata.assertHasPermission("data-hub-entity-model-reader", DocumentMetadataHandle.Capability.READ);
-            metadata.assertHasPermission("data-hub-entity-model-writer", DocumentMetadataHandle.Capability.UPDATE);
+            metadata.assertHasPermissions("data-hub-entity-model-reader", DocumentMetadataHandle.Capability.READ);
+            metadata.assertHasPermissions("data-hub-entity-model-writer", DocumentMetadataHandle.Capability.UPDATE);
         });
     }
 }

@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.flow.RunFlowResponse;
+import org.apache.hadoop.yarn.webapp.hamlet.HamletSpec;
 
 import java.io.IOException;
 import java.util.Map;
@@ -22,6 +25,15 @@ public class HubFlowRunnerResource extends ResourceManager {
 
     public RunFlowResponse runFlow(Input input) {
         JsonNode json = getServices().post(new RequestParameters(), new JacksonHandle(input.getRootNode()), new JacksonHandle()).get();
+        try {
+            return new ObjectMapper().readerFor(RunFlowResponse.class).readValue(json);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public RunFlowResponse runFlowWithXmlInput(String xml) {
+        JsonNode json = getServices().post(new RequestParameters(), new StringHandle(xml).withFormat(Format.XML), new JacksonHandle()).get();
         try {
             return new ObjectMapper().readerFor(RunFlowResponse.class).readValue(json);
         } catch (IOException e) {
@@ -51,10 +63,6 @@ public class HubFlowRunnerResource extends ResourceManager {
             ObjectNode content = contentArray.addObject();
             content.put("uri", uri);
             return content.putObject("value");
-        }
-
-        public ObjectNode getContentObject(int index) {
-            return (ObjectNode) contentArray.get(index);
         }
 
         public ObjectNode getRootNode() {

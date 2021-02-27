@@ -1,0 +1,11 @@
+{
+  "name": "ingestXmlAndMap",
+  "steps": {
+    "1": {
+      "stepId": "ingestXmlCustomer-ingestion"
+    },
+    "2": {
+      "stepId": "mapXmlCustomer-mapping"
+    }
+  }
+}

@@ -33,10 +33,10 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
  * @param runtimeOptions
  */
 function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
-  if (!flowName) {
-    httpUtils.throwBadRequest(`Unable to process content; no flow name provided`);
+  if (contentArray == null || contentArray == undefined) {
+    contentArray = [];
   }
-  if (!Array.isArray(contentArray)) {
+  else if (!Array.isArray(contentArray)) {
     contentArray = [contentArray];
   }
 
@@ -226,8 +226,11 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
   const options = stepExecutionContext.combinedOptions;
   const permissions = options.permissions ? hubUtils.parsePermissions(options.permissions) : null;
   contentArray.forEach(content => {
-    if (content.value && "document" !== xdmp.nodeKind(content.value)) {
-      content.value = xdmp.toJSON(content.value);
+    if (content.value) {
+      const valueNeedsToBeWrappedAsNode = "object" == xdmp.nodeKind(content.value);
+      if (valueNeedsToBeWrappedAsNode) {
+        content.value = xdmp.toJSON(content.value);
+      }
     }
 
     // This copies what queryToContentDesciptorArray does with permissions
@@ -251,9 +254,6 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
 }
 
 /**
- * When a content object is added to the write queue, a deep copy must be made. That allows the content object
- * to be modified by subsequent steps without modifying what will be persisted as a particular step's output.
- *
  * @param stepExecutionContext
  * @param outputContentArray
  * @param enhancedWriteQueue
@@ -267,11 +267,32 @@ function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, 
   }
   outputContentArray.forEach(contentObject => {
     if (contentObject.uri) {
-      // parse/quote is used instead of parse/stringify to account for the fact that content.value may be a node
-      // or may be an object with an embedded node. parse/stringify doesn't work on nodes, but parse/quote does.
-      databaseContentMap[contentObject.uri] = JSON.parse(xdmp.quote(contentObject));
+      databaseContentMap[contentObject.uri] = copyContentObject(contentObject);
     }
   });
+}
+
+/**
+ * Before a content object is added to the write queue, a copy needs to be made of it. This ensure that subsequent steps don't
+ * modify the object that should be persisted. 
+ * 
+ * @param contentObject 
+ */
+function copyContentObject(contentObject) {
+  // TODO We'll see if a shallow copy of contentObject.value holds up. For JSON, this works because the prepare
+  // method calls xdmp.toJSON on it, thus creating a new node. For XML - we'll when we test custom steps, which may not create 
+  // a new object the way a mapping step does. 
+  // Note that JSON.parse/xdmp.quote was initially used; that works for JSON, but not for an XML content.value.
+  // JSON.parse/stringify did not work when the content.value is a node, which it can be. 
+  return {
+    uri: contentObject.uri,
+    value: contentObject.value,
+    context: {
+      collections: JSON.parse(xdmp.quote(contentObject.context.collections)),
+      metadata: JSON.parse(xdmp.quote(contentObject.context.metadata)),
+      permissions: JSON.parse(xdmp.quote(contentObject.context.permissions))
+    }
+  };
 }
 
 /**

@@ -1,0 +1,15 @@
+{
+  "name": "ingestXmlCustomer",
+  "stepId": "ingestXmlCustomer-ingestion",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "collections": [
+    "ingestCustomer"
+  ],
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "off",
+  "disableJobOutput": true
+}
