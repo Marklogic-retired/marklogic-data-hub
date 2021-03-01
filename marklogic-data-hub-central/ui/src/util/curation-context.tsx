@@ -10,14 +10,15 @@ const DEFAULT_CURATION_OPTIONS = {
   activeStep: {
     stepArtifact: {},
     entityName: "",
-    isModified: false
+    hasWarnings: []
   }
 };
 
 export const CurationContext = React.createContext<CurationContextInterface>({
   curationOptions: DEFAULT_CURATION_OPTIONS,
   setActiveStep: () => {},
-  updateActiveStepArtifact: () => {}
+  updateActiveStepArtifact: () => {},
+  setActiveStepWarning: () => {}
 });
 
 const CurationProvider: React.FC<{ children: any }> = ({children}) => {
@@ -50,11 +51,20 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
       activeStep: updatedStep,
     });
   };
+
+  const setActiveStepWarning = (warning: any[]) => {
+    setCurationOptions({
+      ...curationOptions,
+      activeStep: {...curationOptions.activeStep, hasWarnings: warning}
+    });
+  };
+
   return (
     <CurationContext.Provider value={{
       curationOptions,
       setActiveStep,
       updateActiveStepArtifact,
+      setActiveStepWarning
     }}>
       {children}
     </CurationContext.Provider>

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import {Form, Input, Icon, Select} from "antd";
 import styles from "./advanced-settings.module.scss";
@@ -8,6 +8,7 @@ import StepsConfig from "../../config/steps.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
+import {CurationContext} from "../../util/curation-context";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -33,6 +34,7 @@ type Props = {
 }
 
 const AdvancedSettings: React.FC<Props> = (props) => {
+  const {curationOptions} = useContext(CurationContext);
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = StepsConfig.invalidJSONMessage;
@@ -101,6 +103,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [customHookExpanded, setCustomHookExpanded] = useState(false);
   const [customHookValid, setCustomHookValid] = useState(true);
   const [additionalSettings, setAdditionalSettings] = useState("");
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const canReadWrite = props.canWrite;
 
@@ -121,6 +124,13 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setTargetPermissionsTouched(false);
 
   }, [props.openStepSettings]);
+
+  useEffect(() => {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0) {
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
+  }, [curationOptions.activeStep.hasWarnings.length]);
 
   const isFormValid = () => {
     return headersValid && interceptorsValid && customHookValid && targetPermissionsValid;
@@ -272,6 +282,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    setIsSubmit(true);
     if (event) event.preventDefault();
 
     // Parent handles saving of all tabs
@@ -280,9 +291,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     } else {
       props.updateStep(getPayload());
     }
-
-    props.setOpenStepSettings(false);
-    props.resetTabs();
   };
 
   const isPermissionsValid = () => {

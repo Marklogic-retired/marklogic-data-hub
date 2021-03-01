@@ -7,6 +7,7 @@ import {UserContext} from "../../../util/user-context";
 import {NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {StepType} from "../../../types/curation-types";
+import {CurationContext} from "../../../util/curation-context";
 
 type Props = {
   tabKey: string;
@@ -49,6 +50,7 @@ const {TextArea} = Input;
 const CreateEditStep: React.FC<Props>  = (props) => {
   // TODO use steps.config.ts for default values
   const {handleError} = useContext(UserContext);
+  const {curationOptions, setActiveStepWarning} = useContext(CurationContext);
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -68,7 +70,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
 
   const [invalidChars, setInvalidChars] = useState(false);
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
-
+  const [isSubmit, setIsSubmit] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
 
   const initStep = () => {
@@ -89,7 +91,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     resetTouchedValues();
     setIsValid(true);
     setTobeDisabled(true);
-
+    setActiveStepWarning([]);
     props.setIsValid(true);
   };
 
@@ -103,6 +105,13 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     }
   }, [props.openStepSettings]);
 
+  useEffect(() => {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0) {
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
+  }, [curationOptions.activeStep.hasWarnings.length, isSubmit]);
+
   const reset = () => {
     setStepName("");
     setDescription("");
@@ -114,6 +123,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       setTimestamp("");
     }
     resetTouchedValues();
+    setActiveStepWarning([]);
+    setIsSubmit(false);
   };
 
   const resetTouchedValues = () => {
@@ -181,6 +192,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    setIsSubmit(true);
     if (!stepName) {
       // missing name
       setStepNameTouched(true);
@@ -209,8 +221,6 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     } else {
       props.updateStepArtifact(getPayload());
     }
-    props.setOpenStepSettings(false);
-    props.resetTabs();
   };
 
   const handleSearch = async (value: any) => {
