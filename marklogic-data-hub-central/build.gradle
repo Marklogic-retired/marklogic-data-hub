@@ -44,7 +44,7 @@ ext.junitPlatformVersion = '1.4.2'
 ext.junitJupiterVersion = '5.4.2'
 
 bootWar {
-    baseName = springBootJarName
+    archiveBaseName = springBootJarName
     // Used for running hub-central as a system service
     // Also allows us to customize options like JAVA_HOME using a config file
     // https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-script-customization-when-it-runs
@@ -118,7 +118,7 @@ dependencies {
     testImplementation "org.mockito:mockito-core:3.0.0"
     testImplementation "org.mockito:mockito-junit-jupiter:3.0.0"
 
-    //testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
+    testImplementation "javax.ws.rs:javax.ws.rs-api:2.1.1"
 }
 
 // We need this to access test resources such as "entity-reference-model" project from core data hub project

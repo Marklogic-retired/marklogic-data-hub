@@ -57,10 +57,10 @@ dependencies {
     // Depends on the test plumbing classes in the test project
     testImplementation(project(":marklogic-data-hub-test"))
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
-    testCompile "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testImplementation "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
 
 tasks.withType(Test) {
