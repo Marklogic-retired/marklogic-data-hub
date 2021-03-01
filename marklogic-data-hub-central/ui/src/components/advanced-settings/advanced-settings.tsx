@@ -790,27 +790,28 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           />
           { !customHookValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
         </div> : ""}
-        { stepType ==="custom" ? <Form.Item
-          label={<span>Additional Settings</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <TextArea
-            id="additionalSettings"
-            placeholder="Please enter additional settings"
-            value={additionalSettings}
-            disabled={!canReadWrite}
-            className={styles.textarea}
-            rows={6}
-            aria-label="options-textarea"
-            onBlur={sendPayload}
-          />
-          <div className={styles.selectTooltip}>
-            <MLTooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
-          </div>
-        </Form.Item> : null
+        { stepType === "custom" ?                         /** not yet implemented */
+          <Form.Item
+            label={<span>Additional Settings</span>}
+            labelAlign="left"
+            className={styles.formItem}
+          >
+            <TextArea
+              id="additionalSettings"
+              placeholder="Please enter additional settings"
+              value={additionalSettings}
+              disabled={/**!canReadWrite*/ true}          /** uncomment condition to enable */
+              className={styles.textarea}
+              rows={6}
+              aria-label="options-textarea"
+              onBlur={sendPayload}
+            />
+            <div className={styles.selectTooltip}>
+              <MLTooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </MLTooltip>
+            </div>
+          </Form.Item> : null
         }
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>

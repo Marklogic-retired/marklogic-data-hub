@@ -30,12 +30,12 @@ describe("Custom Card component", () => {
     jest.clearAllMocks();
   });
 
-  test("Custom card does not allow edit", async () => {
+  test("Custom card does not allow edit without writeCustom", async () => {
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
     let getByRole, queryAllByRole, getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><CustomCard data={customData} canReadOnly={true} canReadWrite={false}/></Router>
+        <Router><CustomCard data={customData} canReadOnly={true} canReadWrite={false} entityModel={{entityTypeId: "Customer"}}/></Router>
       );
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
@@ -88,7 +88,7 @@ describe("Custom Card component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
-  test("Open advanced settings", async () => {
+  test("Open settings in read-only mode", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readCustom"]);
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
@@ -98,6 +98,7 @@ describe("Custom Card component", () => {
           data={customData}
           canReadOnly={true}
           canReadWrite={false}
+          entityModel={{entityTypeId: "Customer"}}
         />
       </AuthoritiesContext.Provider></Router>);
 
@@ -115,7 +116,7 @@ describe("Custom Card component", () => {
     expect(getByPlaceholderText("Enter description")).toBeDisabled();
     expect(getByLabelText("Collection")).toBeInTheDocument();
     expect(getByLabelText("Query")).toBeChecked();
-    expect(getByPlaceholderText("Enter Source Query")).toHaveTextContent("cts.collectionQuery(['loadCustomerJSON'])");
+    expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['loadCustomerJSON'])");
 
     // Switch to Advanced settings
     await wait(() => {
@@ -140,6 +141,81 @@ describe("Custom Card component", () => {
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("role1,read,role2,update");
     expect(getByPlaceholderText("Please enter target permissions")).toBeDisabled();
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
+    expect(getByText("Custom Hook")).toBeInTheDocument();
+    expect(getByText("Additional Settings")).toBeInTheDocument();
+
+    fireEvent.click(getByLabelText("Close"));
+    await wait(() => {
+      expect(queryByText("Custom Step Settings")).not.toBeInTheDocument();
+    });
+
+  });
+
+  test("Open settings in read-write mode", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readCustom", "writeCustom"]);
+    let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
+    const {getByText, queryByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
+      <Router><AuthoritiesContext.Provider value={authorityService}>
+        <CustomCard
+          data={customData}
+          canReadOnly={true}
+          canReadWrite={true}
+          entityModel={{entityTypeId: "Customer"}}
+        />
+      </AuthoritiesContext.Provider></Router>);
+
+    await wait(() => {
+      fireEvent.click(getByTestId("customJSON-edit"));
+    });
+
+    expect(getByText("Custom Step Settings")).toBeInTheDocument();
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+
+    // Basic settings values
+    expect(getByPlaceholderText("Enter name")).toHaveValue("customJSON");
+    expect(getByPlaceholderText("Enter name")).toBeDisabled();
+    expect(getByPlaceholderText("Enter description")).toBeEnabled();
+    expect(getByLabelText("Collection")).toBeInTheDocument();
+    expect(getByLabelText("Query")).toBeChecked();
+    expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['loadCustomerJSON'])");
+
+    // Switch to Advanced settings
+    await wait(() => {
+      fireEvent.click(getByText("Advanced"));
+    });
+    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+
+    // Advanced settings values
+    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByLabelText("sourceDatabase-select")).toBeEnabled();
+    expect(getByText("db1")).toBeInTheDocument();
+
+    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("db2")).toBeInTheDocument();
+    expect(getByLabelText("targetDatabase-select")).toBeEnabled();
+
+    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
+    expect(getByPlaceholderText("Please enter batch size")).toBeEnabled();
+
+    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByLabelText("additionalColl-select")).toBeEnabled();
+
+    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByTestId("defaultCollections-Customer")).toBeInTheDocument();
+    expect(getByTestId("defaultCollections-mapCustomerJSON")).toBeInTheDocument();
+
+    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("role1,read,role2,update");
+    expect(getByPlaceholderText("Please enter target permissions")).toBeEnabled();
+
+    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByLabelText("provGranularity-select")).toBeEnabled();
+
     expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
     expect(getByText("Additional Settings")).toBeInTheDocument();

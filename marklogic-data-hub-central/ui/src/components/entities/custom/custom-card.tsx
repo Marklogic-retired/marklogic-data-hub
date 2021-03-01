@@ -16,6 +16,7 @@ interface Props {
   data: any;
   flows: any;
   entityTypeTitle: any;
+  updateCustomArtifact: any;
   canReadOnly: any;
   canReadWrite: any;
   canWriteFlow: any;
@@ -50,6 +51,13 @@ const CustomCard: React.FC<Props> = (props) => {
     if (props.flows) flow = props.flows.find(f => f.name === flowName);
     if (flow) result = flow["steps"].findIndex(s => s.stepName === stepName) > -1;
     return result;
+  };
+
+  // updates step settings
+  const updateCustomArtifact = async (payload) => {
+    // Update local form state
+    setStepData(prevState => ({...prevState, ...payload}));
+    await props.updateCustomArtifact(payload);
   };
 
   // mouse over/mouse leave events with card body (shows/hides add-to-flow options)
@@ -151,7 +159,7 @@ const CustomCard: React.FC<Props> = (props) => {
                   size="small"
                 >
                   <div className={styles.formatFileContainer}>
-                    <span className={styles.customNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
+                    <span aria-label={`${elem.name}-step-label`} className={styles.customNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
                   </div>
                   <br />
                   {elem.selectedSource === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery, 32, "...")}</div>}
@@ -226,9 +234,13 @@ const CustomCard: React.FC<Props> = (props) => {
         canReadWrite={props.canReadWrite}
         canReadOnly={props.canReadOnly}
         // Advanced Settings
+        canWrite={props.canReadWrite}
         tooltipsData={AdvCustomTooltips}
+        updateStep={updateCustomArtifact}
         openStepSettings={openStepSettings}
         setOpenStepSettings={setOpenStepSettings}
+        targetEntityType={props.entityModel.entityTypeId}
+        targetEntityName={props.entityModel.entityName}
         activityType={activityType}
       />
     </div>

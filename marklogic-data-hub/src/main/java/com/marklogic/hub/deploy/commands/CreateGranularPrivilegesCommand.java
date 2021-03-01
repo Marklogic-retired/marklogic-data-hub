@@ -49,6 +49,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         "data-hub-operator",
         "hub-central-clear-user-data",
         "hub-central-custom-reader",
+        "hub-central-custom-writer",
         "hub-central-developer",
         "hub-central-downloader",
         "hub-central-entity-exporter",

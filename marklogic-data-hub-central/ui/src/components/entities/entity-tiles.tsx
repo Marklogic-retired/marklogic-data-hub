@@ -303,6 +303,22 @@ const EntityTiles = (props) => {
     }
   };
 
+  const updateCustomArtifact = async (payload) => {
+    try {
+      let response = await updateStep(payload.name, "custom", payload);
+      if (response.status === 200) {
+        updateIsLoadingFlag();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      let message = error;
+      console.error("Error updating custom step", message);
+      return false;
+    }
+  };
+
   const outputCards = (index, entityType, mappingCardData, matchingCardData, mergingCardData, customCardData) => {
     let output;
     if (viewData[index] === "map-" + entityType) {
@@ -365,6 +381,7 @@ const EntityTiles = (props) => {
           flows={props.flows}
           entityTypeTitle={entityType}
           entityModel={props.entityModels[entityType]}
+          updateCustomArtifact={updateCustomArtifact}
           canReadOnly={props.canReadCustom}
           canReadWrite = {props.canWriteCustom}
           addStepToFlow={props.addStepToFlow}
@@ -417,6 +434,7 @@ const EntityTiles = (props) => {
                 flows={props.flows}
                 entityTypeTitle={/** entityType */""}
                 entityModel={/** props.entityModels[entityType] */""}
+                updateCustomArtifact={updateCustomArtifact}
                 canReadOnly={props.canReadCustom}
                 canReadWrite = {props.canWriteCustom}
                 canWriteFlow={props.canWriteFlow}

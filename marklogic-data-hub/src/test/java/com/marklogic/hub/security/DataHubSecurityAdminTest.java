@@ -98,7 +98,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
         Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
         customRole.setRole(CreateGranularPrivilegesCommand.ROLES_THAT_CAN_BE_INHERITED);
 
-        assertEquals(50, customRole.getRole().size(), "As of DHFPROD-6515 in 5.4.0, 50 roles are expected to be " +
+        assertEquals(51, customRole.getRole().size(), "As of DHFPROD-4391 in 5.4.0, 51 roles are expected to be " +
             "inheritable in custom roles created by a user with the data-hub-security-admin role. When new roles must " +
             "be inheritable, they should be added to the list in CreateGranularPrivilegesCommand, and this count " +
             "should be updated to match the new total.");
