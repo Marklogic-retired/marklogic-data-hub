@@ -18,6 +18,7 @@
 const roleToAuthorityMap = {
   "hub-central-clear-user-data": "clearUserData",
   "hub-central-custom-reader": ["readCustom", "readStepDefinition"],
+  "hub-central-custom-writer": ["writeCustom", "writeStepDefinition"],
   "hub-central-downloader": "downloadProjectFiles",
   "hub-central-entity-exporter": "exportEntityInstances",
   "hub-central-entity-model-reader": "readEntityModel",

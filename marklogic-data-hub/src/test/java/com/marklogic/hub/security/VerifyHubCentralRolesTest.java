@@ -16,7 +16,7 @@ public class VerifyHubCentralRolesTest extends AbstractHubCoreTest {
     @Test
     void verifyRoles(){
         verifyRole("hub-central-curator", "hub-central-flow-writer", "hub-central-load-writer", "hub-central-mapping-writer",
-            "hub-central-custom-reader", "hub-central-entity-model-reader");
+            "hub-central-custom-writer", "hub-central-entity-model-reader");
         verifyRole("hub-central-explorer",  "hub-central-saved-query-user", "hub-central-entity-exporter");
         verifyRole("hub-central-modeler","hub-central-entity-model-writer");
         verifyRole("data-hub-job-monitor","data-hub-job-reader");

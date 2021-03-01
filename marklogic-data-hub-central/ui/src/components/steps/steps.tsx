@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 import {Modal, Tabs} from "antd";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
-import ViewCustom from "../entities/custom/view-custom/view-custom";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
 import ConfirmYesNo from "../common/confirm-yes-no/confirm-yes-no";
 import styles from "./steps.module.scss";
@@ -166,9 +165,14 @@ const Steps: React.FC<Props> = (props) => {
     updateStepArtifact={updateStep}
   />);
 
-  const viewCustom = (<ViewCustom
+  const viewCustom = (<CreateEditStep
     {...createEditDefaults}
-    stepData={props.stepData}
+    isEditing={props.isEditing}
+    editStepArtifactObject={props.stepData}
+    stepType={StepType.Custom}
+    targetEntityType={props.targetEntityType}
+    createStepArtifact={() => {} /** custom steps cannot be created through hub central */}
+    updateStepArtifact={updateStep}
   />);
 
   const getCreateEditStep = (activityType) => {
