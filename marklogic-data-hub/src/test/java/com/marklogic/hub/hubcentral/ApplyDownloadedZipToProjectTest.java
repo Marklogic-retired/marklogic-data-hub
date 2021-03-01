@@ -13,6 +13,8 @@ import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +25,8 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+// Running in same thread to see if that helps avoid intermittent Jenkins failures related to zip files
+@Execution(ExecutionMode.SAME_THREAD)
 public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
 
     private final static List<String> PROTECTED_PATH_FILENAMES = Arrays.asList(

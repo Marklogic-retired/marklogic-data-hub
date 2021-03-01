@@ -4,6 +4,8 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.io.*;
 import java.util.*;
@@ -16,6 +18,8 @@ import java.util.zip.ZipInputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// Running in same thread to see if that helps avoid intermittent Jenkins failures related to zip files
+@Execution(ExecutionMode.SAME_THREAD)
 public class GetProjectAsZipTest extends AbstractHubCoreTest {
 
     private Set<String> zipProjectEntries;
@@ -126,12 +130,10 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
             ZipEntry entry = zipIn.getNextEntry();
             while (entry != null) {
                 if ("gradle.properties".equals(entry.getName())) {
-                    InputStream input = zip.getInputStream(entry);
-                    gradleProps.load(input);
+                    loadPropertiesFromZipEntry(zip, entry, gradleProps);
                 }
                 if ("gradle-dhs.properties".equals(entry.getName())) {
-                    InputStream input = zip.getInputStream(entry);
-                    gradleDhsProps.load(input);
+                    loadPropertiesFromZipEntry(zip, entry, gradleDhsProps);
                 }
                 if (Stream.of(artifactDirs).anyMatch(entry.getName()::startsWith) && !entry.isDirectory()) {
                     artifactZipEntries.add(entry);
@@ -141,6 +143,20 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
                 zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
+        }
+    }
+
+    private void loadPropertiesFromZipEntry(ZipFile zip, ZipEntry entry, Properties props) {
+        try {
+            InputStream ins = zip.getInputStream(entry);
+            if (ins == null) {
+                logger.warn("Received null InputStream for zip entry: " + entry.getName() + "; will ignore");
+                return;
+            }
+            props.load(ins);
+        } catch (Exception e) {
+            logger.warn("Unable to load properties from zip entry: " + entry.getName() + "; cause: " + e.getMessage() +
+                "entry size: " + entry.getSize());
         }
     }
 

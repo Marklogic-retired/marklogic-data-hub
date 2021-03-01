@@ -2,10 +2,15 @@ package com.marklogic.hub.hubcentral;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+// Running in same thread to see if that helps avoid intermittent Jenkins failures related to zip files
+@Execution(ExecutionMode.SAME_THREAD)
 public class GetHubCentralFilesAsZipTest extends AbstractHubCoreTest {
 
     private AllArtifactsProject project;
