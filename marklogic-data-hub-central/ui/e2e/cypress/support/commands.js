@@ -111,8 +111,8 @@ Cypress.Commands.add("logout", () => {
 });
 
 Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName) => {
-  cy.findByText(stepType).should("be.visible");
-  cy.findByText(stepName).should("be.visible");
+  cy.waitUntil(() => cy.findByText(stepType).should("be.visible"));
+  cy.waitUntil(() => cy.findByText(stepName).should("be.visible"));
 });
 
 Cypress.Commands.add("waitForModalToDisappear", () => {
@@ -121,9 +121,8 @@ Cypress.Commands.add("waitForModalToDisappear", () => {
 
 Cypress.Commands.add("uploadFile", (filePath) => {
   cy.get("#fileUpload").attachFile(filePath, {subjectType: "input", force: true});
-  cy.waitUntil(() => cy.findByTestId("spinner").should("be.visible"));
-  cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
   cy.waitForAsyncRequest();
+  cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
   cy.waitUntil(() => cy.get("span p"));
 });
 
