@@ -29,7 +29,6 @@ This section describes how to build and test new features and fixes in Data Hub.
 - the Data Hub library in ./marklogic-data-hub
 - the Data Hub Gradle plugin in ./ml-data-hub-plugin
 - the web application in ./marklogic-data-hub-central
-- the QuickStart web application in ./web
 
 ### Prerequisites
 
@@ -176,40 +175,6 @@ Or just run a specific test:
 ### Running and testing marklogic-data-hub-central
 
 See the marklogic-data-hub-central README.md file for more information.
-
-### Running QuickStart from source
-
-The source code for the QuickStart web application is in the ./web subproject. To run and test this locally, begin by 
-opening two terminal windows - you'll run the webapp from one, and then the middle tier from the other.
-
-  **Terminal window 1** - This runs the webapp.
-
-      ```bash
-      cd web
-      ../gradlew bootrun
-      ```
-
-  **NOTE:** The progress indicator stops around 90%. This is normal. In Gradle, 100% means it finished running. This stays running indefinitely and thus shows 90%.
-
-      ```
-      > Building 90% > :web:bootRun
-      ```
-
-  **Terminal window 2** - This runs QuickStart.
-
-      ```
-      cd web
-      ../gradlew runui
-      ```
-
-In a web browser, navigate to [http://localhost:4200](http://localhost:4200) to use the debug version of QuickStart.
-
-If you see several javascript errors, you might have a corrupted `node_modules` directory. Remove it, then run again.
-
-  ```bash
-  rm -rf web/node_modules
-  ```
-
 
 ## Submission Guidelines
 
