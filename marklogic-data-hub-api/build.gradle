@@ -32,15 +32,68 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allJava
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+Node pomCustomizations = new NodeBuilder(). project {
+    name 'marklogic-data-hub-api'
+    packaging 'jar'
+    textdescription 'Library for Creating an Operational Data Hub on MarkLogic'
+    url 'https://github.com/marklogic/marklogic-data-hub'
+
+    scm {
+        url 'git@github.com:marklogic/marklogic-data-hub.git'
+        connection 'scm:git@github.com:marklogic/marklogic-data-hub.git'
+        developerConnection 'scm:git@github.com:marklogic/marklogic-data-hub.git'
+    }
+
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+        }
+    }
+
+    developers {
+        developer {
+            name 'MarkLogic'
+            email 'java-sig@marklogic.com'
+            organization 'MarkLogic'
+            organizationUrl 'https://www.marklogic.com'
+        }
+        developer {
+            name 'MarkLogic Github Contributors'
+            email 'general@developer.marklogic.com'
+            organization 'Github Contributors'
+            organizationUrl 'https://github.com/marklogic/marklogic-data-hub/graphs/contributors'
+        }
+    }
+}
 publishing {
     publications {
-        mainJava(MavenPublication) {
+        main(MavenPublication) {
             from components.java
+
+            pom.withXml {
+                asNode().appendNode('description', pomCustomizations.textdescription.text())
+                asNode().append(pomCustomizations.developers)
+                asNode().append(pomCustomizations.name)
+                asNode().append(pomCustomizations.packaging)
+                asNode().append(pomCustomizations.url)
+                asNode().append(pomCustomizations.scm)
+                asNode().append(pomCustomizations.licenses)
+            }
+
         }
         sourcesJava(MavenPublication) {
             from components.java
             artifact sourcesJar
+
+
         }
+
     }
     repositories {
         maven {
