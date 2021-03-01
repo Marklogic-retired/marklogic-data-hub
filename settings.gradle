@@ -3,7 +3,6 @@ include ':marklogic-data-hub-api'
 include ':marklogic-data-hub-test'
 include ':marklogic-data-hub'
 include ':ml-data-hub-plugin'
-include ':web'
 include ':marklogic-data-hub-central'
 include ':marklogic-data-hub-spark-connector'
 
