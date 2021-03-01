@@ -119,12 +119,12 @@ def dhfWinTests(String mlVersion, String type){
         	        ''').trim().split();
         def bldPath=bldOutput[bldOutput.size()-1]
         setupMLWinCluster bldPath,pkgLoc
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat clean'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat clean'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
         junit '**/TEST-*.xml'
     }
 }
@@ -144,12 +144,12 @@ script{
                                 	        ''').trim().split();
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat clean'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat clean'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
                                 junit '**/TEST-*.xml'
                             }
 }
@@ -462,7 +462,7 @@ pipeline{
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
-	JAVA_HOME_DIR="~/java/openjdk-1.8.0-161"
+	JAVA_HOME_DIR="~/java/openjdk-1.8.0-262"
 	GRADLE_DIR="/.gradle"
 	MAVEN_HOME="/usr/local/maven"
 	M2_HOME_REPO="/repository"
