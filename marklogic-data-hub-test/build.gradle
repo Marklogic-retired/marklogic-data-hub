@@ -25,8 +25,11 @@ repositories {
 dependencies {
     api(project(":marklogic-data-hub-api"))
 
-    // marklogic-client-api 5.3.0 included this, but 5.3.2 does not
-    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1"
+    // Because one of the main features of the test helper classes in this project is access to a Logger object,
+    // this is an API dependency.
+    api "org.slf4j:slf4j-api:1.7.30"
+
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

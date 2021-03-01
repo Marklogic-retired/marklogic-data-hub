@@ -114,24 +114,15 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
 
         QueryManager qm = jobClient.newQueryManager();
 
-        // Build a query that will match everything
-        StringQueryDefinition emptyQuery = qm.newStringDefinition();
-        emptyQuery.setCriteria("");
-
         // Get the job(s) document(s)
         StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
         DataMovementManager dmm = jobClient.newDataMovementManager();
-        QueryBatcher batcher = null;
-        StructuredQueryDefinition query = null;
-        if (jobIds == null) {
-            batcher = dmm.newQueryBatcher(emptyQuery);
-        }
-        else {
-            batcher = dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
-        }
+        QueryBatcher batcher = jobIds == null ?
+            newEmptyQueryBatcher(dmm, jobClient) :
+            dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-        JobTicket jobTicket = dmm.startJob(batcher);
 
+        JobTicket jobTicket = dmm.startJob(batcher);
         batcher.awaitCompletion();
         dmm.stopJob(batcher);
         dmm.release();
@@ -144,15 +135,12 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
 
             // Get the traces that go with the job(s)
             dmm = this.jobClient.newDataMovementManager();
-            if (jobIds == null) {
-                batcher = dmm.newQueryBatcher(emptyQuery);
-            }
-            else {
-                batcher = dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
-            }
+            batcher = jobIds == null ?
+                newEmptyQueryBatcher(dmm, this.jobClient) :
+                dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
             batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
-            jobTicket = dmm.startJob(batcher);
 
+            jobTicket = dmm.startJob(batcher);
             batcher.awaitCompletion();
             dmm.stopJob(batcher);
             dmm.release();
@@ -170,6 +158,20 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
         }
 
         return response;
+    }
+
+    /**
+     * Workaround for this Java Client bug:
+     * https://github.com/marklogic/java-client-api/issues/1290
+     *
+     * @param dmm
+     * @param client
+     * @return
+     */
+    private QueryBatcher newEmptyQueryBatcher(DataMovementManager dmm, DatabaseClient client) {
+        return dmm.newQueryBatcher(client.newQueryManager()
+            .newRawCtsQueryDefinition(new StringHandle("<cts:true-query xmlns:cts=\"http://marklogic.com/cts\"/>")
+                .withFormat(Format.XML)));
     }
 
     @Override public void importJobs(Path importFilePath) throws IOException {
