@@ -13,7 +13,7 @@ the "testing" property on the command line - e.g.
 After initializing the project, you may want to add "testing=true" to the gradle.properties file so that you do not need to include it as a command line property. 
 
 If you are trying to use a snapshot version of the Gradle plugin and get an error about not being able to find the 
-plugin - e.g. "Could not find com.marklogic:ml-data-hub:5.4-SNAPSHOT" - then run the following Gradle task from the root
+plugin - e.g. "Could not find com.marklogic:ml-data-hub:5.5-SNAPSHOT" - then run the following Gradle task from the root
 of this repository (this is also described in the CONTRIBUTING.md guide in the section named "Testing changes to the 
 Data Hub Gradle plugin"): 
 
