@@ -193,6 +193,11 @@ tr.ant-table-row:hover > td {
   color: #333333;
 }
 
+span.join-property-menu + div .ant-cascader-menu-item-disabled {
+  cursor: not-allowed;
+  color: #CCCCCC;
+}
+
 ul.ant-cascader-menu {
   height: auto;
   width: 165px;

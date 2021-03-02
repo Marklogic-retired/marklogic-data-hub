@@ -29,6 +29,9 @@ export interface Property {
   description: string,
   datatype: string,
   ref: string,
+  relatedEntityType: string,
+  joinPropertyName: string,
+  joinPropertyType: string,
   collation: string,
   multiple: boolean,
   facetable: boolean,
@@ -60,6 +63,8 @@ export interface EditPropertyOptions {
 export interface PropertyOptions {
   propertyType: PropertyType,
   type: string,
+  joinPropertyName: string,
+  joinPropertyType: string,
   identifier: string,
   multiple: string,
   pii: string,

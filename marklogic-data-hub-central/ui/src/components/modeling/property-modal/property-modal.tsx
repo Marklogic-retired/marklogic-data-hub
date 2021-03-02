@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Icon, Radio, Cascader} from "antd";
+import {Modal, Form, Input, Icon, Radio, Cascader, Select} from "antd";
 import {MLButton, MLAlert} from "@marklogic/design-system";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -9,7 +9,7 @@ import StructuredTypeModal from "../structured-type-modal/structured-type-modal"
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {UserContext} from "../../../util/user-context";
 import {ModelingContext} from "../../../util/modeling-context";
-import {entityReferences} from "../../../api/modeling";
+import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {MLTooltip, MLCheckbox} from "@marklogic/design-system";
 import {getSystemInfo} from "../../../api/environment";
@@ -29,6 +29,8 @@ import {
   MORE_DATE_TYPES,
   DROPDOWN_PLACEHOLDER
 } from "../../../config/modeling.config";
+
+const {Option} = Select;
 
 type Props = {
   entityName: any;
@@ -103,6 +105,8 @@ const DEFAULT_DROPDOWN_OPTIONS = [
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   propertyType: PropertyType.Basic,
   type: "",
+  joinPropertyName: "",
+  joinPropertyType: "",
   identifier: "no",
   multiple: "no",
   pii: "no",
@@ -139,6 +143,11 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [typeDisplayValue, setTypeDisplayValue] = useState<string[]>([]);
   const [typeErrorMessage, setTypeErrorMessage] = useState("");
 
+  const [showJoinProperty, toggleShowJoinProperty] = useState(false);
+  const [joinDisplayValue, setJoinDisplayValue] = useState<string | undefined>(undefined);
+  const [joinProperties, setJoinProperties] = useState<any[]>([]);
+  const [joinErrorMessage, setJoinErrorMessage] = useState("");
+
   const [dropdownOptions, setDropdownOptions] = useState<any[]>(DEFAULT_DROPDOWN_OPTIONS);
   const [radioValues, setRadioValues] = useState<any[]>([]);
   const [showConfigurationOptions, toggleShowConfigurationOptions] = useState(false);
@@ -153,8 +162,10 @@ const PropertyModal: React.FC<Props> = (props) => {
       if (props.editPropertyOptions.isEdit) {
         let structuredLabel = "";
         let typeDisplayValue = [props.editPropertyOptions.propertyOptions.type];
+        let joinDisplayValue = "";
         let isCommonType = COMMON_PROPERTY_TYPES.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
         let showConfigOptions = true;
+        let showJoinProp = false;
         let newRadioValues = ALL_RADIO_DISPLAY_VALUES;
         getEntityReferences();
 
@@ -175,7 +186,10 @@ const PropertyModal: React.FC<Props> = (props) => {
           typeDisplayValue = [type, props.editPropertyOptions.propertyOptions.type];
 
         } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.RelatedEntity) {
-          typeDisplayValue = ["relatedEntity", props.editPropertyOptions.propertyOptions.type];
+          joinDisplayValue = props.editPropertyOptions.propertyOptions.joinPropertyName;
+          typeDisplayValue = ["relatedEntity", props.editPropertyOptions.propertyOptions.joinPropertyType];
+          createJoinMenu(props.editPropertyOptions.propertyOptions.joinPropertyType, props.editPropertyOptions.propertyOptions.joinPropertyName);
+          showJoinProp = true;
           showConfigOptions = false;
           newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
 
@@ -194,7 +208,9 @@ const PropertyModal: React.FC<Props> = (props) => {
         setErrorMessage("");
         setRadioValues(newRadioValues);
         toggleShowConfigurationOptions(showConfigOptions);
+        toggleShowJoinProperty(showJoinProp);
         setTypeDisplayValue(typeDisplayValue);
+        setJoinDisplayValue(joinDisplayValue);
         setSelectedPropertyOptions(props.editPropertyOptions.propertyOptions);
       } else {
         let modalTitle = "Add Property";
@@ -207,8 +223,10 @@ const PropertyModal: React.FC<Props> = (props) => {
         setName("");
         setErrorMessage("");
         setTypeDisplayValue([]);
+        setJoinDisplayValue(undefined);
         setRadioValues([]);
         toggleShowConfigurationOptions(false);
+        toggleShowJoinProperty(false);
         setSelectedPropertyOptions(DEFAULT_SELECTED_PROPERTY_OPTIONS);
       }
     }
@@ -262,13 +280,17 @@ const PropertyModal: React.FC<Props> = (props) => {
       switch (value[0]) {
       case "relatedEntity":
         newSelectedPropertyOptions.propertyType = PropertyType.RelatedEntity;
+        newSelectedPropertyOptions.joinPropertyName = "";
+        newSelectedPropertyOptions.joinPropertyType = "";
         newSelectedPropertyOptions.identifier = "";
         newSelectedPropertyOptions.pii = "";
         typeValue = value[1];
         //newSelectedPropertyOptions.wildcard = false;
 
+        toggleShowJoinProperty(true);
         setRadioValues([ALL_RADIO_DISPLAY_VALUES[1]]);
         toggleShowConfigurationOptions(false);
+        createJoinMenu(value[1], "");
         break;
       case "structured":
         newSelectedPropertyOptions.propertyType = PropertyType.Structured;
@@ -311,11 +333,14 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     } else {
       setTypeDisplayValue([]);
+      toggleShowJoinProperty(false);
       setRadioValues([]);
       toggleShowConfigurationOptions(false);
       setSelectedPropertyOptions({...selectedPropertyOptions, type: "", propertyType: PropertyType.Basic});
     }
     setTypeErrorMessage("");
+    setJoinDisplayValue(undefined);
+    setJoinErrorMessage("");
   };
 
   const onSubmit = (event) => {
@@ -330,6 +355,8 @@ const PropertyModal: React.FC<Props> = (props) => {
           setErrorMessage(`A property already exists with a name of ${name}`);
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
+        } else if (selectedPropertyOptions.propertyType === "relatedEntity" && selectedPropertyOptions.joinPropertyName === "") {
+          setJoinErrorMessage("Join property is required");
         } else {
 
           let definitionName = props.entityName;
@@ -345,6 +372,12 @@ const PropertyModal: React.FC<Props> = (props) => {
             definitionName = props.entityName;
           }
 
+          // Ensure correct types for related case
+          if (selectedPropertyOptions.propertyType === "relatedEntity") {
+            selectedPropertyOptions.type = typeDisplayValue[1];
+            selectedPropertyOptions.joinPropertyType = joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName).type;
+          }
+
           const newEditPropertyOptions: EditPropertyOptions = {
             name: name,
             isEdit: true,
@@ -354,6 +387,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           props.editPropertyUpdateDefinition(definitionName, props.editPropertyOptions.name, newEditPropertyOptions);
           setErrorMessage("");
           setTypeErrorMessage("");
+          setJoinErrorMessage("");
           props.toggleModal(false);
           refreshSessionTime();
         }
@@ -364,11 +398,14 @@ const PropertyModal: React.FC<Props> = (props) => {
           setErrorMessage(`A property already exists with a name of ${name}`);
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
+        } else if (selectedPropertyOptions.propertyType === "relatedEntity" && selectedPropertyOptions.joinPropertyName === "") {
+          setJoinErrorMessage("Join property is required");
         } else {
           let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
           props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions);
           setErrorMessage("");
           setTypeErrorMessage("");
+          setJoinErrorMessage("");
           props.toggleModal(false);
           refreshSessionTime();
         }
@@ -565,6 +602,65 @@ const PropertyModal: React.FC<Props> = (props) => {
       ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
       children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS["children"], ...structuredTypes]
     };
+  };
+
+  // TODO entityModel arg lets us (eventually) support Cascader nesting by recursion
+  const getJoinMenuProps = (entityName, entityModel, response) => {
+    const entity = response.data.find(ent => ent.entityName === entityName);
+    const model = entity.model.definitions[entityModel];
+    // Check each property and build menu item
+    const result = Object.keys(model.properties).map(key => {
+      // Structured property case
+      if (model.properties[key].hasOwnProperty("$ref")) {
+        return {
+          value: key,
+          label: key,
+          type: "", // TODO
+          disabled: true,
+          // TODO for supporting structure properties
+          // children: getJoinProps(
+          //   entityName,
+          //   model.properties[key]["$ref"].split("#/definitions/")[1],
+          //   response
+          // )
+        };
+      } else if (model.properties[key]["datatype"] === "array") {
+        // Array property case
+        return {
+          value: key,
+          label: key,
+          type: "", // TODO
+          disabled: true
+        };
+      } else {
+        // Default case
+        return {
+          value: key,
+          label: key,
+          type: model.properties[key].datatype
+        };
+      }
+    });
+    return result;
+  };
+
+  const createJoinMenu = async (entityName, entityProp) => {
+    try {
+      const response = await primaryEntityTypes();
+      if (response) {
+        const menuProps = getJoinMenuProps(entityName, entityName, response);
+        setJoinProperties(menuProps);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const onJoinPropertyChange = (value) => {
+    setJoinDisplayValue(value);
+    const type = joinProperties.find(prop => prop["value"] === value).type;
+    setSelectedPropertyOptions({...selectedPropertyOptions, joinPropertyName: value, joinPropertyType: type});
+    setJoinErrorMessage("");
   };
 
   const onRadioChange = (event, radioName) => {
@@ -775,6 +871,35 @@ const PropertyModal: React.FC<Props> = (props) => {
             value={typeDisplayValue}
           />
         </Form.Item>
+
+        { showJoinProperty && (
+          <Form.Item
+            className={styles.formItem}
+            label={<span>
+              Join Property:&nbsp;<span className={styles.asterisk}>*</span>
+              &nbsp;
+            </span>}
+            colon={false}
+            labelAlign="left"
+            wrapperCol={{span: 14}}
+            validateStatus={joinErrorMessage ? "error" : ""}
+            help={joinErrorMessage}
+          >
+            <Select
+              placeholder="Select the join property"
+              onChange={onJoinPropertyChange}
+              value={joinDisplayValue}
+              aria-label="joinProperty-select"
+            >
+              {joinProperties.length > 0 && joinProperties.map((prop, index) => (
+                <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
+              ))}
+            </Select>
+            <MLTooltip title={ModelingTooltips.joinProperty}>
+              <Icon type="question-circle" className={styles.icon} theme="filled" />
+            </MLTooltip>
+          </Form.Item>
+        ) }
 
         {renderRadios}
 
