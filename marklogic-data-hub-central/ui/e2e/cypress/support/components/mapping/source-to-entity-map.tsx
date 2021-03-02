@@ -15,8 +15,12 @@ class SourceToEntityMap {
     return cy.findByTestId("navigate-uris-left");
   }
 
-  expandCollapseSource() {
-    return cy.findByTestId("expandCollapseBtn-source");
+  expandSource() {
+    return cy.get("#srcContainer #expandIcon");
+  }
+
+  collapseSource() {
+    return cy.get("#srcContainer #collapseIcon");
   }
 
   toggleSourceFilterMenu() {
@@ -35,8 +39,12 @@ class SourceToEntityMap {
     return cy.findByTestId("submitSearch-key");
   }
 
-  expandCollapseEntity() {
-    return cy.findByTestId("expandCollapseBtn-entity");
+  expandEntity() {
+    return cy.get("#entityContainer #expandIcon");
+  }
+
+  collapseEntity() {
+    return cy.get("#entityContainer #collapseIcon");
   }
 
   toggleEntityFilterMenu () {
@@ -57,6 +65,10 @@ class SourceToEntityMap {
 
   stepSettingsLink() {
     return cy.findByLabelText(`stepSettings`);
+  }
+
+  modalCloseButton() {
+    return cy.findByLabelText(`Close`);
   }
 
   /**

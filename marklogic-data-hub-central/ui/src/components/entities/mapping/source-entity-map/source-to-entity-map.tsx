@@ -12,6 +12,8 @@ import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
 import {MLButton, MLTooltip, MLCheckbox, MLSpin} from "@marklogic/design-system";
 import SourceNavigation from "../source-navigation/source-navigation";
+import ExpandCollapse from "../../../expand-collapse/expand-collapse";
+
 
 const SourceToEntityMap = (props) => {
 
@@ -1050,25 +1052,25 @@ const SourceToEntityMap = (props) => {
     return allKeysToExpand;
   };
 
-  const handleExpandCollapse = (rowKey) => {
-    if (rowKey === "rowKey") {
-      let keys = getKeysToExpandFromTable(srcData, rowKey);
-      if (expandedSourceFlag) {
-        setSourceExpandedKeys([]);
-        setExpandedSourceFlag(false);
-      } else {
-        setSourceExpandedKeys([...keys]);
-        setExpandedSourceFlag(true);
-      }
+  const handleSourceExpandCollapse = (id) => {
+    let keys = getKeysToExpandFromTable(srcData, "rowKey");
+    if (id === "collapse") {
+      setSourceExpandedKeys([]);
+      setExpandedSourceFlag(false);
     } else {
-      let keys = getKeysToExpandFromTable(props.entityTypeProperties, rowKey);
-      if (expandedEntityFlag) {
-        setEntityExpandedKeys([]);
-        setExpandedEntityFlag(false);
-      } else {
-        setEntityExpandedKeys([...keys]);
-        setExpandedEntityFlag(true);
-      }
+      setSourceExpandedKeys([...keys]);
+      setExpandedSourceFlag(true);
+    }
+  };
+
+  const handleEntityExpandCollapse = (id) => {
+    let keys = getKeysToExpandFromTable(props.entityTypeProperties, "key");
+    if (id === "collapse") {
+      setEntityExpandedKeys([]);
+      setExpandedEntityFlag(false);
+    } else {
+      setEntityExpandedKeys([...keys]);
+      setExpandedEntityFlag(true);
     }
   };
 
@@ -1194,8 +1196,12 @@ const SourceToEntityMap = (props) => {
               </div>
               :
               <div id="dataPresent">
+                <div className={styles.navigationCollapseButtons}>
+                  <span><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} />
+                    <span>{navigationButtons}</span>
+                  </span>
+                </div>
 
-                <div className={styles.navigationCollapseButtons}><span><MLButton data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse("rowKey")} className={styles.expandCollapseBtn}>{expandedSourceFlag ? "Collapse All" : "Expand All"}</MLButton></span><span>{navigationButtons}</span></div>
                 <Table
                   pagination={false}
                   expandIcon={(props) => customExpandIcon(props)}
@@ -1224,7 +1230,9 @@ const SourceToEntityMap = (props) => {
           </div>
           <div ref={dummyNode}></div>
           <div className={styles.columnOptionsSelectorContainer}>
-            <span><MLButton data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse("key")} className={styles.expandCollapseBtn}>{expandedEntityFlag ? "Collapse All" : "Expand All"}</MLButton></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
+            <span><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
+            <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
+          </div>
           <Table
             pagination={false}
             className={styles.entityTable}
@@ -1244,9 +1252,7 @@ const SourceToEntityMap = (props) => {
       </SplitPane>
     </div>
   </Modal>
-
   );
-
 };
 
 export default SourceToEntityMap;
