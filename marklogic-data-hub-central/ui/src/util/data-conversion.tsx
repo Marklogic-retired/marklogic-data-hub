@@ -353,6 +353,9 @@ export const definitionsParser = (definitions: any): Definition[] => {
             datatype: "",
             description: "",
             ref: "",
+            relatedEntityType: "",
+            joinPropertyName: "",
+            joinPropertyType: "",
             collation: "",
             multiple: false,
             facetable: false,
@@ -367,6 +370,15 @@ export const definitionsParser = (definitions: any): Definition[] => {
           if (definitions[definition][entityKeys][properties]["datatype"]) {
             property.datatype = definitions[definition][entityKeys][properties]["datatype"];
 
+            // Handle join props if present
+            property.relatedEntityType = definitions[definition][entityKeys][properties]["relatedEntityType"];
+            property.joinPropertyName = definitions[definition][entityKeys][properties]["joinPropertyName"];
+            if (definitions[definition][entityKeys][properties]["relatedEntityType"]) {
+              // Parse type from relatedEntityType URI
+              let typeSplit = definitions[definition][entityKeys][properties]["relatedEntityType"].split("/");
+              property.joinPropertyType = typeSplit[typeSplit.length - 1];
+            }
+
             if (definitions[definition][entityKeys][properties]["datatype"] === "array") {
               property.multiple = true;
 
@@ -378,6 +390,13 @@ export const definitionsParser = (definitions: any): Definition[] => {
                   property.datatype = definitions[definition][entityKeys][properties]["items"]["$ref"].split("/").pop();
                 }
                 property.ref = definitions[definition][entityKeys][properties]["items"]["$ref"];
+              } else if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("relatedEntityType")) {
+                // Array of related entity type
+                property.relatedEntityType = definitions[definition][entityKeys][properties]["items"]["relatedEntityType"];
+                property.joinPropertyName = definitions[definition][entityKeys][properties]["items"]["joinPropertyName"];
+                // Parse type from relatedEntityType URI
+                let typeSplit = definitions[definition][entityKeys][properties]["items"]["relatedEntityType"].split("/");
+                property.joinPropertyType = typeSplit[typeSplit.length - 1];
               } else if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("datatype")) {
                 // Array of datatype
                 property.datatype = definitions[definition][entityKeys][properties]["items"]["datatype"];

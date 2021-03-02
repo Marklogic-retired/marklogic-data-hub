@@ -44,6 +44,9 @@ const ModelingTooltips = {
     'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',  /* intended dupe: all names */
   descriptionEntityProperty: 'A description of this entity property.',
 
+  /* Form fields */
+  joinProperty: 'Structured type properties and arrays cannot be used as join properties.',
+
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',
