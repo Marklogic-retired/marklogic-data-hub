@@ -345,8 +345,8 @@ describe("RTL Source-to-entity map tests", () => {
     />);
 
     //Expanding all the nested levels first
-    fireEvent.click(getByTestId("expandCollapseBtn-source"));
-    fireEvent.click(getByTestId("expandCollapseBtn-entity"));
+    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     const sourceTableNameSort = getByTestId("sourceTableKey"); // For name column sorting
     const sourceTableValueSort = getByTestId("sourceTableValue"); // For value column sorting
@@ -624,9 +624,8 @@ describe("RTL Source-to-entity map tests", () => {
 
   });
 
-  test("CollapseAll/Expand All feature in JSON Source data table and Entity table", () => {
-
-    const {getByTestId, getByText, queryByText, rerender, getByLabelText} = render(<SourceToEntityMap {...data.mapProps}
+  test("CollapseAll/Expand All feature in JSON Source data table", () => {
+    const {getByText, queryByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
       mappingVisible={true}
     />);
 
@@ -637,22 +636,35 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("FirstNamePreferred")).toBeInTheDocument();
     expect(getByText("LastName")).toBeInTheDocument();
 
-    let expandCollapseBtnSrc = getByTestId("expandCollapseBtn-source");
+    let expandBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-expand");
+    let collapseBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse");
 
-    expect(expandCollapseBtnSrc.textContent).toBe("Expand All"); // Validating the button label
+    // Validating the default button state
+    expect(expandBtnSource).not.toBeChecked();
+    expect(collapseBtnSource).not.toBeChecked();
 
-    fireEvent.click(expandCollapseBtnSrc); //Expanding all nested levels
-    expect(expandCollapseBtnSrc.textContent).toBe("Collapse All"); // Validating the button label
+    //Expanding all nested levels
+    fireEvent.click(expandBtnSource);
+    expect(expandBtnSource).toBeChecked();
+    expect(collapseBtnSource).not.toBeChecked();
     expect(getByText("suffix")).toBeInTheDocument();
 
     //Check if indentation is right
     expect(getByText("suffix").closest("td")?.firstElementChild).toHaveStyle("padding-left: 40px;");
 
-    fireEvent.click(expandCollapseBtnSrc); //Collapsing all child levels
-    expect(expandCollapseBtnSrc.textContent).toBe("Expand All"); // Validating the button label
+    //Collapsing all child levels
+    fireEvent.click(collapseBtnSource);
+    expect(expandBtnSource).not.toBeChecked();
+    expect(collapseBtnSource).toBeChecked();
     expect(onClosestTableRow(getByText("suffix"))?.style.display).toBe("none"); // Checking if the row is marked hidden in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
     expect(onClosestTableRow(getByText("FirstNamePreferred"))?.style.display).toBe("none");
     expect(onClosestTableRow(getByText("LastName"))?.style.display).toBe("none");
+  });
+
+  test("CollapseAll/Expand All feature in JSON Entity table", () => {
+    const {getByText, queryByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
+      mappingVisible={true}
+    />);
 
     /* Validate collapse-expand in Entity table */
     //Check if the expected Entity table elements are present in the DOM before hittting the Expand/Collapse button
@@ -661,40 +673,33 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("itemTypes")).toBeInTheDocument();
     expect(getByText("itemCategory")).toBeInTheDocument();
 
-    let expandCollapseBtn = getByTestId("expandCollapseBtn-entity");
+    let expandBtnEntity = within(getByTestId("entityContainer")).getByLabelText("radio-button-expand");
+    let collapseBtnEntity = within(getByTestId("entityContainer")).getByLabelText("radio-button-collapse");
 
-    expect(expandCollapseBtn.textContent).toBe("Expand All");
+    // Validating the default button state
+    expect(expandBtnEntity).not.toBeChecked();
+    expect(collapseBtnEntity).not.toBeChecked();
 
-    fireEvent.click(expandCollapseBtn); //Expanding all nested levels
-    expect(expandCollapseBtn.textContent).toBe("Collapse All");
+    //Expanding all nested levels
+    fireEvent.click(expandBtnEntity);
+    expect(expandBtnEntity).toBeChecked();
+    expect(collapseBtnEntity).not.toBeChecked();
     expect(getByText("artCraft")).toBeInTheDocument();
 
     //Check if indentation is right
     expect(getByText("artCraft").closest("td")?.firstElementChild).toHaveStyle("padding-left: 28px;");
 
-    fireEvent.click(expandCollapseBtn); //Collapsing all child levels
-    expect(expandCollapseBtn.textContent).toBe("Expand All");
+    //Collapsing all child levels
+    fireEvent.click(collapseBtnEntity);
+    expect(expandBtnEntity).not.toBeChecked();
+    expect(collapseBtnEntity).toBeChecked();
     expect(onClosestTableRow(getByText("artCraft"))?.style.display).toBe("none"); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
     expect(onClosestTableRow(getByText("itemTypes"))?.style.display).toBe("none");
     expect(onClosestTableRow(getByText("itemCategory"))?.style.display).toBe("none");
-
-    //Verify Expand/Collapse button for source and entity tables resets to 'Expand All' when Modal is closed and reoponed
-    fireEvent.click(expandCollapseBtn);
-    expect(expandCollapseBtn.textContent).toBe("Collapse All");
-    fireEvent.click(expandCollapseBtnSrc);
-    expect(expandCollapseBtnSrc.textContent).toBe("Collapse All");
-    fireEvent.click(getByLabelText("Close"));
-    rerender(<SourceToEntityMap {...data.mapProps}
-      mappingVisible={true}
-    />);
-    expect(expandCollapseBtn.textContent).toBe("Expand All");
-    expect(expandCollapseBtnSrc.textContent).toBe("Expand All");
-
   });
 
   test("CollapseAll/Expand All feature in XML Source data table", () => {
-
-    const {getByTestId, getByText, getAllByText, queryByText} = render(<SourceToEntityMap {...data.mapProps}
+    const {getByText, getAllByText, queryByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}
       mappingVisible={true}
       sourceData={data.xmlSourceData}
     />);
@@ -707,12 +712,17 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("@proteinType")).toBeInTheDocument();
     expect(getByText("proteinId")).toBeInTheDocument();
 
-    let expandCollapseBtn = getByTestId("expandCollapseBtn-source");
+    let expandBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-expand");
+    let collapseBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse");
 
-    expect(expandCollapseBtn.textContent).toBe("Expand All");
+    // Validating the default button state
+    expect(expandBtnSource).not.toBeChecked();
+    expect(collapseBtnSource).not.toBeChecked();
 
-    fireEvent.click(expandCollapseBtn); //Expanding all nested levels
-    expect(expandCollapseBtn.textContent).toBe("Collapse All");
+    //Expanding all nested levels
+    fireEvent.click(expandBtnSource);
+    expect(expandBtnSource).toBeChecked();
+    expect(collapseBtnSource).not.toBeChecked();
     let firstName = getByText("FirstNamePreferred");
     let lastName = getByText("LastName");
     let proteinId = getByText("proteinId");
@@ -722,16 +732,16 @@ describe("RTL Source-to-entity map tests", () => {
     expect(lastName).toBeInTheDocument();
     expect(lastName.closest("td")?.firstElementChild).toHaveStyle("padding-left: 40px;"); // Check if the indentation is right
 
-    fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
-    expect(expandCollapseBtn.textContent).toBe("Expand All");
-    expect(expandCollapseBtn.textContent).toBe("Expand All");
+    //Collapsing back to the default view (root and 1st level)
+    fireEvent.click(collapseBtnSource);
+    expect(expandBtnSource).not.toBeChecked();
+    expect(collapseBtnSource).toBeChecked();
     expect(onClosestTableRow(proteinId)?.style.display).toBe("none");
     expect(onClosestTableRow(firstName)?.style.display).toBe("none");
     expect(onClosestTableRow(lastName)?.style.display).toBe("none");
   });
 
   test("Function selector dropdown in entity table", async () => {
-
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.testJSONResponseWithFunctions})));
     const {getByText, getByTestId, getAllByRole, queryByText, queryByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
 
@@ -792,7 +802,6 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getByText("Test"));
     await (waitForElement(() => getByTestId("propAttribute-value")));
     expect(getByTestId("propAttribute-value")).toHaveTextContent("home-NEW"); // home should be mapped as home-New
-
   });
 
   test("URI nav index resets on close of mapping",  async() => {
@@ -864,9 +873,10 @@ describe("Enzyme Source-to-entity map tests", () => {
 
   test("XML source data renders properly", async () => {
     const {getByText, getAllByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
+
     //Expanding all the nested levels first
-    fireEvent.click(getByTestId("expandCollapseBtn-source"));
-    fireEvent.click(getByTestId("expandCollapseBtn-entity"));
+    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     expect(getByText("Source Data")).toBeInTheDocument();
     expect(getByText("proteinId")).toBeInTheDocument();
@@ -881,12 +891,11 @@ describe("Enzyme Source-to-entity map tests", () => {
   });
 
   test("Nested entity data renders properly", () => {
-
     const {getByText, getAllByText, getByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
 
     //Expanding all the nested levels first
-    fireEvent.click(getByTestId("expandCollapseBtn-source"));
-    fireEvent.click(getByTestId("expandCollapseBtn-entity"));
+    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     expect(getByText("propId")).toBeInTheDocument();
     expect(getByText("propName")).toBeInTheDocument();
@@ -1002,7 +1011,6 @@ describe("RTL Source Selector/Source Search tests", () => {
     await waitForElement(() => getByText("Multiple"));
   });
 
-
   test("Nested JSON source data - Right XPATH expression",  async() => {
     axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
     const {getByText, getAllByText, getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
@@ -1046,8 +1054,8 @@ describe("RTL Source Selector/Source Search tests", () => {
     const {getAllByText, getByTestId, getAllByTestId, getByText, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
 
     //Expanding all the nested levels first
-    fireEvent.click(getByTestId("expandCollapseBtn-source"));
-    fireEvent.click(getByTestId("expandCollapseBtn-entity"));
+    fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
     let sourceSelector = getByTestId("itemTypes-listIcon");
 
     //corresponds to 'itemTypes' source selector

@@ -295,6 +295,26 @@ ul.ant-cascader-menu:nth-child(2) {
   color: #7F86B5 ;
 }
 
+/* styling for expand-collapse component */
+#expand-collapse .ant-radio-group-small .ant-radio-button-wrapper {
+  height: 26px;
+  width: 26px;
+  font-size: 16px;
+  border-color: #999;
+  color: #777;
+  text-align: center;
+}
+
+#expand-collapse .ant-radio-group-small .ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
+  border-color: #999;
+  color: #777;
+  box-shadow: -1px 0 0 0 #999;
+}
+
+#expand-collapse .ant-radio-group-small .ant-radio-button-wrapper:hover {
+  color: var(--hoverColor);
+}
+
 /* styling for MLButton focus */
 
 .ml-btn.ant-btn-primary:focus {

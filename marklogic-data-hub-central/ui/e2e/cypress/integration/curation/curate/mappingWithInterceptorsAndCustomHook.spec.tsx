@@ -11,6 +11,7 @@ import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
+import { wait } from "@testing-library/dom";
 
 const flowName = "orderFlow";
 const loadStep = "loadOrder";
@@ -140,7 +141,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     sourceToEntityMap.setXpathExpressionInput("shipRegion", "ShipRegion");
     sourceToEntityMap.setXpathExpressionInput("shippedDate", "ShippedDate");
     curatePage.dataPresent().should("be.visible");
-    sourceToEntityMap.expandCollapseEntity().click();
+    cy.waitUntil(() => sourceToEntityMap.expandEntity()).click();
     // Test the mappings
     cy.waitUntil(() => sourceToEntityMap.testMap().should("be.enabled"));
     sourceToEntityMap.testMap().click();
@@ -190,13 +191,13 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
     // link to settings and back
     curatePage.openSourceToEntityMap("Order", mapStep);
-    cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should("be.visible")).click();
     sourceToEntityMap.stepSettingsLink().click();
     cy.waitUntil(() => createEditMappingDialog.stepDetailsLink().click());
-    cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should("be.visible"));
-
+    cy.wait(1000);
+    cy.waitForAsyncRequest();
+    
     // close modal
-    cy.get("body").type("{esc}");
+    cy.waitUntil(() => sourceToEntityMap.modalCloseButton()).click();
 
     curatePage.openExistingFlowDropdown("Order", mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();

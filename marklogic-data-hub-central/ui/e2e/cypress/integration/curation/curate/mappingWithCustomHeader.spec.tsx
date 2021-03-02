@@ -101,7 +101,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     // map source to entity
     curatePage.openSourceToEntityMap("Order", mapStep);
-    cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should("be.visible")).click();
+    cy.waitUntil(() => sourceToEntityMap.expandEntity());
     sourceToEntityMap.setXpathExpressionInput("orderId", "OrderID");
     sourceToEntityMap.setXpathExpressionInput("address", "/");
     sourceToEntityMap.setXpathExpressionInput("city", "ShipCity");
