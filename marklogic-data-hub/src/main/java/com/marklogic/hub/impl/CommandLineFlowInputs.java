@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Defines command-line-specific inputs for running a flow. JCommander Parameter annotations are used so that a
- * JCommander Command class can extend this to inherit all of the parameters. Usable in a Gradle context as well for
- * collecting Gradle properties and then constructing flow inputs.
+ * Defines command-line-specific inputs for running a flow. Intended for use in the DHF Gradle plugin and the client JAR.
  */
 public class CommandLineFlowInputs {
 
