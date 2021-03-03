@@ -6,7 +6,7 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'com.marklogic.ml-development-tools' version '5.3.0'
+    id 'com.marklogic.ml-development-tools' version '5.4.0'
 
     // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
     // not being able to resolve its "dataFiles" configuration
@@ -50,12 +50,6 @@ ext {
     thirdPartySourcePath = "src/main/resources/ml-modules/root/data-hub/third-party"
 }
 
-// This enables including a logging jar in the application artifacts produced by this project - the installer and the client jars
-// without that jar ending up in the library artifact.
-configurations {
-    datahubLogging
-}
-
 dependencies {
     api project(":marklogic-data-hub-api")
 
@@ -77,13 +71,12 @@ dependencies {
     implementation 'commons-io:commons-io:2.4'
     implementation 'org.apache.commons:commons-text:1.1'
 
-    // For installer program
-    implementation "com.beust:jcommander:1.72"
-
-    datahubLogging 'ch.qos.logback:logback-classic:1.2.3'
-
     testFixturesApi(testImplementation(project(":marklogic-data-hub-test")))
+    testFixturesApi "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation 'commons-io:commons-io:2.4'
+
+    // TODO I don't think this should be necessary, but including as quick fix
+    testRuntime files("src/testFixtures/resources")
 
     // Still need these; trying to bring them in via marklogic-data-hub-api leads to compile errors
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
@@ -120,19 +113,6 @@ configurations.all {
     exclude group: "log4j", module: "log4j"
 }
 
-ext {
-    uberJarLoggingClasses = configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }
-
-    // Because this is evaluated eagerly, the project dependency classes directory main not yet exist.
-    // But if it ends in "main", we know it's a directory and should not be zipped, which causes an error.
-    // The path likely ends in "build/classes/java/main", but we only need to check for "main" (and could
-    // likely only check that it doesn't end in ".jar", but checking for "main" suffices for now).
-    uberJarClasses = configurations.compileClasspath.collect({
-        def isProjectDependencyClassesPath = "main".equals(it.getName())
-        return it.isDirectory() || isProjectDependencyClassesPath ? it : zipTree(it)
-    })
-}
-
 task extractFastXmlParserZip(type: Copy) {
     doFirst {
         new File(thirdPartySourcePath).mkdirs()
@@ -144,67 +124,6 @@ task extractFastXmlParserZip(type: Copy) {
 
 // Ensure that the fast-xml-parser files are available before any DHF jars are built
 processResources.dependsOn extractFastXmlParserZip
-
-task installerJar(type: Jar) {
-    description = "Build an executable jar for installing DHF into DHS"
-    manifest {
-        attributes "Main-Class": "com.marklogic.hub.dhs.installer.Main"
-    }
-    archiveClassifier = "installer"
-    from(uberJarLoggingClasses) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    from(uberJarClasses) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    from("src/main/installer") {
-        include "logback.xml"
-    }
-    with jar
-}
-build.dependsOn installerJar
-
-task installDhfIntoDhs(type: Exec) {
-    description = "Builds and runs the DHF installer for DHS"
-    workingDir = "."
-    commandLine = "java"
-    args = [
-        "-jar", "build/libs/marklogic-data-hub-${version}-installer.jar",
-        "--path", "build/dhsInstaller",
-        "--host", mlHost,
-        "--username", mlUsername,
-        "--password", mlPassword,
-        "dhsInstall"
-    ]
-}
-installDhfIntoDhs.dependsOn installerJar
-
-task clientJar(type: Jar) {
-    description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
-    manifest {
-        attributes "Main-Class": "com.marklogic.hub.cli.client.Main"
-    }
-    archiveClassifier = "client"
-    from(uberJarLoggingClasses) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    from(uberJarClasses) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    from("src/main/clientJar") {
-        include "logback.xml"
-    }
-    with jar
-}
-build.dependsOn clientJar
 
 node {
   // Version of node to use.
@@ -351,8 +270,6 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact installerJar
-            artifact clientJar
 
             pom.withXml {
                 asNode().appendNode('description', pomCustomizations.textdescription.text())
@@ -487,11 +404,6 @@ task testDhsTests(type: Test) {
         exclude 'com/marklogic/hub/dataservices/VerifyEndpointPrivileges*'
 
         include 'com/marklogic/hub/dhs/**'
-        // Doesn't work in DHS because the options expected to be created already exist
-        exclude '**/CopyQueryOptionsCommandTest*'
-        // Not run in DHS because it has to re-install DHF modules, which messes up what the DHF installer did
-        exclude '**/UpdateDhsRestExtensionPermissionsTest*'
-
         include 'com/marklogic/hub/flow/**'
         include 'com/marklogic/hub/hubcentral/**'
         include 'com/marklogic/hub/mapping/**'

@@ -1,0 +1,62 @@
+<configuration>
+
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT" />
+  </root>
+
+  <logger name="com.marklogic.appdeployer" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.mgmt" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.rest" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="org.springframework" level="ERROR" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.client" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.hub.deploy.commands" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.hub.test" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <!-- Quieting this down as it logs frequently at "info" with stuff that's rarely relevant to tests -->
+  <logger name="com.marklogic.hub.impl.HubConfigImpl" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.hub_unit_test" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <!-- Shut this thing up unless there's a real problem, otherwise pollutes the logs -->
+  <logger name="com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager" level="ERROR" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <!-- Quieting this down, as it logs a lot of not-helpful warnings when running tests against DHS -->
+  <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+</configuration>

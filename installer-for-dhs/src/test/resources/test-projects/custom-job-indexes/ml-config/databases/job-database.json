@@ -1,0 +1,22 @@
+{
+  "database-name": "%%mlJobDbName%%",
+  "range-element-index": [
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "CustomJobIndexTest",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }
+  ],
+  "range-path-index": [
+    {
+      "scalar-type": "string",
+      "path-expression": "/Custom/Job/Index/Test",
+      "collation": "http://marklogic.com/collation/codepoint",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }
+  ]
+}
