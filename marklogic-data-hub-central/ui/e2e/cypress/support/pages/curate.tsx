@@ -28,19 +28,19 @@ class CuratePage {
   }
 
   openSourceToEntityMap(entityTypeId: string, stepName: string) {
-    this.getEntityMappingStep(entityTypeId, stepName).trigger("mouseover");
+    cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
     cy.waitUntil(() => cy.findByTestId(`${stepName}-stepDetails`)).click();
     this.verifyStepDetailsOpen(stepName);
   }
 
   addToNewFlow(entityTypeId: string, stepName: string) {
-    this.getEntityMappingStep(entityTypeId, stepName).trigger("mouseover");
+    cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
     cy.waitUntil(() => cy.findByTestId(`${stepName}-toNewFlow`)).click();
   }
 
   openExistingFlowDropdown(entityTypeId: string, stepName: string) {
-    this.getEntityMappingStep(entityTypeId, stepName).trigger("mouseover");
-    cy.findByTestId(`${stepName}-flowsList`).click();
+    cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
+    cy.waitUntil(() => cy.findByTestId(`${stepName}-flowsList`)).click();
   }
 
   openStepDetails(stepName: string) {
@@ -67,15 +67,15 @@ class CuratePage {
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.findByTestId(`${entityTypeId}-Merge`).click();
+    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Merge`)).click();
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.findByTestId(`${entityTypeId}-Match`).click();
+    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Match`)).click({force: true});
   }
 
   selectCustomTab(entityTypeId: string) {
-    cy.findByTestId(`${entityTypeId}-Custom`).click();
+    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Custom`)).click();
   }
 
   addNewStep() {

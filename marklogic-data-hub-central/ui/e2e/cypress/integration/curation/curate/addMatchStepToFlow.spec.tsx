@@ -20,18 +20,22 @@ describe("Add Matching step to a flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("matching", "matchCustomerTest");
     cy.deleteFlows("matchE2ETest", "matchE2ETestRun");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Navigating to Customer Match tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -68,10 +72,11 @@ describe("Add Matching step to a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep);
-    runPage.runStep(matchStep).click();
     cy.waitForAsyncRequest();
+    runPage.runStep(matchStep);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
+    cy.waitForAsyncRequest();
   });
   it("Delete the step and Navigate back to match tab", () => {
     runPage.deleteStep(matchStep).click();
@@ -89,8 +94,8 @@ describe("Add Matching step to a flow", () => {
     curatePage.confirmAddStepToFlow(matchStep, flowName1);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep);
-    runPage.runStep(matchStep).click();
     cy.waitForAsyncRequest();
+    runPage.runStep(matchStep);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });

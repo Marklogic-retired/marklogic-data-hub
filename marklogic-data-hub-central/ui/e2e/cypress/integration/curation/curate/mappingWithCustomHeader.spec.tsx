@@ -24,12 +24,15 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -37,6 +40,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.deleteSteps("mapping", "mapOrderCustomHeader");
     cy.deleteFlows("orderCustomHeaderFlow", "orderE2eFlow");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Create load step", () => {
     toolbar.getLoadToolbarIcon().click();
@@ -64,8 +68,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", loadStep);
     //Run the ingest with JSON
-    runPage.runStep(loadStep).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(loadStep);
     cy.uploadFile("input/10260.json");
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -121,7 +127,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.getExistingFlowFromDropdown(flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName);
-    runPage.runStep(mapStep).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(mapStep);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
     runPage.deleteStep(mapStep).click();

@@ -11,14 +11,17 @@ describe("Verify ingestion for all filetypes", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -37,15 +40,19 @@ describe("Verify ingestion for all filetypes", () => {
     loadPage.selectTargetFormat("XML");
     loadPage.uriPrefixInput().type("/e2eCSV/");
     loadPage.saveButton().click();
+    cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
     loadPage.addStepToNewFlow(stepName);
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
-    runPage.runStep(stepName).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(stepName);
     cy.uploadFile("input/test-1.csv");
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -60,15 +67,19 @@ describe("Verify ingestion for all filetypes", () => {
     loadPage.selectTargetFormat("BINARY (.gif, .jpg, .pdf, .doc, .docx, etc.)");
     loadPage.uriPrefixInput().type("/e2eBinary/");
     loadPage.saveButton().click();
+    cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
     loadPage.addStepToNewFlow(stepName);
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
-    runPage.runStep(stepName).click();
-    cy.get("#fileUpload").attachFile("input/test-1.zip");
+    cy.waitForAsyncRequest();
+    runPage.runStep(stepName);
+    cy.uploadFile("input/test-1.zip");
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -83,15 +94,19 @@ describe("Verify ingestion for all filetypes", () => {
     loadPage.selectTargetFormat("XML");
     loadPage.uriPrefixInput().type("/e2eXml/");
     loadPage.saveButton().click();
+    cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
     loadPage.addStepToNewFlow(stepName);
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
-    runPage.runStep(stepName).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(stepName);
     cy.uploadFile("input/test-1.xml");
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     //Verify step name appears as a collection facet in explorer
     runPage.explorerLink().click();

@@ -20,18 +20,22 @@ describe("Add Merge step to a flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("merging", "mergeCustomerTest");
     cy.deleteFlows("mergeE2ETest", "mergeE2ETestRun");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Navigating to Customer Merge tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -70,8 +74,8 @@ describe("Add Merge step to a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merge", mergeStep);
-    runPage.runStep(mergeStep).click();
     cy.waitForAsyncRequest();
+    runPage.runStep(mergeStep);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -91,8 +95,8 @@ describe("Add Merge step to a flow", () => {
     curatePage.confirmAddStepToFlow(mergeStep, flowName1);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merge", mergeStep);
-    runPage.runStep(mergeStep).click();
     cy.waitForAsyncRequest();
+    runPage.runStep(mergeStep);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
