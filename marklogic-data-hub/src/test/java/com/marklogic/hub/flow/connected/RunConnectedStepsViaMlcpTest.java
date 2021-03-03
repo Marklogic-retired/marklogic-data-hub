@@ -38,7 +38,7 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
 
     @Test
     void ingestAndErrorStep() {
-        int recordCount = 10;
+        int recordCount = 1;
 
         installProject();
         writeTestDocumentsToProjectDirectory(recordCount);

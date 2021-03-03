@@ -274,39 +274,6 @@ public class HubTestBase extends AbstractHubTest {
         }
     }
 
-    protected int getStagingDocCount() {
-        return getStagingDocCount(null);
-    }
-
-    protected int getStagingDocCount(String collection) {
-        return getDocCount(HubConfig.DEFAULT_STAGING_NAME, collection);
-    }
-
-    protected int getFinalDocCount() {
-        return getFinalDocCount(null);
-    }
-
-    protected int getFinalDocCount(String collection) {
-        return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection);
-    }
-
-    protected int getTracingDocCount() {
-        return getDocCount(HubConfig.DEFAULT_JOB_NAME, "trace");
-    }
-
-    protected int getJobDocCount() {
-        return getDocCount(HubConfig.DEFAULT_JOB_NAME, "job");
-    }
-
-    protected int getDocCount(String database, String collection) {
-        String collectionName = "";
-        if (collection != null) {
-            collectionName = "'" + collection + "'";
-        }
-        String val = getClientByName(database).newServerEval().xquery("xdmp:estimate(fn:collection(" + collectionName + "))").evalAs(String.class);
-        return Integer.parseInt(val);
-    }
-
     protected void installStagingDoc(String uri, DocumentMetadataHandle meta, String resource) {
         getHubClient().getStagingClient().newDocumentManager().write(uri, meta, new FileHandle(getResourceFile(resource)));
     }
@@ -363,43 +330,12 @@ public class HubTestBase extends AbstractHubTest {
         return runInDatabase(query, HubConfig.DEFAULT_MODULES_DB_NAME);
     }
 
-    protected EvalResultIterator runInDatabase(String query, String databaseName) {
-        try {
-            return getClientByName(databaseName).newServerEval().xquery(query).eval();
-        } catch (FailedRequestException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     protected AbstractReadHandle runInDatabase(String query, String databaseName, AbstractReadHandle handle) {
         try {
             return getClientByName(databaseName).newServerEval().xquery(query).eval(handle);
         } catch (FailedRequestException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected DatabaseClient getClientByName(String databaseName) {
-        HubClient hc = getHubClient();
-        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.STAGING))) {
-            return hc.getStagingClient();
-        }
-        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.FINAL))) {
-            return hc.getFinalClient();
-        }
-        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.JOB))) {
-            return hc.getJobsClient();
-        }
-        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.MODULES))) {
-            return hc.getModulesClient();
-        }
-        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.STAGING_SCHEMAS))) {
-            return getHubConfig().getAppConfig().newAppServicesDatabaseClient(databaseName);
-        }
-        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.FINAL_SCHEMAS))) {
-            return getHubConfig().getAppConfig().newAppServicesDatabaseClient(databaseName);
-        }
-        throw new IllegalArgumentException("Doesn't support: " + databaseName);
     }
 
     protected void allCombos(ComboListener listener) {
@@ -426,10 +362,6 @@ public class HubTestBase extends AbstractHubTest {
         }
     }
 
-    protected void installHubModules() {
-        new LoadHubModulesCommand(getHubConfig()).execute(newCommandContext());
-    }
-
     /**
      * This loads user artifacts as well, despite the name.
      *
@@ -438,14 +370,6 @@ public class HubTestBase extends AbstractHubTest {
      */
     protected void installUserModules(HubConfig hubConfig, boolean force) {
         installUserModulesAndArtifacts(hubConfig, force);
-    }
-
-    protected void installHubArtifacts() {
-        new LoadHubArtifactsCommand(getHubConfig()).execute(newCommandContext());
-    }
-
-    public void clearUserModules() {
-        dataHub.clearUserModules(Arrays.asList("marklogic-unit-test"));
     }
 
     /**

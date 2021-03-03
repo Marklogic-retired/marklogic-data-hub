@@ -1,0 +1,49 @@
+plugins {
+    id "java"
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+group = 'com.marklogic'
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
+}
+
+repositories {
+    jcenter()
+}
+
+ext {
+    junitPlatformVersion = '1.4.2'
+    junitJupiterVersion = '5.4.2'
+}
+
+dependencies {
+    implementation project(":marklogic-data-hub")
+    implementation "com.beust:jcommander:1.72"
+    implementation "org.slf4j:slf4j-api:1.7.30"
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+
+    testImplementation(testFixtures(project(":marklogic-data-hub")))
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testImplementation "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+}
+
+shadowJar {
+    archiveBaseName = "marklogic-data-hub"
+    classifier = "client"
+    manifest {
+        attributes "Main-Class": "com.marklogic.hub.clientjar.Main"
+    }
+}
+build.dependsOn shadowJar
