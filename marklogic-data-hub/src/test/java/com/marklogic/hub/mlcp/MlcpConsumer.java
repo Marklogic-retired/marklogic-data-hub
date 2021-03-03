@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.util;
+package com.marklogic.hub.mlcp;
 
 import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
 
@@ -29,15 +29,11 @@ public class MlcpConsumer implements Consumer<String> {
     private static final Pattern FAILED_EVENTS_PATTERN = Pattern.compile("^.+OUTPUT_RECORDS_FAILED\\s+(\\d+).*$");
     private AtomicLong successfulEvents;
     private AtomicLong failedEvents;
-    private LegacyFlowStatusListener statusListener;
     private String jobId;
 
-    public MlcpConsumer(AtomicLong successfulEvents, AtomicLong failedEvents, LegacyFlowStatusListener statusListener,
-                        String jobId)
-    {
+    public MlcpConsumer(AtomicLong successfulEvents, AtomicLong failedEvents, String jobId) {
         this.successfulEvents = successfulEvents;
         this.failedEvents = failedEvents;
-        this.statusListener = statusListener;
         this.jobId = jobId;
     }
 
@@ -61,10 +57,6 @@ public class MlcpConsumer implements Consumer<String> {
         m = FAILED_EVENTS_PATTERN.matcher(status);
         if (m.matches()) {
             failedEvents.addAndGet(Long.parseLong(m.group(1)));
-        }
-
-        if (statusListener != null) {
-            statusListener.onStatusChange(jobId, currentPc, status);
         }
     }
 }

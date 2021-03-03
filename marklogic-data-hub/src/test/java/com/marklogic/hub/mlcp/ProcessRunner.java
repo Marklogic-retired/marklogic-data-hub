@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.util;
+package com.marklogic.hub.mlcp;
 
-import com.marklogic.hub.HubConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +56,6 @@ public class ProcessRunner extends Thread {
     @Override
     public void run() {
         try {
-            logger.error(String.join(" ", args));
             ProcessBuilder pb = new ProcessBuilder(args);
             pb.redirectErrorStream(true);
             Process process = pb.start();

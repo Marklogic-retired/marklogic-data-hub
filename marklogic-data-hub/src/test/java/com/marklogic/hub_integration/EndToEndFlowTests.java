@@ -34,7 +34,7 @@ import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.MlcpRunner;
+import com.marklogic.hub.mlcp.MlcpRunner;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +49,6 @@ import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -839,7 +838,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
 
         int existingStagingCount = getStagingDocCount();
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.contentpump.ContentPump", runAsFlowOperator(), flow, databaseClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(runAsFlowOperator(), flow, databaseClient, mlcpOptions);
         if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING)) {
             mlcpRunner.setDatabase(getHubConfig().getDbName(DatabaseKind.STAGING));
         } else {

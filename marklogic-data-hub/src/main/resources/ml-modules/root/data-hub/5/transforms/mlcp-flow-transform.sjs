@@ -16,7 +16,13 @@
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const consts = require("/data-hub/5/impl/consts.sjs");
+const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+
 const urisInBatch = [];
 for (let requestField of xdmp.getRequestFieldNames()) {
   let fieldValue = fn.head(xdmp.getRequestField(requestField));
@@ -27,11 +33,11 @@ for (let requestField of xdmp.getRequestFieldNames()) {
 const visitedURIs = [];
 const urisToContent = {};
 
-
 function transform(content, context = {}) {
-  let currentUri = content.uri;
-  urisToContent[currentUri] = content;
-  visitedURIs.push(currentUri);
+  const contentUri = content.uri;
+  urisToContent[contentUri] = content;
+  visitedURIs.push(contentUri);
+
   if (urisInBatch.every((uri) => visitedURIs.includes(uri))) {
     let params = {};
     let optionsString = null;
@@ -53,74 +59,92 @@ function transform(content, context = {}) {
       params[parts[0]] = parts[1];
     }
 
-    let jobId = params["job-id"] || `mlcp-${xdmp.transaction()}`;
-    let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
-    let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
+    const flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
     if (flowName === 'default-ingestion') {
       context.collections.push('default-ingestion');
     }
-    let flow = datahub.flow.getFlow(flowName);
 
-    if (!flow) {
-      datahub.debug.log({message: params, type: 'error'});
-      httpUtils.throwNotFoundWithArray(["DH-FLOWMISSING", "The specified flow " + flowName + " is missing.", content.uri]);
-    }
-    let options = {};
-    if (optionsString) {
-      let splits = optionsString.split("=");
-      try {
-        options = JSON.parse(splits[1]);
-      } catch (e) {
-        datahub.debug.log({message: params, type: 'error'});
-        httpUtils.throwBadRequestWithArray(["DH-INVALIDOPTIONS", "Invalid json, could not parse options.", optionsString, content.uri]);
-      }
-    }
-    options.noWrite = true;
-    options.fullOutput = true;
+    // Don't need getFullFlow, as we don't need any step config
+    const theFlow = Artifacts.getArtifact("flow", flowName);
+    const jobId = params["job-id"] || `mlcp-${xdmp.transaction()}`;
+
+    const options = optionsString ? parseOptionsString(optionsString, contentUri) : {};
     options.sourceName = params["sourceName"];
     options.sourceType = params["sourceType"];
-    let contentObjs = [];
-    for (let uri in urisToContent) {
-      if (urisToContent.hasOwnProperty(uri)) {
-        let content = urisToContent[uri];
-        if (content.value) {
-          content.context = context;
-          contentObjs.push(content);
-        } else {
-          datahub.debug.log({message: params, type: 'error'});
-          httpUtils.throwNotFoundWithArray(["DH-NOCONTENT", "The content was null provided to the flow " + flowName + " for " + uri + ".", content.uri]);
+
+    const contentArray = buildContentArray(context);
+
+    if (runStepsInMemory(theFlow, options)) {
+      // Let errors propagate to MLCP
+      flowRunner.processContentWithFlow(flowName, contentArray, jobId, options);
+      return Sequence.from([]);
+    } else {
+      const step = params['step'] ? xdmp.urlDecode(params['step']) : null;
+      options.noWrite = true;
+      options.fullOutput = true;
+      // This maps to the ResponseHolder Java class; it's not a RunFlowResponse or RunStepResponse
+      const responseHolder = datahub.flow.runFlow(flowName, jobId, contentArray, options, step);
+      
+      // If the flow response has an error, propagate it up to MLCP so MLCP can report it
+      if (responseHolder.errors && responseHolder.errors.length) {
+        httpUtils.throwBadRequestWithArray([`Flow failed with error: ${responseHolder.errors[0].stack}`, contentUri]);
+      }
+
+      const contentDocuments = responseHolder.documents;
+      if (contentDocuments && contentDocuments.length) {
+        Object.assign(context, contentDocuments[0].context);
+        for (let doc of contentDocuments) {
+          delete doc.context;
+          if (!doc.value) {
+            httpUtils.throwNotFoundWithArray([`No content.value defined for URI: ${doc.uri}`, doc.uri]);
+          }
         }
+        return Sequence.from(contentDocuments);
       }
     }
-
-
-    //don't catch any exception here, let it slip through to mlcp
-    let flowResponse = datahub.flow.runFlow(flowName, jobId, contentObjs, options, step);
-
-    // if an error is returned, throw it to MLCP
-    if (flowResponse.errors && flowResponse.errors.length) {
-      datahub.debug.log(flowResponse.errors[0]);
-      httpUtils.throwBadRequest(flowResponse.errors[0].stack);
-    }
-
-    let documents = flowResponse.documents;
-    if (documents && documents.length) {
-      Object.assign(context, documents[0].context);
-    }
-    for (let doc of documents) {
-      delete doc.context;
-      if (doc.type && doc.type === 'error' && doc.message) {
-        datahub.debug.log(doc);
-        httpUtils.throwBadRequestWithArray(["DH-FLOWERROR", doc.message, content.uri]);
-      } else if (!doc.value) {
-        datahub.debug.log({message: params, type: 'error'});
-        httpUtils.throwNotFoundWithArray(["DH-NOCONTENT","The content was null in the flow " + flowName + " for " + doc.uri + ".", content.uri]);
-      }
-    }
-    return Sequence.from(documents);
   } else {
     return Sequence.from([]);
   }
+}
+
+function buildContentArray(context) {
+  const contentArray = [];
+  Object.keys(urisToContent).forEach(uri => {
+    // Sanity check, though uri/value should always exist when MLCP passes a content object to a transform
+    if (urisToContent.hasOwnProperty(uri)) {
+      let content = urisToContent[uri];
+      if (content.value) {
+        content.context = context;
+        contentArray.push(content);
+      }
+    }
+  });
+  return contentArray;
+}
+
+function parseOptionsString(optionsString, contentUri) {
+  var tokens = optionsString.split("=");
+  if (tokens.length < 2) {
+    // Using console.log so this always appears
+    console.log("Unable to parse JSON options; expecting options={json object}; found: " + optionsString);
+    return {};
+  }
+  try {
+    const options = JSON.parse(optionsString.split("=")[1]);
+    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Parsed options into JSON object: ${xdmp.toJsonString(options)}`);
+    return options;
+  } catch (e) {
+    httpUtils.throwBadRequestWithArray([`Could not parse JSON options; cause: ${e.message}`, contentUri]);
+  }
+}
+
+function runStepsInMemory(theFlow, options) {
+  const mode = "in-memory";
+  if (theFlow.stepConnectionMode == mode || options.stepConnectionMode == mode) {
+    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, "Will runs steps with in-memory connection mode");
+    return true;
+  }
+  return false;
 }
 
 exports.transform = transform;

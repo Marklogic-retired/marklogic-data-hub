@@ -24,7 +24,7 @@ let dataHubOptions = ["sourceQuery", "sourceQueryIsScript", "constrainSourceQuer
   "stepUpdate", "collections" , "additionalCollections", "permissions", "outputFormat", "sourceDatabase", "targetDatabase", "targetEntityType"];
 let additionalSettings = {};
 let step = Artifacts.getArtifact("custom", stepName)
-let options = Artifacts.convertStepReferenceToInlineStep(step.stepId).options;
+let options = Artifacts.convertStepReferenceToInlineStep(step.stepId, null).options;
 for (let key of Object.keys(options)) {
   if(!dataHubOptions.includes(key)){
     additionalSettings[key] = options[key];
