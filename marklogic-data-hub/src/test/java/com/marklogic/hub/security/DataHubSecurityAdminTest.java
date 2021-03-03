@@ -5,6 +5,7 @@ import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.RolePrivilege;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
+import com.marklogic.hub.MarkLogicVersion;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
@@ -269,6 +270,30 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
             new PrivilegeManager(adminUserClient).delete(p.getJson());
             // Just in case the role was created
             new Role(adminUserApi, roleName).delete();
+        }
+    }
+
+    @Test
+    void CreateCustomRoleWithXdmpShutdown() {
+        MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
+        Assumptions.assumeTrue(version.getMajor() >= 10 &&
+            (version.isNightly() || version.getMinor() >= 601), "Bug<55765> is fixed in 10.0-6.1");
+
+        final String roleName = "custom-role-with-xdmp-shutdown-privilege";
+        Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
+        customRole.addPrivilege(new RolePrivilege("xdmp:shutdown", "http://marklogic.com/xdmp/privileges/xdmp-shutdown", "execute"));
+
+        try {
+            customRole.save();
+            fail("The role creation should have failed because a DHSA user shouldn’t be able to create a custom role with xdmp:shutdown privilege");
+        }
+        catch (Exception ex) {
+            logger.info("Caught expected exception: " + ex.getMessage());
+
+            // Just in case the role was created (role was being created even after exception thrown -> bug: 55765).
+            assertFalse(customRole.exists(), "The role should not have been created");
+        } finally {
+            new Role(userWithRoleBeingTestedApi, roleName).delete();
         }
     }
 }
