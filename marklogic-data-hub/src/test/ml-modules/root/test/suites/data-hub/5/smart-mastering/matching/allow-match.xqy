@@ -4,9 +4,9 @@ import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+
 (: Force update mode :)
 declare option xdmp:update "true";
-
 declare option xdmp:mapping "false";
 
 ()

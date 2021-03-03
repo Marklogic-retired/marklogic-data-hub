@@ -27,6 +27,7 @@ declare variable $merge-rule-one := object-node {
       "documentXPath":"/property",
       "maxSources": 1
     };
+
 let $merged-properties-all := merging-impl:standard($property-qname, $all-properties, $merge-rule-all)
 let $merged-properties-one := merging-impl:standard($property-qname, $all-properties, $merge-rule-one)
 return (

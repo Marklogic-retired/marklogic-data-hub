@@ -29,7 +29,7 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
-    "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace notify-impl = "http://marklogic.com/smart-mastering/notification-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/notification-impl.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
@@ -40,7 +40,7 @@ import module namespace coll = "http://marklogic.com/smart-mastering/collections
   at "collections.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
   at "/com.marklogic.smart-mastering/telemetry.xqy";
-import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+import module namespace httputils = "http://marklogic.com/data-hub/http-utils"
   at "/data-hub/5/impl/http-utils.xqy";
 
 declare option xdmp:mapping "false";
@@ -192,7 +192,7 @@ declare function proc-impl:expand-uris-for-merge(
   let $accumulated-uris := fn:distinct-values(($current-uris, $accumulated-uris))
   let $additional-uris :=
     fn:distinct-values(
-      (: We already know at this point that the $accumlated-uris and $current-uris will be merged :)
+      (: We already know at this point that the $accumulated-uris and $current-uris will be merged :)
       let $docs-to-exclude-map := map:entry("docsToExclude", $accumulated-uris)
       let $sub-filter-query-fun := if ($filter-query instance of cts:true-query) then
           function($docs-to-exclude) {
@@ -817,7 +817,6 @@ declare function proc-impl:build-content-objects-from-match-summary(
                                       $merge-node
                                     else
                                       merge-impl:options-from-json($merge-node)
-                                      (: $merge-node :)
                             )
                           )
                         )

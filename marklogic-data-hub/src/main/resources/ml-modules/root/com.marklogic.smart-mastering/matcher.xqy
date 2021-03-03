@@ -34,8 +34,8 @@ import module namespace opt-impl = "http://marklogic.com/smart-mastering/options
   at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
-import module namespace httputils="http://marklogic.com/data-hub/http-utils"
-at "/data-hub/5/impl/http-utils.xqy";
+import module namespace httputils = "http://marklogic.com/data-hub/http-utils"
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace sm = "http://marklogic.com/smart-mastering";
 

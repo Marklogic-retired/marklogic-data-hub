@@ -15,8 +15,8 @@ import module namespace helper-impl = "http://marklogic.com/smart-mastering/help
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace sem = "http://marklogic.com/semantics"
   at "/MarkLogic/semantics.xqy";
-import module namespace httputils="http://marklogic.com/data-hub/http-utils"
-at "/data-hub/5/impl/http-utils.xqy";
+import module namespace httputils = "http://marklogic.com/data-hub/http-utils"
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 declare variable $_entity-descriptors as array-node() := array-node {

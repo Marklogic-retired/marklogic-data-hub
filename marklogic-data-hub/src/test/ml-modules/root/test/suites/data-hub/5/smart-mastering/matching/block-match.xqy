@@ -8,7 +8,6 @@ import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 declare option xdmp:update "false";
-
 declare option xdmp:mapping "false";
 
 let $assertions := ()

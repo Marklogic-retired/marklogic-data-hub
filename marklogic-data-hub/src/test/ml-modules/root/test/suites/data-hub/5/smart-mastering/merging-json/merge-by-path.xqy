@@ -15,7 +15,6 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 
 declare option xdmp:update "false";
-
 declare option xdmp:mapping "false";
 
 (: Merge a couple documents :)

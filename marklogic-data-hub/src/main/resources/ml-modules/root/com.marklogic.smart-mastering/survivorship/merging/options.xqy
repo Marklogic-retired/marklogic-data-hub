@@ -15,16 +15,16 @@ import module namespace es-helper = "http://marklogic.com/smart-mastering/entity
   at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
 import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
   at "../../function-extension/base.xqy";
-import module namespace json="http://marklogic.com/xdmp/json"
+import module namespace json = "http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 import module namespace mem = "http://maxdewpoint.blogspot.com/memory-operations/functional"
   at "/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations-functional.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-  at  "standard.xqy";
+  at "standard.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
   at "/com.marklogic.smart-mastering/impl/util.xqy";
-import module namespace httputils="http://marklogic.com/data-hub/http-utils"
-at "/data-hub/5/impl/http-utils.xqy";
+import module namespace httputils = "http://marklogic.com/data-hub/http-utils"
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 
@@ -35,8 +35,8 @@ declare option xdmp:mapping "false";
  :)
 declare variable $MERGING-OPTIONS-DIR := "/com.marklogic.smart-mastering/options/merging/";
 
-declare variable $event-names-json as xs:QName+ := (xs:QName("onMerge"),xs:QName("onArchive"),xs:QName("onNoMatch"),xs:QName("onNotification"));
-declare variable $event-names-xml as xs:QName+ := (xs:QName("merging:on-merge"),xs:QName("merging:on-archive"),xs:QName("merging:on-no-match"),xs:QName("merging:on-notification"));
+declare variable $event-names-json as xs:QName+ := (xs:QName("onMerge"), xs:QName("onArchive"), xs:QName("onNoMatch"), xs:QName("onNotification"));
+declare variable $event-names-xml as xs:QName+ := (xs:QName("merging:on-merge"), xs:QName("merging:on-archive"), xs:QName("merging:on-no-match"), xs:QName("merging:on-notification"));
 
 (:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  : Functions related to merge options.
@@ -54,43 +54,6 @@ declare function merge-impl:get-JSON-options() as object-node()*
     ))
   let $options := cts:search(doc(), $query, "unfiltered")
   return $options/object-node()
-  (:
-  return array-node { $options ! xdmp:from-json(.) }
-  :)
-};
-
-declare function merge-impl:get-options($format as xs:string)
-{
-  let $query :=
-    cts:and-query((
-      cts:collection-query($const:OPTIONS-COLL),
-      (: In future version, remove mdm-merge collection from query
-        Currently part of the query to avoid breaking changes.
-      :)
-      cts:collection-query(('mdm-merge', $const:MERGE-OPTIONS-COLL))
-    ))
-  let $options := cts:search(fn:collection(), $query)/merging:options
-  return
-    if ($format eq $const:FORMAT-XML) then
-      $options
-    else if ($format eq $const:FORMAT-JSON) then
-      array-node { $options ! merge-impl:options-to-json(.) }
-    else
-      httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option-names called with invalid format " || $format)
-};
-
-declare function merge-impl:get-options($options-name, $format as xs:string)
-{
-  let $options-uri := $MERGING-OPTIONS-DIR || $options-name || ".xml"
-  let $options := fn:doc($options-uri)/merging:options
-  let $log := xdmp:log($options)
-  return
-    if ($format eq $const:FORMAT-XML) then
-      $options
-    else if ($format eq $const:FORMAT-JSON) then
-      merge-impl:options-to-json($options)
-    else
-      httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "merge-impl:get-options called with invalid format " || $format)
 };
 
 declare function merge-impl:get-JSON-options($options-name as xs:string) as object-node()?
@@ -99,7 +62,7 @@ declare function merge-impl:get-JSON-options($options-name as xs:string) as obje
   let $options-uri := $MERGING-OPTIONS-DIR || $options-name || ".json"
   let $options := fn:doc($options-uri)/object-node()
   let $log := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then xdmp:trace($const:TRACE-MERGE-RESULTS, $options) else ()
-  return $options (: ! xdmp:from-json(.) :)
+  return $options
 };
 
 declare function merge-impl:save-options(
@@ -342,8 +305,6 @@ declare function merge-impl:build-namespace-map($source as element()?)
 declare function merge-impl:options-from-json($options-json as item())
   as element(merging:options)
 {
-  (: let $_ := fn:error((), "Don't call this") :)
-
   let $options-json :=
     if ($options-json instance of json:object) then
       xdmp:to-json($options-json)/object-node()

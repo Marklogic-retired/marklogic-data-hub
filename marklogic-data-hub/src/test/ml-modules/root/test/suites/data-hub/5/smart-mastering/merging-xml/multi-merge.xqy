@@ -24,7 +24,6 @@ declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
 declare option xdmp:update "false";
-
 declare option xdmp:mapping "false";
 
 let $_ :=

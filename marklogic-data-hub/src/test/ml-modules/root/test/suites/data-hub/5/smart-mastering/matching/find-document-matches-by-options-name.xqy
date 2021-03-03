@@ -5,10 +5,8 @@ import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
 import module namespace constants = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
-
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
   at "/com.marklogic.smart-mastering/telemetry.xqy";
-
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 declare option xdmp:mapping "false";

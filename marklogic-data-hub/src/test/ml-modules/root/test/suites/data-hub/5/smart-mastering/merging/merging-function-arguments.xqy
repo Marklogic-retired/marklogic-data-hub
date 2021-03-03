@@ -6,7 +6,7 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
 import module namespace merging-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
-      "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 declare option xdmp:mapping "false";
@@ -114,7 +114,7 @@ declare variable $test-docs := (
   document { object-node { "property": "val2" } }
 );
 
-(
+
   (: Test XQuery triple functions :)
   try {
     let $results := merging-impl:build-final-triples(merging-impl:compile-merge-options($quickstart-xquery-options), $test-docs, ())
@@ -177,4 +177,4 @@ declare variable $test-docs := (
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for Hub Central JavaScript Merge. Exception: " || xdmp:describe($e, (), ()))
   }
-)
+

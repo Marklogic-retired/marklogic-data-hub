@@ -6,7 +6,7 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
 import module namespace merging-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
-    "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 import module namespace test-ext = "http://marklogic.com/test/dh/ext" at "/test/additional-helper.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"

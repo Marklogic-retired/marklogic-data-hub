@@ -14,7 +14,6 @@ declare namespace es = "http://marklogic.com/entity-services";
 declare namespace nested = "nested";
 
 declare option xdmp:update "false";
-
 declare option xdmp:mapping "false";
 
 (: Merge the nested docs :)

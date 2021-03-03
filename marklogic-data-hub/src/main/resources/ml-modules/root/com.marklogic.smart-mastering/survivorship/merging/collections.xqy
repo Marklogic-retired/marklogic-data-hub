@@ -16,7 +16,7 @@ import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "base.xqy",
-    "options.xqy";
+     "options.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 

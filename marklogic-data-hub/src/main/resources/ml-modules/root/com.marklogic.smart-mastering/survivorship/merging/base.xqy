@@ -37,8 +37,8 @@ import module namespace history = "http://marklogic.com/smart-mastering/auditing
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-  at  "standard.xqy",
-      "options.xqy";
+  at "standard.xqy",
+     "options.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
@@ -55,8 +55,8 @@ import module namespace mem = "http://maxdewpoint.blogspot.com/memory-operations
   at "/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations-functional.xqy";
 import module namespace helper = "http://marklogic.com/smart-mastering/helper-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
-import module namespace httputils="http://marklogic.com/data-hub/http-utils"
-at "/data-hub/5/impl/http-utils.xqy";
+import module namespace httputils = "http://marklogic.com/data-hub/http-utils"
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 declare namespace sm = "http://marklogic.com/smart-mastering";
@@ -1140,7 +1140,7 @@ declare function merge-impl:build-merge-models-by-final-properties-to-json(
           let $info := fn:head($docs)/envelope/instance/info
           return
             if (fn:exists($info)) then
-              object-node{
+              object-node {
                 "info": $info
               } + $instance-body
             else
@@ -1560,7 +1560,7 @@ declare function merge-impl:parse-final-properties-for-merge(
       fn:doc($uri)
   let $first-doc := fn:head($docs)
   let $first-instance := merge-impl:get-instances($first-doc)
-  let $instances := ($first-instance,merge-impl:get-instances(fn:tail($docs)))
+  let $instances := ($first-instance, merge-impl:get-instances(fn:tail($docs)))
   let $wrapper-qnames :=
     fn:reverse(
       ($first-instance/ancestor-or-self::*
@@ -1569,7 +1569,7 @@ declare function merge-impl:parse-final-properties-for-merge(
       ! fn:node-name(.)
     )
   let $sources := merge-impl:get-sources($docs, $compiled-merge-options)
-  let $sources-by-document-uri as map:map := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
+  let $sources-by-document-uri as map:map := util-impl:combine-maps(map:map(), for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
   let $final-properties := merge-impl:build-final-properties(
     $compiled-merge-options,
     $instances,
@@ -1589,7 +1589,7 @@ declare function merge-impl:parse-final-properties-for-merge(
       map:entry("instances", $instances),
       map:entry("sources", $sources),
       map:entry("documents", $docs),
-      map:entry("wrapper-qnames",$wrapper-qnames),
+      map:entry("wrapper-qnames", $wrapper-qnames),
       map:entry("final-properties", $final-properties),
       map:entry($PROPKEY-HEADERS-NS-MAP, fn:head($final-headers)),
       map:entry("final-headers", fn:tail($final-headers)),
@@ -1858,6 +1858,18 @@ declare function merge-impl:build-final-properties(
   $is-json
 ) as map:map*
 {
+(:
+xdmp:log("top of build-final-properties"),
+xdmp:log("compiled-merge-options"),
+xdmp:log($compiled-merge-options),
+xdmp:log("instances"),
+xdmp:log($instances),
+xdmp:log("sources"),
+xdmp:log($sources-by-document-uri),
+xdmp:log("is-json"),
+xdmp:log($is-json)
+,
+:)
   let $entity-definition := $compiled-merge-options => map:get("targetEntityTypeDefinition")
   let $namespaces-map := $compiled-merge-options => map:get("namespaces")
   let $merge-options-ref := $compiled-merge-options => map:get("mergeOptionsRef")

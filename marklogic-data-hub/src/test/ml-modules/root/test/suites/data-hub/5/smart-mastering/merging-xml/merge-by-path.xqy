@@ -19,7 +19,6 @@ declare namespace sm = "http://marklogic.com/smart-mastering";
 declare namespace has = "has";
 
 declare option xdmp:update "false";
-
 declare option xdmp:mapping "false";
 
 (: Merge a couple documents :)

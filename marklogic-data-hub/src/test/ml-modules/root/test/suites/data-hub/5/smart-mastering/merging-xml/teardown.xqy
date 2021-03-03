@@ -12,7 +12,8 @@ xdmp:collection-delete($const:CONTENT-COLL),
 xdmp:collection-delete($const:ARCHIVED-COLL),
 xdmp:collection-delete($const:AUDITING-COLL),
 xdmp:collection-delete($const:MERGED-COLL),
-xdmp:collection-delete("http://marklogic.com/semantics#default-graph"),
+xdmp:collection-delete("http://marklogic.com/semantics#default-graph")
+,
 for $uri in ("/xqy-action-output.xml", "/sjs-action-output.json")
 return
   if (fn:doc-available($uri)) then
