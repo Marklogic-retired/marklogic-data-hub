@@ -14,12 +14,22 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.loginAsDeveloper().withRequest();
+    cy.deleteSteps("ingestion", "cyCardView");
+    cy.deleteFlows("newE2eFlow", "newE2eFlow2");
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Verify Cancel", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -66,7 +76,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.selectProvGranularity("Off");
     loadPage.setBatchSize("200");
     //Header JSON error
-    cy.get("#headers").clear().type("{").tab();
+    cy.get("#headers").clear().type("{").tab({force: true});
     loadPage.jsonValidateError().should("be.visible");
     loadPage.setHeaderContent("loadTile/headerContent");
     //Interceptors JSON error
@@ -83,7 +93,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.setCustomHook("");
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
-    loadPage.saveSettings(stepName).click();
+    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
   });
@@ -100,6 +110,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
   });
   it("Delete the step and Navigate back to load step", () => {
@@ -113,6 +124,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1");
@@ -121,7 +133,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     tiles.closeRunMessage();
   });
   it("Run the flow with JSON input", () => {
-    runPage.runStep(stepName).click();
+    runPage.runStep(stepName);
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
@@ -144,7 +156,9 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
+    cy.waitForAsyncRequest();
     //Upload file to start running
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
@@ -170,6 +184,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -201,31 +216,12 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.addStepToExistingFlow(stepName, flowName);
     loadPage.addStepToFlowConfirmationMessage().should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Run the flow with TEXT input
-    runPage.runLastStepInAFlow(stepName).last().click();
+    runPage.runLastStepInAFlow(stepName);
     cy.uploadFile("input/test-1.txt");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
-  });
-  it("Delete the flows", () => {
-    runPage.deleteFlow(flowName).click();
-    runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
-    loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName).should("not.be.visible");
-    runPage.deleteFlow(flowName2).click();
-    runPage.deleteFlowConfirmationMessage(flowName2).should("be.visible");
-    loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName2).should("not.be.visible");
-  });
-  it("Verify Delete step", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
-    loadPage.deleteStep(stepName).click();
-    loadPage.confirmationOptions("No").click();
-    loadPage.stepName(stepName).should("be.visible");
-    loadPage.deleteStep(stepName).click();
-    loadPage.confirmationOptions("Yes").click();
-    loadPage.stepName(stepName).should("not.be.visible");
   });
 });

@@ -7,46 +7,40 @@ import "cypress-wait-until";
 
 describe("Custom Ingestion", () => {
 
-  beforeEach(() => {
+  before(() => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-reader", "hub-central-step-runner").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
   });
-
-  afterEach(() => {
+  after(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
-
-
   it("verify that custom ingestion step shows up and can be run", () => {
     const flowName = "testCustomFlow";
     const loadStep = "ingestion-step";
-
     // create load step
     toolbar.getLoadToolbarIcon().click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     // open settings
     loadPage.editStepInCardView(loadStep).click();
     loadPage.switchEditAdvanced().click(); // Advanced tab
-
     //custom ingestion steps have step definition name
     cy.findByText("Step Definition Name").should("exist");
-
     loadPage.cancelSettings(loadStep).click();
-
     toolbar.getRunToolbarIcon().click();
     //Run the ingest with JSON
     cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
     cy.waitUntil(() => cy.contains("Custom"));
-    runPage.runStep(loadStep).click();
-
-    cy.get("#fileUpload").attachFile("input/test-1.json", {subjectType: "input", force: true});
+    cy.waitForAsyncRequest();
+    runPage.runStep(loadStep);
+    cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.get("span p"));
-
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
 

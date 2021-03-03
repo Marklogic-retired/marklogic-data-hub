@@ -18,12 +18,19 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

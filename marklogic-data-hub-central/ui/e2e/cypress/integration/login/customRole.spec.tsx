@@ -10,15 +10,18 @@ describe("customRole", () => {
 
   before(() => {
     cy.visit("/");
+    cy.waitForAsyncRequest();
   });
 
   afterEach(() => {
     cy.logout();
+    cy.waitForAsyncRequest();
   });
 
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
 
   it("should be able to access all tiles with hc-custom-role", () => {

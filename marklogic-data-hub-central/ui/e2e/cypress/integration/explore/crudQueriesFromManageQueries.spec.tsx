@@ -14,17 +14,21 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     //clearing all the saved queries
     cy.loginAsDeveloper().withRequest();
     cy.deleteSavedQueries();
+    cy.waitForAsyncRequest();
   });
   it("Create Queries", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

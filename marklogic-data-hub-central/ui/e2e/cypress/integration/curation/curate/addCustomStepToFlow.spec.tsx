@@ -16,17 +16,22 @@ describe("Add Custom step to a flow", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.deleteRecordsInFinal(stepName);
     cy.deleteFlows(flowName);
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
 
   it("Create new flow", () => {
@@ -39,7 +44,7 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Add custom step from Run tile", () => {
+  it("Add custom step from Run tile and Run the step", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
@@ -49,15 +54,11 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.verifyStepInFlow("Custom", stepName);
-  });
-
-  it("Run steps", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
-    runPage.runStep(stepName).click();
-    cy.waitForAsyncRequest();
+    runPage.runStep(stepName);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });
@@ -68,13 +69,12 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Add custom steps from Curate tile", () => {
+  it("Add custom steps from Curate tile and Run steps", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
     cy.waitForAsyncRequest();
-
     curatePage.openExistingFlowDropdown("Customer", stepName);
     curatePage.getExistingFlowFromDropdown(flowName).click();
     curatePage.confirmAddStepToFlow(stepName, flowName);
@@ -84,15 +84,11 @@ describe("Add Custom step to a flow", () => {
     runPage.expandFlow(flowName);
 
     runPage.verifyStepInFlow("Custom", stepName);
-  });
-
-  it("Run steps", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
-    runPage.runStep(stepName).click();
-    cy.waitForAsyncRequest();
+    runPage.runStep(stepName);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });

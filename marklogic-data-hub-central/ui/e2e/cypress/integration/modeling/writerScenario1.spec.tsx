@@ -20,17 +20,21 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities("Buyer");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Create a new entity", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();

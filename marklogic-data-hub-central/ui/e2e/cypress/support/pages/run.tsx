@@ -44,16 +44,18 @@ class RunPage {
 
   verifyStepInFlow(stepType: string, stepName: string) {
     cy.waitForModalToDisappear();
-    cy.findAllByText(stepType).first().should("be.visible");
+    cy.findByText(stepType).should("be.visible");
     cy.findAllByText(stepName).first().should("be.visible");
   }
 
   runStep(stepName: string) {
-    return cy.findByLabelText(`runStep-${stepName}`);
+    cy.waitUntil(() => cy.findByLabelText(`runStep-${stepName}`)).click({force: true});
+    cy.waitForAsyncRequest();
   }
 
   runLastStepInAFlow(stepName: string) {
-    return cy.findAllByLabelText(`runStep-${stepName}`);
+    cy.waitUntil(() => cy.findAllByLabelText(`runStep-${stepName}`)).last().click({force: true});
+    cy.waitForAsyncRequest();
   }
 
   deleteStep(stepName: string) {

@@ -12,12 +12,19 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("verifies saved queries drop down does not exist", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

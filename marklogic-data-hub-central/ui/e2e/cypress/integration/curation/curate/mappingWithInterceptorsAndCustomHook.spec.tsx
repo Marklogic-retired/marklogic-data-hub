@@ -22,12 +22,15 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -35,6 +38,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.deleteSteps("mapping", "mapOrder", "mapCustomer");
     cy.deleteFlows("orderFlow");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Create load step", () => {
     toolbar.getLoadToolbarIcon().click();
@@ -49,6 +53,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setStepInterceptor("loadTile/orderCategoryCodeInterceptor");
 
     loadPage.confirmationOptions("Save").click({force: true});
+    cy.waitForAsyncRequest();
     cy.findByText(loadStep).should("be.visible");
   });
   it("Edit load step", () => {
@@ -84,7 +89,8 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", loadStep);
     //Run the ingest with JSON
-    runPage.runStep(loadStep).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(loadStep);
     cy.uploadFile("input/10259.json");
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
@@ -197,7 +203,9 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName);
 
-    runPage.runStep(mapStep).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(mapStep);
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     runPage.explorerLink().click();
     browsePage.getTableViewSourceIcon().click();

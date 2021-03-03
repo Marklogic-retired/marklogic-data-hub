@@ -14,12 +14,19 @@ describe("Validate CRUD functionality from list view", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Verify Cancel", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -51,10 +58,10 @@ describe("Validate CRUD functionality from list view", () => {
   it("Verify Edit", () => {
     loadPage.stepName(stepName).click();
     loadPage.stepNameInput().should("be.disabled");
-    loadPage.stepDescriptionInput().clear().type("UPDATE");
+    loadPage.stepDescriptionInput().clear().type("UPDATED");
     loadPage.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.findByText("UPDATE").should("be.visible");
+    cy.findByText("UPDATED").should("be.visible");
   });
   it("Verify Advanced Settings and Error validations", () => {
     loadPage.stepName(stepName).click();
@@ -85,7 +92,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.setCustomHook("loadTile/customHook");
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
-    loadPage.saveSettings(stepName).click();
+    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
   });
@@ -93,7 +100,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.stepName(stepName).click();
     loadPage.stepDescriptionInput().clear().type("UPDATE2");
     loadPage.switchEditAdvanced().click();
-    loadPage.saveSettings(stepName).click();
+    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
   });
   it("Verify that change was saved", () => {
@@ -127,6 +134,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
   });
   it("Delete the step and Navigate back to load step", () => {
@@ -141,6 +149,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
@@ -164,6 +173,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running
     cy.uploadFile("input/test-1.json");
@@ -190,6 +200,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -207,19 +218,23 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
     runPage.getFlowName(flowName).should("not.be.visible");
     runPage.deleteFlow(flowName2).click();
     runPage.deleteFlowConfirmationMessage(flowName2).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("not.be.visible");
     //Verify Delete
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("No").click();
+    cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
     loadPage.deleteStep(stepName).click();
-    loadPage.confirmationOptions("Yes").click();
+    cy.waitUntil(() => loadPage.confirmationOptions("Yes")).click();
+    cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("not.be.visible");
   });
 });

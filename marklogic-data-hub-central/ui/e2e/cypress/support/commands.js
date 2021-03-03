@@ -120,7 +120,7 @@ Cypress.Commands.add("waitForModalToDisappear", () => {
 });
 
 Cypress.Commands.add("uploadFile", (filePath) => {
-  cy.get("#fileUpload").attachFile(filePath, {subjectType: "input", force: true});
+  cy.get("input[type=\"file\"]").attachFile(filePath, {force: true});
   cy.waitForAsyncRequest();
   cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
   cy.waitUntil(() => cy.get("span p"));

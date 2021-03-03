@@ -22,17 +22,21 @@ describe("Entity Modeling: Writer Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities("Patient");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Create an entity with property that already exists", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();

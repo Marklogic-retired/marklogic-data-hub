@@ -16,12 +16,19 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
@@ -51,12 +58,12 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getDateFacetPicker().trigger("mouseover");
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
-  });
-  it("Verify functionality of clear and apply facet buttons", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
+  });
+  it("Verify functionality of clear and apply facet buttons", () => {
     //verify no facets selected case.
     browsePage.selectEntity("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
@@ -100,7 +107,7 @@ describe("Verify numeric/date facet can be applied", () => {
     toolbar.getRunToolbarIcon().click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
-    runPage.runStep("mapPersonJSON").click();
+    runPage.runStep("mapPersonJSON");
     cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
