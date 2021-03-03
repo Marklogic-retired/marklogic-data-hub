@@ -1,0 +1,6 @@
+{
+  "lang": "zxx",
+  "name": "errorStep",
+  "type": "CUSTOM",
+  "modulePath": "/errorStep.sjs"
+}

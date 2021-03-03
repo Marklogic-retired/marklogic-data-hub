@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.util;
+package com.marklogic.hub.mlcp;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.contentpump.bean.MlcpBean;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
 import com.marklogic.hub.legacy.job.Job;
@@ -38,12 +40,10 @@ public class MlcpRunner extends ProcessRunner {
     private LegacyJobManager jobManager;
     private LegacyFlow flow;
     private JsonNode mlcpOptions;
+    private MlcpBean mlcpBean;
     private String jobId = UUID.randomUUID().toString();
     private AtomicLong successfulEvents = new AtomicLong(0);
     private AtomicLong failedEvents = new AtomicLong(0);
-    LegacyFlowStatusListener flowStatusListener;
-    private String mlcpPath;
-    private String mainClass;
     private DatabaseClient databaseClient;
     private String database = null;
 
@@ -52,27 +52,35 @@ public class MlcpRunner extends ProcessRunner {
     private String password;
 
     /**
-     * This constructor is currently only used for testing. And to support running parallel tests, this stores whether
+     * To support running parallel tests, this stores whether
      * a load balancer is being used or not. That avoids having to access the HubConfig on a separate thread, which is
      * not possible when running parallel tests.
      *
-     * @param mainClass
      * @param hubConfig
      * @param mlcpOptions
      */
-    public MlcpRunner(String mainClass, HubConfig hubConfig, JsonNode mlcpOptions) {
-        this(null, mainClass, hubConfig, null, null, mlcpOptions, null);
+    public MlcpRunner(HubConfigImpl hubConfig, JsonNode mlcpOptions) {
+        this(hubConfig, null, null, mlcpOptions);
     }
 
-    public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, LegacyFlow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, LegacyFlowStatusListener statusListener) {
+    public MlcpRunner(HubConfigImpl hubConfig, MlcpBean mlcpBean) {
+        this(hubConfig, null, null, null);
+        this.mlcpBean = mlcpBean;
+        mlcpBean.setCommand("IMPORT");
+        mlcpBean.setHost(hubConfig.getHost());
+        if (mlcpBean.getPort() == null) {
+            mlcpBean.setPort(hubConfig.getPort(DatabaseKind.STAGING));
+        }
+        mlcpBean.setUsername(hubConfig.getMlUsername());
+        mlcpBean.setPassword(hubConfig.getMlPassword());
+    }
+
+    public MlcpRunner(HubConfigImpl hubConfig, LegacyFlow flow, DatabaseClient databaseClient, JsonNode mlcpOptions) {
         super();
 
         this.jobManager = LegacyJobManager.create(hubConfig.newJobDbClient());
-        this.flowStatusListener = statusListener;
         this.flow = flow;
         this.mlcpOptions = mlcpOptions;
-        this.mlcpPath = mlcpPath;
-        this.mainClass = mainClass;
         this.databaseClient = databaseClient;
 
         // Grab the needed data from HubConfig no reference to it needs to be held
@@ -89,56 +97,31 @@ public class MlcpRunner extends ProcessRunner {
         return jobId;
     }
 
+    public String runAndReturnOutput() {
+        this.start();
+        try {
+            this.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return getProcessOutput();
+    }
+
     @Override
     public void run() {
         Job job = null;
         if (flow != null) {
-            job = Job.withFlow(flow)
-                    .withJobId(jobId);
+            job = Job.withFlow(flow).withJobId(jobId);
             jobManager.saveJob(job);
         }
 
         try {
-            MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
-            if (databaseClient != null) {
-                bean.setHost(databaseClient.getHost());
-                bean.setPort(databaseClient.getPort());
-            }
-            if (database != null) {
-                bean.setDatabase(database);
-            }
-
-
-            if (!"copy".equals(bean.getCommand().toLowerCase())) {
-                // Assume that the HTTP credentials will work for mlcp
-                bean.setUsername(this.username);
-                bean.setPassword(this.password);
-            }
-
-            if (mlcpOptions.has("input_file_path")) {
-                File file = new File(mlcpOptions.get("input_file_path").asText());
-                String canonicalPath = file.getCanonicalPath();
-                bean.setInput_file_path(canonicalPath);
-            }
-
-            if (job != null) {
-                bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
-            }
-
-            bean.setModules_root("/");
-
+            MlcpBean bean = this.mlcpBean != null ? this.mlcpBean : makeMlcpBean(job);
             if (this.isHostLoadBalancer) {
                 bean.setRestrict_hosts(true);
             }
-
             buildCommand(bean);
-
             super.run();
-
-            if (flowStatusListener != null) {
-                flowStatusListener.onStatusChange(jobId, 100, "");
-            }
-
         } catch (Exception e) {
             if (job != null) {
                 job.withStatus(JobStatus.FAILED)
@@ -198,19 +181,38 @@ public class MlcpRunner extends ProcessRunner {
             "</configuration>\n";
     }
 
-    private void buildCommand(MlcpBean bean) throws IOException, InterruptedException {
-        ArrayList<String> args = new ArrayList<>();
-        if (this.mlcpPath != null && this.mlcpPath.length() > 0) {
-            File mlcpFile = new File(this.mlcpPath);
-            if (!mlcpFile.exists()) {
-                throw new RuntimeException("MLCP does not exist at: " + mlcpPath);
-            }
-            else if (!mlcpFile.canExecute()) {
-                throw new RuntimeException("Cannot execute: " + mlcpPath);
-            }
-            args.add(this.mlcpPath);
+    private MlcpBean makeMlcpBean(Job job) throws Exception {
+        MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
+        if (databaseClient != null) {
+            bean.setHost(databaseClient.getHost());
+            bean.setPort(databaseClient.getPort());
         }
-        else {
+        if (database != null) {
+            bean.setDatabase(database);
+        }
+
+        if (!"copy".equals(bean.getCommand().toLowerCase())) {
+            // Assume that the HTTP credentials will work for mlcp
+            bean.setUsername(this.username);
+            bean.setPassword(this.password);
+        }
+
+        if (mlcpOptions.has("input_file_path")) {
+            File file = new File(mlcpOptions.get("input_file_path").asText());
+            String canonicalPath = file.getCanonicalPath();
+            bean.setInput_file_path(canonicalPath);
+        }
+
+        if (job != null) {
+            bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
+        }
+
+        bean.setModules_root("/");
+        return bean;
+    }
+
+    private void buildCommand(MlcpBean bean) throws IOException {
+        ArrayList<String> args = new ArrayList<>();
             String javaHome = System.getProperty("java.home");
             String javaBin = javaHome +
                 File.separator + "bin" +
@@ -264,16 +266,14 @@ public class MlcpRunner extends ProcessRunner {
             else {
                 args.add("-cp");
                 args.add(filteredClasspathEntries);
-                args.add(mainClass);
+                args.add("com.marklogic.contentpump.ContentPump");
             }
-        }
 
         args.addAll(Arrays.asList(bean.buildArgs()));
 
         this.withArgs(args);
 
-        this.withStreamConsumer(new MlcpConsumer(successfulEvents,
-            failedEvents, flowStatusListener, jobId));
+        this.withStreamConsumer(new MlcpConsumer(successfulEvents, failedEvents, jobId));
     }
 
     /**

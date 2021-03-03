@@ -229,7 +229,7 @@ function getFullFlow(flowName, artifactVersion = 'latest') {
   const steps = flow["steps"];
   Object.keys(steps).forEach(stepNumber => {
     if (steps[stepNumber].stepId) {
-      steps[stepNumber] = convertStepReferenceToInlineStep(steps[stepNumber].stepId);
+      steps[stepNumber] = convertStepReferenceToInlineStep(steps[stepNumber].stepId, flowName);
     }
   });
   return flow;
@@ -246,13 +246,22 @@ function removeNullProperties(obj) {
   return obj
 }
 
-function convertStepReferenceToInlineStep(stepId) {
+/**
+ * 
+ * @param stepId 
+ * @param flowNameForError optional; if included, will be added to the error message if the step cannot be found
+ */
+function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   const stepDoc = fn.head(cts.search(cts.andQuery([
     cts.collectionQuery("http://marklogic.com/data-hub/steps"),
     cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
   ])));
   if (!stepDoc) {
-    httpUtils.throwBadRequest(`Could not find a step with ID ${stepId}, which was referenced in flow ${flowName}`);
+    let message = `Could not find a step with ID ${stepId}`;
+    if (flowNameForError) {
+      message += `, which is referenced in flow ${flowNameForError}`;
+    }
+    httpUtils.throwBadRequest(message);
   }
 
   const referencedStep = removeNullProperties(stepDoc.toObject());

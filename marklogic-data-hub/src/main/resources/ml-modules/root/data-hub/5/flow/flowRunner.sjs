@@ -28,9 +28,11 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
  * is run in-memory, with the output of one step becoming the input of the next step.
  *
  * @param flowName
- * @param contentArray
+ * @param contentArray array of objects conforming to ContentObject.schema.json; at a minimum, content.uri 
+ * must be specified
  * @param jobId
  * @param runtimeOptions
+ * @return a JSON object conforming to RunFlowResponse.schema.json
  */
 function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
   if (contentArray == null || contentArray == undefined) {
@@ -44,10 +46,10 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
   hubUtils.hubTrace(traceEvent, `Processing content with flow ${flowName}; content array length: ${contentArray.length}`);
 
   const theFlow = Artifacts.getFullFlow(flowName);
-  const enhancedWriteQueue = {};
+  
+  const databaseWriteQueue = {};
   const flowResponse = newFlowResponse(theFlow, jobId);
 
-  // Iterate over all steps; we'll support a subset later
   let currentContentArray = contentArray;
   Object.keys(theFlow.steps).forEach(stepNumber => {
     const startDateTime = fn.currentDateTime().add(xdmp.elapsedTime());
@@ -55,16 +57,15 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
 
     hubUtils.hubTrace(traceEvent, `Running step number ${stepNumber} in flow ${flowName}`);
     const stepExecutionContext = newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions);
-    currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, enhancedWriteQueue);
+    currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, databaseWriteQueue);
     hubUtils.hubTrace(traceEvent, `Finished step number ${stepNumber} in flow ${flowName}`);
 
     flowResponse.lastCompletedStep = stepNumber;
-    flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);
-  });
+    flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);  
+  });    
 
-  persistWriteQueue(enhancedWriteQueue);
+  persistWriteQueue(databaseWriteQueue);
   hubUtils.hubTrace(traceEvent, `Finished processing content with flow ${flowName}`);
-
   flowResponse.jobStatus = "finished";
   flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
   return flowResponse;
@@ -92,9 +93,9 @@ function newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions) {
  *
  * @param stepExecutionContext
  * @param contentArray
- * @param enhancedWriteQueue
+ * @param databaseWriteQueue
  */
-function processContentWithStep(stepExecutionContext, contentArray, enhancedWriteQueue) {
+function processContentWithStep(stepExecutionContext, contentArray, databaseWriteQueue) {
   prepareContentBeforeStepIsRun(contentArray, stepExecutionContext);
 
   let outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
@@ -103,7 +104,7 @@ function processContentWithStep(stepExecutionContext, contentArray, enhancedWrit
 
   // Copies regular flow behavior, where collections from options are added after the step module runs
   stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
-  addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, enhancedWriteQueue);
+  addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue);
   return outputContentArray;
 }
 
@@ -113,26 +114,36 @@ function processContentWithStep(stepExecutionContext, contentArray, enhancedWrit
  *
  * @param contentArray
  * @param stepExecutionContext
+ * @return if an error occurs while processing the batch, in the step execution context and rethrown; else, 
+ * the content array returned by the step is returned
  */
 function runStepOnBatch(contentArray, stepExecutionContext) {
+  const debugEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG);
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const contentSequence = hubUtils.normalizeToSequence(contentArray);
   const outputContentArray = [];
   const batchItems = contentArray.map(content => content.uri);
-  if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG)) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on items: ${xdmp.toJsonString(batchItems)}`);
+
+  if (debugEnabled) {
+    hubUtils.hubTrace(consts.DEBUG, `Running step on batch: ${xdmp.toJsonString(contentSequence)}`);
   }
 
   try {
     const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions));
-    for (const outputContent of outputSequence) {
-      addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
-      outputContentArray.push(outputContent);
+    for (const contentObject of outputSequence) {
+      addMetadataToContent(contentObject, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+      if (debugEnabled) {
+        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(contentObject)}`);
+      }
+      outputContentArray.push(contentObject);
     }
     stepExecutionContext.setCompletedItems(batchItems);
   } catch (error) {
+    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Error while processing batch: ${error.message}`);
     stepExecutionContext.addErrorForEntireBatch(error, batchItems);
+    throw error;
   }
+
   return outputContentArray;
 }
 
@@ -141,14 +152,17 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
  *
  * @param contentArray
  * @param stepExecutionContext
+ * @return if an error occurs while processing an item, it is captured in the step execution context and rethrown; else, 
+ * the content array returned by the step is returned
  */
 function runStepOnEachItem(contentArray, stepExecutionContext) {
+  const debugEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG);
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
   contentArray.map(contentObject => {
     const thisItem = contentObject.uri;
-    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG)) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on item: ${thisItem}`);
+    if (debugEnabled) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
     }
     try {
       const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentObject, stepExecutionContext.combinedOptions));
@@ -156,12 +170,18 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
         outputContent.previousUri = thisItem;
         addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
         stepExecutionContext.addCompletedItem(thisItem);
+        if (debugEnabled) {
+          hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(contentObject)}`);
+        }
         outputContentArray.push(outputContent);
       }
     } catch (error) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Error while processing item ${thisItem}: ${error.message}`);
       stepExecutionContext.addBatchError(error, thisItem);
+      throw error;
     }
   });
+
   return outputContentArray;
 }
 
@@ -256,14 +276,14 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
 /**
  * @param stepExecutionContext
  * @param outputContentArray
- * @param enhancedWriteQueue
+ * @param databaseWriteQueue
  */
-function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, enhancedWriteQueue) {
+function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue) {
   const targetDatabase = stepExecutionContext.getTargetDatabase();
-  let databaseContentMap = enhancedWriteQueue[targetDatabase];
+  let databaseContentMap = databaseWriteQueue[targetDatabase];
   if (!databaseContentMap) {
     databaseContentMap = {};
-    enhancedWriteQueue[targetDatabase] = databaseContentMap;
+    databaseWriteQueue[targetDatabase] = databaseContentMap;
   }
   outputContentArray.forEach(contentObject => {
     if (contentObject.uri) {
@@ -301,9 +321,9 @@ function copyContentObject(contentObject) {
  *
  * TODO Add error handling. Each step may have succeeded, but the batch fails.
  */
-function persistWriteQueue(enhancedWriteQueue) {
-  Object.keys(enhancedWriteQueue).forEach(databaseName => {
-    const databaseContent = enhancedWriteQueue[databaseName];
+function persistWriteQueue(databaseWriteQueue) {
+  Object.keys(databaseWriteQueue).forEach(databaseName => {
+    const databaseContent = databaseWriteQueue[databaseName];
     const contentArray = Object.keys(databaseContent).map(key => databaseContent[key]);
     hubUtils.writeDocuments(contentArray, xdmp.defaultPermissions(), [], databaseName);
   });

@@ -1,12 +1,12 @@
 {
-  "name": "ingestAndMap",
+  "name": "ingestAndErrorStep",
   "stepConnectionMode": "in-memory",
   "steps": {
     "1": {
       "stepId": "ingestCustomer-ingestion"
     },
     "2": {
-      "stepId": "mapCustomer-mapping"
+      "stepId": "errorStep-custom"
     }
   }
 }

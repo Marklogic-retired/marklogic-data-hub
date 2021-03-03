@@ -6,7 +6,6 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.util.MlcpRunner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Test;
@@ -38,19 +37,14 @@ public class MlcpCopyTest  extends AbstractHubCoreTest {
         mlcpOptions.put("output_username", username);
         mlcpOptions.put("output_password", password);
         mlcpOptions.put("collection_filter", "testMlcpCopy");
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.contentpump.ContentPump", hubConfig, mlcpOptions);
+        MlcpRunner mlcpRunner = new MlcpRunner(hubConfig, mlcpOptions);
         final List<String> exceptionStackTraces = new ArrayList<>();
         mlcpRunner.setUncaughtExceptionHandler((th, ex) ->{
             logger.info("MLCP exception caught! " + ExceptionUtils.getMessage(ex));
             exceptionStackTraces.add(ExceptionUtils.getStackTrace(ex));
         });
-        mlcpRunner.start();
-        try {
-            mlcpRunner.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        String processOutput = mlcpRunner.getProcessOutput();
+
+        String processOutput = mlcpRunner.runAndReturnOutput();
         String message = "MLCP copy failed! Output: " + processOutput;
         if (exceptionStackTraces.size() > 0) {
             message += "\n" + StringUtils.join(exceptionStackTraces.toArray(), ',');
