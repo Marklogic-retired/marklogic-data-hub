@@ -1,6 +1,8 @@
 xquery version "1.0-ml";
 import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
-hub-test:reset-hub();
+hub-test:reset-hub()
+
+;
 
 xquery version "1.0-ml";
 
@@ -10,7 +12,10 @@ import module namespace lib = "http://marklogic.com/smart-mastering/test" at "li
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
 declare option xdmp:mapping "false";
-matcher:save-options($lib:MATCH-OPTIONS-NAME, test:get-test-file("match-options.xml"));
+matcher:save-options($lib:MATCH-OPTIONS-NAME, test:get-test-file("match-options.xml"))
+
+;
+
 (:Separating the merge option saves to avoid conflicting update on dictionary :)
 xquery version "1.0-ml";
 

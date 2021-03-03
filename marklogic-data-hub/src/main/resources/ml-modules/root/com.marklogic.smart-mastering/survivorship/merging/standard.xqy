@@ -3,9 +3,9 @@ xquery version "1.0-ml";
 module namespace merging = "http://marklogic.com/smart-mastering/survivorship/merging";
 
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-at  "base.xqy";
+  at "base.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
-at "/com.marklogic.smart-mastering/constants.xqy";
+  at "/com.marklogic.smart-mastering/constants.xqy";
 
 declare namespace m = "http://marklogic.com/smart-mastering/merging";
 (:

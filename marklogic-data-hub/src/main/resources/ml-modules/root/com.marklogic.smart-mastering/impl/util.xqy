@@ -27,8 +27,8 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
   at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
-import module namespace httputils="http://marklogic.com/data-hub/http-utils"
-at "/data-hub/5/impl/http-utils.xqy";
+import module namespace httputils = "http://marklogic.com/data-hub/http-utils"
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 

@@ -4,6 +4,7 @@ import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+
 declare option xdmp:mapping "false";
 
 matcher:save-options($lib:MATCH-OPTIONS-NAME, test:get-test-file("match-options.xml"))

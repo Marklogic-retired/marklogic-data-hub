@@ -9,7 +9,6 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 
 (: Force update mode :)
 declare option xdmp:update "true";
-
 declare option xdmp:mapping "false";
 
 let $assertions := ()

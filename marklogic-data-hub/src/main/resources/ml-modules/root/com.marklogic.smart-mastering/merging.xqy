@@ -27,7 +27,7 @@ module namespace merging = "http://marklogic.com/smart-mastering/merging";
 
 import module namespace impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
-    "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 
@@ -128,17 +128,6 @@ declare function merging:get-option-names()
 };
 
 (:
- : Return a list of names under which merge options have been stored.
- :
- : @param $format  either $const:FORMAT-XML or $const:FORMAT-JSON
- : @return a JSON array with the names as strings, or a merging:options element.
- :)
-declare function merging:get-option-names($format as xs:string)
-{
-  impl:get-option-names($format)
-};
-
-(:
  : Return all previously saved merge options.
  :
  : @return An array of JSON options objects.
@@ -146,43 +135,6 @@ declare function merging:get-option-names($format as xs:string)
 declare function merging:get-JSON-options()
 {
   impl:get-JSON-options()
-};
-
-(:
- : Return all previously saved merge options.
- :
- : @param $format  either $const:FORMAT-XML or $const:FORMAT-JSON
- : @return A sequence of elements with the options or a JSON array with option objects.
- :)
-declare function merging:get-options($format as xs:string)
-{
-  impl:get-options($format)
-};
-
-(:
- : Retrieve a named set of options in a particular format.
- :
- : @param $options-name  the name under which the options were saved
- : @param $format  either $const:FORMAT-XML or $const:FORMAT-JSON
- : @return A <merging:options> element or a JSON object
- :)
-declare function merging:get-options($options-name, $format as xs:string)
-{
-  impl:get-options($options-name, $format)
-};
-
-(:
- : Save a set of merging options to the database.
- : @param $name  the name under which the options are to be stored
- : @param $options  the options, either XML or JSON.
- : @return ()
- :)
-declare function merging:save-options(
-  $name as xs:string,
-  $options as node()
-) as empty-sequence()
-{
-  impl:save-options($name, $options)
 };
 
 (:
@@ -214,4 +166,18 @@ declare function merging:save-JSON-options(
 ) as empty-sequence()
 {
   impl:save-JSON-options($name, $options)
+};
+
+(:
+ : Save a set of merging options to the database.
+ : @param $name  the name under which the options are to be stored
+ : @param $options  the options, either XML or JSON.
+ : @return ()
+ :)
+declare function merging:save-options(
+  $name as xs:string,
+  $options as node()
+) as empty-sequence()
+{
+  impl:save-options($name, $options)
 };

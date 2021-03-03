@@ -10,7 +10,7 @@ import module namespace merging = "http://marklogic.com/smart-mastering/merging"
 import module namespace const = "http://marklogic.com/smart-mastering/constants" at "/com.marklogic.smart-mastering/constants.xqy";
 
 
-let $actual := merging:get-option-names($const:FORMAT-JSON)
+let $actual := merging:get-option-names()
 let $log := xdmp:log($actual)
 
 return (

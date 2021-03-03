@@ -8,14 +8,15 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
   at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
-      "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
+     "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
-
-import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+import module namespace test = "http://marklogic.com/test"
+  at "/test/test-helper.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
   at "/com.marklogic.smart-mastering/impl/util.xqy";
-import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
+import module namespace lib = "http://marklogic.com/smart-mastering/test"
+  at "lib/lib.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace sm = "http://marklogic.com/smart-mastering";

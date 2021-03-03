@@ -1,7 +1,7 @@
 xquery version "1.0-ml";
 
 (:~
- : Implementation library for building property definitions for survivorship.
+ : Implementation library for building property definitions for merging.
  :
  :)
 module namespace prop-def = "http://marklogic.com/smart-mastering/survivorship/property-definition";

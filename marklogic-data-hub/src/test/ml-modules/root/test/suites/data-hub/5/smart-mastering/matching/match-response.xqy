@@ -7,6 +7,7 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+
 declare option xdmp:mapping "false";
 
 (:
