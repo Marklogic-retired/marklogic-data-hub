@@ -75,7 +75,8 @@ dependencies {
     testFixturesApi "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesImplementation 'commons-io:commons-io:2.4'
 
-    // TODO I don't think this should be necessary, but including as quick fix
+    // Projects that depend on this project's testFixtures will have access to these resources.
+    // But this project apparently needs to use testRuntime to reference them in tests.
     testRuntime files("src/testFixtures/resources")
 
     // Still need these; trying to bring them in via marklogic-data-hub-api leads to compile errors
