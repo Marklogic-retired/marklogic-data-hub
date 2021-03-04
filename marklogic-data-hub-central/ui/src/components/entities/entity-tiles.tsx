@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {useLocation} from "react-router-dom";
 import {Collapse, Menu, Modal} from "antd";
 import axios from "axios";
@@ -10,9 +10,10 @@ import MatchingCard from "./matching/matching-card";
 import CustomCard from "./custom/custom-card";
 import "./entity-tiles.scss";
 import MergingCard from "./merging/merging-card";
-
+import {CurationContext} from "../../util/curation-context";
 
 const EntityTiles = (props) => {
+  const {setActiveStepWarning} = useContext(CurationContext);
   const entityModels = props.entityModels || {};
   const location = useLocation<any>();
   const [locationEntityType, setLocationEntityType] = useState<string[]>([]);
@@ -200,6 +201,10 @@ const EntityTiles = (props) => {
     try {
       let response = await axios.post("/api/steps/matching", matchingObj);
       if (response.status === 200) {
+        let warningResponse = await axios.get(`/api/steps/matching/${matchingObj.name}/validate`);
+        if (warningResponse.status === 200) {
+          setActiveStepWarning(warningResponse["data"]);
+        }
         updateIsLoadingFlag();
       }
     } catch (error) {
@@ -218,6 +223,10 @@ const EntityTiles = (props) => {
     try {
       let response = await axios.put(`/api/steps/matching/${matchingObj.name}`, matchingObj);
       if (response.status === 200) {
+        let warningResponse = await axios.get(`/api/steps/matching/${matchingObj.name}/validate`);
+        if (warningResponse.status === 200) {
+          setActiveStepWarning(warningResponse["data"]);
+        }
         updateIsLoadingFlag();
       }
     } catch (error) {

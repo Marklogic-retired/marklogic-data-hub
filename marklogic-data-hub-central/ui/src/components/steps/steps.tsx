@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {Modal, Tabs} from "antd";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
@@ -8,11 +8,12 @@ import ConfirmYesNo from "../common/confirm-yes-no/confirm-yes-no";
 import styles from "./steps.module.scss";
 import "./steps.scss";
 import {StepType} from "../../types/curation-types";
-import {MLTooltip} from "@marklogic/design-system";
+import {MLTooltip, MLAlert} from "@marklogic/design-system";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ErrorTooltips} from "../../config/tooltips.config";
+import {CurationContext} from "../../util/curation-context";
 
 const {TabPane} = Tabs;
 
@@ -38,6 +39,7 @@ interface Props {
 const DEFAULT_TAB = "1";
 
 const Steps: React.FC<Props> = (props) => {
+  const {curationOptions} = useContext(CurationContext);
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [isValid, setIsValid] = useState(true);
   const [hasBasicChanged, setHasBasicChanged] = useState(false);
@@ -100,7 +102,7 @@ const Steps: React.FC<Props> = (props) => {
     // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
     let targetFormat = props.activityType === "ingestion" ? basicPayload["targetFormat"] : advancedPayload["targetFormat"];
-    return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
+    return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat}, {targetEntityType: props.targetEntityName});
   };
 
   const createStep = async (payload) => {
@@ -228,15 +230,34 @@ const Steps: React.FC<Props> = (props) => {
       </header>
       <div className={styles.tabs}>
         <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
+          {curationOptions.activeStep.hasWarnings.length > 0 ? (
+            curationOptions.activeStep.hasWarnings.map((warning, index) => {
+              let description = "Please remove source collection from target collections.";
+              if (warning["message"].includes("target entity type")) {
+                description = "Please remove target entity type from target collections";
+              }
+              return (
+                <MLAlert
+                  id="step-warn"
+                  className={styles.alert}
+                  type="warning"
+                  showIcon
+                  key={warning["level"] + index}
+                  message={<div className={styles.alertMessage}>{warning["message"]}</div>}
+                  description={description}
+                />
+              );
+            })
+          ) : null}
           <TabPane tab={(
-            <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+            <MLTooltip aria-label="basic-tab" getPopupContainer={() => document.getElementById("stepSettings") || document.body}
               id="basicTooltip" style={ {wordBreak: "break-all"} }
               title={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Basic</MLTooltip>
           )} key="1" disabled={!isValid && currentTab !== "1"}>
             {getCreateEditStep(props.activityType)}
           </TabPane>
           <TabPane tab={(
-            <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+            <MLTooltip aria-label="advanced-tab" getPopupContainer={() => document.getElementById("stepSettings") || document.body}
               id="advTooltip" style={ {wordBreak: "break-all"} }
               title={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Advanced</MLTooltip>
           )} key="2" disabled={!isValid && currentTab !== "2"} forceRender={true}>

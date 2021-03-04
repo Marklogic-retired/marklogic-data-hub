@@ -10,6 +10,7 @@ export interface CurationContextInterface {
   curationOptions: CurationOptionsInterface;
   setActiveStep: (stepArtifact: any, modelDefinition: any, entityType: string) => void;
   updateActiveStepArtifact: (stepArtifact: any) => void;
+  setActiveStepWarning: (warning: any) => void;
 }
 
 export interface CurationOptionsInterface {
@@ -20,7 +21,7 @@ export interface CurationOptionsInterface {
 export type ActiveStep ={
   stepArtifact: any | MatchingStep,
   entityName: string,
-  isModified: boolean
+  hasWarnings: any[]
 }
 
 export interface MatchingStep {
