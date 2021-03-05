@@ -1,0 +1,112 @@
+{
+  "name": "testFlow",
+  "description": "flow description",
+  "stopOnError": "true",
+  "steps": {
+    "1": {
+      "name": "e2e-xml",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "xml",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "collections": ["xml-coll"],
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat": "xml"
+      }
+    },
+    "2": {
+      "stepDefinitionName": "json-ingestion",
+      "name": "e2e-json",
+      "stepDefinitionType": "INGESTION",
+      "customHook": {},
+      "options": {
+        "permissions": "data-hub-operator,read,data-hub-operator,update"
+      },
+      "fileLocations": {
+        "inputFilePath": "input",
+        "outputURIReplacement": ".*/input,''"
+      }
+    },
+    "3": {
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "name": "csv",
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "fileLocations": {
+        "inputFilePath": "input/csv",
+        "inputFileType": "csv",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "outputFormat": "json",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "collections": ["csv-coll"]
+      }
+    },
+    "4": {
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "name": "csv",
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "fileLocations": {
+        "inputFilePath": "input/tabs",
+        "inputFileType": "csv",
+        "outputURIReplacement": ".*/input,''",
+        "separator": "\\t"
+      },
+      "options": {
+        "headers" : {
+          "sources" : [ {
+            "name" : "testFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "outputFormat": "json",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "collections": ["csv-tab-coll"]
+      }
+    },
+    "5": {
+      "stepDefinitionName": "json-mapping",
+      "stepDefinitionType": "MAPPING",
+      "name": "json-map",
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "options": {"permissions": "data-hub-operator,read,data-hub-operator,update"}
+    },
+    "6": {
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "name": "xml-mapping",
+      "options": {
+        "collections": ["xml-map"],
+        "outputFormat": "xml",
+        "mapping": {
+          "name": "e2e-mapping",
+          "version": 1
+        },
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "sourceQuery": "cts.collectionQuery('xml-coll')"
+      },
+      "customHook": {},
+      "retryLimit" : null,
+      "batchSize" : null,
+      "threadCount" : null,
+      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+    }
+  }
+}

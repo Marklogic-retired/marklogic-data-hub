@@ -1,0 +1,73 @@
+{
+  "name" : "runXqyFuncFlow",
+  "description" : "flow description",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : true,
+  "options" : null,
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "e2e-xml",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "runXqyFuncFlow"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "",
+        "collections" : [ "xml-xqy" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-STAGING"
+      },
+      "customHook" : { },
+      "retryLimit" : 0,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input",
+        "inputFileType" : "xml",
+        "outputURIPrefix" : "/input/'",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "xml-mapping",
+      "description" : "null",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery('xml-xqy')",
+        "mapping" : {
+          "name" : "runXqyFuncFlow-xml-mapping",
+          "version" : 1
+        },
+        "targetEntity" : "e2eentity",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "xqy-map", "e2eentity" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "validateEntity" : false,
+        "sourceCollection" : "",
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}
