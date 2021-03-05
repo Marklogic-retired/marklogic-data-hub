@@ -18,9 +18,9 @@ describe("Matching Step Detail view component", () => {
     jest.clearAllMocks();
   });
 
-  it("can render matching step with no rulesets or thresholds and click less/more text", async () => {
+  it("can render matching step with no rulesets or thresholds and click less/more text", () => {
 
-    const {getByLabelText, queryByLabelText, getByTestId, getByPlaceholderText, getByText, queryByText} =  render(
+    const {getByLabelText, queryByLabelText, getByTestId, getByPlaceholderText, getByText} =  render(
       <CurationContext.Provider value={customerMatchingStepEmpty}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
@@ -46,15 +46,14 @@ describe("Matching Step Detail view component", () => {
 
     expect(getByLabelText("testMatch")).toBeInTheDocument();
     userEvent.click(getByLabelText("inputUriRadio"));
-    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeInTheDocument();
-
+    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeEnabled();
     expect(getByLabelText("UriInput")).toBeInTheDocument();
-    expect(queryByLabelText("deleteIcon")).not.toBeInTheDocument();
-    await userEvent.type(getByPlaceholderText("Enter URI or Paste URIs"), "/test/Uri1");
-    userEvent.click(getByLabelText("addUriIcon"));
-    userEvent.click(getByLabelText("deleteIcon"));
-    expect(queryByText("/test/Uri1")).not.toBeInTheDocument();
+    expect(getByLabelText("addUriIcon")).toBeInTheDocument();
     expect(getByText("Test")).toBeInTheDocument();
+
+    userEvent.click(getByLabelText("allDataRadio"));
+    expect(getByLabelText("allDataContent")).toBeInTheDocument();
+    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeDisabled();
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
@@ -96,6 +95,9 @@ describe("Matching Step Detail view component", () => {
     expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeInTheDocument();
     expect(getByLabelText("UriInput")).toBeInTheDocument();
     expect(getByText("Test")).toBeInTheDocument();
+
+    userEvent.click(getByLabelText("allDataRadio"));
+    expect(getByLabelText("allDataContent")).toBeInTheDocument();
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {

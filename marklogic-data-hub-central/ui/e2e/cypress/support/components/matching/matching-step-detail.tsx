@@ -47,6 +47,18 @@ class MatchingStepDetail {
   getDefaultTextNoMatchedCombinations() {
     return cy.findByLabelText("noMatchedCombinations");
   }
+
+  getUriInputField() {
+    return cy.findByLabelText("UriInput");
+  }
+
+  getAddUriIcon() {
+    return cy.findByLabelText("addUriIcon");
+  }
+
+  getUriDeleteIcon() {
+    return cy.findByLabelText("deleteIcon");
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();
