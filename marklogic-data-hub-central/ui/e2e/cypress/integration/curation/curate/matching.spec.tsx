@@ -163,7 +163,7 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findByLabelText("customerId-exact").should("have.length.gt", 0));
   });
-  it("Delele ruleset", () => {
+  it("Delete ruleset", () => {
     multiSlider.deleteOption("customerId");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
@@ -172,5 +172,13 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0));
     multiSlider.getHandleName("customerId").should("not.exist");
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
+  });
+  it("Edit test match URIs", () => {
+    matchingStepDetail.getUriDeleteIcon().should("not.be.visible");
+    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriIcon().click();
+    cy.findByText("/test/Uri1").should("be.visible");
+    matchingStepDetail.getUriDeleteIcon().click();
+    cy.findByText("/test/Uri1").should("not.be.visible");
   });
 });

@@ -63,6 +63,7 @@ const MatchingStepDetail: React.FC = () => {
   const [value, setValue] = React.useState(1);
   const [UriTableData, setUriTableData] = useState<any[]>([]);
   const [uriContent, setUriContent] = useState("");
+  const [inputUriDisabled, setInputUriDisabled] = useState(false);
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -247,10 +248,12 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const handleClickAddUri = (event) => {
-    let data = [...UriTableData];
-    data.push({uriContent});
-    setUriTableData(data);
-    setUriContent("");
+    if (uriContent.length > 0) {
+      let data = [...UriTableData];
+      data.push({uriContent});
+      setUriTableData(data);
+      setUriContent("");
+    }
   };
 
   const renderUriTableData = UriTableData.map((uriData) => {
@@ -279,6 +282,12 @@ const MatchingStepDetail: React.FC = () => {
       }
     }
     setUriTableData(data);
+  };
+
+  const handleAllDataRadioClick = (event) => {
+    setUriTableData([]);
+    setUriContent("");
+    setInputUriDisabled(true);
   };
 
   return (
@@ -389,16 +398,17 @@ const MatchingStepDetail: React.FC = () => {
         </div>
 
         <div className={styles.testMatch} aria-label="testMatch">
-          <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}>
-            <MLRadio value={1} aria-label="inputUriRadio">
+          <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}  id="addDataRadio">
+            <MLRadio value={1} aria-label="inputUriRadio" onClick={() => { setInputUriDisabled(false); }}>
               <MLInput
                 placeholder="Enter URI or Paste URIs"
                 className={styles.uriInput}
                 value={uriContent}
                 onChange={handleUriInputChange}
                 aria-label="UriInput"
+                disabled={inputUriDisabled}
               />
-              <FontAwesomeIcon icon={faPlusSquare} className={styles.addIcon} onClick={handleClickAddUri} aria-label="addUriIcon"/>
+              <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriIcon"/>
               <div className={styles.UriTable}>
                 {UriTableData.length > 0 ? <MLTable
                   columns={UriColumns}
@@ -411,6 +421,12 @@ const MatchingStepDetail: React.FC = () => {
               </div>
               <div className={UriTableData.length > 0 ? styles.testButton:""}>
                 <MLButton type="primary" htmlType="submit" size="default">Test</MLButton>
+              </div>
+            </MLRadio>
+            <MLRadio value={2} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
+              <span>All Data</span>
+              <div aria-label="allDataContent"><br />
+                  Info about All Data goes here... what it is, how to use it, limitations..info about All Data goes here... what it is, how to use it, limitations..
               </div>
             </MLRadio>
           </MLRadio.MLGroup>

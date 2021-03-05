@@ -146,6 +146,14 @@
     }
 }
 
+.disabledAddIcon {
+    cursor: not-allowed;
+    pointer-events: auto;
+    font-size: 21px;
+    margin-left: 6px;
+    color: #cccccc;
+}
+
 .testMatch {
     padding-left: 44px;
     padding-top: 10px;
@@ -192,4 +200,11 @@
     padding-left: 1vw;
     line-break: auto;
     margin-left: auto;
+}
+
+.allDataRadio {
+    float: right;
+    margin-left: 5vw;
+    max-width: 55%;
+    position: absolute;
 }
