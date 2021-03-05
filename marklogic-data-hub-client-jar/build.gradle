@@ -39,6 +39,10 @@ dependencies {
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
 
+test {
+    useJUnitPlatform()
+}
+
 shadowJar {
     archiveBaseName = "marklogic-data-hub"
     archiveClassifier = "client"

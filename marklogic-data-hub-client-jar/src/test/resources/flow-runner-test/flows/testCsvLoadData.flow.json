@@ -1,0 +1,23 @@
+{
+  "name": "testCsvLoadData",
+  "description": "flow description",
+  "stopOnError": "true",
+  "steps": {
+    "1": {
+      "name": "csv",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input/csv",
+        "inputFileType": "csv",
+        "outputURIReplacement": ".*/input,''",
+        "separator": ","
+      },
+      "options": {
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "collections": ["csv-coll"],
+        "outputFormat": "json"
+      }
+    }
+  }
+}

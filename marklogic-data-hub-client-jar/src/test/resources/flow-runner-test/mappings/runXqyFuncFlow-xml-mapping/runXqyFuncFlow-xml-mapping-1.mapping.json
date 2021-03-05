@@ -1,0 +1,21 @@
+{
+  "lang" : "zxx",
+  "name" : "runXqyFuncFlow-xml-mapping",
+  "description" : "Default description",
+  "version" : 1,
+  "targetEntityType" : "http://example.com/e2eentity-0.0.1/e2eentity",
+  "sourceContext" : "/",
+  "sourceURI" : "/xqyfunc/ingest-xml.xml",
+  "properties" : {
+    "name" : {
+      "sourcedFrom" : "testing/name"
+    },
+    "id" : {
+      "sourcedFrom" : "testing/id"
+    },
+    "salary" : {
+      "sourcedFrom" : "add-function(testing/salary,10)"
+    }
+  },
+  "namespaces" : { }
+}
