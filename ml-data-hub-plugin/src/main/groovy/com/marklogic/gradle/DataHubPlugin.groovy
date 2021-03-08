@@ -78,7 +78,6 @@ class DataHubPlugin implements Plugin<Project> {
         if (Versions.compare(project.gradle.gradleVersion, "3.4") == -1) {
             logger.error("\n\n" +
                 "********************************\n" +
-                "Hold the phone!\n\n" +
                 "You need Gradle 3.4 or greater.\n" +
                 "We provide gradle wrappers ./gradlew or gradlew.bat for your convenience.\n" +
                 "********************************" +
@@ -92,8 +91,10 @@ class DataHubPlugin implements Plugin<Project> {
         setupHub(project)
 
         String setupGroup = "Data Hub Setup"
-        project.task("hubInit", group: setupGroup, type: InitProjectTask)
-        project.task("hubUpdate", group: setupGroup, type: UpdateHubTask)
+        project.task("hubInit", group: setupGroup, type: InitProjectTask, 
+            description: "Initialize the project directory before deploying to MarkLogic")
+        project.task("hubUpdate", group: setupGroup, type: UpdateHubTask,
+            description: "Update the project directory; typically run after upgrading the version of DHF used in this project's Gradle file")
         project.task("hubVersion", group: setupGroup, type: HubVersionTask,
             description: "Prints the versions of Data Hub and MarkLogic associated with the value of mlHost, and also prints the version of " +
                 "Data Hub associated with this Gradle task")
@@ -120,6 +121,8 @@ class DataHubPlugin implements Plugin<Project> {
             description: "dhsDeploy has been replaced in 5.2.0 by hubDeploy and similar tasks. It is now simply an alias for hubDeploy.")
         project.task("hubPreInstallCheck", type: PreinstallCheckTask,
             description: "Ascertains whether a MarkLogic server can accept installation of the DHF.  Requires administrative privileges to the server.")
+
+        // This intentionally does not have a description so that it will not show up in "gradlew tasks"; its use is unclear
         project.task("hubInfo", type: HubInfoTask)
 
         String hubConversionGroup = "Data Hub Conversion"
@@ -150,7 +153,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubClearUserModules", type: ClearUserModulesTask, group: developGroup,
             description: "Clears user modules in the modules database, only leaving the modules " +
                 "that come with DataHub installation. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
-        project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask)
+        project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask,
+            description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " + 
+                "only use this if your project has not been converted for Hub Central usage")
         project.task("hubCreateStepDefinition", group: developGroup, type: CreateStepDefinitionTask,
             description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
                 "a type (either 'ingestion' or 'custom'; defaults to 'custom') via -PstepDefType=ingestion|custom, " +
@@ -161,7 +166,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubAddStepToFlow", group: developGroup, type: AddStepToFlowTask,
             description: "Add a step to a flow in staging and final databases and write it to your project; specify a flow name via -PflowName=YourFlowName, " +
                 "step name via -PstepName=YourStepName and a step type via -PstepType=(ingestion|mapping|custom|matching|merging|mastering)")
-        project.task("hubCreateEntity", group: developGroup, type: CreateEntityTask)
+        project.task("hubCreateEntity", group: developGroup, type: CreateEntityTask,
+            description: "Create a new entity file in the project directory (does not deploy it to MarkLogic)")
         project.task("hubCreateFlow", group: developGroup, type: CreateFlowTask,
             description: "Create a new flow file and write it to the staging and final database and to your project; specify a flow name with -PflowName=YourFlowName and " +
                 "optionally generate a default set of inline steps by including -PwithInlineSteps=true")
@@ -183,11 +189,13 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDeployUserArtifacts", group: developGroup, type: DeployUserArtifactsTask,
             description: "Installs user artifacts such as entities and mappings.")
         // DHF uses an additional timestamps file needs to be deleted when the ml-gradle one is deleted
-        project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: developGroup)
+        project.task("hubDeleteModuleTimestampsFile", type: DeleteHubModuleTimestampsFileTask, group: developGroup,
+            description: "Delete the timestamps file that captures when DHF modules were loaded")
         project.tasks.mlDeleteModuleTimestampsFile.getDependsOn().add("hubDeleteModuleTimestampsFile")
 
         String runGroup = "Data Hub Run"
-        project.task("hubRunFlow", group: runGroup, type: RunFlowTask)
+        project.task("hubRunFlow", group: runGroup, type: RunFlowTask,
+            description: "Run a flow; requires defining flowName at a minimum; e.g. -PflowName=myFlow")
         project.task("hubEnableDebugging", group: runGroup, type: EnableDebuggingTask,
             description: "Enables debugging on the running DHF server. Requires flow-developer-role or equivalent.")
         project.task("hubDisableDebugging", group: runGroup, type: DisableDebuggingTask,
@@ -216,12 +224,18 @@ class DataHubPlugin implements Plugin<Project> {
                 "Specify the database to perform this in via -Pdatabase=(name of staging or final database).")
 
         String legacyFlowGroup = "Data Hub Legacy Flow"
-        project.task("hubCreateHarmonizeFlow", group: legacyFlowGroup, type: CreateHarmonizeLegacyFlowTask)
-        project.task("hubCreateInputFlow", group: legacyFlowGroup, type: CreateInputLegacyFlowTask)
-        project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask)
-        project.task("hubDeleteJobs", group: legacyFlowGroup, type: DeleteJobsTask)
-        project.task("hubExportLegacyJobs", group: legacyFlowGroup, type: ExportLegacyJobsTask)
-        project.task("hubImportJobs", group: legacyFlowGroup, type: ImportJobsTask)
+        project.task("hubCreateHarmonizeFlow", group: legacyFlowGroup, type: CreateHarmonizeLegacyFlowTask,
+            description: "Create a DHF 4 harmonize flow in the project directory")
+        project.task("hubCreateInputFlow", group: legacyFlowGroup, type: CreateInputLegacyFlowTask,
+            description: "Create a DHF 4 input flow in the project directory")
+        project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask,
+            description: "Run a DHF 4 flow")
+        project.task("hubDeleteJobs", group: legacyFlowGroup, type: DeleteJobsTask,
+            description: "Delete DHF 4 jobs data")
+        project.task("hubExportLegacyJobs", group: legacyFlowGroup, type: ExportLegacyJobsTask,
+            description: "Export DHF jobs data")
+        project.task("hubImportJobs", group: legacyFlowGroup, type: ImportJobsTask,
+            description: "Import DHF 4 jobs data")
 
         ((UpdateIndexesTask)project.tasks.getByName("mlUpdateIndexes")).command = new HubUpdateIndexesCommand(dataHub)
 
