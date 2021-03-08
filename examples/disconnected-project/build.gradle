@@ -1,0 +1,101 @@
+buildscript {
+    if (project.hasProperty("disconnected")) {
+        // Find plugin dependencies via the given directory, as opposed to trying to download them
+        // from a remote repository
+        dependencies {
+            classpath fileTree(dir: "gradle-dependencies", include: "*.jar")
+        }
+    } else {
+        // When connected to the Internet, download plugin dependencies from the following repositories
+        repositories {
+            maven { url "https://plugins.gradle.org/m2/" }
+            jcenter()
+        }
+        dependencies {
+            classpath "net.saliman:gradle-properties-plugin:1.5.1"
+            classpath "com.marklogic:ml-data-hub:5.4.0"
+        }
+    }
+}
+
+apply plugin: "net.saliman.properties"
+apply plugin: "com.marklogic.ml-data-hub"
+
+configurations {
+    hubDeployer
+}
+
+ext {
+    hubDeployerDir = "build/hub-deployer"
+    hubDeployerGroup = "Hub Deployer"
+    hubDeployerZipFilename = "hub-deployer.zip"
+}
+
+if (project.hasProperty("disconnected")) {
+    println "\nRunning in disconnected mode"
+}
+
+else {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        jcenter()
+    }
+
+    configurations { gradlePlugins }
+
+    dependencies {
+        gradlePlugins "net.saliman:gradle-properties-plugin:1.5.1"
+        gradlePlugins "com.marklogic:ml-data-hub:5.4.0"
+    }
+
+    // Customize this as needed to select the project files that you want to be included in the
+    // deployer zip
+    task copyProjectFiles(type: Copy, group: hubDeployerGroup) {
+        from "."
+        include "build.gradle"
+        include "gradle.properties"
+        include "settings.gradle"
+        include "entities/**"
+        include "flows/**"
+        include "mappings/**"
+        include "src/main/**"
+        include "step-definitions/**"
+        include "steps/**"
+        into hubDeployerDir
+    }
+
+    task copyGradlePluginDependencies(type: Copy, group: hubDeployerGroup) {
+        from configurations.gradlePlugins
+        into hubDeployerDir + "/gradle-dependencies"
+    }
+
+    task addDisconnectedToGradleProperties {
+        doLast {
+            ant.propertyfile(file: "build/hub-deployer/gradle.properties") {
+                entry(key: "disconnected", value: "true")
+            }
+        }
+    }
+
+    addDisconnectedToGradleProperties.mustRunAfter copyProjectFiles
+
+    task copyHubDeployerFiles(group: hubDeployerGroup) {
+        dependsOn = [
+            "copyProjectFiles",
+            "copyGradlePluginDependencies",
+            "addDisconnectedToGradleProperties"
+        ]
+    }
+
+    task deleteHubDeployer(type: Delete, group: hubDeployerGroup) { delete hubDeployerDir, "build/${hubDeployerZipFilename}" }
+
+    task buildHubDeployer (type: Zip, group: hubDeployerGroup) {
+        dependsOn = ["deleteHubDeployer", "copyHubDeployerFiles"]
+        from hubDeployerDir
+        into 'hub-deployer'
+        destinationDirectory = file('build')
+        archiveFileName = hubDeployerZipFilename
+    }
+
+    copyHubDeployerFiles.mustRunAfter deleteHubDeployer
+}
