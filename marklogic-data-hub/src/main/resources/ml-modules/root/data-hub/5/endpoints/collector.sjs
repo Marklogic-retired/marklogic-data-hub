@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const CollectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
+const collectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
@@ -63,12 +63,20 @@ if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
 }
 
 let query = combinedOptions.sourceQuery;
+
+if(combinedOptions.sourceQueryLimit){
+  let sourceQueryLimit = fn.number(combinedOptions.sourceQueryLimit);
+  if(isNaN (sourceQueryLimit) || sourceQueryLimit < 1){
+    httpUtils.throwBadRequest(`Invalid value ${sourceQueryLimit} for 'sourceQueryLimit' in step '${stepDoc.name}'. It should be a number greater than zero`);
+  }
+}
+
 if (!query) {
   datahub.debug.log("The collector query was empty");
   httpUtils.throwNotFoundWithArray([404, "Not Found", "The collector query was empty"]);
 }
 
-const javascript = new CollectorLib(datahub).prepareSourceQuery(combinedOptions, stepDefinition);
+const javascript =  collectorLib.prepareSourceQuery(combinedOptions, stepDefinition);
 try {
   /**
    * DHF 5 has always used this eval, and it certainly is open for code injection. This is partially minimized

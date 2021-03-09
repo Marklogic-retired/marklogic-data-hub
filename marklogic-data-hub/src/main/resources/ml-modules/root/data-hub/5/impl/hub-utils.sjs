@@ -29,7 +29,7 @@ function deleteDocument(docUri, database) {
 }
 
 /**
- * @param event 
+ * @param event
  * @param message Expected to be a string; if you have JSON, call hubTraceJson
  */
 function hubTrace(event, message) {
@@ -43,6 +43,13 @@ function hubTrace(event, message) {
  */
 function hubTraceJson(event, json) {
   hubTrace(event, xdmp.toJsonString(json));
+}
+
+/**
+ * @param message string;
+ */
+function warn(message) {
+  console.warn(`[Request:${xdmp.request()}] ${message}`);
 }
 
 function invokeFunction(queryFunction, database) {
@@ -144,6 +151,7 @@ module.exports = {
   deleteDocument,
   hubTrace,
   hubTraceJson,
+  warn,
   invokeFunction,
   normalizeToArray,
   normalizeToSequence,

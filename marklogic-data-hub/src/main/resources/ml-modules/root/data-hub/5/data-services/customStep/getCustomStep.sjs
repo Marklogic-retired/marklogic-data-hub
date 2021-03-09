@@ -20,7 +20,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-custom", "exe
 const Artifacts = require('/data-hub/5/artifacts/core.sjs')
 var stepName;
 
-let dataHubOptions = ["sourceQuery", "sourceQueryIsScript", "constrainSourceQueryToJob", "provenanceGranularityLevel", "acceptsBatch",
+let dataHubOptions = ["sourceQuery", "sourceQueryLimit", "sourceQueryIsScript", "constrainSourceQueryToJob", "provenanceGranularityLevel", "acceptsBatch",
   "stepUpdate", "collections" , "additionalCollections", "permissions", "outputFormat", "sourceDatabase", "targetDatabase", "targetEntityType"];
 let additionalSettings = {};
 let step = Artifacts.getArtifact("custom", stepName)

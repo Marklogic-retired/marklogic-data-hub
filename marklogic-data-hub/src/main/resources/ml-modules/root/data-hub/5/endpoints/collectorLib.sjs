@@ -14,48 +14,47 @@
  * limitations under the License.
  */
 'use strict';
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
-class CollectorLib {
+/**
+ * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
+ * collector endpoint.
+ *
+ * @param combinedOptions
+ * @param stepDefinition
+ * @return {string|*}
+ */
+function prepareSourceQuery(combinedOptions, stepDefinition) {
+  let sourceQuery = combinedOptions.sourceQuery;
+  let sourceQueryLimit = fn.number(combinedOptions.sourceQueryLimit);
 
-  constructor(datahub){
-    this.datahub = datahub;
+  if (combinedOptions.sourceQueryIsScript) {
+    if(sourceQueryLimit){
+      hubUtils.warn( `Ignoring 'sourceQueryLimit' property as 'sourceQueryIsScript' is set to true`);
+    }
+    return fn.normalizeSpace(`${sourceQuery}`);
   }
 
-  /**
-   * Determine the sourceQuery from the given options and stepDefinition and then prepare it for evaluation by the
-   * collector endpoint.
-   *
-   * @param combinedOptions
-   * @param stepDefinition
-   * @return {string|*}
-   */
-  prepareSourceQuery(combinedOptions, stepDefinition) {
-    let sourceQuery = combinedOptions.sourceQuery;
-
-    if (combinedOptions.sourceQueryIsScript) {
-      return fn.normalizeSpace(`${sourceQuery}`);
+  if (true == combinedOptions.constrainSourceQueryToJob) {
+    if (combinedOptions.jobId) {
+      sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
+    } else {
+      hubUtils.warn( `Ignoring constrainSourceQueryToJob=true because no jobId was provided in the options`);
     }
-
-    if (true == combinedOptions.constrainSourceQueryToJob) {
-      if (combinedOptions.jobId) {
-        sourceQuery = fn.normalizeSpace(`cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', '${combinedOptions.jobId}'), ${sourceQuery}])`);
-      } else {
-        this.datahub.debug.log({
-          message: "Ignoring constrainSourceQueryToJob=true because no jobId was provided in the options",
-          type: "warning"
-        });
-      }
-    }
-
-    // This is retained only for backwards compatibility, though its existence is neither documented nor tested
-    // prior to DHFPROD-4665. Prior to DHFPROD-3854, this did support cts.values, though it would not have worked had
-    // someone tried to use that, since the rest of DHF was still expecting URIs to be returned, not values.
-    if (/^\s*cts\.uris\(.*\)\s*$/.test(sourceQuery)) {
-      return sourceQuery;
-    }
-
-    return `cts.uris(null, null, ${sourceQuery})`;
   }
+
+  // This is retained only for backwards compatibility, though its existence is neither documented nor tested
+  // prior to DHFPROD-4665. Prior to DHFPROD-3854, this did support cts.values, though it would not have worked had
+  // someone tried to use that, since the rest of DHF was still expecting URIs to be returned, not values.
+  if (/^\s*cts\.uris\(.*\)\s*$/.test(sourceQuery)) {
+    return sourceQuery;
+  }
+
+  return sourceQueryLimit ? `cts.uris(null, 'limit=${sourceQueryLimit}' , ${sourceQuery})` : `cts.uris(null, null, ${sourceQuery})`;
 }
 
-module.exports = CollectorLib;
+
+module.exports = {
+  prepareSourceQuery
+};
+
