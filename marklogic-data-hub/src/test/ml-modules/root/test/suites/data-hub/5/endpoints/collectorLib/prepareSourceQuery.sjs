@@ -1,24 +1,10 @@
 const test = require("/test/test-helper.xqy");
-const CollectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+const collectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
 
-const lib = new CollectorLib(datahub);
 let assertions = [];
 
-// Query is for a default-merging step
-let sourceQuery = lib.prepareSourceQuery(
-  {
-    sourceQuery: "cts.collectionQuery('test')"
-  },
-  {
-    name: "default-merging",
-    type: "merging"
-  }
-);
-
 // Query constrained to job
-sourceQuery = lib.prepareSourceQuery(
+let sourceQuery = collectorLib.prepareSourceQuery(
   {
     sourceQuery: "cts.collectionQuery('test')",
     constrainSourceQueryToJob: true,
@@ -40,7 +26,7 @@ let options = {
   jobId: "job123"
 };
 options.sourceQuery = 'cts.collectionQuery("test")';
-sourceQuery = lib.prepareSourceQuery(options, {});
+sourceQuery = collectorLib.prepareSourceQuery(options, {});
 assertions.push(
   test.assertEqual(
     "cts.uris(null, null, cts.andQuery([cts.fieldWordQuery('datahubCreatedByJob', 'job123'), cts.collectionQuery(\"test\")]))",
@@ -50,7 +36,7 @@ assertions.push(
 );
 
 // Query constrained to job, but no job ID
-sourceQuery = lib.prepareSourceQuery(
+sourceQuery = collectorLib.prepareSourceQuery(
   {
     sourceQuery: "cts.collectionQuery('test')",
     constrainSourceQueryToJob: true
@@ -64,7 +50,7 @@ assertions.push(
   )
 );
 
-sourceQuery = lib.prepareSourceQuery(
+sourceQuery = collectorLib.prepareSourceQuery(
   {
     sourceQuery: "cts.uris(null, null, cts.trueQuery())"
   }, {}

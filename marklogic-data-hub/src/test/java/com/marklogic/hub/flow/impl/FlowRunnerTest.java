@@ -178,6 +178,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         // cts.valueTuples
         options.put("sourceQuery", "cts.valueTuples([cts.elementReference('PersonGivenName'), cts.elementReference('PersonSurName')], null, cts.collectionQuery('collector-test-input'))");
+        //'sourceQueryLimit' should be ignored if 'sourceQueryIsScript' is set to true.
+        options.put("sourceQueryLimit", 1);
         resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
         assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
@@ -245,6 +247,34 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         EvalResult res = resultItr.next();
         long count = Math.toIntExact((long) res.getNumber());
         Assertions.assertEquals(count, 25);
+    }
+
+    @Test
+    public void testSourceQueryLimit(){
+        Map<String,Object> opts = new HashMap<>();
+
+        runAsDataHubOperator();
+        RunFlowResponse resp = runFlow("testFlow", "4", UUID.randomUUID().toString(),opts, new HashMap<>());
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
+        Assertions.assertEquals("finished", resp.getJobStatus());
+
+        opts.put("sourceQuery", "cts.collectionQuery('csv-tab-coll')");
+        opts.put("sourceQueryLimit", 2);
+        resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
+        Assertions.assertEquals("finished", resp.getJobStatus());
+
+        opts.put("sourceQueryLimit", -2);
+        resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals("failed", resp.getJobStatus());
+
+        opts.put("sourceQueryLimit", "invalidValue");
+        resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
+        flowRunner.awaitCompletion();
+        Assertions.assertEquals("failed", resp.getJobStatus());
     }
 
     @Test
