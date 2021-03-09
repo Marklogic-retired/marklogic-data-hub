@@ -316,6 +316,10 @@ module.exports.updateJob = module.amp(
         throw new Error("Cannot create job document. Incorrect options.");
       }
     }
+    else if(jobDoc.job.timeEnded) {
+      jobDoc.job.timeStarted = fn.currentDateTime();
+      jobDoc.job.timeEnded = null;
+    }
     //update job status at the end of flow run
     if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "canceled"|| status === "stop-on-error") {
       jobDoc.job.timeEnded = fn.currentDateTime();
@@ -326,6 +330,8 @@ module.exports.updateJob = module.amp(
       jobDoc.job.lastAttemptedStep = step;
       if(lastCompleted) {
        jobDoc.job.lastCompletedStep = lastCompleted;
+       jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
+       jobDoc.job.stepResponses[step].stepEndTime = null;
       }
       if(!jobDoc.job.stepResponses[step]){
        jobDoc.job.stepResponses[step] = {};
@@ -338,7 +344,7 @@ module.exports.updateJob = module.amp(
       }
       let stepResp = jobDoc.job.stepResponses[step];
       stepResp.stepStartTime = tempTime;
-      stepResp.stepEndTime = fn.currentDateTime();
+      stepResp.stepEndTime = fn.currentDateTime().add(xdmp.elapsedTime());
       if (stepResp.stepDefinitionName && stepResp.stepDefinitionType) {
         let stepDef = fn.head(hubUtils.invokeFunction(function () {
             return datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
