@@ -8,6 +8,16 @@
     background: #394494; 
 }
 
+#srcContainer {
+  .ant-table-column-has-actions.ant-table-column-has-filters.ant-table-column-has-sorters.ant-table-row-cell-break-word{
+  padding-left: 22px;    
+  }
+
+  .ant-table-wrapper{
+    margin-top: 20px;
+  }
+}
+
 .datatype-string::before {
     content: '"';
 }
@@ -19,6 +29,12 @@
     color: grey;
 }
 
-#entityContainer .ant-table-body {
-    min-height: 40vh;
+#ClearTestButtons .ant-btn-sm{
+    font-size: 16px;
+    height: 30px;
+    width: 60px;
+}
+
+.Resizer.vertical {
+  border-style: dashed !important;
 }

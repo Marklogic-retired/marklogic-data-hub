@@ -139,11 +139,12 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
     mappingStepDetail.setXpathExpressionInput("shipRegion", "ShipRegion");
     mappingStepDetail.setXpathExpressionInput("shippedDate", "ShippedDate");
+    cy.findByTestId("shippedDate-mapexpression").blur();
     curatePage.dataPresent().should("be.visible");
-    cy.waitUntil(() => mappingStepDetail.expandEntity()).click();
     // Test the mappings
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
     mappingStepDetail.testMap().click();
+    cy.waitUntil(() => mappingStepDetail.expandEntity()).click();
     mappingStepDetail.validateMapValues("orderId", "10259");
     mappingStepDetail.validateMapValues("address", "");
     mappingStepDetail.validateMapValues("city", "Houston");

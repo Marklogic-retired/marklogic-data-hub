@@ -1,0 +1,171 @@
+.entityTable {
+  & thead > tr > th {
+      background-color: #EEEEEE;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    };
+  & tbody > tr > td {
+      line-height: 2px;
+      background-color: #FAFAFA;
+      vertical-align: top;
+  }
+}
+
+.contextHelp{
+  width: 14vw;
+  word-wrap: normal;
+  font-size: 14px;
+  color: #777777;
+}
+
+.docLink{
+  cursor: pointer;
+  margin-left: -5px;
+}
+
+.docLinksUl{
+  padding-left: 1vw;
+}
+
+.xpathDoc{
+  color: black;
+}
+
+.typeContainer {
+  margin-bottom: -17px;
+
+  > .typeContextContainer {
+      margin-top: -13px;
+      margin-bottom:-14px;
+      > .typeContext {
+          color: #777777;
+          font-size: 12px
+      }
+
+      >.typeText{
+          margin-top: 10px
+      }
+  }
+}
+.listIcon{
+  background: transparent;
+  border: none;
+  color: #394494;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 4px;
+  font-size: 20px;
+  cursor: pointer;
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+
+.functionIcon{
+  color: #394494;
+  font-size: 14px;
+  width: 22px;
+  height: 18px;
+  border: 1px solid #394494;
+  border-radius: 2px;
+  padding: 0px 0px 0px 0px;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+  align-items: center;
+  margin-top: 5px;
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+.questionCircle {
+  font-size: 12px;
+  color: #7F86B5;
+}
+.mapExpParentContainer{
+  //display: inline;
+  margin-top: -12px;
+  margin-bottom: -12px;
+
+  >.validationErrors {
+      width: 22vw;
+      line-height: normal;
+      padding-top: 6px;
+      padding-left: 2px;
+      padding-bottom: 4px;
+      color: #DB4f59;
+      word-break: break-all;
+
+  }
+}
+
+.mapExpressionContainer {
+  width: 100%;
+  display: inline-flex;
+  vertical-align: top;
+  align-items: flex-start;
+}
+
+.filterContainer {
+  padding: 8px;
+}
+
+.searchInput {
+  min-width: 8vw;
+  margin-bottom: 8px;
+  display: block
+}
+.resetButton {
+  width: 90px;
+  margin-right: 8px
+}
+
+.searchSubmitButton {
+  width: 90px
+}
+
+.highlightStyle {
+  background-color: #ffc069;
+  padding: 0px
+}
+
+.expandIcon{
+  margin-left: -16px;
+  vertical-align:middle;
+  text-align: left;
+  font-size: 13px;
+  padding-right: 1px;
+}
+
+.entitySettingsLink {
+  font-size: 20px !important;
+  position: absolute;
+  top: 12px;
+  right: 66px;
+  color: #44499C;
+  cursor: pointer;
+  .stepSettingsLabel {
+      display: inline-block;
+      margin-left: 6px;
+  }
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+
+.entitySettingsCaret {
+  font-size: 13px !important;
+  position: absolute;
+  top: 15px;
+  right: 57px;
+  color: #44499C;
+  cursor: pointer;
+  .stepSettingsLabel {
+      display: inline-block;
+      margin-left: 6px;
+  }
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
