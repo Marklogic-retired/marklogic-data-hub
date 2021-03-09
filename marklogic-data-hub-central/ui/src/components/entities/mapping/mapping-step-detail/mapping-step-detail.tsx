@@ -1,13 +1,13 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Card, Table, Icon, Popover, Input, Alert, Dropdown, Menu} from "antd";
+import {Card, Table, Icon, Input, Alert, Dropdown, Menu} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
+import EntityMapTable from "../entity-map-table/entity-map-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faObjectUngroup, faList, faPencilAlt, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
 import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFromSrcQuery} from "../../../../util/conversionFunctions";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
-import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
 import {MLButton, MLTooltip, MLCheckbox, MLSpin, MLPageHeader} from "@marklogic/design-system";
@@ -19,7 +19,7 @@ import {xmlParserForMapping} from "../../../../util/record-parser";
 import {CurationContext} from "../../../../util/curation-context";
 import {AuthoritiesContext} from "../../../../util/authorities";
 import {MappingStep, StepType} from "../../../../types/curation-types";
-import {getMappingArtifactByMapName, getMappingFunctions, updateMappingArtifact} from "../../../../api/mapping";
+import {getMappingArtifactByMapName, updateMappingArtifact} from "../../../../api/mapping";
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips} from "../../../../config/tooltips.config";
 
@@ -62,24 +62,16 @@ const MappingStepDetail: React.FC = () => {
   const canReadWrite = authorityService.canWriteMapping();
   const [mapExp, setMapExp] = useState({});
   const [sourceContext, setSourceContext] = useState({});
-  let mapExpUI: any = {};
-  let tempMapExp: any = {};
   let tempSourceContext: any = {};
   let trackUniqueKeys: any = [];
   /*-------------------*/
-
-  //For Dropdown menu
-  const [propName, setPropName] = useState("");
-  const [propListForDropDown, setPropListForDropDown] = useState<any>([]);
-  const [displayFuncMenu, setDisplayFuncMenu] = useState(false);
-  const [displaySelectList, setDisplaySelectList] = useState(false);
-  const [functionValue, setFunctionValue] = useState("");
-  const [caretPosition, setCaretPosition] = useState(0);
 
   //Dummy ref node to simulate a click event
   const dummyNode: any = useRef();
 
   /*-------------------*/
+
+  const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
 
   const [mapExpTouched, setMapExpTouched] = useState(false);
   const [editingURI, setEditingUri] = useState(false);
@@ -89,13 +81,6 @@ const MappingStepDetail: React.FC = () => {
 
   //For source dropdown search menu
   const [flatArray, setFlatArray]   = useState<any[]>([]);
-  const [sourcePropName, setSourcePropName] = useState("");
-  const [sourcePropListForDropDown, setSourcePropListForDropDown] = useState<any>([]);
-  const [sourceIndentForDropDown, setSourceIndentForDropDown] = useState<any>([]);
-  const [sourceValue, setSourceValue] = useState("");
-  const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
-  const [displaySourceList, setDisplaySourceList] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<any>([]); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   //For TEST and Clear buttons
   const [mapResp, setMapResp] = useState({});
@@ -115,22 +100,7 @@ const MappingStepDetail: React.FC = () => {
   const [allSourceKeys, setAllSourceKeys] = useState<any []>([]);
   const [allEntityKeys, setAllEntityKeys] = useState<any []>([]);
 
-  //Documentation links for using Xpath expressions
-  const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
-    <div><ul className={styles.docLinksUl}>
-      <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
-      <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
-      <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
-    </ul></div>
-  </div>;
-
-  //Text for Context Icon
-  const contextHelp = <div className={styles.contextHelp}>An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances). Use a slash (&quot;/&quot;) if the source model is flat.</div>;
-
-  const {TextArea} = Input;
-
   //For Entity table
-  const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
   const [tgtEntityReferences, setTgtEntityReferences] = useState({});
   let EntitYTableKeyIndex = 0;
   let sourceTableKeyIndex = 0;
@@ -138,9 +108,6 @@ const MappingStepDetail: React.FC = () => {
 
   //For storing docURIs
   const [docUris, setDocUris] = useState<any[]>([]);
-
-  //For storing  mapping functions
-  const [mapFunctions, setMapFunctions] = useState<any>([]);
 
   //For storing namespaces
   const [namespaces, setNamespaces] = useState({});
@@ -480,13 +447,6 @@ const MappingStepDetail: React.FC = () => {
     return nmspcString;
   };
 
-  const setMappingFunctions = async () => {
-    let mappingFuncResponse= await getMappingFunctions();
-    if (mappingFuncResponse) {
-      setMapFunctions(mappingFuncResponse.data);
-    }
-  };
-
   const extractEntityInfoForTable = async () => {
     let resp = await getNestedEntities(curationOptions.activeStep.entityName);
     if (resp && resp.status === 200) {
@@ -558,7 +518,6 @@ const MappingStepDetail: React.FC = () => {
   const setMappingStepDetailPageData = async (mappingStepArtifact) => {
     await getSourceData(mappingStepArtifact.name);
     extractEntityInfoForTable();
-    setMappingFunctions();
   };
 
   const handleSubmitUri = (uri) => {
@@ -602,13 +561,14 @@ const MappingStepDetail: React.FC = () => {
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
 
   useEffect(() => {
-    initializeMapExpressions();
     onClear();
     initializeEntityExpandKeys();
     return (() => {
       setMapExp({});
-      setSearchEntityText("");
-      setSearchedEntityColumn("");
+      setSearchSourceText("");
+      setSearchedSourceColumn("");
+      // setSearchEntityText("");
+      // setSearchedEntityColumn("");
     });
   }, [entityTypeProperties, mapData]);
 
@@ -637,6 +597,7 @@ const MappingStepDetail: React.FC = () => {
   //Set the collapse/Expand options for Entity table, when mapping opens up.
   const initializeEntityExpandKeys = () => {
     let initialKeysToExpand:any = [];
+    initialKeysToExpand.push(0); //first row with entity title should be expanded by default
     entityTypeProperties.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.key);
@@ -663,15 +624,6 @@ const MappingStepDetail: React.FC = () => {
 
   const navigationButtons = <SourceNavigation currentIndex={uriIndex} startIndex={0} endIndex={docUris && docUris.length - 1} handleSelection={onNavigateURIList} />;
 
-  //Set the mapping expressions, if already exists.
-  const initializeMapExpressions = () => {
-    if (mapData && mapData["properties"]) {
-      initializeMapExpForUI(mapData["properties"]);
-      setMapExp({...mapExpUI});
-      updateSourceContext({...mapExpUI}, entityTypeProperties);
-      setSourceContext({...tempSourceContext});
-    }
-  };
 
   /*  The source context is updated when mapping is saved/loaded, this function does a level order traversal of entity
      json and updates the sourceContext for every entity property */
@@ -716,21 +668,6 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  //Refresh the UI mapExp from the the one saved in the database
-  const initializeMapExpForUI  = (mapExp, parentKey = "") => {
-    Object.keys(mapExp).forEach(key => {
-      let val = mapExp[key];
-      if (val.hasOwnProperty("properties")) {
-        parentKey = parentKey ? parentKey + "/" + key : key;
-        mapExpUI[parentKey] = mapExp[key]["sourcedFrom"];
-        initializeMapExpForUI(val.properties, parentKey);
-        parentKey = (parentKey.indexOf("/")!==-1) ? parentKey.substring(0, parentKey.lastIndexOf("/")):"";
-      } else {
-        let tempKey = parentKey ? parentKey + "/" + key : key;
-        mapExpUI[tempKey] = mapExp[key]["sourcedFrom"];
-      }
-    });
-  };
 
   const onBack = () => {
     history.push("/tiles/curate");
@@ -771,17 +708,6 @@ const MappingStepDetail: React.FC = () => {
     setMapExpTouched(false);
   };
 
-
-  const handleMapExp = (name, event) => {
-    setCaretPosition(event.target.selectionStart);
-    setMapExpTouched(true);
-    setMapExp({...mapExp, [name]: event.target.value});
-  };
-
-  const handleClickInTextArea = async (e) => {
-    await setCaretPosition(e.target.selectionStart);
-  };
-
   const getDataForValueField = (name) => {
     return !checkFieldInErrors(name) ? displayResp(name) : "";
   };
@@ -797,24 +723,11 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const mapExpressionStyle = (propName) => {
-    const mapStyle: CSSProperties = {
-      width: "22vw",
-      verticalAlign: "top",
-      justifyContent: "top",
-      borderColor: checkFieldInErrors(propName) ? "red" : ""
-    };
-    return mapStyle;
-  };
-
   //For filter search in source table
   let searchInput: any;
   //For Source Table
   const [searchSourceText, setSearchSourceText] = useState("");
   const [searchedSourceColumn, setSearchedSourceColumn] = useState("");
-  //For Entity table
-  const [searchEntityText, setSearchEntityText] = useState("");
-  const [searchedEntityColumn, setSearchedEntityColumn] = useState("");
 
   const handleColSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -828,19 +741,10 @@ const MappingStepDetail: React.FC = () => {
         setSourceExpandedKeys([...getKeysToExpandForFilter(sourceData, "rowKey", selectedKeys[0])]);
       }
 
-    } else {
-      setSearchEntityText(selectedKeys[0]);
-      setSearchedEntityColumn(dataIndex);
-
-      if (entityTypeProperties.length === 1 && entityTypeProperties[0].hasOwnProperty("children")) {
-        setEntityExpandedKeys([1, ...getKeysToExpandForFilter(entityTypeProperties, "key", selectedKeys[0])]);
-      } else {
-        setEntityExpandedKeys([...getKeysToExpandForFilter(entityTypeProperties, "key", selectedKeys[0])]);
-      }
     }
   };
 
-  const handleSearchReset = (clearFilters, dataIndex) => {
+  const handleSourceSearchReset = (clearFilters, dataIndex) => {
     clearFilters();
     if (dataIndex === "key") {
       if (searchSourceText) {
@@ -848,12 +752,6 @@ const MappingStepDetail: React.FC = () => {
       }
       setSearchSourceText("");
       setSearchedSourceColumn("");
-    } else {
-      if (searchEntityText) {
-        setEntityExpandedKeys([...initialEntityKeys]);
-      }
-      setSearchEntityText("");
-      setSearchedEntityColumn("");
     }
   };
 
@@ -871,7 +769,7 @@ const MappingStepDetail: React.FC = () => {
           onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
           className={styles.searchInput}
         />
-        <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
+        <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
                     Reset
         </MLButton>
         <MLButton
@@ -910,8 +808,8 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt) => {
-    if (searchedCol === columnName) {
+  const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt, rowNum) => {
+    if (searchedCol === columnName && rowNum !== 0) {
       return <Highlighter
         highlightClassName={styles.highlightStyle}
         searchWords={[searchTxt]}
@@ -923,11 +821,10 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  //Get the expandKeys for the tables based on teh applied filter
+  //Get the expandKeys for the tables based on the applied filter
   const getKeysToExpandForFilter = (dataArr, rowKey, searchText, allKeysToExpand:any = [], parentRowKey = 0) => {
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
-
         if (((rowKey === "rowKey" ? obj.key : obj.name) + JSON.stringify(obj["children"])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
           if (!allKeysToExpand.includes(obj[rowKey])) {
             allKeysToExpand.push(obj[rowKey]);
@@ -956,10 +853,10 @@ const MappingStepDetail: React.FC = () => {
       sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
       width: "60%",
       defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
-      render: (text) => {
+      render: (text, row) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0]+": "+text?.split(":")[1] : text;
         let valueToDisplay = <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText);
+        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.key);
       }
     },
     {
@@ -970,80 +867,6 @@ const MappingStepDetail: React.FC = () => {
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
       width: "40%",
       render: (text, row) => (<div data-testid = {row.key +"-srcValue"} className = {styles.sourceValue}>{(text || text === "") ?  getTextforSourceValue(text, row) : ""}</div>)
-    }
-  ];
-
-  const entityColumns = [
-    {
-      title: <span data-testid="entityTableName">Name</span>,
-      dataIndex: "name",
-      key: "name",
-      width: "18%",
-      ...getColumnFilterProps("name"),
-      sorter: (a: any, b: any) => a.name?.localeCompare(b.name),
-      ellipsis: true,
-      render: (text) => {
-        let textToSearchInto = text.split("/").pop();
-        let valueToDisplay = <span>{textToSearchInto}</span>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText);
-      }
-    },
-    {
-      ellipsis: true,
-      title: <span data-testid="entityTableType">Type</span>,
-      dataIndex: "type",
-      key: "type",
-      width: "15%",
-      sorter: (a: any, b: any) => getEntityDataType(a.type).localeCompare(getEntityDataType(b.type)),
-      render: (text) => {
-        const expanded = text.startsWith("parent-");
-        const dType = expanded ? text.slice(text.indexOf("-")+1): text;
-        return <div className={styles.typeContainer}>
-          {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
-            content={contextHelp}
-            trigger="click"
-            placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
-        </div>;
-      }
-    },
-    {
-      title: <span>XPath Expression <Popover
-        content={xPathDocLinks}
-        trigger="click"
-        placement="top"
-        getPopupContainer={() => document.getElementById("parentContainer") || document.body}><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
-      </span>,
-      dataIndex: "key",
-      key: "key",
-      width: "45%",
-      render: (text, row) => (<div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-        <TextArea
-          id={"mapexpression"+row.name.split("/").pop()}
-          data-testid={row.name.split("/").pop()+"-mapexpression"}
-          style={mapExpressionStyle(row.name)}
-          onClick={handleClickInTextArea}
-          value={mapExp[row.name]}
-          onChange={(e) => handleMapExp(row.name, e)}
-          onBlur={handleExpSubmit}
-          autoSize={{minRows: 1}}
-          disabled={!canReadWrite}></TextArea>&nbsp;&nbsp;
-        <span>
-          <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!canReadWrite}>
-            <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
-          </Dropdown>
-        </span>
-                &nbsp;&nbsp;
-        <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
-      {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>)
-    },
-    {
-      title: "Value",
-      dataIndex: "value",
-      key: "value",
-      width: "20%",
-      ellipsis: true,
-      sorter: (a: any, b: any) => getDataForValueField(a.name)?.localeCompare(getDataForValueField(b.name)),
-      render: (text, row) => (<div data-testid={row.name.split("/").pop()+"-value"} className={styles.mapValue}><MLTooltip title={getTextForTooltip(row.name)}>{getTextForValueField(row)}</MLTooltip></div>)
     }
   ];
 
@@ -1104,9 +927,6 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const getEntityDataType = (prop) => {
-    return prop.startsWith("parent-") ? prop.slice(prop.indexOf("-")+1) : prop;
-  };
 
   const customExpandIcon = (props) => {
     if (props.expandable) {
@@ -1129,7 +949,8 @@ const MappingStepDetail: React.FC = () => {
   // CSS properties for the alert message after saving the mapping
   const saveMessageCSS: CSSProperties = {
     border: errorInSaving === "noError" ? "1px solid #008000" : "1px solid #ff0000",
-    marginLeft: "25vw"
+    marginLeft: "38vw",
+    top: "3vh"
   };
 
   const success = () => {
@@ -1194,82 +1015,8 @@ const MappingStepDetail: React.FC = () => {
     setMapResp({});
     setIsTestClicked(false);
   };
-    /* Insert Function signature in map expressions */
 
-  const handleFunctionsList = async (name) => {
-    let funcArr: any[]= [];
-    mapFunctions.forEach(element => {
-      funcArr.push({"key": element.functionName, "value": element.functionName});
-    });
-    setPropListForDropDown(funcArr);
-
-    setPropName(name);
-    if (!displaySelectList && !displayFuncMenu) {
-      setFunctionValue("");
-      await setDisplaySelectList(true);
-      await setDisplayFuncMenu(true);
-    } else {
-      await setDisplaySelectList(false);
-      await setDisplayFuncMenu(false);
-    }
-  };
-
-  const functionsDef = (functionName) => {
-    return mapFunctions.find(func => {
-      return func.functionName === functionName;
-    }).signature;
-
-  };
-
-  const insertContent = async (content, propName) => {
-    if (!mapExp[propName]) {
-      mapExp[propName] = "";
-    }
-    let newExp = mapExp[propName].substr(0, caretPosition) + content +
-            mapExp[propName].substr(caretPosition, mapExp[propName].length);
-    await setMapExp({...mapExp, [propName]: newExp});
-
-    setDisplaySelectList(prev => false);
-    setDisplayFuncMenu(prev => false);
-    //simulate a click event to handle simultaneous event propagation of dropdown and select
-    simulateMouseClick(dummyNode.current);
-  };
-
-
-  //simulate a click event to destroy both dropdown and select on option select
-  const simulateMouseClick = (element) => {
-    let mouseClickEvents = ["mousedown", "click", "mouseup"];
-    mouseClickEvents.forEach(mouseEventType =>
-      element.dispatchEvent(
-        new MouseEvent(mouseEventType, {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-          buttons: 1
-        })
-      )
-    );
-  };
-
-  const onFunctionSelect = (e) => {
-    setFunctionValue(e);
-    insertContent(functionsDef(e), propName);
-  };
-
-  const menu = (
-    <DropDownWithSearch
-      displayMenu={displayFuncMenu}
-      setDisplayMenu={setDisplayFuncMenu}
-      setDisplaySelectList={setDisplaySelectList}
-      displaySelectList={displaySelectList}
-      itemValue={functionValue}
-      onItemSelect={onFunctionSelect}
-      srcData={propListForDropDown}
-      propName={propName}
-      handleDropdownMenu={handleFunctionsList}
-    />
-  );
-    /* Insert source field in map expressions */
+  /* Insert source field in map expressions */
 
   const flattenSourceDoc = (sourceData, flatArray, flatArrayKey) => {
     sourceData.forEach(element => {
@@ -1304,65 +1051,6 @@ const MappingStepDetail: React.FC = () => {
     return flatArray;
   };
 
-  const handleSourceList = async (row) => {
-    setSelectedRow(row);
-    let name = row.name;
-    let indentList:any = [];
-    setPropName(name);
-    //flatArray.forEach(element => propList.push(element.key));
-    flatArray.forEach(element => indentList.push(20*(element.key.split("/").length - 1)));
-    setSourcePropListForDropDown(flatArray);
-    setSourceIndentForDropDown(indentList);
-    setSourcePropName(name);
-    if (!displaySourceList && !displaySourceMenu) {
-      setSourceValue("");
-      await setDisplaySourceList(true);
-      await setDisplaySourceMenu(true);
-    } else {
-      await setDisplaySourceList(false);
-      await setDisplaySourceMenu(false);
-    }
-  };
-
-  const insertSource = async  (content, propName) => {
-    if (!mapExp[propName]) {
-      mapExp[propName] = "";
-    }
-    let field = content;//.replace(/[^\/]+\:/g, '');
-    if (/(&|>|<|'|"|}|{|\s)/g.test(String(field))) {
-      field = "*[local-name(.)='" + escapeXML(field) + "']";
-    }
-    // Trim context from beginning of fieldName if needed
-    if (sourceContext[propName]) {
-      let len = sourceContext[propName].length;
-      if (field.substring(0, len+1) === sourceContext[propName] + "/") {
-        field = field.slice(len+1);
-      }
-    }
-
-    let newExp = mapExp[propName].substr(0, caretPosition) + field +
-            mapExp[propName].substr(caretPosition, mapExp[propName].length);
-    await setMapExp({...mapExp, [propName]: newExp});
-    tempMapExp = Object.assign({}, mapExp);
-    tempMapExp[propName] = newExp;
-    saveMapping(tempMapExp);
-    setDisplaySourceList(false);
-    setDisplaySourceMenu(false);
-
-    //simulate a click event to handle simultaneous event propagation of dropdown and select
-    simulateMouseClick(dummyNode.current);
-  };
-
-  function escapeXML(input = "") {
-    return input
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/'/g, "&apos;")
-      .replace(/"/g, "&quot;")
-      .replace(/{/g, "&#123;")
-      .replace(/}/g, "&#125;");
-  }
 
   const saveMapping =  async (mapObject) => {
     let obj = {};
@@ -1390,25 +1078,6 @@ const MappingStepDetail: React.FC = () => {
     setMapSaved(mapSavedResult);
   };
 
-
-  const onSourceSelect = (e) => {
-    setSourceValue(e);
-    insertSource(e, propName);
-  };
-
-  const sourceSearchMenu = (
-    <DropDownWithSearch
-      displayMenu={displaySourceMenu}
-      setDisplayMenu={setDisplaySourceMenu}
-      setDisplaySelectList={setDisplaySourceList}
-      displaySelectList={displaySourceList}
-      itemValue={sourceValue}
-      onItemSelect={onSourceSelect}
-      srcData={sourcePropListForDropDown}
-      propName={sourcePropName}
-      handleDropdownMenu={handleSourceList}
-      indentList = {sourceIndentForDropDown}/>
-  );
 
   const splitPaneStyles= {
     pane1: {minWidth: "150px"},
@@ -1474,9 +1143,6 @@ const MappingStepDetail: React.FC = () => {
         Column Options <Icon type="down" theme="outlined"/>
           </a></Dropdown>;
 
-  const getColumnsForEntityTable:any = () => {
-    return entityColumns.map(el => checkedEntityColumns[el.key] ? el : "").filter(item => item);
-  };
 
   //Collapse all-Expand All button
 
@@ -1506,6 +1172,7 @@ const MappingStepDetail: React.FC = () => {
 
   const handleEntityExpandCollapse = (id) => {
     let keys = getKeysToExpandFromTable(entityTypeProperties, "key");
+    keys.unshift(0);
     if (id === "collapse") {
       setEntityExpandedKeys([]);
       setExpandedEntityFlag(false);
@@ -1515,46 +1182,25 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const toggleRowExpanded = (expanded, record, rowKey) => {
+  const toggleSourceRowExpanded = (expanded, record, rowKey) => {
+    if (!sourceExpandedKeys.includes(record.rowKey)) {
+      setSourceExpandedKeys(prevState => {
+        let finalKeys = prevState.concat([record["rowKey"]]);
 
-    if (rowKey === "key") {
-      if (!entityExpandedKeys.includes(record.key)) {
-        setEntityExpandedKeys(prevState => {
-          let finalKeys = prevState.concat([record["key"]]);
-          if (allEntityKeys.every(item => finalKeys.includes(item))) {
-            setExpandedEntityFlag(true);
-          }
-          return finalKeys;
-        });
-      } else {
-        setEntityExpandedKeys(prevState => {
-          let finalKeys = prevState.filter(item => item !== record["key"]);
-          if (!initialEntityKeys.some(item => finalKeys.includes(item))) {
-            setExpandedEntityFlag(false);
-          }
-          return finalKeys;
-        });
-      }
+        if (allSourceKeys.every(item => finalKeys.includes(item))) {
+          setExpandedSourceFlag(true);
+        }
+        return finalKeys;
+      });
+
     } else {
-      if (!sourceExpandedKeys.includes(record.rowKey)) {
-        setSourceExpandedKeys(prevState => {
-          let finalKeys = prevState.concat([record["rowKey"]]);
-
-          if (allSourceKeys.every(item => finalKeys.includes(item))) {
-            setExpandedSourceFlag(true);
-          }
-          return finalKeys;
-        });
-
-      } else {
-        setSourceExpandedKeys(prevState => {
-          let finalKeys = prevState.filter(item => item !== record["rowKey"]);
-          if (!initialSourceKeys.some(item => finalKeys.includes(item))) {
-            setExpandedSourceFlag(false);
-          }
-          return finalKeys;
-        });
-      }
+      setSourceExpandedKeys(prevState => {
+        let finalKeys = prevState.filter(item => item !== record["rowKey"]);
+        if (!initialSourceKeys.some(item => finalKeys.includes(item))) {
+          setExpandedSourceFlag(false);
+        }
+        return finalKeys;
+      });
     }
   };
 
@@ -1602,17 +1248,9 @@ const MappingStepDetail: React.FC = () => {
           {errorInSaving ? success() : <span className={styles.noMessage}></span>}
         </div>
         <br/>
-        <span className={styles.btn_icons}>
-          <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
-                        Clear
-          </MLButton>
-                &nbsp;&nbsp;
-          <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
-                        Test
-          </MLButton>
-        </span>
         <br/>
         <hr/>
+        <br/>
         <div id="parentContainer" className={styles.parentContainer}>
           <SplitPane
             style={splitStyle}
@@ -1630,14 +1268,9 @@ const MappingStepDetail: React.FC = () => {
               data-testid="srcContainer"
               className={styles.sourceContainer}>
               <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
-                <p className={styles.sourceName}
-                ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
-                  /></i> Source Data <Popover
-                    content={srcDetails}
-                    trigger="click"
-                    placement="right"
-                    getPopupContainer={() => document.getElementById("parentContainer") || document.body}
-                  ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
+                <div className={styles.sourceTitle}
+                ><span className={styles.sourceDataIcon}></span><strong>Source Data</strong>
+                  <span className={styles.srcDetails}>{srcDetails}</span></div>
               </div>
               {isLoading === true ? <div className={styles.spinRunning}>
                 <MLSpin size={"large"} data-testid="spinTest"/>
@@ -1655,15 +1288,14 @@ const MappingStepDetail: React.FC = () => {
                   </div>
                   :
                   <div id="dataPresent">
-
-                    <div className={styles.navigationCollapseButtons}>
-                      <span><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
-                      <span>{navigationButtons}</span>
+                    <div className={styles.sourceButtons}>
+                      <span className={styles.navigationButtons}>{navigationButtons}</span>
+                      <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
                     </div>
                     <Table
                       pagination={false}
                       expandIcon={(props) => customExpandIcon(props)}
-                      onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "rowKey")}
+                      onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
                       expandedRowKeys={sourceExpandedKeys}
                       className={styles.sourceTable}
                       rowClassName={() => styles.sourceTableRows}
@@ -1684,27 +1316,46 @@ const MappingStepDetail: React.FC = () => {
               data-testid="entityContainer"
               className={styles.entityContainer}>
               <div className={styles.entityDetails}>
-                <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity Type: {curationOptions.activeStep.entityName}</p></span>
+                <span className={styles.entityTypeTitle}><p className={styles.entityTypeText}><span className={styles.entityIcon}></span><strong>Entity Type: {curationOptions.activeStep.entityName}</strong></p></span>
+                <span className={styles.clearTestIcons} id="ClearTestButtons">
+                  <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+                                Clear
+                  </MLButton>
+                        &nbsp;&nbsp;
+                  <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
+                                Test
+                  </MLButton>
+                </span>
               </div>
               <div ref={dummyNode}></div>
               <div className={styles.columnOptionsSelectorContainer}>
-                <span><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
+                <span className={styles.entityCollapseButtons}><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
                 <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
               </div>
-              <Table
-                pagination={false}
-                className={styles.entityTable}
-                expandIcon={(props) => customExpandIcon(props)}
-                onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
-                expandedRowKeys={entityExpandedKeys}
-                indentSize={14}
-                //defaultExpandAllRows={true}
-                columns={getColumnsForEntityTable()}
-                scroll={{y: "60vh", x: 1000}}
-                dataSource={entityTypeProperties}
-                tableLayout="unset"
-                rowKey={(record: any) => record.key}
-                getPopupContainer={() => document.getElementById("entityContainer") || document.body}
+              <EntityMapTable
+                mapResp={mapResp}
+                mapData={mapData}
+                setMapResp={setMapResp}
+                mapExpTouched={mapExpTouched}
+                setMapExpTouched={setMapExpTouched}
+                handleExpSubmit={handleExpSubmit}
+                flatArray={flatArray}
+                saveMapping={saveMapping}
+                sourceContext={sourceContext}
+                setSourceContext={setSourceContext}
+                dummyNode={dummyNode}
+                getDataForValueField={getDataForValueField}
+                getTextForTooltip={getTextForTooltip}
+                getTextForValueField={getTextForValueField}
+                canReadWrite={canReadWrite}
+                entityTypeTitle={curationOptions.activeStep.entityName}
+                checkedEntityColumns={checkedEntityColumns}
+                entityTypeProperties={entityTypeProperties}
+                entityExpandedKeys={entityExpandedKeys}
+                setEntityExpandedKeys={setEntityExpandedKeys}
+                allEntityKeys={allEntityKeys}
+                setExpandedEntityFlag={setExpandedEntityFlag}
+                initialEntityKeys={initialEntityKeys}
               />
             </div>
           </SplitPane>

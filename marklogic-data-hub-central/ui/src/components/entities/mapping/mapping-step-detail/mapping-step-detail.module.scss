@@ -1,6 +1,10 @@
+@font-face {
+	font-family: 'MLCustomFont';
+	src: url('../../../../fonts/icomoon.ttf') format('truetype');
+}
 
 .mapContainer{
-    margin-top: -40px;
+    margin-top: -80px;
     width: 92.8vw;
 }
 
@@ -15,7 +19,7 @@
 
 .saveMessage{
     border: 1px solid #ff0000;
-    margin-left: 30em;
+    margin-left: 60em;
 }
 .noMessage{
     padding: 16.5px 0vh;
@@ -24,7 +28,6 @@
     display: flex;
     flex-direction: row;
     padding-bottom: 1vh;
-    padding-top: 1vh;
     height: 80vh;
 }
 
@@ -41,10 +44,11 @@
 
 .sourceTable{
       & thead > tr > th {
-        background-color: #fafafa;
+        background-color: #EEEEEE;
         line-height: 2px;
       };
       & tbody > tr > td {
+        background-color: #FAFAFA;
         line-height: 2px;
     }
 }
@@ -54,6 +58,13 @@
 }
 
 .sourceName{
+    white-space: nowrap;
+}
+
+.sourceTitle{
+    font-size: 16px;
+    margin-top: -15px;
+    margin-bottom: 16px;
     white-space: nowrap;
 }
 
@@ -79,7 +90,6 @@
     padding: 0px
 }
 
-
 .entityContainer{
     width: auto;
     flex: 9;
@@ -95,7 +105,7 @@
         margin-bottom: 3px;
         > .entityTypeTitle{
             float: left;
-            padding-top: 6px;
+            margin-top: -10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -108,9 +118,30 @@
 
         > .columnOptionsSelector{
             float: right;
-            margin-top: 10px;
+            margin: 15px 15px 0px 0px;
+        }
+
+        > .entityCollapseButtons{
+            float: right;
+            margin-top: 10px;  
         }
     }
+}
+
+.sourceButtons{
+  display: flex;
+  float: right;
+  margin-top: -25px;
+}
+
+.navigationButtons{
+  width: 100%;
+}
+
+.sourceCollapseButtons{
+width: 100%;
+padding-top: 23px;
+padding-bottom: 9px;
 }
 
 > .expandCollapseBtn {
@@ -141,8 +172,10 @@
     margin-top: 4px;
 }
 
-.btn_icons{
+.clearTestIcons{
     float: right;
+    padding-top: 2px;
+    padding-right: 4px;
 }
 hr {
     display: block;
@@ -161,59 +194,6 @@ hr {
     }
 }
 
-.entityTable {
-    & thead > tr > th {
-        background-color: #fafafa;
-        padding-top: 12px;
-        padding-bottom: 12px;
-      };
-    & tbody > tr > td {
-        line-height: 2px;
-        vertical-align: top;
-    }
-}
-
-.typeContainer {
-    margin-bottom: -17px;
-
-    > .typeContextContainer {
-        margin-top: -13px;
-        margin-bottom:-14px;
-        > .typeContext {
-            color: #777777;
-            font-size: 12px
-        }
-
-        >.typeText{
-            margin-top: 10px
-        }
-    }
-}
-
-.mapExpParentContainer{
-    //display: inline;
-    margin-top: -12px;
-    margin-bottom: -12px;
-
-    >.validationErrors {
-        width: 22vw;
-        line-height: normal;
-        padding-top: 6px;
-        padding-left: 2px;
-        padding-bottom: 4px;
-        color: #DB4f59;
-        word-break: break-all;
-
-    }
-}
-
-.mapExpressionContainer {
-    width: 100%;
-    display: inline-flex;
-    vertical-align: top;
-    align-items: flex-start;
-}
-
 .mapExpression{
     width: 100%;
     line-height: 1px;
@@ -230,11 +210,22 @@ hr {
     line-height: normal;
 }
 
-.entityIcon{
-    background: transparent;
-    border: none;
-    color: #ffc53dd6;
+.entityIcon:before{
+    content: "\e93b";
+    font-family: MLCustomFont;
+    color: #394494;
+    font-size: 24px;
+    position: relative;
+    font-weight: 200;
+    top: 4px;
+    padding-right: 3px;
+    display: inline-block;
 }
+
+.entityTypeText {
+    font-size: 16px;
+}
+
 .emptyCard {
     background-color: #fff7e6;
     border: 1px solid #ffc53dd6;
@@ -254,13 +245,23 @@ hr {
     float: left;
 }
 .sourceDetails{
+    position: relative;
     padding-top: 5px;
-    //margin-bottom: -14px;
+    margin-bottom: -41px;
 }
-.sourceDataIcon {
-    background: transparent;
-    border: none;
-    color: #7F86B5;
+.sourceDataIcon:before {
+  content: "\e934";
+  font-family: MLCustomFont;
+  color: #394494;
+  font-size: 24px;
+  position: relative;
+  font-weight: 200;
+  top: 4px;
+  padding-right: 3px;
+  display: inline-block;
+}
+.srcDetails {
+    font-size: 14px;
 }
 
 .sourceValue{
@@ -280,94 +281,43 @@ hr {
 .toolTipForValues{
     cursor: pointer;
 }
-.listIcon{
-    background: transparent;
-    border: none;
-    color: #394494;
-    display: inline-block;
-    vertical-align: top;
-    margin-top: 4px;
-    font-size: 20px;
-    cursor: pointer;
-    &:hover{
-        color: var(--hoverColor);
-    }
-}
 
-.functionIcon{
-    color: #394494;
-    font-size: 14px;
-    width: 22px;
-    height: 18px;
-    border: 1px solid #394494;
-    border-radius: 2px;
-    padding: 0px 0px 0px 0px;
-    cursor: pointer;
-    display: inline-block;
-    vertical-align: top;
-    text-align: center;
-    align-items: center;
-    margin-top: 5px;
-    &:hover{
-        color: var(--hoverColor);
-    }
-}
 .questionCircle {
     font-size: 12px;
     color: #7F86B5;
 }
 
-.xpathDoc{
-    color: black;
-}
-
-.docLink{
-    cursor: pointer;
-    margin-left: -5px;
-}
-
-.contextHelp{
-    width: 14vw;
-    word-wrap: normal;
-    font-size: 14px;
-    color: #777777;
-}
 .expandIcon{
-    //color: black;
-    margin-left: -14px;
+    margin-left: -16px;
     vertical-align:middle;
     text-align: left;
-    font-size: 11px;
+    font-size: 13px;
+    padding-right: 1px;
 }
 
 .inputURIContainer{
-    //display: inline-flex;
-    //float: left;
+    padding-top: 10px;
     margin-left: -4px;
     vertical-align: middle;
     text-align: left;
-    //border: 1px solid red;
     width: 105%;
 }
 .uriEditing{
     display: inline-block;
-    width: 330px;
+    width: 265px;
 }
 
 .sourceQuery{
-    padding-bottom: 5px;
-    margin-left: -4px;
+    padding-top: 4px;
 }
 .uri{
-    margin-left: -4px;
     padding: 4px 0px;
     height : 32px;
 }
 
 .showingEditContainer{
-    padding-top: 10px;
-    padding-bottom:5px;
-    margin-bottom: -6px;
+  position: absolute;
+  margin-top: -4px;
 }
 .showingEditIcon{
     padding: 5px 3px;
@@ -414,14 +364,6 @@ hr {
     padding-left: 1vw;
 }
 
-.navigationCollapseButtons{
-    width: 100%;
-    display: inline-block;
-    justify-content: space-between;
-    margin-bottom: -4px;
-    margin-top: 4px;
-}
-
 .spinRunning {
     position: absolute;
     padding-top: 100px;
@@ -453,4 +395,4 @@ hr {
     &:hover{
         color: var(--hoverColor);
     }
-}
+  }

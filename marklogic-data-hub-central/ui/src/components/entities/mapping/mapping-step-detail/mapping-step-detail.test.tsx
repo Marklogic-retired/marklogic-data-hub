@@ -296,17 +296,24 @@ describe("RTL Source-to-entity map tests", () => {
     expect(inputSearchEntity).toHaveValue("craft");
     fireEvent.click(getByTestId("submitSearch-name")); //Click on Search button to apply the filter with the desired string
 
+    //Entity type title should remain in the first row after filter is applied
+    let entTableTopRow: any;
+    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+
+
     //Check if the expected values are available/not available in search result.
     expect(getByText("items")).toBeInTheDocument();
     expect(getByText("itemTypes")).toBeInTheDocument();
     expect(getByText("itemCategory")).toBeInTheDocument();
     expect(getByText("Craft")).toBeInTheDocument();
-    expect(queryByText("propId")).not.toBeInTheDocument();
-    expect(queryByText("propName")).not.toBeInTheDocument();
+    // expect(queryByText("propId")).not.toBeInTheDocument();
+    // expect(queryByText("propName")).not.toBeInTheDocument();
     //productCategory should be visible and collapsed
     expect(getByText("productCategory")).toBeInTheDocument();
-    expect(queryByText("speedometer")).not.toBeInTheDocument();
-    expect(queryByText("windscreen")).not.toBeInTheDocument();
+    // expect(queryByText("speedometer")).not.toBeInTheDocument();
+    // expect(queryByText("windscreen")).not.toBeInTheDocument();
 
     //Check if the source table properties are not affected by the filter on Entity table
     expect(getByText("proteinId")).toBeInTheDocument();
@@ -452,7 +459,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
   });
 
-  test("Sorting in Source and Entity table", async () => {
+  test("Sorting in Source table", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
@@ -464,9 +471,8 @@ describe("RTL Source-to-entity map tests", () => {
       getByTestId = renderResults.getByTestId;
     });
 
-    //Expanding all the nested levels first
+    //Expanding the nested levels first
     fireEvent.click(within(getByTestId("srcContainer")).getByLabelText("radio-button-expand"));
-    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     const sourceTableNameSort = getByTestId("sourceTableKey"); // For name column sorting
     const sourceTableValueSort = getByTestId("sourceTableValue"); // For value column sorting
@@ -512,41 +518,70 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(sourceTableValueSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
     validateMappingTableRow(srcTable, ["123EAC", "home", undefined, "commercial", "retriever, golden, labrador", "", "null", "321", "true", " ", "[ ]", "1, 2, 3", "true, false, true"], "val", data.mapProps.sourceData);
+  });
 
-    /* Validate sorting in Entity table columns */
+  test("Validate Entity table and sorting", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personEntityDef});
+
+    let getByTestId, getByLabelText;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
+    });
+
+
     const entityTableNameSort = getByTestId("entityTableName"); // For value column sorting
     const entityTableTypeSort = getByTestId("entityTableType"); // For Type column sorting
 
+    //expand nested levels first
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
+
+    //Verify Entity type title in first row of Entity table
+    let entTableTopRow: any;
+    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+
+    //Verify entity settings icon and caret also exist in the first row
+    expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
+    expect(getByLabelText("entitySettingsCaret").closest("tr")).toBe(entTableTopRow);
+
+
     //Check sort order of Name Column before clicking on sort button
-    let entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    let entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
     validateMappingTableRow(entTable, ["propId", "propName", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties);
 
     //Click on the Name column to sort the rows by Ascending order
     fireEvent.click(entityTableNameSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
     validateMappingTableRow(entTable, ["gender", "items", "propAttribute", "propId", "propName"], "name", data.mapProps.entityTypeProperties);
+
+    //Entity type title should remain in the first row after sort is applied
+    entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
     //Click on the Name column again to sort the rows by Descending order
     fireEvent.click(entityTableNameSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
     validateMappingTableRow(entTable, ["propName", "propId", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties);
 
     fireEvent.click(entityTableNameSort); //Reset the sort order to go back to default order
 
     //Click on the Type column to sort the rows by Ascending order
     fireEvent.click(entityTableTypeSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
     validateMappingTableRow(entTable, ["int", "ItemType [ ]", "string", "string", "string"], "type", data.mapProps.entityTypeProperties);
 
     //Click on the Type column again to sort the rows by Descending order
     fireEvent.click(entityTableTypeSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
     validateMappingTableRow(entTable, ["string", "string", "string", "ItemType [ ]", "int"], "type", data.mapProps.entityTypeProperties);
 
-    //Resetting the sort order to go back to default order
-    fireEvent.click(entityTableTypeSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    validateMappingTableRow(entTable, ["int", "string", "string", "ItemType [ ]", "string"], "type", data.mapProps.entityTypeProperties);
   });
 
   test("Verify evaluation of valid expression for mapping writer user", async () => {
@@ -918,7 +953,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("artCraft")).toBeInTheDocument();
 
     //Check if indentation is right
-    expect(getByText("artCraft").closest("td")?.firstElementChild).toHaveStyle("padding-left: 28px;");
+    expect(getByText("artCraft").closest("td")?.firstElementChild).toHaveStyle("padding-left: 54px;");
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
