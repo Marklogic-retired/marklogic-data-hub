@@ -79,13 +79,13 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getDeleteQuery().first().click();
     queryComponent.getDeleteQueryYesButton().click({force: true});
     browsePage.getManageQueryCloseIcon().click();
-    queryComponent.getManageQueryModal().should("not.be.visible");
+    queryComponent.getManageQueryModal().should("not.exist");
     browsePage.getSelectedQuery().should("contain", "select a query");
     browsePage.getSelectedQueryDescription().should("contain", "");
     browsePage.getResetQueryButton().should("be.visible");
 
     browsePage.getSaveQueriesDropdown().click();
-    browsePage.getQueryOption("edited-query").should("not.be.visible");
+    browsePage.getQueryOption("edited-query").should("not.exist");
     browsePage.getSaveQueriesDropdown().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.selectEntity("Person");
@@ -105,7 +105,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getExportQueryIconForFirstRow().should("be.visible");
     queryComponent.getDeleteQueryIconForFirstRow().should("be.visible");
     browsePage.getManageQueryCloseIcon().click();
-    queryComponent.getManageQueryModal().should("not.be.visible");
+    queryComponent.getManageQueryModal().should("not.exist");
     detailPage.getInstanceView().should("exist");
   });
   it("manage queries, edit, apply, delete query on zero state page", () => {
@@ -121,8 +121,8 @@ describe("manage queries modal scenarios, developer role", () => {
     // apply query and verify discard/apply icons are not shown after applying
     queryComponent.getQueryByName("edited-query").click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getClearGreyFacets().should("not.be.visible");
-    browsePage.getFacetApplyButton().should("not.be.visible");
+    browsePage.getClearGreyFacets().should("not.exist");
+    browsePage.getFacetApplyButton().should("not.exist");
     browsePage.getSelectedQuery().should("contain", "edited-query");
     browsePage.getSelectedQueryDescription().should("contain", "edited-query-description");
     //remove query
@@ -132,7 +132,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getDeleteQuery().first().click();
     queryComponent.getDeleteQueryYesButton().click({force: true});
     // browsePage.getManageQueryCloseIcon().click();
-    queryComponent.getManageQueryModal().should("not.be.visible");
+    queryComponent.getManageQueryModal().should("not.exist");
   });
   it("verify manage queries modal visibility and removing query scenario on the detail page", () => {
     //create a query
@@ -174,7 +174,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getDeleteQuery().first().click();
     cy.waitUntil(() => queryComponent.getDeleteQueryYesButton().should("have.length.gt", 0));
     queryComponent.getDeleteQueryYesButton().click({force: true});
-    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+    queryComponent.getManageQueryModal().should("not.exist");
     //return back to explore page and verify data display
     detailPage.clickBackButton();
     cy.waitForAsyncRequest();
@@ -221,7 +221,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery().first().click();
     queryComponent.getDeleteQueryYesButton().click({force: true});
-    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+    queryComponent.getManageQueryModal().should("not.exist");
   });
 
   it("verify applying previously saved query scenario on the detail page", () => {
@@ -254,7 +254,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getQueryByName("person-query").first().click();
-    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+    queryComponent.getManageQueryModal().should("not.exist");
 
     //verify the applied query details on Browse page
     cy.waitForAsyncRequest();
@@ -295,7 +295,7 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getSubmitButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => browsePage.getManageQueryCloseIcon().should("be.visible")).click();
-    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+    queryComponent.getManageQueryModal().should("not.exist");
 
     //Check if the current query name is updated in browse page or not
     browsePage.getSelectedQuery().should("contain", "edited-person-query");

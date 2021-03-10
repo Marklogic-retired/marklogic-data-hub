@@ -49,43 +49,43 @@ describe("Entity Modeling: Reader Role", () => {
     // tiles.getModelTile().should('exist');
 
     modelPage.getAddEntityButton().click({force: true});
-    entityTypeModal.getAddButton().should("not.be.visible");
+    entityTypeModal.getAddButton().should("not.exist");
 
     modelPage.getSaveAllButton().click({force: true});
-    confirmationModal.getSaveAllEntityText().should("not.be.visible");
+    confirmationModal.getSaveAllEntityText().should("not.exist");
 
     modelPage.getRevertAllButton().click({force: true});
-    confirmationModal.getRevertEntityText().should("not.be.visible");
+    confirmationModal.getRevertEntityText().should("not.exist");
 
     entityTypeTable.getEntity("Customer").click({force: true});
-    propertyModal.getSubmitButton().should("not.be.visible");
+    propertyModal.getSubmitButton().should("not.exist");
 
     entityTypeTable.getDeleteEntityIcon("Customer").click({force: true});
-    confirmationModal.getDeleteEntityStepText().should("not.be.visible");
+    confirmationModal.getDeleteEntityStepText().should("not.exist");
 
     entityTypeTable.getRevertEntityIcon("Customer").click({force: true});
-    confirmationModal.getRevertEntityText().should("not.be.visible");
+    confirmationModal.getRevertEntityText().should("not.exist");
 
     entityTypeTable.getSaveEntityIcon("Customer").click({force: true});
-    confirmationModal.getSaveEntityText().should("not.be.visible");
+    confirmationModal.getSaveEntityText().should("not.exist");
 
     entityTypeTable.getExpandEntityIcon("Customer").click();
     propertyTable.getAddPropertyButton("Customer").should("be.visible").click({force: true});
-    propertyModal.getSubmitButton().should("not.be.visible");
+    propertyModal.getSubmitButton().should("not.exist");
 
     propertyTable.getDeletePropertyIcon("Customer", "pin").click({force: true});
-    confirmationModal.getDeletePropertyStepWarnText().should("not.be.visible");
+    confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
 
     propertyTable.getAddPropertyToStructureType("Address").click({force: true});
-    propertyModal.getStructuredTypeName().should("not.be.visible");
+    propertyModal.getStructuredTypeName().should("not.exist");
 
     propertyTable.expandStructuredTypeIcon("shipping").click();
     propertyTable.expandStructuredTypeIcon("zip").click();
 
     propertyTable.getAddPropertyToStructureType("Zip").click({force: true});
-    propertyModal.getStructuredTypeName().should("not.be.visible");
+    propertyModal.getStructuredTypeName().should("not.exist");
 
     propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "fiveDigit").click({force: true});
-    confirmationModal.getDeletePropertyStepWarnText().should("not.be.visible");
+    confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
   });
 });

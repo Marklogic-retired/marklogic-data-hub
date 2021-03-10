@@ -28,19 +28,19 @@ class CuratePage {
   }
 
   openMappingStepDetail(entityTypeId: string, stepName: string) {
-    cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
-    cy.waitUntil(() => cy.findByTestId(`${stepName}-stepDetails`)).click();
+    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
+    cy.findByTestId(`${stepName}-stepDetails`).should("be.visible", {timeout: 5000}).click();
     this.verifyStepDetailsOpen(stepName);
   }
 
   addToNewFlow(entityTypeId: string, stepName: string) {
-    cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
-    cy.waitUntil(() => cy.findByTestId(`${stepName}-toNewFlow`)).click();
+    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
+    cy.findByTestId(`${stepName}-toNewFlow`).should("be.visible", {timeout: 5000}).click();
   }
 
   openExistingFlowDropdown(entityTypeId: string, stepName: string) {
-    cy.waitUntil(() => this.getEntityMappingStep(entityTypeId, stepName).should("have.length.gt", 0)).trigger("mouseover");
-    cy.waitUntil(() => cy.findByTestId(`${stepName}-flowsList`)).click();
+    this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
+    cy.findByTestId(`${stepName}-flowsList`).should("be.visible", {timeout: 5000}).click();
   }
 
   openStepDetails(stepName: string) {

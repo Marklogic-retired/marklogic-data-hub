@@ -98,7 +98,7 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getFacetItemCheckbox("collection", "Person").should("not.exist");
     browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").click({force: true});
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").should("exist");
     browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").should("be.checked");
   });
   it("select Customer entity and verify entity, docs, hub/entity properties", () => {
@@ -107,12 +107,12 @@ describe("json scenario for snippet on browse documents page", () => {
     cy.waitForModalToDisappear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.getFacetItemCheckbox("collection", "mapCustomerXML").should("not.be.visible");
+    browsePage.getFacetItemCheckbox("collection", "mapCustomerXML").should("not.exist");
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Customer").should("not.exist");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("exist");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.checked");
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("not.be.checked");
@@ -230,13 +230,13 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.selectEntity("All Entities");
     browsePage.search("Powers");
     browsePage.getSourceViewIcon().trigger("mouseover");
-    cy.contains("Show the complete JSON").should("be.visible");
+    cy.contains("Show the complete JSON").should("exist");
     browsePage.getInstanceViewIcon().trigger("mouseover");
-    cy.contains("Show the processed data").should("be.visible");
+    cy.contains("Show the processed data").should("exist");
     browsePage.getSourceViewIcon().click();
     detailPage.getSourceView().trigger("mouseover");
-    cy.contains("Show the complete JSON").should("be.visible");
+    cy.contains("Show the complete JSON").should("exist");
     detailPage.getInstanceView().trigger("mouseover");
-    cy.contains("Show the processed data").should("be.visible");
+    cy.contains("Show the processed data").should("exist");
   });
 });

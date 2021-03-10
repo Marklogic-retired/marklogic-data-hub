@@ -11,7 +11,7 @@ class BrowsePage {
   }
 
   waitForSpinnerToDisappear() {
-    cy.waitUntil(() => this.getSpinner().should("not.be.visible"));
+    cy.waitUntil(() => this.getSpinner().should("have.length", 0));
   }
 
   waitForTableToLoad() {

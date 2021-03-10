@@ -104,16 +104,16 @@ describe("login", () => {
 
     toolbar.getLoadToolbarIcon().click();
     loadPage.loadView("th-large").should("be.visible");
-    loadPage.addNewButton("card").should("not.be.visible");
+    loadPage.addNewButton("card").should("not.exist");
     loadPage.editStepInCardView(stepName).click();
     loadPage.saveButton().should("be.disabled");
     loadPage.cancelButton().click();
     loadPage.deleteStepDisabled(stepName).should("exist");
     loadPage.stepName(stepName).trigger("mouseover");
     loadPage.addToNewFlow(stepName).click();
-    runPage.newFlowModal().should("not.be.visible");
+    runPage.newFlowModal().should("not.exist");
     loadPage.existingFlowsList(stepName).click();
-    loadPage.existingFlowsList(flowName).should("not.be.visible");
+    loadPage.existingFlowsList(flowName).should("not.exist");
 
     loadPage.loadView("table").click();
     tiles.waitForTableToLoad();
