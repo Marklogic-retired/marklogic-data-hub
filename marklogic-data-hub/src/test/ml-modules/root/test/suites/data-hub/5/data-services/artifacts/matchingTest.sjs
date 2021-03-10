@@ -24,24 +24,30 @@ function createMatchingWithSameNameButDifferentEntityType(artifactName) {
 }
 
 function getArtifacts() {
+    const assertions = [];
     const artifactsByEntity = ArtifactService.invokeGetAllService('matching');
-    test.assertEqual(2, artifactsByEntity.length,
-        "Should be an entry for each entity type, even if there are no matchings for a type");
+    assertions.push(
+        test.assertEqual(2, artifactsByEntity.length,
+        "Should be an entry for each entity type, even if there are no matchings for a type")
+    );
     artifactsByEntity.forEach(entity => {
         if (entity.entityType === 'TestEntity-hasConfig') {
             const artifacts = entity.artifacts;
             artifacts.forEach(matching => {
                 if (matching.name == 'TestMatching' || matching.name === 'TestMatching2') {
-                    test.assertEqual("TestEntity-hasConfig", matching.targetEntityType);
-                    test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', matching.lastUpdated));
+                    assertions.push(
+                        test.assertEqual("TestEntity-hasConfig", matching.targetEntityType),
+                        test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', matching.lastUpdated))
+                    )
                 }
             })
         }
     });
+    return assertions;
 }
 
 function setMatchingConfigWithHCRole() {
-  hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [],
+  return hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [],
     function() {
       let artifactName1 = "HCMatching1";
       const result1 = ArtifactService.invokeSetService('matching', artifactName1, {'name': `${artifactName1}`, 'targetEntityType': 'TestEntity-hasConfig', 'description': 'Matching does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});

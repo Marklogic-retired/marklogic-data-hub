@@ -25,22 +25,27 @@ function createMergingWithSameNameButDifferentEntityType(artifactName) {
 
 function getArtifacts() {
     const artifactsByEntity = ArtifactService.invokeGetAllService('merging');
-    test.assertEqual(2, artifactsByEntity.length,
-        "Should be an entry for each entity type, even if there are no mergings for a type");
+    const assertions = [];
+    assertions.push(test.assertEqual(2, artifactsByEntity.length,
+        "Should be an entry for each entity type, even if there are no mergings for a type"));
     artifactsByEntity.forEach(entity => {
         if (entity.entityType === 'TestEntity-hasConfig') {
             const artifacts = entity.artifacts;
             artifacts.forEach(merging => {
                 if (merging.name == 'TestMerging' || merging.name === 'TestMerging2') {
-                    test.assertEqual("TestEntity-hasConfig", merging.targetEntityType);
-                    test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', merging.lastUpdated));
+                    assertions.push(
+                        test.assertEqual("TestEntity-hasConfig", merging.targetEntityType),
+                        test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', merging.lastUpdated))
+                    );
                 }
             })
         }
     });
+    return assertions;
 }
+
 function setMergingConfigWithHCRole() {
-  hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [],
+  return hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [],
     function() {
       let artifactName1 = "HCMerging1";
       const result1 = ArtifactService.invokeSetService('merging', artifactName1, {'name': `${artifactName1}`, 'targetEntityType': 'TestEntity-hasConfig', 'description': 'Merging does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});

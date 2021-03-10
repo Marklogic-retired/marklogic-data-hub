@@ -16,8 +16,9 @@
 'use strict';
 
 const consts = require("/data-hub/5/impl/consts.sjs");
-const json = require('/MarkLogic/json/json.xqy');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const json = require('/MarkLogic/json/json.xqy');
 const sem = require("/MarkLogic/semantics.xqy");
 
   /**
@@ -685,7 +686,55 @@ const sem = require("/MarkLogic/semantics.xqy");
     return uri;
   }
 
+  /**
+ * @param content
+ * @param flowName
+ * @param stepName
+ * @param jobId
+ */
+function addMetadataToContent(content, flowName, stepName, jobId) {
+  content.context = content.context || {};
+  content.context.metadata = createMetadata(content.context.metadata || {}, flowName, stepName, jobId);
+
+  if (content.context.collections) {
+    content.context.collections = hubUtils.normalizeToArray(content.context.collections);
+  }
+
+  if (content.context.permissions) {
+    content.context.permissions = hubUtils.normalizeToArray(content.context.permissions).map(perm => {
+      if (perm instanceof Element) {
+        const roleName = xdmp.roleName(fn.string(perm.xpath("*:role-id")));
+        const capability = fn.string(perm.xpath("*:capability"));
+        return xdmp.permission(roleName, capability);
+      }
+      return perm;
+    });
+  }
+}
+
+/**
+ * @param contentArray
+ * @param databaseName
+ * @param baseCollections
+ * @return An object consisting of two properties - "transaction" and "dateTime"
+ */
+function writeContentArray(contentArray, databaseName, baseCollections = []) {
+  const vars = {contentArray, baseCollections};
+
+  // ignoreAmps is true to prevent a user from e.g. overwriting job documents, which could be done via an amp
+  const options = {
+    update: 'true',
+    ignoreAmps: true
+  };
+  if (databaseName) {
+    options.database = xdmp.database(databaseName);
+  }
+
+  return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs', vars, options));
+}
+
 module.exports = {
+  addMetadataToContent,
   cleanData,
   createContentAsObject,
   createHeaders,
@@ -706,5 +755,6 @@ module.exports = {
   properExtensionURI,
   tripleToXml,
   updateHeaders,
+  writeContentArray,
   xmlToJson
 };

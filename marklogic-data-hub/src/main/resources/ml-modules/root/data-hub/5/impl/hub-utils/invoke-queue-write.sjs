@@ -17,9 +17,8 @@
 
 declareUpdate();
 
-var permissions,
-  writeQueue,
-  baseCollections;
+var contentArray;
+var baseCollections;
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
@@ -35,9 +34,11 @@ const temporalCollections = temporalLib.getTemporalCollections().toArray().reduc
     return acc;
 }, {});
 
-for (let content of writeQueue) {
+for (let content of contentArray) {
     let context = (content.context||{});
-    let fullPermissions = (permissions || []).concat((context.permissions||[]));
+
+    const permissions = context.permissions || xdmp.defaultPermissions();
+
     let existingCollections = xdmp.documentGetCollections(content.uri);
     let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
     let metadata = context.metadata;
@@ -63,7 +64,7 @@ for (let content of writeQueue) {
             }
             temporal.documentInsert(temporalCollection, content.uri, content.value,
                 {
-                    permissions: fullPermissions,
+                    permissions,
                     collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col))),
                     metadata
                 }
@@ -72,7 +73,7 @@ for (let content of writeQueue) {
             if (traceEnabled) {
                 hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${dbName}`);
             }
-            xdmp.documentInsert(content.uri, content.value, {permissions: fullPermissions, collections, metadata});
+            xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
         }
     }
 }
