@@ -53,17 +53,13 @@ function getArtifactNode(artifactName, artifactVersion) {
 function getDirectory(artifactName, artifact) {
     let doc = getArtifactNode(artifactName, null);
     let dir = "/step-definitions/";
-    let type;
     if(!doc && artifact && artifactName) {
         dir = dir + artifact.type.toLowerCase() + "/" + artifact.name +"/"
     }
     else if (doc) {
-        let mutableArtifact = doc.toObject();
-        if(mutableArtifact.name.startsWith("default-") || mutableArtifact.name == 'entity-services-mapping'){
-            dir = dir + mutableArtifact.toLowerCase() + "/" + "/marklogic/";
-        }
-        else {
-            dir = dir + mutableArtifact.type.toLowerCase() + "/" + mutableArtifact.name + "/";
+        let stepDefinition = doc.toObject();
+        if (stepDefinition.type && stepDefinition.name) {
+            dir = dir + stepDefinition.type.toLowerCase() + "/" + stepDefinition.name + "/";
         }
     }
     return dir;
