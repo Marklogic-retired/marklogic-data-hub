@@ -2,11 +2,11 @@ import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
 import {Card, Row, Col, Modal, Select} from "antd";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
-import {AdvCustomTooltips} from "../../../config/tooltips.config";
+import {CustomStepTooltips} from "../../../config/tooltips.config";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Steps from "../../steps/steps";
-import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {Link, useHistory} from "react-router-dom";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 
@@ -151,8 +151,8 @@ const CustomCard: React.FC<Props> = (props) => {
               >
                 <Card
                   actions={[
-                    <MLTooltip title={AdvCustomTooltips.viewCustom} placement="bottom">
-                      <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faEye}/> View Step Settings</span>
+                    <MLTooltip title={CustomStepTooltips.viewCustom} placement="bottom">
+                      <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faCog}/> Edit Step Settings</span>
                     </MLTooltip>,
                   ]}
                   className={styles.cardStyle}
@@ -235,7 +235,7 @@ const CustomCard: React.FC<Props> = (props) => {
         canReadOnly={props.canReadOnly}
         // Advanced Settings
         canWrite={props.canReadWrite}
-        tooltipsData={AdvCustomTooltips}
+        tooltipsData={CustomStepTooltips}
         updateStep={updateCustomArtifact}
         openStepSettings={openStepSettings}
         setOpenStepSettings={setOpenStepSettings}

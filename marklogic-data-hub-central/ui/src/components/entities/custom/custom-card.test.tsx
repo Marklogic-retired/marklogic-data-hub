@@ -7,7 +7,7 @@ import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
 import mocks from "../../../api/__mocks__/mocks.data";
-import {AdvCustomTooltips} from "../../../config/tooltips.config";
+import {CustomStepTooltips} from "../../../config/tooltips.config";
 
 
 jest.mock("axios");
@@ -48,7 +48,7 @@ describe("Custom Card component", () => {
 
     let tipIconView = getByTestId("customJSON-edit");
     fireEvent.mouseOver(tipIconView);
-    await waitForElement(() => getByText(AdvCustomTooltips.viewCustom));
+    await waitForElement(() => getByText(CustomStepTooltips.viewCustom));
   });
 
   test("Can add step to flow", async () => {
