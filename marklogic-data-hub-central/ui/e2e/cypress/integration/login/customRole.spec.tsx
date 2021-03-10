@@ -42,7 +42,7 @@ describe("customRole", () => {
     cy.findByText(flowName).should("be.visible");
 
     toolbar.getExploreToolbarIcon().click();
-    cy.findByText("Search, filter, review, and export your curated data.");
+    cy.findByText("Search, filter, review, and export your data.");
 
   });
 
