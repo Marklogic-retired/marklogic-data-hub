@@ -4,7 +4,6 @@
 }
 
 .mapContainer{
-    margin-top: -80px;
     width: 92.8vw;
 }
 
@@ -395,4 +394,37 @@ hr {
     &:hover{
         color: var(--hoverColor);
     }
+}
+
+.legend {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -80px;
+
+  .legendText {
+    font-size: 14px;
+    margin-left: 18px;
+    img, svg {
+      margin-right: 2px;
+    }
   }
+
+  .foreignKeyIcon {
+    color: #37AA6C;
+    font-size: 14px;
+  }
+
+  .relatedIcon {
+    margin-bottom: 4px
+  }
+
+  .structuredIcon {
+    color: #5B69AF;
+    font-size: 14px;
+  }
+
+  .arrayImage {
+    margin-bottom: 4px
+  }
+
+}
