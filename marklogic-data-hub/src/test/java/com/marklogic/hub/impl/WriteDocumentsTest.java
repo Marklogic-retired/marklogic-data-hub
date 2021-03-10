@@ -85,7 +85,7 @@ public class WriteDocumentsTest extends AbstractHubCoreTest {
 
     private void testWriteDocuments() {
         String results = eval("'use strict';\n" +
-            "const hubUtils = require('/data-hub/5/impl/hub-utils.sjs');\n" +
+            "const flowUtils = require('/data-hub/5/impl/flow-utils.sjs');\n" +
             "const temporal = require('/MarkLogic/temporal.xqy');\n" +
             "\n" +
             "const temporalCollections = temporal.collections().toArray();\n" +
@@ -94,7 +94,7 @@ public class WriteDocumentsTest extends AbstractHubCoreTest {
             "let temporalCollection = 'TESTtemporalCollection';\n" +
             "let temporalDoc = {uri: \"/TESTtemporal.json\", value: { TESTsystemStart: null, TESTsystemEnd: null, TESTvalidStart: fn.currentDateTime(), TESTvalidEnd: fn.currentDateTime().add(xs.yearMonthDuration('P1Y')) }};\n" +
             "\n" +
-            "hubUtils.writeDocuments([temporalDoc], xdmp.defaultPermissions(), [temporalCollection], xdmp.databaseName(xdmp.database()));\n" +
+            "flowUtils.writeContentArray([temporalDoc], null, [temporalCollection]);\n" +
             "\n" +
             "let readTemporalDoc = fn.head(xdmp.eval(`\n" +
             " cts.doc('${temporalDoc.uri}');\n" +

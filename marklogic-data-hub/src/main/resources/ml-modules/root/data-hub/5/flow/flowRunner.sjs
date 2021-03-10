@@ -131,7 +131,7 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
   try {
     const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions));
     for (const contentObject of outputSequence) {
-      addMetadataToContent(contentObject, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+      flowUtils.addMetadataToContent(contentObject, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
       if (debugEnabled) {
         hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(contentObject)}`);
       }
@@ -168,7 +168,7 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
       const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentObject, stepExecutionContext.combinedOptions));
       for (const outputContent of outputSequence) {
         outputContent.previousUri = thisItem;
-        addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+        flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
         stepExecutionContext.addCompletedItem(thisItem);
         if (debugEnabled) {
           hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(contentObject)}`);
@@ -185,34 +185,6 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
   return outputContentArray;
 }
 
-
-/**
- * TODO This should likely go into flowUtils once that's a library module and not a class.
- *
- * @param content
- * @param flowName
- * @param stepName
- * @param jobId
- */
-function addMetadataToContent(content, flowName, stepName, jobId) {
-  content.context = content.context || {};
-  content.context.metadata = flowUtils.createMetadata(content.context.metadata || {}, flowName, stepName, jobId);
-
-  if (content.context.collections) {
-    content.context.collections = hubUtils.normalizeToArray(content.context.collections);
-  }
-
-  if (content.context.permissions) {
-    content.context.permissions = hubUtils.normalizeToArray(content.context.permissions).map(perm => {
-      if (perm instanceof Element) {
-        const roleName = xdmp.roleName(fn.string(perm.xpath("*:role-id")));
-        const capability = fn.string(perm.xpath("*:capability"));
-        return xdmp.permission(roleName, capability);
-      }
-      return perm;
-    });
-  }
-}
 
 /**
  * @param flowName needed for nice error messages
@@ -325,12 +297,11 @@ function persistWriteQueue(databaseWriteQueue) {
   Object.keys(databaseWriteQueue).forEach(databaseName => {
     const databaseContent = databaseWriteQueue[databaseName];
     const contentArray = Object.keys(databaseContent).map(key => databaseContent[key]);
-    hubUtils.writeDocuments(contentArray, xdmp.defaultPermissions(), [], databaseName);
+    flowUtils.writeContentArray(contentArray, databaseName);
   });
 }
 
 module.exports = {
-  addMetadataToContent,
   processContentWithFlow
 }
 

@@ -17,6 +17,7 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
@@ -156,7 +157,7 @@ function jobReport(jobID, stepResponse, options) {
     if (urisEval) {
       const matchSummaryURIs = hubUtils.normalizeToArray(xdmp.eval(urisEval, {options: options}));
       const summariesToDelete = matchSummaryURIs.map((uri) => ({uri, '$delete': true}));
-      hubUtils.writeDocuments(summariesToDelete);
+      flowUtils.writeContentArray(summariesToDelete);
     }
   }
   return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);

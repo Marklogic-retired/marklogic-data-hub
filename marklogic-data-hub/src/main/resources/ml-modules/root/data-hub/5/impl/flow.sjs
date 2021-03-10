@@ -15,7 +15,6 @@
  */
 'use strict';
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
@@ -288,8 +287,7 @@ class Flow {
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
       try {
-        // combine all collections
-        const collections = [
+        const baseCollections = [
           options.collections,
           ((flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
           (flow.options || {}).collections
@@ -297,7 +295,7 @@ class Flow {
           // filter out any null/empty collections that may exist
           .filter((col) => !!col);
 
-        writeTransactionInfo = hubUtils.writeDocuments(this.writeQueue, xdmp.defaultPermissions(), collections, this.globalContext.targetDatabase);
+        writeTransactionInfo = this.flowUtils.writeContentArray(this.writeQueue, this.globalContext.targetDatabase, baseCollections);
       } catch (e) {
         this.handleWriteError(this, e);
       }
@@ -372,7 +370,7 @@ class Flow {
         const results = hubUtils.normalizeToSequence(flowInstance.runMain(hubUtils.normalizeToSequence(content), combinedOptions, processor.run));
         for (const result of results) {
           content.previousUri = this.globalContext.uri;
-          flowRunner.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
+          this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
           contentArray.push(result);
         }
         flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(items);
@@ -385,7 +383,7 @@ class Flow {
         try {
           const results = hubUtils.normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
           for (const result of results) {
-            flowRunner.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
+            this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
             contentArray.push(result);
           }
           flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);

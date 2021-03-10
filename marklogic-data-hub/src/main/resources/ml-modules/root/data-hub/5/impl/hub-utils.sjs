@@ -92,24 +92,24 @@ function parsePermissions(permissionsString = "") {
 }
 
 function queryToContentDescriptorArray(query, options = {}, database) {
-  let content = [];
+  let contentArray = [];
   invokeFunction(function () {
     let results = cts.search(query, cts.indexOrder(cts.uriReference()));
 
     for (let doc of results) {
-      content.push({
+      contentArray.push({
         uri: xdmp.nodeUri(doc),
         value: doc,
         context: {
-          permissions: options.permissions ? parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
           metadata: xdmp.nodeMetadata(doc),
+          permissions: options.permissions ? parsePermissions(options.permissions) : xdmp.nodePermissions(doc),
           // provide original collections, should a step like to read them
           originalCollections: xdmp.nodeCollections(doc)
         }
       });
     }
   }, database);
-  return content;
+  return contentArray;
 }
 
 /**
@@ -139,26 +139,6 @@ function writeDocument(docUri, content, permissions, collections, database) {
   }));
 }
 
-/**
- * @param writeQueue
- * @param permissions
- * @param collections
- * @param database
- * @return An object consisting of two properties - "transaction" and "dateTime"
- */
-function writeDocuments(writeQueue, permissions = xdmp.defaultPermissions(), collections = [], database = xdmp.databaseName(xdmp.database())) {
-  return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs', {
-    writeQueue,
-    permissions,
-    baseCollections: collections || []
-  }, {
-    database: xdmp.database(database),
-    commit: 'auto',
-    update: 'true',
-    ignoreAmps: true
-  }));
-}
-
 module.exports = {
   capitalize,
   deleteDocument,
@@ -170,6 +150,5 @@ module.exports = {
   parsePermissions,
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
-  writeDocument,
-  writeDocuments
+  writeDocument
 };
