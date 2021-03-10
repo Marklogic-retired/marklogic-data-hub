@@ -1606,4 +1606,17 @@ describe("RTL Source Selector/Source Search tests", () => {
     wait(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
   });
 
+  test("Verify legend visibility",  async() => {
+    let getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+    });
+
+    expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
+    expect(getByTestId("relatedEntityIconLegend")).toBeInTheDocument();
+    expect(getByTestId("multipleIconLegend")).toBeInTheDocument();
+    expect(getByTestId("structuredIconLegend")).toBeInTheDocument();
+  });
+
 });

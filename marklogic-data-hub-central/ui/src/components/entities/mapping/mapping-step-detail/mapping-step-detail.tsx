@@ -5,7 +5,7 @@ import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faSearch, faCog, faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
 import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFromSrcQuery} from "../../../../util/conversionFunctions";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import SplitPane from "react-split-pane";
@@ -22,6 +22,8 @@ import {MappingStep, StepType} from "../../../../types/curation-types";
 import {getMappingArtifactByMapName, updateMappingArtifact} from "../../../../api/mapping";
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips} from "../../../../config/tooltips.config";
+import arrayIcon from "../../../../assets/icon_array.png";
+import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -1145,12 +1147,12 @@ const MappingStepDetail: React.FC = () => {
 
   //Collapse all-Expand All button
 
-  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand:any = []) => {
+  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand:any = [], expanded?) => {
 
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         allKeysToExpand.push(obj[rowKey]);
-        if ((rowKey === "key" && !expandedEntityFlag) || (rowKey === "rowKey" && !expandedSourceFlag)) {
+        if ((rowKey === "key" && !expandedEntityFlag) || (rowKey === "rowKey" && (!expandedSourceFlag || expanded))) {
           getKeysToExpandFromTable(obj["children"], rowKey, allKeysToExpand);
         }
       }
@@ -1158,9 +1160,9 @@ const MappingStepDetail: React.FC = () => {
     return allKeysToExpand;
   };
 
-  const handleSourceExpandCollapse = (id) => {
-    let keys = getKeysToExpandFromTable(sourceData, "rowKey");
-    if (id === "collapse") {
+  const handleSourceExpandCollapse = (option) => {
+    let keys = getKeysToExpandFromTable(sourceData, "rowKey", [], true);
+    if (option === "collapse") {
       setSourceExpandedKeys([]);
       setExpandedSourceFlag(false);
     } else {
@@ -1169,10 +1171,10 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const handleEntityExpandCollapse = (id) => {
+  const handleEntityExpandCollapse = (option) => {
     let keys = getKeysToExpandFromTable(entityTypeProperties, "key");
     keys.unshift(0);
-    if (id === "collapse") {
+    if (option === "collapse") {
       setEntityExpandedKeys([]);
       setExpandedEntityFlag(false);
     } else {
@@ -1242,7 +1244,12 @@ const MappingStepDetail: React.FC = () => {
           <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
           <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
-
+        <div className={styles.legend}>
+          <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key Relationship</div>
+          <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
+          <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
+          <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+        </div>
         <div className={styles.header}>
           {errorInSaving ? success() : <span className={styles.noMessage}></span>}
         </div>
