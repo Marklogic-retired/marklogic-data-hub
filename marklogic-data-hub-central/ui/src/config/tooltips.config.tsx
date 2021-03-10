@@ -330,7 +330,7 @@ const CustomStepTooltips = {
   sourceQuery: 'The collection or CTS query that selects the source data to process in this configuration.',
   additionalSettings: 'A JSON object containing key-value pairs to pass to the custom step module.',
   settings: 'Settings',
-  viewCustom: 'View'
+  viewCustom: 'Edit'
 };
 
 const CustomStepPlaceholders = {
