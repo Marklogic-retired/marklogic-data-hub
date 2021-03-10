@@ -64,10 +64,6 @@ public class LoadHubModulesCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
-        String timestampFile = hubConfig.getHubProject().getHubModulesDeployTimestampFile();
-        PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
-        propsManager.deletePropertiesFile();
-
         DatabaseClient modulesClient = hubConfig.newModulesDbClient();
 
         AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
@@ -80,7 +76,10 @@ public class LoadHubModulesCommand extends AbstractCommand {
                 caughtException = throwable;
             }
         });
-        modulesLoader.setModulesManager(propsManager);
+
+        // When this command is run, should always load all modules
+        modulesLoader.setModulesManager(null);
+
         if (caughtException == null) {
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
             modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());

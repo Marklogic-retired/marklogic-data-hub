@@ -967,18 +967,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         this.requireHubProject().init(appConfig.getCustomTokens());
     }
 
-    @Override
-    @Deprecated
-    public String getHubModulesDeployTimestampFile() {
-        return requireHubProject().getHubModulesDeployTimestampFile();
-    }
-
-    @Override
-    @Deprecated
-    public String getUserModulesDeployTimestampFile() {
-        return requireHubProject().getUserModulesDeployTimestampFile();
-    }
-
     @JsonIgnore
     public void refreshProject() {
         loadConfigurationFromProperties(null, true);

@@ -40,9 +40,7 @@ import java.nio.file.Path;
 @JsonSerialize(as = HubConfigImpl.class)
 public interface HubConfig {
 
-    String HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "hub-modules-deploy-timestamps.properties";
     String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
-    String USER_CONTENT_DEPLOY_TIMESTAMPS_PROPERTIES = "user-content-deploy-timestamps.properties";
 
     String PATH_PREFIX = "src/main/";
     String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
@@ -416,18 +414,6 @@ public interface HubConfig {
      * Initializes the hub project on disk
      */
     void initHubProject();
-
-    /**
-     * Returns the last deployed timestamp file for the hub config and modules
-     * @return string of what's located in the timestamp file
-     */
-    String getHubModulesDeployTimestampFile();
-
-    /**
-     * Returns the last deployed timestamp file for the user modules
-     * @return string of what's located in the timestamp file
-     */
-    String getUserModulesDeployTimestampFile();
 
     /**
      * Creates a new DatabaseClient for accessing the AppServices app

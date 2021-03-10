@@ -223,9 +223,7 @@ public class DhsDeployer extends LoggingObject {
         commands.add(new DeployAlertActionsCommand());
         commands.add(new DeployAlertRulesCommand());
 
-        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
-        loadUserArtifactsCommand.setForceLoad(true);
-        commands.add(loadUserArtifactsCommand);
+        commands.add(new LoadUserArtifactsCommand(hubConfig));
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(true);
         commands.add(loadUserModulesCommand);
