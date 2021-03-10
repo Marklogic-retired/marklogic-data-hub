@@ -187,12 +187,12 @@ describe("json scenario for table on browse documents page", () => {
     //verify the popover doesn't display for the short facet name.
     browsePage.getFacetName("Adams Cole").trigger("mouseover");
     cy.wait(1000);
-    browsePage.getTooltip("Adams Cole").should("not.be.visible");
+    browsePage.getTooltip("Adams Cole").should("not.exist");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     //verify the popover displays for the long facet name.
     browsePage.getFacetName("adamscole@nutralab.com").trigger("mouseover");
     cy.wait(1000);
-    browsePage.getTooltip("adamscole\\@nutralab\\.com").should("be.visible");
+    browsePage.getTooltip("adamscole\\@nutralab\\.com").should("be.exist");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
@@ -215,17 +215,17 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click();
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("exist");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("be.checked");
-    browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("be.visible");
+    browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("exist");
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("be.checked");
 
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").click();
-    browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("be.visible");
+    browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("exist");
     browsePage.getFacetItemCheckbox("source-name", "CustomerSourceName").should("be.checked");
 
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").click();
-    browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("be.visible");
+    browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("exist");
     browsePage.getFacetItemCheckbox("source-type", "CustomerSourceType").should("be.checked");
 
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");

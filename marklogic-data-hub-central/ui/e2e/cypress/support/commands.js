@@ -116,13 +116,14 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName) => {
 });
 
 Cypress.Commands.add("waitForModalToDisappear", () => {
-  cy.waitUntil(() => cy.get(".ant-modal-body").should("not.be.visible"));
+  cy.get("[class=\"ant-modal-mask\"]").should("not.exist");
 });
 
 Cypress.Commands.add("uploadFile", (filePath) => {
+  cy.waitUntil(() => cy.get("input[type=\"file\"]"));
   cy.get("input[type=\"file\"]").attachFile(filePath, {force: true});
   cy.waitForAsyncRequest();
-  cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
+  //cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
   cy.waitUntil(() => cy.get("span p"));
 });
 

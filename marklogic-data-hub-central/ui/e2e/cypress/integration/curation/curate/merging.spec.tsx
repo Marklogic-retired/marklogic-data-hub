@@ -73,7 +73,7 @@ describe("Merging", () => {
     cy.waitUntil(() => cy.findAllByText("discardedMerged").should("have.length", 0));
     cy.findAllByText("discardedMerged").should("not.exist");
     advancedSettings.cancelSettingsButton(mergeStep).click();
-    confirmYesNo.getDiscardText().should("not.be.visible");
+    confirmYesNo.getDiscardText().should("not.exist");
   });
   it("Save Target Collection in advanced settings ", () => {
     curatePage.editStep(mergeStep).click();
@@ -85,7 +85,7 @@ describe("Merging", () => {
   });
   it("Validate when canceling with Target Collection changes should not display confirmation modal (DHFPROD-6660)", () => {
     advancedSettings.cancelSettingsButton(mergeStep).click();
-    confirmYesNo.getDiscardText().should("not.be.visible");
+    confirmYesNo.getDiscardText().should("not.exist");
     cy.waitForAsyncRequest();
   });
   it("Validate when clicking on cancel without changes should not display confirmation modal ", () => {
@@ -93,7 +93,7 @@ describe("Merging", () => {
     curatePage.switchEditAdvanced().click();
     //cy.findAllByText('keptMerged').should('exist');
     advancedSettings.cancelSettingsButton(mergeStep).trigger("mouseover").dblclick();
-    confirmYesNo.getDiscardText().should("not.be.visible");
+    confirmYesNo.getDiscardText().should("not.exist");
   });
   it("Open matching step details ", () => {
     curatePage.openStepDetails(mergeStep);

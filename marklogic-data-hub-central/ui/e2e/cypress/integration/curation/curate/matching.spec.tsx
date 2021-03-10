@@ -68,10 +68,10 @@ describe("Matching", () => {
   it("Open matching step details", () => {
     curatePage.openStepDetails(matchStep);
     cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
-    matchingStepDetail.showThresholdTextMore().should("not.be.visible");
+    matchingStepDetail.showThresholdTextMore().should("not.exist");
     matchingStepDetail.showThresholdTextLess().should("be.visible");
     multiSlider.getRulesetSliderOptions().trigger("mouseover");
-    matchingStepDetail.showRulesetTextMore().should("not.be.visible");
+    matchingStepDetail.showRulesetTextMore().should("not.exist");
     matchingStepDetail.showRulesetTextLess().should("be.visible");
   });
   it("Add threshold", () => {
@@ -178,11 +178,11 @@ describe("Matching", () => {
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
   });
   it("Edit test match URIs", () => {
-    matchingStepDetail.getUriDeleteIcon().should("not.be.visible");
+    matchingStepDetail.getUriDeleteIcon().should("not.exist");
     matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("/test/Uri1").should("be.visible");
     matchingStepDetail.getUriDeleteIcon().click();
-    cy.findByText("/test/Uri1").should("not.be.visible");
+    cy.findByText("/test/Uri1").should("not.exist");
   });
 });

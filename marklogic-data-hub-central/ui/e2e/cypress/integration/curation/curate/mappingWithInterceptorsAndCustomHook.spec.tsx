@@ -69,7 +69,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setCustomHook("loadTile/addPrimaryKeyHook");
 
     advancedSettingsDialog.saveSettings(loadStep).click();
-    advancedSettingsDialog.saveSettings(loadStep).should("not.be.visible");
+    advancedSettingsDialog.saveSettings(loadStep).should("not.exist");
   });
   it("Verify load step with duplicate name cannot be created", () => {
     loadPage.addNewButton("card").click();
@@ -174,7 +174,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     // add customHook to mapping step
     advancedSettingsDialog.setCustomHook("curateTile/customUriHook");
     advancedSettingsDialog.saveSettings(mapStep).click();
-    advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+    advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
 
     //verify that step details page remains opens when step settings was opened from within the step details page
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
@@ -189,7 +189,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     // change source database
     advancedSettingsDialog.setSourceDatabase("data-hub-FINAL");
     advancedSettingsDialog.saveSettings(mapStep).click();
-    advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+    advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     //verify that step details is updated based on recent changes
     cy.waitUntil(() => mappingStepDetail.noDataAvailable().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
@@ -200,7 +200,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     // change source database
     advancedSettingsDialog.setSourceDatabase("data-hub-STAGING");
     advancedSettingsDialog.saveSettings(mapStep).click();
-    advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+    advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     //Step source data is present now.
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
@@ -216,7 +216,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     createEditMappingDialog.setQueryInput("test");
     createEditMappingDialog.saveButton().click({force: true});
     //error message should be displayed instead of step details auto open
-    cy.findByLabelText(`${mapStep}-details-header`).should("not.be.visible");
+    cy.findByLabelText(`${mapStep}-details-header`).should("not.exist");
     loadPage.duplicateStepErrorMessage();
     loadPage.confirmationOptions("OK").click();
     loadPage.duplicateStepErrorMessageClosed();

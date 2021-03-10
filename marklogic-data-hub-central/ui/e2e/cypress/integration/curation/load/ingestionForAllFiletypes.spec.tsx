@@ -115,6 +115,6 @@ describe("Verify ingestion for all filetypes", () => {
     browsePage.waitForCardToLoad();
     browsePage.getTotalDocuments().should("eq", 1);
     browsePage.getFacet("collection").should("exist");
-    browsePage.getFacetItemCheckbox("collection", stepName).should("be.visible");
+    browsePage.getFacetItemCheckbox("collection", stepName).should("to.exist");
   });
 });

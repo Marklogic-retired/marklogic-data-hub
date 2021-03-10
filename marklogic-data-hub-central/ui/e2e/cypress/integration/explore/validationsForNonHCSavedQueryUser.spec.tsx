@@ -28,16 +28,16 @@ describe("User without hub-central-saved-query-user role should not see saved qu
   });
   it("verifies saved queries drop down does not exist", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    browsePage.getSaveQueriesDropdown().should("not.be.visible");
+    browsePage.getSaveQueriesDropdown().should("not.exist");
   });
   it("verifies user without hub-central-saved-query-user role can explore data", () => {
-    browsePage.getSaveQueriesDropdown().should("not.be.visible");
+    browsePage.getSaveQueriesDropdown().should("not.exist");
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
   });
   it("verifies user without hub-central-saved-query-user can not save query", () => {
-    browsePage.getSaveQueriesDropdown().should("not.be.visible");
+    browsePage.getSaveQueriesDropdown().should("not.exist");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
@@ -48,6 +48,6 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     browsePage.getSaveModalIcon().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
   });
   it("verifies user without hub-central-saved-query-user can not manage queries", () => {
-    browsePage.getManageQueriesButton().should("not.be.visible");
+    browsePage.getManageQueriesButton().should("not.exist");
   });
 });

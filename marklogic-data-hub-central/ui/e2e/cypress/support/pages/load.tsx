@@ -262,7 +262,7 @@ class LoadPage {
   }
 
   duplicateStepErrorMessageClosed() {
-    return cy.findByLabelText("duplicate-step-error").should("not.be.visible");
+    return cy.findByLabelText("duplicate-step-error").should("not.exist");
   }
 
   //Load tile card view page objects
@@ -290,6 +290,7 @@ class LoadPage {
   addStepToNewFlowListView(stepName: string) {
     cy.findByLabelText(`${stepName}-add-icon`).click();
     this.addToNewFlow(stepName).click({force: true});
+    cy.waitForAsyncRequest();
   }
 
   existingFlowsList(stepName: string) {

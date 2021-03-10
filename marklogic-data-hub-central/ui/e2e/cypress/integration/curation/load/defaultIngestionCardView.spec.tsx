@@ -46,7 +46,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("No").click();
     loadPage.cancelButton().click();
     loadPage.confirmationOptions("Yes").click();
-    cy.findByText(stepName).should("not.be.visible");
+    cy.findByText(stepName).should("not.exist");
   });
   it("Verify Save", () => {
     loadPage.addNewButton("card").click();
@@ -101,6 +101,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.addStepToNewFlow(stepName);
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
+    cy.waitForAsyncRequest();
     //should route user back to load page card view
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
@@ -143,14 +144,14 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName).should("not.be.visible");
+    runPage.getFlowName(flowName).should("not.exist");
   });
   it("Verify Run Load step in a New Flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.runStep(stepName).click();
     //Just deleted flow should not be visible on flows list
-    cy.findByText(flowName).should("not.be.visible");
+    cy.findByText(flowName).should("not.exist");
     loadPage.runInNewFlow(stepName).click({force: true});
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);

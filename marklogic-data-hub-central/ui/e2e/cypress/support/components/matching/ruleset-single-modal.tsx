@@ -9,8 +9,8 @@ class RulesetSingleModal {
   }
 
   selectMatchTypeDropdown(matchType: string) {
-    cy.findByLabelText("match-type-dropdown").should("be.visible").click({force: true});
-    cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should("be.visible")).click({force: true});
+    cy.findByLabelText("match-type-dropdown").should("be.visible", {timeout: 10000}).click({force: true});
+    cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should("have.length.gt", 0)).click({force: true});
   }
 
   setUriText(str: string) {

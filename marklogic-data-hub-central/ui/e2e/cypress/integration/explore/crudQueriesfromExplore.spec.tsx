@@ -53,7 +53,7 @@ describe("save/manage queries scenarios, developer role", () => {
     // Creating a new query
     browsePage.getSelectedQuery().should("contain", "new-query");
     browsePage.getSelectedQueryDescription().should("contain", "new-query description");
-    browsePage.getSaveQueryButton().should("not.be.visible");
+    browsePage.getSaveQueryButton().should("not.exist");
     browsePage.getSaveQueriesDropdown().should("be.visible");
   });
   it("Editing a previous query", () => {
@@ -313,7 +313,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Person").click({force: true});
     browsePage.getFacetApplyButton().click();
-    browsePage.getSaveModalIcon().should("not.be.visible");
+    browsePage.getSaveModalIcon().should("not.exist");
   });
   // Reset query confirmation
   it("Show Reset query button, open reset confirmation", () => {
@@ -452,7 +452,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getStructuredDataWarning().should("be.visible");
     browsePage.getStructuredDataCancel().should("be.visible");
     browsePage.getStructuredDataCancel().click();
-    browsePage.getStructuredDataWarning().should("not.be.visible");
+    browsePage.getStructuredDataWarning().should("not.exist");
   });
   it("Apply facet,save query using save as is option,verify facets checked on sidebar", () => {
     browsePage.selectEntity("Person");
@@ -499,9 +499,10 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.getSelectedQuery().should("contain", "select a query");
-    browsePage.getFacetItemCheckbox("lname", "Bates").should("not.be.checked");
-    browsePage.getEditQueryModalIcon().should("not.be.visible");
+    //Person entity is not available in stage database
+    browsePage.getFacetItemCheckbox("lname", "Bates").should("not.exist");
+    browsePage.getEditQueryModalIcon().should("not.exist");
     browsePage.getResetQueryButton().should("be.visible");
-    browsePage.getSaveACopyModalIcon().should("not.be.visible");
+    browsePage.getSaveACopyModalIcon().should("not.exist");
   });
 });

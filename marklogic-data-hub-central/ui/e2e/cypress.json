@@ -6,7 +6,6 @@
     "numTestsKeptInMemory": 1,
     "defaultCommandTimeout": 10000,
     "reporter": "junit",
-    "ignoreTestFiles": "**/addCustomStepToFlow.spec.tsx",
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",
       "toConsole": true

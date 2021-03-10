@@ -43,7 +43,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("No").click();
     loadPage.cancelButton().click({force: true});
     loadPage.confirmationOptions("Yes").click();
-    cy.findByText(stepName).should("not.be.visible");
+    cy.findByText(stepName).should("not.exist");
   });
   it("Verify Save", () => {
     loadPage.addNewButton("list").click();
@@ -160,14 +160,14 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName).should("not.be.visible");
+    runPage.getFlowName(flowName).should("not.exist");
   });
   it("Verify Run in a new flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     //Just deleted flow should not be visible on flows list
-    cy.findByText(flowName).should("not.be.visible");
+    cy.findByText(flowName).should("not.exist");
     loadPage.runInNewFlow(stepName).click({force: true});
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
@@ -219,12 +219,12 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-    runPage.getFlowName(flowName).should("not.be.visible");
+    runPage.getFlowName(flowName).should("not.exist");
     runPage.deleteFlow(flowName2).click();
     runPage.deleteFlowConfirmationMessage(flowName2).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-    runPage.getFlowName(flowName2).should("not.be.visible");
+    runPage.getFlowName(flowName2).should("not.exist");
     //Verify Delete
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
@@ -235,6 +235,6 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.deleteStep(stepName).click();
     cy.waitUntil(() => loadPage.confirmationOptions("Yes")).click();
     cy.waitForAsyncRequest();
-    loadPage.stepName(stepName).should("not.be.visible");
+    loadPage.stepName(stepName).should("not.exist");
   });
 });

@@ -152,14 +152,14 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
-    runPage.getFlowName(flowName).should("not.be.visible");
+    runPage.getFlowName(flowName).should("not.exist");
     //Verify Run Map step in a new Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
     //Just deleted flow should not be visible on flows list
-    cy.findByText(flowName).should("not.be.visible");
+    cy.findByText(flowName).should("not.exist");
     curatePage.runInNewFlow(mapStep).click({force: true});
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
