@@ -45,7 +45,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.marklogic.hub.HubConfig.HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
 public class HubProjectImpl extends LoggingObject implements HubProject {
@@ -640,54 +639,14 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         return false;
     }
 
-    @Override  public String getHubModulesDeployTimestampFile() {
-        return Paths.get(projectDirString, ".tmp", HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
-    }
-
-    @Override public String getUserModulesDeployTimestampFile() {
+    @Override
+    public String getUserModulesDeployTimestampFile() {
         return Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile).toString();
     }
 
     @Override
     public void setUserModulesDeployTimestampFile(String userModulesDeployTimestampFile) {
         this.userModulesDeployTimestampFile = userModulesDeployTimestampFile;
-    }
-
-    /**
-     * In the upgrade from 3.x to 4.x, the job-database.json file is copied to its new location, but it also needs
-     * several indexes added to it.
-     *
-     * @param rootNode
-     */
-    private void addPathRangeIndexesToJobDatabase(ObjectNode rootNode) {
-        if (rootNode.get("range-path-index") == null) {
-            if (logger.isInfoEnabled()) {
-                logger.info("Adding path range indexes to job-database.json");
-            }
-
-            ArrayNode indexes = rootNode.putArray("range-path-index");
-            addStringPathRangeIndex(indexes, "/trace/hasError");
-            addStringPathRangeIndex(indexes, "/trace/flowType");
-            addStringPathRangeIndex(indexes, "/trace/jobId");
-            addStringPathRangeIndex(indexes, "/trace/traceId");
-            addStringPathRangeIndex(indexes, "/trace/identifier");
-
-            ObjectNode node = indexes.addObject();
-            node.put("scalar-type", "dateTime");
-            node.put("path-expression", "/trace/created");
-            node.put("collation", "");
-            node.put("range-value-positions", false);
-            node.put("invalid-values", "reject");
-        }
-    }
-
-    private void addStringPathRangeIndex(ArrayNode indexes, String path) {
-        ObjectNode node = indexes.addObject();
-        node.put("scalar-type", "string");
-        node.put("path-expression", path);
-        node.put("collation", "http://marklogic.com/collation/codepoint");
-        node.put("range-value-positions", false);
-        node.put("invalid-values", "reject");
     }
 
     @Override

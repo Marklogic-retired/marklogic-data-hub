@@ -299,9 +299,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
                 "exception to propagate; cause: " + ex.getMessage(), ex);
         }
 
-        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
-        loadUserArtifactsCommand.setForceLoad(forceLoad);
-        commands.add(loadUserArtifactsCommand);
+        commands.add(new LoadUserArtifactsCommand(hubConfig));
 
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
@@ -333,7 +331,6 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
 
     protected void installUserArtifacts() {
         LoadUserArtifactsCommand command = new LoadUserArtifactsCommand(getHubConfig());
-        command.setForceLoad(true);
         new SimpleAppDeployer(getHubConfig().getManageClient(), getHubConfig().getAdminManager(), command)
             .deploy(getHubConfig().getAppConfig());
         // Wait for post-commit triggers to finish

@@ -27,11 +27,6 @@ class DeployUserArtifactsTask extends HubTask {
             println("Data Hub is not installed.")
             return
         }
-
-        def cmd = getLoadUserArtifactsCommand()
-        cmd.setForceLoad(true);
-
-        cmd.execute(getCommandContext())
-
+        getLoadUserArtifactsCommand().execute(getCommandContext())
     }
 }

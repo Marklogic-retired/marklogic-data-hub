@@ -264,8 +264,6 @@ public interface HubProject {
      */
     String getProjectName();
 
-    String getHubModulesDeployTimestampFile();
-
     String getUserModulesDeployTimestampFile();
 
     void setUserModulesDeployTimestampFile(String userModulesDeployTimestampFile);
