@@ -1,0 +1,16 @@
+{
+  "info": {
+    "title": "TdeContextNoNamespaceEntity",
+    "version": "1.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "TdeContextNoNamespaceEntity": {
+      "properties": {
+        "myProperty": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
