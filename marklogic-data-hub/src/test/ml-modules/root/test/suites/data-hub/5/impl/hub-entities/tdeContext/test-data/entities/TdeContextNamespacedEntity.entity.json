@@ -1,0 +1,18 @@
+{
+  "info": {
+    "title": "TdeContextNamespacedEntity",
+    "version": "1.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "TdeContextNamespacedEntity": {
+      "namespace": "http://example.org/",
+      "namespacePrefix": "oex",
+      "properties": {
+        "myProperty": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

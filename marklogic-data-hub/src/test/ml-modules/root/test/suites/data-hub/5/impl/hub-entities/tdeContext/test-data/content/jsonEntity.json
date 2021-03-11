@@ -1,0 +1,12 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "version": "1.0"
+      },
+      "TdeContextNoNamespaceEntity": {
+        "myProperty": "JSON"
+      }
+    }
+  }
+}

@@ -70,7 +70,7 @@ const tiles: Record<TileId, TileItem>  = {
         border: '#BFBFBF',
         controlColor: '#777',
         controls: ['menu', 'close'],
-        intro: 'Search, filter, review, and export your curated data.',
+        intro: 'Search, filter, review, and export your data.',
     },
 };
 

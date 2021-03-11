@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Overview.module.scss";
 import {useHistory} from "react-router-dom";
 import overviewConfig from "../config/overview.config";
+import tiles from "../config/tiles.config";
 
 interface Props {
     enabled: any;
@@ -224,7 +225,7 @@ const Overview: React.FC<Props> = (props) => {
             <div className={styles.head}>
               <span className={styles.icon} aria-label="explore-icon"></span>
               <div className={styles.subtitle}>Explore</div>
-              <div className={styles.body}>Search, filter, and export your curated data.
+              <div className={styles.body}>{tiles.explore.intro}
                 <div className={styles.docLink}>
                   <span onClick={(e) => { openDocumentation(e, "explore"); }}>Documentation</span>
                 </div>
