@@ -15,7 +15,7 @@ class MultiSlider {
   }
 
   deleteOption(name: string) {
-    cy.findByTestId(`delete-${name}`).should("be.visible").then($option => {
+    cy.findByTestId(`delete-${name}`).trigger("mousemove").should("be.visible").then($option => {
       $option[0].click();
     });
   }
