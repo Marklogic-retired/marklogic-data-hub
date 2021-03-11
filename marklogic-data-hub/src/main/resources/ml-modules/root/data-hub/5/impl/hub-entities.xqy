@@ -497,28 +497,26 @@ declare function hent:dump-tde($entities as json:array)
     )
   let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
   let $entity-name := map:get(map:get($uber-model, "info"), "title")
-  return hent:fix-tde(es:extraction-template-generate($uber-model), $entity-model-contexts, $uber-definitions, $entity-name)
+  let $es-template := es:extraction-template-generate($uber-model)
+  return hent:fix-tde($es-template, $entity-model-contexts, $uber-model, $entity-name)
 };
 
 declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
 declare variable $default-invalid-values as element(tde:invalid-values) := element tde:invalid-values {"ignore"};
-(:
-  this method doctors the TDE output from ES
-:)
 
-declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map)
+declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-model as map:map)
 {
-  hent:fix-tde($nodes, $entity-model-contexts, $uber-definitions, ())
+  hent:fix-tde($nodes, $entity-model-contexts, $uber-model, ())
 };
 
-declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-definitions as map:map, $entity-name as xs:string?)
+declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:string*, $uber-model as map:map, $entity-name as xs:string?)
 {
   for $n in $nodes
   return
     typeswitch($n)
       case document-node() return
         document {
-          hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
+          hent:fix-tde($n/node(), $entity-model-contexts, $uber-model, $entity-name)
         }
       case element(tde:nullable) return
         $default-nullable
@@ -533,6 +531,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
               $generated-primary-key-expression
             else if (fn:starts-with($n, $col-name)) then
               let $parts := fn:tokenize($n, "/")
+              let $uber-definitions := $uber-model => map:get("definitions")
               let $entity-definition := $uber-definitions => map:get(fn:string($parts[2]))
               return
                 if (fn:exists($entity-definition)) then
@@ -543,37 +542,26 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     else
                       fn:string($n) || "/" || $primary-key
                 else
-                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-model)
             else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-model)
         }
+
       case element(tde:context) return
-        element { fn:node-name($n) } {
-          $n/namespace::node(),
-          if ($n = $entity-model-contexts) then
-            fn:replace(fn:replace(fn:string($n),"^\./", ".//"), "(.)$", "$1[node()]")
-          else
-          if(fn:count($n) = 1) then
-            let $outer-context := fn:replace(fn:string($n),"//\*:instance", "/*:envelope/*:instance")
-            return if(fn:not(fn:empty($entity-name))) then
-              fn:concat($outer-context, "[*:", $entity-name, "]")
-            else
-              $outer-context
-          else
-          $n/node()
-        }
+        fix-tde-context($n, $entity-model-contexts, $uber-model, $entity-name)
+      
       case element(tde:column) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          hent:fix-tde($n/* except $n/(tde:nullable|tde:invalid-values), $entity-model-contexts, $uber-definitions),
+          hent:fix-tde($n/* except $n/(tde:nullable|tde:invalid-values), $entity-model-contexts, $uber-model),
           $default-nullable,
           $default-invalid-values
         }
       case element(tde:subject)|element(tde:predicate)|element(tde:object) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-tde($n/* except $n/tde:invalid-values, $entity-model-contexts, $uber-definitions),
+          hent:fix-tde($n/* except $n/tde:invalid-values, $entity-model-contexts, $uber-model),
           $default-invalid-values
         }
       case element(tde:template) return
@@ -586,7 +574,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           let $rows := $n/tde:rows/tde:row
           return
             if ($is-join-template) then (
-              hent:fix-tde($n/tde:context, $entity-model-contexts, $uber-definitions),
+              hent:fix-tde($n/tde:context, $entity-model-contexts, $uber-model),
               element tde:rows {
                 element tde:row {
                   $rows/(tde:schema-name|tde:view-name|tde:view-layout),
@@ -596,9 +584,10 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     return
                       element tde:column {
                         $column/@*,
-                        hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-definitions),
+                        hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-model),
                         if (fn:starts-with($column/tde:name, $join-prefix)) then (
                           let $tde-val := fn:string($column/tde:val)
+                          let $uber-definitions := $uber-model => map:get("definitions")
                           let $primary-key := $uber-definitions => map:get($tde-val) => map:get("primaryKey")
                           return
                             element tde:val {
@@ -608,21 +597,21 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                                 $tde-val || "/" || $primary-key
                             }
                         ) else
-                          hent:fix-tde($column/tde:val, $entity-model-contexts, $uber-definitions),
+                          hent:fix-tde($column/tde:val, $entity-model-contexts, $uber-model),
                         $default-nullable,
                         $default-invalid-values,
-                        hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-definitions)
+                        hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-model)
                       }
                   }
                 }
               }
             ) else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-definitions, $entity-name)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-model, $entity-name)
         }
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-definitions)
+          hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-model)
         }
       case text() return
         fn:replace(
@@ -631,6 +620,85 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           $generated-primary-key-expression
         )
       default return $n
+};
+
+(:
+Fixes the ES-generated TDE context path by:
+- Replacing the use of wildcards, which lead to false positives
+- Checking the entity namespacePrefix to determine if the context only needs to support XML
+
+False positives in the context path won't lead to incorrect results when querying via the TDE, but they will 
+lead to unnecessary reindexing, per DHFPROD-6954.
+
+Example of an ES-generated path: //*:instance[*:info/*:version = "1.0"]
+:)
+declare private function fix-tde-context(
+  $context as element(tde:context), 
+  $entity-model-contexts as xs:string*, 
+  $uber-model as map:map, 
+  $entity-name as xs:string?
+) as element(tde:context)
+{
+  element tde:context {
+    $context/namespace::node(),
+    
+    (: This appears to be for the 'non-root' context elements in a TDE :)
+    if ($context = $entity-model-contexts) then
+      fn:replace(fn:replace(fn:string($context),"^\./", ".//"), "(.)$", "$1[node()]")
+
+    else if ($entity-name) then
+      let $version := get-version-from-uber-model($uber-model)
+      let $ns-prefix := get-namespace-prefix($uber-model, $entity-name)
+      return 
+        if ($ns-prefix) then 
+          let $entity-predicate := "[" || $ns-prefix || ":" || $entity-name || "]"
+          return 
+            if ($version) then 
+              "/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '" || $version || "']" || $entity-predicate
+            else 
+              replace-context-wildcards($context/text()) || $entity-predicate
+        else 
+          let $entity-predicate := "[" || $entity-name || "]"
+          return 
+            if ($version) then 
+              (: An 'or' clause is used to further avoid false positives :)
+              "/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '" || $version || "' or info/version = '" || $version || "']" || $entity-predicate
+            else 
+              replace-context-wildcards($context/text()) || $entity-predicate
+
+      else
+        (: In the absence of an entity-name, which is very unexpected, at least remove the wildcards :)
+        replace-context-wildcards($context/text())
+  }
+};
+
+declare private function get-version-from-uber-model($uber-model as map:map) as xs:string?
+{
+  let $info := map:get($uber-model, "info")
+  where fn:exists($info)
+  return map:get($info, "version")
+};
+
+declare private function get-namespace-prefix($uber-model as map:map, $entity-name as xs:string) as xs:string?
+{
+  let $uber-definitions := $uber-model => map:get("definitions")
+  where fn:exists($uber-definitions)
+  return 
+    let $def := map:get($uber-definitions, $entity-name)
+    where fn:exists($def)
+    return map:get($def, "namespacePrefix")
+};
+
+(:
+Replacing wildcards in the ES-generated context path eliminates many false positives, per DHFPROD-6954. 
+This function should also only be used when the entity def does not have a namespace prefix, as the path it 
+returns is intended to support JSON entity instances and XML entity instances that do not have a namespace (but still 
+use the es namespace for envelope/instance/info/version).
+:)
+declare private function replace-context-wildcards($path as xs:string) as xs:string
+{
+  let $temp := fn:replace($path, "//\*:instance", "/(es:envelope|envelope)/(es:instance|instance)")
+  return fn:replace($temp, "\*:info/\*:version", "(es:info/es:version|info/version)")
 };
 
 declare variable $number-types as xs:string+ := ("byte","decimal","double","float","int","integer","long","negativeInteger","nonNegativeInteger","nonPositiveInteger","positiveInteger","short","unsignedLong","unsignedInt","unsignedShort","unsignedByte");
