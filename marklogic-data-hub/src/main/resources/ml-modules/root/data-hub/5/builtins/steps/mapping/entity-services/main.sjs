@@ -10,6 +10,8 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
+let entityModelMap = {};
+const traceEvent = consts.TRACE_MAPPING_DEBUG;
 
 function main(content, options) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : consts.DEFAULT_FORMAT;
@@ -57,33 +59,100 @@ function main(content, options) {
     datahub.debug.log({message: errMsg, type: 'error'});
     throw Error(errMsg);
   }
-  let entityName = lib.getEntityName(targetEntityType);
-  let entity = lib.getTargetEntity(targetEntityType);
+  let targetEntityName = lib.getEntityName(targetEntityType);
+
   let instance = lib.extractInstance(doc);
-  let provenance = {};
 
   const userParams = {"URI":content.uri};
 
-  let newInstance;
+  let arrayOfInstanceArrays;
   try {
-    newInstance = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, userParams, {"format":outputFormat});
+    arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, userParams, {"format":outputFormat});
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
   }
-  // fix the document URI if the format changes
-  content.uri = flowUtils.properExtensionURI(content.uri, outputFormat);
 
+  const mappingStep = fn.head(mapping).toObject();
+  hubUtils.hubTrace(traceEvent, `Entity instances with mapping ${mappingStep.name} and source document ${content.uri}: ${arrayOfInstanceArrays}`);
+
+  buildEntityModelMap(mappingStep);
+
+  let counter = 0;
+  let contentResponse = [];
+
+  for(const instanceArray of xdmp.arrayValues(arrayOfInstanceArrays)){
+    /* The first instance in the array is the target entity instance. 'permissions' and 'collections' for target instance
+    are applied outside of main.sjs */
+    let entityName ;
+    let entityContext = {};
+
+    if(counter == 0){
+      entityName = targetEntityName;
+      entityContext = content.context;
+    }
+    else {
+      let currentRelatedMapping = mappingStep.relatedEntityMappings[counter-1];
+      entityName = lib.getEntityName(fn.string(currentRelatedMapping.targetEntityType));
+      entityContext = createContextForRelatedEntityInstance(currentRelatedMapping);
+    }
+    const entityModel = entityModelMap[entityName];
+
+    for(const entityInstance of xdmp.arrayValues(instanceArray)){
+      let entityContent = {};
+      if(entityName == targetEntityName){
+        entityContent = Object.assign(entityContent, content);
+        entityContent["uri"] = flowUtils.properExtensionURI(content.uri, outputFormat);
+      }
+      else{
+        entityContent["uri"] = flowUtils.properExtensionURI("/"+entityName + "/" + sem.uuidString() + ".json", outputFormat)
+      }
+      entityContent["value"] = entityInstance;
+      entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options);
+      hubUtils.hubTrace(traceEvent, `Entity instance envelope created with mapping ${mappingStep.name} and source document ${content.uri}: ${entityContent.value}`);
+      contentResponse.push(entityContent);
+    }
+    counter++;
+  }
+  return contentResponse.length == 1 ? contentResponse[0] : contentResponse;
+}
+
+function validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options){
   // Must validate before building an envelope so that validaton errors can be added to the headers
-  entityValidationLib.validateEntity(newInstance, options, entity.info);
+  entityValidationLib.validateEntity(entityContent.value, options, entityModel.info);
 
-  content.value = buildEnvelope(entity.info, doc, newInstance, outputFormat, options);
+  entityContent["value"] = buildEnvelope(entityModel.info, doc, entityContent.value, outputFormat, options);
 
   // Must remove these so that they're not carried over to another item in a batch
   entityValidationLib.removeValidationErrorsFromHeaders(options);
+  entityContent["context"] = entityContext;
+  return entityContent;
+}
 
-  content.provenance = { [content.uri]: provenance };
-  return content;
+function createContextForRelatedEntityInstance(relatedEntityMapping){
+  let entityContext = {};
+  let relatedEntityPermissions = fn.string(relatedEntityMapping.permissions);
+  let relatedEntityCollections = relatedEntityMapping.collections;
+  entityContext["permissions"] = hubUtils.parsePermissions(relatedEntityPermissions);
+  entityContext["collections"] = relatedEntityCollections;
+  entityContext["useContextCollectionsOnly"] = true;
+  return entityContext;
+
+}
+
+function buildEntityModelMap(mappingStep){
+  let targetEntityName = lib.getEntityName(mappingStep.targetEntityType);
+  let targetEntityModel= lib.getTargetEntity(mappingStep.targetEntityType);
+  entityModelMap[targetEntityName] = targetEntityModel;
+  if(mappingStep.relatedEntityMappings){
+    mappingStep.relatedEntityMappings.forEach(relatedEntityMapping => {
+      let relatedEntityName = lib.getEntityName(relatedEntityMapping.targetEntityType);
+      if(!entityModelMap[relatedEntityName]){
+        let relatedEntityModel= lib.getTargetEntity(relatedEntityMapping.targetEntityType);
+        entityModelMap[relatedEntityName] = relatedEntityModel;
+      }
+    });
+  }
 }
 
 // Extracted for unit testing purposes

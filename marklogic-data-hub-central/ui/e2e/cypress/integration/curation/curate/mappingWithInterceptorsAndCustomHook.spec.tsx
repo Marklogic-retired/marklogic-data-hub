@@ -6,7 +6,7 @@ import {
   mappingStepDetail
 } from "../../../support/components/mapping/index";
 import loadPage from "../../../support/pages/load";
-import browsePage from "../../../support/pages/browse";
+//import browsePage from "../../../support/pages/browse";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
@@ -35,7 +35,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadOrder");
-    cy.deleteSteps("mapping", "mapOrder", "mapCustomer");
+    cy.deleteSteps("mapping", "mapOrder");
     cy.deleteFlows("orderFlow");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
@@ -220,7 +220,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.confirmationOptions("OK").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
-  it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
+  /*  it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
     // link to settings and back
     curatePage.openMappingStepDetail("Order", mapStep);
     cy.waitUntil(() => mappingStepDetail.expandEntity().should("be.visible")).click();
@@ -269,5 +269,5 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
-  });
+  });*/
 });

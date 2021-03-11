@@ -40,7 +40,14 @@ for (let content of contentArray) {
     const permissions = context.permissions || xdmp.defaultPermissions();
 
     let existingCollections = xdmp.documentGetCollections(content.uri);
-    let collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
+    let collections;
+    if(context && context.useContextCollectionsOnly){
+      collections = fn.distinctValues(Sequence.from(context.collections||[])).toArray();
+    }
+    else{
+      collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
+    }
+
     let metadata = context.metadata;
     let temporalCollection = collections.concat(existingCollections).find((col) => temporalCollections[col]);
     let isDeleteOp = !!content['$delete'];

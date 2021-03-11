@@ -1,0 +1,43 @@
+{
+  "info": {
+    "title": "Order",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Order": {
+      "primaryKey": "orderId",
+      "properties": {
+        "orderId": {
+          "datatype": "integer"
+        },
+        "orderedBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+          "joinPropertyName": "customerId"
+        },
+        "deliveredTo": {
+          "datatype": "integer"
+        },
+        "lineItems": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/LineItem"
+          }
+        }
+      }
+    },
+    "LineItem": {
+      "properties": {
+        "quantity": {
+          "datatype": "integer"
+        },
+        "orderIncludes": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Product-0.0.1/Product",
+          "joinPropertyName": "productId"
+        }
+      }
+    }
+  }
+}

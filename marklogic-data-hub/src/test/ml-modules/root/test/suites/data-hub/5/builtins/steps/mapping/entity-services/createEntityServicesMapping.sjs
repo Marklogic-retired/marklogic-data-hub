@@ -133,7 +133,7 @@ function applyDefOverridesAndSetCache(customerDefOverrides, orderDefOverrides) {
 
 function constructSingleTemplateWithOverrides(customerDefOverrides, orderDefOverrides) {
   const updatedEntities = applyDefOverridesAndSetCache(customerDefOverrides, orderDefOverrides);
-  return tidyXML(mappingLib.buildEntityTemplate(baseCustomerMapping.toObject(), updatedEntities.customerEntity.toObject(), "Customer"));
+  return tidyXML(mappingLib.buildEntityTemplate(baseCustomerMapping.toObject(), updatedEntities.customerEntity.toObject(), "Customer", 0));
 }
 
 function constructEntireNestedTemplateWithOverrides(customerDefOverrides, orderDefOverrides) {
@@ -147,18 +147,18 @@ have a value, then it will be added as ID:"". But that will not fail schema vali
 the "ID" property won't be included at all, which will properly fail schema validation.
  */
 let expectedTemplate = tidyXML(`
-  <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
+  <m:entity name="mapping0-Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
       <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <Orders datatype='array'>
-          <m:call-template name="Customer.Orders"/>
+          <m:call-template name="mapping0-Customer.Orders"/>
         </Orders>
       </m:for-each>
         <m:for-each><m:select>customerName</m:select>
           <Name>
-            <m:call-template name="Customer.Name"/>
+            <m:call-template name="mapping0-Customer.Name"/>
           </Name>
         </m:for-each>
     </Customer>
@@ -172,18 +172,18 @@ assertions.push(
 
 // Namespace without prefix test
 expectedTemplate = tidyXML(`
-  <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
+  <m:entity name="mapping0-Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <Customer xmlns="http://my-test-namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
       <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <Orders datatype='array'>
-          <m:call-template name="Customer.Orders"/>
+          <m:call-template name="mapping0-Customer.Orders"/>
         </Orders>
       </m:for-each>
       <m:for-each><m:select>customerName</m:select>
         <Name>
-          <m:call-template name="Customer.Name"/>
+          <m:call-template name="mapping0-Customer.Name"/>
         </Name>
       </m:for-each>
     </Customer>
@@ -197,18 +197,18 @@ assertions.push(
 
 // Namespace with prefix test
 expectedTemplate = tidyXML(`
-  <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
+  <m:entity name="mapping0-Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
     <myPrefix:Customer xmlns:myPrefix="http://my-test-namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       <m:optional><myPrefix:ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></myPrefix:ID></m:optional>
       <m:optional><myPrefix:Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></myPrefix:Date></m:optional>
       <m:for-each><m:select>orders/order</m:select>
         <myPrefix:Orders datatype='array'>
-          <m:call-template name="Customer.Orders"/>
+          <m:call-template name="mapping0-Customer.Orders"/>
         </myPrefix:Orders>
       </m:for-each>
       <m:for-each><m:select>customerName</m:select>
         <myPrefix:Name>
-          <m:call-template name="Customer.Name"/>
+          <m:call-template name="mapping0-Customer.Name"/>
         </myPrefix:Name>
       </m:for-each>
     </myPrefix:Customer>
@@ -222,41 +222,42 @@ assertions.push(
 
 // Test entire build
 expectedTemplate = tidyXML(`
-  <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" xmlns:ns1="http://ns1" xmlns:ns2="http://ns2">
+  <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:map="http://marklogic.com/xdmp/map" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:ns1="http://ns1" xmlns:ns2="http://ns2">
     ${mappingLib.retrieveFunctionImports()}
     <m:param name="URI"/>
-    <m:entity name="Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
+    <m:entity name="mapping0-Customer" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Customer xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <m:optional><ID xsi:type="xs:string"><m:val>string(@CustomerID)</m:val></ID></m:optional>
         <m:optional><Date xsi:type="xs:dateTime"><m:val>parseDateTime(date, 'DD/MM/YYYY-hh:mm:ss')</m:val></Date></m:optional>
         <m:for-each><m:select>orders/order</m:select>
           <Orders datatype='array'>
-            <m:call-template name="Customer.Orders"/>
+            <m:call-template name="mapping0-Customer.Orders"/>
           </Orders>
         </m:for-each>
         <m:for-each><m:select>customerName</m:select>
           <Name>
-            <m:call-template name="Customer.Name"/>
+            <m:call-template name="mapping0-Customer.Name"/>
           </Name>
         </m:for-each>
       </Customer>
     </m:entity>
-    <m:entity name="Customer.Orders" xmlns:m="http://marklogic.com/entity-services/mapping">
+    <m:entity name="mapping0-Customer.Orders" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Order xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <m:optional><OrderID xsi:type="xs:string"><m:val>@id</m:val></OrderID></m:optional>
       </Order>
     </m:entity>
-    <m:entity name="Customer.Name" xmlns:m="http://marklogic.com/entity-services/mapping">
+    <m:entity name="mapping0-Customer.Name" xmlns:m="http://marklogic.com/entity-services/mapping">
       <Name xmlns="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
         <m:optional><FirstName xsi:type="xs:string"><m:val>ns1:givenName</m:val></FirstName></m:optional>
         <m:optional><LastName xsi:type="xs:string"><m:val>ns2:surName</m:val></LastName></m:optional>
       </Name>
     </m:entity>
-      <!-- Default entity is Customer -->
       <m:output>
-        <m:for-each><m:select>/</m:select>
-            <m:call-template name="Customer" />
-        </m:for-each>
+        <instance:entityInstance0>
+            <m:for-each><m:select>/</m:select>
+                <m:call-template name="mapping0-Customer" />
+            </m:for-each>
+        </instance:entityInstance0>
       </m:output>
     </m:mapping>
 `);

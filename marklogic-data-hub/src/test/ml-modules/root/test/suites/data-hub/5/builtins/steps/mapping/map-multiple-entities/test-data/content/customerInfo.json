@@ -1,0 +1,41 @@
+{
+  "CustomerID": 202,
+  "Name": {
+    "FirstName": "Cynthia",
+    "LastName": "Waters"
+  },
+  "Orders": [
+    {
+      "OrderId": "2002",
+      "FirstName": "Audrey",
+      "LastName": "Thompson",
+      "SendToID": "303",
+      "Products": [
+        {
+          "Quantity": "1",
+          "ProductId": "10",
+          "Name": "New Balance FuelCell Echo V1 Sneaker"
+        }
+      ]
+    },
+    {
+      "OrderId": "2012",
+      "DateAndTime": "2021/02/14-09:39:15",
+      "FirstName": "Cornelia",
+      "LastName": "Nixon",
+      "SendToID": "404",
+      "Products": [
+        {
+          "Quantity": "1",
+          "ProductId": "30",
+          "Name": "Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless"
+        },
+        {
+          "Quantity": "2",
+          "ProductId": "40",
+          "Name": "Cuisinart 8-Cup Stainless Steel Electric Kettle with Automatic Shut-off"
+        }
+      ]
+    }
+  ]
+}
