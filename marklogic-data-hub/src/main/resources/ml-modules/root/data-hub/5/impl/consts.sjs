@@ -84,5 +84,6 @@ module.exports = {
   // Define all DH trace events here
   TRACE_STEP: "hub-step",
   TRACE_FLOW_RUNNER: "hub-flow-runner",
-  TRACE_FLOW_RUNNER_DEBUG: "hub-flow-runner-debug"
+  TRACE_FLOW_RUNNER_DEBUG: "hub-flow-runner-debug",
+  TRACE_MAPPING_DEBUG: "hub-mapping-debug"
 };

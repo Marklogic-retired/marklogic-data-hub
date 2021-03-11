@@ -1,0 +1,8 @@
+{
+  "name" : "customerFlow",
+  "steps" : {
+    "1" : {
+      "stepId" : "mapCustomersJSON-mapping"
+    }
+  }
+}

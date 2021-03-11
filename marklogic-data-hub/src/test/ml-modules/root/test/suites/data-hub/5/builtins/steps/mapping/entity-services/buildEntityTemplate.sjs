@@ -11,7 +11,7 @@ function entityNameDoesntExist() {
   };
 
   try {
-    esMappingLib.buildEntityTemplate(mapping, model, "")
+    esMappingLib.buildEntityTemplate(mapping, model, "", 0)
     throw Error("Expected a failure because there's no matching definition in the entity model");
   } catch (e) {
     const errorMessage = e.toString();

@@ -8,12 +8,12 @@ const test = require("/test/test-helper.xqy");
 const mappingTemplate = hubTest.getModulesDocument("/mappings/PersonMapping/PersonMapping-6.mapping.xml");
 const namespaces = {"m": "http://marklogic.com/entity-services/mapping"};
 const assertions = [
-  test.assertEqual("Person.name", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'Person']/Person/m:for-each/name/m:call-template/@name/string()", namespaces)),
-  test.assertEqual("Person.alias", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'Person']/Person/m:for-each/alias/m:call-template/@name/string()", namespaces)),
-  test.assertEqual(1, mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'Person.name']", namespaces).toArray().length),
-  test.assertEqual("Person.name.first", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'Person.name']/Name/m:for-each/first/m:call-template/@name/string()", namespaces)),
-  test.assertEqual(1, mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'Person.name.first']", namespaces).toArray().length),
-  test.assertEqual(1, mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'Person.alias']", namespaces).toArray().length)
+  test.assertEqual("mapping0-Person.name", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person']/Person/m:for-each/name/m:call-template/@name/string()", namespaces)),
+  test.assertEqual("mapping0-Person.alias", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person']/Person/m:for-each/alias/m:call-template/@name/string()", namespaces)),
+  test.assertEqual(1, mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person.name']", namespaces).toArray().length),
+  test.assertEqual("mapping0-Person.name.first", mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person.name']/Name/m:for-each/first/m:call-template/@name/string()", namespaces)),
+  test.assertEqual(1, mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person.name.first']", namespaces).toArray().length),
+  test.assertEqual(1, mappingTemplate.xpath("/m:mapping/m:entity[@name/string() = 'mapping0-Person.alias']", namespaces).toArray().length)
 
 ];
 

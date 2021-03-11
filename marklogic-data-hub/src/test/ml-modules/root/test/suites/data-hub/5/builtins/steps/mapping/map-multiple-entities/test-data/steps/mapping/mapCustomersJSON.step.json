@@ -1,0 +1,80 @@
+
+{
+  "collections": ["mapCustomersJSON", "Customer"],
+  "additionalCollections": [],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "name": "mapCustomersJSON",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['raw-content'])",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": {},
+  "interceptors": [],
+  "provenanceGranularityLevel": "coarse",
+  "customHook": {},
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersJSON-mapping",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "firstName": {
+      "sourcedFrom": "Name/FirstName"
+    },
+    "lastName": {
+      "sourcedFrom": "Name/LastName"
+    }
+  },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "productId:Order.lineItems.orderIncludes",
+      "collections": ["mapCustomersJSON", "Product"],
+      "permissions": "data-hub-operator,read,data-hub-operator,update",
+      "expressionContext": "/Orders/Products",
+      "properties": {
+        "productId": {
+          "sourcedFrom": "ProductId"
+        },
+        "productName": {
+          "sourcedFrom": "Name"
+        }
+      },
+      "targetEntityType": "http://example.org/Product-1.0.0/Product"
+    },
+    {
+      "relatedEntityMappingId": "orderedBy:Customer.customerId",
+      "collections": ["mapCustomersJSON", "Order"],
+      "expressionContext": "/Orders",
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "properties": {
+        "orderId": {
+          "sourcedFrom": "OrderId"
+        },
+        "orderedBy": {
+          "sourcedFrom": "/CustomerID"
+        },
+        "deliveredTo": {
+          "sourcedFrom": "SendToID"
+        },
+        "lineItems": {
+          "sourcedFrom": "Products",
+          "properties": {
+            "quantity": {
+              "sourcedFrom": "Quantity"
+            },
+            "orderIncludes": {
+              "sourcedFrom": "ProductId"
+            }
+          },
+          "targetEntityType": "#/definitions/LineItem"
+        }
+      },
+      "targetEntityType": "http://example.org/Order-0.0.1/Order"
+    }
+  ]
+}
