@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card} from "antd";
+import {Modal, Row, Col, Card, Menu} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -64,6 +64,7 @@ const MatchingStepDetail: React.FC = () => {
   const [UriTableData, setUriTableData] = useState<any[]>([]);
   const [uriContent, setUriContent] = useState("");
   const [inputUriDisabled, setInputUriDisabled] = useState(false);
+  const [testMatchTab, setTestMatchTab] = useState("matched");
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -290,6 +291,9 @@ const MatchingStepDetail: React.FC = () => {
     setInputUriDisabled(true);
   };
 
+  const handleTestMatchTab = (event) => {
+    setTestMatchTab(event.key);
+  };
   return (
     <>
       <MLPageHeader
@@ -431,7 +435,12 @@ const MatchingStepDetail: React.FC = () => {
             </MLRadio>
           </MLRadio.MLGroup>
         </div>
-
+        <div className={styles.matchedTab}>
+          <Menu onClick={handleTestMatchTab} selectedKeys={[testMatchTab]} mode="horizontal" aria-label="testMatchTab">
+            <Menu.Item key="matched">Matched</Menu.Item>
+            <Menu.Item key="notMatched">Not Matched</Menu.Item>
+          </Menu>
+        </div>
       </div>
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}
