@@ -181,6 +181,15 @@ declare function get-first-prov-document()
   invoke-in-db(function() {fn:collection("http://marklogic.com/provenance-services/record")[1]}, "data-hub-JOBS")
 };
 
+declare function get-final-schema($uri as xs:string)
+{
+  xdmp:eval("fn:doc('" || $uri || "')", (), 
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:database("data-hub-final-SCHEMAS")}</database>
+    </options>
+  )
+};
+
 declare function invoke-in-db($function, $database as xs:string)
 {
   xdmp:invoke-function($function,

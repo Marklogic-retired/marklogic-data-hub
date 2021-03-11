@@ -1,0 +1,10 @@
+<es:envelope xmlns:es="http://marklogic.com/entity-services">
+  <es:instance>
+    <es:info>
+      <es:version>1.0</es:version>
+    </es:info>
+    <TdeContextNoNamespaceEntity xmlns:ns="example">
+      <myProperty>XML</myProperty>
+    </TdeContextNoNamespaceEntity>
+  </es:instance>
+</es:envelope>
