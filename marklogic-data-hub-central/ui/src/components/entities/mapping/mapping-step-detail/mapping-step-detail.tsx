@@ -520,9 +520,8 @@ const MappingStepDetail: React.FC = () => {
     extractEntityInfoForTable();
   };
 
-  const handleSubmitUri = (uri) => {
-    getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, curationOptions.activeStep.stepArtifact.name);
-    fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
+  const handleSubmitUri = async (uri) => {
+    await fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
     if (isTestClicked) {
       getMapValidationResp(uri);
     }
