@@ -1,0 +1,26 @@
+{
+  "name": "mergeCustomersStandard",
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "mergeCustomersStandard-merging",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['matchCustomers'])",
+  "collections": ["mergeCustomers"],
+  "additionalCollections": [ ],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-common,read,data-hub-common-writer,update",
+  "provenanceGranularityLevel": "fine",
+  "lastUpdatedLocation": {
+    "documentXPath": "/envelope/headers/createdOn"
+  },
+  "mergeStrategies": [
+  ],
+  "mergeRules": [
+  ],
+  "targetCollections": {
+  }
+}

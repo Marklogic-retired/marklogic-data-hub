@@ -1,0 +1,40 @@
+{
+  "name": "matchCustomerShippingCityState",
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "matchCustomerShippingCityState-matching",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['raw-content'])",
+  "collections": ["matchCustomers"],
+  "additionalCollections": [ ],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-common,read,data-hub-common-writer,update",
+  "provenanceGranularityLevel": "fine",
+  "matchRulesets": [
+    {
+      "name": "shippingCityState",
+      "weight": 5,
+      "matchRules": [
+        {
+          "entityPropertyPath": "shipping.city",
+          "matchType": "exact"
+        },
+        {
+          "entityPropertyPath": "shipping.state",
+          "matchType": "exact"
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "thresholdName": "mergeThreshold",
+      "action": "merge",
+      "score": 5
+    }
+  ]
+}
