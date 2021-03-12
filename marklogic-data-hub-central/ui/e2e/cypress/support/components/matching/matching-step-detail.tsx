@@ -24,7 +24,7 @@ class MatchingStepDetail {
     cy.findByLabelText("add-ruleset").click();
   }
 
-  getSinglePropertyOption(){
+  getSinglePropertyOption() {
     cy.findByLabelText("singlePropertyRulesetOption").click();
   }
 
@@ -61,7 +61,11 @@ class MatchingStepDetail {
   }
 
   getUriDeleteIcon() {
-    return cy.findByLabelText("deleteIcon");
+    return cy.findAllByLabelText("deleteIcon");
+  }
+
+  getTestMatchUriButton() {
+    return cy.findByLabelText("testMatchUriButton");
   }
 }
 

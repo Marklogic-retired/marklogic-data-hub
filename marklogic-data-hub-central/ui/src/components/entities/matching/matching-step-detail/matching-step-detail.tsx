@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown} from "antd";
+import {Modal, Row, Col, Card, Menu, Dropdown, Form} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -67,6 +67,8 @@ const MatchingStepDetail: React.FC = () => {
   const [uriContent, setUriContent] = useState("");
   const [inputUriDisabled, setInputUriDisabled] = useState(false);
   const [testMatchTab, setTestMatchTab] = useState("matched");
+  const [duplicateUriWarning, setDuplicateUriWarning] = useState(false);
+  const [singleUriWarning, setSingleUriWarning] = useState(false);
 
   const menu = (
     <Menu>
@@ -263,11 +265,24 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const handleClickAddUri = (event) => {
-    if (uriContent.length > 0) {
+    let flag=false;
+    let setDuplicateWarning = () => { setDuplicateUriWarning(true); setSingleUriWarning(false); };
+    if (UriTableData.length > 0) {
+      for (let i=0; i<UriTableData.length;i++) {
+        if (UriTableData[i].uriContent === uriContent) {
+          flag=true;
+          setDuplicateWarning();
+          break;
+        }
+      }
+    }
+    if (uriContent.length > 0 && !flag) {
       let data = [...UriTableData];
       data.push({uriContent});
       setUriTableData(data);
       setUriContent("");
+      setDuplicateUriWarning(false);
+      setSingleUriWarning(false);
     }
   };
 
@@ -297,12 +312,23 @@ const MatchingStepDetail: React.FC = () => {
       }
     }
     setUriTableData(data);
+    setDuplicateUriWarning(false);
+    setSingleUriWarning(false);
   };
 
   const handleAllDataRadioClick = (event) => {
     setUriTableData([]);
     setUriContent("");
     setInputUriDisabled(true);
+    setDuplicateUriWarning(false);
+    setSingleUriWarning(false);
+  };
+
+  const handleTestButtonClick = () => {
+    if (UriTableData.length < 2) {
+      setDuplicateUriWarning(false);
+      setSingleUriWarning(true);
+    }
   };
 
   const handleTestMatchTab = (event) => {
@@ -426,16 +452,18 @@ const MatchingStepDetail: React.FC = () => {
 
         <div className={styles.testMatch} aria-label="testMatch">
           <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}  id="addDataRadio">
-            <MLRadio value={1} aria-label="inputUriRadio" onClick={() => { setInputUriDisabled(false); }}>
+            <Form><Form.Item validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}><MLRadio value={1} aria-label="inputUriRadio" onClick={() => { setInputUriDisabled(false); }}>
               <MLInput
                 placeholder="Enter URI or Paste URIs"
-                className={styles.uriInput}
+                className={duplicateUriWarning ? styles.duplicateUriInput : styles.uriInput}
                 value={uriContent}
                 onChange={handleUriInputChange}
                 aria-label="UriInput"
                 disabled={inputUriDisabled}
               />
               <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriIcon"/>
+              {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
+              {singleUriWarning ? <div className={styles.duplicateUriWarning}>The minimum of two URIs are required.</div> : ""}
               <div className={styles.UriTable}>
                 {UriTableData.length > 0 ? <MLTable
                   columns={UriColumns}
@@ -447,7 +475,7 @@ const MatchingStepDetail: React.FC = () => {
                 />:""}
               </div>
               <div className={UriTableData.length > 0 ? styles.testButton:""}>
-                <MLButton type="primary" htmlType="submit" size="default">Test</MLButton>
+                <MLButton type="primary" htmlType="submit" size="default" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</MLButton>
               </div>
             </MLRadio>
             <MLRadio value={2} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
@@ -455,7 +483,7 @@ const MatchingStepDetail: React.FC = () => {
               <div aria-label="allDataContent"><br />
                   Info about All Data goes here... what it is, how to use it, limitations..info about All Data goes here... what it is, how to use it, limitations..
               </div>
-            </MLRadio>
+            </MLRadio></Form.Item></Form>
           </MLRadio.MLGroup>
         </div>
         <div className={styles.matchedTab}>

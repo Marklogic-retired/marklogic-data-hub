@@ -186,5 +186,20 @@ describe("Matching", () => {
     cy.findByText("/test/Uri1").should("be.visible");
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
+
+    //to test validation check
+    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriIcon().click();
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("The minimum of two URIs are required.").should("be.visible");
+    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriIcon().click();
+    cy.findByText("This URI has already been added.").should("be.visible");
+    matchingStepDetail.getUriInputField().type("/test/Uri2");
+    matchingStepDetail.getAddUriIcon().click();
+    cy.findByText("This URI has already been added.").should("not.exist");
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("The minimum of two URIs are required.").should("not.exist");
+    matchingStepDetail.getUriDeleteIcon().click({multiple: true});
   });
 });
