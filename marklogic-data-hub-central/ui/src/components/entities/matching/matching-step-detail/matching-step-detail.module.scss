@@ -164,6 +164,11 @@
     height: 4vh;
 }
 
+.duplicateUriInput {
+    width: 29vw;
+    height: 4vh;
+}
+
 .testButton {
     padding-top: 23px;
 }
@@ -173,6 +178,7 @@
     width: 32.5vw;
     overflow-y: auto;
     max-height: 30vh;
+    margin-left: 1vw;
 }
 
 .tableContent {
@@ -196,7 +202,7 @@
 
 .positionDeleteIcon {
     float: right;
-    padding-right: 0.2vw;
+    padding-right: 1vw;
     padding-left: 1vw;
     line-break: auto;
     margin-left: auto;
@@ -211,4 +217,9 @@
 
 .matchedTab {
     margin-bottom: 10vh;
+}
+
+.duplicateUriWarning {
+    color: #B32424;
+    margin: 1vh 0vh -0.5vh 1.3vw;
 }
