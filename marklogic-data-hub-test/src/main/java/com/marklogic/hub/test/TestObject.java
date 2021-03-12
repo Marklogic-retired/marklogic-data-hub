@@ -11,6 +11,10 @@ import org.springframework.util.FileCopyUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 
 /**
  * Base class for any object that helps with writing tests. Should only contain the most generic helper methods.
@@ -18,6 +22,31 @@ import java.io.InputStream;
 public abstract class TestObject extends LoggingObject {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
+
+    private DateTimeFormatter dateTimeFormatter;
+
+    /**
+     * @param text expected to be a MarkLogic dateTime value - e.g. 2021-03-12T00:47:29.30019Z
+     * @return
+     */
+    protected LocalDateTime parseDateTime(String text) {
+        return LocalDateTime.parse(text, getDateTimeFormatter());
+    }
+
+    /**
+     * @return a DateTimeFormatter that can be used for parsing MarkLogic dateTime values - e.g. 2021-03-12T00:47:29.30019Z
+     */
+    protected DateTimeFormatter getDateTimeFormatter() {
+        if (dateTimeFormatter == null) {
+            dateTimeFormatter = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .appendFraction(ChronoField.MICRO_OF_SECOND, 0, 7, true)
+                .appendPattern("[XXX][X]")
+                .parseLenient()
+                .toFormatter();
+        }
+        return dateTimeFormatter;
+    }
 
     protected void sleep(long ms) {
         try {
