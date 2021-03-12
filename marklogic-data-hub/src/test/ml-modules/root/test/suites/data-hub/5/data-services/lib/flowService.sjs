@@ -34,8 +34,8 @@ function removeStepFromFlow(flowName, stepNumber) {
   return invoke("removeStepFromFlow.sjs", {flowName, stepNumber});
 }
 
-function updateFlowInfo(name, description) {
-  return invoke("updateFlowInfo.sjs", {name, description});
+function updateFlow(updatedFlow) {
+  return invoke("updateFlow.sjs", {updatedFlow});
 }
 
 module.exports = {
@@ -46,6 +46,6 @@ module.exports = {
   getFlowsWithStepDetails,
   getFullFlow,
   removeStepFromFlow,
-  updateFlowInfo,
+  updateFlow,
   getFlowWithLatestJobInfo
 };

@@ -26,12 +26,6 @@ try {
   test.assertTrue(fn.contains(e.data[1], 'already exists'), "Exception should thrown due to already existing flow.");
 }
 
-// Update the description and verify
-serviceResponse = flowService.updateFlowInfo(flowName, "modified");
-expectedFlow.description = "modified";
-hubJsTest.verifyJson(expectedFlow, serviceResponse, assertions);
-hubJsTest.verifyJson(expectedFlow, flowService.getFlow(flowName), assertions);
-
 // Create 3 mapping steps and add them to the flow
 ["firstMapper", "secondMapper", "thirdMapper"].forEach(mappingName => {
   let info = {

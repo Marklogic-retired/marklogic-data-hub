@@ -16,6 +16,7 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
@@ -69,10 +70,11 @@ public class FlowController extends BaseController {
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.PUT)
     @ResponseBody
-    @ApiOperation(value = "Update a flow", response = FlowInfo.class)
+    @ApiOperation(value = "Update a flow", response = UpdateFlow.class)
     @Secured("ROLE_writeFlow")
-    public ResponseEntity<JsonNode> updateFlowInfo(@PathVariable String flowName, @RequestBody UpdateFlowInfo info) {
-        return ResponseEntity.ok(newFlowService().updateFlowInfo(flowName, info.description));
+    public ResponseEntity<JsonNode> updateFlow(@RequestBody JsonNode updatedFlow) {
+
+        return ResponseEntity.ok(newFlowService().updateFlow(updatedFlow));
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
@@ -145,8 +147,10 @@ public class FlowController extends BaseController {
         public String description;
     }
 
-    public static class UpdateFlowInfo {
+    public static class UpdateFlow {
         public String description;
+        public String name;
+        public List<String> steps;
     }
 
     public static class FlowsWithStepDetails extends ArrayList<FlowWithStepDetails> {

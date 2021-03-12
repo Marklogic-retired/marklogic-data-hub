@@ -29,6 +29,7 @@ describe("Flows component", () => {
     flowsDefaultActiveKey: [],
     showStepRunResponse: () => null,
     runEnded: {},
+    onReorderFlow: () => null,
   };
   const flowName = data.flows.data[0].name;
   const flowStepName = data.flows.data[0].steps[1].stepName;
@@ -233,4 +234,51 @@ describe("Flows component", () => {
 
   });
 
+
+  it("user with write privileges can reorder a flow", () => {
+    const {getByText, getByLabelText, queryByLabelText} = render(
+      <Router history={history}><Flows
+        {...flowsProps}
+        canReadFlow={true}
+        canWriteFlow={true}
+        hasOperatorRole={true}
+      /></Router>
+    );
+
+    let flowButton = getByLabelText("icon: right");
+    fireEvent.click(flowButton);
+    expect(getByText(flowStepName)).toBeInTheDocument();
+
+    // Middle step(s) have both left and right arrows
+    expect(getByLabelText("rightArrow-"+flowStepName)).toBeInTheDocument();
+    expect(getByLabelText("leftArrow-"+flowStepName)).toBeInTheDocument();
+
+    // First step only has right arrow, and no left arrow
+    const firstFlowStep = data.flows.data[0].steps[0].stepName;
+    expect(getByLabelText("rightArrow-"+firstFlowStep)).toBeInTheDocument();
+    expect(queryByLabelText("leftArrow-"+firstFlowStep)).not.toBeInTheDocument();
+
+    // Last step only has left arrow, and no right arrow
+    const lastFlowStep = data.flows.data[0].steps[data.flows.data[0].steps.length-1].stepName;
+    expect(getByLabelText("leftArrow-"+lastFlowStep)).toBeInTheDocument();
+    expect(queryByLabelText("rightArrow-"+lastFlowStep)).not.toBeInTheDocument();
+
+  });
+
+  it("user without write privileges can't reorder a flow", () => {
+    const {getByText, getByLabelText, queryByLabelText} = render(
+      <Router history={history}><Flows
+        {...flowsProps}
+        canReadFlow={true}
+        canWriteFlow={false}
+        hasOperatorRole={true}
+      /></Router>
+    );
+
+    let flowButton = getByLabelText("icon: right");
+    fireEvent.click(flowButton);
+    expect(getByText(flowStepName)).toBeInTheDocument();
+    expect(queryByLabelText("rightArrow-"+flowStepName)).not.toBeInTheDocument();
+    expect(queryByLabelText("leftArrow-"+flowStepName)).not.toBeInTheDocument();
+  });
 });
