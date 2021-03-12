@@ -89,4 +89,12 @@ hubTest.runWithRolesAndPrivileges(['hub-central-custom-writer'], [], function() 
     assertions.push(test.assertTrue(authorities.includes('writeStepDefinition'), 'hub-central-custom-writer should have "writeStepDefinition"'));
 });
 
+// Test hub-central-job-monitor
+hubTest.runWithRolesAndPrivileges(['hub-central-job-monitor'], [], function() {
+    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-custom-writer should have "loginToHubCentral"'));
+    assertions.push(test.assertTrue(authorities.includes('jobMonitor'), 
+    'hub-central-job-monitor should have "jobMonitor"'));
+});
+
 assertions;

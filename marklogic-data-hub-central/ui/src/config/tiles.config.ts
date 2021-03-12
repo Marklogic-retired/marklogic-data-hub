@@ -1,6 +1,6 @@
 import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram } from "@fortawesome/free-solid-svg-icons";
 
-export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore';
+export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore' | 'monitor';;
 export type IconType = 'fa' | 'custom';
 export type ControlType = 'menu' | 'newTab' | 'maximize' | 'minimize' | 'close';
 
@@ -72,6 +72,17 @@ const tiles: Record<TileId, TileItem>  = {
         controls: ['menu', 'close'],
         intro: 'Search, filter, review, and export your data.',
     },
+    monitor: {
+        title: 'Monitor',
+        iconType: 'custom',
+        icon: 'monitorIcon',
+        color: '#f09022',
+        bgColor: '#F4F6F8',
+        border: '#BFBFBF',
+        controlColor: '#777',
+        controls: ['menu', 'close'],
+        intro: 'Monitor the Job Database.',
+    }
 };
 
 export default tiles;

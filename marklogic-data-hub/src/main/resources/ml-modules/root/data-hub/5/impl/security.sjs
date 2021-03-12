@@ -32,7 +32,8 @@ const roleToAuthorityMap = {
   "hub-central-match-merge-writer": ["writeMatching", "writeMerging"],
   "hub-central-saved-query-user": "savedQueryUser",
   "hub-central-step-runner": ["runStep", "readFlow"],
-  "hub-central-user": "loginToHubCentral"
+  "hub-central-user": "loginToHubCentral",
+  "hub-central-job-monitor": "jobMonitor"
 };
 
 function getAuthorities() {

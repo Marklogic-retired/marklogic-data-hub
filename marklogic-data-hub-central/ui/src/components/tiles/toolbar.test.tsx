@@ -26,7 +26,7 @@ describe("Toolbar component", () => {
   });
 
   it("verify rendering of disabled tile icons", () => {
-    let disabledTiles = ["load", "model", "curate", "run", "explore"];
+    let disabledTiles = ["load", "model", "curate", "run", "explore", "monitor"];
     const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={[]}/></Router>);
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
@@ -72,7 +72,7 @@ describe("Toolbar component", () => {
 
   it("verify tile icon selection using arrow keys", () => {
     let i: number;
-    let enabledTiles = ["load", "model", "curate", "run", "explore"];
+    let enabledTiles = ["load", "model", "curate", "run", "explore", "monitor"];
     const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={enabledTiles}/></Router>);
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
@@ -85,14 +85,14 @@ describe("Toolbar component", () => {
     expect(getByLabelText("tool-load-link")).toHaveFocus();
 
     // pressing down arrow sequentially moves focus down
-    for (i = 1; i < 5; ++i) {
+    for (i = 1; i < 6; ++i) {
       fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i-1] + "-link"), {key: "ArrowDown", code: "ArrowDown"});
       expect(getByLabelText("tool-" + enabledTiles[i] + "-link")).toHaveFocus();
     }
 
     // pressing down arrow while on explore does nothing (cannot go further down)
-    fireEvent.keyDown(getByLabelText("tool-explore-link"), {key: "ArrowDown", code: "ArrowDown"});
-    expect(getByLabelText("tool-explore-link")).toHaveFocus();
+    fireEvent.keyDown(getByLabelText("tool-monitor-link"), {key: "ArrowDown", code: "ArrowDown"});
+    expect(getByLabelText("tool-monitor-link")).toHaveFocus();
 
     // pressing up arrow sequentially moves focus up
     for (i = 3; i >= 0; --i) {

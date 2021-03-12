@@ -26,6 +26,7 @@ export interface IAuthoritiesContextInterface {
     canAccessModel: () => boolean;
     canAccessCurate: () => boolean;
     canAccessRun: () => boolean;
+    canAccessMonitor: () => boolean;
 }
 
 /**
@@ -109,6 +110,10 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     /* can see Run tile */
     public canAccessRun: () => boolean = () => {
       return this.canReadFlow();
+    };
+    /* can see Monitor tile */
+    public canAccessMonitor: () => boolean = () => {
+      return this.authorities.includes("jobMonitor");
     };
 }
 
