@@ -1,3 +1,4 @@
+
 .flowsContainer {
     min-width: 800px;
 
@@ -54,6 +55,7 @@
         width: 100%;
         display: flex;
         justify-content: flex-start;
+
         .actions {
             .run {
                 position: relative;
@@ -102,26 +104,82 @@
                 opacity: 0.5;
                 cursor: not-allowed;
             }
+
         }
+        
+        .reorder {
+            align-items: center; 
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+
+            .reorderRight {
+                display: flex;
+                flex: 1;
+                flex-direction: row;
+                justify-content: flex-end;
+                font-size: 20px;
+            }
+            
+            .reorderLeft {
+                display: flex;
+                flex: 1;
+                flex-direction: row;
+                justify-content: flex-start;
+                font-size: 20px;
+            }
+            
+            .reorderFlowRight {
+                display: inline-block;
+                color: #777777;
+                font-size: 21px;
+                cursor: pointer;
+                margin-right: 12px;
+            }
+        
+            .reorderFlowLeft {
+                display: inline-block;
+                color: #777777;
+                font-size: 21px;
+                cursor: pointer;
+                margin-left: 12px;
+            }
+
+            .reorderFlowLeft:hover {
+                display: inline-block;
+                color: #7FADE3;
+                font-size: 21px;
+                cursor: pointer;
+            }
+
+            .reorderFlowRight:hover {
+                display: inline-block;
+                color: #7FADE3;
+                font-size: 21px;
+                cursor: pointer;
+            }
+        }   
+
         .successfulRun {
             display: inline-block;
             color: #008000;
             font-size: 20px;
             cursor: pointer;
         }
+
         .unSuccessfulRun {
             display: inline-block;
             color: #DB4f59;
             font-size: 20px;
             cursor: pointer;
         }
+        
         .stepResponse {
-            padding-top: 1px;
-            padding-bottom: 1px;
             padding-right: 15px;
             padding-left: 1px;
             float: right;
         }
+
         .cardContent {
             border: solid 1px #ddd;
             padding: 10px;
@@ -188,6 +246,7 @@
 .cardStyle {
     width: 300px;
     margin-right: 20px;
+    
     ul {
         border-top: 0px;
         background: #ffffff;
@@ -199,5 +258,7 @@
         height: 33.3px;
     }
 }
+
+    
 
 

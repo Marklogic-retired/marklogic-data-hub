@@ -88,6 +88,17 @@ class RunPage {
   expandFlow(flowName: string) {
     return cy.get(`#${flowName}`).click();
   }
+
+  moveStepRight(stepName: string) {
+    cy.waitUntil(() => cy.findAllByLabelText(`rightArrow-${stepName}`)).last().click({force: true});
+    cy.waitForAsyncRequest();
+  }
+
+  moveStepLeft(stepName: string) {
+    cy.waitUntil(() => cy.findAllByLabelText(`leftArrow-${stepName}`)).last().click({force: true});
+    cy.waitForAsyncRequest();
+  }
+
 }
 
 const runPage = new RunPage();

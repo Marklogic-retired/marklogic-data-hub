@@ -2,11 +2,12 @@ import React, {useState, CSSProperties, useEffect, useContext, createRef} from "
 import {Collapse, Icon, Card, Modal, Menu, Dropdown} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import {MLButton} from "@marklogic/design-system";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
+import "./flows.scss";
 import styles from "./flows.module.scss";
 import {MLTooltip, MLSpin} from "@marklogic/design-system";
 import {useDropzone} from "react-dropzone";
@@ -14,28 +15,34 @@ import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
-import "./flows.scss";
+
+
+enum ReorderFlowOrderDirection {
+  LEFT = "left",
+  RIGHT = "right"
+}
 
 const {Panel} = Collapse;
 
 interface Props {
-    flows: any;
-    steps: any;
-    deleteFlow: any;
-    createFlow: any;
-    updateFlow: any;
-    deleteStep: any;
-    runStep: any;
-    canReadFlow: boolean;
-    canWriteFlow: boolean;
-    hasOperatorRole: boolean;
-    running: any;
-    uploadError:string;
-    newStepToFlowOptions: any;
-    addStepToFlow: any;
-    flowsDefaultActiveKey: any;
-    showStepRunResponse: any;
-    runEnded:any;
+  flows: any;
+  steps: any;
+  deleteFlow: any;
+  createFlow: any;
+  updateFlow: any;
+  deleteStep: any;
+  runStep: any;
+  canReadFlow: boolean;
+  canWriteFlow: boolean;
+  hasOperatorRole: boolean;
+  running: any;
+  uploadError: string;
+  newStepToFlowOptions: any;
+  addStepToFlow: any;
+  flowsDefaultActiveKey: any;
+  showStepRunResponse: any;
+  runEnded: any;
+  onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
 }
 
 const StepDefinitionTypeTitles = {
@@ -81,7 +88,7 @@ const Flows: React.FC<Props> = (props) => {
   const location = useLocation();
 
   // maintain a list of panel refs
-  const flowPanels : any = props.flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()}}), {});
+  const flowPanels: any = props.flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()}}), {});
 
   // If a step was just added scroll the flow step panel fully to the right
   useEffect(() => {
@@ -132,7 +139,7 @@ const Flows: React.FC<Props> = (props) => {
             setStartRun(false);
           }
         }
-      //run step that is already inside a flow
+        //run step that is already inside a flow
       } else if (props.newStepToFlowOptions && !props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.startRunStep && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
         let runStepNum = stepsInFlow.findIndex(s => s.stepName === props.newStepToFlowOptions?.newStepName);
         if (startRun) {
@@ -178,11 +185,13 @@ const Flows: React.FC<Props> = (props) => {
     }
   }, [props.runEnded]);
 
+
   useEffect(() => {
     if (props.newStepToFlowOptions && props.newStepToFlowOptions.startRunStep) {
       setStartRun(true);
     }
   }, [props.newStepToFlowOptions]);
+
 
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -367,58 +376,58 @@ const Flows: React.FC<Props> = (props) => {
     return (
       <Menu>
         <Menu.ItemGroup title="Load">
-          { props.steps && props.steps["ingestionSteps"] && props.steps["ingestionSteps"].length > 0 ? props.steps["ingestionSteps"].map((elem, index) => (
+          {props.steps && props.steps["ingestionSteps"] && props.steps["ingestionSteps"].length > 0 ? props.steps["ingestionSteps"].map((elem, index) => (
             <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "ingestion"); }}
               >{elem.name}</div>
             </Menu.Item>
-          )) : null }
+          )) : null}
         </Menu.ItemGroup>
         <Menu.ItemGroup title="Map">
-          { props.steps && props.steps["mappingSteps"] && props.steps["mappingSteps"].length > 0 ? props.steps["mappingSteps"].map((elem, index) => (
+          {props.steps && props.steps["mappingSteps"] && props.steps["mappingSteps"].length > 0 ? props.steps["mappingSteps"].map((elem, index) => (
             <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "mapping"); }}
               >{elem.name}</div>
             </Menu.Item>
-          )) : null }
+          )) : null}
         </Menu.ItemGroup>
         <Menu.ItemGroup title="Match">
-          { props.steps && props.steps["matchingSteps"] && props.steps["matchingSteps"].length > 0 ? props.steps["matchingSteps"].map((elem, index) => (
+          {props.steps && props.steps["matchingSteps"] && props.steps["matchingSteps"].length > 0 ? props.steps["matchingSteps"].map((elem, index) => (
             <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "matching"); }}
               >{elem.name}</div>
             </Menu.Item>
-          )) : null }
+          )) : null}
         </Menu.ItemGroup>
         <Menu.ItemGroup title="Merge">
-          { props.steps && props.steps["mergingSteps"] && props.steps["mergingSteps"].length > 0 ? props.steps["mergingSteps"].map((elem, index) => (
+          {props.steps && props.steps["mergingSteps"] && props.steps["mergingSteps"].length > 0 ? props.steps["mergingSteps"].map((elem, index) => (
             <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "merging"); }}
               >{elem.name}</div>
             </Menu.Item>
-          )) : null }
+          )) : null}
         </Menu.ItemGroup>
         <Menu.ItemGroup title="Master">
-          { props.steps && props.steps["masteringSteps"] && props.steps["masteringSteps"].length > 0 ? props.steps["masteringSteps"].map((elem, index) => (
+          {props.steps && props.steps["masteringSteps"] && props.steps["masteringSteps"].length > 0 ? props.steps["masteringSteps"].map((elem, index) => (
             <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "mastering"); }}
               >{elem.name}</div>
             </Menu.Item>
-          )) : null }
+          )) : null}
         </Menu.ItemGroup>
         <Menu.ItemGroup title="Custom">
-          { props.steps && props.steps["customSteps"] && props.steps["customSteps"].length > 0 ? props.steps["customSteps"].map((elem, index) => (
+          {props.steps && props.steps["customSteps"] && props.steps["customSteps"].length > 0 ? props.steps["customSteps"].map((elem, index) => (
             <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "custom"); }}
               >{elem.name}</div>
             </Menu.Item>
-          )) : null }
+          )) : null}
         </Menu.ItemGroup>
       </Menu>
     );
@@ -452,7 +461,7 @@ const Flows: React.FC<Props> = (props) => {
               <MLButton
                 className={styles.addStep}
                 size="default"
-                aria-label={"addStepDisabled-"+i}
+                aria-label={"addStepDisabled-" + i}
                 style={{backgroundColor: "#f5f5f5", borderColor: "#f5f5f5", pointerEvents: "none"}}
                 type="primary"
                 disabled={!props.canWriteFlow}
@@ -470,7 +479,7 @@ const Flows: React.FC<Props> = (props) => {
                 onClick={() => { handleFlowDelete(name); }}
                 data-testid={`deleteFlow-${name}`}
                 className={styles.deleteIcon}
-                size="lg"/>
+                size="lg" />
             </i>
           </MLTooltip>
           :
@@ -480,9 +489,9 @@ const Flows: React.FC<Props> = (props) => {
                 icon={faTrashAlt}
                 data-testid={`deleteFlow-${name}`}
                 className={styles.disabledDeleteIcon}
-                size="lg"/>
+                size="lg" />
             </i>
-          </MLTooltip> }
+          </MLTooltip>}
       </span>
     </div>
   );
@@ -549,31 +558,86 @@ const Flows: React.FC<Props> = (props) => {
       stepEndTime = new Date(step.stepEndTime).toLocaleString();
     }
     if (!step.lastRunStatus) {
-      return ;
+      return;
     } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
-      tooltipText = "Step last ran successfully on "+ stepEndTime;
+      tooltipText = "Step last ran successfully on " + stepEndTime;
       return (
-        <MLTooltip overlayStyle={{maxWidth: "200px"}} title= {tooltipText} placement="bottom" onClick={(e) => showStepRunResponse(step)}>
+        <MLTooltip overlayStyle={{maxWidth: "200px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
+          onClick={(e) => showStepRunResponse(step)}>
           <Icon type="check-circle" theme="filled" className={styles.successfulRun} />
         </MLTooltip>
       );
 
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
-      tooltipText = "Step last ran with errors on "+ stepEndTime;
+      tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
-        <MLTooltip overlayStyle={{maxWidth: "190px"}} title={tooltipText} placement="bottom"  onClick={(e) => showStepRunResponse(step)}>
+        <MLTooltip overlayStyle={{maxWidth: "190px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
+          onClick={(e) => showStepRunResponse(step)}>
           <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
         </MLTooltip>
       );
     } else {
-      tooltipText = "Step last failed on "+ stepEndTime;
+      tooltipText = "Step last failed on " + stepEndTime;
       return (
-        <MLTooltip overlayStyle={{maxWidth: "175px"}} title={tooltipText} placement="bottom"  onClick={(e) => showStepRunResponse(step)}>
+        <MLTooltip overlayStyle={{maxWidth: "175px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
+          onClick={(e) => showStepRunResponse(step)}>
           <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
         </MLTooltip>
       );
     }
   };
+
+  const updateFlow = async (flowName, flowDesc, steps) => {
+    let updatedFlow;
+    try {
+      updatedFlow = {
+        name: flowName,
+        steps: steps,
+        description: flowDesc
+      };
+      await axios.put(`/api/flows/` + flowName, updatedFlow);
+
+    } catch (error) {
+      console.error("Error updating flow", error);
+    }
+  };
+
+
+  const reorderFlow = (id, flowName, direction: ReorderFlowOrderDirection) => {
+    let flowNum = props.flows.findIndex((flow) => flow.name === flowName);
+    let flowDesc = props.flows[flowNum]["description"];
+    const stepList = props.flows[flowNum]["steps"];
+    let newSteps = stepList;
+
+    if (direction === ReorderFlowOrderDirection.RIGHT) {
+      if (id <= stepList.length - 2) {
+        newSteps = [...stepList];
+        const oldLeftStep = newSteps[id];
+        const oldRightStep = newSteps[id + 1];
+        newSteps[id] = oldRightStep;
+        newSteps[id + 1] = oldLeftStep;
+      }
+    } else {
+      if (id >= 1) {
+        newSteps = [...stepList];
+        const oldLeftStep = newSteps[id - 1];
+        const oldRightStep = newSteps[id];
+        newSteps[id - 1] = oldRightStep;
+        newSteps[id] = oldLeftStep;
+      }
+    }
+
+    let steps : string[] = [];
+    for (let i = 0; i < newSteps.length; i++) {
+      newSteps[i].stepNumber = String(i+1);
+      steps.push(newSteps[i].stepId);
+    }
+
+    const reorderedList = [...newSteps];
+    props.onReorderFlow(flowNum, reorderedList);
+    updateFlow(flowName, flowDesc, steps);
+  };
+
 
   const getFlowWithJobInfo = async (flowNum) => {
     let currentFlow = props.flows[flowNum];
@@ -600,27 +664,56 @@ const Flows: React.FC<Props> = (props) => {
         let sourceFormat = step.sourceFormat;
         let stepNumber = step.stepNumber;
         let viewStepId = `${flowName}-${stepNumber}`;
-        let stepDefinitionType = step.stepDefinitionType ? step.stepDefinitionType.toLowerCase():"";
+        let stepDefinitionType = step.stepDefinitionType ? step.stepDefinitionType.toLowerCase() : "";
         let stepDefinitionTypeTitle = StepDefinitionTypeTitles[stepDefinitionType];
         return (
-          <div key={viewStepId}>
+          <div key={viewStepId} id="flowSettings">
             <Card
               className={styles.cardStyle}
               title={StepDefToTitle(step.stepDefinitionType)}
               size="small"
               actions={[
-                <span className={styles.stepResponse}>{
-                  latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
-                    ? lastRunResponse(latestJobData[flowName][index])
-                    : ""
-                }</span>
+                <div className={styles.reorder}>
+                  {index !== 0 && props.canWriteFlow &&
+                    <div className={styles.reorderLeft}>
+                      <MLTooltip title={"Move left"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+                        <FontAwesomeIcon
+                          aria-label={`leftArrow-${step.stepName}`}
+                          icon={faArrowAltCircleLeft}
+                          aria-required="true"
+                          className={styles.reorderFlowLeft}
+                          role="button"
+                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)} />
+                      </MLTooltip>
+                    </div>
+                  }
+                  <div className={styles.reorderRight}>
+                    <div className={styles.stepResponse}>
+                      {latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
+                        ? lastRunResponse(latestJobData[flowName][index])
+                        : ""
+                      }
+                    </div>
+                    {index < flow.steps.length - 1 && props.canWriteFlow &&
+                      <MLTooltip title={"Move right"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+                        <FontAwesomeIcon
+                          aria-label={`rightArrow-${step.stepName}`}
+                          icon={faArrowAltCircleRight}
+                          aria-required="true"
+                          className={styles.reorderFlowRight}
+                          role="button"
+                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)} />
+                      </MLTooltip>
+                    }
+                  </div>
+                </div>
               ]}
               extra={
                 <div className={styles.actions}>
                   {props.hasOperatorRole ?
                     step.stepDefinitionType.toLowerCase() === "ingestion" ?
                       <div {...getRootProps()} style={{display: "inline-block"}}>
-                        <input {...getInputProps()} id="fileUpload"/>
+                        <input {...getInputProps()} id="fileUpload" />
                         <div
                           className={styles.run}
                           aria-label={`runStep-${step.stepName}`}
@@ -672,20 +765,20 @@ const Flows: React.FC<Props> = (props) => {
                 </div>
               }
             >
-              <div  aria-label={viewStepId + "-content"} className={styles.cardContent}
+              <div aria-label={viewStepId + "-content"} className={styles.cardContent}
                 onMouseOver={(e) => handleMouseOver(e, viewStepId)}
                 onMouseLeave={(e) => setShowLinks("")} >
-                { sourceFormat ?
+                {sourceFormat ?
                   <div className={styles.format} style={sourceFormatStyle(sourceFormat)} >{sourceFormatOptions[sourceFormat].label}</div>
-                  : null }
+                  : null}
                 <div className={styles.name}>{step.stepName}</div>
                 <div className={styles.cardLinks}
-                  style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType]  ? "block" : "none"}}
+                  style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType] ? "block" : "none"}}
                   aria-label={viewStepId + "-cardlink"}
                 >
-                  <Link id={"tiles-step-view-"+viewStepId}
+                  <Link id={"tiles-step-view-" + viewStepId}
                     to={{
-                      pathname: `/tiles/${stepDefinitionType === "ingestion" ? "load": "curate"}`,
+                      pathname: `/tiles/${stepDefinitionType === "ingestion" ? "load" : "curate"}`,
                       state: {
                         stepToView: step.stepId,
                         stepDefinitionType: stepDefinitionType,
@@ -697,11 +790,11 @@ const Flows: React.FC<Props> = (props) => {
                   </Link>
                 </div>
               </div>
-              <div className = {styles.uploadError}>
-                { showUploadError && flowName === runningFlow && stepNumber === runningStep.stepNumber ? props.uploadError : ""}
+              <div className={styles.uploadError}>
+                {showUploadError && flowName === runningFlow && stepNumber === runningStep.stepNumber ? props.uploadError : ""}
               </div>
-              <div className={styles.running} style={{display: isRunning(flowName, stepNumber)  ? "block" : "none"}}>
-                <div><MLSpin data-testid="spinner"/></div>
+              <div className={styles.running} style={{display: isRunning(flowName, stepNumber) ? "block" : "none"}}>
+                <div><MLSpin data-testid="spinner" /></div>
                 <div className={styles.runningLabel}>Running...</div>
               </div>
             </Card>

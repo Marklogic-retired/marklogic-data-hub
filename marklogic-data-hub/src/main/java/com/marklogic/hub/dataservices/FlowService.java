@@ -47,13 +47,13 @@ public interface FlowService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_updateFlow;
             private BaseProxy.DBFunctionRequest req_getFlow;
             private BaseProxy.DBFunctionRequest req_deleteFlow;
             private BaseProxy.DBFunctionRequest req_addStepToFlow;
             private BaseProxy.DBFunctionRequest req_getFlowsWithStepDetails;
             private BaseProxy.DBFunctionRequest req_getFlowWithLatestJobInfo;
             private BaseProxy.DBFunctionRequest req_removeStepFromFlow;
-            private BaseProxy.DBFunctionRequest req_updateFlowInfo;
             private BaseProxy.DBFunctionRequest req_createFlow;
             private BaseProxy.DBFunctionRequest req_getFullFlow;
 
@@ -61,6 +61,8 @@ public interface FlowService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/flow/", servDecl);
 
+                this.req_updateFlow = this.baseProxy.request(
+                    "updateFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getFlow = this.baseProxy.request(
                     "getFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_deleteFlow = this.baseProxy.request(
@@ -73,12 +75,25 @@ public interface FlowService {
                     "getFlowWithLatestJobInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_removeStepFromFlow = this.baseProxy.request(
                     "removeStepFromFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_updateFlowInfo = this.baseProxy.request(
-                    "updateFlowInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_createFlow = this.baseProxy.request(
                     "createFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getFullFlow = this.baseProxy.request(
                     "getFullFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode updateFlow(com.fasterxml.jackson.databind.JsonNode updatedFlow) {
+                return updateFlow(
+                    this.req_updateFlow.on(this.dbClient), updatedFlow
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode updateFlow(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode updatedFlow) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("updatedFlow", false, BaseProxy.JsonDocumentType.fromJsonNode(updatedFlow))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -170,22 +185,6 @@ public interface FlowService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode updateFlowInfo(String name, String description) {
-                return updateFlowInfo(
-                    this.req_updateFlowInfo.on(this.dbClient), name, description
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode updateFlowInfo(BaseProxy.DBFunctionRequest request, String name, String description) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
-                          BaseProxy.atomicParam("description", false, BaseProxy.StringType.fromString(description))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
             public com.fasterxml.jackson.databind.JsonNode createFlow(String name, String description) {
                 return createFlow(
                     this.req_createFlow.on(this.dbClient), name, description
@@ -221,6 +220,14 @@ public interface FlowService {
     }
 
   /**
+   * Invokes the updateFlow operation on the database server
+   *
+   * @param updatedFlow	provides input
+   * @return	Return the updated flow document
+   */
+    com.fasterxml.jackson.databind.JsonNode updateFlow(com.fasterxml.jackson.databind.JsonNode updatedFlow);
+
+  /**
    * Invokes the getFlow operation on the database server
    *
    * @param name	provides input
@@ -232,7 +239,7 @@ public interface FlowService {
    * Invokes the deleteFlow operation on the database server
    *
    * @param name	provides input
-   * 
+   *
    */
     void deleteFlow(String name);
 
@@ -249,7 +256,7 @@ public interface FlowService {
   /**
    * Invokes the getFlowsWithStepDetails operation on the database server
    *
-   * 
+   *
    * @return	Return an array of flow documents, where each step has a few identifying data points and abstracts whether it's inline or referenced
    */
     com.fasterxml.jackson.databind.JsonNode getFlowsWithStepDetails();
@@ -270,15 +277,6 @@ public interface FlowService {
    * @return	Return the updated flow document
    */
     com.fasterxml.jackson.databind.JsonNode removeStepFromFlow(String flowName, String stepNumber);
-
-  /**
-   * Invokes the updateFlowInfo operation on the database server
-   *
-   * @param name	provides input
-   * @param description	provides input
-   * @return	Return the updated flow document
-   */
-    com.fasterxml.jackson.databind.JsonNode updateFlowInfo(String name, String description);
 
   /**
    * Invokes the createFlow operation on the database server

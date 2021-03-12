@@ -138,7 +138,8 @@ const Run = (props) => {
       setIsLoading(true);
       let updatedFlow = {
         name: payload.name,
-        description: payload.description,
+        steps: payload.steps,
+        description: payload.description
       };
       let response = await axios.put(`/api/flows/` + flowId, updatedFlow);
       if (response.status === 200) {
@@ -188,6 +189,14 @@ const Run = (props) => {
       setIsLoading(false);
     }
   };
+
+  const onReorderFlow = (flowIndex: number, newSteps: Array<any>) => {
+    const newFlow = {...flows[flowIndex], steps: newSteps};
+    const newFlows = [...flows];
+    newFlows[flowIndex] = newFlow;
+    setFlows(newFlows);
+  };
+
 
   // function formatStepType(stepType){
   //     stepType = stepType.toLowerCase();
@@ -465,6 +474,7 @@ const Run = (props) => {
                 flowsDefaultActiveKey={flowsDefaultActiveKey}
                 showStepRunResponse={showStepRunResponse}
                 runEnded={runEnded}
+                onReorderFlow={onReorderFlow}
               />
             ]
             :

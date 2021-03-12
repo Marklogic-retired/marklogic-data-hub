@@ -19,14 +19,30 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "exec
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
-var name;
-var description;
+var updatedFlow;
+let newSteps = {};
 
-const flow = Artifacts.getArtifact("flow", name);
-if (!description && flow.description) {
-  delete flow.description;
-} else {
-  flow.description = description;
+updatedFlow = fn.head(xdmp.fromJSON(updatedFlow));
+let name = updatedFlow.name;
+let description = updatedFlow.description;
+let steps = updatedFlow.steps;
+
+const oldFlow = Artifacts.getArtifact("flow", name);
+
+if (!description && oldFlow.description) {
+  delete updatedFlow.description;
 }
 
-Artifacts.setArtifact("flow", name, flow);
+if (steps) {
+  steps = Array.from(steps);
+  steps.forEach(function (stepId, i) {
+    newSteps[(i+1)] = {"stepId": stepId}
+  });
+  updatedFlow.steps = newSteps;
+} else if (!steps && oldFlow.steps) {
+  updatedFlow.steps = oldFlow.steps;
+} else {
+  updatedFlow.steps = {};
+}
+
+Artifacts.setArtifact("flow", name, updatedFlow);
