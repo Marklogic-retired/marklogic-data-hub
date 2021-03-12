@@ -70,6 +70,9 @@ class DeveloperRolesService implements IAuthoritiesContextInterface {
     public canAccessRun: () => boolean = () => {
       return true;
     };
+    public canAccessMonitor: () => boolean = () => {
+      return true;
+    };
 }
 
 // Roles service for data-hub-operator
@@ -142,6 +145,9 @@ class OperatorRolesService implements IAuthoritiesContextInterface {
     public canAccessRun: () => boolean = () => {
       return true;
     };
+    public canAccessMonitor: () => boolean = () => {
+      return true;
+    };
 }
 
 class HCUserRolesService implements IAuthoritiesContextInterface {
@@ -212,6 +218,9 @@ class HCUserRolesService implements IAuthoritiesContextInterface {
     };
     public canAccessRun: () => boolean = () => {
       return false;
+    };
+    public canAccessMonitor: () => boolean = () => {
+      return true;
     };
 }
 

@@ -129,3 +129,28 @@
     background-color: #7F86B5;
     outline: none;
 }
+
+.monitorIcon:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    content: "\e955";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    background-color: #FFF;
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    text-align: center;
+    outline: none;
+}
+
+.monitorIcon:focus-within {
+    box-shadow: 0px 0px 1px 1px #7F86B5;
+    background-color: #7F86B5;
+    outline: none;
+}

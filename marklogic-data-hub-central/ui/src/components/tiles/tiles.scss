@@ -53,3 +53,13 @@
     display: inline-block;
     padding-left: 10px;
 }
+
+.monitorIconHeader:before {
+    content: "\e955";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    left: -10px;
+    display: inline-block;
+    padding-left: 10px;
+}
