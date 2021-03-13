@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import {Form, Input, Icon, Select} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
 import StepsConfig from "../../config/steps.config";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
 import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
+import {CurationContext} from "../../util/curation-context";
 
 const {TextArea} = Input;
 const {Option} = Select;
@@ -33,6 +34,7 @@ type Props = {
 }
 
 const AdvancedSettings: React.FC<Props> = (props) => {
+  const {curationOptions, validateCalled, setValidateMatchCalled} = useContext(CurationContext);
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = StepsConfig.invalidJSONMessage;
@@ -101,6 +103,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [customHookExpanded, setCustomHookExpanded] = useState(false);
   const [customHookValid, setCustomHookValid] = useState(true);
   const [additionalSettings, setAdditionalSettings] = useState("");
+  const [isSubmit, setIsSubmit] = useState(false);
 
   const canReadWrite = props.canWrite;
 
@@ -121,6 +124,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setTargetPermissionsTouched(false);
 
   }, [props.openStepSettings]);
+
+  useEffect(() => {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === "matching" && validateCalled) {
+      setValidateMatchCalled(false);
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
+  }, [curationOptions.activeStep.hasWarnings.length, validateCalled]);
 
   const isFormValid = () => {
     return headersValid && interceptorsValid && customHookValid && targetPermissionsValid;
@@ -280,9 +291,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     } else {
       props.updateStep(getPayload());
     }
-
-    props.setOpenStepSettings(false);
-    props.resetTabs();
+    stepType === "matching" ? setIsSubmit(true) : setIsSubmit(false);
+    if (stepType !== "matching") {
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
   };
 
   const isPermissionsValid = () => {
@@ -478,6 +491,25 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
   return (
     <div className={styles.newDataForm}>
+      {stepType === "matching" ? curationOptions.activeStep.hasWarnings.length > 0 ? (
+        curationOptions.activeStep.hasWarnings.map((warning, index) => {
+          let description = "Please remove source collection from target collections.";
+          if (warning["message"].includes("target entity type")) {
+            description = "Please remove target entity type from target collections";
+          }
+          return (
+            <MLAlert
+              id="step-warn"
+              className={styles.alert}
+              type="warning"
+              showIcon
+              key={warning["level"] + index}
+              message={<div className={styles.alertMessage}>{warning["message"]}</div>}
+              description={description}
+            />
+          );
+        })
+      ) : null : null}
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>
         {isCustomIngestion ? <Form.Item
           label={<span>Step Definition Name</span>}

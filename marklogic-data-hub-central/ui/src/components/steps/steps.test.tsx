@@ -6,6 +6,8 @@ import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/steps.data";
 import StepsConfig from "../../config/steps.config";
 import {ErrorTooltips} from "../../config/tooltips.config";
+import {CurationContext} from "../../util/curation-context";
+import {customerStepWarning} from "../../assets/mock-data/curation/curation-context-mock";
 
 jest.mock("axios");
 
@@ -394,4 +396,13 @@ describe("Steps settings component", () => {
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
 
+  test("Verify rendering of step warning", async () => {
+    const {getAllByText} = render(
+      <CurationContext.Provider value={customerStepWarning}>
+        <Steps {...data.newMatching} />
+      </CurationContext.Provider>
+    );
+    expect(getAllByText("Warning: Target Collections includes the target entity type Person")).toBeTruthy();
+    expect(getAllByText("Warning: Target Collections includes the source collection loadPersonJSON")).toBeTruthy();
+  });
 });

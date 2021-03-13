@@ -5,8 +5,9 @@ import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
 import {UserContext} from "../../../util/user-context";
 import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
 import {StepType} from "../../../types/curation-types";
+import {CurationContext} from "../../../util/curation-context";
 
 type Props = {
   tabKey: string;
@@ -49,6 +50,7 @@ const {TextArea} = Input;
 const CreateEditStep: React.FC<Props>  = (props) => {
   // TODO use steps.config.ts for default values
   const {handleError} = useContext(UserContext);
+  const {curationOptions, setActiveStepWarning, validateCalled, setValidateMatchCalled} = useContext(CurationContext);
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -69,6 +71,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   const [invalidChars, setInvalidChars] = useState(false);
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
 
+  const [isSubmit, setIsSubmit] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
 
   const initStep = () => {
@@ -89,7 +92,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     resetTouchedValues();
     setIsValid(true);
     setTobeDisabled(true);
-
+    setActiveStepWarning([]);
+    setValidateMatchCalled(false);
     props.setIsValid(true);
   };
 
@@ -103,6 +107,13 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     }
   }, [props.openStepSettings]);
 
+  useEffect(() => {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && props.stepType === StepType.Matching && validateCalled) {
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
+  }, [curationOptions.activeStep.hasWarnings.length, validateCalled]);
+
   const reset = () => {
     setStepName("");
     setDescription("");
@@ -114,6 +125,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       setTimestamp("");
     }
     resetTouchedValues();
+    setValidateMatchCalled(false);
+    setActiveStepWarning([]);
+    setIsSubmit(false);
   };
 
   const resetTouchedValues = () => {
@@ -203,14 +217,16 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     if (event) event.preventDefault();
 
     setIsValid(true);
-
     if (!props.isEditing) {
       props.createStepArtifact(getPayload());
     } else {
       props.updateStepArtifact(getPayload());
     }
-    props.setOpenStepSettings(false);
-    props.resetTabs();
+    props.stepType === StepType.Matching ? setIsSubmit(true):setIsSubmit(false);
+    if (props.stepType !== StepType.Matching) {
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
   };
 
   const handleSearch = async (value: any) => {
@@ -403,6 +419,25 @@ const CreateEditStep: React.FC<Props>  = (props) => {
 
   return (
     <div className={styles.createEditStep}>
+      {props.stepType === StepType.Matching ? curationOptions.activeStep.hasWarnings.length > 0 ? (
+        curationOptions.activeStep.hasWarnings.map((warning, index) => {
+          let description = "Please remove source collection from target collections.";
+          if (warning["message"].includes("target entity type")) {
+            description = "Please remove target entity type from target collections";
+          }
+          return (
+            <MLAlert
+              id="step-warn"
+              className={styles.alert}
+              type="warning"
+              showIcon
+              key={warning["level"] + index}
+              message={<div className={styles.alertMessage}>{warning["message"]}</div>}
+              description={description}
+            />
+          );
+        })
+      ) : null : null}
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
             Name:&nbsp;<span className={styles.asterisk}>*</span>
