@@ -98,7 +98,8 @@ const Steps: React.FC<Props> = (props) => {
     // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
     let targetFormat = props.activityType === "ingestion" ? basicPayload["targetFormat"] : advancedPayload["targetFormat"];
-    return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
+    if (props.activityType === "matching") return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat}, {targetEntityType: props.targetEntityName});
+    else return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
   };
 
   const createStep = async (payload) => {
@@ -231,6 +232,7 @@ const Steps: React.FC<Props> = (props) => {
       </header>
       <div className={styles.tabs}>
         <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
+
           <TabPane tab={(
             <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
               id="basicTooltip" style={ {wordBreak: "break-all"} }

@@ -11,7 +11,8 @@ const DEFAULT_CURATION_OPTIONS = {
   activeStep: {
     stepArtifact: {},
     entityName: "",
-    isModified: false
+    isModified: false,
+    hasWarnings: []
   }
 };
 
@@ -25,6 +26,9 @@ export const CurationContext = React.createContext<CurationContextInterface>({
   curationOptions: DEFAULT_CURATION_OPTIONS,
   setActiveStep: () => {},
   updateActiveStepArtifact: () => {},
+  validateCalled: false,
+  setValidateMatchCalled: () => {},
+  setActiveStepWarning: () => {},
   mappingOptions: DEFAULT_MAPPING_OPTIONS,
   setOpenStepSettings: () => {},
   setOpenStep: () => {},
@@ -36,7 +40,7 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [curationOptions, setCurationOptions] = useState<CurationOptionsInterface>(DEFAULT_CURATION_OPTIONS);
   const [mappingOptions, setMappingOptions] = useState<MappingOptionsInterface>(DEFAULT_MAPPING_OPTIONS);
-
+  const [validateCalled, setValidateCalled] = useState(false);
   /**
     * Sets the current active step in the curate tile
     * Transforms definitions object payload into array of objects with static key values
@@ -53,6 +57,17 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
       ...curationOptions,
       activeStep: {...curationOptions.activeStep, stepArtifact, entityName},
       entityDefinitionsArray: entityDefArray
+    });
+  };
+
+  const setValidateMatchCalled = (validateCalledUpdate: boolean) => {
+    setValidateCalled(validateCalledUpdate);
+  };
+
+  const setActiveStepWarning = (warning: any[]) => {
+    setCurationOptions({
+      ...curationOptions,
+      activeStep: {...curationOptions.activeStep, hasWarnings: warning}
     });
   };
 
@@ -98,6 +113,9 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
       curationOptions,
       setActiveStep,
       updateActiveStepArtifact,
+      validateCalled,
+      setValidateMatchCalled,
+      setActiveStepWarning,
       mappingOptions,
       setOpenStepSettings,
       setOpenStep,

@@ -11,6 +11,9 @@ export interface CurationContextInterface {
   curationOptions: CurationOptionsInterface;
   setActiveStep: (stepArtifact: any, modelDefinition: any, entityType: string) => void;
   updateActiveStepArtifact: (stepArtifact: any) => void;
+  validateCalled: (boolean);
+  setValidateMatchCalled: (validateCalled: boolean) => void;
+  setActiveStepWarning: (warning: any) => void;
   mappingOptions: MappingOptionsInterface;
   setOpenStepSettings: (openStepSettings: boolean) => void;
   setOpenStep: (openStep: any) => void;
@@ -32,7 +35,8 @@ export interface MappingOptionsInterface {
 export type ActiveStep ={
   stepArtifact: any | MatchingStep,
   entityName: string,
-  isModified: boolean
+  isModified: boolean,
+  hasWarnings: any[]
 }
 
 export interface MatchingStep {

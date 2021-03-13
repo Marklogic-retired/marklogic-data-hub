@@ -14,7 +14,8 @@ export const customerMatchingStep = {
     activeStep: {
       stepArtifact: matchingStep.artifacts[0],
       entityName: matchingStep.entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
@@ -27,7 +28,8 @@ export const customerMatchingStepEmpty = {
     activeStep: {
       stepArtifact: matchingStep.artifacts[1],
       entityName: matchingStep.entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
@@ -40,7 +42,8 @@ export const customerMergingStep = {
     activeStep: {
       stepArtifact: mergingStep.artifacts[0],
       entityName: mergingStep.entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
@@ -53,7 +56,8 @@ export const customerMergingStepEmpty = {
     activeStep: {
       stepArtifact: mergingStep.artifacts[1],
       entityName: mergingStep.entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
@@ -111,11 +115,36 @@ export const matchThresholdArtifact = {
         "lastUpdated": "2020-11-11T22:01:18.172789-08:00"
       },
       entityName: "Customer",
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn()
+};
+
+export const customerStepWarning = {
+  curationOptions: {
+    entityDefinitionsArray: customerEntityDefsArray,
+    activeStep: {
+      stepArtifact: mergingStep.artifacts[1],
+      entityName: mergingStep.entityType,
+      hasWarnings: [
+        {
+          "level": "warn",
+          "message": "Warning: Target Collections includes the target entity type Person"
+        },
+        {
+          "level": "warn",
+          "message": "Warning: Target Collections includes the source collection loadPersonJSON"
+        }
+      ]
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  setValidateMatchCalled: jest.fn()
 };
 
 export const customerMappingStep = {
