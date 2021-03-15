@@ -898,8 +898,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Expanding all nested levels
     fireEvent.click(expandBtnSource);
-    expect(expandBtnSource).toBeChecked();
-    expect(collapseBtnSource).not.toBeChecked();
     expect(getByText("suffix")).toBeInTheDocument();
 
     //Check if indentation is right
@@ -907,8 +905,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnSource);
-    expect(expandBtnSource).not.toBeChecked();
-    expect(collapseBtnSource).toBeChecked();
     expect(onClosestTableRow(getByText("suffix"))?.style.display).toBe("none"); // Checking if the row is marked hidden in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
     expect(onClosestTableRow(getByText("FirstNamePreferred"))?.style.display).toBe("none");
     expect(onClosestTableRow(getByText("LastName"))?.style.display).toBe("none");
@@ -948,8 +944,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Expanding all nested levels
     fireEvent.click(expandBtnEntity);
-    expect(expandBtnEntity).toBeChecked();
-    expect(collapseBtnEntity).not.toBeChecked();
     expect(getByText("artCraft")).toBeInTheDocument();
 
     //Check if indentation is right
@@ -957,8 +951,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
-    expect(expandBtnEntity).not.toBeChecked();
-    expect(collapseBtnEntity).toBeChecked();
     expect(onClosestTableRow(getByText("artCraft"))?.style.display).toBe("none"); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
     expect(onClosestTableRow(getByText("itemTypes"))?.style.display).toBe("none");
     expect(onClosestTableRow(getByText("itemCategory"))?.style.display).toBe("none");
@@ -999,8 +991,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Expanding all nested levels
     fireEvent.click(expandBtnSource);
-    expect(expandBtnSource).toBeChecked();
-    expect(collapseBtnSource).not.toBeChecked();
     let firstName = getByText("FirstNamePreferred");
     let lastName = getByText("LastName");
     let proteinId = getByText("proteinId");
@@ -1012,8 +1002,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Collapsing back to the default view (root and 1st level)
     fireEvent.click(collapseBtnSource);
-    expect(expandBtnSource).not.toBeChecked();
-    expect(collapseBtnSource).toBeChecked();
     expect(onClosestTableRow(proteinId)?.style.display).toBe("none");
     expect(onClosestTableRow(firstName)?.style.display).toBe("none");
     expect(onClosestTableRow(lastName)?.style.display).toBe("none");

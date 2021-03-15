@@ -4,9 +4,10 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
-import {MLPageHeader, MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
+import {MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
 import "./matching-step-detail.scss";
+import CustomPageHeader from "../../page-header/page-header";
 
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import MultiSlider from "../multi-slider/multi-slider";
@@ -296,10 +297,9 @@ const MatchingStepDetail: React.FC = () => {
   };
   return (
     <>
-      <MLPageHeader
-        className={styles.pageHeader}
-        onBack={() => history.push("/tiles/curate")}
+      <CustomPageHeader
         title={matchingStep.name}
+        handleOnBack={() => history.push("/tiles/curate")}
       />
       <p className={styles.headerDescription}>{MatchingStepDetailText.description}</p>
 
