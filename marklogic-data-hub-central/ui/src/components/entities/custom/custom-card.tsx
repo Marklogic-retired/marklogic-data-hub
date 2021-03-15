@@ -16,6 +16,7 @@ interface Props {
   data: any;
   flows: any;
   entityTypeTitle: any;
+  getArtifactProps: any;
   updateCustomArtifact: any;
   canReadOnly: any;
   canReadWrite: any;
@@ -81,8 +82,8 @@ const CustomCard: React.FC<Props> = (props) => {
     setTooltipVisible(false);
   }
 
-  const OpenStepSettings = (index) => {
-    setStepData(prevState => ({...prevState, ...props.data[index]}));
+  const OpenStepSettings = async (name : String) => {
+    setStepData(await props.getArtifactProps(name));
     setOpenStepSettings(true);
   };
 
@@ -152,7 +153,7 @@ const CustomCard: React.FC<Props> = (props) => {
                 <Card
                   actions={[
                     <MLTooltip title={CustomStepTooltips.viewCustom} placement="bottom">
-                      <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faCog}/> Edit Step Settings</span>
+                      <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(elem.name)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faCog}/> Edit Step Settings</span>
                     </MLTooltip>,
                   ]}
                   className={styles.cardStyle}

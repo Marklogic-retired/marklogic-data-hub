@@ -1,6 +1,6 @@
 import {Application} from "../../../support/application.config";
 import {toolbar} from "../../../support/components/common";
-import {createEditStepDialog} from "../../../support/components/merging/index";
+import {advancedSettings, createEditStepDialog} from "../../../support/components/merging/index";
 import curatePage from "../../../support/pages/curate";
 import {confirmYesNo} from "../../../support/components/common/index";
 import "cypress-wait-until";
@@ -26,12 +26,14 @@ describe("Custom step settings: ", () => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
   });
+
   it("Navigate to Curate tile -> Customer entity -> custom tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
   });
+
   it("Validate step name is disabled, changes are discarded on cancel", () => {
     curatePage.editStep(stepName).click();
     createEditStepDialog.stepNameInput().should("be.disabled");
@@ -62,6 +64,21 @@ describe("Custom step settings: ", () => {
     createEditStepDialog.stepDescriptionInput().clear().type("This is the default mapping step", {timeout: 2000});
     createEditStepDialog.saveButton("custom").click();
     cy.waitForAsyncRequest();
+    curatePage.verifyStepNameIsVisible(stepName);
+  });
+
+  it("Verify Additional Settings displays correctly", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectCustomTab("Customer");
+
+    curatePage.editStep(stepName).click();
+    curatePage.switchEditAdvanced().click();
+    advancedSettings.additionalSettingsInput().should("contain.value", `"name": "mapping-name"`);
+    advancedSettings.additionalSettingsInput().should("contain.value", `"validateEntity": false`);
+
+    advancedSettings.cancelSettingsButton(stepName).click();
     curatePage.verifyStepNameIsVisible(stepName);
   });
 

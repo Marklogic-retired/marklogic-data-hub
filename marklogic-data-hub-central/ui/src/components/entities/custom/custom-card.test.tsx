@@ -66,6 +66,7 @@ describe("Custom Card component", () => {
           canWriteFlow={true}
           entityModel={{entityTypeId: "Customer"}}
           addStepToFlow={() => {}}
+          getArtifactProps={() => {return customData[0]}}
         />
       </AuthoritiesContext.Provider></Router>);
 
@@ -99,6 +100,7 @@ describe("Custom Card component", () => {
           canReadOnly={true}
           canReadWrite={false}
           entityModel={{entityTypeId: "Customer"}}
+          getArtifactProps={() => {return customData[0]}}
         />
       </AuthoritiesContext.Provider></Router>);
 
@@ -163,6 +165,7 @@ describe("Custom Card component", () => {
           canReadOnly={true}
           canReadWrite={true}
           entityModel={{entityTypeId: "Customer"}}
+          getArtifactProps={() => {return customData[0]}}
         />
       </AuthoritiesContext.Provider></Router>);
 

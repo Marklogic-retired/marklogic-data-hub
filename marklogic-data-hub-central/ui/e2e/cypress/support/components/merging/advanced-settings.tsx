@@ -17,6 +17,10 @@ class AdvancedSettings {
     cy.findByTestId(`${event}-discard`).click();
   }
 
+  additionalSettingsInput() {
+    return cy.findByPlaceholderText("Please enter additional settings");
+  }
+
   cancelSettingsButton(stepName: string) {
     return cy.findByTestId(`${stepName}-cancel-settings`);
   }
