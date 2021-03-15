@@ -23,6 +23,12 @@
         }
       }
     },
+    "options": {
+      "type": "object",
+      "description": "Default options for the step, or in a batch context, options as actually run.",
+      "properties": {
+      }
+    },
     "customHook": {
       "type": "object",
       "$ref": "./CustomHook.schema.json"

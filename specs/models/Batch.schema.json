@@ -22,7 +22,7 @@
     },
     "step": {
       "type": "object",
-      "description": "A copy of the step from its flow"
+      "description": "A copy of the step from its flow, plus runtime options"
     },
     "stepNumber": {
       "type": "string"
