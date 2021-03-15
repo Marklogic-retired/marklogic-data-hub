@@ -286,6 +286,20 @@ const EntityTiles = (props) => {
     }
   };
 
+  const getCustomArtifactProps = async (name : String) => {
+    try {
+      if (props.canReadCustom) {
+        let response = await axios.get("/api/steps/custom/" + name);
+        if (response.status === 200) {
+          return response.data;
+        }
+      }
+    } catch (error) {
+      let message = error;
+      console.error("Error while fetching custom artifacts", message);
+    }
+  }
+
   const updateCustomArtifact = async (payload) => {
     try {
       let response = await updateStep(payload.name, "custom", payload);
@@ -363,6 +377,7 @@ const EntityTiles = (props) => {
           flows={props.flows}
           entityTypeTitle={entityType}
           entityModel={props.entityModels[entityType]}
+          getArtifactProps={getCustomArtifactProps}
           updateCustomArtifact={updateCustomArtifact}
           canReadOnly={props.canReadCustom}
           canReadWrite = {props.canWriteCustom}
@@ -422,6 +437,7 @@ const EntityTiles = (props) => {
                 canWriteFlow={props.canWriteFlow}
                 addStepToFlow={props.addStepToFlow}
                 addStepToNew={props.addStepToNew}
+                getArtifactProps={getCustomArtifactProps}
               />
             </div>: null}
           </Panel>: null}
