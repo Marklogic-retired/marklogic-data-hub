@@ -358,3 +358,18 @@ ul.ant-cascader-menu:nth-child(2) {
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
 }
+
+.ant-page-header-heading-title {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  margin-top: 3px;
+  font-weight: 400
+}
+
+.ant-page-header-back-button {
+  color: #5B69AF;
+}
+
+.ant-page-header-back-button:hover {
+  color: #7FADE3;
+}

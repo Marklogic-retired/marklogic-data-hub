@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import {useHistory} from "react-router-dom";
-import {MLPageHeader, MLButton} from "@marklogic/design-system";
+import {MLButton} from "@marklogic/design-system";
 import styles from "./merging-step-detail.module.scss";
 import "./merging-step-detail.scss";
 import NumberIcon from "../../../number-icon/number-icon";
@@ -19,7 +19,7 @@ import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {RightOutlined, DownOutlined} from "@ant-design/icons";
 import {Icon, Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
-
+import CustomPageHeader from "../../page-header/page-header";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -351,10 +351,9 @@ const MergingStepDetail: React.FC = () => {
 
   return (
     <>
-      <MLPageHeader
-        className={styles.pageHeader}
-        onBack={() => history.push("/tiles/curate")}
+      <CustomPageHeader
         title={mergingStep.name}
+        handleOnBack={() => history.push("/tiles/curate")}
       />
       <p className={styles.headerDescription}>{MergingStepDetailText.description}</p>
       <div className={styles.mergingDetailContainer}>

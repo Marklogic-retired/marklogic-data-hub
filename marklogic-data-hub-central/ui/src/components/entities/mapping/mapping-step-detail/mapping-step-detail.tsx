@@ -10,7 +10,7 @@ import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFrom
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
-import {MLButton, MLTooltip, MLCheckbox, MLSpin, MLPageHeader} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLCheckbox, MLSpin} from "@marklogic/design-system";
 import SourceNavigation from "../source-navigation/source-navigation";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {useHistory} from "react-router-dom";
@@ -24,6 +24,7 @@ import Steps from "../../../steps/steps";
 import {AdvMapTooltips} from "../../../../config/tooltips.config";
 import arrayIcon from "../../../../assets/icon_array.png";
 import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
+import CustomPageHeader from "../../page-header/page-header";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -1234,10 +1235,9 @@ const MappingStepDetail: React.FC = () => {
 
   return (
     <>
-      <MLPageHeader
-        className={styles.pageHeader}
-        onBack={onBack}
+      <CustomPageHeader
         title={<span aria-label={`${curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}-details-header`}>{curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}</span>}
+        handleOnBack={onBack}
       />
       <div className={styles.mapContainer}>
         <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>

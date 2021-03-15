@@ -10,7 +10,6 @@ interface Props {
 }
 
 const ExpandCollapse: React.FC<Props> = (props) => {
-
   let [enabled, setEnabled] = useState(props.currentSelection);
 
   const onSelect = (val) => {
@@ -48,11 +47,11 @@ const ExpandCollapse: React.FC<Props> = (props) => {
       <MLRadio.MLGroup
         buttonStyle="outline"
         className={"radioGroupView"}
-        // defaultValue={enabled}
         name="radiogroup"
         onChange={e => onSelect(e.target.value)}
         size="small"
         tabIndex={0}
+        value={""}
       >
         <MLRadio.MLButton id="expandBtn" data-testid="expandBtn" aria-label="radio-button-expand" value={"expand"} checked={enabled === "expand"} >
           <MLTooltip title={"Expand All"}>
