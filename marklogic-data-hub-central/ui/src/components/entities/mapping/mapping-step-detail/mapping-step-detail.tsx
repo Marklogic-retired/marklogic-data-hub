@@ -1153,7 +1153,7 @@ const MappingStepDetail: React.FC = () => {
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         allKeysToExpand.push(obj[rowKey]);
-        if ((rowKey === "key" && !expandedEntityFlag) || (rowKey === "rowKey" && (!expandedSourceFlag || expanded))) {
+        if ((rowKey === "key" && (!expandedEntityFlag || expanded)) || (rowKey === "rowKey" && (!expandedSourceFlag || expanded))) {
           getKeysToExpandFromTable(obj["children"], rowKey, allKeysToExpand);
         }
       }
@@ -1173,7 +1173,7 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const handleEntityExpandCollapse = (option) => {
-    let keys = getKeysToExpandFromTable(entityTypeProperties, "key");
+    let keys = getKeysToExpandFromTable(entityTypeProperties, "key", [], true);
     keys.unshift(0);
     if (option === "collapse") {
       setEntityExpandedKeys([]);
