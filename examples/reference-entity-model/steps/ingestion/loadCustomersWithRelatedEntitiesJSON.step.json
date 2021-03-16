@@ -1,0 +1,23 @@
+{
+  "name": "loadCustomersWithRelatedEntitiesJSON",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadCustomersWithRelatedEntitiesJSON-ingestion",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "collections": [
+    "loadCustomersWithRelatedEntitiesJSON"
+  ],
+  "inputFilePath": "input/jsonCustomersWithRelatedEntities",
+  "outputURIReplacement": ".*input/jsonCustomersWithRelatedEntities,'/Customer'",
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse",
+  "headers" : {
+    "sources" : [ {
+      "name" : "CustomerWithRelatedEntitiesJSON"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  }
+}

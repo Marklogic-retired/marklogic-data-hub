@@ -1,0 +1,173 @@
+
+{
+  "collections": ["mapCustomersWithRelatedEntitiesJSON", "Customer"],
+  "additionalCollections": [],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "JSON",
+  "name": "mapCustomersWithRelatedEntitiesJSON",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCustomersWithRelatedEntitiesJSON'])",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "headers": {},
+  "interceptors": [],
+  "provenanceGranularityLevel": "coarse",
+  "customHook": {},
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersWithRelatedEntitiesJSON-mapping",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "concat(Name/FirstName, ' ', Name/LastName)"
+    },
+    "nicknames": {
+      "sourcedFrom": "nicknames"
+    },
+    "shipping": {
+      "sourcedFrom": "/Address/Shipping",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "billing": {
+      "sourcedFrom": "/Address/Billing",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    }
+  },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "Order:Customer.customerId",
+      "collections": ["mapCustomersWithRelatedEntitiesJSON", "Order"],
+      "expressionContext": "/Orders",
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "properties": {
+        "orderId": {
+          "sourcedFrom": "OrderId"
+        },
+        "orderDateTime": {
+          "sourcedFrom": "parseDateTime(DateAndTime, 'YYYY/MM/DD-hh:mm:ss')"
+        },
+        "orderedBy": {
+          "sourcedFrom": "/CustomerID"
+        },
+        "deliveredTo": {
+          "sourcedFrom": "SendToID"
+        },
+        "lineItems": {
+          "sourcedFrom": "Products",
+          "properties": {
+            "quantity": {
+              "sourcedFrom": "Quantity"
+            },
+            "hasProduct": {
+              "sourcedFrom": "ProductId"
+            }
+          },
+          "targetEntityType": "#/definitions/LineItem"
+        }
+      },
+      "targetEntityType": "http://example.org/Order-0.0.1/Order"
+    },
+    {
+      "relatedEntityMappingId": "Product:Order.lineItems.orderIncludes",
+      "collections": ["mapCustomersWithRelatedEntitiesJSON", "Product"],
+      "permissions": "data-hub-operator,read,data-hub-operator,update",
+      "expressionContext": "/Orders/Products",
+      "properties": {
+        "productId": {
+          "sourcedFrom": "ProductId"
+        },
+        "productName": {
+          "sourcedFrom": "Name"
+        }
+      },
+      "targetEntityType": "http://example.org/Product-1.0.0/Product"
+    },
+    {
+      "relatedEntityMappingId": "BabyRegistry:Customer.customerId",
+      "collections": ["mapCustomersWithRelatedEntitiesJSON", "BabyRegistry"],
+      "expressionContext": "BabyRegistry",
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "properties": {
+        "babyRegistryId": {
+          "sourcedFrom": "BabyRegistryId"
+        },
+        "arrivalDate": {
+          "sourcedFrom": "parseDate(Arrival_Date, 'YYYY-MM-DD')"
+        },
+        "ownedBy": {
+          "sourcedFrom": "/CustomerID"
+        },
+        "hasProduct": {
+          "sourcedFrom": "Products/ProductId"
+        }
+      },
+      "targetEntityType": "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
+    },
+    {
+      "relatedEntityMappingId": "Product:BabyRegistry.babyRegistryIncludes",
+      "collections": ["mapCustomersWithRelatedEntitiesJSON", "Product"],
+      "permissions": "data-hub-operator,read,data-hub-operator,update",
+      "expressionContext": "/BabyRegistry/Products",
+      "properties": {
+        "productId": {
+          "sourcedFrom": "ProductId"
+        },
+        "productName": {
+          "sourcedFrom": "Name"
+        }
+      },
+      "targetEntityType": "http://example.org/Product-1.0.0/Product"
+    }
+  ]
+}
