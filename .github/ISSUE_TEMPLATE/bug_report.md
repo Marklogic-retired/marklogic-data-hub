@@ -7,37 +7,35 @@ assignees: ''
 
 ---
 
-*### Welcome Hub enthusiast!
+If you are a licensed MarkLogic customer, please contact Support first. 
 
-Let's get the most out of this ticket, please fill out this template.
+If you are a MarkLogic employee, please use our internal JIRA instance to report an issue of type Bug in the DHFPROD project. 
 
-#### The issue
+Otherwise, please use this template to report the bug you've run into.
+### The issue
 
-Short description of the problem:
+Please provide reproducible steps for the issue and a description of what behavior you expected instead.
 
-What behavior are you expecting?
+The steps to reproduce the issue (use as many numbered steps as you need):
 
-What are the steps to reproduce the issue:
 1)
 2)
 3)
 
-#### Tech details
+What behavior were you expecting? 
 
-Which Operating System are you using?
+### Technical details
 
-Which version of MarkLogic are you using?
+Please provide the following version information:
 
-Which version of the Data Hub are you using?
+- Operating System = 
+- MarkLogic = 
+- Data Hub = 
 
-Is this a QuickStart UI bug? If so, which browser are you using?
+If this is a Hub Central or QuickStart issue, please provide the browser version too: 
 
-#### The devil is in the details...
+### Additional details
 
-If possible, rerun the command with -d for debugging output and attach the output:
+If the bug involves running Gradle, please run the task that failed with "-i" and "--stacktrace" and include the output as an attachment - e.g. : 
 
-  **for quickstart:**  
-  `java -jar marklogic-datahub-<version>.war  --debug  > myoutput.txt`
-
-  **for gradle:**  
-  `gradle mlYourCommand -debug > myoutput.txt`
+   ./gradlew yourTask -i --stacktrace > output.txt
