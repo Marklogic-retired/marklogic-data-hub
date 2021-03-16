@@ -1,29 +1,7 @@
-### Welcome Hub enthusiast!
+If you are a licensed MarkLogic customer and you believe you've identified a bug, please contact Support first. 
 
-Let's get the most out of this ticket.
+If you are a MarkLogic employee, please use our internal JIRA instance to report an issue in the DHFPROD project. 
 
-#### The issue
+**Issue details**
 
-Short description of the problem:
-
-What behavior are you expecting?
-
-#### Tech details
-
-Which Operating System are you using?
-
-Which version of MarkLogic are you using?
-
-Which version of Data Hub are you using?
-
-Is this a QuickStart UI bug? If so, which browser are you using?
-
-#### The devil is in the details...
-
-If possible, rerun the command with -d for debugging output and attach the output:
-
-  **for quickstart:**  
-  `java -jar quickstart.war -d > myoutput.txt`
-
-  **for gradle:**  
-  `gradle mlYourCommand -d > myoutput.txt`
+Please provide the details of your issue here. 
