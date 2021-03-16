@@ -52,13 +52,6 @@
         },
         "ssn": {
           "datatype": "string"
-        },
-        "orders": {
-          "datatype": "array",
-          "description": "Example of a relationship to another entity type",
-          "items": {
-            "$ref": "http://example.org/Order-0.0.1/Order"
-          }
         }
       }
     },
