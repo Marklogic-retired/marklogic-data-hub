@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu} from "antd";
+import {Modal, Row, Col, Card, Menu, Dropdown} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -18,6 +18,7 @@ import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
 import {MatchingStepDetailText} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact, calculateMatchingActivity} from "../../../../api/matching";
+import {DownOutlined} from "@ant-design/icons";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -66,6 +67,18 @@ const MatchingStepDetail: React.FC = () => {
   const [uriContent, setUriContent] = useState("");
   const [inputUriDisabled, setInputUriDisabled] = useState(false);
   const [testMatchTab, setTestMatchTab] = useState("matched");
+
+  const menu = (
+    <Menu>
+      <Menu.Item key="singlePropertyRuleset">
+        <span onClick={() => addNewSingleRuleset()} aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
+      </Menu.Item>
+      <Menu.Item key="multiPropertyRuleset">
+        {/*Add addNewMultipleRuleset() here to open respective Modal*/}
+        <span aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
+      </Menu.Item>
+    </Menu>
+  );
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -353,7 +366,6 @@ const MatchingStepDetail: React.FC = () => {
               </p>
               {!moreThresholdText && <span aria-label="threshold-more" className={styles.link} onClick={() => toggleMoreThresholdText(!moreThresholdText)}>more</span> }
             </div>
-
             <div className={styles.addButtonContainer}>
               <MLButton
                 aria-label="add-threshold"
@@ -386,12 +398,23 @@ const MatchingStepDetail: React.FC = () => {
               </p>
               {!moreRulesetText && <span aria-label="ruleset-more" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>more</span> }
             </div>
-
-            <div className={styles.addButtonContainer}>
-              <MLButton aria-label="add-ruleset" size="default" type="primary" onClick={() => addNewSingleRuleset()}>
+            <div
+              id="panelActions"
+              onClick={event => {
+                event.stopPropagation(); // Do not trigger collapse
+                event.preventDefault();
+              }}
+            >
+              <Dropdown
+                overlay={menu}
+                trigger={["click"]}
+                overlayClassName="stepMenu"
+              >
+                <div className={styles.addButtonContainer}>
+                  <MLButton aria-label="add-ruleset" size="default" type="primary">
                 Add{" "}
-              </MLButton>
-            </div>
+                    <DownOutlined /></MLButton>
+                </div></Dropdown></div>
           </div>
           <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
         </div>

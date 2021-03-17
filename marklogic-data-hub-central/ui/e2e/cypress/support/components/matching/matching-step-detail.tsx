@@ -24,6 +24,10 @@ class MatchingStepDetail {
     cy.findByLabelText("add-ruleset").click();
   }
 
+  getSinglePropertyOption(){
+    cy.findByLabelText("singlePropertyRulesetOption").click();
+  }
+
   getSliderDeleteText() {
     return cy.findByLabelText("delete-slider-text");
   }

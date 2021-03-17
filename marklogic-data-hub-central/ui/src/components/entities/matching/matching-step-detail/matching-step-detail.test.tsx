@@ -73,6 +73,8 @@ describe("Matching Step Detail view component", () => {
     expect(getByText("household")).toBeInTheDocument();
 
     userEvent.click(getByLabelText("add-ruleset"));
+    expect(getByLabelText("multiPropertyRulesetOption")).toBeInTheDocument();
+    userEvent.click(getByLabelText("singlePropertyRulesetOption"));
     //Verify ruleset options are rendered on the slider
     expect(getByText("name")).toBeInTheDocument();
     expect(getByText("lastName")).toBeInTheDocument();
