@@ -44,6 +44,10 @@ class Provenance {
     return this.config.granularityLevel;
   }
 
+  _newProvId(jobId, flowId, stepType, docUri) {
+    return `${jobId + flowId + stepType + docUri}_${sem.uuidString()}`;
+  }
+
   /**
    * Get array of provTypes for a given step type for provenance record creation
    * @param {string} stepDefinitionType - step definition type ['ingestion','mapping','mastering','matching','merging','custom']
@@ -241,7 +245,7 @@ class Provenance {
    *      - location (doc URI)
    */
   _createIngestionStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
-    let provId = `${jobId + flowId + 'ingestion' + docURI}`;
+    let provId = this._newProvId(jobId, flowId, 'ingestion', docURI);
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:IngestionStep','dhf:IngestionStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
@@ -285,7 +289,7 @@ class Provenance {
    *      - location (doc URI)
    */
   _createMappingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
-    let provId = `${jobId + flowId + 'mapping' + docURI}`;
+    let provId = this._newProvId(jobId, flowId, 'mapping', docURI);
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MappingStep','dhf:MappingStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
@@ -330,7 +334,7 @@ class Provenance {
    *      - location (doc URI)
    */
   _createMasteringStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
-    let provId = `${jobId + flowId + 'mastering' + docURI}`;
+    let provId = this._newProvId(jobId, flowId, 'mastering', docURI);
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MasteringStep','dhf:MasteringStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
@@ -375,7 +379,7 @@ class Provenance {
    *      - location (doc URI)
    */
   _createMatchingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
-    let provId = `${jobId + flowId + 'matching' + docURI}`;
+    let provId = this._newProvId(jobId, flowId, 'matching', docURI);
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MatchingStep','dhf:MatchingStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
@@ -420,7 +424,7 @@ class Provenance {
    *      - location (doc URI)
    */
   _createMergingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
-    let provId = `${jobId + flowId + 'merging' + docURI}`;
+    let provId = this._newProvId(jobId, flowId, 'merging', docURI);
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MergingStep','dhf:MergingStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
@@ -464,7 +468,7 @@ class Provenance {
    *    - location (doc URI)
    */
   _createCustomStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
-    let provId = `${jobId + flowId + 'custom' + docURI}`;
+    let provId = this._newProvId(jobId, flowId, 'custom', docURI);
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:CustomStep','dhf:CustomStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
@@ -617,7 +621,7 @@ class Provenance {
       if (docURIs && docURIs.length > 0 &&
         propertyProvIds && propertyProvIds.length > 0) {
         let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
-        let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_${activity}`;
+        let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_${activity}_${sem.uuidString()}`;
         let encodedPropertyName = propertyName;
         if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
           encodedPropertyName = xdmp.encodeForNCName(encodedPropertyName);
@@ -667,7 +671,7 @@ class Provenance {
       if (documentProvIds && documentProvIds.length > 0 &&
         alteredPropertyProvIds && alteredPropertyProvIds.length > 0) {
         let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
-        let provId = `${jobId + flowId + stepDefinitionType + newDocURI}`;
+        let provId = this._newProvId(jobId, flowId, stepDefinitionType, newDocURI);
         let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntity',`dhf:${capitalizedStepType}AlteredEntity`];
         let recordOpts = {
           provTypes,

@@ -1,0 +1,57 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<prov:document xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ps="http://marklogic.com/provenance-services" xmlns:dhf="http://marklogic.com/dhf">
+    <prov:entity prov:id="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer12.json_955e8d4b-8a03-424a-aa60-fdf2fb4717a3">
+        <prov:type xsi:type="xsd:QName">ps:Flow</prov:type>
+        <prov:type xsi:type="xsd:QName">ps:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:CustomStep</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:CustomStepEntity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:DocUpdated</prov:type>
+        <location>/echo/customer12.json</location>
+        <roles>7004461930022123088,13041542794130379697,4819568355413302520,17320231898593598586,8888915767846683442,15332289034847710415,17774220447394382090,4511058173900060812,7981934846638917044,9269456903625358229,1904171987351243553,16468473248794482589,7089338530631756591,6350132272746672126,16386188882306008016,8044111862228725143,7482704131174481508,1089014225989558873,14091947216088621083,13177108347483077462,4434813530826978523,17997362789601553516,7575344508487703137,10821724227635724164,5445020029411447278,14450241473789614995,10180847751662597714,9139879687733852072,14517932478431335455,13578910327022954714,6900972904100795271,10325857000464131620,15460447972374083750,3680293911625886504,4269276833403077142,9817166411556333901,14576756828800329222,342934903601278352,16742763111021671912,13597928973033528218,6823644575327271238,12055492266265052889,5662350550126476559,13250884486160217664,1894540869717216476,3624176135518137745,17686726761471786317,8774251034348193496,4561328885837692750,9255410630724871173,16006660639234618281</roles>
+        <roleNames>data-hub-operator,rest-extension-user,data-hub-ingestion-reader,data-hub-mapping-writer,data-hub-mapping-reader,hub-central-mapping-writer,harmonized-reader,hub-central-entity-exporter,data-hub-module-writer,hub-central-operator,hub-central-flow-writer,data-hub-job-reader,rest-reader,data-hub-job-monitor,hub-central-downloader,hub-central-clear-user-data,manage-user,hub-central-developer,hub-central-saved-query-user,data-hub-developer,data-hub-entity-model-writer,data-hub-module-reader,hub-central-load-reader,redaction-user,hub-central-entity-model-writer,data-hub-entity-model-reader,data-hub-temporal-user,hub-central-custom-reader,data-hub-user-reader,ps-user,hub-central-mapping-reader,data-hub-match-merge-writer,hub-central-entity-model-reader,tde-admin,data-hub-saved-query-user,data-hub-common,data-hub-flow-reader,data-hub-step-definition-reader,tde-view,hub-central-user,hub-central-step-runner,hub-central-match-merge-writer,data-hub-common-writer,data-hub-ingestion-writer,data-hub-match-merge-reader,hub-central-match-merge-reader,data-hub-custom-writer,data-hub-step-definition-writer,data-hub-flow-writer,data-hub-custom-reader,hub-central-load-writer</roleNames>
+    </prov:entity>
+    <prov:wasGeneratedBy>
+        <prov:entity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:entity>
+        <prov:activity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77">
+        </prov:activity>
+        <prov:time>2021-03-17T14:58:46.850288+05:30</prov:time>
+    </prov:wasGeneratedBy>
+    <prov:wasInfluencedBy>
+        <prov:influencee prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:influencee>
+        <prov:influencer prov:ref="runEchoStep">
+        </prov:influencer>
+    </prov:wasInfluencedBy>
+    <prov:wasDerivedFrom>
+        <prov:generatedEntity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:generatedEntity>
+        <prov:usedEntity prov:ref="/echo/customer12.json">
+        </prov:usedEntity>
+    </prov:wasDerivedFrom>
+    <prov:wasAssociatedWith>
+        <prov:activity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:activity>
+        <prov:agent prov:ref="echoFlow">
+        </prov:agent>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:activity>
+        <prov:agent prov:ref="runEchoStep">
+        </prov:agent>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:activity>
+        <prov:agent prov:ref="echo-step">
+        </prov:agent>
+    </prov:wasAssociatedWith>
+    <prov:wasAttributedTo>
+        <prov:entity prov:ref="8121febd-9e51-4939-b44a-2a566ce44a77echoFlowcustom/echo/customer%s.json">
+        </prov:entity>
+        <prov:agent prov:ref="test-data-hub-developer">
+        </prov:agent>
+    </prov:wasAttributedTo>
+</prov:document>
