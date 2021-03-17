@@ -40,8 +40,17 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
     void ingestionStep() {
         installReferenceModelProject();
 
+        runAsAdmin();
+        String provString = readStringFromClasspath("entity-reference-model/legacyProvenanceRecord1.xml");
+        writeJobsXmlDoc("/legacyProvenanceRecord1.xml", provString, "http://marklogic.com/provenance-services/record");
+        runAsDataHubDeveloper();
+
         makeInputFilePathsAbsoluteInFlow("ingestToFinal");
-        runFlow(new FlowInputs("ingestToFinal", "1"));
+        FlowInputs flowInputs = new FlowInputs();
+        flowInputs.setFlowName("ingestToFinal");
+        flowInputs.setSteps(Arrays.asList("1"));
+        flowInputs.setJobId("8121febd-9e51-4939-b44a-2a566ce44a77");
+        runFlow(flowInputs);
         customerUris.add("/customers/customer1.json");
 
         Pair<Long, String> preview = createdByStepFixer.previewFixingDocuments(finalDatabaseName);
@@ -69,8 +78,23 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         }
         logger.info("Insert time: " + (System.currentTimeMillis() - start));
 
+
+        runAsAdmin();
+        String provString = readStringFromClasspath("entity-reference-model/legacyProvenanceRecord2.xml");
         start = System.currentTimeMillis();
-        runFlow(new FlowInputs("echoFlow"));
+        for (int i = 1; i <= 100; i++) {
+            writeJobsXmlDoc(String.format("/legacyProvenanceRecord%s.xml", i), String.format(provString, i, i, i, i, i, i, i), "http://marklogic.com/provenance-services/record");
+        }
+        logger.info("Provenance Records Insert time: " + (System.currentTimeMillis() - start));
+        runAsDataHubDeveloper();
+
+        start = System.currentTimeMillis();
+
+        FlowInputs flowInputs = new FlowInputs();
+        flowInputs.setFlowName("echoFlow");
+        flowInputs.setJobId("8121febd-9e51-4939-b44a-2a566ce44a77");
+
+        runFlow(flowInputs);
         logger.info("Flow time: " + (System.currentTimeMillis() - start));
 
         Pair<Long, String> preview = createdByStepFixer.previewFixingDocuments(finalDatabaseName);

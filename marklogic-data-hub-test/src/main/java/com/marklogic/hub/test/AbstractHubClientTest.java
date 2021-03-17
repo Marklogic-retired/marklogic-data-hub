@@ -223,6 +223,14 @@ public abstract class AbstractHubClientTest extends TestObject {
             new BytesHandle(content.getBytes()).withFormat(Format.JSON));
     }
 
+    protected void writeJobsXmlDoc(String uri, String content, String... collections) {
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        addDefaultPermissions(metadata);
+        metadata.getCollections().addAll(collections);
+        getHubClient().getJobsClient().newDocumentManager().write(uri, metadata,
+                new BytesHandle(content.getBytes()).withFormat(Format.XML));
+    }
+
     /**
      * Convenience method for doing something with a WriteBatcher.
      *
