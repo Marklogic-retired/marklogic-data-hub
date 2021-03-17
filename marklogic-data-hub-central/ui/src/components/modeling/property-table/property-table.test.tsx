@@ -3,7 +3,8 @@ import {render, screen, fireEvent, wait, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
 
-import {entityReferences} from "../../../api/modeling";
+import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
+import curateData from "../../../assets/mock-data/curation/flows.data";
 import {ConfirmationType} from "../../../types/common-types";
 import {getSystemInfo} from "../../../api/environment";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -15,6 +16,7 @@ jest.mock("../../../api/modeling");
 jest.mock("../../../api/environment");
 
 const mockEntityReferences = entityReferences as jest.Mock;
+const mockPrimaryEntityTypes = primaryEntityTypes as jest.Mock;
 const mockGetSystemInfo = getSystemInfo as jest.Mock;
 
 describe("Entity Modeling Property Table Component", () => {
@@ -265,9 +267,12 @@ describe("Entity Modeling Property Table Component", () => {
   });
 
   test("can edit a property and change the type from basic to relationship", async () => {
+    // Mock population of Join Property menu
+    mockPrimaryEntityTypes.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
+
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const {getByTestId, getAllByTestId, getByText} =  render(
+    const {getByTestId, getAllByTestId, getByText, getAllByText, getByLabelText} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyTable
           canReadEntityModel={true}
@@ -314,14 +319,22 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getByTestId("altName-span"));
 
     userEvent.clear(screen.getByLabelText("input-name"));
-    userEvent.type(screen.getByLabelText("input-name"), "orderRelationship");
+    userEvent.type(screen.getByLabelText("input-name"), "customerRelationship");
     userEvent.click(screen.getByLabelText("type-dropdown"));
     userEvent.click(screen.getByText("Related Entity"));
-    userEvent.click(screen.getAllByText("Order")[0]);
-    fireEvent.submit(screen.getByLabelText("input-name"));
+    userEvent.click(screen.getAllByText("Customer")[1]);
 
-    expect(getByTestId("orderRelationship-span")).toBeInTheDocument();
-    userEvent.click(screen.getByTestId("orderRelationship-span"));
+    // Choose join property after menu is populated
+    userEvent.click(getByLabelText("joinProperty-select"));
+    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+    await wait(() => userEvent.click(getAllByText("customerId")[1]));
+
+    userEvent.click(getByLabelText("property-modal-submit"));
+    expect(getByTestId("customerRelationship-span")).toBeInTheDocument();
+    userEvent.click(screen.getByTestId("customerRelationship-span"));
+
+    fireEvent.mouseOver((getByTestId("foreign-customerRelationship")));
+    await wait(() => expect(screen.getByText("Foreign Key Relationship")).toBeInTheDocument());
 
     userEvent.clear(screen.getByLabelText("input-name"));
     userEvent.type(screen.getByLabelText("input-name"), "basicID");

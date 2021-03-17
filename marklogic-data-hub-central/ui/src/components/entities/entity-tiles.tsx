@@ -298,7 +298,7 @@ const EntityTiles = (props) => {
       let message = error;
       console.error("Error while fetching custom artifacts", message);
     }
-  }
+  };
 
   const updateCustomArtifact = async (payload) => {
     try {
