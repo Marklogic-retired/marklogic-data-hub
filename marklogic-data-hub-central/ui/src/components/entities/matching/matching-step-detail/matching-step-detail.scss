@@ -5,3 +5,16 @@
 #addDataRadio .ant-radio-wrapper{
     white-space: normal;
 }
+
+#panelActions {
+    .ant-dropdown-trigger {
+        margin-top: 4px;
+        height: 30px;
+        margin-right: 0px;
+    }
+}
+
+.stepMenu {
+    max-height: 50vh;
+    border: solid 1px #ddd;
+}

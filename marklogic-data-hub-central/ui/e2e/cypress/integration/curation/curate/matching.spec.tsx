@@ -108,6 +108,7 @@ describe("Matching", () => {
   });
   it("Add ruleset", () => {
     matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("customerId");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
@@ -126,6 +127,7 @@ describe("Matching", () => {
   //});
   it("Add another ruleset", () => {
     matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("email");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
