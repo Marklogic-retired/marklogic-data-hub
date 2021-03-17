@@ -716,11 +716,9 @@ pipeline{
         stage('publishAnddhs'){
          when {
            expression {
-                    node('dhmaster') {
-                        props = readProperties file: 'data-hub/pipeline.properties';
-                        println(props['ExecutionBranch'])
-                        return (env.BRANCH_NAME == props['ExecutionBranch'])
-                   }
+                 props = readProperties file: 'data-hub/pipeline.properties';
+                 println(props['ExecutionBranch'])
+                 return (env.BRANCH_NAME == props['ExecutionBranch'])
            }
          }
          agent { label 'dhfLinuxAgent' }
