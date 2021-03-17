@@ -469,9 +469,6 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         validateStatus={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "error"}
         help={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "Collection or Query is required"}
         >
-          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
-            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
-          </MLTooltip>
 
           <Radio.Group
             id="srcType"
@@ -481,6 +478,10 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
+
+          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
+            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
+          </MLTooltip>
 
           <MLTooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
             <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>
