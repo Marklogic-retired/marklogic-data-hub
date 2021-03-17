@@ -17,6 +17,9 @@ import {EntityModified} from "../types/modeling-types";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
+import {faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
+import arrayIcon from "../assets/icon_array.png";
+import relatedEntityIcon from "../assets/icon_related_entities.png";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
@@ -173,33 +176,42 @@ const Modeling: React.FC = () => {
         <div className={styles.header}>
           <h1>Entity Types</h1>
           <div className={styles.buttonContainer}>
-            {canWriteEntityModel ?
-              <MLTooltip title={ModelingTooltips.addNewEntity}>
-                {addButton}
-              </MLTooltip>
-              :
-              <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
-                <span className={styles.disabledCursor}>{addButton}</span>
-              </MLTooltip>
-            }
-            {canWriteEntityModel ?
-              <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
-                <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
-              </MLTooltip>
-              :
-              <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
-                <span className={styles.disabledCursor}>{saveAllButton}</span>
-              </MLTooltip>
-            }
-            {canWriteEntityModel ?
-              <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
-                <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
-              </MLTooltip>
-              :
-              <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
-                <span className={styles.disabledCursor}>{revertAllButton}</span>
-              </MLTooltip>
-            }
+            <div className={styles.legend}>
+              <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key Relationship</div>
+              <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
+              <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
+              <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+            </div>
+
+            <div style={{float: "right"}}>
+              {canWriteEntityModel ?
+                <MLTooltip title={ModelingTooltips.addNewEntity}>
+                  {addButton}
+                </MLTooltip>
+                :
+                <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
+                  <span className={styles.disabledCursor}>{addButton}</span>
+                </MLTooltip>
+              }
+              {canWriteEntityModel ?
+                <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
+                  <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
+                </MLTooltip>
+                :
+                <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
+                  <span className={styles.disabledCursor}>{saveAllButton}</span>
+                </MLTooltip>
+              }
+              {canWriteEntityModel ?
+                <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
+                  <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
+                </MLTooltip>
+                :
+                <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
+                  <span className={styles.disabledCursor}>{revertAllButton}</span>
+                </MLTooltip>
+              }
+            </div>
           </div>
         </div>
         <ConfirmationModal

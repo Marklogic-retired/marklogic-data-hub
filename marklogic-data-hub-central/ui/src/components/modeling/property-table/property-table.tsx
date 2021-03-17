@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {MLButton, MLTable, MLTooltip} from "@marklogic/design-system";
-import {faCircle, faCheck, faTrashAlt, faPlusSquare} from "@fortawesome/free-solid-svg-icons";
+import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
 import useDeepCompareEffect from "use-deep-compare-effect";
@@ -117,7 +117,6 @@ const PropertyTable: React.FC<Props> = (props) => {
         let renderText = text;
 
         if (props.canWriteEntityModel && props.canReadEntityModel) {
-
           renderText = <span
             data-testid={text + "-span"}
             aria-label="property-name-header"
@@ -125,7 +124,12 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(text, record);
             }}>
-            {text}</span>;
+            {record.joinPropertyName && record.joinPropertyType ?
+              <span>{text}
+                <MLTooltip title={"Foreign Key Relationship"}>
+                  <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + text}/>
+                </MLTooltip></span>  : text}
+          </span>;
         }
 
         return renderText;

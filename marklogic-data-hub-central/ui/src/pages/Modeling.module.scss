@@ -15,13 +15,13 @@
 
 .header {
   display: flex;
-  margin: 10px auto 0 auto;
+  margin: 0 auto;
   width: 100%;
   justify-content: space-between;
 }
 
 .buttonContainer {
-  display: flex;
+  margin-bottom: 10px;
 }
 
 .buttonContainer > button:nth-child(2), .buttonContainer > button:last-child {
@@ -48,4 +48,38 @@
 
 .CursorButton{
     margin-left: 5px;
+}
+
+.legend {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+  margin-bottom: 15px;
+
+  .legendText {
+    font-size: 14px;
+    margin-left: 18px;
+    img, svg {
+      margin-right: 2px;
+    }
+  }
+
+  .foreignKeyIcon {
+    color: #37AA6C;
+    font-size: 14px;
+  }
+
+  .relatedIcon {
+    margin-bottom: 4px
+  }
+
+  .structuredIcon {
+    color: #5B69AF;
+    font-size: 14px;
+  }
+
+  .arrayImage {
+    margin-bottom: 4px
+  }
+
 }
