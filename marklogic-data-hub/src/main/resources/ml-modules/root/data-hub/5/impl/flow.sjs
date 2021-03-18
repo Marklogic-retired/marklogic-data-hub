@@ -19,13 +19,13 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
+const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
 const defaultGlobalContext = {
   flow : {},
   jobId: '',
-  attemptStep: 1,
   lastCompletedStep: 0,
   lastAttemptedStep: 0,
   batchErrors: [],
@@ -53,7 +53,7 @@ class Flow {
     this.flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
     
     this.consts = datahub.consts;
-    this.writeQueue = [];
+    this.writeQueue = new WriteQueue();
     if (globalContext) {
       this.globalContext = globalContext;
     } else {
@@ -73,7 +73,7 @@ class Flow {
         this.globalContext[key] = Object.create(this.globalContext[key]);
       }
     }
-    this.writeQueue = [];
+    this.writeQueue = new WriteQueue();
   }
 
   getFlowNames() {
@@ -109,17 +109,16 @@ class Flow {
     return cachedFlows[name];
   }
 
-  setFlow(flowObj){
-    this.globalContext.flow = flowObj;
-  }
-
   /**
    * Find records that match a query based on the given inputs. Each matching record is wrapped in a
    * "content descriptor" object that is guaranteed to have at least a "uri" property.
    *
    * @param flowName
    * @param stepNumber
-   * @param options
+   * @param options This isn't just the runtime options provided by the user; because it is expected 
+   * to be called by the processBatch endpoint, which is invoked by the Java QueryStepRunner class, 
+   * this is likely already the set of combined options. But it's not guaranteed to be the same, 
+   * and so combinedOptions is still constructed within this function.
    * @return {*}
    */
   findMatchingContent(flowName, stepNumber, options) {
@@ -136,14 +135,14 @@ class Flow {
       httpUtils.throwBadRequest(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
     }
 
-    const combinedOptions = Object.assign({}, stepDefinition.options || {}, flow.options || {}, flowStep.options || {}, options);
+    const combinedOptions = this.flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, options);
 
     let query;
     let uris = null;
     if (options.uris) {
       uris = hubUtils.normalizeToArray(options.uris);
 
-      if (options.excludeAlreadyProcessed === true || options.excludeAlreadyProcessed === "true") {
+      if (combinedOptions.excludeAlreadyProcessed === true || combinedOptions.excludeAlreadyProcessed === "true") {
         const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
         const filteredItems = this.filterItemsAlreadyProcessedByStep(uris, flowName, stepId);
         if (filteredItems.length != uris.length) {
@@ -152,7 +151,7 @@ class Flow {
         uris = filteredItems;
       }
 
-      if (options.sourceQueryIsScript) {
+      if (combinedOptions.sourceQueryIsScript) {
         // When the source query is a script, map each item to a content object with the "uri" property containing the item value
         return uris.map(uri => {return {uri}});
       }
@@ -206,18 +205,19 @@ class Flow {
    * @param content Array of content "descriptors", where each descriptor is expected to at least have a "uri" property.
    * The value of the "uri" property is not necessarily a URI; if sourceQueryIsScript is true for the step, then
    * the value of the "uri" property can be any string.
-   * @param options Optional map of options that are used to override the flow and step configuration
+   * @param options Similar to findMatchingContent, this is the combination of options provided by the Java QueryStepRunner
+   *  class that ideally would be the same as what's produced by flowUtils.makeCombinedOptions, but it's not yet
    * @param stepNumber The number of the step within the given flow to run
    */
   runFlow(flowName, jobId, content = [], options, stepNumber) {
     let items = content.map((contentItem) => contentItem.uri);
 
-    let flow = this.getFlow(flowName);
-    if(!flow) {
+    const theFlow = this.getFlow(flowName);
+    if(!theFlow) {
       this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
       throw Error('The flow with the name '+flowName+' could not be found.')
     }
-    this.globalContext.flow = flow;
+    this.globalContext.flow = theFlow;
 
     let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
     if(!(jobDoc || options.disableJobOutput)) {
@@ -238,18 +238,15 @@ class Flow {
       stepNumber = 1;
     }
 
-    //set the context for the attempted step
-    this.globalContext.attemptStep = stepNumber;
-
-    const flowStep = this.globalContext.flow.steps[stepNumber];
+    const flowStep = theFlow.steps[stepNumber];
     if(!flowStep) {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
 
-    //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
-    let combinedOptions = Object.assign({}, stepDefinition.options, flow.options, flowStep.options, options);
+    const combinedOptions = this.flowUtils.makeCombinedOptions(theFlow, stepDefinition, stepNumber, options);
+    
     // set provenance granularity based off of combined options
     this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
 
@@ -295,12 +292,14 @@ class Flow {
         const baseCollections = [
           options.collections,
           ((flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
-          (flow.options || {}).collections
+          (theFlow.options || {}).collections
         ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
           // filter out any null/empty collections that may exist
           .filter((col) => !!col);
 
-        writeTransactionInfo = this.flowUtils.writeContentArray(this.writeQueue, this.globalContext.targetDatabase, baseCollections);
+        const targetDatabase = this.globalContext.targetDatabase;
+        const contentArray = this.writeQueue.getContentArray(targetDatabase);
+        writeTransactionInfo = this.flowUtils.writeContentArray(contentArray, targetDatabase, baseCollections);
       } catch (e) {
         this.handleWriteError(this, e);
       }
@@ -319,7 +318,7 @@ class Flow {
       "errors": this.globalContext.batchErrors
     };
     if (combinedOptions.fullOutput) {
-      resp.documents = this.writeQueue;
+      resp.documents = this.writeQueue.getContentArray(this.globalContext.targetDatabase);
     }
     if (this.datahub.performance.performanceMetricsOn()) {
       resp.performanceMetrics = this.datahub.performance.stepMetrics;
@@ -413,12 +412,9 @@ class Flow {
 
     // Assumption is that if an interceptor failed, none of the content objects processed by the step module should be written
     if (!stepInterceptorFailed) {
+      const databaseName = flowInstance.globalContext.targetDatabase;
       contentArray.forEach(contentObject => {
-        if (contentObject.uri) {
-          this.writeQueue.push(contentObject);
-        } else {
-          this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(contentObject)}' to the write queue due to missing uri.`});
-        }
+        this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);
       });
     }
 
@@ -487,7 +483,7 @@ class Flow {
 
   handleWriteError(flowInstance, error) {
     flowInstance.globalContext.completedItems = [];
-    flowInstance.globalContext.failedItems = flowInstance.writeQueue.map((contentObj) => contentObj.uri);
+    flowInstance.globalContext.failedItems = flowInstance.writeQueue.getContentUris(flowInstance.globalContext.targetDatabase);
     const operation = error.stackFrames && error.stackFrames[0] && error.stackFrames[0].operation;
     let uri;
     // see if we can determine a uri based off the operation in the stackFrames
@@ -546,8 +542,8 @@ class Flow {
     if (this.globalContext.completedItems.length && prov.granularityLevel() !== prov.OFF_LEVEL) {
       const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase(): stepDefinition.type;
       const stepName = flowStep.name || flowStep.stepDefinitionName;
-
-      for (let content of this.writeQueue) {
+      const contentArray = this.writeQueue.getContentArray(this.globalContext.targetDatabase);
+      for (let content of contentArray) {
         // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
         if (content.provenance !== false) {
           const previousUris = hubUtils.normalizeToArray(content.previousUri || content.uri);

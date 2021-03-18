@@ -1,0 +1,10 @@
+{
+  "name" : "errorStep",
+  "type" : "CUSTOM",
+  "options" : {
+    "sourceDatabase": "data-hub-FINAL",
+    "targetDatabase": "data-hub-FINAL"
+  },
+  "lang" : "zxx",
+  "modulePath" : "/testModuleThrowsError.sjs"
+}

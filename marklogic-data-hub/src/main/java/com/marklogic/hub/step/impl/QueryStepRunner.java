@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.datamovement.*;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
 import com.marklogic.hub.dataservices.StepRunnerService;
@@ -113,32 +112,11 @@ public class QueryStepRunner implements StepRunner {
 
     @Override
     @SuppressWarnings("unchecked")
-    public StepRunner withOptions(Map<String, Object> options) {
+    public StepRunner withOptions(Map<String, Object> runtimeOptions) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
         }
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> stepDefMap = null;
-        if(stepDef != null) {
-            stepDefMap = mapper.convertValue(stepDef.getOptions(), Map.class);
-        }
-        Map<String, Object> stepMap = mapper.convertValue(this.flow.getStep(step).getOptions(), Map.class);
-        Map<String,Object> flowMap = mapper.convertValue(flow.getOptions(), Map.class);
-        Map<String, Object> combinedOptions = new HashMap<>();
-
-        if(stepDefMap != null){
-            combinedOptions.putAll(stepDefMap);
-        }
-        if(flowMap != null) {
-            combinedOptions.putAll(flowMap);
-        }
-        if(stepMap != null){
-            combinedOptions.putAll(stepMap);
-        }
-        if(options != null) {
-            combinedOptions.putAll(options);
-        }
-        this.options = combinedOptions;
+        this.options = StepRunnerUtil.makeCombinedOptions(this.flow, this.stepDef, this.step, runtimeOptions);
         return this;
     }
 

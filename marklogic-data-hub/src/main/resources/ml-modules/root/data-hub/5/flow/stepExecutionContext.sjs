@@ -15,19 +15,19 @@
 */
 'use strict';
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
 class StepExecutionContext {
-  constructor(theFlow, stepNumber, stepDefinition, jobId, runtimeOptions) {
+  constructor(theFlow, stepNumber, stepDefinition, jobId, runtimeOptions = {}) {
     this.flow = theFlow;
     this.stepDefinition = stepDefinition;
     this.stepNumber = stepNumber;
     this.flowStep = theFlow.steps[stepNumber];
     this.jobId = jobId;
 
-    runtimeOptions = runtimeOptions || {};
-    this.combinedOptions = Object.assign({}, stepDefinition.options, theFlow.options, this.flowStep.options, runtimeOptions);
+    this.combinedOptions = flowUtils.makeCombinedOptions(theFlow, stepDefinition, stepNumber, runtimeOptions);
 
     // Copies what flow.sjs does for combining collections from options
     this.collectionsFromOptions = [
