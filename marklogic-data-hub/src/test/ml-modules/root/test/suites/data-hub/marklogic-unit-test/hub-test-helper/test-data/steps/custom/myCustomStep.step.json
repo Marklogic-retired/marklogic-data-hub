@@ -1,0 +1,9 @@
+{
+  "name": "myCustomStep",
+  "stepId": "myCustomStep-custom",
+  "stepDefinitionName": "myCustomStep",
+  "stepDefinitionType": "CUSTOM",
+  "sourceQuery": "cts.collectionQuery('doesnt-matter')",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "myFlow",
+  "steps": {
+    "1": {
+      "stepId": "myCustomStep-custom"
+    }
+  }
+}

@@ -7,6 +7,7 @@ load one or more kinds of DHF artifacts.
 
 module namespace hub-test = "http://marklogic.com/data-hub/test";
 
+import module namespace config = "http://marklogic.com/data-hub/config" at "/com.marklogic.hub/config.xqy";
 import module namespace cvt = "http://marklogic.com/cpf/convert" at "/MarkLogic/conversion/convert.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
@@ -62,7 +63,7 @@ declare private function load-jobs(
   let $content := test:get-test-file($path)
   let $_ := invoke-in-db(function() {
     xdmp:document-insert($uri-prefix || $path, $content, xdmp:default-permissions(), $collections)
-  },"data-hub-JOBS" )
+  }, $config:JOB-DATABASE)
   return ()
 };
 
@@ -150,7 +151,7 @@ declare function clear-jobs-database()
   invoke-in-db(function() {
     xdmp:collection-delete("Jobs"),
     xdmp:collection-delete("http://marklogic.com/provenance-services/record")
-    }, "data-hub-JOBS"
+    }, $config:JOB-DATABASE
   )
 };
 
@@ -163,22 +164,37 @@ declare function reset-staging-and-final-databases()
 
 declare function invoke-in-staging-and-final($function)
 {
-  ("data-hub-STAGING", "data-hub-FINAL") ! invoke-in-db($function, .)
+  ($config:STAGING-DATABASE, $config:FINAL-DATABASE) ! invoke-in-db($function, .)
+};
+
+declare function get-staging-collection-size($collection-name as xs:string) as xs:integer
+{
+  invoke-in-db(function(){xdmp:estimate(fn:collection($collection-name))}, $config:STAGING-DATABASE)
+};
+
+declare function get-final-collection-size($collection-name as xs:string) as xs:integer
+{
+  invoke-in-db(function(){xdmp:estimate(fn:collection($collection-name))}, $config:FINAL-DATABASE)
+};
+
+declare function get-job-collection-size($collection-name as xs:string) as xs:integer
+{
+  invoke-in-db(function(){xdmp:estimate(fn:collection($collection-name))}, $config:JOB-DATABASE)
 };
 
 declare function get-first-batch-document()
 {
-  invoke-in-db(function() {collection("Batch")[1]}, "data-hub-JOBS")
+  invoke-in-db(function() {collection("Batch")[1]}, $config:JOB-DATABASE)
 };
 
 declare function get-modules-document($uri as xs:string)
 {
-  invoke-in-db(function() {fn:doc($uri)}, "data-hub-MODULES")
+  invoke-in-db(function() {fn:doc($uri)}, $config:MODULES-DATABASE)
 };
 
 declare function get-first-prov-document()
 {
-  invoke-in-db(function() {fn:collection("http://marklogic.com/provenance-services/record")[1]}, "data-hub-JOBS")
+  invoke-in-db(function() {fn:collection("http://marklogic.com/provenance-services/record")[1]}, $config:JOB-DATABASE)
 };
 
 declare function get-final-schema($uri as xs:string)
@@ -217,7 +233,7 @@ declare function assert-called-from-test()
 
 declare function assert-in-collections($uri as xs:string, $collections as xs:string+)
 {
-  let $actual-collections := invoke-in-db(function(){xdmp:document-get-collections($uri)}, "data-hub-FINAL")
+  let $actual-collections := invoke-in-db(function(){xdmp:document-get-collections($uri)}, $config:FINAL-DATABASE)
   for $c in $collections
   return test:assert-true($actual-collections = $c, "Expected URI " || $uri || " to be in collection " || $c)
 };
@@ -227,7 +243,7 @@ permissions-string is expected to be role,capability,role,capability,etc
 :)
 declare function assert-has-permissions($uri as xs:string, $permissions-string as xs:string)
 {
-  let $actual-perms := invoke-in-db(function(){xdmp:document-get-permissions($uri)}, "data-hub-FINAL")
+  let $actual-perms := invoke-in-db(function(){xdmp:document-get-permissions($uri)}, $config:FINAL-DATABASE)
   let $tokens := fn:tokenize($permissions-string, ",")
   for $token at $index in $tokens
   where math:fmod($index, 2) = 1
