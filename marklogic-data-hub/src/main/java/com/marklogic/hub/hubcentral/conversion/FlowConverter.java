@@ -88,7 +88,7 @@ public class FlowConverter extends LoggingObject {
             );
             QueryBatcher queryBatcher = dmm.newQueryBatcher(query)
                 .withConsistentSnapshot()
-                .withThreadCount(4) // If not set, DMSDK logs an unattractive warning
+                .withThreadCount(1) // If not set, DMSDK logs an unattractive warning
                 .onUrisReady(new DeleteListener());
             dmm.startJob(queryBatcher);
             queryBatcher.awaitCompletion();
