@@ -9,7 +9,7 @@ const flowName = "doesntMatter";
 const flowStep = {"name":"myStep", "stepDefinitionName": "myCustomStep", "stepDefinitionType": "custom"};
 
 // Simulate a processed URI so that prov can be generated
-datahub.flow.writeQueue.push({"uri": "test.json"});
+datahub.flow.writeQueue.addContent(xdmp.databaseName(xdmp.database()), {"uri": "test.json"});
 datahub.flow.globalContext.completedItems = ["test.json"];
 
 // Try writing with an invalid input

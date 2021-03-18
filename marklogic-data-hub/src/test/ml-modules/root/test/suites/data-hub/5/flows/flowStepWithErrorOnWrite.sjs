@@ -13,7 +13,7 @@ const output = datahub.flow.runFlow('myNewFlow', 'error-on-write-job', [
     value: cts.doc('/customer1.json'),
     context: {}
   }
-], {}, 1);
+], {}, 2);
 
 [
   test.assertEqual(2, output.errorCount, `This should show an error count of 2 since it failed on write. Output: ${xdmp.toJsonString(output)}`),

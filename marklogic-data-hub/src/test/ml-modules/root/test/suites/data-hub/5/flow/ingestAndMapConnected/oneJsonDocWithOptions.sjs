@@ -3,7 +3,7 @@ const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
 /**
- * This test verifies that runtime options are honored. It also verifies the details of the two documents that are 
+ * This test verifies that runtime options are honored. It also verifies the details of the two documents that are
  * persisted, while the twoJsonDocs test is focused more on the response object.
  */
 const flowName = "ingestAndMap";
@@ -20,7 +20,7 @@ const response = flowRunner.processContentWithFlow(flowName, contentArray, jobId
 const finalCustomer = hubTest.getRecord("/customer1.json");
 const assertions = [
   test.assertEqual("finished", response.jobStatus),
-  test.assertEqual(1, finalCustomer.document.envelope.instance.Customer.customerId, 
+  test.assertEqual(1, finalCustomer.document.envelope.instance.Customer.customerId,
     "Verifies that the entity was mapped correctly"),
   test.assertEqual("Customer", finalCustomer.document.envelope.instance.info.title),
   test.assertEqual("0.0.1", finalCustomer.document.envelope.instance.info.version),
@@ -28,7 +28,7 @@ const assertions = [
   test.assertEqual(2, finalCustomer.collections.length),
   test.assertEqual("Customer", finalCustomer.collections[0]),
   test.assertEqual("mapCustomer", finalCustomer.collections[1]),
-  test.assertEqual("read", finalCustomer.permissions["data-hub-operator"][0], 
+  test.assertEqual("read", finalCustomer.permissions["data-hub-operator"][0],
     "Verifies that the runtime options overrode the step options for permissions"),
   test.assertEqual("update", finalCustomer.permissions["data-hub-operator"][1]),
   test.assertEqual(xdmp.getCurrentUser(), finalCustomer.metadata.datahubCreatedBy),
@@ -43,7 +43,7 @@ assertions.concat(
   test.assertEqual("1", stagingCustomer.document.envelope.instance.customerId),
   test.assertEqual(1, stagingCustomer.collections.length),
   test.assertEqual("ingestCustomer", stagingCustomer.collections[0]),
-  test.assertEqual("read", stagingCustomer.permissions["data-hub-operator"][0], 
+  test.assertEqual("read", stagingCustomer.permissions["data-hub-operator"][0],
     "Verifies that permissions was overridden by the runtime options"),
   test.assertEqual("update", stagingCustomer.permissions["data-hub-operator"][1]),
   test.assertEqual(xdmp.getCurrentUser(), stagingCustomer.metadata.datahubCreatedBy),

@@ -27,6 +27,12 @@ declare option xdmp:mapping "false";
 
 xdmp:invoke-function(function() {
   xdmp:document-insert(
+    "/testModuleThrowsError.sjs",
+    test:get-test-file("testModuleThrowsError.sjs"),
+    (xdmp:default-permissions(), xdmp:permission("rest-extension-user", "execute"), xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")),
+    ()
+  ),
+  xdmp:document-insert(
     "/test/custom-null-step/main.sjs",
     test:get-test-file("nullStep.sjs"),
     (xdmp:default-permissions(), xdmp:permission("rest-extension-user", "execute"), xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")),

@@ -22,6 +22,7 @@ const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
+const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
 /**
  * Processes the given contentArray - a batch of content - against each step in the given flow. Each step
@@ -47,7 +48,7 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
 
   const theFlow = Artifacts.getFullFlow(flowName);
   
-  const databaseWriteQueue = {};
+  const databaseWriteQueue = new WriteQueue();
   const flowResponse = newFlowResponse(theFlow, jobId);
 
   let currentContentArray = contentArray;
@@ -64,7 +65,7 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
     flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);  
   });    
 
-  persistWriteQueue(databaseWriteQueue);
+  databaseWriteQueue.persist();
   hubUtils.hubTrace(traceEvent, `Finished processing content with flow ${flowName}`);
   flowResponse.jobStatus = "finished";
   flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
@@ -248,19 +249,13 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
 /**
  * @param stepExecutionContext
  * @param outputContentArray
- * @param databaseWriteQueue
+ * @param writeQueue
  */
-function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue) {
+function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, writeQueue) {
   const targetDatabase = stepExecutionContext.getTargetDatabase();
-  let databaseContentMap = databaseWriteQueue[targetDatabase];
-  if (!databaseContentMap) {
-    databaseContentMap = {};
-    databaseWriteQueue[targetDatabase] = databaseContentMap;
-  }
-  outputContentArray.forEach(contentObject => {
-    if (contentObject.uri) {
-      databaseContentMap[contentObject.uri] = copyContentObject(contentObject);
-    }
+  outputContentArray.forEach(content => {
+    const contentCopy = copyContentObject(content);
+    writeQueue.addContent(targetDatabase, contentCopy, stepExecutionContext.flowName, stepExecutionContext.stepNumber);
   });
 }
 
@@ -285,20 +280,6 @@ function copyContentObject(contentObject) {
       permissions: JSON.parse(xdmp.quote(contentObject.context.permissions))
     }
   };
-}
-
-/**
- * TODO Once we do job data, we'll have to figure out what to do with multiple transaction IDs and timestamps,
- * as those aren't at the step level but rather at the batch level, and per database.
- *
- * TODO Add error handling. Each step may have succeeded, but the batch fails.
- */
-function persistWriteQueue(databaseWriteQueue) {
-  Object.keys(databaseWriteQueue).forEach(databaseName => {
-    const databaseContent = databaseWriteQueue[databaseName];
-    const contentArray = Object.keys(databaseContent).map(key => databaseContent[key]);
-    flowUtils.writeContentArray(contentArray, databaseName);
-  });
 }
 
 module.exports = {

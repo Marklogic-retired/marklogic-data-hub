@@ -12,6 +12,14 @@
         "sourceDatabase": "data-hub-FINAL",
         "targetDatabase": "data-hub-FINAL"
       }
+    },
+    "2": {
+      "stepDefinitionName": "errorStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL"
+      }
     }
   }
 }

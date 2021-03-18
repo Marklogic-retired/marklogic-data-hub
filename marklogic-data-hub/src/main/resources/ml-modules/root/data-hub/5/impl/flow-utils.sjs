@@ -733,6 +733,36 @@ function writeContentArray(contentArray, databaseName, baseCollections = []) {
   return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs', vars, options));
 }
 
+/**
+ * 
+ * @param theFlow 
+ * @param stepDefinition 
+ * @param stepNumber 
+ * @param runtimeOptions 
+ * @returns the "combined" options based on the order of precedence of option sources. 
+ * If stepOptions is present in runtimeOptions, and stepOptions has a key matching that of the 
+ * stepNumber, then the value of that key will also be applied to the combined options. Note that
+ * the combined options will also have "stepOptions" present in it if that exists in the runtime 
+ * options.
+ */
+function makeCombinedOptions(theFlow, stepDefinition, stepNumber, runtimeOptions) {
+  theFlow = theFlow || {};
+  const flowSteps = theFlow.steps || {};
+  stepDefinition = stepDefinition || {};
+  runtimeOptions = runtimeOptions || {};
+
+  const stepRuntimeOptions = runtimeOptions.stepOptions ? runtimeOptions.stepOptions[stepNumber] : {};
+  const stepOptions = flowSteps[stepNumber] ? flowSteps[stepNumber].options : {};
+  
+  return Object.assign({}, 
+    stepDefinition.options,
+    theFlow.options,
+    stepOptions, 
+    runtimeOptions, 
+    stepRuntimeOptions
+  );
+}
+
 module.exports = {
   addMetadataToContent,
   cleanData,
@@ -748,6 +778,7 @@ module.exports = {
   getTriplesAsObject,
   isNonStringIterable,
   jsonToXml,
+  makeCombinedOptions,
   makeEnvelope,
   mergeHeaders,
   normalizeValuesInNode,

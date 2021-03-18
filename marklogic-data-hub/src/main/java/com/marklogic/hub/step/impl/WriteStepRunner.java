@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JacksonCSVSplitter;
 import com.marklogic.client.datamovement.JobTicket;
@@ -35,13 +34,11 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
@@ -178,32 +175,11 @@ public class WriteStepRunner implements StepRunner {
 
     @Override
     @SuppressWarnings("unchecked")
-    public StepRunner withOptions(Map<String, Object> options) {
+    public StepRunner withOptions(Map<String, Object> runtimeOptions) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
         }
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Object> stepDefMap = null;
-        if(stepDef != null) {
-            stepDefMap = mapper.convertValue(stepDef.getOptions(), Map.class);
-        }
-        Map<String, Object> stepMap = mapper.convertValue(this.flow.getStep(step).getOptions(), Map.class);
-        Map<String,Object> flowMap = mapper.convertValue(flow.getOptions(), Map.class);
-        Map<String, Object> combinedOptions = new HashMap<>();
-
-        if(stepDefMap != null){
-            combinedOptions.putAll(stepDefMap);
-        }
-        if(flowMap != null) {
-            combinedOptions.putAll(flowMap);
-        }
-        if(stepMap != null){
-            combinedOptions.putAll(stepMap);
-        }
-        if(options != null) {
-            combinedOptions.putAll(options);
-        }
-        this.options = combinedOptions;
+        this.options = StepRunnerUtil.makeCombinedOptions(this.flow, this.stepDef, this.step, runtimeOptions);
         return this;
     }
 
