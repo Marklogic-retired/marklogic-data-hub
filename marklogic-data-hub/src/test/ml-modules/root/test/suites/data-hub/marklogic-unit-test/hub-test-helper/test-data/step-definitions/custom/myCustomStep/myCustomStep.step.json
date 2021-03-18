@@ -1,0 +1,6 @@
+{
+  "lang": "zxx",
+  "name": "myCustomStep",
+  "type": "CUSTOM",
+  "modulePath": "/doesnt-matter.sjs"
+}
