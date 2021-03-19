@@ -6,8 +6,9 @@ import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
-import {faList, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
+import {faList, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {getMappingFunctions} from "../../../../api/mapping";
+import EntitySettings from "../entity-settings/entity-settings";
 
 
 interface Props {
@@ -34,6 +35,8 @@ interface Props {
   allEntityKeys: any;
   setExpandedEntityFlag: any;
   initialEntityKeys: any;
+  tooltipsData: any;
+  updateStep?: any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
@@ -567,7 +570,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       <div className = {styles.entityTopRow}>
         <div className={styles.entityTitle}><strong>{props.entityTypeTitle}</strong></div>
         <div className={styles.entitySettingsLink}>
-          <FontAwesomeIcon icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"}/>
+          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} updateStep={props.updateStep} stepData={props.mapData}/>
         </div>
       </div>
       <div className={styles.entityFilterContainer}>
