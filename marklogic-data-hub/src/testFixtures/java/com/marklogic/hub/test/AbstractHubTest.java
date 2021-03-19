@@ -502,6 +502,10 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, "job");
     }
 
+    protected int getJobDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
+    }
+
     protected int getDocCount(String database, String collection) {
         String collectionName = "";
         if (collection != null) {

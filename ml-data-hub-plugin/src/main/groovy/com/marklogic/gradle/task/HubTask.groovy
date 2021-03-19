@@ -32,9 +32,22 @@ import com.marklogic.hub.legacy.LegacyTracing
 import com.marklogic.hub.legacy.job.LegacyJobManager
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal
 
 abstract class HubTask extends DefaultTask {
+
+    String getRequiredPropertyValue(propertyName, errorMessage) {
+        def value = getOptionalPropertyValue(propertyName)
+        if (value == null) {
+            throw new GradleException(errorMessage)
+        }
+        return value
+    }
+
+    String getOptionalPropertyValue(String propertyName) {
+        return project.hasProperty(propertyName) ? project.property(propertyName).toString() : null
+    }
 
     @Internal
     HubConfig getHubConfig() {
