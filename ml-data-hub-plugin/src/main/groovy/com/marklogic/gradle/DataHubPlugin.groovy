@@ -37,6 +37,7 @@ import com.marklogic.hub.gradle.task.FixCreatedByStepTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
+import com.marklogic.hub.gradle.task.GenerateTestSuiteTask
 import com.marklogic.hub.gradle.task.PreviewFixCreatedByStepTask
 import com.marklogic.hub.gradle.task.PrintInheritableRolesTask
 import com.marklogic.hub.gradle.task.PullChangesTask
@@ -91,7 +92,7 @@ class DataHubPlugin implements Plugin<Project> {
         setupHub(project)
 
         String setupGroup = "Data Hub Setup"
-        project.task("hubInit", group: setupGroup, type: InitProjectTask, 
+        project.task("hubInit", group: setupGroup, type: InitProjectTask,
             description: "Initialize the project directory before deploying to MarkLogic")
         project.task("hubUpdate", group: setupGroup, type: UpdateHubTask,
             description: "Update the project directory; typically run after upgrading the version of DHF used in this project's Gradle file")
@@ -154,7 +155,7 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Clears user modules in the modules database, only leaving the modules " +
                 "that come with DataHub installation. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask,
-            description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " + 
+            description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " +
                 "only use this if your project has not been converted for Hub Central usage")
         project.task("hubCreateStepDefinition", group: developGroup, type: CreateStepDefinitionTask,
             description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
@@ -173,6 +174,8 @@ class DataHubPlugin implements Plugin<Project> {
                 "optionally generate a default set of inline steps by including -PwithInlineSteps=true")
         project.task("hubGeneratePii", group: developGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
+        project.task("hubGenerateTestSuite", group: developGroup, type: GenerateTestSuiteTask,
+            description: "Generate a marklogic-unit-test test suite; requires -Psuite=suiteName to be defined")
         project.task("hubGenerateTDETemplates", group: developGroup, type: GenerateTDETemplateFromEntityTask,
             description: "Generates TDE Templates from the entity definition files. It is possible to only generate TDE templates" +
                 " for specific entities by setting the (comma separated) project property 'entityNames'. E.g. -PentityNames=Entity1,Entity2")

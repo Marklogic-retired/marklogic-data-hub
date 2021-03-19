@@ -15,15 +15,15 @@
 :)
 xquery version "1.0-ml";
 
-module namespace dhmut = "http://marklogic.com/data-hub/marklogic-unit-test";
+module namespace dhmut = "http://marklogic.com/data-hub/ext/marklogic-unit-test";
 
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/config.xqy";
 
 (:
-Prepares the staging, final, and jobs databases so that a test can run in a clean environment. "clean" in this 
-context is defined as: the staging and final databases only contain user and DHF artifacts, and the jobs database 
-has been cleared of jobs data. 
+Prepares the staging, final, and jobs databases so that a test can run in a clean environment. "clean" in this
+context is defined as: the staging and final databases only contain user and DHF artifacts, and the jobs database
+has been cleared of jobs data.
 :)
 declare function prepare-databases() as empty-sequence()
 {
@@ -57,10 +57,10 @@ declare function prepare-database($database-name as xs:string) as empty-sequence
 Clears the jobs collection via a collection delete. The database/forests are not cleared
 in case the jobs database has other data that should remain in between test suite runs.
 
-Provenance data is not deleted by this due to the protected collection restriction on 
-provenance documents. That restriction requires either an admin user or a user with the 
+Provenance data is not deleted by this due to the protected collection restriction on
+provenance documents. That restriction requires either an admin user or a user with the
 ps-internal role, neither of which is recommended for running tests. User tests may instead
-install their own amp to allow for the provenance collection to be deleted, assuming that is 
+install their own amp to allow for the provenance collection to be deleted, assuming that is
 necessary to prepare the jobs database.
 :)
 declare function prepare-jobs-database() as empty-sequence()
