@@ -378,3 +378,7 @@ ul.ant-cascader-menu:nth-child(2) {
 .ant-page-header-back-button:hover {
   color: #7FADE3;
 }
+
+#entitySettings .ant-popover-arrow {
+  display: none !important;
+}

@@ -1367,6 +1367,8 @@ const MappingStepDetail: React.FC = () => {
                 allEntityKeys={allEntityKeys}
                 setExpandedEntityFlag={setExpandedEntityFlag}
                 initialEntityKeys={initialEntityKeys}
+                tooltipsData={AdvMapTooltips}
+                updateStep={UpdateMappingArtifact}
               />
             </div>
           </SplitPane>

@@ -579,7 +579,6 @@ describe("RTL Source-to-entity map tests", () => {
     //Verify entity settings icon also exist in the first row
     expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
-
     //Check sort order of Name Column before clicking on sort button
     let entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
     validateMappingTableRow(entTable, ["propId", "propName", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties);
