@@ -228,7 +228,7 @@ class TlsTest extends BaseTest {
         createProperties()
         result = runTask("enableSSL")
         print(result.output)
-        hubConfig().refreshProject()
+        hubConfig().loadConfigurationFromProperties(null, true)
     }
 
 

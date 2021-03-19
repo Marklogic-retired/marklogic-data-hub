@@ -244,10 +244,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         return hubProject;
     }
 
-    public void createProject(String projectDirString) {
-        requireHubProject().createProject(projectDirString);
-    }
-
     public String getHost() { return appConfig != null ? appConfig.getHost() : super.getHost(); }
 
     @Override public String getDbName(DatabaseKind kind){
@@ -815,31 +811,31 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     }
 
     // roles and users
-    @Override public String getFlowOperatorRoleName() {
+    public String getFlowOperatorRoleName() {
         return flowOperatorRoleName;
     }
-    @Override public void setFlowOperatorRoleName(String flowOperatorRoleName) {
+    public void setFlowOperatorRoleName(String flowOperatorRoleName) {
         this.flowOperatorRoleName = flowOperatorRoleName;
     }
 
-    @Override public String getFlowOperatorUserName() {
+    public String getFlowOperatorUserName() {
         return flowOperatorUserName;
     }
-    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
+    public void setFlowOperatorUserName(String flowOperatorUserName) {
         this.flowOperatorUserName = flowOperatorUserName;
     }
 
-    @Override public String getFlowDeveloperRoleName() {
+    public String getFlowDeveloperRoleName() {
         return flowDeveloperRoleName;
     }
-    @Override public void setFlowDeveloperRoleName(String flowDeveloperRoleName) {
+    public void setFlowDeveloperRoleName(String flowDeveloperRoleName) {
         this.flowDeveloperRoleName = flowDeveloperRoleName;
     }
 
-    @Override public String getFlowDeveloperUserName() {
+    public String getFlowDeveloperUserName() {
         return flowDeveloperUserName;
     }
-    @Override  public void setFlowDeveloperUserName(String flowDeveloperUserName) {
+    public void setFlowDeveloperUserName(String flowDeveloperUserName) {
         this.flowDeveloperUserName = flowDeveloperUserName;
     }
 
@@ -921,19 +917,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         this.jobPermissions = jobPermissions;
     }
 
-
-    @Override
-    @Deprecated
-    public String getProjectDir() {
-        return requireHubProject().getProjectDirString();
-    }
-
-    @Override
-    @Deprecated
-    public void setProjectDir(String projectDir) {
-        createProject(projectDir);
-    }
-
     public void setEntityModelPermissions(String entityModelPermissions) {
         this.entityModelPermissions = entityModelPermissions;
     }
@@ -967,11 +950,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         this.requireHubProject().init(appConfig.getCustomTokens());
     }
 
-    @JsonIgnore
-    public void refreshProject() {
-        loadConfigurationFromProperties(null, true);
-    }
-
     /**
      * Use this when you need to apply properties, and you likely also want to load properties from Gradle files.
      * As of 5.3.0, this is really only intended for use within QuickStart, which depends on getting properties from
@@ -998,7 +976,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
                         logger.info("Loading additional properties from " + envPropertiesFile.getAbsolutePath());
                     }
                     loadPropertiesFromFile(envPropertiesFile, gradleAndUserProperties);
-                    requireHubProject().setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
+                    requireHubProject().setUserModulesDeployTimestampFile(envString + "-" + HubProject.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
                 }
             }
         }
@@ -1035,10 +1013,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     }
     public void setAdminManager(AdminManager adminManager) { this.adminManager = adminManager; }
 
-    public DatabaseClient newAppServicesClient() {
-        return getAppConfig().newAppServicesDatabaseClient(getStagingDbName());
-    }
-
     @Override
     public DatabaseClient newStagingClient() {
         return newStagingClient(getStagingDbName());
@@ -1054,94 +1028,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     @Override
     public DatabaseClient newFinalClient() {
         return newFinalClient(getFinalDbName());
-    }
-
-    @Deprecated
-    public DatabaseClient newTraceDbClient() {
-        return newJobDbClient();
-    }
-
-    @JsonIgnore
-    @Override public Path getModulesDir() {
-        return requireHubProject().getModulesDir();
-    }
-
-    @JsonIgnore
-    public Path getHubProjectDir() { return requireHubProject().getProjectDir(); }
-
-    @JsonIgnore
-    @Override public Path getHubPluginsDir() {
-        return requireHubProject().getHubPluginsDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getHubEntitiesDir() { return requireHubProject().getHubEntitiesDir(); }
-
-    @JsonIgnore
-    @Override public Path getHubMappingsDir() { return requireHubProject().getHubMappingsDir(); }
-
-    @JsonIgnore
-    @Override
-    public Path getStepDefinitionPath(StepDefinition.StepDefinitionType type) {
-        return requireHubProject().getStepDefinitionPath(type);
-    }
-
-    @JsonIgnore
-    @Override public Path getHubConfigDir() {
-        return requireHubProject().getHubConfigDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getHubDatabaseDir() {
-        return requireHubProject().getHubDatabaseDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getHubServersDir() {
-        return requireHubProject().getHubServersDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getHubSecurityDir() {
-        return requireHubProject().getHubSecurityDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserSecurityDir() {
-        return requireHubProject().getUserSecurityDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserConfigDir() {
-        return requireHubProject().getUserConfigDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserDatabaseDir() {
-        return requireHubProject().getUserDatabaseDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserSchemasDir() { return requireHubProject().getUserSchemasDir(); }
-
-    @JsonIgnore
-    @Override public Path getEntityDatabaseDir() {
-        return requireHubProject().getEntityDatabaseDir();
-    }
-
-    @Override
-    public Path getFlowsDir() {
-        return requireHubProject().getFlowsDir();
-    }
-
-    @Override
-    public Path getStepDefinitionsDir() {
-        return requireHubProject().getStepDefinitionsDir();
-    }
-
-    @JsonIgnore
-    @Override public Path getUserServersDir() {
-        return requireHubProject().getUserServersDir();
     }
 
     @JsonIgnore
@@ -1294,7 +1180,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
             initializeConfigDirs(config);
             initializeModulePaths(config);
             List<String> paths = new ArrayList<>();
-            paths.add(getUserSchemasDir().toString());
+            paths.add(getHubProject().getUserSchemasDir().toString());
             config.setSchemaPaths(paths);
         }
 
@@ -1323,8 +1209,8 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
         if (configDirsIsSetToTheMlAppDeployerDefault) {
             List<ConfigDir> configDirs = new ArrayList<>();
-            configDirs.add(new ConfigDir(getHubConfigDir().toFile()));
-            configDirs.add(new ConfigDir(getUserConfigDir().toFile()));
+            configDirs.add(new ConfigDir(getHubProject().getHubConfigDir().toFile()));
+            configDirs.add(new ConfigDir(getHubProject().getUserConfigDir().toFile()));
             config.setConfigDirs(configDirs);
         }
         else {
@@ -1385,18 +1271,13 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     }
 
     @JsonIgnore
-    public String getInfo()
-    {
-
+    public String getInfo() {
         try {
             return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
         }
-        catch(Exception e)
-        {
-            throw new DataHubConfigurationException("Your datahub configuration could not serialize");
-
+        catch(Exception e) {
+            throw new RuntimeException("Unable to serialize HubConfigImpl: " + e.getMessage());
         }
-
     }
 
     /**
@@ -1410,7 +1291,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     @JsonIgnore
     public HubConfig withPropertiesFromEnvironment(String environment) {
         this.envString = environment;
-        requireHubProject().setUserModulesDeployTimestampFile(envString + "-" + USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
+        requireHubProject().setUserModulesDeployTimestampFile(envString + "-" + HubProject.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES);
         return this;
     }
 

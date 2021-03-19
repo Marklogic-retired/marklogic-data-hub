@@ -37,6 +37,7 @@ import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
@@ -76,32 +77,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Component
-public class DataHubImpl implements DataHub, InitializingBean {
+public class DataHubImpl extends LoggingObject implements DataHub {
 
     @Autowired
     private HubConfig hubConfig;
 
     private HubClient hubClient;
-
-    private LoadHubModulesCommand loadHubModulesCommand;
-
-    private LoadUserModulesCommand loadUserModulesCommand;
-
-    private LoadUserArtifactsCommand loadUserArtifactsCommand;
-
-    private LoadHubArtifactsCommand loadHubArtifactsCommand;
-
-    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
-
     private Versions versions;
-
-    @Autowired
-    FlowRunner flowRunner;
-
-    @Autowired
-    FlowManager flowManager;
-
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public DataHubImpl() {
         super();
@@ -110,7 +92,12 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public DataHubImpl(HubConfig hubConfig) {
         this();
         this.hubConfig = hubConfig;
-        afterPropertiesSet();
+    }
+
+    public DataHubImpl(HubConfig hubConfig, Versions versions) {
+        this();
+        this.hubConfig = hubConfig;
+        this.versions = versions;
     }
 
     /**
@@ -121,15 +108,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public DataHubImpl(HubClient hubClient) {
         this();
         this.hubClient = hubClient;
-    }
-
-    public void afterPropertiesSet() {
-        this.versions = new Versions(hubConfig);
-        this.generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig);
-        this.loadHubModulesCommand = new LoadHubModulesCommand(hubConfig);
-        this.loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
-        this.loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
-        this.loadHubArtifactsCommand = new LoadHubArtifactsCommand(hubConfig);
     }
 
     /**
@@ -145,11 +123,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
             new ServerManager(hubConfig.getManageClient());
     }
 
-    @Override
-    public void clearDatabase(String database) {
-        getDatabaseManager().clearDatabase(database);
-    }
-
     private AdminManager getAdminManager() {
         return hubConfig.getAdminManager();
     }
@@ -160,11 +133,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
     private DatabaseManager getDatabaseManager() {
         return new DatabaseManager(getManageClient());
-    }
-
-    @Override
-    public FlowRunner getFlowRunner() {
-        return  this.flowRunner;
     }
 
     @Override
@@ -297,12 +265,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     @Override
-    public void initProject() {
-        logger.info("Initializing the Hub Project");
-        hubConfig.initHubProject();
-    }
-
-    @Override
     public void clearUserModules() {
         clearUserModules(null);
     }
@@ -420,12 +382,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
         logger.info("Finished clearing user artifacts; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
-    public void deleteDocument(String uri, DatabaseKind databaseKind) {
-        String query = "xdmp:document-delete(\"" + uri + "\")";
-        logger.info("Deleting URI " + uri + " from " + databaseKind + " database.");
-        runInDatabase(query, hubConfig.getDbName(databaseKind));
-    }
-
     public List<Command> buildListOfCommands() {
         Map<String, List<Command>> commandMap = buildCommandMap();
         List<Command> commands = new ArrayList<>();
@@ -496,7 +452,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         }
 
 
-        serverVersion = versions.getMarkLogicVersionString();
+        serverVersion = getVersions().getMarkLogicVersionString();
         serverVersionOk = isServerVersionValid(serverVersion);
         Map<String, Object> response = new HashMap<>();
         response.put("serverVersion", serverVersion);
@@ -527,7 +483,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     @Override
     public void install(HubDeployStatusListener listener) {
         if (!hubConfig.getHubProject().isInitialized()) {
-            initProject();
+            hubConfig.initHubProject();
         }
 
         logger.warn("Installing the Data Hub into MarkLogic");
@@ -611,32 +567,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
      */
     protected Pattern buildPatternForDatabasesToUpdateIndexesFor() {
         return Pattern.compile("(staging|final|job)-database.json");
-    }
-
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     */
-    @Override
-    public void uninstall() {
-        uninstall(null);
-    }
-
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     *
-     * @param listener - the callback method to receive status updates
-     */
-    @Override
-    public void uninstall(HubDeployStatusListener listener) {
-        logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
-        List<Command> commandMap = buildListOfCommands();
-
-        // Removing this command as databases are deleted by other DatabaseCommands
-        commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
-
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setCommands(commandMap);
-        finalDeployer.undeploy(hubConfig.getAppConfig());
     }
 
     private void runInDatabase(String query, String databaseName) {
@@ -741,11 +671,11 @@ public class DataHubImpl implements DataHub, InitializingBean {
      */
     private void updateModuleCommandList(Map<String, List<Command>> commandsMap) {
         List<Command> commands = new ArrayList<>();
-        commands.add(loadHubModulesCommand);
-        commands.add(loadUserModulesCommand);
-        commands.add(loadUserArtifactsCommand);
-        commands.add(loadHubArtifactsCommand);
-        commands.add(generateFunctionMetadataCommand);
+        commands.add(new LoadHubModulesCommand(hubConfig));
+        commands.add(new LoadUserModulesCommand(hubConfig));
+        commands.add(new LoadUserArtifactsCommand(hubConfig));
+        commands.add(new LoadHubArtifactsCommand(hubConfig));
+        commands.add(new GenerateFunctionMetadataCommand(hubConfig));
 
         for (Command c : commandsMap.get("mlModuleCommands")) {
             if (c instanceof LoadModulesCommand) {
@@ -754,7 +684,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             }
             if (c instanceof DeleteTestModulesCommand) {
                 // Make sure this runs after our custom command for loading modules
-                ((DeleteTestModulesCommand) c).setExecuteSortOrder(loadUserModulesCommand.getExecuteSortOrder() + 1);
+                ((DeleteTestModulesCommand) c).setExecuteSortOrder(new LoadUserModulesCommand().getExecuteSortOrder() + 1);
             }
             commands.add(c);
         }
@@ -803,15 +733,13 @@ public class DataHubImpl implements DataHub, InitializingBean {
     private boolean serverVersionOk;
     private String serverVersion;
 
-    @Override
-    public boolean isSafeToInstall() {
+    protected boolean isSafeToInstall() {
         return !(isPortInUse(DatabaseKind.FINAL) ||
             isPortInUse(DatabaseKind.STAGING) ||
             isPortInUse(DatabaseKind.JOB)) && isServerVersionOk();
     }
 
-    @Override
-    public boolean isPortInUse(DatabaseKind kind) {
+    protected boolean isPortInUse(DatabaseKind kind) {
         boolean inUse;
         switch (kind) {
             case STAGING:
@@ -830,62 +758,16 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     @Override
-    public void setPortInUseBy(DatabaseKind kind, String usedBy) {
-        switch (kind) {
-            case STAGING:
-                stagingPortInUseBy = usedBy;
-                break;
-            case FINAL:
-                finalPortInUseBy = usedBy;
-                break;
-            case JOB:
-                jobPortInUseBy = usedBy;
-                break;
-            default:
-                throw new InvalidDBOperationError(kind, "set if port in use");
-        }
-    }
-
-    @Override
-    public String getPortInUseBy(DatabaseKind kind) {
-        String inUseBy;
-        switch (kind) {
-            case STAGING:
-                inUseBy = stagingPortInUseBy;
-                break;
-            case FINAL:
-                inUseBy = finalPortInUseBy;
-                break;
-            case JOB:
-                inUseBy = jobPortInUseBy;
-                break;
-            default:
-                throw new InvalidDBOperationError(kind, "check if port is in use");
-        }
-        return inUseBy;
-    }
-
-    @Override
     public boolean isServerVersionOk() {
         return serverVersionOk;
     }
 
     @Override
-    public void setServerVersionOk(boolean serverVersionOk) {
-        this.serverVersionOk = serverVersionOk;
-    }
-
-    @Override
     public String getServerVersion() {
         if(serverVersion == null) {
-            serverVersion = versions.getMarkLogicVersionString();
+            serverVersion = getVersions().getMarkLogicVersionString();
         }
         return serverVersion;
-    }
-
-    @Override
-    public void setServerVersion(String serverVersion) {
-        this.serverVersion = serverVersion;
     }
 
     @Override
@@ -899,7 +781,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
         if (isHubInstalled) {
             final String minUpgradeVersion = "4.3.0";
-            final String installedVersion = versions.getInstalledVersion();
+            final String installedVersion = getVersions().getInstalledVersion();
             // Warn is used so this appears when using Gradle without "-i"
             logger.warn("Currently installed DHF version: " + installedVersion);
             if (Versions.compare(installedVersion, minUpgradeVersion) == -1) {
@@ -914,11 +796,11 @@ public class DataHubImpl implements DataHub, InitializingBean {
         try {
             if (hubConfig.getHubProject().isInitialized()) {
                 prepareProjectBeforeUpgrading(hubConfig.getHubProject(), hubConfig.getJarVersion());
-                hubConfig.getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
+                hubConfig.getHubProject().getHubSecurityDir().resolve("roles").resolve("flow-operator.json").toFile().delete();
             }
 
             hubConfig.initHubProject();
-            hubConfig.getHubProject().upgradeProject(flowManager);
+            hubConfig.getHubProject().upgradeProject(new FlowManagerImpl(hubConfig));
             System.out.println("Starting in version 5.2.0, the default value of mlModulePermissions has been changed to \"data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute\". " +
                 "It is recommended to remove this property from gradle.properties unless you must customize the value." );
 
@@ -975,36 +857,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
         final String backupPath = HubProject.HUB_CONFIG_DIR + "-pre-" + newDataHubVersion;
         FileUtils.copyDirectory(hubProject.getHubConfigDir().toFile(), hubProject.getProjectDir().resolve(backupPath).toFile());
         logger.warn("The " + HubProject.HUB_CONFIG_DIR + " directory has been moved to " + backupPath + " so that it can be re-initialized using the new version of Data Hub");
-    }
-
-    // only used in test
-    public void setHubConfig(HubConfigImpl hubConfig) {
-        this.hubConfig = hubConfig;
-        if (this.loadUserModulesCommand != null) {
-            this.loadUserModulesCommand.setHubConfig(hubConfig);
-        }
-        if (this.loadHubModulesCommand != null) {
-            this.loadHubModulesCommand.setHubConfig(hubConfig);
-        }
-        if (this.loadHubArtifactsCommand != null) {
-            this.loadHubArtifactsCommand.setHubConfig(hubConfig);
-        }
-        if (this.loadUserArtifactsCommand != null) {
-            this.loadUserArtifactsCommand.setHubConfig(hubConfig);
-        }
-        if (this.generateFunctionMetadataCommand != null) {
-            this.generateFunctionMetadataCommand.setHubConfig(hubConfig);
-        }
-    }
-
-    // only used in test
-    public HubConfig getHubConfig() {
-        return this.hubConfig;
-    }
-
-    // only used in test
-    public void setVersions(Versions versions) {
-        this.versions = versions;
     }
 
     /**
@@ -1088,5 +940,12 @@ public class DataHubImpl implements DataHub, InitializingBean {
         logger.info("Writing user and hub artifacts to " + databaseName + "; count: " + writeSet.size());
         mgr.write(writeSet);
         logger.info("Finished writing user and hub artifacts to " + databaseName);
+    }
+
+    protected Versions getVersions() {
+        if (this.versions == null) {
+            this.versions = new Versions(hubConfig);
+        }
+        return this.versions;
     }
 }

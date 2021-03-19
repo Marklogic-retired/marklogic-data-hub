@@ -137,8 +137,8 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
      * @throws IOException
      */
     protected ObjectNode mergePayloadWithEntityConfigFileIfItExists(CommandContext context, ObjectNode payloadNode) throws IOException {
-        if (hubConfig.getEntityDatabaseDir() != null && this.databaseFilename != null) {
-            File entityDatabaseDir = hubConfig.getEntityDatabaseDir().toFile();
+        if (hubConfig.getHubProject().getEntityDatabaseDir() != null && this.databaseFilename != null) {
+            File entityDatabaseDir = hubConfig.getHubProject().getEntityDatabaseDir().toFile();
             if (entityDatabaseDir != null) {
                 File entityDatabaseFile = new File(entityDatabaseDir, this.databaseFilename);
                 if (entityDatabaseFile != null && entityDatabaseFile.exists()) {

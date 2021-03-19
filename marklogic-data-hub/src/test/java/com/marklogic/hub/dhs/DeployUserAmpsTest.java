@@ -121,7 +121,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         ObjectNode roleNode = objectMapper.createObjectNode();
         roleNode.put("role-name", "test-custom-role");
         roleNode.set("role", objectMapper.createArrayNode().add("data-hub-developer").add("pii-reader"));
-        writePayLoadToFileAndDeploy(getHubConfig().getUserSecurityDir().resolve("roles"), "customRole.json", roleNode);
+        writePayLoadToFileAndDeploy(getHubProject().getUserSecurityDir().resolve("roles"), "customRole.json", roleNode);
         ResourcesFragment amps;
         try {
             writeAmpFileToProjectAndDeploy(HubConfig.DEFAULT_MODULES_DB_NAME,"test-custom-role");
@@ -184,7 +184,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     }
 
     private void writeAmpFileToProjectAndDeploy(String dbName, String ... roleNames) {
-        writePayLoadToFileAndDeploy(getHubConfig().getUserSecurityDir().resolve("amps"), "getPiiData.json", getAmpNode(dbName, roleNames));
+        writePayLoadToFileAndDeploy(getHubProject().getUserSecurityDir().resolve("amps"), "getPiiData.json", getAmpNode(dbName, roleNames));
     }
 
     private ObjectNode getAmpNode(String dbName, String ... roleNames){

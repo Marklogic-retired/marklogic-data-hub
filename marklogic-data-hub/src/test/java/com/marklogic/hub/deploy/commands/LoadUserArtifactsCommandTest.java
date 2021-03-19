@@ -171,7 +171,7 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         node.put("type", "mapping");
 
         String errorMessage = "Invalid name: 'my Artifact'; it must start with a letter and can contain letters, numbers, hyphens and underscores only.";
-        Path stepDefDir = hubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.MAPPING).resolve("myArtifact");
+        Path stepDefDir = getHubProject().getStepDefinitionPath(StepDefinition.StepDefinitionType.MAPPING).resolve("myArtifact");
         stepDefDir.toFile().mkdirs();
         File stepDefFile = stepDefDir.resolve("myArtifact.step.json").toFile();
         stepDefFile.createNewFile();
@@ -186,7 +186,7 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         node.remove("type");
         stepDefFile.delete();
 
-        File flowFile = hubConfig.getFlowsDir().resolve("myArtifact.flow.json").toFile();
+        File flowFile = getHubProject().getFlowsDir().resolve("myArtifact.flow.json").toFile();
         flowFile.createNewFile();
         writer.writeValue(flowFile, node);
 
@@ -195,7 +195,7 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         assertEquals(errorMessage, ex.getServerMessage());
 
         flowFile.delete();
-        Path ingestionStepDir = hubConfig.getHubProjectDir().resolve("steps").resolve("ingestion");
+        Path ingestionStepDir = getHubProject().getProjectDir().resolve("steps").resolve("ingestion");
         ingestionStepDir.toFile().mkdirs();
         File ingestionStepFile = ingestionStepDir.resolve("myArtifact.step.json").toFile();
         ingestionStepFile.createNewFile();

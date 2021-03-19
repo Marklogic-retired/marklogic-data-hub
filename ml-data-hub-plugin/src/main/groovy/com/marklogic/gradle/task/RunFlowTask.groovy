@@ -20,6 +20,7 @@ package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.HubNotInstalledException
+import com.marklogic.hub.flow.impl.FlowRunnerImpl
 import com.marklogic.hub.impl.CommandLineFlowInputs
 import com.marklogic.hub.flow.FlowInputs
 import com.marklogic.hub.flow.FlowRunner
@@ -209,7 +210,7 @@ class RunFlowTask extends HubTask {
         println(pair.getRight())
 
         FlowInputs flowInputs = pair.getLeft()
-        FlowRunner flowRunner = dataHub.getFlowRunner()
+        FlowRunner flowRunner = new FlowRunnerImpl(getHubConfig(), getFlowManager())
         RunFlowResponse runFlowResponse = flowRunner.runFlow(flowName, steps, jobId, flowInputs.getOptions(), flowInputs.getStepConfig())
         flowRunner.awaitCompletion()
 

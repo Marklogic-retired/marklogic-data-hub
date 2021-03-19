@@ -38,7 +38,7 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
 
         logger.info("Initializing DHF into project directory: " + projectDir);
 
-        hubConfig.createProject(projectDir.getAbsolutePath());
+        hubConfig.getHubProject().createProject(projectDir.getAbsolutePath());
         hubConfig.initHubProject();
 
         Map<String, String> params = options.getParams();

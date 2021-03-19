@@ -138,7 +138,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     @Override public ArrayList<String> getMappingsNames() {
-        return (ArrayList<String>)FileUtil.listDirectFolders(hubConfig.getHubMappingsDir().toFile());
+        return (ArrayList<String>)FileUtil.listDirectFolders(hubConfig.getHubProject().getHubMappingsDir().toFile());
     }
 
     @Override public ArrayList<Mapping> getMappings() {
@@ -160,7 +160,7 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
 
     private Mapping getMappingVersion(String mappingName, int version){
         int mappingExtensionCount = MAPPING_FILE_EXTENSION.length();
-        Path mappingPath = Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
+        Path mappingPath = Paths.get(hubConfig.getHubProject().getHubMappingsDir().toString(), mappingName);
         List<String> fileNames = FileUtil.listDirectFiles(mappingPath);
         String targetFileName = null;
         int    highestVersion  = -1;
@@ -238,6 +238,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     }
 
     private Path getMappingDirPath(String mappingName){
-        return Paths.get(hubConfig.getHubMappingsDir().toString(), mappingName);
+        return Paths.get(hubConfig.getHubProject().getHubMappingsDir().toString(), mappingName);
     }
 }

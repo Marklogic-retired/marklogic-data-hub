@@ -2,6 +2,7 @@ package com.marklogic.hub.core;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
@@ -165,9 +166,9 @@ public class HubProjectTest extends AbstractHubCoreTest {
 
         HubConfigImpl hubConfig = new HubConfigImpl(getHubProject());
         hubConfig.withPropertiesFromEnvironment(envName);
-        hubConfig.refreshProject();
+        hubConfig.loadConfigurationFromProperties(null, true);
 
-        String expectedPath = Paths.get(getHubProject().getProjectDirString(), ".tmp", envName + "-" + hubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+        String expectedPath = Paths.get(getHubProject().getProjectDirString(), ".tmp", envName + "-" + HubProject.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
 
         assertEquals(expectedPath, hubConfig.getHubProject().getUserModulesDeployTimestampFile());
     }

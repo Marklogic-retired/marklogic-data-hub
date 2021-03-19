@@ -45,16 +45,14 @@ public class DataHubImplTest extends AbstractHubCoreTest {
     public void beforeTests() {
         serverManager = EasyMock.mock(ServerManager.class);
 
-        dh = EasyMock.createMockBuilder(DataHubImpl.class)
-            .withConstructor()
-            .createMock();
-        dh.setHubConfig(getHubConfig());
-
         versions = EasyMock.createMockBuilder(Versions.class)
             .withConstructor()
             .addMockedMethod("getMarkLogicVersionString")
             .createMock();
-        dh.setVersions(versions);
+
+        dh = EasyMock.createMockBuilder(DataHubImpl.class)
+            .withConstructor(getHubConfig(), versions)
+            .createMock();
     }
 
     @Test
@@ -243,7 +241,6 @@ public class DataHubImplTest extends AbstractHubCoreTest {
         dh.runPreInstallCheck(serverManager);
         assertTrue(dh.isServerVersionOk());
         assertTrue(dh.isPortInUse(DatabaseKind.STAGING));
-        assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
         assertFalse(dh.isSafeToInstall());
@@ -265,7 +262,6 @@ public class DataHubImplTest extends AbstractHubCoreTest {
         dh.runPreInstallCheck(serverManager);
         assertFalse(dh.isServerVersionOk());
         assertTrue(dh.isPortInUse(DatabaseKind.STAGING));
-        assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.STAGING));
         assertFalse(dh.isPortInUse(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
         assertFalse(dh.isSafeToInstall());
@@ -288,7 +284,6 @@ public class DataHubImplTest extends AbstractHubCoreTest {
         assertTrue(dh.isServerVersionOk());
         assertFalse(dh.isPortInUse(DatabaseKind.STAGING));
         assertTrue(dh.isPortInUse(DatabaseKind.FINAL));
-        assertEquals("port-stealer", dh.getPortInUseBy(DatabaseKind.FINAL));
         assertFalse(dh.isPortInUse(DatabaseKind.JOB));
         assertFalse(dh.isSafeToInstall());
     }

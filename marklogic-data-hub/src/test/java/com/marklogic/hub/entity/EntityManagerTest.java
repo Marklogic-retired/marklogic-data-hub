@@ -17,6 +17,7 @@ package com.marklogic.hub.entity;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.util.FileUtil;
@@ -72,19 +73,19 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         clearUserModules();
         Path dir = getHubProject().getEntityConfigDir();
 
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         // this should be true regardless
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertFalse(Paths.get(dir.toString(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertFalse(Paths.get(dir.toString(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
 
         HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
 
         assertEquals(2, deployed.size());
-        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertTrue(Paths.get(dir.toString(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE));
     }
 
     @Test
@@ -96,20 +97,20 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         runAsAdmin();
         Path dir = getHubProject().getEntityConfigDir();
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertFalse(Paths.get(dir.toString(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertFalse(Paths.get(dir.toString(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
 
         runAsDataHubDeveloper();
         entityManager.deployQueryOptions();
 
         // Gotta user admin in order to have read permission
         runAsAdmin();
-        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertTrue(Paths.get(dir.toString(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
     }
 
 
@@ -215,13 +216,13 @@ public class EntityManagerTest extends AbstractHubCoreTest {
                 .forEach(dbName -> assertNull(getModulesFile("/Default/" + dbName + "/rest-api/options/exp-default.xml"), "Did not expect exp-default.xml options file in " + dbName + "since we dont use it anymore."));
 
         Path dir = getHubProject().getEntityConfigDir();
-        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubProject.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubProject.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
 
-        String stagingOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
-        String finalOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
+        String stagingOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        String finalOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE);
         Stream<String> optionsString = Stream.of(stagingOptions, finalOptions);
         MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
         if(version.supportsRangeIndexConstraints()){
@@ -232,8 +233,8 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         }
 
 
-        String stagingExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
-        String finalExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
+        String stagingExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubProject.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        String finalExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubProject.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
         Stream.of(stagingExplorerOptions, finalExplorerOptions).forEach(option -> {
             assertNotNull(option, "Expected the option to be deployed since the conflicting container constraint has been removed.");
 

@@ -33,6 +33,7 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.*;
 import com.marklogic.hub.error.DataHubProjectException;
@@ -81,10 +82,10 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 dir.toFile().mkdirs();
             }
 
-            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
-            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
-            File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
-            File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File finalFile = Paths.get(dir.toString(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expStagingFile = Paths.get(dir.toString(), HubProject.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
+            File expFinalFile = Paths.get(dir.toString(), HubProject.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
 
             List<JsonNode> entities = getAllEntities();
             String options = generator.generateOptions(entities, false);
@@ -115,12 +116,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
         HashMap<Enum, Boolean> loadedResources = new HashMap<>();
 
-        if (deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE) &&
-            deployQueryOptions(hubConfig.newFinalClient(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE)) {
+        if (deployQueryOptions(hubConfig.newFinalClient(), HubProject.FINAL_ENTITY_QUERY_OPTIONS_FILE) &&
+            deployQueryOptions(hubConfig.newFinalClient(), HubProject.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE)) {
             loadedResources.put(DatabaseKind.FINAL, true);
         }
-        if (deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE) &&
-            deployQueryOptions(hubConfig.newStagingClient(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE)) {
+        if (deployQueryOptions(hubConfig.newStagingClient(), HubProject.STAGING_ENTITY_QUERY_OPTIONS_FILE) &&
+            deployQueryOptions(hubConfig.newStagingClient(), HubProject.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE)) {
             loadedResources.put(DatabaseKind.STAGING, true);
         }
 
@@ -155,9 +156,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Override
     public boolean saveDbIndexes() {
         try {
-            Path dir = hubConfig.getEntityDatabaseDir();
-            File finalFile = Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_DATABASE_FILE).toFile();
-            File stagingFile = Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_DATABASE_FILE).toFile();
+            Path dir = hubConfig.getHubProject().getEntityDatabaseDir();
+            File finalFile = Paths.get(dir.toString(), HubProject.FINAL_ENTITY_DATABASE_FILE).toFile();
+            File stagingFile = Paths.get(dir.toString(), HubProject.STAGING_ENTITY_DATABASE_FILE).toFile();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -192,7 +193,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
     private List<JsonNode> getAllEntities() {
         List<JsonNode> entities = new ArrayList<>(getAllLegacyEntities());
-        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        Path entitiesPath = hubConfig.getHubProject().getHubEntitiesDir();
         File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
         if (entityDefs != null) {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -376,7 +377,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Override
     public List<HubEntity> getEntities(Boolean extendSubEntities) {
         List<HubEntity> entities = new ArrayList<>();
-        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        Path entitiesPath = hubConfig.getHubProject().getHubEntitiesDir();
         ObjectMapper objectMapper = new ObjectMapper();
         File[] entityDefs = entitiesPath.toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
         if (entityDefs != null) {
@@ -431,7 +432,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 }
             }
         } else {
-            Path dir = hubConfig.getHubEntitiesDir();
+            Path dir = hubConfig.getHubProject().getHubEntitiesDir();
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -473,7 +474,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     }
 
     public void deleteEntity(String entity) {
-        Path entityPath = hubConfig.getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION);
+        Path entityPath = hubConfig.getHubProject().getHubEntitiesDir().resolve(entity + ENTITY_FILE_EXTENSION);
         if (entityPath.toFile().exists()) {
             entityPath.toFile().delete();
         }
@@ -501,8 +502,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Override
     public boolean savePii() {
         try {
-            Path protectedPaths = hubConfig.getUserSecurityDir().resolve("protected-paths");
-            Path queryRolesets = hubConfig.getUserSecurityDir().resolve("query-rolesets");
+            Path protectedPaths = hubConfig.getHubProject().getUserSecurityDir().resolve("protected-paths");
+            Path queryRolesets = hubConfig.getHubProject().getUserSecurityDir().resolve("query-rolesets");
             if (!protectedPaths.toFile().exists()) {
                 protectedPaths.toFile().mkdirs();
             }

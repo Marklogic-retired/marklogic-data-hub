@@ -128,7 +128,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
     @Override
     protected HubClient doRunAsUser(String username, String password) {
         // Need to create the project directory before applying properties
-        testHubConfig.createProject(testProjectDirectory);
+        testHubConfig.getHubProject().createProject(testProjectDirectory);
         testHubConfig.applyProperties(hubCentral.buildPropertySource(username, password));
 
         // Update the provider with a new HubClient
@@ -206,7 +206,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
         runAsAdmin();
         Path dir = getHubProject().getEntityDatabaseDir();
-        List<String> filePaths = Arrays.asList(HubConfig.FINAL_ENTITY_DATABASE_FILE, HubConfig.STAGING_ENTITY_DATABASE_FILE);
+        List<String> filePaths = Arrays.asList(HubProject.FINAL_ENTITY_DATABASE_FILE, HubProject.STAGING_ENTITY_DATABASE_FILE);
         for (String filePath: filePaths) {
             File dbFile = Paths.get(dir.toString(), filePath).toFile();
             DeployHubDatabaseCommand dbCommand = new DeployHubDatabaseCommand(getHubConfig(), dbFile, dbFile.getName());

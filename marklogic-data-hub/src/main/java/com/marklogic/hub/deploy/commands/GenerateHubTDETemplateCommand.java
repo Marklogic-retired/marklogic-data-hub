@@ -116,7 +116,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
         } else {
             logger.info("No data hub entity files found under {} or its sub-directories.",
-                hubConfig.getHubEntitiesDir());
+                hubConfig.getHubProject().getHubEntitiesDir());
         }
 
     }
@@ -157,7 +157,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
             entityNameFileMapKeys.retainAll(entityNamesAsList);
 
             if (entityNameFileMapKeys.isEmpty()) {
-                logger.warn("No entities files found under {} or its sub-directories with the entity name(s) {}", hubConfig.getHubEntitiesDir(),entityNamesAsList);
+                logger.warn("No entities files found under {} or its sub-directories with the entity name(s) {}", hubConfig.getHubProject().getHubEntitiesDir(),entityNamesAsList);
             }
         }
     }
@@ -172,7 +172,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
 
     protected List<File> findEntityFiles() {
         List<File> entities = new ArrayList<>();
-        Path entitiesPath = hubConfig.getHubEntitiesDir();
+        Path entitiesPath = hubConfig.getHubProject().getHubEntitiesDir();
         File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
         if (entityDefs != null) {
             entities.addAll(Arrays.asList(entityDefs));

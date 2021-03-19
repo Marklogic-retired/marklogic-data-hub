@@ -45,8 +45,6 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
-
 public class HubProjectImpl extends LoggingObject implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
@@ -183,22 +181,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         return this.projectDir.resolve("flows");
     }
 
-    @Deprecated
-    @Override public Path getHubStagingModulesDir() {
-        return this.projectDir.resolve(MODULES_DIR);
-    }
-
-    @Deprecated
-    @Override public Path getUserStagingModulesDir() {
-        return this.projectDir.resolve(MODULES_DIR);
-    }
-
     @Override public Path getModulesDir() {
-        return this.projectDir.resolve(MODULES_DIR);
-    }
-
-    @Deprecated
-    @Override public Path getUserFinalModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
@@ -349,7 +332,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         writeResourceFile("scaffolding/gradle/wrapper/gradle-wrapper.properties", gradleWrapperDir.resolve("gradle-wrapper.properties"), true);
 
         writeResourceFile("scaffolding/build_gradle", projectDir.resolve("build.gradle"));
-        writeResourceFileWithReplace(customTokens, "scaffolding/gradle_properties", projectDir.resolve("gradle.properties"));
+        writeResourceFileWithReplace(customTokens, projectDir.resolve("gradle.properties"));
         writeResourceFile("scaffolding/gradle-local_properties", projectDir.resolve("gradle-local.properties"));
     }
 
@@ -392,14 +375,11 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
     }
 
-    private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile) {
-        writeResourceFileWithReplace(customTokens, srcFile, dstFile, false);
-    }
-
-    private void writeResourceFileWithReplace(Map<String, String> customTokens, String srcFile, Path dstFile, boolean overwrite) {
+    private void writeResourceFileWithReplace(Map<String, String> customTokens, Path dstFile) {
         InputStream inputStream = null;
+        String srcFile = "scaffolding/gradle_properties";
         try {
-            if (overwrite || !dstFile.toFile().exists()) {
+            if (!dstFile.toFile().exists()) {
                 logger.debug("Getting file with replace: " + srcFile);
                 inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
@@ -508,11 +488,6 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
     }
 
-    @Override
-    public void exportProject(OutputStream outputStream) {
-        exportProject(outputStream, new ArrayList<>());
-    }
-
     public void exportProject(OutputStream outputStream, List<String> additionalFilesTobeAdded){
         Stream<String> filesToBeAddedToZip = Stream.of("entities", "flows", "src/main", "step-definitions", "steps", "gradle",
             "gradlew", "gradlew.bat", "build.gradle", "gradle.properties");
@@ -547,11 +522,6 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         catch (Exception e){
             throw new RuntimeException("Unable to export project, cause: " + e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String getProjectName() {
-        return getProjectDir().toFile().getName();
     }
 
     private void zipSubDirectory(String basePath, File fileToZip, ZipOutputStream zout) throws IOException {

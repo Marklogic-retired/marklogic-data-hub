@@ -162,7 +162,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
 
     public void verifyZipProject() {
         assertEquals(HubConfig.DEFAULT_STAGING_NAME, gradleProps.getProperty("mlStagingDbName"));
-        assertEquals(String.valueOf(HubConfig.DEFAULT_FINAL_PORT), gradleProps.getProperty("mlFinalPort"));
+        assertEquals("8011", gradleProps.getProperty("mlFinalPort"));
         assertEquals(HubConfig.DEFAULT_JOB_NAME, gradleProps.getProperty("mlJobAppserverName"));
 
         assertEquals("", gradleDhsProps.getProperty("mlUsername"));

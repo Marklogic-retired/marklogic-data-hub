@@ -212,7 +212,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         assertTrue(getHubConfig().getHubProject().getStepFile(StepDefinitionType.getStepDefinitionType(stepType), stepName).exists());
         assertNotNull(getStagingDoc("/steps/" + stepType + "/" + stepName + ".step.json"));
         if(stepDefName != null){
-            assertTrue(getHubConfig().getStepDefinitionsDir().resolve(stepType).resolve(stepDefName).resolve(stepDefName + ".step.json").toFile().exists());
+            assertTrue(getHubProject().getStepDefinitionsDir().resolve(stepType).resolve(stepDefName).resolve(stepDefName + ".step.json").toFile().exists());
             assertNotNull(getStagingDoc("/step-definitions/" + stepType + "/" + stepDefName + "/" + stepDefName + ".step.json"));
         }
     }

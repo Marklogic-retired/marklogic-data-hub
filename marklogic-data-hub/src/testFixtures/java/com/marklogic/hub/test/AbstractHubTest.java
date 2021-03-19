@@ -311,7 +311,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
 
     // Update app config's config and modules dirs when not already in the hub config's project dir.
     private void resolveAppConfigDirectories(HubConfig hubConfig) {
-        String baseDirNormalized = Paths.get(hubConfig.getProjectDir()).normalize().toString();
+        String baseDirNormalized = Paths.get(hubConfig.getHubProject().getProjectDirString()).normalize().toString();
         AppConfig appConfig = hubConfig.getAppConfig();
         List<ConfigDir> configDirs = appConfig.getConfigDirs();
         for (ConfigDir configDir : configDirs) {

@@ -91,7 +91,7 @@ class DataHubPlugin implements Plugin<Project> {
         setupHub(project)
 
         String setupGroup = "Data Hub Setup"
-        project.task("hubInit", group: setupGroup, type: InitProjectTask, 
+        project.task("hubInit", group: setupGroup, type: InitProjectTask,
             description: "Initialize the project directory before deploying to MarkLogic")
         project.task("hubUpdate", group: setupGroup, type: UpdateHubTask,
             description: "Update the project directory; typically run after upgrading the version of DHF used in this project's Gradle file")
@@ -154,7 +154,7 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Clears user modules in the modules database, only leaving the modules " +
                 "that come with DataHub installation. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask,
-            description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " + 
+            description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " +
                 "only use this if your project has not been converted for Hub Central usage")
         project.task("hubCreateStepDefinition", group: developGroup, type: CreateStepDefinitionTask,
             description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
@@ -294,7 +294,7 @@ class DataHubPlugin implements Plugin<Project> {
 
         def extensions = project.getExtensions()
 
-        hubConfig.createProject(project.getProjectDir().getAbsolutePath())
+        hubConfig.getHubProject().createProject(project.getProjectDir().getAbsolutePath())
 
         boolean calledHubInitOrUpdate = userCalledTask(project, "hubinit") || userCalledTask(project, "hubupdate")
         if (!calledHubInitOrUpdate && !hubProject.isInitialized()) {

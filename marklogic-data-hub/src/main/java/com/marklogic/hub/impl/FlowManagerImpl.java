@@ -125,7 +125,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     }
 
     public ObjectNode getLocalFlowAsJSON(String flowName) {
-        Path flowPath = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);
+        Path flowPath = Paths.get(hubConfig.getHubProject().getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);
         InputStream inputStream = null;
         // first, let's check our resources
         inputStream = getClass().getResourceAsStream("/hub-internal-artifacts/flows/" + flowName + FLOW_FILE_EXTENSION);
@@ -184,7 +184,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Override
     public List<String> getLocalFlowNames() {
         // Get all the files with flow.json extension from flows dir
-        File flowsDir = hubConfig.getFlowsDir().toFile();
+        File flowsDir = hubConfig.getHubProject().getFlowsDir().toFile();
         if (flowsDir == null || !flowsDir.exists()) {
             return new ArrayList<>();
         }
@@ -239,7 +239,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public void deleteFlow(String flowName) {
-        File flowFile = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
+        File flowFile = Paths.get(hubConfig.getHubProject().getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
         if (flowFile.exists()) {
             try {
                 FileUtils.forceDelete(flowFile);
@@ -311,12 +311,12 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     }
 
     public File getFileForLocalFlow(String flowName) {
-        File flowsDir = hubConfig.getFlowsDir().toFile();
+        File flowsDir = hubConfig.getHubProject().getFlowsDir().toFile();
         if (!flowsDir.exists()) {
             flowsDir.mkdirs();
         }
         String flowFileName = flowName + FLOW_FILE_EXTENSION;
-        return Paths.get(hubConfig.getFlowsDir().toString(), flowFileName).toFile();
+        return Paths.get(hubConfig.getHubProject().getFlowsDir().toString(), flowFileName).toFile();
     }
 
     @Override
@@ -333,7 +333,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     public Pair<File, String> addStepToFlow(String flowName, String stepName, String stepType) {
         StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.getStepDefinitionType(stepType);
         Assert.notNull(stepDefType, "Unrecognized step type: " + stepType);
-        File flowFile = hubConfig.getFlowsDir().resolve(flowName + ".flow.json").toFile();
+        File flowFile = hubConfig.getHubProject().getFlowsDir().resolve(flowName + ".flow.json").toFile();
         JsonNode flow;
         try{
             DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();
@@ -355,7 +355,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public boolean isFlowExisted(String flowName) {
-        File flowFile = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
+        File flowFile = Paths.get(hubConfig.getHubProject().getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION).toFile();
         if (flowFile.exists()) {
             return true;
         }

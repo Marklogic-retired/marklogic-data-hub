@@ -30,7 +30,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setupEach() throws IOException {
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), getHubConfig().getFlowsDir().toFile());
+        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), getHubProject().getFlowsDir().toFile());
         installUserModules(runAsFlowDeveloper(), true);
     }
 

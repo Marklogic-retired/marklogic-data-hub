@@ -302,7 +302,7 @@ class BaseTest extends Specification {
         ctx.refresh()
         _hubConfig = ctx.getBean(HubConfigImpl.class)
         createFullPropertiesFile()
-        _hubConfig.createProject(testProjectDir.root.getAbsolutePath())
-        _hubConfig.refreshProject()
+        _hubConfig.getHubProject().createProject(testProjectDir.root.getAbsolutePath())
+        _hubConfig.loadConfigurationFromProperties(null, true)
     }
 }

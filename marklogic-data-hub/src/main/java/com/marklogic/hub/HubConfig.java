@@ -16,43 +16,16 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
-import java.nio.file.Path;
 
-/**
- * An interface to set, manage and recall the Data Hub's Configuration.
- * HubConfig has a singleton scope so set everything you want at the start of the application and
- * and then call {@link #refreshProject()} to wire up all clients and load the properties from gradle.properties
- * (optionally overridden with gradle-{env}.properties).
- */
-@JsonDeserialize(as = HubConfigImpl.class)
-@JsonSerialize(as = HubConfigImpl.class)
 public interface HubConfig {
-
-    String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
-
-    String PATH_PREFIX = "src/main/";
-    String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
-    String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
-    String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
-    String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
-    String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
-    String EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE = "exp-staging-entity-options.xml";
-    String EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE = "exp-final-entity-options.xml";
-    String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
-    String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
-
 
     String DEFAULT_STAGING_NAME = "data-hub-STAGING";
     String DEFAULT_FINAL_NAME = "data-hub-FINAL";
@@ -63,23 +36,6 @@ public interface HubConfig {
     String DEFAULT_STAGING_SCHEMAS_DB_NAME = "data-hub-staging-SCHEMAS";
     String DEFAULT_FINAL_SCHEMAS_DB_NAME = "data-hub-final-SCHEMAS";
 
-    String DEFAULT_ROLE_NAME = "flow-operator-role";
-    String DEFAULT_USER_NAME = "flow-operator";
-    String DEFAULT_DEVELOPER_ROLE_NAME = "flow-developer-role";
-    String DEFAULT_DEVELOPER_USER_NAME = "flow-developer";
-
-    Integer DEFAULT_STAGING_PORT = 8010;
-    Integer DEFAULT_FINAL_PORT = 8011;
-    Integer DEFAULT_JOB_PORT = 8013;
-
-    String DEFAULT_AUTH_METHOD = "digest";
-    String DEFAULT_HUB_LOG_LEVEL = "default";
-
-    String DEFAULT_SCHEME = "http";
-
-    Integer DEFAULT_FORESTS_PER_HOST = 4;
-
-    String DEFAULT_CUSTOM_FOREST_PATH = "forests";
     String PII_QUERY_ROLESET_FILE = "pii-reader.json";
     String PII_PROTECTED_PATHS_FILE = "pii-protected-paths.json";
 
@@ -278,56 +234,6 @@ public interface HubConfig {
      */
     void setExternalName(DatabaseKind kind, String externalName);
 
-    // roles and users
-
-    /**
-     * Get the roleName the hub uses
-     * @return the name of the role the DHF uses
-     */
-    String getFlowOperatorRoleName();
-
-    /**
-     * Set the role name that the hub uses
-     * @param flowOperatorRoleName the name to use
-     */
-    void setFlowOperatorRoleName(String flowOperatorRoleName);
-
-    /**
-     * Get the current marklogic user name the hub uses
-     * @return the username
-     */
-    String getFlowOperatorUserName();
-
-    /**
-     * Sets the username for the hub to use in MarkLogic
-     * @param flowOperatorUserName - username to use
-     */
-    void setFlowOperatorUserName(String flowOperatorUserName);
-
-    /**
-     * Get the roleName the hub uses for developing flows
-     * @return the name of the role the DHF uses for developing flows
-     */
-    String getFlowDeveloperRoleName();
-
-    /**
-     * Set the role name that the hub uses for developing flows
-     * @param flowDeveloperRoleName the name to use for developing flows
-     */
-    void setFlowDeveloperRoleName(String flowDeveloperRoleName);
-
-    /**
-     * Get the current marklogic user name the hub uses to develop flows
-     * @return the username
-     */
-    String getFlowDeveloperUserName();
-
-    /**
-     * Sets the username for the hub to use in MarkLogic for developing flows
-     * @param flowDeveloperUserName - username to use
-     */
-    void setFlowDeveloperUserName(String flowDeveloperUserName);
-
     /**
      * Signifies if the host is a load balancer host.
      * @return a Boolean.
@@ -393,33 +299,17 @@ public interface HubConfig {
     String getStepDefinitionPermissions();
 
     /**
-     * Obtains the project directory as a string
-     * @return project directory
-     */
-    String getProjectDir();
-
-    /**
-     * Sets the directory for the current project
-     * @param projectDir - a string that represents the path to the project directory
-     */
-    void setProjectDir(String projectDir);
-
-    /**
      * Returns the HubProject associated with the HubConfig
      * @return current hubProject associated with the HubConfig
      */
     HubProject getHubProject();
 
     /**
-     * Initializes the hub project on disk
+     * Initializes the hub project on disk. As of 5.4, this requires access to all the project properties, as those
+     * properties affect how the project is initialized. This doesn't really seem to make sense though, because the
+     * primary way of specifying properties is by reading in a properties file from the project.
      */
     void initHubProject();
-
-    /**
-     * Creates a new DatabaseClient for accessing the AppServices app
-     * @return - a DatabaseClient
-     */
-    DatabaseClient newAppServicesClient();
 
     /**
      * Creates a new DatabaseClient for accessing the Job database
@@ -428,124 +318,15 @@ public interface HubConfig {
     DatabaseClient newJobDbClient();
 
     /**
-     * Use newJobDbClient instead.  This function returns a client to
-     * the JOBS database.
-     * @return - a DatabaseClient
-     */
-    @Deprecated
-    DatabaseClient newTraceDbClient();
-
-    /**
      * Creates a new DatabaseClient for accessing the Hub Modules database
      * @return - a DatabaseClient
      */
     DatabaseClient newModulesDbClient();
 
     /**
-     * Gets the path for the modules directory
-     * @return the path for the modules directory
-     */
-    Path getModulesDir();
-
-    /**
-     * Gets the path for the hub plugins directory
-     * @return the path for the hub plugins directory
-     */
-    Path getHubPluginsDir();
-
-    /**
-     * Gets the path for the hub entities directory
-     * @return the path for the hub entities directory
-     */
-    Path getHubEntitiesDir();
-
-    /**
-     * Gets the path for the hub mappings directory
-     * @return the path for the hub mappings directory
-     */
-    Path getHubMappingsDir();
-
-    Path getStepDefinitionPath(StepDefinition.StepDefinitionType type);
-
-    /**
-     * Gets the path for the hub's config directory
-     * @return the path for the hub's config directory
-     */
-    Path getHubConfigDir();
-
-    /**
-     * Gets the path for the hub's database directory
-     * @return the path for the hub's database directory
-     */
-    Path getHubDatabaseDir();
-
-    /**
-     * Gets the path for the hub servers directory
-     * @return the path for the hub servers database directory
-     */
-    Path getHubServersDir();
-
-    /**
-     * Gets the path for the hub's security directory
-     * @return the path for the hub's security directory
-     */
-    Path getHubSecurityDir();
-
-    /**
-     * Gets the path for the user config directory
-     * @return the path for the user config directory
-     */
-    Path getUserConfigDir();
-
-    /**
-     * Gets the path for the user security directory
-     * @return the path for the user security directory
-     */
-    Path getUserSecurityDir();
-
-    /**
-     * Gets the path for the user database directory
-     * @return the path for the user database directory
-     */
-    Path getUserDatabaseDir();
-
-    /**
-     * Gets the path for the user schemas directory
-     * @return the path for the user schemas directory
-     */
-    Path getUserSchemasDir();
-
-    /**
-     * Gets the path for the user servers directory
-     * @return the path for the user servers database directory
-     */
-    Path getUserServersDir();
-
-    /**
-     * Gets the path for the entity database directory
-     * @return the path for the entity's database directory
-     */
-    Path getEntityDatabaseDir();
-
-    /**
-     * Gets the path for the flows directory
-     *
-     * @return the path for the flows directory
-     */
-    Path getFlowsDir();
-
-    /**
-     * Gets the path for the step definitions directory
-     *
-     * @return the path for the step definitions directory
-     */
-    Path getStepDefinitionsDir();
-
-    /**
      * Returns the current AppConfig object attached to the HubConfig
      * @return Returns current AppConfig object set for HubConfig
      */
-    @JsonIgnore
     AppConfig getAppConfig();
 
     /**
@@ -609,34 +390,5 @@ public interface HubConfig {
      */
     DatabaseClient newFinalClient(String dbName);
 
-    /**
-     * Gets information on a datahub configuration
-     * @return information on the datahub configuration as a string
-     */
-    String getInfo();
-
-
-    /**
-     * Initializes the java application state to a specific location.  A properties file
-     * is expected to be found in this directory.
-     * @param projectDirString The directory in which to find properties for a project.
-     */
-    void createProject(String projectDirString);
-
-    /**
-     * In a non-Gradle environment, a client can use this to load properties from a "gradle-(environment).properties"
-     * file, similar to how the Gradle properties plugin would process such a file in a Gradle context.
-     *
-     * @param environment - The name of the environment to use (local,dev,qa,prod,...)
-     * @return A HubConfig
-     */
     HubConfig withPropertiesFromEnvironment(String environment);
-
-    /**
-     * Loads HubConfig object with values from gradle.properties (optionally overridden with
-     * gradle-(environment).properties). Once Spring creates HubConfig object and the project is initialized with
-     * {@link #createProject(String)} you can use setter methods to change HubConfig properties
-     * and then call this method.
-     */
-    void refreshProject();
 }

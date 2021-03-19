@@ -34,6 +34,16 @@ public interface HubProject {
     String HUB_CONFIG_DIR = PATH_PREFIX + "hub-internal-config";
     String USER_CONFIG_DIR = PATH_PREFIX + "ml-config";
 
+    String USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES = "user-modules-deploy-timestamps.properties";
+
+    String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
+    String STAGING_ENTITY_QUERY_OPTIONS_FILE = "staging-entity-options.xml";
+    String FINAL_ENTITY_QUERY_OPTIONS_FILE = "final-entity-options.xml";
+    String EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE = "exp-staging-entity-options.xml";
+    String EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE = "exp-final-entity-options.xml";
+    String STAGING_ENTITY_DATABASE_FILE = "staging-database.json";
+    String FINAL_ENTITY_DATABASE_FILE = "final-database.json";
+
     /**
      * Gets the string used to originally make the project
      *
@@ -184,35 +194,11 @@ public interface HubProject {
     Path getFlowsDir();
 
     /**
-     * Gets the path for the hub staging modules
-     *
-     * @return the path for the hub staging modules
-     */
-    @Deprecated
-    Path getHubStagingModulesDir();
-
-    /**
-     * Gets the path for the user staging modules
-     *
-     * @return the path for the user staging modules
-     */
-    @Deprecated
-    Path getUserStagingModulesDir();
-
-    /**
      * Gets the path for the modules directory
      *
      * @return the path for the modules directory
      */
     Path getModulesDir();
-
-    /**
-     * Gets the path for the user final modules
-     *
-     * @return the path for the user final modules
-     */
-    @Deprecated
-    Path getUserFinalModulesDir();
 
     /**
      * Gets the path for the custom modules directory
@@ -253,16 +239,6 @@ public interface HubProject {
      * Exports the project content to disk
      */
     void exportProject(File location);
-
-    /**
-     * Exports the project content to output stream
-     */
-    void exportProject(OutputStream outputStream);
-
-    /**
-     * Returns the name of the project
-     */
-    String getProjectName();
 
     String getUserModulesDeployTimestampFile();
 

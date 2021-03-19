@@ -23,19 +23,7 @@ import com.marklogic.hub.flow.FlowRunner;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Handles creation and orchastration of DHF with a MarkLogic server.
- *
- * Includes installs, version validation, updates, and the init of a DHF project.
- */
 public interface DataHub {
-
-    /**
-     * Clears the database of all documents
-     * @param database - the name of the database in string form
-     */
-
-    void clearDatabase(String database);
 
     /**
      * Determines if the data hub is installed in MarkLogic
@@ -52,21 +40,9 @@ public interface DataHub {
     boolean isServerVersionValid(String versionString);
 
     /**
-     * Initializes the project on disk, creates scaffold project code
-     */
-    void initProject();
-
-    /**
      * Removes user's modules from the modules db
      */
     void clearUserModules();
-
-    /**
-     * Deletes document based on supplied doc uri in supplied database
-     * @param uri - document uri
-     * @param databaseKind - database type
-     */
-    void deleteDocument(String uri, DatabaseKind databaseKind);
 
     /**
      * Runs the pre-install check for the datahub populating the object
@@ -97,57 +73,10 @@ public interface DataHub {
     void updateIndexes();
 
     /**
-     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
-     * Must be run as a user with sufficient privileges to install a data hub.
-     */
-    void uninstall();
-
-    /**
-     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param listener - the callback method to receive status updates
-     */
-    void uninstall(HubDeployStatusListener listener);
-
-    /**
-     * Checks to make sure all the versions and database in a valid configuration with version check
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @return boolean - if not, returns false, if safe to proceed ahead returns true
-     */
-    boolean isSafeToInstall();
-
-    /**
-     * Checks to see if the port is in use
-     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
-     * @return true if the port is in use, false if it is not
-     */
-    boolean isPortInUse(DatabaseKind kind);
-
-    /**
-     * Sets what appserver name is using the port
-     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
-     * @param usedBy - string name of what is using the port
-     */
-    void setPortInUseBy(DatabaseKind kind, String usedBy);
-
-    /**
-     * Returns name of what is using the port
-     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
-     * @return name of who using the port
-     */
-    String getPortInUseBy(DatabaseKind kind);
-
-    /**
      * Checks to see if the datahub and server versions are compatible
      * @return true if the server version matches, false if it does not
      */
     boolean isServerVersionOk();
-
-    /**
-     * Sets true or false if the server version is okay with this version of DHF
-     * @param serverVersionOk - true if it compatible or false if it is not
-     */
-    void setServerVersionOk(boolean serverVersionOk);
 
     /**
      * Returns the string presentation of the server version, eg: "9.03-1"
@@ -156,22 +85,9 @@ public interface DataHub {
     String getServerVersion();
 
     /**
-     * Sets the server version holder on the datahub object - currently unused
-     * @param serverVersion - server version as a string, eg: "9.03-1"
-     */
-    void setServerVersion(String serverVersion);
-
-    /**
      * Upgrades the installed datahub on the server to this version of the DataHub
      * Must be run as a user with sufficient privileges to install a data hub.
      * @return true or false based on success of the upgrade
      */
     boolean upgradeHub();
-
-    /**
-     * Creates and returns the FlowRunner object using the datahub's autowired hubconfig
-     *
-     * @return FlowRunner object with current hubconfig already set
-     */
-    FlowRunner getFlowRunner();
 }

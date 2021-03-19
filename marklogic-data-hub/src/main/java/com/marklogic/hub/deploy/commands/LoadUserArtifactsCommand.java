@@ -129,7 +129,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * @throws IOException
      */
     private void loadModels(HubClient hubClient) throws IOException {
-        final Path modelsPath = hubConfig.getHubEntitiesDir();
+        final Path modelsPath = hubConfig.getHubProject().getHubEntitiesDir();
         if (modelsPath.toFile().exists()) {
             ArrayNode modelsArray = objectMapper.createArrayNode();
             EntityDefModulesFinder modulesFinder = new EntityDefModulesFinder();
@@ -163,7 +163,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * @throws IOException
      */
     private void loadLegacyMappings(HubClient hubClient) throws IOException {
-        Path mappingsPath = hubConfig.getHubMappingsDir();
+        Path mappingsPath = hubConfig.getHubProject().getHubMappingsDir();
         if (mappingsPath.toFile().exists()) {
             JSONDocumentManager finalDocMgr = hubClient.getFinalClient().newJSONDocumentManager();
             JSONDocumentManager stagingDocMgr = hubClient.getStagingClient().newJSONDocumentManager();

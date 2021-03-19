@@ -23,7 +23,7 @@ class InitProjectTask extends HubTask {
 
     @TaskAction
     void initProject() {
-        getDataHub().initProject()
+        getHubConfig().initHubProject();
 
         println("\n\n############################################")
         println("# Your Data Hub Project is ready.")

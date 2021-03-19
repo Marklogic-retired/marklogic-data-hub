@@ -36,6 +36,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.util.HubFileFilter;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.legacy.LegacyFlowManager;
@@ -192,7 +193,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         DatabaseClient stagingClient = hubConfig.newStagingClient();
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
-        Path userModulesPath = hubConfig.getHubPluginsDir();
+        Path userModulesPath = hubConfig.getHubProject().getHubPluginsDir();
         String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
 
@@ -216,7 +217,7 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         // deploy the auto-generated ES search options, but not if mlWatch is being run, as it will result in the same
         // options being generated and loaded over and over
         if (loadQueryOptions) {
-            Path entityConfigDir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
+            Path entityConfigDir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubProject.ENTITY_CONFIG_DIR);
             if (!entityConfigDir.toFile().exists()) {
                 entityConfigDir.toFile().mkdirs();
             }
