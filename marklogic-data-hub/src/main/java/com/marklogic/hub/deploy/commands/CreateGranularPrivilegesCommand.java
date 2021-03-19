@@ -90,6 +90,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         "data-hub-user-reader",
         "pii-reader",
         "redaction-user",
+        "data-hub-http-user",
 
         // Added in 5.4.0 to allow for pre-5.2 customers to create custom roles that can access documents that have
         // permissions with these roles

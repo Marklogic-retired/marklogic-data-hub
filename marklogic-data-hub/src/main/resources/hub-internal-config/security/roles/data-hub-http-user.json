@@ -1,0 +1,36 @@
+{
+  "role-name": "data-hub-http-user",
+  "description": "Permits use of HTTP functions",
+  "privilege": [
+    {
+      "privilege-name": "xdmp:http-get",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-http-get",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:http-post",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-http-post",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:http-put",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-http-put",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:http-head",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-http-head",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:http-delete",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-http-delete",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:http-options",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-http-options",
+      "kind": "execute"
+    }
+  ]
+}
