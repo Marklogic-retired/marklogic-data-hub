@@ -144,7 +144,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
   });
   it("Verify Run in an existing flow", () => {
     loadPage.loadView("table").click();

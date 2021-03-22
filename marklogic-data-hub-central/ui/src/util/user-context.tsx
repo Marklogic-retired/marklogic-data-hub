@@ -3,6 +3,7 @@ import {Subscription} from "rxjs";
 import axios from "axios";
 import {createUserPreferences, getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import {IUserContextInterface, UserContextInterface} from "../types/user-types";
+import {ViewSettingsType} from "../types/view-types";
 import {AuthoritiesContext} from "./authorities";
 import {StompContext, STOMPState} from "./stomp";
 import {resetEnvironment, setEnvironment} from "../util/environment";
@@ -22,6 +23,15 @@ const defaultUserData = {
 };
 
 let CryptoJS = require("crypto-js");
+
+export function getViewSettings (): ViewSettingsType {
+  const data: any = JSON.parse(sessionStorage.getItem("dataHubViewSettings") ?? JSON.stringify({}));
+  return data;
+}
+
+export function setViewSettings (data: ViewSettingsType): void {
+  sessionStorage.setItem("dataHubViewSettings", JSON.stringify(data));
+}
 
 export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
@@ -108,6 +118,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem("serviceName", session.data.serviceName);
     localStorage.setItem("hubCentralSessionToken", session.data.sessionToken);
     monitorSession();
+    sessionStorage.setItem("dataHubViewSettings", JSON.stringify({}));
 
     if (session.data.pendoKey) {
       window.usePendo && window.usePendo(session.data.pendoKey);
