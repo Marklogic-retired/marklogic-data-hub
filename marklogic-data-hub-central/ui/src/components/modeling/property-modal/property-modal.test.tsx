@@ -498,10 +498,11 @@ describe("Property Modal Component", () => {
     expect(mockGetSystemInfo).toBeCalledTimes(0);
   });
 
-  // TODO fix unit test of join property, currently tested in cypress e2e
-  test.skip("can edit a relationship property", async () => {
+  test("can edit a relationship property", async () => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
     mockEntityReferences.mockResolvedValueOnce({status: 200, data: referencePayloadEmpty});
+    // Mock population of Join Property menu
+    mockPrimaryEntityTypes.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
@@ -546,10 +547,18 @@ describe("Property Modal Component", () => {
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(1);
 
+    // Population of Join Property menu
+    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+
     expect(queryByText("Show Steps...")).toBeNull();
     expect(queryByText("Hide Steps...")).toBeNull();
 
     expect(getByText("Edit Property")).toBeInTheDocument();
+
+    // Change Join Property
+    expect(getByText("customerId")).toBeInTheDocument();
+    userEvent.click(getByLabelText("joinProperty-select"));
+    await wait(() => userEvent.click(getByText("name")));
 
     const multipleRadio = screen.getByLabelText("multiple-yes");
     expect(multipleRadio["value"]).toBe("yes");
