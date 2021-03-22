@@ -5,7 +5,7 @@ import {useLocation} from "react-router-dom";
 import SwitchView from "../components/load/switch-view";
 import LoadList from "../components/load/load-list";
 import LoadCard from "../components/load/load-card";
-import {UserContext} from "../util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "../util/user-context";
 import axios from "axios";
 import {createStep, updateStep, getSteps, deleteStep} from "../api/steps";
 import {sortStepsByUpdated} from "../util/conversionFunctions";
@@ -14,11 +14,14 @@ import tiles from "../config/tiles.config";
 import {LoadingContext} from "../util/loading-context";
 import {MissingPagePermission} from "../config/messages.config";
 
-export type ViewType =  "card" | "list";
+export type ViewType = "card" | "list";
 
 const INITIAL_VIEW: ViewType = "card";
 
 const Load: React.FC = () => {
+
+  const storage = getViewSettings();
+  const storedViewMode = storage?.load?.viewMode;
 
   const {
     loadingOptions,
@@ -26,7 +29,7 @@ const Load: React.FC = () => {
   } = useContext(LoadingContext);
 
   const location = useLocation<any>();
-  let [view, setView] = useState(location.state?.viewMode ? location.state.viewMode : INITIAL_VIEW);
+  let [view, setView] = useState(storedViewMode ? storedViewMode : INITIAL_VIEW);
   const [loading, setLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
@@ -50,6 +53,16 @@ const Load: React.FC = () => {
     setView(location.state?.viewMode ? location.state?.viewMode : view);
     setSortedInfo(location.state?.sortOrderInfo);
   }, [location]);
+
+
+  useEffect(() => {
+    if (view === null) {
+      return;
+    }
+    const viewStorage = getViewSettings();
+    const newStorage = {...viewStorage, load: {...viewStorage.load, viewMode: view}};
+    setViewSettings(newStorage);
+  }, [view]);
 
   useEffect(() => {
     getLoadArtifacts();
@@ -226,7 +239,7 @@ const Load: React.FC = () => {
           <div className={styles.intro}>
             <p>{tiles.load.intro}</p>
             <div className={styles.switchViewContainer}>
-              <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
+              <SwitchView handleSelection={handleViewSelection} defaultView={view} />
             </div>
           </div>
           {output}

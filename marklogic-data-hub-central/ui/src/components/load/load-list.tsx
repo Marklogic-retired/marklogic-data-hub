@@ -12,6 +12,7 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {MLTooltip} from "@marklogic/design-system";
 import {LoadingContext} from "../../util/loading-context";
+import {getViewSettings, setViewSettings} from "../../util/user-context";
 
 const {Option} = Select;
 
@@ -30,6 +31,8 @@ interface Props {
 }
 
 const LoadList: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+  const storedSortOrder = storage?.load?.sortOrder;
 
   const {
     loadingOptions,
@@ -39,7 +42,7 @@ const LoadList: React.FC<Props> = (props) => {
 
   const activityType = "ingestion";
   const location = useLocation<any>();
-  const [sortedInfo, setSortedInfo] = useState(props.sortOrderInfo);
+  const [sortedInfo, setSortedInfo] = useState(storedSortOrder ? storedSortOrder : {});
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
   const [runNoFlowsDialogVisible, setRunNoFlowsDialogVisible] = useState(false);
@@ -60,9 +63,18 @@ const LoadList: React.FC<Props> = (props) => {
       const stepIndex = props.data.findIndex((step) => step.stepId === location.state.stepToView);
       setPage(Math.floor(stepIndex / loadingOptions.pageSize) + 1);
     } else {
-      setSortedInfo(props.sortOrderInfo);
+      setSortedInfo(storedSortOrder ? storedSortOrder : {});
     }
   }, [location, props.data]);
+
+  useEffect(() => {
+    if (sortedInfo === null) {
+      return;
+    }
+    const sortStorage = getViewSettings();
+    const newStorage = {...sortStorage, load: {...sortStorage.load, sortOrder: {...sortStorage.load?.sortOrder, columnKey: sortedInfo.columnKey, order: sortedInfo.order}}};
+    setViewSettings(newStorage);
+  }, [sortedInfo]);
 
   let history = useHistory();
 
@@ -129,7 +141,7 @@ const LoadList: React.FC<Props> = (props) => {
   };
 
   const countStepInFlow = (loadName) => {
-    let result : string[] = [];
+    let result: string[] = [];
     if (props.flows) props.flows.forEach(f => f["steps"].findIndex(s => s.stepName === loadName) > -1 ? result.push(f.name) : "");
     return result;
   };
@@ -237,12 +249,14 @@ const LoadList: React.FC<Props> = (props) => {
         </Col>
         <Col span={11}>
           <Link data-testid="link" id="tiles-add-run-new-flow" to={
-            {pathname: "/tiles/run/add-run",
+            {
+              pathname: "/tiles/run/add-run",
               state: {
                 stepToAdd: loadArtifactName,
                 stepDefinitionType: "ingestion",
                 existingFlow: false
-              }}}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled"/>New flow</div></Link>
+              }
+            }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled" />New flow</div></Link>
         </Col>
       </Row>
     </Modal>
@@ -277,16 +291,18 @@ const LoadList: React.FC<Props> = (props) => {
     >
       <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px", padding: "10px"}}>
         <div aria-label="step-in-mult-flows">Choose the flow in which to run the step <strong>{loadArtifactName}</strong>.</div>
-        <div className = {styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
+        <div className={styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
           <Link data-testid="link" id="tiles-run-step" key={i} to={
-            {pathname: "/tiles/run/run-step",
+            {
+              pathname: "/tiles/run/run-step",
               state: {
                 flowName: flowName,
                 stepToAdd: loadArtifactName,
                 stepDefinitionType: "ingestion",
                 existingFlow: false,
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
-              }}}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
+              }
+            }}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
         ))}
         </div>
       </div>
@@ -406,7 +422,7 @@ const LoadList: React.FC<Props> = (props) => {
       key: "actions",
       render: (text, row) => (
         <span>
-          {props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={row.name+"-run"} onClick={() => handleStepRun(row.name)}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load-list button" data-testid={row.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i></MLTooltip>}
+          {props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={row.name + "-run"} onClick={() => handleStepRun(row.name)} /></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load-list button" data-testid={row.name + "-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon} /></i></MLTooltip>}
           <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={["click"]} disabled={!props.canWriteFlow} placement="bottomCenter">
             {props.canWriteFlow ? <MLTooltip title={"Add to Flow"} placement="bottom"><span className={"AddToFlowIcon"} aria-label={row.name + "-add-icon"}></span></MLTooltip> : <MLTooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}><span aria-label={row.name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span></MLTooltip>}
           </Dropdown>

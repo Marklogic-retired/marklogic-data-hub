@@ -7,9 +7,11 @@ import mocks from "../api/__mocks__/mocks.data";
 import Load from "./Load";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
+import {getViewSettings} from "../util/user-context";
 
 jest.mock("axios");
 jest.setTimeout(30000);
+
 
 const DEFAULT_VIEW = "card";
 
@@ -216,4 +218,77 @@ describe("Load component", () => {
 
   });
 
+});
+
+
+describe("getViewSettings", () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+    jest.restoreAllMocks();
+  });
+
+  const sessionStorageMock = (() => {
+    let store = {};
+
+    return {
+      getItem(key) {
+        return store[key] || null;
+      },
+      setItem(key, value) {
+        store[key] = value.toString();
+      },
+      removeItem(key) {
+        delete store[key];
+      },
+      clear() {
+        store = {};
+      }
+    };
+  })();
+
+  Object.defineProperty(window, "sessionStorage", {
+    value: sessionStorageMock
+  });
+
+  it("should get page number from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({load: {page: 2}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({load: {page: 2}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get view mode from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({load: {viewMode: "list"}}));
+    let actualValue = getViewSettings();
+    expect(actualValue).toEqual({load: {viewMode: "list"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({load: {viewMode: "card"}}));
+    actualValue = getViewSettings();
+    expect(actualValue).toEqual({load: {viewMode: "card"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get sort order from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({load: {columnKey: "name", order: "ascend"}}));
+    let actualValue = getViewSettings();
+    expect(actualValue).toEqual({load: {columnKey: "name", order: "ascend"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({load: {columnKey: "name", order: "descend"}}));
+    actualValue = getViewSettings();
+    expect(actualValue).toEqual({load: {columnKey: "name", order: "descend"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get empty object if no info in session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({});
+    expect(window.sessionStorage.getItem).toBeCalledWith("dataHubViewSettings");
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
 });

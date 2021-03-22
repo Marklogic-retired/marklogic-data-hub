@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {getViewSettings, setViewSettings} from "./user-context";
 
 type LoadingContextInterface = {
   start: number,
@@ -26,14 +27,43 @@ export const LoadingContext = React.createContext<ILoadingContextInterface>({
 
 const LoadingProvider: React.FC<{ children: any }> = ({children}) => {
 
-  const [loadingOptions, setLoadingOptions] = useState<LoadingContextInterface>(defaultLoadingOptions);
+  const storage = getViewSettings();
+  const storedPageNumber = storage?.load?.page;
 
-  const setPage = (pageNumber: number) => {
+  const [loadingOptions, setLoadingOptions] = useState<LoadingContextInterface>({
+    ...defaultLoadingOptions,
+    ...(storedPageNumber !== null ? {pageNumber: storedPageNumber} : {})
+  });
+
+  const setPage = (pageNumber) => {
     setLoadingOptions({
       ...loadingOptions,
       pageNumber: pageNumber,
     });
   };
+
+  useEffect(() => {
+    if (loadingOptions.pageNumber === undefined) {
+      return;
+    }
+    const pageStorage = getViewSettings();
+    const newStorage = {...pageStorage, load: {...pageStorage.load, page: loadingOptions.pageNumber}};
+    setViewSettings(newStorage);
+  }, [loadingOptions.pageNumber]);
+
+  useEffect(() => {
+    if (loadingOptions.pageNumber === undefined) {
+      const pageStorage = getViewSettings();
+      const storedPageNumber = pageStorage?.load?.page;
+      if (storedPageNumber !== null) {
+        setPage(storedPageNumber);
+      }
+
+      const newStorage = {...pageStorage, load: {...pageStorage.load, page: loadingOptions.pageNumber}};
+      setViewSettings(newStorage);
+    }
+  }, [loadingOptions.pageNumber]);
+
 
 
   const setPageSize = (current: number, pageSize: number) => {
