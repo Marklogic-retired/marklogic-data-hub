@@ -181,12 +181,24 @@
     margin-left: 1vw;
 }
 
+.UriMatchedDataTable {
+    padding-top: 20px;
+    width: 90.7vw;
+    overflow-y: auto;
+    max-height: 30vh;
+    margin-left: 1vw;
+}
+
 .tableContent {
     border-top: 1px solid #e8e8e8;
 }
 
 .tableRow {
     display: flex;
+    height: 1em;
+}
+
+.testMatchedTableRow {
     height: 1em;
 }
 
@@ -216,10 +228,21 @@
 }
 
 .matchedTab {
-    margin-bottom: 10vh;
+    margin-bottom: 0vh;
 }
 
 .duplicateUriWarning {
     color: #B32424;
     margin: 1vh 0vh -0.5vh 1.3vw;
+}
+
+.expandableIcon {
+    font-size: 15px;
+    margin-right: 1vw;
+    cursor: pointer
+}
+
+.matchedUriRow{
+    margin-top: 2vh;
+    margin-left: 1.9vw;
 }

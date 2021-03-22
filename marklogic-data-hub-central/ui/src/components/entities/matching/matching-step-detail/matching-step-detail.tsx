@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown, Form} from "antd";
+import {Modal, Row, Col, Card, Menu, Dropdown, Icon} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
-import {MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
+import {MLButton, MLTable, MLInput, MLRadio, MLTooltip} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
 import "./matching-step-detail.scss";
 import CustomPageHeader from "../../page-header/page-header";
@@ -17,7 +17,7 @@ import ThresholdModal from "../threshold-modal/threshold-modal";
 import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
 import {MatchingStepDetailText} from "../../../../config/tooltips.config";
-import {updateMatchingArtifact, calculateMatchingActivity} from "../../../../api/matching";
+import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity} from "../../../../api/matching";
 import {DownOutlined} from "@ant-design/icons";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
@@ -69,6 +69,10 @@ const MatchingStepDetail: React.FC = () => {
   const [testMatchTab, setTestMatchTab] = useState("matched");
   const [duplicateUriWarning, setDuplicateUriWarning] = useState(false);
   const [singleUriWarning, setSingleUriWarning] = useState(false);
+  const [uriTestMatchClicked, setUriTestMatchClicked] = useState(false);
+  const [allDataSelected, setAllDataSelected] = useState(false);
+  const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 10, uris: []});
+  const [previewMatchedActivity, setPreviewMatchedActivity]   = useState<any>({sampleSize: 10, uris: [], actionPreview: []});
 
   const menu = (
     <Menu>
@@ -112,6 +116,11 @@ const MatchingStepDetail: React.FC = () => {
   const handleMatchingActivity = async (matchStepName) => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
     setMatchingActivity(matchActivity);
+  };
+
+  const handlePreviewMatchingActivity = async (testMatchData) => {
+    let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    setPreviewMatchedActivity(previewMatchActivity);
   };
 
   const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
@@ -293,13 +302,35 @@ const MatchingStepDetail: React.FC = () => {
     };
   });
 
+  const renderTestMatchUriData = previewMatchedActivity.actionPreview.map((testMatchedUriData, index) => {
+    return {
+      key: index,
+      uriTestMatchValue: testMatchedUriData,
+    };
+  });
+
   const UriColumns = [{
     key: "uriValue",
     title: "uriValues",
     dataIndex: "uriValue",
     render: (text, key) => (
-      <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg"/></i></span>
+      <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
+        <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg"/></i>
+      </span>
     ),
+  }];
+
+  const testMatchedUriColumns = [{
+    key: "key",
+    title: "Matched URI",
+    dataIndex: "uriTestMatchValue",
+    render: (text) => (
+      <div>
+        <MLTooltip placement="topLeft" title={text.uris[0]}><span className={styles.testMatchedTableRow}><Icon className={styles.expandableIcon} type="right" />
+          {text.entityNames[0]}</span></MLTooltip><br /><br />
+        <MLTooltip placement="top" title={text.uris[1]}><span className={styles.matchedUriRow}>{text.entityNames[1]}</span></MLTooltip>
+      </div>
+    )
   }];
 
   const handleDeleteUri = (event) => {
@@ -314,26 +345,47 @@ const MatchingStepDetail: React.FC = () => {
     setUriTableData(data);
     setDuplicateUriWarning(false);
     setSingleUriWarning(false);
+    setUriTestMatchClicked(false);
   };
 
   const handleAllDataRadioClick = (event) => {
+    setAllDataSelected(true);
     setUriTableData([]);
     setUriContent("");
     setInputUriDisabled(true);
     setDuplicateUriWarning(false);
     setSingleUriWarning(false);
+    setUriTestMatchClicked(false);
   };
 
   const handleTestButtonClick = () => {
-    if (UriTableData.length < 2) {
+    if (UriTableData.length < 2 && !allDataSelected) {
       setDuplicateUriWarning(false);
       setSingleUriWarning(true);
+    }
+    if (UriTableData.length >= 2 || allDataSelected) {
+      if (!duplicateUriWarning && !singleUriWarning) {
+        setUriTestMatchClicked(true);
+        for (let i=0;i<UriTableData.length;i++) {
+          testMatchedData.uris.push(UriTableData[i].uriContent);
+        }
+        testMatchedData.stepName=matchingStep.name;
+        setTestMatchedData(testMatchedData);
+        handlePreviewMatchingActivity(testMatchedData);
+      }
     }
   };
 
   const handleTestMatchTab = (event) => {
     setTestMatchTab(event.key);
   };
+
+  const handleUriInputSelected = (event) => {
+    setInputUriDisabled(false);
+    setAllDataSelected(false);
+    setUriTestMatchClicked(false);
+  };
+
   return (
     <>
       <CustomPageHeader
@@ -452,7 +504,7 @@ const MatchingStepDetail: React.FC = () => {
 
         <div className={styles.testMatch} aria-label="testMatch">
           <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}  id="addDataRadio">
-            <Form><Form.Item validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}><MLRadio value={1} aria-label="inputUriRadio" onClick={() => { setInputUriDisabled(false); }}>
+            <MLRadio value={1} aria-label="inputUriRadio" onClick={handleUriInputSelected} validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}>
               <MLInput
                 placeholder="Enter URI or Paste URIs"
                 className={duplicateUriWarning ? styles.duplicateUriInput : styles.uriInput}
@@ -483,7 +535,7 @@ const MatchingStepDetail: React.FC = () => {
               <div aria-label="allDataContent"><br />
                   Info about All Data goes here... what it is, how to use it, limitations..info about All Data goes here... what it is, how to use it, limitations..
               </div>
-            </MLRadio></Form.Item></Form>
+            </MLRadio>
           </MLRadio.MLGroup>
         </div>
         <div className={styles.matchedTab}>
@@ -492,6 +544,16 @@ const MatchingStepDetail: React.FC = () => {
             <Menu.Item key="notMatched">Not Matched</Menu.Item>
           </Menu>
         </div>
+        {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" && uriTestMatchClicked ? <div className={styles.UriMatchedDataTable}>
+          <MLTable
+            columns={testMatchedUriColumns}
+            className={styles.tableContent}
+            dataSource={renderTestMatchUriData}
+            rowKey="key"
+            id="uriData"
+            pagination={false}
+          />
+        </div> : ""}
       </div>
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}

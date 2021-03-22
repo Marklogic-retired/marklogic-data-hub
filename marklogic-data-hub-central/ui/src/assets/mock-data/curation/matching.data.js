@@ -259,3 +259,141 @@ export const matchingActivity = {
     }
   ]
 };
+
+export const testMatchingActivity = {
+  "sampleSize": 10,
+  "uris": [
+    "/content/CustMatchMerge1.json",
+    "/content/CustMatchMerge2.json",
+    "/content/CustShippingCityStateMatch1.json",
+    "/content/CustShippingCityStateMatch2.json",
+    "/content/CustShippingCityStateMatch3.json",
+    "/content/CustShippingCityStateMatch4.json"
+  ],
+  "actionPreview": [
+    {
+      "name": "sameThreshold",
+      "action": "merge",
+      "score": "15",
+      "entityNames": [
+        "Customer11",
+        "Customer12"
+      ],
+      "uris": [
+        "/content/CustMatchMerge1.json",
+        "/content/CustMatchMerge2.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "customerId",
+        "name",
+        "shippingAddress"
+      ]
+    },
+    {
+      "name": "testSecondCustomAction",
+      "action": "custom",
+      "score": "9.5",
+      "entityNames": [
+        "Customer1",
+        "Customer3"
+      ],
+      "uris": [
+        "/content/CustShippingCityStateMatch1.json",
+        "/content/CustShippingCityStateMatch3.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "customerId"
+      ]
+    },
+    {
+      "name": "similarThreshold",
+      "action": "notify",
+      "score": "7.5",
+      "entityNames": [
+        "Customer1",
+        "Customer2"
+      ],
+      "uris": [
+        "/content/CustShippingCityStateMatch1.json",
+        "/content/CustShippingCityStateMatch2.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "lastName"
+      ]
+    },
+    {
+      "name": "similarThreshold",
+      "action": "notify",
+      "score": "7.5",
+      "entityNames": [
+        "Customer4",
+        "Customer6"
+      ],
+      "uris": [
+        "/content/CustShippingCityStateMatch1.json",
+        "/content/CustShippingCityStateMatch4.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "lastName"
+      ]
+    },
+    {
+      "name": "testSecondCustomAction",
+      "action": "custom",
+      "score": "9.5",
+      "entityNames": [
+        "Customer2",
+        "Customer4"
+      ],
+      "uris": [
+        "/content/CustShippingCityStateMatch2.json",
+        "/content/CustShippingCityStateMatch4.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "customerId"
+      ]
+    },
+    {
+      "name": "similarThreshold",
+      "action": "notify",
+      "score": "7.5",
+      "entityNames": [
+        "Customer2",
+        "Customer3"
+      ],
+      "uris": [
+        "/content/CustShippingCityStateMatch2.json",
+        "/content/CustShippingCityStateMatch3.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "lastName"
+      ]
+    },
+    {
+      "name": "household",
+      "action": "custom",
+      "score": "8.5",
+      "entityNames": [
+        "Customer3",
+        "Customer4"
+      ],
+      "uris": [
+        "/content/CustShippingCityStateMatch3.json",
+        "/content/CustShippingCityStateMatch4.json"
+      ],
+      "matchRulesets": [
+        "billingAddress",
+        "lastName",
+        "shippingAddress",
+        "reduce for household"
+      ]
+    }
+  ]
+};
+
