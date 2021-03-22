@@ -67,6 +67,10 @@ class MatchingStepDetail {
   getTestMatchUriButton() {
     return cy.findByLabelText("testMatchUriButton");
   }
+
+  getAllDataRadio() {
+    return cy.findByLabelText("allDataRadio");
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();
