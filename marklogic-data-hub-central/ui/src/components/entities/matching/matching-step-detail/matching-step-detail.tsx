@@ -425,7 +425,7 @@ const MatchingStepDetail: React.FC = () => {
               {!moreRulesetText && <span aria-label="ruleset-more" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>more</span> }
             </div>
             <div
-              id="panelActions"
+              id="panelActionsMatch"
               onClick={event => {
                 event.stopPropagation(); // Do not trigger collapse
                 event.preventDefault();
