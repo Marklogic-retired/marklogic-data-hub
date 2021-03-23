@@ -17,8 +17,11 @@
 
 declareUpdate();
 
+// The array of content objects to write
 var contentArray;
-var baseCollections;
+
+// The collections to add to each content object, based on step definition / flow / step / runtime config
+var configCollections;
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
@@ -29,63 +32,88 @@ const traceEvent = consts.TRACE_FLOW_RUNNER_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
 const dbName = traceEnabled ? xdmp.databaseName(xdmp.database()) : null;
 
-const temporalCollections = temporalLib.getTemporalCollections().toArray().reduce((acc, col) => {
-    acc[col] = true;
-    return acc;
+/**
+ * Delete the document with the URI in the given content object.
+ *
+ * @param content
+ * @param temporalCollection optional; should only be non-null if document is currently in a temporal collection
+ */
+function deleteContent(content, temporalCollection) {
+  const uri = content.uri;
+  if (fn.docAvailable(uri)) {
+    if (temporalCollection) {
+      temporal.documentDelete(temporalCollection, uri);
+    } else {
+      xdmp.documentDelete(content.uri);
+    }
+  }
+}
+
+/**
+ * 
+ * @param content 
+ * @returns array of collections that the content object should be written to
+ */
+function determineTargetCollections(content) {
+  const context = (content.context || {});
+  const contextCollections = context.collections || [];
+
+  let targetCollections;
+  if (context.useContextCollectionsOnly) {
+    targetCollections = fn.distinctValues(Sequence.from(contextCollections)).toArray();
+  } else {
+    targetCollections = fn.distinctValues(Sequence.from(configCollections.concat(contextCollections))).toArray();
+  }
+
+  return targetCollections.length > 0 ? targetCollections : xdmp.defaultCollections().toArray();
+}
+
+// Create a map of all temporal collections for quick checks on whether or not a collection is a temporal one
+const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().reduce((collectionMap, collectionName) => {
+  collectionMap[collectionName] = true;
+  return collectionMap;
 }, {});
 
 for (let content of contentArray) {
-    let context = (content.context||{});
+  let context = (content.context || {});
 
-    const permissions = context.permissions || xdmp.defaultPermissions();
+  const permissions = context.permissions || xdmp.defaultPermissions();
 
-    let existingCollections = xdmp.documentGetCollections(content.uri);
-    let collections;
-    if(context && context.useContextCollectionsOnly){
-      collections = fn.distinctValues(Sequence.from(context.collections||[])).toArray();
-    }
-    else{
-      collections = fn.distinctValues(Sequence.from(baseCollections.concat((context.collections||[])))).toArray();
-    }
+  const targetCollections = determineTargetCollections(content);
 
-    let metadata = context.metadata;
-    let temporalCollection = collections.concat(existingCollections).find((col) => temporalCollections[col]);
-    let isDeleteOp = !!content['$delete'];
-    if (isDeleteOp) {
-        if (fn.docAvailable(content.uri)) {
-            if (temporalCollection) {
-                temporal.documentDelete(temporalCollection, content.uri);
-            } else {
-                xdmp.documentDelete(content.uri);
-            }
-        }
+  const existingCollections = xdmp.documentGetCollections(content.uri);
+  const temporalCollection = targetCollections.concat(existingCollections).find((col) => temporalCollectionMap[col]);
+
+  if (!!content['$delete']) {
+    deleteContent(content, temporalCollection);
+  } else {
+    const metadata = context.metadata;
+    if (temporalCollection) {
+      // temporalDocURI is managed by the temporal package and must not be carried forward.
+      if (metadata) {
+        delete metadata.temporalDocURI;
+      }
+      const collectionsReservedForTemporal = ['latest', content.uri];
+      if (traceEnabled) {
+        hubUtils.hubTrace(traceEvent, `Inserting temporal document ${content.uri} into database ${dbName}`);
+      }
+      temporal.documentInsert(temporalCollection, content.uri, content.value, {
+        permissions,
+        collections: targetCollections.filter((col) => !(temporalCollectionMap[col] || collectionsReservedForTemporal.includes(col))),
+        metadata
+      });
     } else {
-        if (temporalCollection) {
-            // temporalDocURI is managed by the temporal package and must not be carried forward.
-            if (metadata) {
-                delete metadata.temporalDocURI;
-            }
-            const collectionsReservedForTemporal = ['latest', content.uri];
-            if (traceEnabled) {
-                hubUtils.hubTrace(traceEvent, `Inserting temporal document ${content.uri} into database ${dbName}`);
-            }
-            temporal.documentInsert(temporalCollection, content.uri, content.value,
-                {
-                    permissions,
-                    collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col))),
-                    metadata
-                }
-            );
-        } else {
-            if (traceEnabled) {
-                hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${dbName}`);
-            }
-            xdmp.documentInsert(content.uri, content.value, {permissions, collections, metadata});
-        }
+      if (traceEnabled) {
+        hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${dbName}`);
+      }
+      xdmp.documentInsert(content.uri, content.value, {permissions, collections: targetCollections, metadata});
     }
+  }
 }
-let writeInfo = {
-    transaction: xdmp.transaction(),
-    dateTime: fn.currentDateTime()
+
+const writeInfo = {
+  transaction: xdmp.transaction(),
+  dateTime: fn.currentDateTime()
 };
+
 writeInfo;

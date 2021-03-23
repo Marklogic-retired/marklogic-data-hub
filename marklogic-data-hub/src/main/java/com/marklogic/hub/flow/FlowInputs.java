@@ -83,6 +83,21 @@ public class FlowInputs {
         this.options = options;
     }
 
+    /**
+     * Convenience method for adding one option at a time.
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    public FlowInputs withOption(String name, Object value) {
+        if (options == null) {
+            options = new HashMap<>();
+        }
+        options.put(name, value);
+        return this;
+    }
+
     public FlowInputs withOptions(Map<String, Object> options) {
         setOptions(options);
         return this;
