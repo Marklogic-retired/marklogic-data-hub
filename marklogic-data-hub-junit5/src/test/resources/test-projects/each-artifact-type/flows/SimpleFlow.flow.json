@@ -1,0 +1,8 @@
+{
+  "name": "SimpleFlow",
+  "steps": {
+    "1": {
+      "stepId": "simpleStep-custom"
+    }
+  }
+}

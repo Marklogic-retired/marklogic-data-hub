@@ -1,0 +1,7 @@
+{
+  "name": "simpleStep",
+  "stepId": "simpleStep-custom",
+  "stepDefinitionName": "simpleStep",
+  "stepDefinitionType": "CUSTOM",
+  "sourceQuery": "cts.collectionQuery('anything')"
+}

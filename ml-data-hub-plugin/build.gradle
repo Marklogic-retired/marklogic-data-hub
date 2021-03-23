@@ -36,9 +36,6 @@ plugins {
 
 apply plugin: "com.gradle.plugin-publish"
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
-
 jar.enabled = true
 
 // See https://github.com/snyk/gradle-plugin for docs
@@ -47,13 +44,6 @@ snyk {
     api = snykToken
     autoDownload = true
     autoUpdate = true
-}
-
-repositories {
-    jcenter()
-    mavenCentral()
-    maven { url 'http://repo.spring.io/milestone' }
-    maven { url 'http://developer.marklogic.com/maven2' }
 }
 
 dependencies {

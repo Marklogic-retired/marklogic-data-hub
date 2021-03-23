@@ -16,13 +16,18 @@ snyk {
 }
 
 dependencies {
-    api(project(":marklogic-data-hub-api"))
+    api(project(":marklogic-data-hub"))
 
-    // Because one of the main features of the test helper classes in this project is access to a Logger object,
-    // this is an API dependency.
+    api "org.junit.jupiter:junit-jupiter:5.7.1"
     api "org.slf4j:slf4j-api:1.7.30"
+    api "org.springframework:spring-test:5.2.9.RELEASE"
 
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1"
+    testImplementation(testFixtures(project(":marklogic-data-hub")))
+    testImplementation "ch.qos.logback:logback-classic:1.2.3"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

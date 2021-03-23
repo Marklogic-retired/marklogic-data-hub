@@ -498,6 +498,16 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, "trace");
     }
 
+    /**
+     * @return a count of all docs in the jobs database.
+     */
+    protected int getJobsDocCount() {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, null);
+    }
+
+    /**
+     * @return a count of documents in the "job" collection - i.e. actual "Job" documents.
+     */
     protected int getJobDocCount() {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, "job");
     }

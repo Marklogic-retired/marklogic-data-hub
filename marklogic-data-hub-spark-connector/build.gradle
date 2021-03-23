@@ -5,10 +5,6 @@ plugins {
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
-// Spark 2 requires Java 8
-sourceCompatibility = "8"
-targetCompatibility = "8"
-
 group = 'com.marklogic'
 
 // See https://github.com/snyk/gradle-plugin for docs
@@ -19,19 +15,12 @@ snyk {
     autoUpdate = true
 }
 
-repositories {
-    jcenter()
-}
-
-ext {
-    junitPlatformVersion = '1.4.2'
-    junitJupiterVersion  = '5.4.2'
+configurations {
+    // Some of the Spark dependencies bring in junit 3, which we don't want on the classpath
+    all*.exclude group: "junit", module: "junit"
 }
 
 dependencies {
-
-    // marklogic-data-hub-api depends on Java 8 and JavaClient 5.3 and can thus safely be used by this connector,
-    // as Spark runs on Java 8
     api(project(":marklogic-data-hub-api"))
 
     // Makes it possible to use lambdas in Java 8 to implement Spark's Function1 and Function2 interfaces
@@ -47,20 +36,17 @@ dependencies {
     compileOnly "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
     compileOnly "org.apache.spark:spark-core_2.11:${sparkVersion}"
 
+    // Depends on the test plumbing classes in the test project
+    testImplementation(project(":marklogic-data-hub-test"))
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
+
     // Need to declare the Spark dependencies here too so they're available for tests
     testImplementation "org.apache.spark:spark-sql_2.11:${sparkVersion}"
     testImplementation "org.apache.spark:spark-launcher_2.11:${sparkVersion}"
     testImplementation "org.apache.spark:spark-catalyst_2.11:${sparkVersion}"
     testImplementation "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
     testImplementation "org.apache.spark:spark-core_2.11:${sparkVersion}"
-
-    // Depends on the test plumbing classes in the test project
-    testImplementation(project(":marklogic-data-hub-test"))
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
-    testImplementation "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 }
 
 tasks.withType(Test) {
