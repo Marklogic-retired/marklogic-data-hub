@@ -25,9 +25,6 @@ apply plugin: "com.github.node-gradle.node"
 apply plugin: "jsonschema2pojo"
 apply from: 'build-rpm.gradle'
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
-
 // See https://github.com/snyk/gradle-plugin for docs
 snyk {
     severity = 'medium'
@@ -39,9 +36,6 @@ snyk {
 ext {
     taskGroup = "Spring Boot UI"
 }
-
-ext.junitPlatformVersion = '1.4.2'
-ext.junitJupiterVersion = '5.4.2'
 
 bootWar {
     archiveBaseName = springBootJarName
@@ -57,22 +51,16 @@ bootRun.doFirst {
     environment "spring.profiles.active", springProfiles
 }
 
-repositories {
-    jcenter()
-    mavenCentral()
-    mavenLocal()
-}
-
 dependencies {
     // No idea why this is necessary, but when Gradle brings the core project over, it bumps the okhttp3 dependency
-    // down from 4.4.0 to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
+    // down from 4.x to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
     // then explicitly depending on the desired versions.
     implementation (project(":marklogic-data-hub")) {
         exclude group: "com.squareup.okhttp3", module: "okhttp"
         exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
     }
 
-    // Depend on the versions that ML Java Client 5.3.0 depends on
+    // Depend on the versions that ML Java Client 5.4.0 depends on
     implementation "com.squareup.okhttp3:okhttp:4.7.2"
     implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
 
@@ -110,13 +98,6 @@ dependencies {
 
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-
-    testImplementation "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
-    testImplementation "org.mockito:mockito-core:3.0.0"
-    testImplementation "org.mockito:mockito-junit-jupiter:3.0.0"
 
     testImplementation "javax.ws.rs:javax.ws.rs-api:2.1.1"
 }
@@ -164,9 +145,8 @@ node {
 
     // Set the work directory where node_modules should be located
     nodeModulesDir = file("${project.projectDir}/ui")
-
-
 }
+
 task installDependencies(type: NpmTask, group: taskGroup) {
     description = "Install UI dependencies before building the UI files"
     args = ["install"]

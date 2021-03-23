@@ -215,12 +215,19 @@ public abstract class AbstractHubClientTest extends TestObject {
         return new Fragment(getHubClient().getFinalClient().newXMLDocumentManager().read(uri, new StringHandle()).get());
     }
 
+    protected void writeStagingJsonDoc(String uri, String content, String... collections) {
+        writeJsonDoc(getHubClient().getStagingClient(), uri, content, collections);
+    }
+
     protected void writeFinalJsonDoc(String uri, String content, String... collections) {
+        writeJsonDoc(getHubClient().getFinalClient(), uri, content, collections);
+    }
+
+    protected void writeJsonDoc(DatabaseClient client, String uri, String content, String... collections) {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         addDefaultPermissions(metadata);
         metadata.getCollections().addAll(collections);
-        getHubClient().getFinalClient().newDocumentManager().write(uri, metadata,
-            new BytesHandle(content.getBytes()).withFormat(Format.JSON));
+        client.newDocumentManager().write(uri, metadata, new BytesHandle(content.getBytes()).withFormat(Format.JSON));
     }
 
     protected void writeJobsXmlDoc(String uri, String content, String... collections) {
