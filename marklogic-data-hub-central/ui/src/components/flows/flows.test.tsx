@@ -281,4 +281,46 @@ describe("Flows component", () => {
     expect(queryByLabelText("rightArrow-"+flowStepName)).not.toBeInTheDocument();
     expect(queryByLabelText("leftArrow-"+flowStepName)).not.toBeInTheDocument();
   });
+
+  it("reorder flow buttons can be focused and pressed by keyboard", async () => {
+    const {getByLabelText} = render(
+      <Router history={history}><Flows
+        {...flowsProps}
+        canReadFlow={true}
+        canWriteFlow={true}
+        hasOperatorRole={true}
+      /></Router>
+    );
+    let flowButton = getByLabelText("icon: right");
+    fireEvent.click(flowButton);
+
+    const rightArrowButton = getByLabelText("rightArrow-"+flowStepName);
+    expect(rightArrowButton).toBeInTheDocument();
+    rightArrowButton.focus();
+    expect(rightArrowButton).toHaveFocus();
+
+    userEvent.tab();
+    expect(rightArrowButton).not.toHaveFocus();
+    userEvent.tab({shift: true});
+    expect(rightArrowButton).toHaveFocus();
+
+    const leftArrowButton = getByLabelText("leftArrow-"+flowStepName);
+    expect(leftArrowButton).toBeInTheDocument();
+    leftArrowButton.focus();
+    expect(leftArrowButton).toHaveFocus();
+
+    userEvent.tab();
+    expect(leftArrowButton).not.toHaveFocus();
+    userEvent.tab({shift: true});
+    expect(leftArrowButton).toHaveFocus();
+
+    // Verifying a user can press enter to reorder steps in a flow
+    rightArrowButton.onkeydown = jest.fn();
+    fireEvent.keyDown(rightArrowButton, {key: "Enter", code: "Enter"});
+    expect(rightArrowButton.onkeydown).toHaveBeenCalledTimes(1);
+
+    leftArrowButton.onkeydown = jest.fn();
+    fireEvent.keyDown(leftArrowButton, {key: "Enter", code: "Enter"});
+    expect(leftArrowButton.onkeydown).toHaveBeenCalledTimes(1);
+  });
 });

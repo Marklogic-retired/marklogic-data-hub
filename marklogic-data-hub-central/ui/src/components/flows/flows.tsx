@@ -683,7 +683,9 @@ const Flows: React.FC<Props> = (props) => {
                           aria-required="true"
                           className={styles.reorderFlowLeft}
                           role="button"
-                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)} />
+                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)}
+                          onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.LEFT)}
+                          tabIndex={0}/>
                       </MLTooltip>
                     </div>
                   }
@@ -702,7 +704,9 @@ const Flows: React.FC<Props> = (props) => {
                           aria-required="true"
                           className={styles.reorderFlowRight}
                           role="button"
-                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)} />
+                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)}
+                          onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.RIGHT)}
+                          tabIndex={0}/>
                       </MLTooltip>
                     }
                   </div>
@@ -827,6 +831,14 @@ const Flows: React.FC<Props> = (props) => {
       event.preventDefault();
     }
   };
+
+  const reorderFlowKeyDownHandler = (event, index, flowName, direction) => {
+    if (event.key === "Enter") {
+      reorderFlow(index, flowName, direction);
+      event.preventDefault();
+    }
+  };
+
 
   return (
     <div id="flows-container" className={styles.flowsContainer}>
