@@ -37,6 +37,7 @@ describe("Add Custom step to a flow", () => {
   it("Create new flow", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.createFlowButton().click();
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`test flow for adding custom step`);

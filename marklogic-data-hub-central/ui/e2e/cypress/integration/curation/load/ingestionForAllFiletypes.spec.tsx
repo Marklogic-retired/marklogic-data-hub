@@ -43,6 +43,7 @@ describe("Verify ingestion for all filetypes", () => {
     cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
     loadPage.addStepToNewFlow(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -70,6 +71,7 @@ describe("Verify ingestion for all filetypes", () => {
     cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
     loadPage.addStepToNewFlow(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -97,6 +99,7 @@ describe("Verify ingestion for all filetypes", () => {
     cy.waitForAsyncRequest();
     cy.findByText(stepName).should("be.visible");
     loadPage.addStepToNewFlow(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
