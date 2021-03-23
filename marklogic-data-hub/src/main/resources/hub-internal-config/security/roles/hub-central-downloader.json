@@ -8,6 +8,7 @@
     "data-hub-ingestion-reader",
     "data-hub-mapping-reader",
     "data-hub-match-merge-reader",
+    "data-hub-custom-reader",
     "data-hub-step-definition-reader"
   ],
   "privilege": [

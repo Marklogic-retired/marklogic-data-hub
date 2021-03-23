@@ -74,6 +74,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         StepService stepService = StepService.on(stagingClient);
         stepService.deleteStep("ingestion", "validArtifact");
         stepService.deleteStep("mapping", "personMapping");
+        stepService.deleteStep("custom", "customStep");
         ModelsService modelsService = ModelsService.on(stagingClient);
         modelsService.deleteModel("Order");
         modelsService.deleteModel("Person");

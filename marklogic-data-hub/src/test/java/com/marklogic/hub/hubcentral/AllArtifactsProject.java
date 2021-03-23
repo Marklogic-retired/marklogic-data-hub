@@ -60,6 +60,7 @@ public class AllArtifactsProject extends TestObject {
         verifyEntryExists("steps/mapping/TestOrderMapping1.step.json", "TestOrderMapping1");
         verifyEntryExists("steps/mapping/OrderMappingJson.step.json", "OrderMappingJson");
         verifyEntryExists("steps/ingestion/validArtifact.step.json", "validArtifact");
+        verifyEntryExists("steps/custom/someTestStep.step.json", "someTestStep");
 
         // Verify path doesn't start with "/"
         verifyArtifactPathsDontStartWithSlash();
@@ -87,11 +88,12 @@ public class AllArtifactsProject extends TestObject {
         dbProps = verifyEntryExists("src/main/entity-config/databases/final-database.json", "database-name",
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
-        assertEquals(15, hubCentralFilesZipEntries.size(), "Expecting the following entries: " +
+        assertEquals(16, hubCentralFilesZipEntries.size(), "Expecting the following entries: " +
             "1 flow; " +
             "2 entity models; " +
             "2 mapping steps; " +
             "1 ingestion step; " +
+            "1 custom step; " +
             "2 protected path files (for PII); " +
             "1 query roleset file (for PII); " +
             "4 search options files; " +

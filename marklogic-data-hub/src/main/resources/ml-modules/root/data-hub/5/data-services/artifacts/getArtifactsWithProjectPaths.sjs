@@ -33,7 +33,8 @@ const userArtifactQuery = cts.andNotQuery(
     "http://marklogic.com/data-hub/steps/ingestion",
     "http://marklogic.com/data-hub/steps/mapping",
     "http://marklogic.com/data-hub/steps/matching",
-    "http://marklogic.com/data-hub/steps/merging"
+    "http://marklogic.com/data-hub/steps/merging",
+    "http://marklogic.com/data-hub/steps/custom"
   ]),
   cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
 );
