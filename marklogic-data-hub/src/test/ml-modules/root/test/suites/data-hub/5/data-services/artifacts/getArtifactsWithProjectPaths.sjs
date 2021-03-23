@@ -39,9 +39,9 @@ assertions.push(
         artifactsWithProjectPaths.some((artifact) => artifact.path === 'steps/merging/mergingStep.step.json'),
         `Artifacts should include merging steps. Artifacts: ${artifactsWithProjectPathsDesc}`
     ),
-    test.assertFalse(
+    test.assertTrue(
         artifactsWithProjectPaths.some((artifact) => artifact.path === 'steps/custom/customStep.step.json'),
-        `Artifacts should not include custom steps as they can't be modified by Hub Central. Artifacts: ${artifactsWithProjectPathsDesc}`
+        `Artifacts should include custom steps. Artifacts: ${artifactsWithProjectPathsDesc}`
     )
 )
 
