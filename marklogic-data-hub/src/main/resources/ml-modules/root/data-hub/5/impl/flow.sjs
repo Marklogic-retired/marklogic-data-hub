@@ -289,7 +289,7 @@ class Flow {
     //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
       try {
-        const baseCollections = [
+        const configCollections = [
           options.collections,
           ((flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
           (theFlow.options || {}).collections
@@ -299,7 +299,7 @@ class Flow {
 
         const targetDatabase = this.globalContext.targetDatabase;
         const contentArray = this.writeQueue.getContentArray(targetDatabase);
-        writeTransactionInfo = this.flowUtils.writeContentArray(contentArray, targetDatabase, baseCollections);
+        writeTransactionInfo = this.flowUtils.writeContentArray(contentArray, targetDatabase, configCollections);
       } catch (e) {
         this.handleWriteError(this, e);
       }

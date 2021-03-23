@@ -713,13 +713,13 @@ function addMetadataToContent(content, flowName, stepName, jobId) {
 }
 
 /**
- * @param contentArray
- * @param databaseName
- * @param baseCollections
+ * @param contentArray the array of content objects to write
+ * @param databaseName the database to write the content objects to
+ * @param configCollections the collections to add to each content object based on step definition / flow / step / runtime config
  * @return An object consisting of two properties - "transaction" and "dateTime"
  */
-function writeContentArray(contentArray, databaseName, baseCollections = []) {
-  const vars = {contentArray, baseCollections};
+function writeContentArray(contentArray, databaseName, configCollections = []) {
+  const vars = {contentArray, configCollections};
 
   // ignoreAmps is true to prevent a user from e.g. overwriting job documents, which could be done via an amp
   const options = {
@@ -734,15 +734,15 @@ function writeContentArray(contentArray, databaseName, baseCollections = []) {
 }
 
 /**
- * 
- * @param theFlow 
- * @param stepDefinition 
- * @param stepNumber 
- * @param runtimeOptions 
- * @returns the "combined" options based on the order of precedence of option sources. 
- * If stepOptions is present in runtimeOptions, and stepOptions has a key matching that of the 
+ *
+ * @param theFlow
+ * @param stepDefinition
+ * @param stepNumber
+ * @param runtimeOptions
+ * @returns the "combined" options based on the order of precedence of option sources.
+ * If stepOptions is present in runtimeOptions, and stepOptions has a key matching that of the
  * stepNumber, then the value of that key will also be applied to the combined options. Note that
- * the combined options will also have "stepOptions" present in it if that exists in the runtime 
+ * the combined options will also have "stepOptions" present in it if that exists in the runtime
  * options.
  */
 function makeCombinedOptions(theFlow, stepDefinition, stepNumber, runtimeOptions) {
@@ -753,12 +753,12 @@ function makeCombinedOptions(theFlow, stepDefinition, stepNumber, runtimeOptions
 
   const stepRuntimeOptions = runtimeOptions.stepOptions ? runtimeOptions.stepOptions[stepNumber] : {};
   const stepOptions = flowSteps[stepNumber] ? flowSteps[stepNumber].options : {};
-  
-  return Object.assign({}, 
+
+  return Object.assign({},
     stepDefinition.options,
     theFlow.options,
-    stepOptions, 
-    runtimeOptions, 
+    stepOptions,
+    runtimeOptions,
     stepRuntimeOptions
   );
 }

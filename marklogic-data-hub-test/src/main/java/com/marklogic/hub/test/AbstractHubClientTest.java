@@ -111,11 +111,19 @@ public abstract class AbstractHubClientTest extends TestObject {
      */
     protected void setTestUserRoles(String... roles) {
         runAsAdmin();
+        makeTestUserWithRoles(roles).save();
+    }
 
+    /**
+     * @param roles
+     * @return an un-saved User object for test-data-hub-user with the given roles; the typical intent here is that you
+     * want to further modify the User before saving it
+     */
+    protected User makeTestUserWithRoles(String... roles) {
         User user = new User(new API(getHubClient().getManageClient()), "test-data-hub-user");
         user.setRole(Arrays.asList(roles));
         user.setPassword("password");
-        user.save();
+        return user;
     }
 
     /**
