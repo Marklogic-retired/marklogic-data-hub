@@ -62,6 +62,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     advancedSettingsDialog.saveSettings(loadStep).should("not.be.exist");
     // add step to a new flow
     loadPage.addStepToNewFlow(loadStep);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -161,6 +162,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
     curatePage.runInNewFlow(mapStep).click({force: true});
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -187,6 +189,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.addToNewFlow("Order", mapStep);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);

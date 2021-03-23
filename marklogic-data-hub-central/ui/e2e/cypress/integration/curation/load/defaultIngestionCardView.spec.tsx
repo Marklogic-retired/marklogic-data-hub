@@ -99,6 +99,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
   });
   it("Cancel Add to New Flow", () => {
     loadPage.addStepToNewFlow(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
     cy.waitForAsyncRequest();
@@ -107,6 +108,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
   });
   it("Verify Add to New Flow", () => {
     loadPage.addStepToNewFlow(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -153,6 +155,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
     loadPage.runInNewFlow(stepName).click({force: true});
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -181,6 +184,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.addStepToNewFlow(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);

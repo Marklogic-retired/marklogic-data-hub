@@ -66,6 +66,7 @@ describe("Add Matching step to a flow", () => {
   });
   it("Add the Match step to new flow and Run the step(new)", () => {
     curatePage.addToNewFlow("Customer", matchStep);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName1);
     runPage.setFlowDescription(`${flowName1} description`);
@@ -113,6 +114,7 @@ describe("Add Matching step to a flow", () => {
   it("Add the Match step to new flow from card run button and should automatically run", () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runInNewFlow(matchStep).click();
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);

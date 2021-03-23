@@ -82,6 +82,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   });
   it("Add step to new flow and Run", () => {
     loadPage.addStepToNewFlow(loadStep);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.editSave().should("be.enabled");
     runPage.setFlowName(flowName);

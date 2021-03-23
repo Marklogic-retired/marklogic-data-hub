@@ -123,6 +123,7 @@ describe("Validate CRUD functionality from list view", () => {
   });
   it("Cancel Add to New Flow", () => {
     loadPage.addStepToNewFlowListView(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
     //should route user back to load page list view
@@ -130,6 +131,7 @@ describe("Validate CRUD functionality from list view", () => {
   });
   it("Add step to a new flow", () => {
     loadPage.addStepToNewFlowListView(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -169,6 +171,7 @@ describe("Validate CRUD functionality from list view", () => {
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
     loadPage.runInNewFlow(stepName).click({force: true});
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -196,6 +199,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.addStepToNewFlowListView(stepName);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
