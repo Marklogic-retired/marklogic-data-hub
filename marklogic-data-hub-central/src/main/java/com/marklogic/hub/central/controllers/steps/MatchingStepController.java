@@ -3,6 +3,7 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
+import com.marklogic.hub.central.controllers.MappingController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MasteringService;
@@ -10,12 +11,14 @@ import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/api/steps/matching")
@@ -70,6 +73,16 @@ public class MatchingStepController extends BaseController {
     @Secured("ROLE_readMatching")
     public ResponseEntity<JsonNode> calculateMatchingActivity(@PathVariable String stepName) {
         return ResponseEntity.ok(MasteringService.on(getHubClient().getStagingClient()).calculateMatchingActivity(stepName));
+    }
+
+    @RequestMapping(value = "/{stepName}/previewMatchingActivity", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "Get matching pairs of URIs and the match details")
+    @Secured("ROLE_readMatching")
+    public ResponseEntity<JsonNode> previewMatchingActivity(@PathVariable String stepName,
+                                                            @RequestParam(value = "uris", required = false) String[] uris,
+                                                            @RequestParam(value = "sampleSize", required = false) int sampleSize) {
+        return ResponseEntity.ok(MasteringService.on(getHubClient().getStagingClient()).previewMatchingActivity(stepName, Arrays.stream(uris), sampleSize));
     }
 
     @RequestMapping(value = "/{stepName}/validate", method = RequestMethod.GET)
