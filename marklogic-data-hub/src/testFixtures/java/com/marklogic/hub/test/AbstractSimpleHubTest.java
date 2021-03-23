@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
- * Subprojects that wish to reuse these testFixtures module can likely have their tests extend this class.
+ * Subprojects that wish to reuse this testFixtures module can likely have their tests extend this class.
+ * It implements the abstract methods in AbstractHubTest with a simple implementation for creating a HubProject,
+ * resetting the databases, and running as a data-hub-developer user.
  */
 public abstract class AbstractSimpleHubTest extends AbstractHubTest {
 

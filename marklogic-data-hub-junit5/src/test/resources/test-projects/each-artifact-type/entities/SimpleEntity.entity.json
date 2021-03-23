@@ -1,0 +1,16 @@
+{
+  "info": {
+    "title": "SimpleEntity",
+    "version": "1.0.0",
+    "baseUri": "http://www.marklogic.com/"
+  },
+  "definitions": {
+    "SimpleEntity": {
+      "properties": {
+        "name": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

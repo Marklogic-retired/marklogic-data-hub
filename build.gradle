@@ -3,36 +3,30 @@ plugins {
     id "net.saliman.properties" version "1.5.1"
 }
 
-allprojects {
-    task resolveAllDependencies {
-        doLast {
-            configurations.all {
-                if (it.isCanBeResolved()) {
-                    it.resolve()
-                }
-            }
-        }
-    }
-}
-
 subprojects {
+    // While subprojects may need to use java-library plugin, applying this at the top level allows for
+    // sourceCompatibility/targetCompatibility to be set at this level as well
     apply plugin: 'java'
+
     apply plugin: 'jacoco'
+
     sourceCompatibility = "8"
     targetCompatibility = "8"
 
     repositories {
+        jcenter()
         mavenCentral()
         mavenLocal()
     }
 
     tasks.withType(Test){
         ignoreFailures = true
-        testLogging{
-            events 'started','passed', 'skipped', 'failed'
+        testLogging {
+            events 'started', 'passed', 'skipped', 'failed'
             exceptionFormat 'full'
         }
     }
+
     jacocoTestReport {
         reports {
             xml.enabled true

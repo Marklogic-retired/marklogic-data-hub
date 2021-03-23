@@ -1,5 +1,6 @@
 package com.marklogic.hub.collector.impl;
 
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.collector.DiskQueue;
 import org.apache.commons.io.FilenameUtils;
 
@@ -10,7 +11,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class FileCollector {
+public class FileCollector extends LoggingObject {
 
     private String inputFormat;
     private Set<String> textExts = new HashSet<>(Arrays.asList("txt"));
@@ -37,6 +38,10 @@ public class FileCollector {
         DiskQueue<String> results;
         try {
             results = new DiskQueue<>(10000);
+
+            if (logger.isInfoEnabled()) {
+                logger.info("Finding files in directory: " + dirPath);
+            }
 
             try (Stream<Path> files = Files.find(dirPath,
                 Integer.MAX_VALUE,

@@ -7,19 +7,12 @@ plugins {
 
 group = 'com.marklogic'
 
-sourceCompatibility = "8"
-targetCompatibility = "8"
-
 // See https://github.com/snyk/gradle-plugin for docs
 snyk {
     severity = 'medium'
     api = snykToken
     autoDownload = true
     autoUpdate = true
-}
-
-repositories {
-    jcenter()
 }
 
 dependencies {
