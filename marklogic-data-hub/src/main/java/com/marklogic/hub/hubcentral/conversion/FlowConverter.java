@@ -88,7 +88,8 @@ public class FlowConverter extends LoggingObject {
             );
             QueryBatcher queryBatcher = dmm.newQueryBatcher(query)
                 .withConsistentSnapshot()
-                .withThreadCount(1) // If not set, DMSDK logs an unattractive warning
+                .withBatchSize(100) // If not set, QB hangs https://github.com/marklogic/java-client-api/issues/1293
+                .withThreadCount(4) // If not set, DMSDK logs an unattractive warning
                 .onUrisReady(new DeleteListener());
             dmm.startJob(queryBatcher);
             queryBatcher.awaitCompletion();
