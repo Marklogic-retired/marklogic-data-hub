@@ -1,0 +1,14 @@
+{
+    "functionName": "finishJob",
+    "desc": "Updated the Job document associated with jobId with the given jobStatus",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string"
+        },
+        {
+            "name": "jobStatus",
+            "datatype": "string"
+        }
+    ]
+}

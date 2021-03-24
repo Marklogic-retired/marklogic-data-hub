@@ -15,21 +15,10 @@
  */
 'use strict';
 
-// No privilege required: This endpoint is called by the spark connector.
-
-var jobId;
-var status;
+// No privilege required: A user only needs read permissions on a job document
 
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 
-try {
-  const jobDoc = jobs.getJob(jobId);
-  if (jobDoc) {
-    jobDoc.job.jobStatus = status;
-    jobDoc.job.timeEnded = fn.currentDateTime();
-    jobs.updateJob(jobDoc);
-  }
-} catch (ex) {
-  console.log("Failed to update job document; cause: " + ex);
-}
+var jobId;
 
+jobs.getJob(jobId);

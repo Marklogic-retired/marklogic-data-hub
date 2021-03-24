@@ -20,16 +20,17 @@
 var jobId;
 var status;
 
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
-const Jobs = require("/data-hub/5/impl/jobs.sjs");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 const alwaysUseThisStatus = "stop-on-error";
-
-try{
-  Jobs.updateJob(datahub, jobId, alwaysUseThisStatus, null, null, null, null);
-}
-catch(ex){
+try {
+  const jobDoc = jobs.getJob(jobId);
+  if (jobDoc) {
+    jobDoc.job.jobStatus = alwaysUseThisStatus;
+    jobDoc.job.timeEnded = fn.currentDateTime();
+    jobs.updateJob(jobDoc);
+  }
+} catch (ex) {
   console.log("Failed to update job document; cause: " + ex);
 }
 

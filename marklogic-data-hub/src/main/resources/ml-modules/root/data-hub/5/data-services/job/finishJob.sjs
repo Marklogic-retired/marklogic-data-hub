@@ -15,21 +15,19 @@
  */
 'use strict';
 
-// No privilege required: This endpoint is called by the spark connector.
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
-var jobId;
-var status;
-
+const consts = require('/data-hub/5/impl/consts.sjs');
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 
-try {
-  const jobDoc = jobs.getJob(jobId);
-  if (jobDoc) {
-    jobDoc.job.jobStatus = status;
-    jobDoc.job.timeEnded = fn.currentDateTime();
-    jobs.updateJob(jobDoc);
-  }
-} catch (ex) {
-  console.log("Failed to update job document; cause: " + ex);
-}
+var jobId;
+var jobStatus;
 
+const jobDoc = jobs.getRequiredJob(jobId);
+
+jobDoc.job.jobStatus = jobStatus;
+jobDoc.job.timeEnded = fn.currentDateTime();
+
+hubUtils.hubTrace(consts.TRACE_JOB, `Setting status of job '${jobId}' to '${jobStatus}'`);
+jobs.updateJob(jobDoc);

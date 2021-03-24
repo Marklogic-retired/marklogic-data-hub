@@ -16,11 +16,14 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.impl.Step;
+import com.marklogic.hub.util.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +63,15 @@ public class RunStepResponse {
     private String stepEndTime;
 
     private Flow flow;
+
+    public ObjectNode toObjectNode() {
+        try {
+            String json = JSONObject.writeValueAsString(this);
+            return (ObjectNode) new ObjectMapper().readTree(json);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to convert RunStepResponse into JSON node; cause: " + ex.getMessage());
+        }
+    }
 
     /**
      * @return true if the job ran without errors, false otherwise.

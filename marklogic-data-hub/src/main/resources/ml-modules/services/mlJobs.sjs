@@ -14,18 +14,23 @@
  limitations under the License.
  */
 'use strict';
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
-const jobsMod = require("/data-hub/5/impl/jobs.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
+
+/**
+ * This is still supporting what's documented at https://docs.marklogic.com/datahub/5.4/tools/rest/rest-extensions.html
+ * for the mlJobs endpoint, so we still need test cases for them.
+ *
+ * @param context
+ * @param params
+ * @returns {null}
+ */
 function get(context, params) {
   let jobId = params["jobid"];
   let status = params["status"];
   let flow = params["flow-name"];
   let flowNames = params["flowNames"];
-  let latest = params["latest"];
 
   let resp = null;
 
@@ -33,27 +38,16 @@ function get(context, params) {
     httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request"]);
   }
   else if(fn.exists(jobId)) {
-    resp = datahub.jobs.getJobDocWithId(jobId);
+    resp = jobs.getJob(jobId);
   }
   else if(fn.exists(status)) {
-    resp = datahub.jobs.getJobDocs(status);
-  }
-  else if (fn.exists(latest)) {
-    flowNames = (fn.exists(flowNames)) ? hubUtils.normalizeToSequence(flowNames) : hubUtils.normalizeToSequence(flow);
-    if (fn.empty(flowNames)) {
-      resp = datahub.jobs.getLatestJobDocPerFlow();
-    } else {
-      resp = datahub.jobs.getLatestJobDocPerFlow(flowNames);
-    }
-    if (fn.count(flowNames) === 1) {
-      resp = resp[0];
-    }
+    resp = jobs.getJobDocs(status);
   }
   else if (fn.exists(flowNames)) {
-    resp = datahub.jobs.getJobDocsForFlows(flowNames);
+    resp = jobs.getJobDocsForFlows(flowNames);
   }
   else if (fn.exists(flow)) {
-    resp = datahub.jobs.getJobDocsByFlow(flow);
+    resp = jobs.getJobDocsByFlow(flow);
   }
   else{
     httpUtils.throwBadRequestWithArray(["Bad Request", "Incorrect options"]);
@@ -63,22 +57,7 @@ function get(context, params) {
 };
 
 
-function post(context, params, input) {
-  let jobId = params["jobid"];
-  let status = params["status"];
-  let flow = params["flow-name"];
-  let step = params["step"];
-  let lastCompleted = params["lastCompleted"];
-  let stepResponse = input.toObject();
-  let resp = null;
-  try {
-    resp = jobsMod.updateJob(datahub, jobId, status, flow, step, lastCompleted, stepResponse);
-  }
-  catch (ex) {
-    httpUtils.throwBadRequestWithArray(["Bad Request", ex.message]);
-  }
-  return resp;
-};
+function post(context, params, input) {};
 
 function put(context, params, input) {};
 

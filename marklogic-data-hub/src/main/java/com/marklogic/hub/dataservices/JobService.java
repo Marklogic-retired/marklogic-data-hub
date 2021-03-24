@@ -1,0 +1,199 @@
+package com.marklogic.hub.dataservices;
+
+// IMPORTANT: Do not edit. This file is generated.
+
+import com.marklogic.client.io.Format;
+
+
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.io.marker.JSONWriteHandle;
+
+import com.marklogic.client.impl.BaseProxy;
+
+/**
+ * This service description will be included in the class comments of the generated Java class
+ */
+public interface JobService {
+    /**
+     * Creates a JobService object for executing operations on the database server.
+     *
+     * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
+     * client object can be used for any number of requests and in multiple threads.
+     *
+     * @param db	provides a client for communicating with the database server
+     * @return	an object for executing database operations
+     */
+    static JobService on(DatabaseClient db) {
+      return on(db, null);
+    }
+    /**
+     * Creates a JobService object for executing operations on the database server.
+     *
+     * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
+     * client object can be used for any number of requests and in multiple threads.
+     *
+     * The service declaration uses a custom implementation of the same service instead
+     * of the default implementation of the service by specifying an endpoint directory
+     * in the modules database with the implementation. A service.json file with the
+     * declaration can be read with FileHandle or a string serialization of the JSON
+     * declaration with StringHandle.
+     *
+     * @param db	provides a client for communicating with the database server
+     * @param serviceDeclaration	substitutes a custom implementation of the service
+     * @return	an object for executing database operations
+     */
+    static JobService on(DatabaseClient db, JSONWriteHandle serviceDeclaration) {
+        final class JobServiceImpl implements JobService {
+            private DatabaseClient dbClient;
+            private BaseProxy baseProxy;
+
+            private BaseProxy.DBFunctionRequest req_startStep;
+            private BaseProxy.DBFunctionRequest req_finishStep;
+            private BaseProxy.DBFunctionRequest req_getJob;
+            private BaseProxy.DBFunctionRequest req_startJob;
+            private BaseProxy.DBFunctionRequest req_finishJob;
+
+            private JobServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
+                this.dbClient  = dbClient;
+                this.baseProxy = new BaseProxy("/data-hub/5/data-services/job/", servDecl);
+
+                this.req_startStep = this.baseProxy.request(
+                    "startStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_finishStep = this.baseProxy.request(
+                    "finishStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_getJob = this.baseProxy.request(
+                    "getJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_startJob = this.baseProxy.request(
+                    "startJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_finishJob = this.baseProxy.request(
+                    "finishJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+            }
+
+            @Override
+            public void startStep(String jobId, String stepNumber) {
+                startStep(
+                    this.req_startStep.on(this.dbClient), jobId, stepNumber
+                    );
+            }
+            private void startStep(BaseProxy.DBFunctionRequest request, String jobId, String stepNumber) {
+              request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
+                          BaseProxy.atomicParam("stepNumber", false, BaseProxy.StringType.fromString(stepNumber))
+                          ).responseNone();
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode finishStep(String jobId, String stepNumber, String stepStatus, com.fasterxml.jackson.databind.JsonNode runStepResponse) {
+                return finishStep(
+                    this.req_finishStep.on(this.dbClient), jobId, stepNumber, stepStatus, runStepResponse
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode finishStep(BaseProxy.DBFunctionRequest request, String jobId, String stepNumber, String stepStatus, com.fasterxml.jackson.databind.JsonNode runStepResponse) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
+                          BaseProxy.atomicParam("stepNumber", false, BaseProxy.StringType.fromString(stepNumber)),
+                          BaseProxy.atomicParam("stepStatus", false, BaseProxy.StringType.fromString(stepStatus)),
+                          BaseProxy.documentParam("runStepResponse", false, BaseProxy.JsonDocumentType.fromJsonNode(runStepResponse))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getJob(String jobId) {
+                return getJob(
+                    this.req_getJob.on(this.dbClient), jobId
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getJob(BaseProxy.DBFunctionRequest request, String jobId) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName) {
+                return startJob(
+                    this.req_startJob.on(this.dbClient), jobId, flowName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode startJob(BaseProxy.DBFunctionRequest request, String jobId, String flowName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
+                          BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public void finishJob(String jobId, String jobStatus) {
+                finishJob(
+                    this.req_finishJob.on(this.dbClient), jobId, jobStatus
+                    );
+            }
+            private void finishJob(BaseProxy.DBFunctionRequest request, String jobId, String jobStatus) {
+              request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
+                          BaseProxy.atomicParam("jobStatus", false, BaseProxy.StringType.fromString(jobStatus))
+                          ).responseNone();
+            }
+        }
+
+        return new JobServiceImpl(db, serviceDeclaration);
+    }
+
+  /**
+   * Updates the Job document associated with the given jobId to note that the step has been started
+   *
+   * @param jobId	provides input
+   * @param stepNumber	provides input
+   * 
+   */
+    void startStep(String jobId, String stepNumber);
+
+  /**
+   * Updates the associated Job document after all batches have been processed for a step
+   *
+   * @param jobId	provides input
+   * @param stepNumber	provides input
+   * @param stepStatus	provides input
+   * @param runStepResponse	provides input
+   * @return	The updated Job document
+   */
+    com.fasterxml.jackson.databind.JsonNode finishStep(String jobId, String stepNumber, String stepStatus, com.fasterxml.jackson.databind.JsonNode runStepResponse);
+
+  /**
+   * This endpoint description will be included in the method comments of the generated Java method
+   *
+   * @param jobId	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getJob(String jobId);
+
+  /**
+   * Start a new job for the given flowName by creating a new Job document
+   *
+   * @param jobId	provides input
+   * @param flowName	provides input
+   * @return	The created Job document
+   */
+    com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName);
+
+  /**
+   * Updated the Job document associated with jobId with the given jobStatus
+   *
+   * @param jobId	provides input
+   * @param jobStatus	provides input
+   * 
+   */
+    void finishJob(String jobId, String jobStatus);
+
+}

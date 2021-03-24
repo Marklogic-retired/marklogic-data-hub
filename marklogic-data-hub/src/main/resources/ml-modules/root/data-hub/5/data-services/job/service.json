@@ -1,0 +1,5 @@
+{
+  "desc" : "Defines endpoints for managing Job documents",
+  "endpointDirectory" : "/data-hub/5/data-services/job/",
+  "$javaClass" : "com.marklogic.hub.dataservices.JobService"
+}

@@ -68,26 +68,30 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
 
+        verifyJobFinished(resp);
         assertEquals("testFlow", resp.getFlowName());
         verifyCollectionCountsFromRunningTestFlow();
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+
         XMLDocumentManager docMgr = getHubClient().getStagingClient().newXMLDocumentManager();
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         docMgr.readMetadata("/ingest-xml.xml", metadataHandle);
         DocumentMetadataHandle.DocumentPermissions permissions = metadataHandle.getPermissions();
-        Assertions.assertEquals(2, permissions.get("data-hub-operator").size());
-        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.READ));
-        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.UPDATE));
+
+        assertEquals(2, permissions.get("data-hub-operator").size());
+        assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.READ));
+        assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.UPDATE));
+
         RunStepResponse stepResp = resp.getStepResponses().get("1");
-        Assertions.assertNotNull(stepResp.getStepStartTime());
-        Assertions.assertNotNull(stepResp.getStepEndTime());
+        assertNotNull(stepResp.getStepStartTime());
+        assertNotNull(stepResp.getStepEndTime());
+
         EvalResultIterator itr = runInDatabase("fn:collection(\"csv-coll\")[1]/envelope/headers/createdUsingFile", HubConfig.DEFAULT_STAGING_NAME);
         EvalResult res = itr.next();
         StringHandle sh = new StringHandle();
         res.get(sh);
         String file = sh.get();
-        Assertions.assertNotNull(file);
-        Assertions.assertTrue(file.contains("ingest.csv"));
+        assertNotNull(file);
+        assertTrue(file.contains("ingest.csv"), "Unexpected filename: " + file);
     }
 
     @Test
@@ -96,7 +100,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         options.put("sourceQuery", "cts.collectionQuery('oops");
         RunFlowResponse resp = runFlow("testValuesFlow", "1", null, options, null);
         flowRunner.awaitCompletion();
-        assertEquals(JobStatus.FAILED.toString(), resp.getJobStatus(), "The job should have failed due to the invalid sourceQuery");
+        assertEquals(JobStatus.FAILED.toString(), resp.getJobStatus(), "The job should have failed due to the invalid sourceQuery: " + resp.toJson());
         String errorMessage = resp.getStepResponses().get("1").getStepOutput().get(0);
         assertTrue(errorMessage.contains("Unable to collect items to process; sourceQuery script: cts.collectionQuery('oops"),
             "The error message should include the invalid source query script for easier debugging; message: " + errorMessage);
@@ -158,7 +162,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         options.put("sourceQuery", "cts.values([cts.elementReference(options.firstQName), cts.elementReference(options.secondQName)], null, null, cts.collectionQuery('collector-test-input'))");
         RunFlowResponse resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
-        assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
+
+        verifyJobFinished(resp);
         assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
             "There are 3 unique values in the PersonGivenName and PersonSurName indexes, so 3 documents should have been created");
         deleteCollectorTestOutput();
@@ -167,7 +172,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         options.put("sourceQuery", "cts.elementValueCoOccurrences(xs.QName('PersonGivenName'), xs.QName('PersonSurName'), null, cts.collectionQuery('collector-test-input'))");
         resp = runFlow(flowName, "2", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
-        assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
+
+        verifyJobFinished(resp);
         assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
             "Both test documents should return a co-occurrence. Note that this array will be passed as a string to the " +
                 "endpoint for running a flow. It can be converted into an array via xdmp.eval .");
@@ -182,7 +188,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         options.put("sourceQueryLimit", 1);
         resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
-        assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
+        verifyJobFinished(resp);
         assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
             "Each of the 2 test documents should return a tuple with 2 items in it");
     }
@@ -211,8 +217,9 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         flowRunner.awaitCompletion();
 
         runAsDataHubDeveloper();
+        verifyJobFinished(resp);
         assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll"));
-        assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+
         String count = getHubClient().getStagingClient().newServerEval().xquery("fn:count(cts:uri-match('/prefix-output/*.xml'))").evalAs(String.class);
         assertEquals(25, Integer.parseInt(count));
         count = getHubClient().getJobsClient().newServerEval().xquery("xdmp:estimate(fn:collection('http://marklogic.com/provenance-services/record'))").evalAs(String.class);
@@ -241,12 +248,14 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "4", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll") == 25);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+
+        verifyJobFinished(resp);
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
+
         EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
         EvalResult res = resultItr.next();
         long count = Math.toIntExact((long) res.getNumber());
-        Assertions.assertEquals(count, 25);
+        assertEquals(25, count);
     }
 
     @Test
@@ -256,25 +265,25 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "4", UUID.randomUUID().toString(),opts, new HashMap<>());
         flowRunner.awaitCompletion();
-        Assertions.assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
-        Assertions.assertEquals("finished", resp.getJobStatus());
+        verifyJobFinished(resp);
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
 
         opts.put("sourceQuery", "cts.collectionQuery('csv-tab-coll')");
         opts.put("sourceQueryLimit", 2);
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
         flowRunner.awaitCompletion();
-        Assertions.assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
-        Assertions.assertEquals("finished", resp.getJobStatus());
+        verifyJobFinished(resp);
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
 
         opts.put("sourceQueryLimit", -2);
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
         flowRunner.awaitCompletion();
-        Assertions.assertEquals("failed", resp.getJobStatus());
+        assertEquals("failed", resp.getJobStatus(), "Unexpected job status: " + resp.toJson());
 
         opts.put("sourceQueryLimit", "invalidValue");
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
         flowRunner.awaitCompletion();
-        Assertions.assertEquals("failed", resp.getJobStatus());
+        assertEquals("failed", resp.getJobStatus(), "Unexpected job status: " + resp.toJson());
     }
 
     @Test
@@ -295,8 +304,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "2", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "text-collection") == 1);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        verifyJobFinished(resp);
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "text-collection"));
     }
 
     @Test
@@ -307,9 +316,10 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         opts.put("sourceQuery", "cts.collectionQuery('non-existent-collection')");
         RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+
+        verifyJobFinished(resp);
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
     }
 
     @Test
@@ -322,10 +332,11 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
+        assertEquals(JobStatus.FINISHED_WITH_ERRORS.toString(), resp.getJobStatus(), "Since one step completed and " +
+            "the other failed, the status should be finished with errors: " + resp.toJson());
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
-        assertEquals(JobStatus.FINISHED_WITH_ERRORS.toString(), resp.getJobStatus(), "Since one step completed and " +
-            "the other failed, the status should be finished with errors");
+
         RunStepResponse stepResponse = resp.getStepResponses().get("6");
         assertEquals("failed step 6", stepResponse.getStatus());
         assertEquals(1, stepResponse.getStepOutput().size(), "Expecting an error message due to the invalid sourceQuery");
@@ -333,9 +344,9 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
         assertEquals(JobStatus.FAILED.toString(), resp.getJobStatus(), "Since all steps failed (there was just one step), " +
-            "the status should be failed");
+            "the status should be failed: " + resp.toJson());
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
         stepResponse = resp.getStepResponses().get("6");
         assertEquals("failed step 6", stepResponse.getStatus());
     }
@@ -355,19 +366,20 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        Assertions.assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection"));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        verifyJobFinished(resp);
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection"));
 
         opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
         opts.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);
         opts.put("testRunFlowOption", "xyzzy");
         resp = runFlow("testFlow", "5", mappingJobId, opts, null);
         flowRunner.awaitCompletion();
+
+        verifyJobFinished(resp);
         JsonNode batchDoc = findFirstBatchDocument(mappingJobId);
-        Assertions.assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection"));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        Assertions.assertEquals("cts.collectionQuery('test-collection')", batchDoc.get("batch").get("step").get("options").get("sourceQuery").asText());
-        Assertions.assertEquals("xyzzy", batchDoc.get("batch").get("step").get("options").get("testRunFlowOption").asText());
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection"));
+        assertEquals("cts.collectionQuery('test-collection')", batchDoc.get("batch").get("step").get("options").get("sourceQuery").asText());
+        assertEquals("xyzzy", batchDoc.get("batch").get("step").get("options").get("testRunFlowOption").asText());
     }
 
     @Test
@@ -388,10 +400,10 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 1);
-        // Assert that a Job document is created
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Job") == 1);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+
+        verifyJobFinished(resp);
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_JOB_NAME, "Job"));
     }
 
     @Test
@@ -408,10 +420,10 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection") == 2);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        // Assert that no Jobs documents were created
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs") == 0);
+
+        verifyJobFinished(resp);
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection"));
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs"));
     }
 
     @Test
@@ -444,8 +456,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), "Unexpected job status: " + resp.toJson());
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
-        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus());
     }
 
     @Test
@@ -477,9 +489,9 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         RunFlowResponse resp1 = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
 
+        verifyJobFinished(resp);
+        verifyJobFinished(resp1);
         assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection"));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()));
     }
 
     @Test
@@ -500,8 +512,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         RunFlowResponse resp = runFlow("testFlow","1", UUID.randomUUID().toString(), opts, stepConfig);
         flowRunner.awaitCompletion();
 
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection") == 0);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        verifyJobFinished(resp);
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "binary-text-collection"));
     }
 
     @Test
@@ -524,7 +536,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         assertEquals(JobStatus.CANCELED.toString().toLowerCase(), status,
             "Expected the response status to be canceled, since the job was stopped before it finished, but was instead: " + status
          + ". If this failed in Jenkins, it likely can be ignored because we don't have a firm idea of how long the " +
-                "thread that stops the job should wait until it stops the job.");
+                "thread that stops the job should wait until it stops the job; response: " + resp.toJson());
     }
 
     @Test
@@ -555,12 +567,11 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         RunFlowResponse resp = runFlow("testFlow", "2", UUID.randomUUID().toString(), opts, stepConfig);
         RunFlowResponse resp1 = runFlow("testFlow", "2", UUID.randomUUID().toString(), opts1, stepConfig1);
         flowRunner.awaitCompletion();
+
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "test-collection1"));
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()),
-            "Expected job status of first response to be 'finished', but was: " + resp.getJobStatus());
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()),
-            "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
+        verifyJobFinished(resp);
+        verifyJobFinished(resp1);
     }
 
     private void verifyCollectionCountsFromRunningTestFlow() {
@@ -570,5 +581,9 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
+    }
+
+    private void verifyJobFinished(RunFlowResponse response) {
+        assertEquals("finished", response.getJobStatus(), "Expected status of finished: " + response.toJson());
     }
 }

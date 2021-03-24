@@ -1,14 +1,12 @@
 const consts = require("/data-hub/5/impl/consts.sjs");
 const dhmut = require("/data-hub/ext/marklogic-unit-test/hub-test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.xqy");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
 const test = require("/test/test-helper.xqy");
 
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
-
 // Insert some job documents so we can verify that they're deleted
-const fakeJob = datahub.jobs.createJob("myFlow");
-datahub.jobs.createBatch(fakeJob, {}, "1");
+const fakeJob = jobs.createJob("myFlow");
+jobs.createBatch(fakeJob, {}, "1");
 
 const assertions = [];
 
