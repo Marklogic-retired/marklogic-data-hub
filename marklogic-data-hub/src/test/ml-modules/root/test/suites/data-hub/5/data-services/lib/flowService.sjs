@@ -34,8 +34,8 @@ function removeStepFromFlow(flowName, stepNumber) {
   return invoke("removeStepFromFlow.sjs", {flowName, stepNumber});
 }
 
-function updateFlow(updatedFlow) {
-  return invoke("updateFlow.sjs", {updatedFlow});
+function updateFlow(name, description, stepIds) {
+  return invoke("updateFlow.sjs", {name, description, stepIds});
 }
 
 module.exports = {

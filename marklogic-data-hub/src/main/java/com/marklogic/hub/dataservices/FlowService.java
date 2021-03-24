@@ -62,7 +62,7 @@ public interface FlowService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/flow/", servDecl);
 
                 this.req_updateFlow = this.baseProxy.request(
-                    "updateFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                    "updateFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getFlow = this.baseProxy.request(
                     "getFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_deleteFlow = this.baseProxy.request(
@@ -82,16 +82,18 @@ public interface FlowService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode updateFlow(com.fasterxml.jackson.databind.JsonNode updatedFlow) {
+            public com.fasterxml.jackson.databind.JsonNode updateFlow(String name, String description, com.fasterxml.jackson.databind.node.ArrayNode stepIds) {
                 return updateFlow(
-                    this.req_updateFlow.on(this.dbClient), updatedFlow
+                    this.req_updateFlow.on(this.dbClient), name, description, stepIds
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode updateFlow(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode updatedFlow) {
+            private com.fasterxml.jackson.databind.JsonNode updateFlow(BaseProxy.DBFunctionRequest request, String name, String description, com.fasterxml.jackson.databind.node.ArrayNode stepIds) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
-                          BaseProxy.documentParam("updatedFlow", false, BaseProxy.JsonDocumentType.fromJsonNode(updatedFlow))
+                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
+                          BaseProxy.atomicParam("description", true, BaseProxy.StringType.fromString(description)),
+                          BaseProxy.documentParam("stepIds", true, BaseProxy.ArrayType.fromArrayNode(stepIds))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -222,10 +224,12 @@ public interface FlowService {
   /**
    * Invokes the updateFlow operation on the database server
    *
-   * @param updatedFlow	provides input
+   * @param name	provides input
+   * @param description	provides input
+   * @param stepIds	provides input
    * @return	Return the updated flow document
    */
-    com.fasterxml.jackson.databind.JsonNode updateFlow(com.fasterxml.jackson.databind.JsonNode updatedFlow);
+    com.fasterxml.jackson.databind.JsonNode updateFlow(String name, String description, com.fasterxml.jackson.databind.node.ArrayNode stepIds);
 
   /**
    * Invokes the getFlow operation on the database server
