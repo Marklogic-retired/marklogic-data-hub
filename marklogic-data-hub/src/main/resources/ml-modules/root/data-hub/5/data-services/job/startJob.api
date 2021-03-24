@@ -1,0 +1,19 @@
+{
+    "functionName": "startJob",
+    "desc": "Start a new job for the given flowName by creating a new Job document",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string"
+        },
+        {
+            "name": "flowName",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "desc": "The created Job document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

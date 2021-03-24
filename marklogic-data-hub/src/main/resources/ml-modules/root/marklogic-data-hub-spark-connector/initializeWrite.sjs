@@ -21,22 +21,9 @@ declareUpdate();
 
 var externalMetadata = externalMetadata != null ? fn.head(xdmp.fromJSON(externalMetadata)) : {};
 
-const config = require("/com.marklogic.hub/config.sjs");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 const id = sem.uuidString();
-
-//Adding this function to make it compatible with Datahub 5.2.x as this function doesn't exist <5.3.X.
-function buildJobPermissions(config) {
-  let permissionsString = config.JOBPERMISSIONS;
-  let permissions = xdmp.defaultPermissions().concat([xdmp.permission(config.FLOWDEVELOPERROLE, 'update'), xdmp.permission(config.FLOWOPERATORROLE, 'update')]);
-  if (permissionsString != null && permissionsString.indexOf("mlJobPermissions") < 0) {
-    let tokens = permissionsString.split(",");
-    for (let i = 0; i < tokens.length; i += 2) {
-      permissions.push(xdmp.permission(tokens[i], tokens[i + 1]));
-    }
-  }
-  return permissions;
-}
 
 xdmp.documentInsert(
   "/jobs/" + id + ".json",
@@ -49,7 +36,7 @@ xdmp.documentInsert(
       externalMetadata
     }
   },
-  buildJobPermissions(config),
+  jobs.buildJobPermissions(),
   ['Jobs', 'Job']
 );
 

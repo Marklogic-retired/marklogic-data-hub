@@ -1,0 +1,28 @@
+{
+    "functionName": "finishStep",
+    "desc": "Updates the associated Job document after all batches have been processed for a step",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string"
+        },
+        {
+            "name": "stepNumber",
+            "datatype": "string"
+        },
+        {
+            "name": "stepStatus",
+            "datatype": "string"
+        },
+        {
+            "name": "runStepResponse",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ],
+    "return": {
+        "desc": "The updated Job document",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

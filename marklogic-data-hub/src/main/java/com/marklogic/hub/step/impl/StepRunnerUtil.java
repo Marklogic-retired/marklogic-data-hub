@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.JobDocManager;
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepDefinition;
 
@@ -43,15 +41,6 @@ public class StepRunnerUtil {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected static void initializeStepRun(JobDocManager jobDocManager, RunStepResponse runStepResponse, Flow flow, String step, String jobId) {
-        JsonNode json = jobDocManager.getJobDocument(jobId);
-        if (json == null) {
-            jobDocManager.createJob(jobId, flow.getName());
-        }
-
-        jobDocManager.postJobs(jobId, JobStatus.RUNNING_PREFIX + step, flow.getName(), step, null, runStepResponse);
     }
 
     protected static String objectToString(Object obj) {

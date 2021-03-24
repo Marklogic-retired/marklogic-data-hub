@@ -1,0 +1,14 @@
+{
+    "functionName": "startStep",
+    "desc": "Updates the Job document associated with the given jobId to note that the step has been started",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string"
+        },
+        {
+            "name": "stepNumber",
+            "datatype": "string"
+        }
+    ]
+}

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.job.JobDocManager;
+import com.marklogic.hub.dataservices.JobService;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
@@ -41,20 +41,11 @@ public class JobsController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Get the Job document associated with the given ID", response = Job.class)
     public JsonNode getJob(@PathVariable String jobId) {
-        JsonNode jobsObj = getJobs(getJobDocManager(), jobId, null);
-        return flattenJobsJson(jobsObj);
-    }
-
-    private JsonNode getJobs(JobDocManager jobDocManager, String jobId, String flowName) {
-        JsonNode jobsJson = jobDocManager.getJobDocument(jobId, flowName);
+        JsonNode jobsJson = JobService.on(getHubClient().getJobsClient()).getJob(jobId);
         if (jobsJson == null) {
             throw new RuntimeException("Unable to get job document");
         }
         return flattenJobsJson(jobsJson);
-    }
-
-    private JobDocManager getJobDocManager() {
-        return new JobDocManager(getHubClient().getJobsClient());
     }
 
     private JsonNode flattenJobsJson(JsonNode jobJSON) {

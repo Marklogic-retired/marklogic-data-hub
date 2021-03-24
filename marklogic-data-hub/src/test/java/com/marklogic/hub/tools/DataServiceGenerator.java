@@ -127,7 +127,7 @@ public class DataServiceGenerator {
         }
 
         System.out.println("\nTo update the associated Java interface for this service, please run: ");
-        System.out.println("\n./gradlew generate" + serviceName + "Service");
+        System.out.println("\n./gradlew generate" + serviceName + "Interface");
     }
 
 

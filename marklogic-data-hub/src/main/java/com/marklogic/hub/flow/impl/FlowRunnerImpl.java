@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
@@ -60,12 +59,17 @@ public class FlowRunnerImpl implements FlowRunner {
     private final ConcurrentHashMap<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
     private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
     private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
+
+    // TODO Hoping to combine these maps together into a single one soon
+    private Map<String, FlowContext> flowContextMap = new ConcurrentHashMap<>();
+
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
     private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
 
     private ThreadPoolExecutor threadPool;
-    private JobDocManager jobDocManager;
+
+    private JobService jobService;
     private boolean disableJobOutput = false;
 
     public FlowRunnerImpl() {
@@ -178,10 +182,12 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     protected RunFlowResponse runFlow(Flow flow, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
+        FlowContext flowContext = new FlowContext();
         if (options != null && options.containsKey("disableJobOutput")) {
-            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
-        } else {
-            disableJobOutput = false;
+            flowContext.jobOutputIsEnabled = !Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        }
+        if (flowContext.jobOutputIsEnabled) {
+            flowContext.jobService = JobService.on(hubClient != null ? hubClient.getJobsClient() : hubConfig.newJobDbClient());
         }
 
         configureStopOnError(flow, options);
@@ -217,6 +223,7 @@ public class FlowRunnerImpl implements FlowRunner {
         flowResp.put(jobId, response);
         stepsMap.put(jobId, stepsQueue);
         flowMap.put(jobId, flow);
+        flowContextMap.put(jobId, flowContext);
 
         //add jobId to a queue
         jobQueue.add(jobId);
@@ -254,9 +261,13 @@ public class FlowRunnerImpl implements FlowRunner {
         jobStoppedOnError.set(false);
         runningJobId = jobId;
         runningFlow = flowMap.get(runningJobId);
-        if(jobDocManager == null && !disableJobOutput) {
-            jobDocManager = new JobDocManager(hubClient != null ? hubClient.getJobsClient() : hubConfig.newJobDbClient());
+
+        FlowContext flowContext = flowContextMap.get(jobId);
+
+        if (flowContext.jobOutputIsEnabled) {
+            flowContext.jobService.startJob(jobId, runningFlow.getName());
         }
+
         if(threadPool == null || threadPool.isTerminated()) {
             // thread pool size needs to be at least 2, so the current step thread can kick-off the next step thread
             int maxPoolSize = Math.max(Runtime.getRuntime().availableProcessors()/2, 2);
@@ -311,6 +322,8 @@ public class FlowRunnerImpl implements FlowRunner {
             RunFlowResponse resp = flowResp.get(runningJobId);
             resp.setFlowName(runningFlow.getName());
             stepQueue = stepsMap.get(jobId);
+
+            FlowContext flowContext = flowContextMap.get(jobId);
 
             Map<String, RunStepResponse> stepOutputs = new HashMap<>();
             String stepNum = null;
@@ -393,7 +406,7 @@ public class FlowRunnerImpl implements FlowRunner {
                                 runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
                         });
                     } catch (Exception ex) {
-                        logger.error(ex.getMessage());
+                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
                     }
                     if(runningFlow.isStopOnError()) {
                         jobStoppedOnError.set(true);
@@ -436,20 +449,18 @@ public class FlowRunnerImpl implements FlowRunner {
             }
             resp.setJobStatus(jobStatus.toString());
             try {
-                if (!disableJobOutput) {
-                    stepOutputs.entrySet().forEach((stepRespEntry) -> {
-                        jobDocManager.postJobs(jobId, jobStatus.toString(), flow.getName(), stepRespEntry.getKey(), null, stepRespEntry.getValue());
-                    });
+                if (flowContext.jobOutputIsEnabled) {
+                    flowContext.jobService.finishJob(jobId, jobStatus.toString());
                 }
             }
             catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("Unable to finish job with ID: " + jobId + "; cause: " + e.getMessage());
             }
             finally {
                 JsonNode jobNode = null;
-                if (!disableJobOutput) {
+                if (flowContext.jobOutputIsEnabled) {
                     try {
-                        jobNode = jobDocManager.getJobDocument(jobId);
+                        jobNode = flowContext.jobService.getJob(jobId);
                     } catch (Exception e) {
                         logger.error("Unable to get job document with ID: " + jobId + ": cause: " + e.getMessage());
                     }
@@ -470,7 +481,7 @@ public class FlowRunnerImpl implements FlowRunner {
                             listener.onStatusChanged(jobId, runningStep, jobStatus.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
                         });
                     } catch (Exception ex) {
-                        logger.error(ex.getMessage());
+                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
                     }
                 } else {
                     try {
@@ -478,13 +489,14 @@ public class FlowRunnerImpl implements FlowRunner {
                             listener.onStatusChanged(jobId, runningStep, jobStatus.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
                         });
                     } catch (Exception ex) {
-                        logger.error(ex.getMessage());
+                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
                     }
                 }
 
                 jobQueue.remove();
                 stepsMap.remove(jobId);
                 flowMap.remove(jobId);
+                flowContextMap.remove(jobId);
                 flowResp.remove(runningJobId);
                 if (!jobQueue.isEmpty()) {
                     initializeFlow(stepRunnerFactory, jobQueue.peek());
@@ -534,7 +546,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 }
             }
             if (t != null) {
-                logger.error(t.getMessage());
+                logger.error("Caught error while running FlowRunnerTask: " + t.getMessage());
                 FlowRunnerTask flowRunnerTask = (FlowRunnerTask)r;
                 //Run the next queued flow if stop-on-error is set or if the step queue is empty
                 if (flowRunnerTask.getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
@@ -586,5 +598,10 @@ public class FlowRunnerImpl implements FlowRunner {
 
     public Flow getRunningFlow() {
         return this.runningFlow;
+    }
+
+    class FlowContext {
+        boolean jobOutputIsEnabled = true;
+        JobService jobService;
     }
 }

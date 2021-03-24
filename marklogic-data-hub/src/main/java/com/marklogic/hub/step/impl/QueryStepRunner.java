@@ -23,10 +23,10 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.dataservices.StepRunnerService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.*;
 import org.slf4j.Logger;
@@ -64,7 +64,6 @@ public class QueryStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private QueryBatcher queryBatcher = null;
-    private JobDocManager jobDocManager;
     private AtomicBoolean isStopped = new AtomicBoolean(false) ;
     private StepDefinition stepDef;
 
@@ -204,10 +203,7 @@ public class QueryStepRunner implements StepRunner {
 
         //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
-            jobDocManager = new JobDocManager(hubClient.getJobsClient());
-            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        } else {
-            jobDocManager = null;
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
         }
 
         DiskQueue<String> uris;
@@ -225,7 +221,7 @@ public class QueryStepRunner implements StepRunner {
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
             if (!disableJobOutput) {
-                JsonNode jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
+                JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, JobStatus.FAILED_PREFIX + step, runStepResponse.toObjectNode());
                 try {
                     return StepRunnerUtil.getResponse(jobDoc, step);
                 } catch (Exception ignored) {
@@ -248,8 +244,8 @@ public class QueryStepRunner implements StepRunner {
     @Override
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
+        JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
         return this.runHarmonizer(runStepResponse,uris);
     }
 
@@ -289,7 +285,7 @@ public class QueryStepRunner implements StepRunner {
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
-            JsonNode jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
+            JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
             try {
                 return StepRunnerUtil.getResponse(jobDoc, step);
             }
@@ -450,7 +446,7 @@ public class QueryStepRunner implements StepRunner {
             }
             JsonNode jobDoc = null;
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, (JobStatus.COMPLETED_PREFIX + step).equalsIgnoreCase(stepStatus) ? step : null, runStepResponse);
+                jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
             }
             catch (Exception e) {
                 logger.error(e.getMessage());

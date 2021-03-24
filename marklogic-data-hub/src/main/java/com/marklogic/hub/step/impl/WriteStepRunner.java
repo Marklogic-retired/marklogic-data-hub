@@ -37,9 +37,9 @@ import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.FileCollector;
+import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepDefinition;
@@ -110,7 +110,6 @@ public class WriteStepRunner implements StepRunner {
     private Thread runningThread = null;
     private DataMovementManager dataMovementManager = null;
     private WriteBatcher writeBatcher = null;
-    private JobDocManager jobDocManager;
     // setting these values to protected so their values can be tested
     protected String inputFilePath = null;
     protected String outputCollections;
@@ -259,15 +258,11 @@ public class WriteStepRunner implements StepRunner {
         }
         options.put("flow", this.flow.getName());
 
-        Collection<String> uris = null;
-        //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
-            jobDocManager = new JobDocManager(hubClient.getJobsClient());
-            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        } else {
-            jobDocManager = null;
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
         }
 
+        Collection<String> uris;
         try {
             uris = runFileCollector();
         } catch (Exception e) {
@@ -277,13 +272,8 @@ public class WriteStepRunner implements StepRunner {
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
             if (!disableJobOutput) {
-                JsonNode jobDoc = null;
-                try {
-                    jobDoc = jobDocManager.postJobs(jobId, JobStatus.FAILED_PREFIX + step, flow.getName(), step, null, runStepResponse);
-                }
-                catch (Exception ex) {
-                    throw ex;
-                }
+                JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, JobStatus.FAILED_PREFIX + step, runStepResponse.toObjectNode());
+
                 //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
                 try {
                     return StepRunnerUtil.getResponse(jobDoc, step);
@@ -299,12 +289,7 @@ public class WriteStepRunner implements StepRunner {
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        try {
-            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
-        }
+        JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
         return this.runIngester(runStepResponse,uris);
     }
 
@@ -453,17 +438,11 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
-            try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
-            }
-            catch (Exception e) {
-                throw e;
-            }
+            jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
             try {
                 return StepRunnerUtil.getResponse(jobDoc, step);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 return runStepResponse;
             }
         }
@@ -626,7 +605,7 @@ public class WriteStepRunner implements StepRunner {
             }
             JsonNode jobDoc = null;
             try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.equalsIgnoreCase(JobStatus.COMPLETED_PREFIX + step) ? step : null, runStepResponse);
+                jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId,  step, stepStatus, runStepResponse.toObjectNode());
             }
             catch (Exception e) {
                 logger.error("Unable to update job document, cause: " + e.getMessage());

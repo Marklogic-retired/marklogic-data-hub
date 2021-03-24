@@ -12,42 +12,38 @@
  */
 'use strict';
 
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const config = require("/com.marklogic.hub/config.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
-class Jobs {
-
-  constructor(config = null, datahub = null) {
-    if(!config) {
-      config = require("/com.marklogic.hub/config.sjs");
+  function createJob(flowName, jobId = null ) {
+    let job = null;
+    if(!jobId) {
+      jobId = sem.uuidString();
     }
-    this.config = config;
-    this.jobPermissions = this.buildJobPermissions(config);
+    job = buildNewJob(jobId, flowName);
+    hubUtils.writeDocument("/jobs/" + jobId + ".json", job, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
+    return job;
   }
 
-  createJob(flowName, id = null ) {
-    let job = null;
-    if(!id) {
-      id = sem.uuidString();
-    }
-    job = {
+  function buildNewJob(jobId, flowName) {
+    return {
       job: {
-        jobId: id,
+        jobId: jobId,
         flow: flowName,
         user: xdmp.getCurrentUser(),
         lastAttemptedStep: 0,
         lastCompletedStep: 0 ,
         jobStatus: "started" ,
         timeStarted:  fn.currentDateTime(),
-        timeEnded: "N/A",
         stepResponses :{}
       }
     };
-
-    hubUtils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
-    return job;
   }
 
-  buildJobPermissions(config) {
+  function buildJobPermissions() {
     let permissionsString = config.JOBPERMISSIONS;
     let permissions = xdmp.defaultPermissions().concat([xdmp.permission(config.FLOWDEVELOPERROLE, 'update'), xdmp.permission(config.FLOWOPERATORROLE, 'update')]);
     if (permissionsString != null && permissionsString.indexOf("mlJobPermissions") < 0) {
@@ -59,57 +55,36 @@ class Jobs {
     return permissions;
   }
 
-  getJobDocWithId(jobId) {
-    let jobUri = "/jobs/" + jobId + ".json";
-    return fn.head(hubUtils.invokeFunction(function() {
-        let jobDoc = cts.doc(jobUri);
-        if (cts.contains(jobDoc, cts.jsonPropertyValueQuery("jobId", jobId))) {
-          return jobDoc.toObject();
+  function getJob(jobId) {
+    return getJobDocWithId(jobId, false);
+  }
+
+  /**
+   * An error is thrown if a Job with the given jobId does not exist.
+   *
+   * @param jobId
+   * @returns
+   */
+  function getRequiredJob(jobId) {
+    return getJobDocWithId(jobId, true)
+  }
+
+  function getJobDocWithId(jobId, throwErrorIfMissing) {
+    const jobUri = "/jobs/" + jobId + ".json";
+    const jobDoc = fn.head(hubUtils.invokeFunction(function() {
+        let doc = cts.doc(jobUri);
+        if (cts.contains(doc, cts.jsonPropertyValueQuery("jobId", jobId))) {
+          return doc.toObject();
         }
-      }, this.config.JOBDATABASE)
+      }, config.JOBDATABASE)
     );
-  }
-
-  getJobDocWithUri(jobUri) {
-    return fn.head(hubUtils.invokeFunction(function() {
-      if (xdmp.documentGetCollections(jobUri).includes("Job")) {
-        return cts.doc(jobUri).toObject();
-      }
-    }, this.config.JOBDATABASE));
-  }
-
-  deleteJob(jobId) {
-    let uris = cts.uris("", null ,cts.andQuery([cts.orQuery([cts.directoryQuery("/jobs/"),cts.directoryQuery("/jobs/batches/")]),
-      cts.jsonPropertyValueQuery("jobId", jobId)]));
-    for (let doc of uris) {
-      if (fn.docAvailable(doc)){
-        hubUtils.deleteDocument(doc, this.config.JOBDATABASE);
-      }
+    if (!jobDoc && throwErrorIfMissing) {
+      httpUtils.throwNotFound(`Unable to find Job document with ID: ${jobId}`);
     }
+    return jobDoc;
   }
 
-  getLastStepAttempted(jobId) {
-    let doc =  this.getJobDocWithId(jobId);
-    if (doc){
-      return doc.job.lastAttemptedStep;
-    }
-  }
-
-  getLastStepCompleted(jobId) {
-    let doc =  this.getJobDocWithId(jobId);
-    if (doc){
-      return doc.job.lastCompletedStep;
-    }
-  }
-
-  getJobStatus(jobId) {
-    let doc =  this.getJobDocWithId(jobId);
-    if (doc){
-      return doc.job.jobStatus;
-    }
-  }
-
-  getJobDocs(status) {
+  function getJobDocs(status) {
     let docs = [];
     let query = [cts.directoryQuery("/jobs/"), cts.jsonPropertyWordQuery("jobStatus", status.toString().toLowerCase())];
     hubUtils.invokeFunction(function() {
@@ -117,25 +92,11 @@ class Jobs {
       for (let doc of uris) {
         docs.push(cts.doc(doc).toObject());
       }
-    }, this.config.JOBDATABASE);
+    }, config.JOBDATABASE);
     return docs;
   }
 
-  getLatestJobDocPerFlow(flowNames = cts.values(cts.jsonPropertyReference("flow"))) {
-    return fn.head(hubUtils.invokeFunction(function(){
-      let timeQuery = [];
-      for(let flowName of flowNames) {
-        let time = cts.values(cts.jsonPropertyReference("timeStarted"), null, ["descending","limit=1"], cts.jsonPropertyRangeQuery("flow", "=", flowName));
-        timeQuery.push(cts.andQuery([cts.jsonPropertyRangeQuery("flow", "=", flowName), cts.rangeQuery(cts.jsonPropertyReference("timeStarted"), "=", time)]));
-      }
-      let results = cts.search(cts.orQuery(timeQuery));
-      if(results) {
-        return results.toArray();
-      }
-    }, this.config.JOBDATABASE));
-  }
-
-  getJobDocsForFlows(flowNames) {
+  function getJobDocsForFlows(flowNames) {
     // Grab all the timeStarted values for each flow
     const tuples = cts.valueTuples(
       [
@@ -213,14 +174,14 @@ class Jobs {
     return response;
   }
 
-  getJobDocsByFlow(flowName) {
+  function getJobDocsByFlow(flowName) {
     return hubUtils.invokeFunction(function() {
       let query = [cts.collectionQuery('Job'),  cts.jsonPropertyValueQuery('flow', flowName, "case-insensitive")];
       let jobDoc = cts.search(cts.andQuery(query));
       if (jobDoc) {
         return jobDoc.toObject();
       }
-    }, this.config.JOBDATABASE);
+    }, config.JOBDATABASE);
   }
 
   /**
@@ -233,7 +194,7 @@ class Jobs {
    * @param stepNumber the number of the step as defined in the flow being executed
    * @returns {any}
    */
-  createBatch(job, flowStep, stepNumber) {
+  function createBatch(job, flowStep, stepNumber) {
     let requestTimestamp = xdmp.requestTimestamp();
     let reqTimeStamp = (requestTimestamp) ? xdmp.timestampToWallclock(requestTimestamp) : fn.currentDateTime();
 
@@ -260,37 +221,13 @@ class Jobs {
     };
 
     hubUtils.writeDocument(
-      "/jobs/batches/" + batch.batch.batchId + ".json", batch,
-      this.jobPermissions, ['Jobs','Batch'], this.config.JOBDATABASE
+      "/jobs/batches/" + batch.batch.batchId + ".json", batch, buildJobPermissions(), ['Jobs','Batch'], config.JOBDATABASE
     );
 
     return batch;
   }
 
-  getBatchDocs(jobId, step=null) {
-    let docs = [];
-    let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)];
-    if (step) {
-      query.push(cts.jsonPropertyValueQuery("stepNumber", step));
-    }
-    hubUtils.invokeFunction(function () {
-      let uris = cts.uris("", null, cts.andQuery(query));
-      for (let doc of uris) {
-        docs.push(cts.doc(doc).toObject());
-      }
-    }, this.config.JOBDATABASE);
-    return docs;
-  }
-
-  getBatchDocWithUri(batchUri) {
-    return fn.head(hubUtils.invokeFunction(function() {
-      if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
-        return cts.doc(batchUri).toObject();
-      }
-    }, this.config.JOBDATABASE));
-  }
-
-  getBatchDoc(jobId, batchId) {
+  function getBatchDoc(jobId, batchId) {
     return fn.head(hubUtils.invokeFunction(function () {
       const batchDoc = fn.head(cts.search(
         cts.andQuery([
@@ -300,91 +237,84 @@ class Jobs {
         ]), "unfiltered"
       ));
       return batchDoc ? batchDoc.toObject() : null;
-    }, this.config.JOBDATABASE));
+    }, config.JOBDATABASE));
   }
-}
-module.exports.updateJob = module.amp(
-  function updateJob(datahub, jobId, status, flow, step, lastCompleted, stepResponse) {
-    let jobDoc = datahub.jobs.getJobDocWithId(jobId);
-    let resp = null;
-    if(!jobDoc) {
-      if(fn.exists(jobId) && fn.exists(flow)) {
-        datahub.jobs.createJob(flow, jobId);
-        jobDoc = datahub.jobs.getJobDocWithId(jobId);
+
+  /**
+   * This logic was originally in updateJob, and it was expected to be triggered when a step was finished.
+   * The intent is to give a step a chance to perform some processing after all batches have been completed. Right
+   * now, that logic is specific to the notion of a "job report", which is specific to the OOTB merging step. This
+   * could certainly be generalized in the future to be a generic "after batches completed" function.
+   *
+   * @param stepResponse
+   */
+  function createJobReport(stepResponse) {
+    if (stepResponse.stepDefinitionName && stepResponse.stepDefinitionType) {
+      const stepDefinition = fn.head(hubUtils.invokeFunction(function () {
+          return new StepDefinition().getStepDefinitionByNameAndType(stepResponse.stepDefinitionName, stepResponse.stepDefinitionType);
+        }, config.FINALDATABASE
+      ));
+
+      let jobReportFunction = null;
+      try {
+        jobReportFunction = new StepDefinition().makeFunction(null, 'jobReport', stepDefinition.modulePath);
+      } catch (e) {
+        // If this function cannot be obtained, it is because the modulePath does not exist. No need to fail here;
+        // a better error will be thrown later when the step is run and the module cannot be found.
       }
-      else {
-        throw new Error("Cannot create job document. Incorrect options.");
-      }
-    }
-    else if(jobDoc.job.timeEnded) {
-      jobDoc.job.timeStarted = fn.currentDateTime();
-      jobDoc.job.timeEnded = null;
-    }
-    //update job status at the end of flow run
-    if(status === "finished"|| status === "finished_with_errors" || status === "failed"|| status === "canceled"|| status === "stop-on-error") {
-      jobDoc.job.timeEnded = fn.currentDateTime();
-    }
-    //update job doc before and after step run
-    jobDoc.job.jobStatus = status;
-    if (step) {
-      jobDoc.job.lastAttemptedStep = step;
-      if(lastCompleted) {
-       jobDoc.job.lastCompletedStep = lastCompleted;
-       jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
-       jobDoc.job.stepResponses[step].stepEndTime = null;
-      }
-      if(!jobDoc.job.stepResponses[step]){
-       jobDoc.job.stepResponses[step] = {};
-       jobDoc.job.stepResponses[step].stepStartTime = fn.currentDateTime();
-       jobDoc.job.stepResponses[step].status = "running step " + step;
-      }
-      let tempTime = jobDoc.job.stepResponses[step].stepStartTime;
-      if (stepResponse && Object.keys(stepResponse).length) {
-       jobDoc.job.stepResponses[step] = stepResponse;
-      }
-      let stepResp = jobDoc.job.stepResponses[step];
-      stepResp.stepStartTime = tempTime;
-      stepResp.stepEndTime = fn.currentDateTime().add(xdmp.elapsedTime());
-      if (stepResp.stepDefinitionName && stepResp.stepDefinitionType) {
-        let stepDef = fn.head(hubUtils.invokeFunction(function () {
-            return datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
-          },
-          datahub.config.FINALDATABASE
+
+      if (jobReportFunction) {
+        const flowStep = fn.head(hubUtils.invokeFunction(function () {
+            return Artifacts.getFullFlow(stepResponse.flowName).steps[stepNumber];
+          }, config.FINALDATABASE
         ));
-        let jobsReportFun = null;
-        try {
-          jobsReportFun = datahub.flow.stepDefinition.makeFunction(datahub.flow, 'jobReport', stepDef.modulePath);
-        } catch (e) {
-          // If this function cannot be obtained, it is because the modulePath does not exist. No need to fail here;
-          // a better error will be thrown later when the step is run and the module cannot be found.
-        }
-        if (jobsReportFun) {
-          let flowStep = fn.head(hubUtils.invokeFunction(function () {
-              return datahub.flow.getFlow(stepResp.flowName).steps[step];
-            }, datahub.config.FINALDATABASE
-          ));
-          let options = Object.assign({}, stepDef.options, flowStep.options);
-          let jobReport = fn.head(hubUtils.invokeFunction(function () {
-              return jobsReportFun(jobId, stepResp, options);
-            },
-            options.targetDatabase || datahub.config.FINALDATABASE
-          ));
-          if (jobReport) {
-            hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissions, ['Jobs', 'JobReport'], datahub.config.JOBDATABASE);
-          }
+        const options = Object.assign({}, stepDefinition.options, flowStep.options);
+        const jobReport = fn.head(hubUtils.invokeFunction(function () {
+            return jobReportFunction(jobId, stepResponse, options);
+          },
+          options.targetDatabase || config.FINALDATABASE
+        ));
+        if (jobReport) {
+          hubUtils.writeDocument(
+            `/jobs/reports/${stepResponse.flowName}/${stepNumber}/${jobId}.json`, jobReport,
+            buildJobPermissions(), ['Jobs', 'JobReport'], config.JOBDATABASE
+          );
         }
       }
     }
-    hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
-    resp = jobDoc;
-    return resp;
-  });
+  }
+
+module.exports = {
+  buildJobPermissions,
+  buildNewJob,
+  createJob,
+  createJobReport,
+  createBatch,
+  getJob,
+  getJobDocs,
+  getJobDocsByFlow,
+  getJobDocsForFlows,
+  getRequiredJob
+}
+
+/**
+ * This function is amped to allow for the Job document to be updated by users that do not have the required
+ * roles that permit doing so.
+ */
+module.exports.updateJob = module.amp(
+  function updateJob(jobDoc) {
+    const jobId = jobDoc.job.jobId;
+    //console.log("updating: " + jobId + "; " + buildJobPermissions());
+    hubUtils.writeDocument("/jobs/" + jobId + ".json", jobDoc, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
+    return null;
+  }
+);
 
 module.exports.updateBatch = module.amp(
   // TODO Should simplify the number of args here.  It's only called in one place, which means the caller - which
   // has all of these parameters - should update the batch doc and then send it here to be updated via an amp.
-  function updateBatch(datahub, jobId, batchId, flowName, flowStep, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
-    let docObj = datahub.jobs.getBatchDoc(jobId, batchId);
+  function updateBatch(jobId, batchId, flowName, flowStep, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
+    let docObj = getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
@@ -403,7 +333,7 @@ module.exports.updateBatch = module.amp(
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
     }
-    if(error){
+    if (error) {
       // Sometimes we don't get the stackFrames
       if (error.stackFrames) {
         let stackTraceObj = error.stackFrames[0];
@@ -420,10 +350,6 @@ module.exports.updateBatch = module.amp(
     }
     docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
-    hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissions, ['Jobs','Batch'], datahub.config.JOBDATABASE);
+    hubUtils.writeDocument("/jobs/batches/" + batchId + ".json", docObj, buildJobPermissions(), ['Jobs', 'Batch'], config.JOBDATABASE);
   });
-module.exports.Jobs = Jobs;
-
-
-
 

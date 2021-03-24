@@ -17,7 +17,7 @@
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const jobsMod = require("/data-hub/5/impl/jobs.sjs");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
@@ -219,9 +219,9 @@ class Flow {
     }
     this.globalContext.flow = theFlow;
 
-    let jobDoc = this.datahub.jobs.getJobDocWithId(jobId);
+    let jobDoc = jobs.getJob(jobId);
     if(!(jobDoc || options.disableJobOutput)) {
-      jobDoc = this.datahub.jobs.createJob(flowName, jobId);
+      jobDoc = jobs.createJob(flowName, jobId);
     }
     if (jobDoc) {
       if (jobDoc.job) {
@@ -259,7 +259,7 @@ class Flow {
         flowStep,
         {"options": Object.assign({}, flowStep.options, combinedOptions)}
       );
-      let batchDoc = this.datahub.jobs.createBatch(jobDoc, flowStepWithOptions, stepNumber);
+      let batchDoc = jobs.createBatch(jobDoc, flowStepWithOptions, stepNumber);
       this.globalContext.batchId = batchDoc.batch.batchId;
     }
 
@@ -522,8 +522,8 @@ class Flow {
       if (this.globalContext.failedItems.length) {
         batchStatus = this.globalContext.completedItems.length ? "finished_with_errors" : "failed";
       }
-      jobsMod.updateBatch(
-        this.datahub, this.globalContext.jobId, this.globalContext.batchId, flowName, flowStep, batchStatus, items,
+      jobs.updateBatch(
+        this.globalContext.jobId, this.globalContext.batchId, flowName, flowStep, batchStatus, items,
         writeTransactionInfo, this.globalContext.batchErrors[0], combinedOptions
       );
     }

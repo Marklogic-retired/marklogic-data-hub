@@ -17,7 +17,6 @@
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 
-const Jobs = require("/data-hub/5/impl/jobs.sjs");
 const Flow = require("/data-hub/5/impl/flow.sjs");
 const Perf = require("/data-hub/5/impl/perf.sjs");
 const Prov = require("/data-hub/5/impl/prov.sjs");
@@ -39,7 +38,6 @@ class DataHub {
     this.debug = new Debug(config);
     this.performance = new Perf(config, this);
     this.flow = new Flow(config, null, this);
-    this.jobs = new Jobs.Jobs(config, this);
     this.prov = new Prov.Provenance(Object.assign({}, config, {autoCommit: false}), this);
     this.debug = new Debug(config, this);
     if (this.performance.performanceMetricsOn()) {
