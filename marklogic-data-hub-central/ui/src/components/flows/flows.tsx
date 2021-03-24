@@ -680,7 +680,6 @@ const Flows: React.FC<Props> = (props) => {
                         <FontAwesomeIcon
                           aria-label={`leftArrow-${step.stepName}`}
                           icon={faArrowAltCircleLeft}
-                          aria-required="true"
                           className={styles.reorderFlowLeft}
                           role="button"
                           onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)} />
@@ -699,7 +698,6 @@ const Flows: React.FC<Props> = (props) => {
                         <FontAwesomeIcon
                           aria-label={`rightArrow-${step.stepName}`}
                           icon={faArrowAltCircleRight}
-                          aria-required="true"
                           className={styles.reorderFlowRight}
                           role="button"
                           onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)} />

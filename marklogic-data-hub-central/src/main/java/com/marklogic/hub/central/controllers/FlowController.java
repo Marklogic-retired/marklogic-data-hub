@@ -72,9 +72,14 @@ public class FlowController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Update a flow", response = UpdateFlow.class)
     @Secured("ROLE_writeFlow")
-    public ResponseEntity<JsonNode> updateFlow(@RequestBody JsonNode updatedFlow) {
+    public ResponseEntity<JsonNode> updateFlow(@PathVariable String flowName, @RequestBody JsonNode flow) {
 
-        return ResponseEntity.ok(newFlowService().updateFlow(updatedFlow));
+        ArrayNode stepIdsArray = (ArrayNode) flow.get("steps");
+        if (flow.get("description") == null) {
+            return ResponseEntity.ok(newFlowService().updateFlow(flowName, "", stepIdsArray));
+        }
+
+        return ResponseEntity.ok(newFlowService().updateFlow(flowName, flow.get("description").asText(), stepIdsArray));
     }
 
     @RequestMapping(value = "/{flowName}", method = RequestMethod.DELETE)
@@ -150,7 +155,7 @@ public class FlowController extends BaseController {
     public static class UpdateFlow {
         public String description;
         public String name;
-        public List<String> steps;
+        public List<String> stepIds;
     }
 
     public static class FlowsWithStepDetails extends ArrayList<FlowWithStepDetails> {

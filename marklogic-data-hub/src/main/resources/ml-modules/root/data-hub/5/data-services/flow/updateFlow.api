@@ -2,9 +2,21 @@
     "functionName": "updateFlow",
     "params": [
         {
-            "name": "updatedFlow",
-            "datatype": "jsonDocument",
-            "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+            "name": "name",
+            "datatype": "string"
+        },
+        {
+            "name": "description",
+            "desc": "The description of the flow can be updated.",
+            "datatype": "string",
+            "nullable": true
+        },
+        {
+            "name": "stepIds",
+            "desc": "The order of stepIds can be updated.",
+            "datatype": "array",
+            "nullable": true,
+            "$javaClass": "com.fasterxml.jackson.databind.node.JsonNode"
         }
     ],
     "return": {
