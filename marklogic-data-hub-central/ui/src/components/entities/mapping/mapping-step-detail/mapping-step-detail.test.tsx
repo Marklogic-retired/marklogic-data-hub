@@ -526,11 +526,13 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personEntityDef});
 
-    let getByTestId, getByLabelText;
+    let getByTestId, getByLabelText, getByText, getAllByText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
+      getByText = renderResults.getByText;
+      getAllByText = renderResults.getAllByText;
     });
 
 
@@ -540,15 +542,42 @@ describe("RTL Source-to-entity map tests", () => {
     //expand nested levels first
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
-    //Verify Entity type title in first row of Entity table
+    //Verify utility in first row of Entity table
+
+    //Entity type title should be visible
     let entTableTopRow: any;
     let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
     entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
     expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
-    //Verify entity settings icon and caret also exist in the first row
+    //Verify related entity filter in the first row
+    expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
+
+    let entitiesFilter = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-search__field"
+    )[0];
+
+    fireEvent.click(entitiesFilter); // focus on the search box
+
+    //related entity options should appear, replace with real values in DHFPROD-6706
+    expect(getByText("entity1")).toBeInTheDocument();
+    expect(getByText("entity2")).toBeInTheDocument();
+    expect(getByText("entity3")).toBeInTheDocument();
+
+    fireEvent.click(getByText("entity2"));
+
+    //selected value should appear in filter
+    let entityFilterValue = getByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-selection__choice__content"
+    );
+    expect(entityFilterValue).toHaveTextContent("entity2");
+
+    //Verify entity settings icon also exist in the first row
     expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
-    expect(getByLabelText("entitySettingsCaret").closest("tr")).toBe(entTableTopRow);
 
 
     //Check sort order of Name Column before clicking on sort button
@@ -1019,9 +1048,10 @@ describe("RTL Source-to-entity map tests", () => {
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
     mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[2]});
 
-    let getByText, getByTestId, queryByText, getAllByRole, queryByTestId;
+    let getByText, getAllByText, getByTestId, queryByText, getAllByRole, queryByTestId;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getAllByText = renderResults.getAllByText;
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       queryByText = renderResults.queryByText;
@@ -1036,11 +1066,11 @@ describe("RTL Source-to-entity map tests", () => {
 
     let functionSelector = getByTestId("propAttribute-3-functionIcon");
     fireEvent.click(functionSelector);
-    let inputBox = getByText(
+    let inputBox = getAllByText(
       (_content, element) =>
         element.className !== null &&
                 element.className === "ant-select-search__field"
-    );
+    )[1];
 
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByText("concat")).toBeInTheDocument();
@@ -1246,13 +1276,13 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let getByText, getByTestId, getAllByText, getAllByRole;
+    let getByTestId, getAllByText, getAllByRole, queryByTestId;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       getAllByText = renderResults.getAllByText;
       getAllByRole = renderResults.getAllByRole;
+      queryByTestId = renderResults.queryByTestId;
     });
 
     let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
@@ -1267,11 +1297,11 @@ describe("RTL Source Selector/Source Search tests", () => {
     let lastName = getAllByText("LastName");
     expect(lastName.length).toEqual(2);
 
-    let inputBox = getByText(
+    let inputBox = getAllByText(
       (_content, element) =>
         element.className !== null &&
                 element.className ==="ant-select-search__field"
-    );
+    )[1];
 
     fireEvent.click(inputBox);
     fireEvent.change(inputBox, {target: {value: "Fir"}});
@@ -1287,8 +1317,10 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.keyDown(inputBox, {key: "Enter", code: "Enter", keyCode: 13, charCode: 13});
 
     //mapping is saved
-    expect(await(waitForElement(() => getByTestId("successMessage"), {"timeout": 200})));
-
+    await (waitForElement(() => (getByTestId("successMessage"))));
+    if (queryByTestId("successMessage")) {
+      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
+    }
     let mapExp = getByTestId("itemTypes-mapexpression");
     //Right Xpath is populated
     expect(mapExp).toHaveTextContent("nutFreeName/FirstNamePreferred");

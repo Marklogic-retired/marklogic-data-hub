@@ -1,12 +1,12 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Icon, Table, Popover, Input, Dropdown} from "antd";
+import {Icon, Table, Popover, Input, Select, Dropdown} from "antd";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
-import {faList, faSearch, faCog, faCaretDown} from "@fortawesome/free-solid-svg-icons";
+import {faList, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
 import {getMappingFunctions} from "../../../../api/mapping";
 
 
@@ -43,6 +43,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
 
+  const {Option} = Select;
   const {TextArea} = Input;
   let searchInput: any;
   let tempMapExp: any = {};
@@ -74,6 +75,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [sourceValue, setSourceValue] = useState("");
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
+
+  //States for related entities
+  const [relatedEntitySelected, setRelatedEntitySelected] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [relatedEntities, setRelatedEntities] = useState<any>(["entity1", "entity2", "entity3"]); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   //Documentation links for using Xpath expressions
   const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -539,6 +544,45 @@ const EntityMapTable: React.FC<Props> = (props) => {
     />
   );
 
+  const relatedEntitiesFilter = (
+    <Select
+      mode="multiple"
+      allowClear
+      style={{width: "98%"}}
+      placeholder="Select"
+      id="entities-filter"
+      onChange={value => handleOptionSelect(value)}
+      dropdownClassName={styles.entityFilterDropdown}
+    >
+      {/* Fill these options with related entities when backend support is complete with DHFPROD-7068 */}
+      {relatedEntities.map((entity, i) => {
+        return <Option aria-label={`${entity}-option`} value={entity} key={i}>{entity}</Option>;
+      })}
+
+    </Select>
+  );
+
+  const topRowDetails = (
+    <div>
+      <div className = {styles.entityTopRow}>
+        <div className={styles.entityTitle}><strong>{props.entityTypeTitle}</strong></div>
+        <div className={styles.entitySettingsLink}>
+          <FontAwesomeIcon icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"}/>
+        </div>
+      </div>
+      <div className={styles.entityFilterContainer}>
+        <div className={styles.mapRelatedEntitiesText}>Map related entities: </div>
+        <div className={styles.entityFilter}>{relatedEntitiesFilter}</div>
+      </div>
+    </div>
+  );
+
+  const handleOptionSelect = (value) => {
+    setRelatedEntitySelected(value);
+  };
+
+
+
   const entityColumns = [
     {
       title: <span data-testid="entityTableName">Name</span>,
@@ -548,10 +592,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
       ...getColumnFilterProps("name"),
       sorter: (a: any, b: any) => a.name?.localeCompare(b.name),
       ellipsis: true,
-      render: (text, row) => {
-        let textToSearchInto = text.split("/").pop();
-        let valueToDisplay = row.key !== 0 ? <span>{textToSearchInto}</span> : <strong>{textToSearchInto}</strong>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
+      render: (text, row, index) => {
+        let textToSearchInto = row.key !== 0 ? text.split("/").pop() : text;
+        let valueToDisplay = textToSearchInto;
+        return {children: getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key), props: (row.key === 0  && index === 0) ? {colSpan: 4} : {colSpan: 1}};
       }
     },
     {
@@ -561,15 +605,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
       key: "type",
       width: "15%",
       sorter: (a: any, b: any) => getEntityDataType(a.type).localeCompare(getEntityDataType(b.type)),
-      render: (text) => {
+      render: (text, row, index) => {
         const expanded = text.startsWith("parent-");
         const dType = expanded ? text.slice(text.indexOf("-")+1): text;
-        return <div className={styles.typeContainer}>
+        return {children: <div className={styles.typeContainer}>
           {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
             content={contextHelp}
             trigger="click"
             placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
-        </div>;
+        </div>, props: (row.key === 0 && index === 0) ? {colSpan: 0} : {colSpan: 1}};
       }
     },
     {
@@ -582,25 +626,31 @@ const EntityMapTable: React.FC<Props> = (props) => {
       dataIndex: "key",
       key: "key",
       width: "45%",
-      render: (text, row) => (row.key !== 0 ? <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-        <TextArea
-          id={"mapexpression"+row.name.split("/").pop()}
-          data-testid={row.name.split("/").pop()+"-mapexpression"}
-          style={mapExpressionStyle(row.name)}
-          onClick={handleClickInTextArea}
-          value={mapExp[row.name]}
-          onChange={(e) => handleMapExp(row.name, e)}
-          onBlur={handleExpSubmit}
-          autoSize={{minRows: 1}}
-          disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-        <span>
-          <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-            <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
-          </Dropdown>
-        </span>
-                &nbsp;&nbsp;
-        <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
-      {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div> : ""),
+      render: (text, row, index) => {
+        if (row.key !== 0) {
+          return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+            <TextArea
+              id={"mapexpression"+row.name.split("/").pop()}
+              data-testid={row.name.split("/").pop()+"-mapexpression"}
+              style={mapExpressionStyle(row.name)}
+              onClick={handleClickInTextArea}
+              value={mapExp[row.name]}
+              onChange={(e) => handleMapExp(row.name, e)}
+              onBlur={handleExpSubmit}
+              autoSize={{minRows: 1}}
+              disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
+            <span>
+              <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+                <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
+              </Dropdown>
+            </span>
+                    &nbsp;&nbsp;
+            <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
+          {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}};
+        } else {
+          return {children: null, props: {colSpan: 0}};
+        }
+      },
     },
     {
       title: "Value",
@@ -609,7 +659,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
       width: "20%",
       ellipsis: true,
       sorter: (a: any, b: any) => props.getDataForValueField(a.name)?.localeCompare(props.getDataForValueField(b.name)),
-      render: (text, row) => (row.key !== 0 ? <div data-testid={row.name.split("/").pop()+"-value"} className={styles.mapValue}><MLTooltip title={props.getTextForTooltip(row.name)}>{props.getTextForValueField(row)}</MLTooltip></div> : <div><div className={styles.entitySettingsLink}><FontAwesomeIcon icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"}/></div><FontAwesomeIcon className={styles.entitySettingsCaret} icon={faCaretDown} aria-label={"entitySettingsCaret"}/></div>)
+      render: (text, row, index) => {
+        if (row.key !== 0) {
+          return {
+            children:
+              <div data-testid={row.name.split("/").pop()+"-value"} className={styles.mapValue}>
+                <MLTooltip title={props.getTextForTooltip(row.name)}>{props.getTextForValueField(row)}</MLTooltip>
+              </div>,
+            props: {colSpan: 1}
+          };
+        } else {
+          return {children: null, props: {colSpan: 0}};
+        }
+      }
     }
   ];
 
@@ -624,7 +686,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       //defaultExpandAllRows={true}
       columns={getColumnsForEntityTable()}
       scroll={{y: "60vh", x: 1000}}
-      dataSource={[{key: 0, name: props.entityTypeTitle, type: "", parentVal: "", children: props.entityTypeProperties}]}
+      dataSource={[{key: 0, name: topRowDetails, type: "", parentVal: "", children: props.entityTypeProperties}]}
       tableLayout="unset"
       rowKey={(record: any) => record.key}
       getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
