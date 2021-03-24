@@ -382,7 +382,6 @@ pipeline{
 	agent none;
 	options {
   	checkoutToSubdirectory 'data-hub'
-  	skipStagesAfterUnstable()
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
@@ -547,9 +546,12 @@ pipeline{
                       }
                   }
                   }
-		}
-		}
-		}
+		}}
+        post{
+           unstable { script{
+               if(!params.regressions) error("Pre merge tests Failed");
+           }}
+        }}
 		stage('code-review'){
 		when {
   			 allOf {
@@ -713,30 +715,32 @@ pipeline{
                   }
 		}
 
-        stage('publishAnddhs'){
+        stage('publishing'){
          when {
            expression {
                  props = readProperties file: 'data-hub/pipeline.properties';
                  println(props['ExecutionBranch'])
-                 return (env.BRANCH_NAME == props['ExecutionBranch'])
+                 return (env.BRANCH_NAME == props['ExecutionBranch'] && !params.regressions)
            }
          }
          agent { label 'dhfLinuxAgent' }
          steps {
                sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
                build job: 'DHF-Publish-RPM', propagate: false, wait: false
-               build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
+            }
+        }
+
+        stage('dhs-test'){
+            when { expression {return params.regressions} }
+            agent { label 'dhfLinuxAgent' }
+            steps {
+                sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
+                build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
             }
         }
 
 		stage('rh7-singlenode'){
-		when {
-	            expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	           }
+            when { expression {return params.regressions} }
 			agent { label 'dhfLinuxAgent'}
 			steps{
 			 script{
@@ -773,15 +777,7 @@ pipeline{
                   }
 		}
 		stage('Linux Core Parallel Execution'){
-		when {
-	            expression{
-	             node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-		}
+        when { expression {return params.regressions} }
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
@@ -919,15 +915,7 @@ pipeline{
 		}
 	}
 		stage('example projects parallel'){
-		when {
-	            expression{
-	            node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-              }
+            when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
@@ -998,16 +986,8 @@ pipeline{
 		}
 		}
 		stage('Windows Core Parallel'){
-        		when {
-        	            expression{
-        	             node('dhmaster'){
-        	                props = readProperties file:'data-hub/pipeline.properties';
-                            println(props['ExecutionBranch'])
-        	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-        	            }
-        	            }
-                		}
-        		    parallel{
+            when { expression {return params.regressions} }
+            parallel{
         		stage('w10_SN_9.0-Nightly'){
         			agent { label 'dhfWinagent'}
         			steps{
