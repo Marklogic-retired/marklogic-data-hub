@@ -7,8 +7,6 @@
   "Orders": [
     {
       "OrderId": "2002",
-      "FirstName": "Audrey",
-      "LastName": "Thompson",
       "SendToID": "303",
       "Products": [
         {
@@ -21,8 +19,6 @@
     {
       "OrderId": "2012",
       "DateAndTime": "2021/02/14-09:39:15",
-      "FirstName": "Cornelia",
-      "LastName": "Nixon",
       "SendToID": "404",
       "Products": [
         {

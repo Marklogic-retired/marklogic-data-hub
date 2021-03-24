@@ -1,0 +1,37 @@
+<Customer xmlns="customerInfo">
+  <CustomerID>202</CustomerID>
+  <Name type="preferred">
+    <FirstName>Cynthia</FirstName>
+    <LastName>Waters</LastName>
+  </Name>
+  <Orders>
+    <Order>
+      <OrderID>2002</OrderID>
+      <SendToID>303</SendToID>
+      <Products>
+        <Product>
+          <Quantity>1</Quantity>
+          <ProductId>10</ProductId>
+          <Name>New Balance FuelCell Echo V1 Sneaker</Name>
+        </Product>
+      </Products>
+    </Order>
+    <Order>
+      <OrderID>2012</OrderID>
+      <DateAndTime>2021/02/14-09:39:15</DateAndTime>
+      <SendToID>404</SendToID>
+      <Products>
+        <Product>
+          <Quantity>1</Quantity>
+          <ProductId>30</ProductId>
+          <Name>Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless</Name>
+        </Product>
+        <Product>
+          <Quantity>2</Quantity>
+          <ProductId>40</ProductId>
+          <Name>Cuisinart 8-Cup Stainless Steel Electric Kettle with Automatic Shut-off</Name>
+        </Product>
+      </Products>
+    </Order>
+  </Orders>
+</Customer>

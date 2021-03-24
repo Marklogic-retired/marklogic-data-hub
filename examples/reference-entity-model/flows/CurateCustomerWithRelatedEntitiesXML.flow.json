@@ -1,0 +1,11 @@
+{
+  "name" : "CurateCustomerWithRelatedEntitiesXML",
+  "steps" : {
+    "1" : {
+      "stepId" : "loadCustomersWithRelatedEntitiesXML-ingestion"
+    },
+    "2" : {
+      "stepId" : "mapCustomersWithRelatedEntitiesXML-mapping"
+    }
+  }
+}

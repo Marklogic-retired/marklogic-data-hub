@@ -1,0 +1,75 @@
+<Customer xmlns="customerInfo">
+  <CustomerID>401</CustomerID>
+  <Name type="preferred">
+    <FirstName>Jane</FirstName>
+    <LastName>Seymour</LastName>
+  </Name>
+  <Nicknames>
+    <nickname>Janie</nickname>
+    <nickname>Janey</nickname>
+  </Nicknames>
+  <Address>
+    <Shipping>
+      <Street>Covington Road</Street>
+      <City>Los Altos</City>
+      <State>California</State>
+      <Postal>94024-0241</Postal>
+    </Shipping>
+    <Billing>
+      <Street>Latham St</Street>
+      <City>Mountain view</City>
+      <State>California</State>
+      <Postal>94040-6783</Postal>
+    </Billing>
+  </Address>
+  <Orders>
+    <Order>
+      <OrderID>3002</OrderID>
+      <DateAndTime>2019/05/24-07:45:22</DateAndTime>
+      <SendToID>403</SendToID>
+      <Products>
+        <Product>
+          <Quantity>1</Quantity>
+          <ProductId>70</ProductId>
+          <Name>Skechers GOrun Razor +</Name>
+        </Product>
+        <Product>
+          <Quantity>3</Quantity>
+          <ProductId>80</ProductId>
+          <Name>Air Jordan 1 Mid</Name>
+        </Product>
+      </Products>
+    </Order>
+    <Order>
+      <OrderID>3012</OrderID>
+      <DateAndTime>2021/02/14-09:39:15</DateAndTime>
+      <SendToID>404</SendToID>
+      <Products>
+        <Product>
+          <Quantity>1</Quantity>
+          <ProductId>90</ProductId>
+          <Name>Instant Pot Duo Plus 6 Quart 9-in-1 Electric Pressure Cooker</Name>
+        </Product>
+        <Product>
+          <Quantity>2</Quantity>
+          <ProductId>100</ProductId>
+          <Name>Air Fryer Lid Pressure Cooker Lid Air Fryer Transformer</Name>
+        </Product>
+      </Products>
+    </Order>
+  </Orders>
+  <BabyRegistry>
+    <BabyRegistryId>4039</BabyRegistryId>
+    <Arrival_Date>2021-04-08</Arrival_Date>
+    <Products>
+      <Product>
+        <ProductId>110</ProductId>
+        <Name>Glow in The Dark Throw Blanket for Kids</Name>
+      </Product>
+      <Product>
+        <ProductId>120</ProductId>
+        <Name>adidas Originals Kid's Trefoil Beanie</Name>
+      </Product>
+    </Products>
+  </BabyRegistry>
+</Customer>

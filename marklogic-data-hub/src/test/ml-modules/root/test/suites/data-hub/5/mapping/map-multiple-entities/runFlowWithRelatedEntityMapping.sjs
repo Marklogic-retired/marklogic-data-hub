@@ -11,11 +11,9 @@ const content = ["/content/customerInfo.json"].map(uri => {
 });
 
 let results = datahub.flow.runFlow('customerFlow', 'test-job', content, {outputFormat: 'json', mapping:{name:'mapCustomersJSON'}}, 1);
-console.log(results);
 let customerUris = getUris("Customer");
 let orderUris = getUris("Order");
 let productUris = getUris("Product");
-console.log(customerUris);
 let orderDocPermissions = hubTest.getRecord(orderUris[0], "data-hub-FINAL");
 let productDocPermissions = hubTest.getRecord(productUris[0], "data-hub-FINAL")
 let sqlQueryResponse = executeSql();
