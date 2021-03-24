@@ -11,10 +11,17 @@ import org.springframework.test.context.TestContext;
  * <p>
  * Avoids directly clearing the database, as that often requires a couple seconds to complete, which is an unacceptable
  * delay when running tests.
+ * <p>
+ * For some test classes, it may be desirable to disable this behavior for the scope of the test class. For example,
+ * a test class that runs marklogic-unit-test modules, which are likely to have their own database preparation logic,
+ * may want this behavior disabled. A public static method is available for doing so, presumably via methods marked
+ * with the JUnit5 BeforeAll and AfterAll annotations.
  */
 public class HubDatabasePreparer extends LoggingObject implements DatabasePreparer {
 
     private HubClient hubClient;
+
+    private static boolean enabled = true;
 
     public HubDatabasePreparer(HubClient hubClient) {
         this.hubClient = hubClient;
@@ -22,6 +29,11 @@ public class HubDatabasePreparer extends LoggingObject implements DatabasePrepar
 
     @Override
     public void prepareDatabasesBeforeTestMethod(TestContext testContext) {
+        if (!enabled) {
+            logger.debug("Not enabled, so will not prepare databases");
+            return;
+        }
+
         String query = getQueryForClearingDatabase();
 
         logger.info("Preparing staging database");
@@ -56,5 +68,13 @@ public class HubDatabasePreparer extends LoggingObject implements DatabasePrepar
             "'http://marklogic.com/data-hub/step-definition', " +
             "'http://marklogic.com/data-hub/steps'" +
             "]))).toArray().forEach(item => xdmp.documentDelete(item))";
+    }
+
+    public static boolean isEnabled() {
+        return enabled;
+    }
+
+    public static void setEnabled(boolean enabled) {
+        HubDatabasePreparer.enabled = enabled;
     }
 }

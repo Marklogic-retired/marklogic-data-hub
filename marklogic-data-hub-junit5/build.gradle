@@ -16,11 +16,15 @@ snyk {
 }
 
 dependencies {
-    api(project(":marklogic-data-hub"))
-
     api "org.junit.jupiter:junit-jupiter:5.7.1"
     api "org.slf4j:slf4j-api:1.7.30"
     api "org.springframework:spring-test:5.2.9.RELEASE"
+    api project(":marklogic-data-hub")
+
+    api ("com.marklogic:marklogic-unit-test-client:1.0.0") {
+        // 1.0.0 uses Java Client 4.2.0, so we exclude that
+        exclude module: "marklogic-client-api"
+    }
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
     testImplementation "ch.qos.logback:logback-classic:1.2.3"
