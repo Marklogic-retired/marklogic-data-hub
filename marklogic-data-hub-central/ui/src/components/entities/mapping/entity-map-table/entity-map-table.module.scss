@@ -11,6 +11,48 @@
   }
 }
 
+.entityTopRow{
+  margin-top: -20px;
+}
+
+.entityTitle{
+  margin-top: -8px;
+  display: inline-block;
+}
+
+.entitySettingsLink {
+  display: inline-block;
+  padding-right: 20px;
+  margin-left: 90%;
+  font-size: 20px !important;
+  color: #44499C;
+  cursor: pointer;
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+
+.mapRelatedEntitiesText{
+  display: inline-block;
+  margin-left: -8px;
+}
+
+.entityFilterContainer{
+  width: 98%;
+  margin-top: 10px;
+}
+
+.entityFilter{
+  display: inline-block;
+  width: 91%;
+  padding-left: 15px;
+  padding-bottom: 3px;
+}
+
+.entityFilterDropdown{
+  top: 69px !important;
+}
+
 .contextHelp{
   width: 14vw;
   word-wrap: normal;
@@ -107,6 +149,15 @@
   align-items: flex-start;
 }
 
+.mapValue {
+  margin-top: -6px;
+  margin-bottom: -20px;
+  white-space: pre-wrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: normal;
+}
+
 .filterContainer {
   padding: 8px;
 }
@@ -136,36 +187,4 @@
   text-align: left;
   font-size: 13px;
   padding-right: 1px;
-}
-
-.entitySettingsLink {
-  font-size: 20px !important;
-  position: absolute;
-  top: 12px;
-  right: 66px;
-  color: #44499C;
-  cursor: pointer;
-  .stepSettingsLabel {
-      display: inline-block;
-      margin-left: 6px;
-  }
-  &:hover{
-      color: var(--hoverColor);
-  }
-}
-
-.entitySettingsCaret {
-  font-size: 13px !important;
-  position: absolute;
-  top: 15px;
-  right: 57px;
-  color: #44499C;
-  cursor: pointer;
-  .stepSettingsLabel {
-      display: inline-block;
-      margin-left: 6px;
-  }
-  &:hover{
-      color: var(--hoverColor);
-  }
 }
