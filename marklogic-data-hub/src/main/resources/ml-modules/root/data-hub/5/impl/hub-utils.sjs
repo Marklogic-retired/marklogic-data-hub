@@ -146,6 +146,19 @@ function writeDocument(docUri, content, permissions, collections, database) {
   }));
 }
 
+/**
+ * ML 9 does not support Object.values(). This function serves as its replacement so that datahub can be supported in ML 9
+ * @param object
+ * @returns  an array of a given object's property values
+ */
+function getObjectValues(object){
+    let valuesArray = [];
+    for (const property in object) {
+      valuesArray.push(object[property]);
+    }
+    return valuesArray;
+}
+
 module.exports = {
   capitalize,
   deleteDocument,
@@ -158,5 +171,6 @@ module.exports = {
   parsePermissions,
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
-  writeDocument
+  writeDocument,
+  getObjectValues
 };
