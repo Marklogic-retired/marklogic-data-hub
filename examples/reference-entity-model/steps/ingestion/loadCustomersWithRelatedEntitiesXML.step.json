@@ -1,0 +1,23 @@
+{
+  "name": "loadCustomersWithRelatedEntitiesXML",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadCustomersWithRelatedEntitiesXML-ingestion",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "collections": [
+    "loadCustomersWithRelatedEntitiesXML"
+  ],
+  "inputFilePath": "input/xmlCustomersWithRelatedEntities",
+  "outputURIReplacement": ".*input/xmlCustomersWithRelatedEntities,'/Customer'",
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse",
+  "headers" : {
+    "sources" : [ {
+      "name" : "CustomerWithRelatedEntitiesXML"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  }
+}

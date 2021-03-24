@@ -23,7 +23,8 @@ configurations {
     mlcp
 }
 
-["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers", "CurateCustomerWithRelatedEntitiesJSON"].each {theFlowName ->
+["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers",
+ "CurateCustomerWithRelatedEntitiesJSON", "CurateCustomerWithRelatedEntitiesXML"].each {theFlowName ->
     task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
         description = "Run the ingestion and mapping steps for flow ${theFlowName}"
         flowName = theFlowName

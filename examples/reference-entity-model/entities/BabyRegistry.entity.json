@@ -24,7 +24,7 @@
           "items": {
             "datatype": "integer",
             "relatedEntityType": "http://example.org/Product-0.0.1/Product",
-            "joinPropertyName": "customerId"
+            "joinPropertyName": "productId"
           }
         }
       }
