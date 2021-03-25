@@ -142,23 +142,6 @@ function applyPermissionsFromOptions(results, options) {
 }
 
 function jobReport(jobID, stepResponse, options) {
-  if (stepResponse.success && stepResponse.successfulEvents) {
-    const hubUtils = datahub.hubUtils;
-    const query = options.sourceQuery;
-    let urisEval;
-    if (!query || /^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {
-      urisEval = null;
-      datahub.debug.log({type: 'notice', message: `Cannot safely parse sourceQuery for match summary cleanup (JobID: ${jobID})`});
-    } else {
-      // Restrict the query to only cover match summary documents in the query
-      urisEval = `cts.uris(null, null, cts.andQuery([cts.collectionQuery('datahubMasteringMatchSummary${options.targetEntity ? '-' + options.targetEntity : ''}'),${query}]))`;
-    }
-    if (urisEval) {
-      const matchSummaryURIs = hubUtils.normalizeToArray(xdmp.eval(urisEval, {options: options}));
-      const summariesToDelete = matchSummaryURIs.map((uri) => ({uri, '$delete': true}));
-      hubUtils.writeDocuments(summariesToDelete);
-    }
-  }
   return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);
 }
 
