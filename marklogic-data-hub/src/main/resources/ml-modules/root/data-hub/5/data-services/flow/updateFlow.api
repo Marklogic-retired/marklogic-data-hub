@@ -16,7 +16,7 @@
             "desc": "The order of stepIds can be updated.",
             "datatype": "array",
             "nullable": true,
-            "$javaClass": "com.fasterxml.jackson.databind.node.JsonNode"
+            "$javaClass": "com.fasterxml.jackson.databind.node.ArrayNode"
         }
     ],
     "return": {
