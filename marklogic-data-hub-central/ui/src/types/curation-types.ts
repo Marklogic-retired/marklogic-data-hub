@@ -59,7 +59,7 @@ export interface MatchRule {
   // custom options
   algorithmModuleNamespace?: string,
   algorithmModulePath?: string,
-  algorithmModuleFunction?: string,
+  algorithmFunction?: string,
 }
 
 export interface Threshold {
