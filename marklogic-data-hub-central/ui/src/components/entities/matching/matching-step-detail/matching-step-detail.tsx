@@ -10,6 +10,7 @@ import "./matching-step-detail.scss";
 import CustomPageHeader from "../../page-header/page-header";
 
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
+import RulesetMultipleModal from "../ruleset-multiple-modal/ruleset-multiple-modal";
 import MultiSlider from "../multi-slider/multi-slider";
 import NumberIcon from "../../../number-icon/number-icon";
 import ThresholdModal from "../threshold-modal/threshold-modal";
@@ -73,6 +74,7 @@ const MatchingStepDetail: React.FC = () => {
   const [allDataSelected, setAllDataSelected] = useState(false);
   const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 10, uris: []});
   const [previewMatchedActivity, setPreviewMatchedActivity]   = useState<any>({sampleSize: 10, uris: [], actionPreview: []});
+  const [showRulesetMultipleModal, toggleShowRulesetMultipleModal] = useState(false);
 
   const menu = (
     <Menu>
@@ -80,8 +82,7 @@ const MatchingStepDetail: React.FC = () => {
         <span onClick={() => addNewSingleRuleset()} aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
       </Menu.Item>
       <Menu.Item key="multiPropertyRuleset">
-        {/*Add addNewMultipleRuleset() here to open respective Modal*/}
-        <span aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
+        <span onClick={() => addNewMultipleRuleset()} aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
       </Menu.Item>
     </Menu>
   );
@@ -225,6 +226,11 @@ const MatchingStepDetail: React.FC = () => {
   const addNewSingleRuleset = () => {
     setEditRuleset({});
     toggleShowRulesetSingleModal(true);
+  };
+
+  const addNewMultipleRuleset = () => {
+    setEditRuleset({});
+    toggleShowRulesetMultipleModal(true);
   };
 
   const deleteModal = (
@@ -559,6 +565,11 @@ const MatchingStepDetail: React.FC = () => {
         isVisible={showRulesetSingleModal}
         editRuleset={editRuleset}
         toggleModal={toggleShowRulesetSingleModal}
+      />
+      <RulesetMultipleModal
+        isVisible={showRulesetMultipleModal}
+        editRuleset={editRuleset}
+        toggleModal={toggleShowRulesetMultipleModal}
       />
       <ThresholdModal
         isVisible={showThresholdModal}
