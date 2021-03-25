@@ -1607,4 +1607,34 @@ describe("RTL Source Selector/Source Search tests", () => {
     expect(getByTestId("structuredIconLegend")).toBeInTheDocument();
   });
 
+  test("Verify Edit Source Doc URI Save/Discard",  async() => {
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+
+    let getByTestId, getByText, getByLabelText;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+    });
+
+    //verify discard case
+    expect(getByText("/dummy/uri/person-101.json")).toBeInTheDocument();
+    fireEvent.mouseOver(getByTestId("uri-edit"));
+    fireEvent.click(getByTestId("pencil-icon"));
+    fireEvent.change(getByTestId("uri-input"), {target: {value: "/dummy/uri/person-102.json"}});
+    fireEvent.click(getByLabelText("icon: close"));
+    expect(getByText("/dummy/uri/person-101.json")).toBeInTheDocument();
+
+    //verify save case
+    expect(getByText("/dummy/uri/person-101.json")).toBeInTheDocument();
+    fireEvent.mouseOver(getByTestId("uri-edit"));
+    fireEvent.click(getByTestId("pencil-icon"));
+    fireEvent.change(getByTestId("uri-input"), {target: {value: "/dummy/uri/person-102.json"}});
+    fireEvent.click(getByLabelText("icon: check"));
+    await(waitForElement(() => getByText("/dummy/uri/person-102.json")));
+    expect(getByText("/dummy/uri/person-102.json")).toBeInTheDocument();
+  });
+
 });

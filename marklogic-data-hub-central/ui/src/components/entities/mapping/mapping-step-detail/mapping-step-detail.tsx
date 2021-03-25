@@ -119,6 +119,7 @@ const MappingStepDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [sourceData, setSourceData] = useState<any[]>([]);
   const [sourceURI, setSourceURI] = useState("");
+  const [sourceURIPrev, setSourceURIPrev] = useState("");
   const [sourceFormat, setSourceFormat] = useState("");
   const [docNotFound, setDocNotFound] = useState(false);
   const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
@@ -153,8 +154,8 @@ const MappingStepDetail: React.FC = () => {
     setShowEditURIOption(true);
   };
 
-  const handleCloseEditOption = (srcURI) => {
-    setSourceURI(srcURI);
+  const handleCloseEditOption = () => {
+    setSourceURI(sourceURIPrev);
     setEditingUri(false);
   };
 
@@ -166,6 +167,7 @@ const MappingStepDetail: React.FC = () => {
         if (response.data.length > 0) {
           setDocUris(response.data);
           setSourceURI(response.data[0]);
+          setSourceURIPrev(response.data[0]);
           fetchSrcDocFromUri(stepName, response.data[0]);
         } else {
           setIsLoading(false);
@@ -524,6 +526,7 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const handleSubmitUri = async (uri) => {
+    setSourceURIPrev(sourceURI);
     await fetchSrcDocFromUri(curationOptions.activeStep.stepArtifact.name, uri);
     if (isTestClicked) {
       getMapValidationResp(uri);
@@ -533,11 +536,11 @@ const MappingStepDetail: React.FC = () => {
 
   const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
     {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(mapData["sourceQuery"], 32, "...")}</div>}
-    {!editingURI ? <div
-      onMouseOver={(e) => handleMouseOver(e)}
-      onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 32, "...")}</span></span> :
-        <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(sourceURI, 32, "...")}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
-        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(sourceURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/></span></div>}
+    {!editingURI ? <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)}
+      className={styles.uri}>{!showEditURIOption ? <span data-testid={"uri-edit"} className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 32, "...")}</span></span> :
+        <span className={styles.showingEditContainer}>URI: <span data-testid={"uri-edit"} className={styles.showingEditIcon}>{getLastChars(sourceURI, 32, "...")} <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}
+        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
+      <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/></span></div>}
   </div> : "";
 
   useEffect(() => {
@@ -555,6 +558,7 @@ const MappingStepDetail: React.FC = () => {
       setExpandedSourceFlag(false);
       setExpandedEntityFlag(false);
       setSourceURI("");
+      setSourceURIPrev("");
       setDocUris([]);
       setUriIndex(0);
       setSourceData([]);
@@ -615,6 +619,7 @@ const MappingStepDetail: React.FC = () => {
     onUpdateURINavButtons(docUris[index]).then(() => {
       setUriIndex(index);
       setSourceURI(docUris[index]);
+      setSourceURIPrev(docUris[index]);
     });
   };
   const onUpdateURINavButtons = async (uri) => {
