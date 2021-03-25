@@ -101,7 +101,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
       if (matchType === "custom") {
         setUriValue(editRuleset["matchRules"][0]["algorithmModulePath"]);
-        setFunctionValue(editRuleset["matchRules"][0]["algorithmModuleFunction"]);
+        setFunctionValue(editRuleset["matchRules"][0]["algorithmFunction"]);
         setNamespaceValue(editRuleset["matchRules"][0]["algorithmModuleNamespace"]);
 
       } else if (matchType === "doubleMetaphone") {
@@ -365,7 +365,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         entityPropertyPath: propertyName,
         matchType: matchType,
         algorithmModulePath: uriValue,
-        algorithmModuleFunction: functionValue,
+        algorithmFunction: functionValue,
         algorithmModuleNamespace: namespaceValue,
         options: {}
       };
