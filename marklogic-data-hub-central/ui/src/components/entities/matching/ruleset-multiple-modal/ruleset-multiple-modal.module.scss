@@ -1,0 +1,127 @@
+.modalTitleContainer {
+  margin-bottom: 35px;
+
+  .modalTitle{
+    font-size: 25px;
+  }
+
+  .titleDescription{
+    font-size: 13px;
+  }
+}
+
+.modalTitleLegend {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: -40px;
+  margin-bottom: 10px;
+  //vertical-align: bottom ;
+
+  .legendText {
+    font-size: 13px;
+    margin-left: 15px;
+  }
+
+  .expandCollapseIcon{
+    font-size: 11px;
+    margin-left: 5em;
+  }
+}
+
+.structuredIcon {
+  color: #5B69AF;
+  font-size: 14px;
+}
+
+.rulesetName{
+  width: 550px;
+}
+
+.matchTypeSelect {
+  width: 160px !important;
+}
+
+.icon {
+  position: absolute;
+  top: 4px;
+  right: -20px;
+  font-size: 12px;
+  color: #7F86B5;
+}
+
+.asterisk {
+  color: #B32424;
+  width: min-content;
+  max-height: 6px;
+  margin-top: -3px;
+  margin-bottom: 2px;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  .saveButton {
+    margin-left: 5px;
+  }
+}
+
+.reduceWeightText {
+  font-weight: 900;
+}
+
+.reduceToggle {
+  margin-left: 12px !important;
+}
+
+.matchOnText {
+  font-weight: 500;
+}
+
+.matchOnTagsContainer {
+  margin-left: 12px !important;
+  .matchOnTags {
+    margin-right: 6px !important;
+  }
+}
+
+.entityTable {
+  margin-bottom: 40px;
+}
+
+.nameColumnStyle {
+  margin-left: 3px;
+}
+
+.matchTypeDetailsContainer{
+  width: 100%;
+  display: flex;
+  
+  .mandatoryFieldContainer {
+    display: flex
+  }
+
+  .input {
+    position: relative;
+    width: 22vw;
+    margin-right: 5px;
+  }
+
+  .filterInput{
+    width: 25vw;
+    margin-left: 15px;
+    margin-right: 5px;
+  }
+
+  .questionCircle {
+    font-size: 12px;
+    color: #7F86B5;
+  }
+
+  .functionInput{
+    width: 13vw;
+    margin-left: 15px;
+    margin-right: 5px;
+  }
+}
