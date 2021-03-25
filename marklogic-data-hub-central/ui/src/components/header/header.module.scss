@@ -11,7 +11,8 @@ header.container {
     cursor: pointer;
     padding: 0px 20px 0px 20px;
     span.logo {
-      width: 160px;
+      width: 28px;
+      height: 29px;
       overflow: visible;
     }
     a.logo:focus {
@@ -24,14 +25,14 @@ header.container {
       top: 3px;
       border-left: dotted 1px rgba(255, 255, 255, 0.65);
       height: 24px;
-      margin: -6px 8px;
+      margin: -6px 15px;
       cursor: default;
     }
   }
   div.titleContainer {
     font-family: 'HelveticaNeue-Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     float: left;
-    margin: 0 60px 0 150px;
+    margin: 0 60px 0 29px;
     text-align: right;
     color: #fff;
     cursor: pointer;
