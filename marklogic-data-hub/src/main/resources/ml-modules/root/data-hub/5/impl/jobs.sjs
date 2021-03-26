@@ -311,19 +311,25 @@ module.exports.updateJob = module.amp(
 );
 
 module.exports.updateBatch = module.amp(
-  // TODO Should simplify the number of args here.  It's only called in one place, which means the caller - which
-  // has all of these parameters - should update the batch doc and then send it here to be updated via an amp.
-  function updateBatch(jobId, batchId, flowName, flowStep, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
-    let docObj = getBatchDoc(jobId, batchId);
+  function updateBatch(stepExecutionContext, items, writeTransactionInfo) {
+    const jobId = stepExecutionContext.jobId;
+    const batchId = stepExecutionContext.batchId;
+
+    const docObj = getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
 
+    const batchStatus = stepExecutionContext.getBatchStatus();
     docObj.batch.batchStatus = batchStatus;
     docObj.batch.uris = items;
 
+    const combinedOptions = stepExecutionContext.combinedOptions;
+
     // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
     if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
+      const flowStep = stepExecutionContext.flowStep;
+      const flowName = stepExecutionContext.flow.name;
       const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
       // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
       const prefix = flowName + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
@@ -333,7 +339,9 @@ module.exports.updateBatch = module.amp(
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
     }
-    if (error) {
+
+    const error = stepExecutionContext.batchErrors[0];
+    if(error){
       // Sometimes we don't get the stackFrames
       if (error.stackFrames) {
         let stackTraceObj = error.stackFrames[0];

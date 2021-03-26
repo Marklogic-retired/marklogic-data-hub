@@ -130,7 +130,7 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
   }
 
   try {
-    const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions));
+    const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions, stepExecutionContext));
     for (const contentObject of outputSequence) {
       flowUtils.addMetadataToContent(contentObject, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
       if (debugEnabled) {
@@ -166,7 +166,7 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
       hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
     }
     try {
-      const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentObject, stepExecutionContext.combinedOptions));
+      const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentObject, stepExecutionContext.combinedOptions, stepExecutionContext));
       for (const outputContent of outputSequence) {
         outputContent.previousUri = thisItem;
         flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);

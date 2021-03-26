@@ -61,9 +61,10 @@ class StepDefinition {
       }
       httpUtils.throwBadRequest(`Unable to run module: ${moduleUri}; cause: ${e.stack}`);
     }
-    if (this.performance.performanceMetricsOn())  {
-      return this.performance.instrumentStep(stepModule, stepModule[funcName], flow.globalContext.jobId, flow.globalContext.batchId, flow.globalContext.flow.name, moduleUri, flow.globalContext.uri);
-    }
+    // TODO Disabling this for now to avoid dependency on globalContext; will rework it soon so that it's still functional
+    // if (this.performance.performanceMetricsOn())  {
+    //   return this.performance.instrumentStep(stepModule, stepModule[funcName], TODO.jobId, TODO.batchId, TODO.flow.name, moduleUri, TODO.uri);
+    // }
     return stepModule[funcName];
   }
 

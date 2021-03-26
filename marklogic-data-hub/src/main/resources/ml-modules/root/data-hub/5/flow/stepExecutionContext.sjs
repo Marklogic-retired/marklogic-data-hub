@@ -15,6 +15,7 @@
 */
 'use strict';
 
+const config = require("/com.marklogic.hub/config.sjs");
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
@@ -42,6 +43,14 @@ class StepExecutionContext {
     this.failedItems = [];
     this.batchErrors = [];
     this.stepOutputErrorMessages = undefined;
+  }
+
+  getSourceDatabase() {
+    return this.combinedOptions.sourceDatabase || config.STAGINGDATABASE;
+  }
+
+  getTargetDatabase() {
+    return this.combinedOptions.targetDatabase || config.FINALDATABASE;
   }
 
   buildStepResponse(startDateTime) {
@@ -77,7 +86,7 @@ class StepExecutionContext {
 
   /**
    * "collections from options" refers to the array of collections built when this class was constructed.
-   * 
+   *
    * @param contentArray
    */
   addCollectionsFromOptionsToContentObjects(contentArray) {
@@ -86,11 +95,11 @@ class StepExecutionContext {
         if (!contentObject.context) {
           contentObject.context = {};
         }
-        contentObject.context.collections = this.collectionsFromOptions.concat(contentObject.context.collections || []);  
+        contentObject.context.collections = this.collectionsFromOptions.concat(contentObject.context.collections || []);
       }
     })
   }
-  
+
   setCompletedItems(items) {
     this.completedItems = items;
   }
@@ -110,6 +119,7 @@ class StepExecutionContext {
   }
 
   addBatchError(error, batchItem) {
+    // Object.assign doesn't work on an error object; gotta manually copy over each thing we care about
     const batchError = {
       "stack": error.stack,
       "code": error.code,
@@ -121,7 +131,7 @@ class StepExecutionContext {
       "uri": batchItem
     };
 
-    if (!batchItem) {
+    if (batchItem != null) {
       this.failedItems.push(batchItem);
     }
 
@@ -135,10 +145,6 @@ class StepExecutionContext {
     this.batchErrors.push(batchError);
   }
 
-  getTargetDatabase() {
-    return this.combinedOptions.targetDatabase;
-  }
-
   getStepMainFunction() {
     const modulePath = this.stepDefinition.modulePath;
     const stepMainFunction = new StepDefinition().makeFunction(null, "main", modulePath);
@@ -147,11 +153,18 @@ class StepExecutionContext {
       message += `; step definition module path: '${modulePath}'`;
       httpUtils.throwBadRequest(message);
     }
-    return stepMainFunction;  
+    return stepMainFunction;
   }
 
   stepModuleAcceptsBatch() {
     return this.stepDefinition.acceptsBatch;
+  }
+
+  getBatchStatus() {
+    if (this.failedItems.length > 0) {
+      return this.completedItems.length > 0 ? "finished_with_errors" : "failed";
+    }
+    return "finished";
   }
 }
 

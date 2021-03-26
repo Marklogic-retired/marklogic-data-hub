@@ -28,12 +28,12 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
  * @param {Sequence} content Sequnce of content objects to match
  * @param {string} summaryCollection
  * @param {{contentCollection: string, mergedCollection: string, notificationCollection: string, archivedCollection: string, auditingCollection: string}} collectionInfo
+ * @param {string} jobId
  */
-function filterContentAlreadyProcessed(content, summaryCollection, collectionInfo) {
-  const jobID = datahub.flow.globalContext.jobId;
+function filterContentAlreadyProcessed(content, summaryCollection, collectionInfo, jobId) {
   const filteredContent = [];
   const collectionQuery = cts.collectionQuery(summaryCollection);
-  const jobIdQuery = cts.fieldWordQuery('datahubCreatedByJob', jobID);
+  const jobIdQuery = cts.fieldWordQuery('datahubCreatedByJob', jobId);
   let auditingNotificationsInSourceQuery = false;
   for (let item of content) {
     const collections = item.context ? item.context.originalCollections || [] : [];
@@ -51,7 +51,7 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
   return Sequence.from(filteredContent);
 }
 
-function main(content, options) {
+function main(content, options, stepExecutionContext) {
   if (options.stepId) {
     const stepDoc = fn.head(cts.search(cts.andQuery([
       cts.collectionQuery("http://marklogic.com/data-hub/steps"),
@@ -70,7 +70,8 @@ function main(content, options) {
     collections.push(`datahubMasteringMatchSummary-${targetEntityType}`);
   }
   const summaryCollection = collections[collections.length - 1];
-  const filteredContent = filterContentAlreadyProcessed(content, summaryCollection, collectionInfo);
+  const jobId = stepExecutionContext ? stepExecutionContext.jobId : "";
+  const filteredContent = filterContentAlreadyProcessed(content, summaryCollection, collectionInfo, jobId);
   if (fn.count(filteredContent) === 0) {
     return emptySequence;
   }
