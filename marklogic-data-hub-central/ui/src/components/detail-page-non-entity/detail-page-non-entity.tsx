@@ -74,7 +74,7 @@ const DetailPageNonEntity = (props) => {
       render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
         key={text}
         title={text}>
-        <div style={{color: "#44499C", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
+        <div style={{color: "#333333", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
       </MLTooltip>
     },
     {
@@ -93,7 +93,7 @@ const DetailPageNonEntity = (props) => {
       render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
         key={text}
         title={text}>
-        <div style={{color: "#44499C", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
+        <div style={{color: "#333333", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
       </MLTooltip>
     },
     {
