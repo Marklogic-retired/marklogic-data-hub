@@ -458,7 +458,6 @@ pipeline{
 	agent none;
 	options {
   	checkoutToSubdirectory 'data-hub'
-  	skipStagesAfterUnstable()
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
@@ -623,9 +622,12 @@ pipeline{
                       }
                   }
                   }
-		}
-		}
-		}
+                  }}
+                   post{
+                     unstable { script{
+                         if(!params.regressions) error("Pre merge tests Failed");
+                     }}
+                  }}
 		stage('code-review'){
 		when {
   			 allOf {
@@ -789,13 +791,13 @@ pipeline{
                   }
 		}
 
-        stage('publishAnddhs'){
+        stage('publishing'){
          when {
            expression {
                     node('dhmaster') {
                         props = readProperties file: 'data-hub/pipeline.properties';
                         println(props['ExecutionBranch'])
-                        return (env.BRANCH_NAME == props['ExecutionBranch'])
+                        return (env.BRANCH_NAME == props['ExecutionBranch']  && !params.regressions)
                    }
            }
          }
@@ -803,57 +805,27 @@ pipeline{
          steps {
                sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
                build job: 'DHF-Publish-RPM', propagate: false, wait: false
-               build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
             }
         }
 
-/*
-        stage('publishing'){
-
-            when {
-                expression {
-                    node('dhmaster') {
-                        props = readProperties file: 'data-hub/pipeline.properties';
-                        println(props['ExecutionBranch'])
-                        return (env.BRANCH_NAME == props['ExecutionBranch'])
-                    }
-                }
+        stage('dhs-test'){
+            when { expression {return params.regressions} }
+            agent { label 'dhfLinuxAgent' }
+            steps {
+                sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
+                build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
             }
+        }
 
-            parallel {
-
-                stage('publishAnddhs') {
-                    agent { label 'dhfLinuxAgent' }
-                    steps {
-                        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
-                        build job: 'DHF-Publish-RPM', propagate: false, wait: false
-                        build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
-                    }
-                }
-
-                stage('FlexCodeScan') {
-                    agent { label 'dhfLinuxAgent' }
-                    steps { flexcodeScanAndReport() }
-                }
-
-        }}
-*/
-
-		stage('rh7-singlenode'){
-		when {
-	            expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	           }
-			agent { label 'dhfLinuxAgent'}
-			steps{
-			 script{
+        stage('rh7-singlenode'){
+            when { expression {return params.regressions} }
+            agent { label 'dhfLinuxAgent'}
+            steps{
+	      script{
                 props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-11'
-				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+		copyRPM 'Release','9.0-11'
+		setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+	        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
 				junit '**/TEST-*.xml'
                 def output=readFile 'data-hub/console.log'
 				def result=false;
@@ -881,19 +853,12 @@ pipeline{
                       sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Failed'
                   }
                   }
-		}
-		stage('Linux Core Parallel Execution'){
-		when {
-	            expression{
-	             node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-		}
-		parallel{
-		stage('rh7_cluster_10.0-Nightly'){
+        }
+
+       stage('Linux Core Parallel Execution'){
+         when { expression {return params.regressions} }
+         parallel{
+	  stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
 			dhflinuxTests("10.0","Latest")
@@ -1028,16 +993,9 @@ pipeline{
               }
 		}
 	}
-		stage('example projects parallel'){
-		when {
-	            expression{
-	            node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-              }
+
+        stage('example projects parallel'){
+            when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
@@ -1107,18 +1065,10 @@ pipeline{
             }
 		}
 		}
-		stage('Windows Core Parallel'){
-        		when {
-        	            expression{
-        	             node('dhmaster'){
-        	                props = readProperties file:'data-hub/pipeline.properties';
-                            println(props['ExecutionBranch'])
-        	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-        	            }
-        	            }
-                		}
-        		    parallel{
-        		stage('w10_SN_9.0-Nightly'){
+          stage('Windows Core Parallel'){
+            when { expression {return params.regressions} }
+      	    parallel{
+            stage('w10_SN_9.0-Nightly'){
         			agent { label 'dhfWinagent'}
         			steps{
         			    dhfWinTests("9.0","Latest")
@@ -1197,17 +1147,9 @@ pipeline{
 
         		    }
         		}
-		stage('quick start linux parallel'){
-		when {
-	            expression{
-	             node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-        		}
-		parallel{
+	stage('quick start linux parallel'){
+         when { expression {return params.regressions} }
+	 parallel{
 		stage('qs_rh7_90-nightly'){
 			agent { label 'lnx-dhf-jenkins-slave-2'}
 			steps{
