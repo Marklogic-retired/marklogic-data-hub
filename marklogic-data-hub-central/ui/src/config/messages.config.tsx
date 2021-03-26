@@ -21,10 +21,17 @@ const ConfirmYesNoMessages = {
     'saveChanges' : 'Save changes?'
 };
 
+const SystemInfoMessages = {
+    downloadHubCentralFiles: "Download a zip file containing only artifacts (models, steps, and flows) that were created or modified through Hub Central. You can apply these files to an existing local project.",
+    downloadProjectFiles: "Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.",
+    clearAllUserData: "Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain."
+}
+
 const MissingPagePermission = "You do not have permission to view this page.";
 
 export {
     AdvancedSettingsMessages,
     ConfirmYesNoMessages,
+    SystemInfoMessages,
     MissingPagePermission
 };
