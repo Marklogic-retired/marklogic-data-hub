@@ -14,6 +14,8 @@
  limitations under the License.
  */
 'use strict';
+
+const config = require("/com.marklogic.hub/config.sjs")
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
@@ -36,7 +38,7 @@ function post(context, params, input) {
   let stepRefOptions = stepRef.options || {};
   let stepDetailsOptions = stepDetails.options || {};
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
-  let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
+  let sourceDatabase = combinedOptions.sourceDatabase || config.STAGINGDATABASE;
 
   combinedOptions.fullOutput = true;
   combinedOptions.noWrite = params.preview === 'true';
@@ -75,7 +77,7 @@ function deleteFunction(context, params) {
   });
   let jobId = params["job-id"];
   // build combined options
-  let sourceDatabase = options.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
+  let sourceDatabase = options.sourceDatabase || config.STAGINGDATABASE;
   let mergeURIs = hubUtils.normalizeToArray(params.mergeURI);
   let query = cts.documentQuery(mergeURIs);
   let content = hubUtils.queryToContentDescriptorArray(query, options, sourceDatabase);

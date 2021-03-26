@@ -39,7 +39,8 @@ const TEST_DOC_URI = "/zzz/test-doc.json";
  */
 function match(entityTypeName, entityProperties, options) {
   const content = buildMatchingContent(entityTypeName, entityProperties);
-  return fn.head(matching.main(content, options)).value.matchSummary;
+  const stepExecutionContext = {jobId:"doesnt-matter"};
+  return fn.head(matching.main(content, options, stepExecutionContext)).value.matchSummary;
 }
 
 /**

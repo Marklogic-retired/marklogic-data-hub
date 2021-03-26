@@ -14,65 +14,30 @@
  limitations under the License.
  */
 'use strict';
+
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const defaultConfig = require("/com.marklogic.hub/config.sjs")
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
+const StepExecutionContext = require('/data-hub/5/flow/stepExecutionContext.sjs');
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
-const defaultGlobalContext = {
-  flow : {},
-  jobId: '',
-  lastCompletedStep: 0,
-  lastAttemptedStep: 0,
-  batchErrors: [],
-  failedItems: [],
-  completedItems: []
-};
 
 class Flow {
 
-  constructor(config = null, globalContext = null, datahub = null) {
-    if (!config) {
-      config = require("/com.marklogic.hub/config.sjs");
-    }
+  constructor(config, datahub) {
     this.config = config;
-
-    if (!datahub) {
-      let DataHub = require("/data-hub/5/datahub.sjs");
-      datahub = new DataHub(config);
-    }
     this.datahub = datahub;
     this.stepDefinition = new StepDefinition(config, datahub);
 
-    // Starting in 5.5, this is needed for backwards compatibility so that scaffolded modules can still 
-    // refer to datahub.flow.flowUtils . 
+    // Starting in 5.5, this is needed for backwards compatibility so that scaffolded modules can still
+    // refer to datahub.flow.flowUtils .
     this.flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-    
-    this.consts = datahub.consts;
-    this.writeQueue = new WriteQueue();
-    if (globalContext) {
-      this.globalContext = globalContext;
-    } else {
-      this.resetGlobalContext();
-    }
-  }
 
-  resetGlobalContext() {
-    this.globalContext = Object.assign({
-      targetDatabase: this.config.FINALDATABASE,
-      sourceDatabase: this.config.STAGINGDATABASE
-    }, defaultGlobalContext);
-    for (let key of Object.getOwnPropertyNames(this.globalContext)) {
-      if (Array.isArray(this.globalContext[key])) {
-        this.globalContext[key] = [];
-      } else if (this.globalContext[key] instanceof Object) {
-        this.globalContext[key] = Object.create(this.globalContext[key]);
-      }
-    }
+    this.consts = require("/data-hub/5/impl/consts.sjs");
     this.writeQueue = new WriteQueue();
   }
 
@@ -115,9 +80,9 @@ class Flow {
    *
    * @param flowName
    * @param stepNumber
-   * @param options This isn't just the runtime options provided by the user; because it is expected 
-   * to be called by the processBatch endpoint, which is invoked by the Java QueryStepRunner class, 
-   * this is likely already the set of combined options. But it's not guaranteed to be the same, 
+   * @param options This isn't just the runtime options provided by the user; because it is expected
+   * to be called by the processBatch endpoint, which is invoked by the Java QueryStepRunner class,
+   * this is likely already the set of combined options. But it's not guaranteed to be the same,
    * and so combinedOptions is still constructed within this function.
    * @return {*}
    */
@@ -161,7 +126,7 @@ class Flow {
       query = sourceQuery ? xdmp.eval(sourceQuery) : null;
     }
 
-    let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
+    let sourceDatabase = combinedOptions.sourceDatabase || defaultConfig.STAGINGDATABASE;
     return hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
   }
 
@@ -210,14 +175,10 @@ class Flow {
    * @param stepNumber The number of the step within the given flow to run
    */
   runFlow(flowName, jobId, content = [], options, stepNumber) {
-    let items = content.map((contentItem) => contentItem.uri);
-
     const theFlow = this.getFlow(flowName);
     if(!theFlow) {
-      this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
       throw Error('The flow with the name '+flowName+' could not be found.')
     }
-    this.globalContext.flow = theFlow;
 
     let jobDoc = jobs.getJob(jobId);
     if(!(jobDoc || options.disableJobOutput)) {
@@ -227,13 +188,9 @@ class Flow {
       if (jobDoc.job) {
         jobDoc = jobDoc.job;
       }
-      //set the jobid in the context based on the jobdoc response
-      this.globalContext.jobId = jobDoc.jobId;
-      this.globalContext.lastCompletedStep = jobDoc.lastCompletedStep;
-      this.globalContext.lastAttemptedStep = jobDoc.lastAttemptedStep;
+      jobId = jobDoc.jobId;
     }
 
-    //grab the step, or the first if its null/not set
     if(!stepNumber) {
       stepNumber = 1;
     }
@@ -245,22 +202,17 @@ class Flow {
     }
     const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
 
-    const combinedOptions = this.flowUtils.makeCombinedOptions(theFlow, stepDefinition, stepNumber, options);
-    
-    // set provenance granularity based off of combined options
+    const stepExecutionContext = new StepExecutionContext(theFlow, stepNumber, stepDefinition, jobId, options);
+    const combinedOptions = stepExecutionContext.combinedOptions;
+
     this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
 
-    this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
-    this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
-
     if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
-      const flowStepWithOptions = Object.assign(
-        {},
-        flowStep,
+      const flowStepWithOptions = Object.assign({}, flowStep,
         {"options": Object.assign({}, flowStep.options, combinedOptions)}
       );
       let batchDoc = jobs.createBatch(jobDoc, flowStepWithOptions, stepNumber);
-      this.globalContext.batchId = batchDoc.batch.batchId;
+      stepExecutionContext.batchId = batchDoc.batch.batchId;
     }
 
     if (this.datahub.flow) {
@@ -269,15 +221,16 @@ class Flow {
       delete this.datahub.flow;
     }
 
-    if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
-      this.runStep(items, content, combinedOptions, flowName, stepNumber, flowStep);
+    const items = content.map(contentItem => contentItem.uri);
+    if (this.isContextDB(stepExecutionContext.getSourceDatabase()) && !combinedOptions.stepUpdate) {
+      this.runStep(stepExecutionContext, content);
     } else {
       const flowInstance = this;
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        {flowInstance, items, content, combinedOptions, flowName, flowStep, stepNumber},
+        {flowInstance, stepExecutionContext, content},
         {
-          database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
+          database: xdmp.database(stepExecutionContext.getSourceDatabase()),
           update: combinedOptions.stepUpdate ? 'true': 'false',
           commit: 'auto',
           ignoreAmps: true
@@ -297,47 +250,50 @@ class Flow {
           // filter out any null/empty collections that may exist
           .filter((col) => !!col);
 
-        const targetDatabase = this.globalContext.targetDatabase;
+        const targetDatabase = stepExecutionContext.getTargetDatabase();
         const contentArray = this.writeQueue.getContentArray(targetDatabase);
         writeTransactionInfo = this.flowUtils.writeContentArray(contentArray, targetDatabase, configCollections);
       } catch (e) {
-        this.handleWriteError(this, e);
+        this.handleWriteError(this, stepExecutionContext, e);
       }
     }
 
-    this.writeProvenanceData(jobId, flowName, stepDefinition, flowStep);
-    this.updateBatchDocument(flowName, flowStep, combinedOptions, items, writeTransactionInfo);
+    this.writeProvenanceData(stepExecutionContext);
+    this.updateBatchDocument(stepExecutionContext, items, writeTransactionInfo);
 
     let resp = {
-      "jobId": this.globalContext.jobId,
+      "jobId": stepExecutionContext.jobId,
       // using failed/completed items length instead of content length since a step can create more or less documents than were passed to the step
-      "totalCount": this.globalContext.failedItems.length + this.globalContext.completedItems.length,
-      "errorCount": this.globalContext.failedItems.length,
-      "completedItems": this.globalContext.completedItems,
-      "failedItems": this.globalContext.failedItems,
-      "errors": this.globalContext.batchErrors
+      "totalCount": stepExecutionContext.failedItems.length + stepExecutionContext.completedItems.length,
+      "errorCount": stepExecutionContext.failedItems.length,
+      "completedItems": stepExecutionContext.completedItems,
+      "failedItems": stepExecutionContext.failedItems,
+      "errors": stepExecutionContext.batchErrors
     };
     if (combinedOptions.fullOutput) {
-      resp.documents = this.writeQueue.getContentArray(this.globalContext.targetDatabase);
+      resp.documents = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
     }
     if (this.datahub.performance.performanceMetricsOn()) {
       resp.performanceMetrics = this.datahub.performance.stepMetrics;
     }
-    this.resetGlobalContext();
+
+    this.writeQueue = new WriteQueue();
     return resp;
   }
 
   /**
-   * @param items the batch of items being processed by the current transaction for the given flow and step. Will be a
-   * set of URIs, unless sourceQueryIsScript is set to true for the step, in which case the items can be any set
-   * of strings.
+   *
+   * @param stepExecutionContext
    * @param content
-   * @param combinedOptions
-   * @param flowName
-   * @param stepNumber
-   * @param flowStep
    */
-  runStep(items, content, combinedOptions, flowName, stepNumber, flowStep) {
+  runStep(stepExecutionContext, content) {
+    const flowStep = stepExecutionContext.flowStep;
+    const stepNumber = stepExecutionContext.stepNumber;
+    const combinedOptions = stepExecutionContext.combinedOptions;
+    const flowName = stepExecutionContext.flow.name;
+
+    const items = content.map(contentObject => contentObject.uri);
+
     let flowInstance = this;
     let processor = flowInstance.stepDefinition.getStepProcessor(flowInstance, flowStep.stepDefinitionName, flowStep.stepDefinitionType);
     if (!(processor && processor.run)) {
@@ -359,7 +315,7 @@ class Flow {
           hook.module,
           parameters,
           hook.user || xdmp.getCurrentUser(),
-          hook.database || (hook.runBefore ? flowInstance.globalContext.sourceDatabase : flowInstance.globalContext.targetDatabase)
+          hook.database || (hook.runBefore ? stepExecutionContext.getSourceDatabase() : stepExecutionContext.getTargetDatabase())
         );
       }
     }
@@ -371,33 +327,35 @@ class Flow {
 
     if (combinedOptions.acceptsBatch) {
       try {
-        const results = hubUtils.normalizeToSequence(flowInstance.runMain(hubUtils.normalizeToSequence(content), combinedOptions, processor.run));
+        const stepOutput = processor.run(hubUtils.normalizeToSequence(content), combinedOptions, stepExecutionContext);
+        const results = hubUtils.normalizeToSequence(stepOutput);
         for (const result of results) {
-          content.previousUri = this.globalContext.uri;
-          this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
+          content.previousUri = stepExecutionContext.currentItem;
+          this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, stepExecutionContext.jobId);
           contentArray.push(result);
         }
-        flowInstance.globalContext.completedItems = flowInstance.globalContext.completedItems.concat(items);
+        stepExecutionContext.setCompletedItems(items);
       } catch (e) {
-        this.handleStepError(flowInstance, e, items);
+        stepExecutionContext.addErrorForEntireBatch(e, items);
       }
     } else {
       for (let contentItem of content) {
-        flowInstance.globalContext.uri = contentItem.uri;
+        stepExecutionContext.currentItem = contentItem.uri;
         try {
-          const results = hubUtils.normalizeToSequence(flowInstance.runMain(contentItem, combinedOptions, processor.run));
+          const stepOutput = processor.run(contentItem, combinedOptions, stepExecutionContext);
+          const results = hubUtils.normalizeToSequence(stepOutput);
           for (const result of results) {
-            this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, this.globalContext.jobId);
+            this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, stepExecutionContext.jobId);
             contentArray.push(result);
           }
-          flowInstance.globalContext.completedItems.push(flowInstance.globalContext.uri);
+          stepExecutionContext.addCompletedItem(stepExecutionContext.currentItem);
         } catch (e) {
-          this.handleStepError(flowInstance, e);
+          stepExecutionContext.addBatchError(e, stepExecutionContext.currentItem);
         }
-        flowInstance.globalContext.uri = null;
+        stepExecutionContext.currentItem = null;
       }
     }
-    flowInstance.globalContext.uri = null;
+    stepExecutionContext.currentItem = null;
 
     let stepInterceptorFailed = false;
     try {
@@ -405,14 +363,14 @@ class Flow {
     } catch (e) {
       // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
       // all items failed; this is analogous to the behavior of acceptsBatch=true
-      flowInstance.globalContext.completedItems = [];
+      stepExecutionContext.setCompletedItems([]);
       stepInterceptorFailed = true;
-      this.handleStepError(flowInstance, e, items);
+      stepExecutionContext.addErrorForEntireBatch(e, items);
     }
 
     // Assumption is that if an interceptor failed, none of the content objects processed by the step module should be written
     if (!stepInterceptorFailed) {
-      const databaseName = flowInstance.globalContext.targetDatabase;
+      const databaseName = stepExecutionContext.getTargetDatabase();
       contentArray.forEach(contentObject => {
         this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);
       });
@@ -471,78 +429,53 @@ class Flow {
     }
   }
 
-  handleStepError(flowInstance, error, items) {
-    flowInstance.addBatchError(flowInstance, error, flowInstance.globalContext.uri);
-    if (!flowInstance.globalContext.uri && items) {
-      flowInstance.globalContext.failedItems = flowInstance.globalContext.failedItems.concat(items);
-    } else if (flowInstance.globalContext.uri) {
-      flowInstance.globalContext.failedItems.push(flowInstance.globalContext.uri);
-    }
-    flowInstance.datahub.debug.log({message: `Error running step: ${error.toString()}. ${error.stack}`, type: 'error'});
-  }
+  handleWriteError(flowInstance, stepExecutionContext, error) {
+    stepExecutionContext.setCompletedItems([]);
+    const failedItems = flowInstance.writeQueue.getContentUris(stepExecutionContext.getTargetDatabase());
+    stepExecutionContext.setFailedItems(failedItems);
 
-  handleWriteError(flowInstance, error) {
-    flowInstance.globalContext.completedItems = [];
-    flowInstance.globalContext.failedItems = flowInstance.writeQueue.getContentUris(flowInstance.globalContext.targetDatabase);
     const operation = error.stackFrames && error.stackFrames[0] && error.stackFrames[0].operation;
     let uri;
     // see if we can determine a uri based off the operation in the stackFrames
     if (operation) {
-      uri = flowInstance.globalContext.failedItems.find((uri) => operation.includes(`"${uri}"`));
+      uri = failedItems.find(uri => operation.includes(`"${uri}"`));
     }
-    flowInstance.addBatchError(flowInstance, error, uri);
-  }
 
-  addBatchError(flowInstance, error, uri = flowInstance.globalContext.uri) {
-    flowInstance.globalContext.batchErrors.push({
-      "stack": error.stack,
-      "code": error.code,
-      "data": error.data,
-      "message": error.message,
-      "name": error.name,
-      "retryable": error.retryable,
-      "stackFrames": error.stackFrames,
-      "uri": uri
-    });
+    // Directly add this to avoid the failedItems count from being incremented
+    stepExecutionContext.batchErrors.push(Object.assign(error, {"uri":uri}));
   }
 
   /**
-   * Updates the batch document based on what's in the globalContext. This doesn't care about interceptors at all,
+   * Updates the batch document based on what's in the stepExecutionContext. This doesn't care about interceptors at all,
    * as those don't have any impact on the "items" that were the input to this transaction.
    *
-   * @param flowName
-   * @param flowStep
-   * @param combinedOptions
+   * @param stepExecutionContext
    * @param items
    * @param writeTransactionInfo
    */
-  updateBatchDocument(flowName, flowStep, combinedOptions = {}, items, writeTransactionInfo) {
+  updateBatchDocument(stepExecutionContext, items, writeTransactionInfo) {
+    const combinedOptions = stepExecutionContext.combinedOptions;
     if (!combinedOptions.noBatchWrite && !combinedOptions.disableJobOutput) {
-      let batchStatus = "finished";
-      if (this.globalContext.failedItems.length) {
-        batchStatus = this.globalContext.completedItems.length ? "finished_with_errors" : "failed";
-      }
-      jobs.updateBatch(
-        this.globalContext.jobId, this.globalContext.batchId, flowName, flowStep, batchStatus, items,
-        writeTransactionInfo, this.globalContext.batchErrors[0], combinedOptions
-      );
+      jobs.updateBatch(stepExecutionContext, items, writeTransactionInfo);
     }
   }
 
   /**
    * Writes provenance data based on what's in the writeQueue.
    *
-   * @param jobId
-   * @param flowName
-   * @param stepDefinition
-   * @param flowStep
+   * @param stepExecutionContext
    */
-  writeProvenanceData(jobId, flowName, stepDefinition, flowStep) {
+  writeProvenanceData(stepExecutionContext) {
+    const jobId = stepExecutionContext.jobId;
+    const flowName = stepExecutionContext.flow.name;
+    const stepDefinition = stepExecutionContext.stepDefinition;
+    const flowStep = stepExecutionContext.flowStep;
+
     const prov = this.datahub.prov;
-    if (this.globalContext.completedItems.length && prov.granularityLevel() !== prov.OFF_LEVEL) {
+    if (stepExecutionContext.completedItems.length && prov.granularityLevel() !== prov.OFF_LEVEL) {
       const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase(): stepDefinition.type;
       const stepName = flowStep.name || flowStep.stepDefinitionName;
-      const contentArray = this.writeQueue.getContentArray(this.globalContext.targetDatabase);
+      const contentArray = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
       for (let content of contentArray) {
         // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
         if (content.provenance !== false) {
@@ -637,12 +570,6 @@ class Flow {
   isContextDB(databaseName) {
     return !databaseName || fn.string(xdmp.database()) === fn.string(xdmp.database(databaseName));
   }
-
-  runMain(content, options, func) {
-    let resp;
-    resp = func(content, options);
-    return resp;
-  };
 }
 
 module.exports = Flow;

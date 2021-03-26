@@ -37,7 +37,7 @@ class DataHub {
 
     this.debug = new Debug(config);
     this.performance = new Perf(config, this);
-    this.flow = new Flow(config, null, this);
+    this.flow = new Flow(config, this);
     this.prov = new Prov.Provenance(Object.assign({}, config, {autoCommit: false}), this);
     this.debug = new Debug(config, this);
     if (this.performance.performanceMetricsOn()) {

@@ -39,7 +39,7 @@ function main(content, options) {
       httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
   }
-  //const jobID = datahub.flow.globalContext.jobId;
+  
   const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string', 'collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
   const thisMatchSummaryURI = content.uri;

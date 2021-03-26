@@ -147,7 +147,7 @@ class Provenance {
         ['info', info]
       ].filter((pair) => !pair[1])
         .reduce((pair) => pair[0]);
-      isValid = new Error(`Function requires all params 'flowId', 'stepName', 'stepDefinitionName', 'stepDefinitionType' and 'info' to be defined. Missing: ${missingParams.join(', ')}`);
+      isValid = new Error(`Function requires all params 'flowId', 'stepName', 'stepDefinitionName', 'stepDefinitionType' and 'info' to be defined. Missing: ${missingParams}`);
     }
     return isValid;
   }

@@ -14,6 +14,8 @@
  limitations under the License.
  */
 'use strict';
+
+const config = require("/com.marklogic.hub/config.sjs")
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
@@ -50,7 +52,7 @@ function post(context, params, input) {
   let stepRefOptions = stepRef.options || {};
   let stepDetailsOptions = stepDetails.options || {};
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
-  let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
+  let sourceDatabase = combinedOptions.sourceDatabase || config.STAGINGDATABASE;
   let matchOptions = new NodeBuilder().addNode({ options: combinedOptions.matchOptions }).toNode();
   return fn.head(hubUtils.invokeFunction(
     function() {
