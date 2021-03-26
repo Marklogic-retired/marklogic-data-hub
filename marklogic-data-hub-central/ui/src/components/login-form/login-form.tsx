@@ -4,14 +4,14 @@ import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
 
-import {MLButton} from "@marklogic/design-system";
+import {MLSpin, MLButton} from "@marklogic/design-system";
 
 const LoginForm: React.FC = () => {
 
   const {loginAuthenticated} = useContext(UserContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
   const [message, setMessage] = useState({show: false, text: ""});
@@ -124,6 +124,7 @@ const LoginForm: React.FC = () => {
             </MLButton>
           </Form.Item>
         </Form>
+        {isLoading && <div className={styles.loginSpinner}><MLSpin size="middle"/></div>}
       </div>
     </>
   );
