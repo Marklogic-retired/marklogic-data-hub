@@ -6,6 +6,9 @@ import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.JobService;
+// This is explicitly imported to avoid compile errors with Java 9 or higher, where Flow cannot be
+// distinguished from java.util.concurrent.Flow
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
