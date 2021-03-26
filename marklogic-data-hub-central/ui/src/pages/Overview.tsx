@@ -126,10 +126,7 @@ const Overview: React.FC<Props> = (props) => {
   return (
     <div className={styles.overviewContainer} aria-label="overview">
       <div className={styles.title}>Welcome to MarkLogic Data Hub Central</div>
-      <div className={styles.introText} aria-label={"introText"}>MarkLogic Data Hub Central brings together the Data Hub features in a single intuitive interface on DHS. Load your data, curate and manage your data, or explore and export your data — all within Hub Central.
-        <div className={styles.spacer}></div>
-        <span className={styles.note}>NOTE:</span> You might need additional permissions for advanced features. Contact your security administrator to access disabled features.
-      </div>
+      <div className={styles.introText} aria-label={"introText"}>MarkLogic Data Hub Central makes it easy to manage your data. You can load, curate, and manage your data, or explore and export your data — all within Hub Central.</div>
       <div className={styles.cardsContainer}>
         <div className={styles.cards}>
           <div
@@ -204,7 +201,7 @@ const Overview: React.FC<Props> = (props) => {
               <div className={styles.subtitle}>
                 <span className={styles.icon} aria-label="run-icon"></span>Run
               </div>
-              <div className={styles.body}>Add your step to a flow and run it.
+              <div className={styles.body}>{tiles.run.intro}
                 <div className={styles.docLink}>
                   <span onClick={(e) => { openDocumentation(e, "run"); }}>Documentation</span>
                 </div>

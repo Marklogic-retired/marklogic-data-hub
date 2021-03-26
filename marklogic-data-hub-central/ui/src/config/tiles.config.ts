@@ -59,7 +59,7 @@ const tiles: Record<TileId, TileItem>  = {
         border: '#BFBFBF',
         controlColor: '#777',
         controls: ['close'],
-        intro: 'Add your step to a flow and run it.',
+        intro: 'Create flows, add your existing steps to flows, and run them.',
     },
     explore: {
         title: 'Explore',
