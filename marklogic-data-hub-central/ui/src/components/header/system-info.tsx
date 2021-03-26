@@ -7,9 +7,9 @@ import {AuthoritiesContext} from "../../util/authorities";
 import Axios from "axios";
 import {MLButton, MLSpin, MLTooltip} from "@marklogic/design-system";
 import {SecurityTooltips} from "../../config/tooltips.config";
+import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
-
 
 
 const SystemInfo = (props) => {
@@ -157,7 +157,7 @@ const SystemInfo = (props) => {
               { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
-                  <p>Download a zip file containing only artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can apply these files to an existing local project.</p>
+                  <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
                   <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
                       <MLButton
@@ -172,7 +172,7 @@ const SystemInfo = (props) => {
                 <Col>
                   <Card size="small" className={styles.download} >
                     <div className={styles.title}>Download Hub Central Files</div>
-                    <p>Download a zip file containing only artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can apply these files to an existing local project.</p>
+                    <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
                     <div className={styles.buttonContainer}>
                       <MLButton
                         type="primary"
@@ -188,7 +188,7 @@ const SystemInfo = (props) => {
               { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Project Files</div>
-                  <p>Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.</p>
+                  <p>{SystemInfoMessages.downloadProjectFiles}</p>
                   <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
                       <MLButton
@@ -203,7 +203,7 @@ const SystemInfo = (props) => {
                 <Col>
                   <Card size="small" className={styles.download} >
                     <div className={styles.title}>Download Project Files</div>
-                    <p>Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.</p>
+                    <p>{SystemInfoMessages.downloadProjectFiles}</p>
                     <div className={styles.buttonContainer}>
                       <MLButton
                         type="primary"
@@ -222,7 +222,7 @@ const SystemInfo = (props) => {
                     <MLSpin size={"large"} />
                   </div>: ""}
                   <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                  <p>Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.</p>
+                  <p>{SystemInfoMessages.clearAllUserData}</p>
                   <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
                       <MLButton
@@ -240,7 +240,7 @@ const SystemInfo = (props) => {
                       <MLSpin size={"large"} />
                     </div>: ""}
                     <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                    <p>Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.</p>
+                    <p>{SystemInfoMessages.clearAllUserData}</p>
                     <div className={styles.buttonContainer}>
                       <MLButton
                         type="primary"
