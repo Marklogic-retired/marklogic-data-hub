@@ -151,7 +151,7 @@ declare function matcher:find-document-matches-by-options(
     $options,
     $start,
     $page-length,
-    fn:min($options//(array-node("thresholds")/object-node()|*:thresholds/*:threshold)/(@above|above) ! fn:number(.)),
+    fn:min($options//(array-node("thresholds")/object-node()|*:thresholds/*:threshold)/(@above|above|score) ! fn:number(.)),
     $include-matches,
     $filter-query
   )

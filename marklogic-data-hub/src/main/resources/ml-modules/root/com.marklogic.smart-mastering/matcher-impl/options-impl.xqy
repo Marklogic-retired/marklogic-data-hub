@@ -681,6 +681,7 @@ declare function opt-impl:multi-struct-prop-multi-value-map($match-rules, $entit
           ()
 };
 
+(: returns threshold objects in the HC JSON format :)
 declare function opt-impl:normalize-thresholds($thresholds as node()*, $match-options as node()) {
   if (fn:exists($thresholds[thresholdName])) then
     $thresholds

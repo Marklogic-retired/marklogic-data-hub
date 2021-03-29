@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.ws.rs.core.MediaType;
 
@@ -95,6 +97,15 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
                     MockHttpServletResponse response = result.getResponse();
                     assertEquals(HttpStatus.OK.value(), response.getStatus());
                 });
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("sampleSize", "20");
+        postWithParams(PATH + "/firstStep/previewMatchingActivity", params)
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(HttpStatus.OK.value(), response.getStatus());
+            });
 
         getJson(PATH + "/firstStep/validate")
             .andDo(result -> {

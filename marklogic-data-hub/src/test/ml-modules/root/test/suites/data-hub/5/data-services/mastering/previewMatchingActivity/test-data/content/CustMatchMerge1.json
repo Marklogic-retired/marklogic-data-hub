@@ -1,0 +1,129 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "source 1"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 105,
+        "name": "Holland Wells",
+        "birthDate": "1986-01-01",
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Hanover Place"
+              ],
+              "city": "Marshall",
+              "state": "Oklahoma",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "19111",
+                  "plusFour": "1001"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "1800 Tysons Blvd"
+              ],
+              "city": "McLean",
+              "state": "Virginia",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "22102",
+                  "plusFour": "2021"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Sunnyside Avenue"
+            ],
+            "city": "Brutus",
+            "state": "Wisconsin",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "30706",
+                "plusFour": "8854"
+              }
+            }
+          }
+        }
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "loadCustomersJSON"
+            }
+          ],
+          "createdOn": "2020-08-20T05:27:43.360675Z",
+          "createdBy": "admin"
+        },
+        "triples": [],
+        "instance": {
+          "CustomerID": 105,
+          "Name": {
+            "FirstName": "Holland",
+            "LastName": "Wells"
+          },
+          "nicknames": [
+            "holly",
+            "well"
+          ],
+          "Email": "hollandwells@nutralab.com",
+          "Address": [
+            {
+              "Shipping": {
+                "Street": "Hanover Place",
+                "City": "Marshall",
+                "State": "Oklahoma",
+                "Postal": "19111-1001"
+              }
+            },
+            {
+              "Shipping": {
+                "Street": "1800 Tysons Blvd",
+                "City": "McLean",
+                "State": "Virginia",
+                "Postal": "22102-2021"
+              }
+            },
+            {
+              "Billing": {
+                "Street": "Sunnyside Avenue",
+                "City": "Brutus",
+                "State": "Wisconsin",
+                "Postal": "30706-8854"
+              }
+            }
+          ],
+          "Phone": "(887) 571-2692",
+          "PIN": 1772,
+          "Created": "05/06/2016"
+        },
+        "attachments": null
+      }
+    }
+  }
+}
