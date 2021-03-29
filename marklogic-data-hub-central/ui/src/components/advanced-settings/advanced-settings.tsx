@@ -102,7 +102,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [customHookTouched, setCustomHookTouched] = useState(false);
   const [customHookExpanded, setCustomHookExpanded] = useState(false);
   const [customHookValid, setCustomHookValid] = useState(true);
+
   const [additionalSettings, setAdditionalSettings] = useState("");
+  const [additionalSettingsTouched, setAdditionalSettingsTouched] = useState(false);
+  const [additionalSettingsValid, setAdditionalSettingsValid] = useState(true);
+
   const [isSubmit, setIsSubmit] = useState(false);
 
   const canReadWrite = props.canWrite;
@@ -122,6 +126,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setInterceptorsTouched(false);
     setCustomHookTouched(false);
     setTargetPermissionsTouched(false);
+    setAdditionalSettingsTouched(false);
 
   }, [props.openStepSettings]);
 
@@ -134,7 +139,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   }, [curationOptions.activeStep.hasWarnings.length, validateCalled]);
 
   const isFormValid = () => {
-    return headersValid && interceptorsValid && customHookValid && targetPermissionsValid;
+    return headersValid && interceptorsValid && customHookValid && targetPermissionsValid && additionalSettingsValid;
   };
 
   // Convert JSON from JavaScript object to formatted string
@@ -257,6 +262,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         && !batchSizeTouched
         && !interceptorsTouched
         && !customHookTouched
+        && !additionalSettingsTouched
     ) {
       return false;
     } else {
@@ -279,6 +285,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       batchSize: batchSize,
       customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
       targetCollections: usesAdvancedTargetCollections ? targetCollections : undefined,
+      additionalSettings: stepType === "custom" || isCustomIngestion ? parseJSON(additionalSettings) : {}
     };
   };
 
@@ -377,6 +384,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       }
     }
 
+    if (event.target.id === "additionalSettings") {
+      setAdditionalSettings(event.target.value);
+      setAdditionalSettingsTouched(true);
+      if (!additionalSettingsValid && isValidJSON(event.target.value)) {
+        setAdditionalSettingsValid(true);
+      }
+    }
+
     if (event.target.id === "batchSize") {
       setBatchSize(event.target.value);
       setBatchSizeTouched(true);
@@ -396,6 +411,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
     if (event.target.id === "customHook") {
       setCustomHookValid(isValidJSON(event.target.value));
+      props.setIsValid(isValidJSON(event.target.value));
+    }
+
+    if (event.target.id === "additionalSettings") {
+      setAdditionalSettingsValid(isValidJSON(event.target.value));
       props.setIsValid(isValidJSON(event.target.value));
     }
 
@@ -822,7 +842,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           />
           { !customHookValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
         </div> : ""}
-        { stepType === "custom" ?                         /** not yet implemented */
+        { stepType === "custom" || isCustomIngestion ?
           <Form.Item
             label={<span>Additional Settings</span>}
             labelAlign="left"
@@ -832,11 +852,12 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               id="additionalSettings"
               placeholder="Please enter additional settings"
               value={additionalSettings}
-              disabled={/**!canReadWrite*/ true}          /** uncomment condition to enable */
+              onChange={handleChange}
+              disabled={!canReadWrite}
               className={styles.textarea}
               rows={6}
               aria-label="options-textarea"
-              onBlur={sendPayload}
+              onBlur={handleBlur}
             />
             <div className={styles.selectTooltip}>
               <MLTooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
