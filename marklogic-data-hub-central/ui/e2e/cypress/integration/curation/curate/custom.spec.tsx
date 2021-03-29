@@ -67,18 +67,41 @@ describe("Custom step settings: ", () => {
     curatePage.verifyStepNameIsVisible(stepName);
   });
 
-  it("Verify Additional Settings displays correctly", () => {
+  it("Verify Additional Settings saves correctly", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
 
+    // enter custom props
     curatePage.editStep(stepName).click();
     curatePage.switchEditAdvanced().click();
-    advancedSettings.additionalSettingsInput().should("contain.value", `"name": "mapping-name"`);
-    advancedSettings.additionalSettingsInput().should("contain.value", `"validateEntity": false`);
+    advancedSettings.additionalSettingsInput().clear().type(`{{}"prop":"value", "foo":"bar"{}}`, {timeout: 2000});
+    advancedSettings.saveSettingsButton(stepName).click();
 
-    advancedSettings.cancelSettingsButton(stepName).click();
+    cy.waitForAsyncRequest();
+    curatePage.verifyStepNameIsVisible(stepName);
+
+    curatePage.editStep(stepName).click();
+    curatePage.switchEditAdvanced().click();
+    advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);
+    advancedSettings.additionalSettingsInput().should("contain.value", `"foo": "bar"`);
+
+    // delete one prop.  other prop should remain
+    advancedSettings.additionalSettingsInput().clear().type(`{{}"prop":"value"{}}`, {timeout: 2000});
+    advancedSettings.saveSettingsButton(stepName).click();
+    cy.waitForAsyncRequest();
+    curatePage.verifyStepNameIsVisible(stepName);
+
+    curatePage.editStep(stepName).click();
+    curatePage.switchEditAdvanced().click();
+    advancedSettings.additionalSettingsInput().should("contain.value", `"prop": "value"`);
+    advancedSettings.additionalSettingsInput().should("not.contain.value", `"foo": "bar"`);
+
+    // clear all props
+    advancedSettings.additionalSettingsInput().clear();
+    advancedSettings.saveSettingsButton(stepName).click();
+    cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(stepName);
   });
 

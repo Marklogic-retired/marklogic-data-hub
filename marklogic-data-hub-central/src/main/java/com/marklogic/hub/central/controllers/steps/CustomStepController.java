@@ -26,7 +26,7 @@ public class CustomStepController extends BaseController {
     @ApiOperation(value = "Get all custom steps associated with entity types or not associated with any entity types ", response = CustomSteps.class)
     @Secured("ROLE_readCustom")
     public ResponseEntity<JsonNode> getCustomStepsWithEntity() {
-        return ResponseEntity.ok(newService().getCustomSteps());
+        return ResponseEntity.ok(customStepService().getCustomSteps());
 
     }
 
@@ -34,7 +34,7 @@ public class CustomStepController extends BaseController {
     @ApiOperation(value = "Get a step", response = StepSchema.class)
     @Secured("ROLE_readCustom")
     public ResponseEntity<JsonNode> getCustomStep(@PathVariable String stepName) {
-        return ResponseEntity.ok(newService().getCustomStep(stepName));
+        return ResponseEntity.ok(customStepService().getCustomStep(stepName));
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
@@ -42,11 +42,11 @@ public class CustomStepController extends BaseController {
     @Secured("ROLE_writeCustom")
     public ResponseEntity<Void> updateCustomStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
-        newStepService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, false);
+        customStepService().updateCustomStep(propertiesToAssign);
         return emptyOk();
     }
 
-    private CustomStepService newService() {
+    private CustomStepService customStepService() {
         return CustomStepService.on(getHubClient().getStagingClient());
     }
 

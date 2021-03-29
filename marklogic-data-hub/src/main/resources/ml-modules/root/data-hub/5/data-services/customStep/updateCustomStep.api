@@ -1,0 +1,15 @@
+{
+    "functionName": "updateCustomStep",
+    "desc": "Updates the custom step and returns the updated step",
+    "params": [
+            {
+                "name": "stepProperties",
+                "datatype": "jsonDocument",
+                "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+            }
+        ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

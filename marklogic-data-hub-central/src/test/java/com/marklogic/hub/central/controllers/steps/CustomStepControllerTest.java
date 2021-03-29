@@ -2,8 +2,7 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-
+import com.fasterxml.jackson.databind.node.*;
 import com.marklogic.hub.dataservices.StepService;
 
 import org.junit.jupiter.api.Test;
@@ -11,8 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,41 +27,127 @@ public class CustomStepControllerTest extends AbstractStepControllerTest {
     		+ " \"sourceQuery\": \"cts.collectionQuery('default')\" , "
     		+ " \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\" , "
     		+ " \"stepDefinitionName\": \"custom\" , "
+            + " \"stepDefinitionType\": \"custom\" , "
+            + " \"stepId\": \"myCustomStep-custom\" , "
     		+ " \"batchSize\": \"50\" , "
     		+ " \"provenanceGranularityLevel\": \"coarse\" "
     		+ "}";
-    private final static ObjectMapper MAPPER = new ObjectMapper();
+    
+    @Test
+    void permittedWriteUser() throws Exception {
+    	installOnlyReferenceModelEntities();
+        loginAsTestUserWithRoles("hub-central-custom-writer");
+        
+        /* create new custom step (not supported by CustomStepController) */
+        JsonNode newCustomStepNode = (new ObjectMapper()).readTree("{"
+        		+ " \"name\": \"myCustomStep\" , "
+        		+ " \"description\": \"\" , "
+        		+ " \"selectedSource\": \"\" , "
+        		+ " \"sourceQuery\": \"cts.collectionQuery('default')\" , "
+        		+ " \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\" , "
+        		+ " \"stepDefinitionName\": \"custom\" , "
+                + " \"stepDefinitionType\": \"custom\" , "
+                + " \"stepId\": \"myCustomStep-custom\" , "
+        		+ " \"batchSize\": \"50\" , "
+        		+ " \"provenanceGranularityLevel\": \"coarse\" , "
+        		+ " \"prop\": \"value\" , " // additional settings
+        		+ " \"prop2\": \"value2\" "
+        		+ "}");
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", newCustomStepNode, false, true);
+        
+        getJson(PATH + "/myCustomStep").andExpect(status().isOk())
+        .andDo(result -> updateCustomStep(parseJsonResponse(result)));
+        
+        getJson(PATH + "/myCustomStep").andExpect(status().isOk())
+        .andDo(result -> {
+            JsonNode stepData = parseJsonResponse(result);
 
-    public static class CustomStep {
-        public String name;
-        public String description;
-        public String selectedSource;
-        public String sourceQuery;
-        public String targetEntityType;
-        public String stepDefinitionName;
+            assertTrue(stepData.get("name").asText().equals("myCustomStep"));
+            assertTrue(stepData.get("sourceQuery").asText().equals("no_query"));
+            
+            assertNotNull(stepData.get("additionalSettings"));
+            assertTrue(stepData.get("additionalSettings").get("prop").asText().equals("foo"));
+            assertNull(stepData.get("additionalSettings").get("prop2"));
+        });
     }
 
-    public static CustomStep newDefaultCustomStep(String name) {
-        CustomStep step = new CustomStep();
-        step.name = name;
-        step.description = "optional";
-        step.selectedSource = "collection";
-        step.sourceQuery = "cts.collectionQuery('test')";
-        step.targetEntityType = "http://example.org/Customer-0.0.1/Customer";
-        step.stepDefinitionName = "custom";
-        return step;
+    private void updateCustomStep(JsonNode customStepNode) throws Exception {
+        ObjectNode updatedCustomStepNode = (ObjectNode) customStepNode;
+        ObjectNode additionalSettings = (ObjectNode) customStepNode.get("additionalSettings");
+
+        additionalSettings.put("prop", "foo");
+        additionalSettings.remove("prop2");
+
+        updatedCustomStepNode.set("additionalSettings", additionalSettings);
+        updatedCustomStepNode.put("sourceQuery", "no_query");
+        putJson(PATH + "/myCustomStep", updatedCustomStepNode).andExpect(status().isOk());
     }
 
     @Test
-    void userCanUpdateStep() throws Exception {
-        installOnlyReferenceModelEntities();
+    void permittedReadUserAdditionalSettings() throws Exception {
+    	/* only tests /api/step/custom/${stepName} endpoint */
+    	
+    	installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-custom-writer");
 
-        JsonNode new_node = MAPPER.readTree(DEFAULT_JSON);
-        StepService.on(getHubClient().getStagingClient()).saveStep("custom", new_node, false, true);
+        /* create new custom step (not supported by CustomStepController) */
+        JsonNode newCustomStepNode = (new ObjectMapper()).readTree("{"
+        		+ " \"name\": \"myCustomStep\" , "
+        		+ " \"description\": \"\" , "
+        		+ " \"selectedSource\": \"\" , "
+        		+ " \"sourceQuery\": \"cts.collectionQuery('default')\" , "
+        		+ " \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\" , "
+        		+ " \"stepDefinitionName\": \"custom\" , "
+                + " \"stepDefinitionType\": \"custom\" , "
+                + " \"stepId\": \"myCustomStep-custom\" , "
+        		+ " \"batchSize\": \"50\" , "
+        		+ " \"provenanceGranularityLevel\": \"coarse\" , "
+        		+ " \"prop\": \"value\" " // additional settings
+        		+ "}");
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", newCustomStepNode, false, true);
         
-        /* update fields for testing */
-        putJson(PATH + "/myCustomStep", newDefaultCustomStep("myCustomStep")).andExpect(status().isOk());
+        getJson(PATH + "/myCustomStep").andExpect(status().isOk())
+        .andDo(result -> {
+            JsonNode stepData = parseJsonResponse(result);
+
+            assertTrue(stepData.get("name").asText().equals("myCustomStep"));
+            assertTrue(stepData.get("targetEntityType").asText().equals("http://example.org/Customer-0.0.1/Customer"));
+            
+            assertNotNull(stepData.get("additionalSettings"));
+            assertTrue(stepData.get("additionalSettings").get("prop").asText().equals("value"));
+        });
+    }
+    
+    @Test
+    void permittedReadUser() throws Exception {
+    	/* only tests /api/steps/custom endpoint */
+    	
+    	installOnlyReferenceModelEntities();
+        loginAsTestUserWithRoles("hub-central-custom-writer");
+    	
+        JsonNode node_1 = (new ObjectMapper()).readTree("{"
+        		+ " \"name\": \"custom-step-1\" , "
+        		+ " \"selectedSource\": \"\" , "
+        		+ " \"sourceQuery\": \"cts.collectionQuery('default')\" , "
+        		+ " \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\" , "
+        		+ " \"stepDefinitionName\": \"custom\" , "
+                + " \"stepDefinitionType\": \"custom\" , "
+                + " \"stepId\": \"custom-step-1-custom\" "
+        		+ "}");
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", node_1, false, true);
+        
+        JsonNode node_2 = (new ObjectMapper()).readTree("{"
+        		+ " \"name\": \"custom-step-2\" , "
+        		+ " \"selectedSource\": \"\" , "
+        		+ " \"sourceQuery\": \"cts.collectionQuery('default')\" , "
+        		+ " \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\" , "
+        		+ " \"stepDefinitionName\": \"custom\" , "
+                + " \"stepDefinitionType\": \"custom\" , "
+                + " \"stepId\": \"custom-step-2-custom\" "
+        		+ "}");
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", node_2, false, true);
+        
+        loginAsTestUserWithRoles("hub-central-custom-reader");
         
         getJson(PATH).andExpect(status().isOk())
         .andDo(result -> {
@@ -75,28 +159,22 @@ public class CustomStepControllerTest extends AbstractStepControllerTest {
             assertEquals(0, orderArtifacts.size(), "should have 0 Order artifacts");
             
             JsonNode customerArtifacts = array.get(0).get("artifacts");
-            assertEquals(1, customerArtifacts.size(), "should have 1 Customer artifact");
-            JsonNode stepData = customerArtifacts.get(0);
+            assertEquals(2, customerArtifacts.size(), "should have 2 Customer artifacts");
             
-            /* custom step name and entity type should not have been changed */
-            assertTrue(stepData.get("name").asText().equals("myCustomStep"));
-            assertTrue(stepData.get("targetEntityType").asText().equals("http://example.org/Customer-0.0.1/Customer"));
-            
-            /* other fields should have been updated */
-            assertTrue(stepData.get("description").asText().equals("optional"));
-            assertTrue(stepData.get("selectedSource").asText().equals("collection"));
-            assertTrue(stepData.get("sourceQuery").asText().equals("cts.collectionQuery('test')"));
-            
-            /* fields not present in update should not have been touched */
-            assertTrue(stepData.get("batchSize").asText().equals("50"));
-            assertTrue(stepData.get("provenanceGranularityLevel").asText().equals("coarse"));
-            assertTrue(stepData.get("sourceDatabase").asText().equals("data-hub-STAGING"));
-            assertTrue(stepData.get("targetDatabase").asText().equals("data-hub-FINAL"));
+            if (customerArtifacts.get(0).get("name").asText().equals("custom-step-1")) {
+            	assertTrue(customerArtifacts.get(1).get("name").asText().equals("custom-step-2"));
+            }
+            else if (customerArtifacts.get(1).get("name").asText().equals("custom-step-1")) {
+            	assertTrue(customerArtifacts.get(0).get("name").asText().equals("custom-step-2"));
+            }
+            else {
+            	fail("Custom step custom-step-1 is not found in response");
+            }
         });
     }
-
+    
     @Test
-    void userCannotReadStep() throws Exception {
+    void forbiddenReadUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-user");
         mockMvc.perform(get(PATH).session(mockHttpSession))
             .andDo(result -> {
@@ -105,14 +183,14 @@ public class CustomStepControllerTest extends AbstractStepControllerTest {
     }
 
     @Test
-    void userCannotWriteStep() throws Exception {
+    void forbiddenWriteUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-custom-writer");
     	
-        JsonNode new_node = MAPPER.readTree(DEFAULT_JSON);
-        StepService.on(getHubClient().getStagingClient()).saveStep("custom", new_node, false, true);
+        JsonNode newCustomStepNode = (new ObjectMapper()).readTree(DEFAULT_JSON);
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", newCustomStepNode, false, true);
         
         loginAsTestUserWithRoles("hub-central-custom-reader");
-        putJson(PATH + "/myCustomStep", newDefaultCustomStep("myCustomStep"))
+        putJson(PATH + "/myCustomStep", newCustomStepNode)
             .andDo(result -> {
                 assertTrue(result.getResolvedException() instanceof AccessDeniedException);
             });

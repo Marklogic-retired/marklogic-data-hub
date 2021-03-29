@@ -62,7 +62,7 @@ describe("Advanced step settings", () => {
 
   /* Custom ingestion should be same as default-ingestion except "step definition name" field should be present */
   test("Verify advanced settings for Custom Load step", async () => {
-    const {getByText, getAllByText, queryByText} = render(
+    const {getByText, getAllByText, queryByText, getByPlaceholderText} = render(
       <AdvancedSettings {...data.advancedCustomLoad} />
     );
 
@@ -95,6 +95,9 @@ describe("Advanced step settings", () => {
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
+
+    expect(getByPlaceholderText("Please enter additional settings")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter additional settings")).toBeEnabled();
   });
 
   test("Verify edit advanced settings for Mapping", async () => {

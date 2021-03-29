@@ -54,15 +54,18 @@ hubJsTest.verifyJson({dummy: "value1"}, customStep.additionalSettings, assertion
 delete customStep.lastUpdated;
 // 'additionalSettings' is a json object, tested it separately, hence can be removed .
 delete customStep.additionalSettings;
+// DHFPROD-7059: custom settings are not longer returned in duplicate as root element
+delete expectedStep.dummy;
 hubJsTest.verifyJson(expectedStep, customStep, assertions);
 
-expectedStep = Object.assign(info, { name:"anotherCustom", username:"joe", targetEntityType :""});
+expectedStep = Object.assign(info, { name:"anotherCustom", targetEntityType :""});
 expectedStep.stepId = "anotherCustom" + "-" + "custom";
 
 let anotherStep = customService.getCustomStep("anotherCustom");
 hubJsTest.verifyJson({dummy: "value1", username:"joe"}, anotherStep.additionalSettings, assertions);
 delete anotherStep.lastUpdated;
 delete anotherStep.additionalSettings;
+delete expectedStep.dummy;
 hubJsTest.verifyJson(expectedStep, anotherStep, assertions);
 
 let customStepsWithoutEntity = customService.getCustomSteps().stepsWithoutEntity;
