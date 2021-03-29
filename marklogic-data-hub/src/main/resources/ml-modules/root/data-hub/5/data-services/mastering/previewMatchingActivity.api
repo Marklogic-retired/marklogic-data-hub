@@ -1,0 +1,145 @@
+{
+  "functionName": "previewMatchingActivity",
+  "params": [
+  {
+    "name": "sampleSize",
+    "datatype": "int"
+  },
+  {
+    "name": "uris",
+    "datatype": "string",
+    "multiple": true,
+    "nullable": true
+  },
+  {
+    "name": "stepName",
+    "datatype": "string"
+  }],
+  "return":
+  {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+    "description": "Returns the documentType with an 'id' matching the input",
+    "schema":
+    {
+      "$ref": "#/components/schemas/MatchActivityPreview"
+    }
+  },
+  "components":
+  {
+    "schemas":
+    {
+      "MatchAction":
+      {
+        "type": "string",
+        "description": "The action that will take place when this threshold is met",
+        "enum": [
+          "notify",
+          "merge",
+          "custom"
+        ],
+        "example": "merge"
+      },
+      "MatchArtifactRef":
+      {
+        "type": "object",
+        "required": [
+          "matchStepName"
+        ],
+        "properties":
+        {
+          "matchStepName":
+          {
+            "type": "string",
+            "description": "The name of a match artifact"
+          }
+        }
+      },
+      "MatchContribution":
+      {
+        "type": "object",
+        "properties":
+        {
+          "entityPropertyPath":
+          {
+            "type": "string",
+            "description": "The title of an entity type property, optionally prefixed with the Entity Type Title and \".\" to differentiate between properties",
+            "example": "Person.name"
+          },
+          "matchAlgorithm":
+          {
+            "type": "string",
+            "description": "The name of the match algorithm being used",
+            "example": "doubleMetaphone"
+          },
+          "weight":
+          {
+            "type": "integer",
+            "description": "The weight that a match on this property and algoritm will contribute",
+            "example": 8
+          }
+        }
+      },
+      "MatchActivityPreview":
+      {
+        "type": "object",
+        "properties":
+        {
+          "sampleSize":
+          {
+            "type": "integer",
+            "description": "The number of documents included in sample for preview",
+            "example": 200
+          },
+          "actionsPreview":
+          {
+            "type": "array",
+            "items":
+            {
+              "type": "object",
+              "properties":
+              {
+                "name":
+                {
+                  "type": "string",
+                  "description": "The name of a threshold that causes an action",
+                  "example": "mergeThreshold"
+                },
+                "action":
+                {
+                  "$ref": "#/components/schemas/MatchAction"
+                },
+                "uris":
+                {
+                  "type": "array",
+                  "items":
+                  {
+                    "type": "string"
+                  },
+                  "example": [
+                    "/doc1.json",
+                    "/doc2.json"
+                  ]
+                },
+                "matchContributions":
+                {
+                  "type": "array",
+                  "description": "The combination of matches that occured ti",
+                  "items":
+                  {
+                    "$ref": "#/components/schemas/MatchContribution"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Previews what will occur when a matching step is run on a sample of a data set.",
+        "x-tags": [
+          "match",
+          "master"
+        ]
+      }
+    }
+  }
+}

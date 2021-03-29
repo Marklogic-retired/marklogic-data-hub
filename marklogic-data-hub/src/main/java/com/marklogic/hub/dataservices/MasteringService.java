@@ -10,6 +10,8 @@ import com.marklogic.client.io.marker.JSONWriteHandle;
 
 import com.marklogic.client.impl.BaseProxy;
 
+import java.util.stream.Stream;
+
 /**
  * Provides a set of operations on the database server
  */
@@ -51,6 +53,7 @@ public interface MasteringService {
             private BaseProxy.DBFunctionRequest req_validateMatchingStep;
             private BaseProxy.DBFunctionRequest req_updateMergeOptions;
             private BaseProxy.DBFunctionRequest req_calculateMatchingActivity;
+            private BaseProxy.DBFunctionRequest req_previewMatchingActivity;
             private BaseProxy.DBFunctionRequest req_updateMatchOptions;
             private BaseProxy.DBFunctionRequest req_getDefaultCollections;
             private BaseProxy.DBFunctionRequest req_validateMergingStep;
@@ -67,6 +70,8 @@ public interface MasteringService {
                     "updateMergeOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_calculateMatchingActivity = this.baseProxy.request(
                     "calculateMatchingActivity.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_previewMatchingActivity = this.baseProxy.request(
+                    "previewMatchingActivity.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_updateMatchOptions = this.baseProxy.request(
                     "updateMatchOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getDefaultCollections = this.baseProxy.request(
@@ -132,6 +137,25 @@ public interface MasteringService {
                       .withParams(
                           BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
                           ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(String stepName, Stream<String> uris, Integer sampleSize) {
+                return previewMatchingActivity(
+                    this.req_previewMatchingActivity.on(this.dbClient), stepName, uris, sampleSize
+                );
+            }
+            private com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(BaseProxy.DBFunctionRequest request, String stepName, Stream<String> uris, Integer sampleSize) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    request
+                        .withParams(
+                            BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
+                            BaseProxy.atomicParam("uris", true, BaseProxy.StringType.fromString(uris)),
+                            BaseProxy.atomicParam("sampleSize", false, BaseProxy.IntegerType.fromInteger(sampleSize))
+                        )
+                        .withMethod("POST")
+                        .responseSingle(false, Format.JSON)
                 );
             }
 
@@ -216,7 +240,17 @@ public interface MasteringService {
    */
     com.fasterxml.jackson.databind.JsonNode calculateMatchingActivity(String stepName);
 
-  /**
+    /**
+     * Invokes the previewMatchingActivity operation on the database server
+     *
+     * @param sampleSize	provides input
+     * @param uris	provides input
+     * @param stepName	provides input
+     * @return	as output
+     */
+    com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(String stepName, Stream<String> uris, Integer sampleSize);
+
+    /**
    * Invokes the updateMatchOptions operation on the database server
    *
    * @param options	provides input
