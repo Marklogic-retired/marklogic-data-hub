@@ -268,6 +268,10 @@ public class QueryStepRunner implements StepRunner {
         StepMetrics stepMetrics = new StepMetrics();
         final int urisCount = uris != null ? uris.size() : 0;
 
+        double batchCount = Math.ceil((double) urisCount / (double) batchSize);
+
+        logger.info(String.format("Number of items collected: %d; These items will be processed in %d batches", urisCount, (int)batchCount));
+
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0,0, "starting step execution");
         });
@@ -303,8 +307,6 @@ public class QueryStepRunner implements StepRunner {
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        double batchCount = Math.ceil((double) urisCount / (double) batchSize);
-
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         Map<String,Object> fullResponse = new HashMap<>();
@@ -324,7 +326,7 @@ public class QueryStepRunner implements StepRunner {
                     Map<String, Object> batchOptions = new HashMap<>(options);
                     batchOptions.put("uris", batch.getItems());
                     inputs.set("options", objectMapper.valueToTree(batchOptions));
-
+                    logger.debug(String.format("Processing %d items in batch %d of %d", batch.getItems().length, batch.getJobBatchNumber(),(int) batchCount));
                     // Invoke the DS endpoint. A StepRunnerService is created based on the DatabaseClient associated
                     // with the batch to help distribute load, per DHFPROD-1172.
                     JsonNode jsonResponse = StepRunnerService.on(batch.getClient()).processBatch(inputs);
