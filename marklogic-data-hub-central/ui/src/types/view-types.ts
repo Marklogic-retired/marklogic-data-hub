@@ -7,4 +7,9 @@ export type ViewSettingsType = {
             order?: string
         },
     },
+
+    model?: {
+        entityExpandedRows?: string[],
+        propertyExpandedRows?: string[],
+    }
 };

@@ -13,6 +13,7 @@ import {isModified, notModified} from "../assets/mock-data/modeling/modeling-con
 import {primaryEntityTypes, updateEntityModels} from "../api/modeling";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
+import {getViewSettings} from "../util/user-context";
 
 jest.mock("../api/modeling");
 
@@ -128,6 +129,68 @@ describe("Modeling Page", () => {
     expect(queryByLabelText("add-entity")).toBeNull();
     expect(queryByLabelText("save-all")).toBeNull();
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
+  });
+});
+
+describe("getViewSettings", () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+    jest.restoreAllMocks();
+  });
+
+  const sessionStorageMock = (() => {
+    let store = {};
+
+    return {
+      getItem(key) {
+        return store[key] || null;
+      },
+      setItem(key, value) {
+        store[key] = value.toString();
+      },
+      removeItem(key) {
+        delete store[key];
+      },
+      clear() {
+        store = {};
+      }
+    };
+  })();
+
+  Object.defineProperty(window, "sessionStorage", {
+    value: sessionStorageMock
+  });
+
+  it("should get entity expanded rows from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({model: {entityExpandedRows: ["Customer,"]}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({model: {entityExpandedRows: ["Customer,"]}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get property expanded rows from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({model: {propertyExpandedRows: ["shipping,31"]}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({model: {propertyExpandedRows: ["shipping,31"]}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get entity and property expanded rows from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({model: {entityExpandedRows: ["Customer,"], propertyExpandedRows: ["shipping,31"]}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({model: {entityExpandedRows: ["Customer,"], propertyExpandedRows: ["shipping,31"]}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get empty object if no info in session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({});
+    expect(window.sessionStorage.getItem).toBeCalledWith("dataHubViewSettings");
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
   });
 });
 

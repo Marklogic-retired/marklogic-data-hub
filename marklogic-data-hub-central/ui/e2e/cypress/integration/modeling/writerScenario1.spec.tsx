@@ -205,7 +205,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
   });
   it("Edit Order type and then revert again", () => {
-    propertyTable.editProperty("orderDetails");
+    propertyTable.editProperty("orderDetails-orderDetails");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("testing");
     propertyModal.getNoRadio("multiple").click();
@@ -219,7 +219,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     confirmationModal.getRevertEntityText().should("exist");
     confirmationModal.getRevertEntityText().should("not.exist");
     propertyTable.getProperty("testing").should("not.exist");
-    propertyTable.getProperty("orderDetails").should("exist");
+    propertyTable.getProperty("orderDetails-orderDetails").should("exist");
     propertyTable.getMultipleIcon("orderDetails").should("exist");
     propertyTable.getPiiIcon("orderDetails").should("not.exist");
     modelPage.getEntityModifiedAlert().should("not.exist");
