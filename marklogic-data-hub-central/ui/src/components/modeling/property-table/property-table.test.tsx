@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, wait, within} from "@testing-library/react";
+import {render, screen, fireEvent, wait, within, cleanup} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
 
@@ -23,6 +23,7 @@ describe("Entity Modeling Property Table Component", () => {
   window.scrollTo = jest.fn();
   afterEach(() => {
     jest.clearAllMocks();
+    cleanup();
   });
 
   test("Property Table renders an Entity with no properties, no writer role", () => {
@@ -107,7 +108,7 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByTestId("identifier-customerId")).toBeInTheDocument();
     expect(getByTestId("multiple-orders")).toBeInTheDocument();
     expect(getAllByTestId("add-struct-Address")).toHaveLength(2);
-    expect(queryByTestId("customerId-span")).toBeNull();
+    expect(queryByTestId("customerId-customerId-span")).toBeNull();
 
     expect(getByText("Order")).toBeInTheDocument();
     expect(getByText("integer")).toBeInTheDocument();
@@ -253,9 +254,9 @@ describe("Entity Modeling Property Table Component", () => {
 
     fireEvent.submit(screen.getByLabelText("input-name"));
 
-    expect(getByTestId("newStructure-span")).toBeInTheDocument();
+    expect(getByTestId("newStructure-newStructure-span")).toBeInTheDocument();
 
-    userEvent.click(screen.getByTestId("newStructure-span"));
+    userEvent.click(screen.getByTestId("newStructure-newStructure-span"));
     userEvent.clear(screen.getByLabelText("input-name"));
     userEvent.type(screen.getByLabelText("input-name"), "basicName");
     userEvent.click(screen.getByLabelText("type-dropdown"));
@@ -414,9 +415,7 @@ describe("Entity Modeling Property Table Component", () => {
       />
     );
 
-    const shippingExpandIcon = getByTestId("mltable-expand-shipping");
-    userEvent.click(within(shippingExpandIcon).getByRole("img"));
-    userEvent.click(getByTestId("delete-Customer-Address-city"));
+    userEvent.click(getByTestId("delete-Customer-Address-shipping-city"));
 
     await wait(() =>
       expect(screen.getByLabelText("delete-property-step-text")).toBeInTheDocument(),
@@ -424,7 +423,8 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
     expect(mockEntityReferences).toBeCalledTimes(1);
     expect(mockGetSystemInfo).toBeCalledTimes(1);
-    expect(screen.queryByTestId("city-span")).toBeNull();
+    expect(screen.queryByTestId("shipping-city-span")).toBeNull();
+
   });
 });
 

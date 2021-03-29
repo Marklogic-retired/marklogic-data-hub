@@ -19,7 +19,7 @@ import {
 import {ConfirmationType} from "../../../types/common-types";
 
 import {entityReferences} from "../../../api/modeling";
-import {UserContext} from "../../../util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-context";
 import {ModelingContext} from "../../../util/modeling-context";
 import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
@@ -73,6 +73,9 @@ const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
 };
 
 const PropertyTable: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+  const expandedRowStorage = storage?.model?.propertyExpandedRows;
+
   const {handleError} = useContext(UserContext);
   const {modelingOptions, updateEntityModified} = useContext(ModelingContext);
   const [showPropertyModal, toggleShowPropertyModal] = useState(false);
@@ -91,12 +94,21 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const [headerColumns, setHeaderColumns] = useState<any[]>([]);
   const [tableData, setTableData] = useState<any[]>([]);
-  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [newRowKey, setNewRowKey] = useState("");
 
   useEffect(() => {
     updateEntityDefinitionsAndRenderTable(props.definitions);
   }, [props.definitions]);
+
+  useEffect(() => {
+    if (expandedRows === null) {
+      return;
+    }
+    const rowStorage = getViewSettings();
+    const newStorage = {...rowStorage, model: {...rowStorage.model, propertyExpandedRows: expandedRows}};
+    setViewSettings(newStorage);
+  }, [expandedRows]);
 
   useEffect(() => {
     if (newRowKey) {
@@ -114,10 +126,16 @@ const PropertyTable: React.FC<Props> = (props) => {
       width: 200,
       render: (text, record) => {
         let renderText = text;
+        let recordKey = "";
+
+        if (record.hasOwnProperty("structured")) {
+          let recordArray = record.key.split(",");
+          recordKey = recordArray[0] + "-";
+        }
 
         if (props.canWriteEntityModel && props.canReadEntityModel) {
           renderText = <span
-            data-testid={text + "-span"}
+            data-testid={`${recordKey}` + text + "-span"}
             aria-label="property-name-header"
             className={styles.link}
             onClick={() => {
@@ -230,7 +248,10 @@ const PropertyTable: React.FC<Props> = (props) => {
             definitionName = record.structured;
           }
         }
-        let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${record.propertyName}`;
+        let recordArray = record.key.split(",");
+        let recordKey = recordArray[0];
+        let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${recordKey}-${record.propertyName}`;
+
 
         return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
           icon={faTrashAlt}

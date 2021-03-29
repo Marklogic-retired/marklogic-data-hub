@@ -10,7 +10,7 @@ import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {entityReferences, deleteEntity, updateEntityModels} from "../../../api/modeling";
 import {EntityModified} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
-import {UserContext} from "../../../util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-context";
 import {ModelingContext} from "../../../util/modeling-context";
 import {queryDateConverter, relativeTimeConverter} from "../../../util/date-conversion";
 import {numberConverter} from "../../../util/number-conversion";
@@ -29,9 +29,12 @@ type Props = {
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+  const expandedRowStorage = storage?.model?.entityExpandedRows;
+
   const {handleError} = useContext(UserContext);
   const {modelingOptions, removeEntityModified, clearEntityModified} = useContext(ModelingContext);
-  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -39,11 +42,21 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const [arrayValues, setArrayValues] = useState<string[]>([]);
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.DeleteEntity);
 
+
   useEffect(() => {
     if (props.autoExpand) {
       setExpandedRows([props.autoExpand]);
     }
   }, [props.autoExpand]);
+
+  useEffect(() => {
+    if (expandedRows === null) {
+      return;
+    }
+    const rowStorage = getViewSettings();
+    const newStorage = {...rowStorage, model: {...rowStorage.model, entityExpandedRows: expandedRows}};
+    setViewSettings(newStorage);
+  }, [expandedRows]);
 
   useEffect(() => {
     // Deep copying props.allEntityTypesData since we dont want the prop to be mutated

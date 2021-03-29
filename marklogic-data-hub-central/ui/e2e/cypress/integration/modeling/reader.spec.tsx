@@ -85,7 +85,7 @@ describe("Entity Modeling: Reader Role", () => {
     propertyTable.getAddPropertyToStructureType("Zip").click({force: true});
     propertyModal.getStructuredTypeName().should("not.exist");
 
-    propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "fiveDigit").click({force: true});
+    propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "zip-fiveDigit").click({force: true});
     confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
   });
 });

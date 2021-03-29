@@ -128,7 +128,7 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.getWildcardIcon('fourDigit').should('exist');
   });
   it("Edit Property Structured Property", () => {
-    propertyTable.editProperty("street");
+    propertyTable.editProperty("address-street");
     propertyModal.getToggleStepsButton().should("not.exist");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("Zip");
@@ -150,7 +150,7 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.getWildcardIcon('streetAlt').should('exist');
   });
   it("Rename property and change type from structured to relationship", () => {
-    propertyTable.editProperty("address");
+    propertyTable.editProperty("address-address");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("alt_address");
     propertyModal.openPropertyDropdown();
@@ -176,7 +176,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getCascadedTypeFromDropdown("Address").click();
     propertyModal.getSubmitButton().click();
     propertyTable.expandStructuredTypeIcon("alt_address").click();
-    propertyTable.getProperty("streetAlt").should("exist");
+    propertyTable.getProperty("alt_address-streetAlt").should("exist");
   });
   it("Add join property with type as Related Entity", () => {
     propertyTable.getAddPropertyButton("User3").click();
@@ -192,8 +192,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("OrderedBy").should("exist");
   });
   it("Delete a property, a structured property and then the entity", () => {
-    //Structured Property
-    propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "streetAlt").click();
+    //Structured Property 
+    propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "alt_address-streetAlt").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty("streetAlt").should("not.exist");
