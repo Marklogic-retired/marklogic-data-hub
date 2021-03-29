@@ -3,7 +3,6 @@ import {MLButton, MLTable, MLTooltip} from "@marklogic/design-system";
 import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
-import useDeepCompareEffect from "use-deep-compare-effect";
 import styles from "./property-table.module.scss";
 import PropertyModal from "../property-modal/property-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
@@ -95,7 +94,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [newRowKey, setNewRowKey] = useState("");
 
-  useDeepCompareEffect(() => {
+  useEffect(() => {
     updateEntityDefinitionsAndRenderTable(props.definitions);
   }, [props.definitions]);
 
