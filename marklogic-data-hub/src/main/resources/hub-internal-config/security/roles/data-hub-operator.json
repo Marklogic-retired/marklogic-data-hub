@@ -86,6 +86,11 @@
       "privilege-name": "status-builtins",
       "action": "http://marklogic.com/xdmp/privileges/status",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "data-hub-prune-provenance",
+      "action": "http://marklogic.com/data-hub/privileges/prune-provenance",
+      "kind": "execute"
     }
   ]
 }

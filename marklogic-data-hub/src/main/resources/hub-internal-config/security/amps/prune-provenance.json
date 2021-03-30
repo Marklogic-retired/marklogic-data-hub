@@ -1,0 +1,6 @@
+{
+  "local-name" : "pruneProvenance",
+  "document-uri" : "/data-hub/5/provenance/pruning.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "ps-internal" ]
+}
