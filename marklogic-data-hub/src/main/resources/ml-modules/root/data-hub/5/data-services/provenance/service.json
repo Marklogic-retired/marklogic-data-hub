@@ -1,0 +1,5 @@
+{
+  "desc" : "Defines endpoints for viewing and managing provenance documents",
+  "endpointDirectory" : "/data-hub/5/data-services/provenance/",
+  "$javaClass" : "com.marklogic.hub.dataservices.ProvenanceService"
+}
