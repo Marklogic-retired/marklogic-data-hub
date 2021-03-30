@@ -581,6 +581,10 @@ function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, s
     }
   });
 
+  if(!flowAndStepNames["flowName"]) {
+    return flowAndStepNames;
+  }
+
   for (let currentIndex=0; currentIndex<associatedWith.length-1; currentIndex++) {
     if(associatedWith[currentIndex] === flowAndStepNames["flowName"]) {
       let artifactTobeRemoved =  associatedWith[currentIndex];
