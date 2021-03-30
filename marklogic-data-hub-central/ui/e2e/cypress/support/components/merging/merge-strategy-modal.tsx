@@ -15,6 +15,10 @@ class MergeStrategyModal {
   saveButton() {
     return cy.findByLabelText("confirm-merge-strategy");
   }
+
+  maxValue(str: string) {
+    cy.get("#maxValuesStrategyInput").focus().clear().type(str);
+  }
 }
 
 const mergeStrategyModal = new MergeStrategyModal();

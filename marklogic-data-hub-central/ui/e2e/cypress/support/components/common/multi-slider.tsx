@@ -4,6 +4,10 @@ class MultiSlider {
     return cy.findByTestId(`${name}-active`);
   }
 
+  getHandleNameMulti(name: string) {
+    return cy.findAllByTestId(`${name}-active`);
+  }
+
   getHandleNameAndType(name: string, type: string) {
     return cy.findByLabelText(`${name}-${type}`);
   }
@@ -34,6 +38,10 @@ class MultiSlider {
 
   sliderTicksHover(sliderName: string, val: string) {
     cy.findByTestId(`${sliderName}-ticks`).find(`div[style*="left: ${val}%;"]`).trigger("mouseover", {force: true});
+  }
+
+  sliderTicksMove(sliderName: string, val: string) {
+    cy.findByTestId(`${sliderName}-ticks`).find(`div[style*="left: ${val}%;"]`).trigger("mousemove", {force: true});
   }
 }
 

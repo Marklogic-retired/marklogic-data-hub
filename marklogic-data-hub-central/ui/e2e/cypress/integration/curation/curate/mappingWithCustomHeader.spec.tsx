@@ -193,7 +193,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Map", mapStep);
     //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
     toolbar.getCurateToolbarIcon().click();

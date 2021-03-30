@@ -112,7 +112,9 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
   });

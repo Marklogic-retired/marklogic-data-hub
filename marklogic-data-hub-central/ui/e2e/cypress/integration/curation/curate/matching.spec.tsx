@@ -117,14 +117,14 @@ describe("Matching", () => {
     multiSlider.getHandleNameAndType("customerId", "exact").should("be.visible");
     multiSlider.getHandleName("customerId").should("be.visible");
   });
-  //TODO
-  //it("When we work on the spike story to update multi-slider componenens using cypress", () => {
-  // multiSlider.getRulesetSliderRail().invoke('attr','activehandleid','$$-0');
-  // multiSlider.getHandleName('customerId').invoke('attr', 'style', 'left: 20%').then(attr => {
-  //Verify the possible match combinations
-  // matchingStepDetail.getPossibleMatchCombinationHeading('testing').should('be.visible');
-  // matchingStepDetail.getPossibleMatchCombinationRuleset('testing','customerId').should('be.visible');
-  //});
+  it("When we work on the spike story to update multi-slider componenens using cypress", () => {
+    multiSlider.getHandleName("customerId").trigger("mousedown", {force: true});
+    cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
+    multiSlider.getHandleName("customerId").trigger("mouseup", {force: true});
+    //Verify the possible match combinations
+    matchingStepDetail.getPossibleMatchCombinationHeading("testing").trigger("mousemove").should("be.visible");
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerId - Exact").should("be.visible");
+  });
   it("Add another ruleset", () => {
     matchingStepDetail.addNewRulesetSingle();
     matchingStepDetail.getSinglePropertyOption();
@@ -136,13 +136,13 @@ describe("Matching", () => {
     multiSlider.getHandleNameAndType("email", "exact").should("be.visible");
     multiSlider.getHandleName("email").should("be.visible");
   });
-  //TODO
-  //it("When we work on the spike story to update multi-slider componenens using cypress", () => {
-  // multiSlider.getRulesetSliderRail().invoke('attr','activehandleid','$$-1');
-  // multiSlider.getHandleName('email').invoke('attr', 'style', 'left: 30%').then(attr => {
-  //   //Verify the possible match combinations
-  //   matchingStepDetail.getPossibleMatchCombinationRuleset('testing','email').should('be.visible');
-  //});
+  it("When we work on the spike story to update multi-slider componenens using cypress", () => {
+    multiSlider.getHandleName("email").trigger("mousedown", {force: true});
+    cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 30.303%;"]`).trigger("mousemove", {force: true});
+    multiSlider.getHandleName("email").trigger("mouseup", {force: true});
+    //Verify the possible match combinations
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email - Exact").trigger("mousemove").should("be.visible");
+  });
   it("Delete a ruleset", () => {
     multiSlider.deleteOption("email");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
