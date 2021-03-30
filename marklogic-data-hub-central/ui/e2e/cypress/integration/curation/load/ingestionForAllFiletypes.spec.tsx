@@ -103,7 +103,9 @@ describe("Verify ingestion for all filetypes", () => {
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     cy.waitForAsyncRequest();

@@ -72,7 +72,9 @@ describe("Add Merge step to a flow", () => {
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName1);
     runPage.setFlowDescription(`${flowName1} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merge", mergeStep);
     cy.waitForAsyncRequest();

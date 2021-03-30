@@ -175,7 +175,9 @@ describe("Validate CRUD functionality from list view", () => {
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running

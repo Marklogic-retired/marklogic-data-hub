@@ -118,7 +118,9 @@ describe("Add Matching step to a flow", () => {
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));

@@ -33,6 +33,22 @@ class RulesetSingleModal {
     return cy.findByLabelText("confirm-single-ruleset");
   }
 
+  setDictionaryUri(str: string) {
+    cy.get("#dictionary-uri-input").focus().type(str);
+  }
+
+  setDistanceThreshold(str: string) {
+    cy.get("#distance-threshold-input").focus().type(str);
+  }
+
+  setThesaurus(str: string) {
+    cy.get("#thesaurus-uri-input").focus().type(str);
+  }
+
+  reduceButton() {
+    return cy.findByLabelText("reduceToggle");
+  }
+
 }
 
 const rulesetSingleModal = new RulesetSingleModal();
