@@ -124,7 +124,7 @@ const LoginForm: React.FC = () => {
             </MLButton>
           </Form.Item>
         </Form>
-        {isLoading && <div className={styles.loginSpinner}><MLSpin size="middle"/></div>}
+        {isLoading && <div className={styles.loginSpinner}><MLSpin size="default"/></div>}
       </div>
     </>
   );

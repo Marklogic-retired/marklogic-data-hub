@@ -3,6 +3,8 @@ import styles from "./Monitor.module.scss";
 import {AuthoritiesContext} from "../util/authorities";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
+import {jobResults} from "../assets/mock-data/monitor/job-results";
+import JobResultsTableView from "../components/job-results-table-view/job-results-table-view";
 
 const Monitor: React.FC = () => {
 
@@ -23,6 +25,9 @@ const Monitor: React.FC = () => {
           <p>{MissingPagePermission}</p>
         </div>
       }
+      <div>
+        <JobResultsTableView data={jobResults.results}/>
+      </div>
     </div>
   );
 
