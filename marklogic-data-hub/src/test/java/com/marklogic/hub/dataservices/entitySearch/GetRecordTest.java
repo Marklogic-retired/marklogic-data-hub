@@ -6,6 +6,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.EntitySearchService;
+import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
@@ -21,10 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GetRecordTest extends AbstractHubCoreTest {
 
     private EntitySearchService service;
+    private FlowService flowService;
 
     @BeforeEach
     void beforeEach() {
         service = EntitySearchService.on(getHubClient().getFinalClient());
+        flowService = FlowService.on(getHubClient().getFinalClient());
     }
 
     @Test
@@ -200,5 +203,26 @@ public class GetRecordTest extends AbstractHubCoreTest {
         response = (ObjectNode) service.getRecord("/Customer2.json");
         history = (ArrayNode) response.get("history");
         assertEquals(0, history.size());
+    }
+
+    @Test
+    public void provenanceDataContainsADeletedFlow() {
+        installProjectInFolder("test-projects/provenance-test");
+        String path = "test-projects/provenance-test/data/customers";
+
+        FlowInputs inputs = new FlowInputs("inline", "1");
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
+        FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
+        flowRunner.runFlow(inputs);
+        flowRunner.awaitCompletion();
+
+        // delete a flow
+        flowService.deleteFlow("inline");
+
+        ObjectNode response = (ObjectNode) service.getRecord("/customers/customer1.json");
+        ArrayNode history = (ArrayNode) response.get("history");
+        assertEquals(1, history.size());
+        assertNull(history.get(0).get("flow"));
+        assertNull(history.get(0).get("step"));
     }
 }
