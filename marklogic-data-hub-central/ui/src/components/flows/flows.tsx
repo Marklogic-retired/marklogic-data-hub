@@ -773,7 +773,7 @@ const Flows: React.FC<Props> = (props) => {
                 {sourceFormat ?
                   <div className={styles.format} style={sourceFormatStyle(sourceFormat)} >{sourceFormatOptions[sourceFormat].label}</div>
                   : null}
-                <div className={styles.name}>{step.stepName}</div>
+                <div className={sourceFormat ? styles.loadStepName : styles.name}>{step.stepName}</div>
                 <div className={styles.cardLinks}
                   style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType] ? "block" : "none"}}
                   aria-label={viewStepId + "-cardlink"}
