@@ -54,7 +54,7 @@ describe("Update data load settings component", () => {
     expect(getByText("Download Project Files")).toBeInTheDocument();
     expect(getByTestId("clearData")).toBeInTheDocument();
     expect(getByText("Download a zip file containing only artifacts (models, steps, and flows) that were created or modified through Hub Central. You can apply these files to an existing local project.")).toBeInTheDocument();
-    expect(getByText("Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.")).toBeInTheDocument();
+    expect(getByText("Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, and flows) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.")).toBeInTheDocument();
     expect(getByText("Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.")).toBeInTheDocument();
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
