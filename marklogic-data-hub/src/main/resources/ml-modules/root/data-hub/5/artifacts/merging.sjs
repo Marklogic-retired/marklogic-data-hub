@@ -74,7 +74,7 @@ function defaultArtifact(artifactName) {
     sourceDatabase: dataHub.config.FINALDATABASE,
     targetDatabase: dataHub.config.FINALDATABASE,
     permissions: defaultPermissions,
-    targetEntity: "Change this to a valid entity type name; e.g. Customer",
+    targetEntityType: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('mastering-summary')",
     provenanceGranularityLevel: 'coarse',
     collections: [],

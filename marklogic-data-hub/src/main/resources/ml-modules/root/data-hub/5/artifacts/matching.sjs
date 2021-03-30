@@ -72,7 +72,7 @@ function defaultArtifact(artifactName) {
     batchSize: 100,
     sourceDatabase: dataHub.config.FINALDATABASE,
     targetDatabase: dataHub.config.FINALDATABASE,
-    targetEntity: "Change this to a valid entity type name; e.g. Customer",
+    targetEntityType: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('Change this to a valid collection name; e.g. Customer')",
     collections: [
       "mastering-summary"
