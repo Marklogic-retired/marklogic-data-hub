@@ -251,7 +251,7 @@ function rulesetsCombosAboveScoreRecursion(
   } else {
     let results = [];
     remainingRulesets.forEach((ruleset, i) => {
-      let subCombo = rulesetsCombosAtAndAboveScoreRecursion(
+      let subCombo = rulesetsCombosAboveScoreRecursion(
           remainingRulesets.slice(i + 1),
           combinedWeight + ruleset.weight,
           score,
