@@ -5,8 +5,8 @@ import {mergingStep} from "./merging.data";
 import {mappingStep} from "./mapping.data";
 import curateData from "./flows.data";
 
-const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
-const personNestedEntityDefArray = definitionsParser(personNestedEntityDef.definitions);
+const customerEntityDefsArray = definitionsParser(customerEntityDef[0]["entityModel"].definitions);
+const personNestedEntityDefArray = definitionsParser(personNestedEntityDef[0]["entityModel"].definitions);
 
 export const customerMatchingStep = {
   curationOptions: {

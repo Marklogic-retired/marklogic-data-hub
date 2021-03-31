@@ -17,13 +17,14 @@
 
 .entityTitle{
   margin-top: -8px;
+  width: 96%;
   display: inline-block;
+  padding-left: 10px;
 }
 
 .entitySettingsLink {
   display: inline-block;
   padding-right: 20px;
-  margin-left: 90%;
   font-size: 20px !important;
   color: #44499C;
   cursor: pointer;
@@ -182,7 +183,7 @@
 }
 
 .expandIcon{
-  margin-left: -16px;
+  margin-left: -10px;
   vertical-align:middle;
   text-align: left;
   font-size: 13px;
