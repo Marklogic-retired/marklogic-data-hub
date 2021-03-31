@@ -818,25 +818,28 @@ pipeline{
         }
 
         stage('rh7-singlenode'){
+            options {timeout(time: 3, unit: 'HOURS')}
             when { expression {return params.regressions} }
             agent { label 'dhfLinuxAgent'}
             steps{
-	      script{
-                props = readProperties file:'data-hub/pipeline.properties';
-		copyRPM 'Release','9.0-11'
-		setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-	        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
-				junit '**/TEST-*.xml'
-                def output=readFile 'data-hub/console.log'
-				def result=false;
-                if(output.contains("npm ERR!")){
-                   result=true;
-                }
-                if(result){
-                   currentBuild.result='UNSTABLE'
-                }
-				}
-			}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
+
+                    script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        copyRPM 'Release','9.0-11'
+                        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+                        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+                        junit '**/TEST-*.xml'
+                        def output=readFile 'data-hub/console.log'
+                        def result=false;
+                        if(output.contains("npm ERR!")){
+                            result=true;
+                        }
+                        if(result){
+                            currentBuild.result='UNSTABLE'
+                        }
+                    }
+                }}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -859,10 +862,11 @@ pipeline{
          when { expression {return params.regressions} }
          parallel{
 	  stage('rh7_cluster_10.0-Nightly'){
-			agent { label 'dhfLinuxAgent'}
+          options {timeout(time: 3, unit: 'HOURS')}
+          agent { label 'dhfLinuxAgent'}
 			steps{
-			dhflinuxTests("10.0","Latest")
-			}
+              catchError(buildResult: 'SUCCESS', catchInterruptions: true) { dhflinuxTests("10.0","Latest")}
+            }
 			post{
 				 always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -879,9 +883,10 @@ pipeline{
                   }
 		}
 		stage('rh7_cluster_9.0-Nightly'){
+            options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
-	        dhflinuxTests("9.0","Latest")
+              catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0","Latest")}
 			}
 			post{
 				always{
@@ -898,9 +903,10 @@ pipeline{
                   }
 		}
         stage('rh7_cluster_9.0-11'){
+            options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
-		    dhflinuxTests("9.0-11","Release")
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
 			}
 			post{
 				always{
@@ -916,9 +922,10 @@ pipeline{
                   }
 		}
          stage('rh7_cluster_10.0-3'){
+               options {timeout(time: 3, unit: 'HOURS')}
                agent { label 'dhfLinuxAgent'}
                steps{
-                    dhflinuxTests("10.0-3","Release");
+                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
                }
                post{
                  always{
@@ -935,9 +942,10 @@ pipeline{
                            }
              }
              stage('rh7_cluster_10.0-4'){
+               options {timeout(time: 3, unit: 'HOURS')}
                agent { label 'dhfLinuxAgent'}
                steps{
-                    dhflinuxTests("10.0-4.4","Release");
+                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
                }
                post{
                  always{
@@ -954,9 +962,10 @@ pipeline{
                            }
              }
              stage('rh7_cluster_10.0-5'){
+                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                     dhflinuxTests("10.0-5.3","Release");
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
                 }
                 post{
                   always{
@@ -973,9 +982,10 @@ pipeline{
                             }
               }
 		stage('rh7_cluster_10.0-6'){
+                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                     dhflinuxTests("10.0-6","Release");
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
                 }
                 post{
                   always{
@@ -998,8 +1008,11 @@ pipeline{
             when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
-                 agent { label 'dhfLinuxAgent'}
-                steps{dh5Example()}
+                options {timeout(time: 3, unit: 'HOURS')}
+                agent { label 'dhfLinuxAgent'}
+                steps {
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dh5Example()}
+                }
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1013,10 +1026,11 @@ pipeline{
                  }
             }
             stage('dhf-customhook'){
-                 agent { label 'dhfLinuxAgent'}
+                options {timeout(time: 3, unit: 'HOURS')}
+                agent { label 'dhfLinuxAgent'}
                 steps{
-                      dhCustomHook();
-                     }
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhCustomHook()}
+                 }
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1030,9 +1044,10 @@ pipeline{
                  }
             }
             stage('mapping-example'){
-                 agent { label 'dhfLinuxAgent'}
+                options {timeout(time: 3, unit: 'HOURS')}
+                agent { label 'dhfLinuxAgent'}
                 steps{
-                    mappingExample()
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
                  }
                  post{
                  always{
@@ -1047,9 +1062,10 @@ pipeline{
                  }
             }
             stage('smart-mastering-complete'){
-                 agent { label 'dhfLinuxAgent'}
+                options {timeout(time: 3, unit: 'HOURS')}
+                agent { label 'dhfLinuxAgent'}
                 steps{
-                    smartMastering()
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
                  }
                  post{
                  always{
@@ -1069,10 +1085,11 @@ pipeline{
             when { expression {return params.regressions} }
       	    parallel{
             stage('w10_SN_9.0-Nightly'){
-        			agent { label 'dhfWinagent'}
-        			steps{
-        			    dhfWinTests("9.0","Latest")
-        			}
+                options {timeout(time: 3, unit: 'HOURS')}
+        		agent { label 'dhfWinagent'}
+        		steps{
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
+        		}
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
@@ -1088,9 +1105,10 @@ pipeline{
                           }
         		}
                 stage('w10_SN_10.0-Nightly'){
+                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
-        			    dhfWinTests("10.0","Latest")
+                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
         			}
         			post{
         				always{
@@ -1107,9 +1125,10 @@ pipeline{
                           }
         		}
         		stage('w10_SN_9.0-11'){
+                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
-                        dhfWinTests("9.0-11","Release")
+                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
         			}
         			post{
         				always{
@@ -1126,9 +1145,10 @@ pipeline{
                           }
         		}
         		stage('w12_cluster_10.0-6'){
+                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinCluster'}
         			steps{
-                            winParallel()
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){winParallel()}
         			}
         			post{
         				always{
@@ -1147,78 +1167,6 @@ pipeline{
 
         		    }
         		}
-	stage('quick start linux parallel'){
-         when { expression {return params.regressions} }
-	 parallel{
-		stage('qs_rh7_90-nightly'){
-			agent { label 'lnx-dhf-jenkins-slave-2'}
-			steps{
-			    dhfqsLinuxTests("9.0","Latest")
-			}
-			post{
 
-                  success {
-                    println("qs_rh7_90-nightly Tests Completed")
-                    sendMail Email,'<h3>Quick start End-End Tests Passed on Nigtly 9.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-9.0-Nightly | Cluster | Passed'
-                   }
-                   unstable {
-                      println("qs_rh7_90-nightly Tests Failed")
-                      sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Nightly 9.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-9.0-Nightly | Cluster | Failed'
-                  }
-                  }
-		}
-		stage('qs_rh7_10-nightly'){
-        			agent { label 'lnx-dhf-jenkins-slave-2'}
-        			steps{
-        			 dhfqsLinuxTests("10.0","Latest")
-        			}
-        			post{
-
-                          success {
-                            println("qs_rh7_10-nightly Tests Completed")
-                            sendMail Email,'<h3>Quick start End-End Tests Passed on Nigtly 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-Nightly | Cluster | Passed'
-                           }
-                           unstable {
-                              println("qs_rh7_10-nightly Tests Failed")
-                              sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-9.0-Nightly | Cluster | Failed'
-                          }
-                          }
-        		}
-        stage('qs_rh7_90-release'){
-        			agent { label 'lnx-dhf-jenkins-slave-2'}
-        			steps{
-                     dhfqsLinuxTests("9.0-11","Release")
-        			}
-        			post{
-
-                          success {
-                            println("qs_rh7_90-release Tests Completed")
-                            sendMail Email,'<h3>Quick start End-End Tests Passed on Released 9.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-9.0-11 | Cluster | Passed'
-                           }
-                           unstable {
-                              println("qs_rh7_90-release Tests Failed")
-                              sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Nightly 9.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-9.0-11 | Cluster | Failed'
-                          }
-                          }
-        		}
-        		stage('qs_rh7_10-release'){
-                			agent { label 'lnx-dhf-jenkins-slave-2'}
-                			steps{
-                                 dhfqsLinuxTests("10.0-6","Release")
-                			}
-                			post{
-
-                                  success {
-                                    println("qs_rh7_10-release Tests Completed")
-                                    sendMail Email,'<h3>Quick start End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-6 | Cluster | Passed'
-                                   }
-                                   unstable {
-                                      println("qs_rh7_10-release Tests Failed")
-                                      sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-6 | Cluster | Failed'
-                                  }
-                                  }
-                		}
-		}
-		}
 	}
 }
