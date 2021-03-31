@@ -4,6 +4,7 @@
 }
 
 .mapContainer{
+    height: auto;
     width: 92.8vw;
 }
 
@@ -27,7 +28,6 @@
     display: flex;
     flex-direction: row;
     padding-bottom: 1vh;
-    height: 80vh;
 }
 
 .sourceContainer{

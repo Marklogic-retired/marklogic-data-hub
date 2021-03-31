@@ -6,7 +6,7 @@ import EntityPropertyTreeSelect from "./entity-property-tree-select";
 import {customerEntityDef} from "../../assets/mock-data/curation/entity-definitions-mock";
 import {definitionsParser} from "../../util/data-conversion";
 
-const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
+const customerEntityDefsArray = definitionsParser(customerEntityDef[0]["entityModel"].definitions);
 const entityTypeDefinition = customerEntityDefsArray.find(entityDefinition => entityDefinition.name === "Customer");
 
 describe("Entity Property Tree Select component", () => {

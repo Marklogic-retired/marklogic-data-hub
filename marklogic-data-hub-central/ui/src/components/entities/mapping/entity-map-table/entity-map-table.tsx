@@ -9,7 +9,7 @@ import Highlighter from "react-highlight-words";
 import {faList, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {getMappingFunctions} from "../../../../api/mapping";
 import EntitySettings from "../entity-settings/entity-settings";
-
+import {css} from "@emotion/css";
 
 interface Props {
   mapResp: any;
@@ -30,6 +30,8 @@ interface Props {
   entityTypeTitle: any;
   checkedEntityColumns: any;
   entityTypeProperties: any;
+  entityMappingId: any;
+  relatedMappings: any;
   entityExpandedKeys: any;
   setEntityExpandedKeys: any;
   allEntityKeys: any;
@@ -37,10 +39,17 @@ interface Props {
   initialEntityKeys: any;
   tooltipsData: any;
   updateStep?: any;
+  relatedEntityTypeProperties: any;
+  setRelatedEntitiesSelected: any;
+  isRelatedEntity: boolean;
+  tableColor: any;
+  firstRowTableKeyIndex: any;
+  includedEntityTypeProperties: any;
+  includedEntitiesSelected: any;
+  setIncludedEntitiesSelected: any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
-
   const [mapExp, setMapExp] = useState({});
 
   //Dummy ref node to simulate a click event
@@ -79,9 +88,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
 
-  //States for related entities
-  const [relatedEntitySelected, setRelatedEntitySelected] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [relatedEntities, setRelatedEntities] = useState<any>(["entity1", "entity2", "entity3"]); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
   //Documentation links for using Xpath expressions
   const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -553,14 +560,22 @@ const EntityMapTable: React.FC<Props> = (props) => {
       allowClear
       style={{width: "98%"}}
       placeholder="Select"
-      id="entities-filter"
+      id={`${props.entityTypeTitle}-entities-filter`}
       onChange={value => handleOptionSelect(value)}
+      value={selectedOptions}
       dropdownClassName={styles.entityFilterDropdown}
     >
-      {/* Fill these options with related entities when backend support is complete with DHFPROD-7068 */}
-      {relatedEntities.map((entity, i) => {
-        return <Option aria-label={`${entity}-option`} value={entity} key={i}>{entity}</Option>;
-      })}
+
+      {!props.isRelatedEntity ? props.relatedEntityTypeProperties.map((entity, i) => {
+        let entityLabel = entity.entityLabel;
+        return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={i}>{entityLabel}</Option>;
+      }) :
+        props.includedEntityTypeProperties.map((entity, i) => {
+          let entityLabel = entity.entityLabel;
+          if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === props.entityMappingId.substring(0, props.entityMappingId.indexOf(":"))) {
+            return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={`${entityLabel}-${i}`}>{entityLabel}</Option>;
+          }
+        })}
 
     </Select>
   );
@@ -568,23 +583,55 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const topRowDetails = (
     <div>
       <div className = {styles.entityTopRow}>
-        <div className={styles.entityTitle}><strong>{props.entityTypeTitle}</strong></div>
+        <div className={styles.entityTitle}>
+          <strong>{props.entityTypeTitle}
+          </strong>
+        </div>
         <div className={styles.entitySettingsLink}>
           <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} updateStep={props.updateStep} stepData={props.mapData}/>
         </div>
       </div>
-      <div className={styles.entityFilterContainer}>
-        <div className={styles.mapRelatedEntitiesText}>Map related entities: </div>
-        <div className={styles.entityFilter}>{relatedEntitiesFilter}</div>
-      </div>
+      { props.relatedMappings && props.relatedMappings.length > 0 ?
+        <div className={styles.entityFilterContainer}>
+          <div className={styles.mapRelatedEntitiesText}>Map related entities: </div>
+          <div className={styles.entityFilter}>{relatedEntitiesFilter}</div>
+        </div>
+        :
+        ""
+      }
     </div>
   );
 
-  const handleOptionSelect = (value) => {
-    setRelatedEntitySelected(value);
+  const handleOptionSelect = (selectedValues) => {
+    let selectedArray: any = [];
+    let entityArray = props.isRelatedEntity ? props.includedEntityTypeProperties : props.relatedEntityTypeProperties;
+
+    if (selectedValues.length !== 0) {
+      //in the properties array, push the object that has the key which matches the value of the entity name selected
+      selectedValues.forEach(val => {
+        let index = entityArray.findIndex(object => object.entityLabel === val);
+        selectedArray.push(entityArray[index]);
+      });
+    } else {
+      selectedArray = [];
+    }
+    if (props.isRelatedEntity) {
+      //check if values were removed from the filter
+      if (selectedValues.length < selectedOptions.length) {
+        //filter for which value(s) were removed
+        let removedEntities = selectedOptions.filter(options =>  selectedValues.indexOf(options) < 0);
+        removedEntities.forEach(val => {
+          let index = entityArray.findIndex(object => object.entityLabel === val);
+          props.setIncludedEntitiesSelected(prevState => prevState.filter(obj => obj !== entityArray[index]));
+        });
+      } else {
+        props.setIncludedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
+      }
+    } else {
+      props.setRelatedEntitiesSelected(selectedArray);
+    }
+    setSelectedOptions(selectedValues);
   };
-
-
 
   const entityColumns = [
     {
@@ -596,9 +643,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
       sorter: (a: any, b: any) => a.name?.localeCompare(b.name),
       ellipsis: true,
       render: (text, row, index) => {
-        let textToSearchInto = row.key !== 0 ? text.split("/").pop() : text;
+        let textToSearchInto = row.key > 100 ? text.split("/").pop() : text;
         let valueToDisplay = textToSearchInto;
-        return {children: getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key), props: (row.key === 0  && index === 0) ? {colSpan: 4} : {colSpan: 1}};
+        return {children: getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key), props: (row.key <= 100  && index === 0) ? {colSpan: 4} : {colSpan: 1}};
       }
     },
     {
@@ -616,7 +663,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
             content={contextHelp}
             trigger="click"
             placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
-        </div>, props: (row.key === 0 && index === 0) ? {colSpan: 0} : {colSpan: 1}};
+        </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}};
       }
     },
     {
@@ -630,7 +677,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       key: "key",
       width: "45%",
       render: (text, row, index) => {
-        if (row.key !== 0) {
+        if (row.key > 100) {
           return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
             <TextArea
               id={"mapexpression"+row.name.split("/").pop()}
@@ -663,7 +710,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       ellipsis: true,
       sorter: (a: any, b: any) => props.getDataForValueField(a.name)?.localeCompare(props.getDataForValueField(b.name)),
       render: (text, row, index) => {
-        if (row.key !== 0) {
+        if (row.key > 100) {
           return {
             children:
               <div data-testid={row.name.split("/").pop()+"-value"} className={styles.mapValue}>
@@ -678,10 +725,28 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   ];
 
-  return (<div id="entityTableContainer">
+  const tableCSS = css({
+    "& thead > tr > th": {
+      backgroundColor: props.tableColor,
+      paddingTop: "12px",
+      paddingBottom: "12px",
+    },
+    "& tbody > tr > td": {
+      backgroundColor: props.tableColor,
+      lineHeight: "2px",
+      verticalAlign: "top",
+    },
+    "& tbody > tr > .ant-table-column-has-actions": {
+      backgroundColor: props.tableColor,
+      lineHeight: "2px",
+      verticalAlign: "top",
+    }
+  });
+
+  return (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"}>
     <Table
+      className={tableCSS}
       pagination={false}
-      className={styles.entityTable}
       expandIcon={(props) => customExpandIcon(props)}
       onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
       expandedRowKeys={props.entityExpandedKeys}
@@ -689,10 +754,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
       //defaultExpandAllRows={true}
       columns={getColumnsForEntityTable()}
       scroll={{y: "60vh", x: 1000}}
-      dataSource={[{key: 0, name: topRowDetails, type: "", parentVal: "", children: props.entityTypeProperties}]}
+      dataSource={[{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: "", children: props.entityTypeProperties}]}
       tableLayout="unset"
       rowKey={(record: any) => record.key}
       getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
+      showHeader={!props.isRelatedEntity}
     /></div>);
 };
 

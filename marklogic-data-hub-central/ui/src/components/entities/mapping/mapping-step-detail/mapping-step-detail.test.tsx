@@ -12,7 +12,7 @@ import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curat
 import {getUris, getDoc} from "../../../../util/search-service";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import {act} from "react-dom/test-utils";
-import {personEntityDef, personNestedEntityDef, personNestedEntityDefSameNames} from "../../../../assets/mock-data/curation/entity-definitions-mock";
+import {personEntityDef, personNestedEntityDef, personNestedEntityDefSameNames, personRelatedEntityDef} from "../../../../assets/mock-data/curation/entity-definitions-mock";
 import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authorities";
 import SplitPane from "react-split-pane";
 import userEvent from "@testing-library/user-event";
@@ -481,43 +481,43 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Check the sort order of Name column rows before enforcing sort order
     let srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["proteinId", "proteinType", "nutFreeName", "proteinCat", "proteinDog", "emptyString", "nullValue", "numberValue", "booleanValue", "whitespaceValue", "emptyArrayValue", "numberArray", "booleanArray"], "key", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["proteinId", "proteinType", "nutFreeName", "proteinCat", "proteinDog", "emptyString", "nullValue", "numberValue", "booleanValue", "whitespaceValue", "emptyArrayValue", "numberArray", "booleanArray"], "key", data.mapProps.sourceData, "source");
 
     //Click on the Name column to sort the rows by Ascending order
     fireEvent.click(sourceTableNameSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["booleanArray", "booleanValue", "emptyArrayValue", "emptyString", "nullValue", "numberArray", "numberValue", "nutFreeName", "proteinCat", "proteinDog", "proteinId", "proteinType", "whitespaceValue"],  "key", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["booleanArray", "booleanValue", "emptyArrayValue", "emptyString", "nullValue", "numberArray", "numberValue", "nutFreeName", "proteinCat", "proteinDog", "proteinId", "proteinType", "whitespaceValue"],  "key", data.mapProps.sourceData, "source");
 
     //Click on the Name column to sort the rows by Descending order
     fireEvent.click(sourceTableNameSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["whitespaceValue", "proteinType", "proteinId", "proteinDog", "proteinCat", "nutFreeName", "numberValue", "numberArray", "nullValue", "emptyString", "emptyArrayValue", "booleanValue", "booleanArray"],  "key", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["whitespaceValue", "proteinType", "proteinId", "proteinDog", "proteinCat", "nutFreeName", "numberValue", "numberArray", "nullValue", "emptyString", "emptyArrayValue", "booleanValue", "booleanArray"],  "key", data.mapProps.sourceData, "source");
 
     //Click on the Name column again to remove the applied sort order and check if its removed
     fireEvent.click(sourceTableNameSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["proteinId", "proteinType", "nutFreeName", "proteinCat", "proteinDog", "emptyString", "nullValue", "numberValue", "booleanValue", "whitespaceValue", "emptyArrayValue", "numberArray", "booleanArray"], "key", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["proteinId", "proteinType", "nutFreeName", "proteinCat", "proteinDog", "emptyString", "nullValue", "numberValue", "booleanValue", "whitespaceValue", "emptyArrayValue", "numberArray", "booleanArray"], "key", data.mapProps.sourceData, "source");
 
     /* Validate sorting on Values column in source table */
 
     //Check the sort order of Values column rows before enforcing sort order
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["123EAC", "home", undefined, "commercial", "retriever, golden, labrador", "", "null", "321", "true", " ", "[ ]", "1, 2, 3", "true, false, true"], "val", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["123EAC", "home", undefined, "commercial", "retriever, golden, labrador", "", "null", "321", "true", " ", "[ ]", "1, 2, 3", "true, false, true"], "val", data.mapProps.sourceData, "source");
 
     //Click on the Values column to sort the rows by Ascending order
     fireEvent.click(sourceTableValueSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["", " ", "[ ]", "1, 2, 3", "123EAC", "321", "commercial", "home", "null", "retriever, golden, labrador", "true", "true, false, true", undefined], "val", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["", " ", "[ ]", "1, 2, 3", "123EAC", "321", "commercial", "home", "null", "retriever, golden, labrador", "true", "true, false, true", undefined], "val", data.mapProps.sourceData, "source");
 
     //Click on the Values column to sort the rows by Descending order
     fireEvent.click(sourceTableValueSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["true", "retriever, golden, labrador", "null", "home", "commercial", "123EAC", undefined, "true, false, true", "321", "1, 2, 3", "[ ]", " ", ""], "val", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["true", "retriever, golden, labrador", "null", "home", "commercial", "123EAC", undefined, "true, false, true", "321", "1, 2, 3", "[ ]", " ", ""], "val", data.mapProps.sourceData, "source");
 
     //Click on the Value column again to remove the applied sort order and check if its removed
     fireEvent.click(sourceTableValueSort);
     srcTable = document.querySelectorAll("#srcContainer .ant-table-row-level-0");
-    validateMappingTableRow(srcTable, ["123EAC", "home", undefined, "commercial", "retriever, golden, labrador", "", "null", "321", "true", " ", "[ ]", "1, 2, 3", "true, false, true"], "val", data.mapProps.sourceData);
+    validateMappingTableRow(srcTable, ["123EAC", "home", undefined, "commercial", "retriever, golden, labrador", "", "null", "321", "true", " ", "[ ]", "1, 2, 3", "true, false, true"], "val", data.mapProps.sourceData, "source");
   });
 
   test("Validate Entity table and sorting", async () => {
@@ -526,13 +526,12 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText;
+    let getByTestId, getByLabelText, queryByText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
-      getByText = renderResults.getByText;
-      getAllByText = renderResults.getAllByText;
+      queryByText = renderResults.queryByText;
     });
 
 
@@ -550,43 +549,20 @@ describe("RTL Source-to-entity map tests", () => {
     entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
     expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
-    //Verify related entity filter in the first row
-    expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
+    //Verify related entity filter does not exist in table with no related entities
+    expect(queryByText("Map related entities:")).toBeNull();
 
-    let entitiesFilter = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-search__field"
-    )[0];
-
-    fireEvent.click(entitiesFilter); // focus on the search box
-
-    //related entity options should appear, replace with real values in DHFPROD-6706
-    expect(getByText("entity1")).toBeInTheDocument();
-    expect(getByText("entity2")).toBeInTheDocument();
-    expect(getByText("entity3")).toBeInTheDocument();
-
-    fireEvent.click(getByText("entity2"));
-
-    //selected value should appear in filter
-    let entityFilterValue = getByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-selection__choice__content"
-    );
-    expect(entityFilterValue).toHaveTextContent("entity2");
-
-    //Verify entity settings icon also exist in the first row
+    //Verify entity settings icon exists in the first row
     expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
     //Check sort order of Name Column before clicking on sort button
     let entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["propId", "propName", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties);
+    validateMappingTableRow(entTable, ["propId", "propName", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties, "entity");
 
     //Click on the Name column to sort the rows by Ascending order
     fireEvent.click(entityTableNameSort);
     entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["gender", "items", "propAttribute", "propId", "propName"], "name", data.mapProps.entityTypeProperties);
+    validateMappingTableRow(entTable, ["gender", "items", "propAttribute", "propId", "propName"], "name", data.mapProps.entityTypeProperties, "entity");
 
     //Entity type title should remain in the first row after sort is applied
     entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
@@ -596,20 +572,78 @@ describe("RTL Source-to-entity map tests", () => {
     //Click on the Name column again to sort the rows by Descending order
     fireEvent.click(entityTableNameSort);
     entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["propName", "propId", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties);
+    validateMappingTableRow(entTable, ["propName", "propId", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties, "entity");
 
     fireEvent.click(entityTableNameSort); //Reset the sort order to go back to default order
 
     //Click on the Type column to sort the rows by Ascending order
     fireEvent.click(entityTableTypeSort);
     entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["int", "ItemType [ ]", "string", "string", "string"], "type", data.mapProps.entityTypeProperties);
+    validateMappingTableRow(entTable, ["int", "ItemType [ ]", "string", "string", "string"], "type", data.mapProps.entityTypeProperties, "entity");
 
     //Click on the Type column again to sort the rows by Descending order
     fireEvent.click(entityTableTypeSort);
     entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["string", "string", "string", "ItemType [ ]", "int"], "type", data.mapProps.entityTypeProperties);
+    validateMappingTableRow(entTable, ["string", "string", "string", "ItemType [ ]", "int"], "type", data.mapProps.entityTypeProperties, "entity");
 
+  });
+
+  test("Validate Entity table related entities filter", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
+
+    let getByTestId, getByLabelText, getByText, getAllByText, debug;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
+      getByText = renderResults.getByText;
+      getAllByText = renderResults.getAllByText;
+      debug = renderResults.debug;
+    });
+
+    //expand nested levels first
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
+
+    //Verify utility in first row of Entity table
+
+    //Entity type title should be visible
+    let entTableTopRow: any;
+    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+
+    // Verify related entity filter in the first row
+    expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
+
+    //Verify entity settings icon also exist in the first row
+    expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
+
+    let entitiesFilter = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-search__field"
+    )[0];
+
+    fireEvent.click(entitiesFilter); // focus on the search box
+
+    debug();
+    //related entity options should appear
+    expect(getByText("Order (orderedBy Person)")).toBeInTheDocument();
+    expect(getByText("BabyRegistry (ownedBy Person)")).toBeInTheDocument();
+    // expect(getByText("entity3")).toBeInTheDocument();
+
+    fireEvent.click(getByText("Order (orderedBy Person)"));
+
+    //selected value should appear in filter
+    let entityFilterValue = getByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-selection__choice__content"
+    );
+    expect(entityFilterValue).toHaveTextContent("Order (orderedBy Person)");
   });
 
   test("Verify evaluation of valid expression for mapping writer user", async () => {
@@ -776,7 +810,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("propAttribute-value")).not.toHaveTextContent("home");
 
     //Verify that fx/source-data list is disabled for mapping reader user
-    expect(getByTestId("propId-1-functionIcon")).toBeDisabled();
+    expect(getByTestId("propId-101-functionIcon")).toBeDisabled();
     expect(getByTestId("propId-listIcon1")).toHaveAttribute("disabled");
   });
 
@@ -829,7 +863,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByTestId("propId-expErr")).toBeNull();
 
     //Verify that fx/source-data list is enabled for mapping writer user
-    expect(getByTestId("propId-1-functionIcon")).toBeEnabled();
+    expect(getByTestId("propId-101-functionIcon")).toBeEnabled();
     expect(getByTestId("propId-listIcon1")).not.toHaveAttribute("disabled");
   });
 
@@ -1063,13 +1097,13 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.change(propAttributeExpression, {target: {value: ""}});
     fireEvent.blur(propAttributeExpression);
 
-    let functionSelector = getByTestId("propAttribute-3-functionIcon");
+    let functionSelector = getByTestId("propAttribute-103-functionIcon");
     fireEvent.click(functionSelector);
     let inputBox = getAllByText(
       (_content, element) =>
         element.className !== null &&
                 element.className === "ant-select-search__field"
-    )[1];
+    )[0];
 
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByText("concat")).toBeInTheDocument();
@@ -1300,7 +1334,7 @@ describe("RTL Source Selector/Source Search tests", () => {
       (_content, element) =>
         element.className !== null &&
                 element.className ==="ant-select-search__field"
-    )[1];
+    )[0];
 
     fireEvent.click(inputBox);
     fireEvent.change(inputBox, {target: {value: "Fir"}});

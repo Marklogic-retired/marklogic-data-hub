@@ -20,11 +20,11 @@ jest.mock("react-router-dom", () => ({
   }),
 }));
 
-const entityModel = {model: customerEntityDef.definitions};
+const entityModel = {model: customerEntityDef[0]["entityModel"].definitions};
 const defaultProps = {
   mergingStepsArray: mergingStepsArray,
   flows: [{name: "customerJSONFlow", steps: [{stepName: "mergeCustomers"}, {stepName: "mergeCustomers123"}]}, {name: "customerXMLFlow", steps: [{stepName: "mergeCustomers123"}]}],
-  entityName: customerEntityDef.info.title,
+  entityName: customerEntityDef[0]["entityModel"].info.title,
   deleteMergingArtifact: jest.fn(),
   createMergingArtifact: jest.fn(),
   canReadMatchMerge: true,
