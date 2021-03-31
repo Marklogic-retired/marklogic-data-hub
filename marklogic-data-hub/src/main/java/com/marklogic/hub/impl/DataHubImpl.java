@@ -73,7 +73,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @Component
 public class DataHubImpl implements DataHub, InitializingBean {
@@ -674,6 +673,10 @@ public class DataHubImpl implements DataHub, InitializingBean {
         List<Command> granularPrivilegeCommands = new ArrayList<>();
         granularPrivilegeCommands.add(new CreateGranularPrivilegesCommand(hubConfig));
         commandMap.put("hubGranularPrivilegeCommands", granularPrivilegeCommands);
+
+        List<Command> defaultTDEsCommand = new ArrayList<>();
+        defaultTDEsCommand.add(new DeployHubDefaultTdesCommand(hubConfig));
+        commandMap.put("hubDefaultTDEsCommand", defaultTDEsCommand);
 
         return commandMap;
     }
