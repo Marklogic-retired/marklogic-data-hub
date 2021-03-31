@@ -22,17 +22,21 @@ describe("Entity Modeling: Writer Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteEntities("Patient");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Create an entity with property that already exists", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
@@ -186,6 +190,7 @@ describe("Entity Modeling: Writer Role", () => {
     entityTypeTable.getSaveEntityIcon("User3").click();
     confirmationModal.getSaveEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
+    cy.waitForAsyncRequest();
     confirmationModal.getSaveEntityText().should("exist");
     confirmationModal.getSaveEntityText().should("not.exist");
     //Entity
@@ -318,6 +323,7 @@ describe("Entity Modeling: Writer Role", () => {
     //Save Changes
     modelPage.getSaveAllButton().click();
     confirmationModal.getYesButton(ConfirmationType.SaveAll).click();
+    cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");
     confirmationModal.getSaveAllEntityText().should("not.exist");
     modelPage.getEntityModifiedAlert().should("not.exist");

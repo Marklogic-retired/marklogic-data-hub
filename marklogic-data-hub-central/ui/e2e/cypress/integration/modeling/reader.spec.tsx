@@ -19,12 +19,14 @@ describe("Entity Modeling: Reader Role", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
   });
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
     // Removed navigation tests unitl DHFPROD-6152 is resolved

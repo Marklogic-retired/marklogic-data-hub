@@ -13,17 +13,21 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     //clearing all the saved queries
     cy.loginAsDeveloper().withRequest();
     cy.deleteSavedQueries();
+    cy.waitForAsyncRequest();
   });
   it("Apply facet search,open save modal, save new query", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

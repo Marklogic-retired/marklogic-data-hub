@@ -290,6 +290,7 @@ class LoadPage {
   addStepToNewFlowListView(stepName: string) {
     cy.findByLabelText(`${stepName}-add-icon`).click();
     this.addToNewFlow(stepName).click({force: true});
+    cy.waitForAsyncRequest();
   }
 
   existingFlowsList(stepName: string) {

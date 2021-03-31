@@ -14,12 +14,19 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
