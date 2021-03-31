@@ -256,10 +256,6 @@ class Flow {
     this.globalContext.targetDatabase = combinedOptions.targetDatabase || this.globalContext.targetDatabase;
     this.globalContext.sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
 
-    if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
-      let batchDoc = this.datahub.jobs.createBatch(jobDoc, flowStep, stepNumber);
-      this.globalContext.batchId = batchDoc.batch.batchId;
-    }
 
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
@@ -302,7 +298,22 @@ class Flow {
     }
 
     this.writeProvenanceData(jobId, flowName, stepDefinition, flowStep);
-    this.updateBatchDocument(flowName, flowStep, combinedOptions, items, writeTransactionInfo);
+
+    //write batch data if required. This is defered until after the batch is complete to handle onFailure properly
+    if (!(
+        combinedOptions.batchOutput === 'never' ||
+        (combinedOptions.batchOutput === 'onFailure' && !this.globalContext.failedItems.length) ||
+        combinedOptions.disableJobOutput
+      )) {
+
+      let batchStatus = "finished";
+      if (this.globalContext.failedItems.length) {
+        batchStatus = this.globalContext.completedItems.length ? "finished_with_errors" : "failed";
+      }
+
+      let batchDoc = this.datahub.jobs.insertBatch(jobDoc, flowStep, stepNumber, batchStatus, this.globalContext.completedItems, this.globalContext.batchErrors[0], combinedOptions);
+      this.globalContext.batchId = batchDoc.batch.batchId;
+    }
 
     let resp = {
       "jobId": this.globalContext.jobId,
@@ -503,29 +514,6 @@ class Flow {
       "stackFrames": error.stackFrames,
       "uri": uri
     });
-  }
-
-  /**
-   * Updates the batch document based on what's in the globalContext. This doesn't care about interceptors at all,
-   * as those don't have any impact on the "items" that were the input to this transaction.
-   *
-   * @param flowName
-   * @param flowStep
-   * @param combinedOptions
-   * @param items
-   * @param writeTransactionInfo
-   */
-  updateBatchDocument(flowName, flowStep, combinedOptions = {}, items, writeTransactionInfo) {
-    if (!combinedOptions.noBatchWrite && !combinedOptions.disableJobOutput) {
-      let batchStatus = "finished";
-      if (this.globalContext.failedItems.length) {
-        batchStatus = this.globalContext.completedItems.length ? "finished_with_errors" : "failed";
-      }
-      jobsMod.updateBatch(
-        this.datahub, this.globalContext.jobId, this.globalContext.batchId, flowName, flowStep, batchStatus, items,
-        writeTransactionInfo, this.globalContext.batchErrors[0], combinedOptions
-      );
-    }
   }
 
   /**

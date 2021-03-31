@@ -231,15 +231,21 @@ class Jobs {
    * than the Job document that is persisted, which has "job" as its only key.
    * @param flowStep the step as defined in the flow being executed
    * @param stepNumber the number of the step as defined in the flow being executed
+   * @param batchStatus the status of the completed batch
+   * @param items the list of uris updated by the batch execution
+   * @param error the error returned by the batch execution (if any)
+   * @param combinedOptions the options passed to the flow.  Used to determine if processed item hashes should be
+   * added to the batch document.
    * @returns {any}
    */
-  createBatch(job, flowStep, stepNumber) {
+  
+  insertBatch(job, flowStep, stepNumber, batchStatus, items, error, combinedOptions) {
     let requestTimestamp = xdmp.requestTimestamp();
     let reqTimeStamp = (requestTimestamp) ? xdmp.timestampToWallclock(requestTimestamp) : fn.currentDateTime();
 
     const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
 
-    let batch = {
+    let batchExecution = {
       batch: {
         jobId: job.jobId,
         batchId: sem.uuidString(),
@@ -247,24 +253,47 @@ class Jobs {
         stepId : stepId,
         step: flowStep,
         stepNumber: stepNumber,
-        batchStatus: "started",
-        timeStarted:  fn.currentDateTime(),
-        timeEnded: "N/A",
+        batchStatus: batchStatus,
+        timeStarted: fn.currentDateTime(),
+        timeEnded: fn.currentDateTime().add(xdmp.elapsedTime()),
         hostName: xdmp.hostName(),
         reqTimeStamp: reqTimeStamp,
         reqTrnxID: xdmp.transaction(),
         writeTimeStamp: null,
         writeTrnxID: null,
-        uris:[]
+        uris: items
       }
     };
 
+    // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
+    if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
+      // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
+      const prefix = flowName + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
+      batchExecution.batch.processedItemHashes = items.map(item => xdmp.hash64(prefix + item));
+    }
+
+    if(error){
+      // Sometimes we don't get the stackFrames
+      if (error.stackFrames) {
+        let stackTraceObj = error.stackFrames[0];
+        batchExecution.batch.fileName = stackTraceObj.uri;
+        batchExecution.batch.lineNumber = stackTraceObj.line;
+        // If we don't get stackFrames, see if we can get the stack
+      } else if (error.stack) {
+        batchExecution.batch.errorStack = error.stack;
+      }
+      batchExecution.batch.error = `${error.name || error.code}: ${error.message}`;
+      // Include the complete error so that this module doesn't have to have knowledge of everything that a step or flow
+      // may add to the error, such as the URI of the failed document
+      batchExecution.batch.completeError = error;
+    }
+
     hubUtils.writeDocument(
-      "/jobs/batches/" + batch.batch.batchId + ".json", batch,
+      "/jobs/batches/" + batchExecution.batch.batchId + ".json", batchExecution,
       this.jobPermissions, ['Jobs','Batch'], this.config.JOBDATABASE
     );
 
-    return batch;
+    return batchExecution;
   }
 
   getBatchDocs(jobId, step=null) {
@@ -380,48 +409,6 @@ module.exports.updateJob = module.amp(
     return resp;
   });
 
-module.exports.updateBatch = module.amp(
-  // TODO Should simplify the number of args here.  It's only called in one place, which means the caller - which
-  // has all of these parameters - should update the batch doc and then send it here to be updated via an amp.
-  function updateBatch(datahub, jobId, batchId, flowName, flowStep, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
-    let docObj = datahub.jobs.getBatchDoc(jobId, batchId);
-    if(!docObj) {
-      throw new Error("Unable to find batch document: "+ batchId);
-    }
-
-    docObj.batch.batchStatus = batchStatus;
-    docObj.batch.uris = items;
-
-    // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
-    if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
-      const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
-      // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
-      const prefix = flowName + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
-      docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(prefix + item));
-    }
-
-    if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
-      docObj.batch.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
-    }
-    if(error){
-      // Sometimes we don't get the stackFrames
-      if (error.stackFrames) {
-        let stackTraceObj = error.stackFrames[0];
-        docObj.batch.fileName = stackTraceObj.uri;
-        docObj.batch.lineNumber = stackTraceObj.line;
-        // If we don't get stackFrames, see if we can get the stack
-      } else if (error.stack) {
-        docObj.batch.errorStack = error.stack;
-      }
-      docObj.batch.error = `${error.name || error.code}: ${error.message}`;
-      // Include the complete error so that this module doesn't have to have knowledge of everything that a step or flow
-      // may add to the error, such as the URI of the failed document
-      docObj.batch.completeError = error;
-    }
-    docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
-    docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
-    hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissions, ['Jobs','Batch'], datahub.config.JOBDATABASE);
-  });
 module.exports.Jobs = Jobs;
 
 
