@@ -338,7 +338,7 @@ describe("Advanced step settings", () => {
     let getByText, getByLabelText, queryAllByText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettings {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedCustomLoad} />
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -359,6 +359,8 @@ describe("Advanced step settings", () => {
     expect(queryAllByText("Invalid JSON").length === 0);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
+    fireEvent.change(getByLabelText("options-textarea"), {target: {value: ""}});
+    expect(queryAllByText("Invalid JSON").length === 0);
 
     // Invalid JSON
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
@@ -367,13 +369,17 @@ describe("Advanced step settings", () => {
     expect(queryAllByText("Invalid JSON").length === 2);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 3);
+    fireEvent.change(getByLabelText("options-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
+    expect(queryAllByText("Invalid JSON").length === 4);
 
     // Valid JSON
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: "{\"goodJSON\": true}"}});
-    expect(queryAllByText("Invalid JSON").length === 2);
+    expect(queryAllByText("Invalid JSON").length === 3);
     fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: "{\"goodJSON\": true}"}});
-    expect(queryAllByText("Invalid JSON").length === 1);
+    expect(queryAllByText("Invalid JSON").length === 2);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"goodJSON\": true}"}});
+    expect(queryAllByText("Invalid JSON").length === 1);
+    fireEvent.change(getByLabelText("options-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 0);
 
   });

@@ -271,22 +271,34 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   const getPayload = () => {
-    return {
+    let payload = 
+    {
       collections: defaultCollections,
       additionalCollections: additionalCollections,
-      sourceDatabase: usesSourceDatabase ? sourceDatabase: null,
       targetDatabase: targetDatabase,
       targetFormat: targetFormat,
       permissions: targetPermissions,
       headers: isEmptyString(headers) ? {} : parseJSON(headers),
       interceptors: isEmptyString(interceptors) ? [] : parseJSON(interceptors),
       provenanceGranularityLevel: provGranularity,
-      validateEntity: validateEntity,
       batchSize: batchSize,
       customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
-      targetCollections: usesAdvancedTargetCollections ? targetCollections : undefined,
-      additionalSettings: stepType === "custom" || isCustomIngestion ? parseJSON(additionalSettings) : {}
     };
+
+    if (usesSourceDatabase) {
+      payload["sourceDatabase"] = sourceDatabase;
+    }
+    if (stepType === "custom" || isCustomIngestion) {
+      payload["additionalSettings"] = parseJSON(additionalSettings);
+    }
+    if (stepType === "mapping") {
+      payload["validateEntity"] = validateEntity;
+    }
+    if (usesAdvancedTargetCollections) {
+      payload["targetCollections"] = targetCollections;
+    }
+
+    return payload;
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -859,6 +871,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               aria-label="options-textarea"
               onBlur={handleBlur}
             />
+            { !additionalSettingsValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
             <div className={styles.selectTooltip}>
               <MLTooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
