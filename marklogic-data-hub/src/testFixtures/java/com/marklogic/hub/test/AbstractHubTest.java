@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Abstract base class for tests that depend on a HubConfigImpl (which generally means they depend on both a HubClient
  * and a HubProject).
@@ -410,6 +412,18 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         return response;
     }
 
+    /**
+     * Convenience method for running a flow when it's expected to finish successfully.
+     *
+     * @param flowInputs
+     * @return
+     */
+    protected RunFlowResponse runSuccessfulFlow(FlowInputs flowInputs) {
+        RunFlowResponse response = runFlow(flowInputs);
+        assertEquals("finished", response.getJobStatus(), "Unexpected job status: " + response.toJson());
+        return response;
+    }
+
     protected void waitForReindex(HubClient hubClient, String database){
         String query = "(\n" +
             "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
@@ -506,13 +520,32 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     }
 
     /**
-     * @return a count of documents in the "job" collection - i.e. actual "Job" documents.
+     * @return a count of legacy (DHF 4) job documents; these are in the "job" collection while DHF job documents are
+     * in the "Job" collection
      */
-    protected int getJobDocCount() {
+    protected int getLegacyJobDocCount() {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, "job");
     }
 
-    protected int getJobDocCount(String collection) {
+    /**
+     * @return count of DHF 5 job documents
+     */
+    protected int getJobDocCount() {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, "Job");
+    }
+
+    /**
+     * @return count of DHF 5 batch documents
+     */
+    protected int getBatchDocCount() {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, "Batch");
+    }
+
+    /**
+     * @param collection
+     * @return the number of documents in the given collection in the Jobs database
+     */
+    protected int getJobsDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
     }
 

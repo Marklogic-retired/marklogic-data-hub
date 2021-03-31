@@ -17,7 +17,6 @@ package com.marklogic.hub.legacy.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
@@ -121,13 +120,13 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
 
     @Test
     public void deleteOneJob() {
-        assertEquals(4, getJobDocCount());
+        assertEquals(4, getLegacyJobDocCount());
         assertEquals(8, getTracingDocCount());
         String jobs = jobIds.get(1);
 
         JobDeleteResponse actual = jobManager.deleteJobs(jobs);
 
-        assertEquals(3, getJobDocCount());
+        assertEquals(3, getLegacyJobDocCount());
         assertEquals(6, getTracingDocCount());
         assertEquals(1, actual.totalCount);
         assertEquals(0, actual.errorCount);
@@ -143,13 +142,13 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     @Test
     public void deleteMultipleJobs() {
         assertEquals(3, jobIds.size());
-        assertEquals(4, getJobDocCount());
+        assertEquals(4, getLegacyJobDocCount());
         assertEquals(8, getTracingDocCount());
         String jobs = jobIds.get(0) + "," + jobIds.get(2);
 
         JobDeleteResponse actual = jobManager.deleteJobs(jobs);
 
-        assertEquals(2, getJobDocCount());
+        assertEquals(2, getLegacyJobDocCount());
         assertEquals(4, getTracingDocCount());
         assertEquals(2, actual.totalCount);
         assertEquals(0, actual.errorCount);
@@ -167,7 +166,7 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     public void deleteInvalidJob() {
         JobDeleteResponse actual = jobManager.deleteJobs("InvalidId");
 
-        assertEquals(4, getJobDocCount());
+        assertEquals(4, getLegacyJobDocCount());
         assertEquals(8, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(1, actual.errorCount);
@@ -177,7 +176,7 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     public void deleteEmptyStringJob() {
         JobDeleteResponse actual = jobManager.deleteJobs("");
 
-        assertEquals(4, getJobDocCount());
+        assertEquals(4, getLegacyJobDocCount());
         assertEquals(8, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(0, actual.errorCount);
@@ -187,7 +186,7 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     public void deleteNullJob() {
         JobDeleteResponse actual = jobManager.deleteJobs(null);
 
-        assertEquals(4, getJobDocCount());
+        assertEquals(4, getLegacyJobDocCount());
         assertEquals(8, getTracingDocCount());
         assertEquals(0, actual.totalCount);
         assertEquals(0, actual.errorCount);
@@ -275,12 +274,12 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
         resetDatabases();
         runAsFlowDeveloper();
 
-        assertEquals(0, getJobDocCount());
+        assertEquals(0, getLegacyJobDocCount());
         assertEquals(0, getTracingDocCount());
 
         jobManager.importJobs(Paths.get(url.toURI()));
 
-        assertEquals(4, getJobDocCount());
+        assertEquals(4, getLegacyJobDocCount());
         assertEquals(8, getTracingDocCount());
 
         // Check one of the (known) JSON trace documents to make sure it was loaded as JSON

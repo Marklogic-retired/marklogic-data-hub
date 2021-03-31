@@ -34,7 +34,7 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     protected void verifyAmps() {
         AmpManager ampManager = new AmpManager(hubConfig.getManageClient());
         List<String> ampNames = ampManager.getAsXml().getListItemNameRefs();
-        Stream.of("updateBatch", "updateJob", "map-to-xml", "construct-type", "locked-uris", "post-bulk-documents",
+        Stream.of("updateJob", "map-to-xml", "construct-type", "locked-uris", "post-bulk-documents",
             "do-refresh-extension-metadata", "xdmp-add-response-header", "xdmp-add-response-header").forEach(name -> {
             verify(ampNames.contains(name), "Expected amp to have been created: " + name);
         });

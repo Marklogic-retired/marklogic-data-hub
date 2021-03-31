@@ -14,6 +14,7 @@
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const config = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
@@ -24,7 +25,11 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
       jobId = sem.uuidString();
     }
     job = buildNewJob(jobId, flowName);
-    hubUtils.writeDocument("/jobs/" + jobId + ".json", job, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
+    const jobUri = "/jobs/" + jobId + ".json";
+    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting job document with URI '${jobUri}`);
+    }
+    hubUtils.writeDocument(jobUri, job, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
     return job;
   }
 
@@ -190,54 +195,75 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
    *
    * @param job the Job associated with this Batch. This is expected to be a JSON object with jobId as a key, rather
    * than the Job document that is persisted, which has "job" as its only key.
-   * @param flowStep the step as defined in the flow being executed
-   * @param stepNumber the number of the step as defined in the flow being executed
-   * @returns {any}
+   * @param stepExecutionContext
+   * @param batchItems {array}
+   * @param writeTransactionInfo
+   * @returns {object} the inserted Batch document
    */
-  function createBatch(job, flowStep, stepNumber) {
-    let requestTimestamp = xdmp.requestTimestamp();
-    let reqTimeStamp = (requestTimestamp) ? xdmp.timestampToWallclock(requestTimestamp) : fn.currentDateTime();
+  function insertBatch(job, stepExecutionContext, batchItems, writeTransactionInfo) {
+    const timestamp = xdmp.requestTimestamp() ? xdmp.timestampToWallclock(xdmp.requestTimestamp()) : fn.currentDateTime();
 
+    const flowStep = stepExecutionContext.flowStep;
     const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
+    const batchStatus = stepExecutionContext.getBatchStatus();
 
-    let batch = {
+    // Per DHFPROD-2445, ensure that runtime options are included
+    const flowStepWithOptions = Object.assign({}, flowStep, 
+      {"options": Object.assign({}, flowStep.options, stepExecutionContext.combinedOptions)}
+    );
+
+    let batchExecution = {
       batch: {
         jobId: job.jobId,
         batchId: sem.uuidString(),
         flowName: job.flow,
         stepId : stepId,
-        step: flowStep,
-        stepNumber: stepNumber,
-        batchStatus: "started",
-        timeStarted:  fn.currentDateTime(),
-        timeEnded: "N/A",
+        step: flowStepWithOptions,
+        stepNumber: stepExecutionContext.stepNumber,
+        batchStatus: batchStatus,
+        timeStarted: fn.currentDateTime(),
+        timeEnded: fn.currentDateTime().add(xdmp.elapsedTime()),
         hostName: xdmp.hostName(),
-        reqTimeStamp: reqTimeStamp,
+        reqTimeStamp: timestamp,
         reqTrnxID: xdmp.transaction(),
-        writeTimeStamp: null,
-        writeTrnxID: null,
-        uris:[]
+        writeTimeStamp: writeTransactionInfo.timestamp,
+        writeTrnxID: writeTransactionInfo.dateTime,
+        uris: batchItems
       }
     };
 
-    hubUtils.writeDocument(
-      "/jobs/batches/" + batch.batch.batchId + ".json", batch, buildJobPermissions(), ['Jobs','Batch'], config.JOBDATABASE
-    );
+    // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
+    const combinedOptions = stepExecutionContext.combinedOptions;
+    if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
+      // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
+      const prefix = stepExecutionContext.flow.name + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
+      batchExecution.batch.processedItemHashes = batchItems.map(item => xdmp.hash64(prefix + item));
+    }
 
-    return batch;
-  }
+    const firstError = stepExecutionContext.batchErrors.length ? stepExecutionContext.batchErrors[0] : null;
+    if (firstError){
+      // Sometimes we don't get the stackFrames
+      if (firstError.stackFrames) {
+        let stackTraceObj = firstError.stackFrames[0];
+        batchExecution.batch.fileName = stackTraceObj.uri;
+        batchExecution.batch.lineNumber = stackTraceObj.line;
+        // If we don't get stackFrames, see if we can get the stack
+      } else if (firstError.stack) {
+        batchExecution.batch.errorStack = firstError.stack;
+      }
+      batchExecution.batch.error = `${firstError.name || firstError.code}: ${firstError.message}`;
+      // Include the complete error so that this module doesn't have to have knowledge of everything that a step or flow
+      // may add to the error, such as the URI of the failed document
+      batchExecution.batch.completeError = firstError;
+    }
 
-  function getBatchDoc(jobId, batchId) {
-    return fn.head(hubUtils.invokeFunction(function () {
-      const batchDoc = fn.head(cts.search(
-        cts.andQuery([
-          cts.directoryQuery("/jobs/batches/"),
-          cts.jsonPropertyValueQuery("jobId", jobId),
-          cts.jsonPropertyValueQuery("batchId", batchId)
-        ]), "unfiltered"
-      ));
-      return batchDoc ? batchDoc.toObject() : null;
-    }, config.JOBDATABASE));
+    const batchUri = "/jobs/batches/" + batchExecution.batch.batchId + ".json";
+    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting batch document with URI '${batchUri}'`);
+    }
+    hubUtils.writeDocument(batchUri, batchExecution, buildJobPermissions(), ['Jobs','Batch'], config.JOBDATABASE);
+
+    return batchExecution;
   }
 
   /**
@@ -289,75 +315,27 @@ module.exports = {
   buildNewJob,
   createJob,
   createJobReport,
-  createBatch,
   getJob,
   getJobDocs,
   getJobDocsByFlow,
   getJobDocsForFlows,
-  getRequiredJob
+  getRequiredJob,
+  insertBatch
 }
 
 /**
  * This function is amped to allow for the Job document to be updated by users that do not have the required
  * roles that permit doing so.
  */
-module.exports.updateJob = module.amp(
+ module.exports.updateJob = module.amp(
   function updateJob(jobDoc) {
     const jobId = jobDoc.job.jobId;
-    //console.log("updating: " + jobId + "; " + buildJobPermissions());
-    hubUtils.writeDocument("/jobs/" + jobId + ".json", jobDoc, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
+    const jobUri = "/jobs/" + jobId + ".json";
+    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Updating job document with URI '${jobUri}`);
+    }
+    hubUtils.writeDocument(jobUri, jobDoc, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
     return null;
   }
 );
-
-module.exports.updateBatch = module.amp(
-  function updateBatch(stepExecutionContext, items, writeTransactionInfo) {
-    const jobId = stepExecutionContext.jobId;
-    const batchId = stepExecutionContext.batchId;
-
-    const docObj = getBatchDoc(jobId, batchId);
-    if(!docObj) {
-      throw new Error("Unable to find batch document: "+ batchId);
-    }
-
-    const batchStatus = stepExecutionContext.getBatchStatus();
-    docObj.batch.batchStatus = batchStatus;
-    docObj.batch.uris = items;
-
-    const combinedOptions = stepExecutionContext.combinedOptions;
-
-    // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
-    if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
-      const flowStep = stepExecutionContext.flowStep;
-      const flowName = stepExecutionContext.flow.name;
-      const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
-      // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
-      const prefix = flowName + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
-      docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(prefix + item));
-    }
-
-    if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
-      docObj.batch.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
-    }
-
-    const error = stepExecutionContext.batchErrors[0];
-    if(error){
-      // Sometimes we don't get the stackFrames
-      if (error.stackFrames) {
-        let stackTraceObj = error.stackFrames[0];
-        docObj.batch.fileName = stackTraceObj.uri;
-        docObj.batch.lineNumber = stackTraceObj.line;
-        // If we don't get stackFrames, see if we can get the stack
-      } else if (error.stack) {
-        docObj.batch.errorStack = error.stack;
-      }
-      docObj.batch.error = `${error.name || error.code}: ${error.message}`;
-      // Include the complete error so that this module doesn't have to have knowledge of everything that a step or flow
-      // may add to the error, such as the URI of the failed document
-      docObj.batch.completeError = error;
-    }
-    docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
-    docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
-    hubUtils.writeDocument("/jobs/batches/" + batchId + ".json", docObj, buildJobPermissions(), ['Jobs', 'Batch'], config.JOBDATABASE);
-  });
 

@@ -71,11 +71,7 @@ public class HubProjectTest extends AbstractHubCoreTest {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-reader.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/data-hub-entity-model-writer.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/hub-central-entity-exporter.json").exists());
-
-
-        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/amps/amps-dhf-update-batch.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/amps/amps-dhf-update-job.json").exists());
-
         assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/modules-database.json").exists());
