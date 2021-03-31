@@ -72,7 +72,7 @@ function defaultArtifact(artifactName) {
     sourceDatabase: config.FINALDATABASE,
     targetDatabase: config.FINALDATABASE,
     permissions: defaultPermissions,
-    targetEntity: "Change this to a valid entity type name; e.g. Customer",
+    targetEntityType: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('mastering-summary')",
     provenanceGranularityLevel: 'coarse',
     collections: [],
