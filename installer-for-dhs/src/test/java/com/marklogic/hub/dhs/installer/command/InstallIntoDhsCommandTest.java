@@ -100,9 +100,10 @@ public class InstallIntoDhsCommandTest extends AbstractSimpleHubTest {
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
+        assertTrue(commands.get(index++) instanceof DeployHubDefaultTdesCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
         assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
-        assertEquals(15, commands.size());
+        assertEquals(16, commands.size());
 
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
@@ -113,7 +114,7 @@ public class InstallIntoDhsCommandTest extends AbstractSimpleHubTest {
         assertFalse(filter.accept(dir, "flow-operator-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
         assertFalse(filter.accept(dir, "data-hub-admin-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
 
-        CreateGranularPrivilegesCommand createGranularPrivilegesCommand = (CreateGranularPrivilegesCommand) commands.get(14);
+        CreateGranularPrivilegesCommand createGranularPrivilegesCommand = (CreateGranularPrivilegesCommand) commands.get(15);
         List<String> names = createGranularPrivilegesCommand.getGroupNames();
         assertEquals("Evaluator", names.get(0));
         assertEquals("Curator", names.get(1));
