@@ -59,6 +59,14 @@ const MappingStepDetail: React.FC = () => {
     setOpenStepSettings,
     setStepOpenOptions} = useContext(CurationContext);
 
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
   const canReadOnly = authorityService.canReadMapping();
@@ -105,9 +113,17 @@ const MappingStepDetail: React.FC = () => {
 
   //For Entity table
   const [tgtEntityReferences, setTgtEntityReferences] = useState({});
-  let EntitYTableKeyIndex = 0;
+  let EntityTableKeyIndex = 100;
   let sourceTableKeyIndex = 0;
+  let firstRowTableKeyIndex = 0;
+  let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   let tgtRefs:any = {};
+  const [relatedEntityTypeProperties, setRelatedEntityTypeProperties] = useState<any[]>([]);
+  const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
+  const [includedEntityTypeProperties, setIncludedEntityTypeProperties] = useState<any[]>([]);
+  const [includedEntitiesSelected, setIncludedEntitiesSelected] = useState<any[]>([]);
+  const previousSelected : any = usePrevious(relatedEntitiesSelected);
+  const [rootRelatedMappings, setRootRelatedMappings] = useState<any[]>([]);
 
   //For storing docURIs
   const [docUris, setDocUris] = useState<any[]>([]);
@@ -123,6 +139,8 @@ const MappingStepDetail: React.FC = () => {
   const [sourceFormat, setSourceFormat] = useState("");
   const [docNotFound, setDocNotFound] = useState(false);
   const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
+
+  const tableColors = ["#e4f1f4", "#f0f9f5", "#fae9d3", "#f6e2e9", "#edecf5", "#f0e8ed", "#e0e1ea", "#e6eff6", "#f0f6d9", "#fff5d7", "#ecfaf7", "#ecfae2", "#dcebf3", "#f3dbd8", "#f1eef5", "#dee2ed", "#effadd", "#fae3df", "#f6f7f8"];
 
   //For Column Option dropdown checkboxes
   const [checkedEntityColumns, setCheckedEntityColumns] = useState({
@@ -455,11 +473,28 @@ const MappingStepDetail: React.FC = () => {
   const extractEntityInfoForTable = async () => {
     let resp = await getNestedEntities(curationOptions.activeStep.entityName);
     if (resp && resp.status === 200) {
-      let entProps = resp.data && resp.data.definitions ? resp.data.definitions[curationOptions.activeStep.entityName].properties : {};
+      let rootEntityName = curationOptions.activeStep.entityName;
+      let entProps = resp.data && resp.data[0]["entityModel"].definitions ? resp.data[0]["entityModel"].definitions[rootEntityName].properties : {};
       let entEntityTempData: any = [];
       let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
       setEntityTypeProperties([...nestedEntityProps]);
       setTgtEntityReferences({...tgtRefs});
+      setRootRelatedMappings(resp.data[0]["relatedEntityMappings"]);
+      if (resp.data[0]["relatedEntityMappings"] && resp.data[0]["relatedEntityMappings"].length > 0) {
+        resp.data.forEach(entityObject => {
+          let relatedEntityName = entityObject["entityType"];
+          if (relatedEntityName !== curationOptions.activeStep.entityName && entityObject["entityModel"].definitions && entityObject.mappingTitle && entityObject["entityMappingId"]) {
+            let relatedEntProps = entityObject["entityModel"].definitions[relatedEntityName].properties;
+            let relatedEntityTempData: any =[];
+            let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData);
+            if (/:(.*?)\./.exec(entityObject["entityMappingId"])![1] === curationOptions.activeStep.entityName) {
+              setRelatedEntityTypeProperties(prevState => ([...prevState, {entityType: entityObject.entityType, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps}]));
+            } else {
+              setIncludedEntityTypeProperties(prevState => ([...prevState, {entityType: entityObject.entityType, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps}]));
+            }
+          }
+        });
+      }
     }
   };
 
@@ -468,18 +503,18 @@ const MappingStepDetail: React.FC = () => {
 
     Object.keys(entProps).forEach(key => {
       let val = entProps[key];
-
+      let propty;
       if (val.hasOwnProperty("subProperties")) {
         let dataTp = getDatatype(val);
         parentKey = parentKey ? parentKey + "/" + key : key;
-        EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
+        EntityTableKeyIndex = EntityTableKeyIndex + 1;
         if (val.$ref || val.items.$ref) {
           let ref = val.$ref ? val.$ref : val.items.$ref;
           tgtRefs[parentKey] = ref;
         }
 
-        let propty = {
-          key: EntitYTableKeyIndex,
+        propty = {
+          key: EntityTableKeyIndex,
           name: parentKey,
           type: dataTp,
           children: []
@@ -490,12 +525,25 @@ const MappingStepDetail: React.FC = () => {
 
       } else {
         let dataTp = getDatatype(val);
-        EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
-        let propty = {
-          key: EntitYTableKeyIndex,
-          name: parentKey ? parentKey + "/" + key : key,
-          type: dataTp
-        };
+        if (val.hasOwnProperty("relatedEntityType") && val.hasOwnProperty("joinPropertyName")) {
+          let relatedEntType = val["relatedEntityType"];
+          let joinPropName = val["joinPropertyName"];
+          EntityTableKeyIndex = EntityTableKeyIndex + 1;
+          propty = {
+            key: EntityTableKeyIndex,
+            name: parentKey ? parentKey + "/" + key : key,
+            type: dataTp,
+            relatedEntityType: relatedEntType,
+            joinPropertyName: joinPropName
+          };
+        } else {
+          EntityTableKeyIndex = EntityTableKeyIndex + 1;
+          propty = {
+            key: EntityTableKeyIndex,
+            name: parentKey ? parentKey + "/" + key : key,
+            type: dataTp,
+          };
+        }
         nestedEntityData.push(propty);
       }
     });
@@ -587,6 +635,30 @@ const MappingStepDetail: React.FC = () => {
     });
   }, [sourceData]);
 
+  useEffect(() => {
+    if (previousSelected) {
+      if (includedEntitiesSelected.length > 0 && previousSelected.length > relatedEntitiesSelected.length) {
+        let removedEntities = previousSelected.filter(entity => relatedEntitiesSelected.indexOf(entity) < 0);
+        checkRemoveEntityDependencies(removedEntities);
+      }
+    }
+
+  }, [relatedEntitiesSelected]);
+
+  const checkRemoveEntityDependencies = (removedEntities) => {
+    removedEntities.forEach(entity => {
+      if (entity.relatedEntityMappings.length < 1) {
+        return;
+      } else {
+        entity.relatedEntityMappings.forEach(relatedMapping => {
+          let relatedEntityId : any = relatedMapping["entityMappingId"];
+          setIncludedEntitiesSelected(prevState => prevState.filter(entity => entity["entityMappingId"].substring(0, entity["entityMappingId"].indexOf(".")) !== relatedEntityId.substring(0, relatedEntityId.indexOf("."))));
+        });
+      }
+      return;
+    });
+  };
+
   //Set the collapse/Expand options for Source table, when mapping opens up.
   const initializeSourceExpandKeys = () => {
     let initialKeysToExpand:any = [];
@@ -603,7 +675,7 @@ const MappingStepDetail: React.FC = () => {
   //Set the collapse/Expand options for Entity table, when mapping opens up.
   const initializeEntityExpandKeys = () => {
     let initialKeysToExpand:any = [];
-    initialKeysToExpand.push(0); //first row with entity title should be expanded by default
+    initialKeysToExpand.push(...firstRowKeys);
     entityTypeProperties.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.key);
@@ -1184,7 +1256,7 @@ const MappingStepDetail: React.FC = () => {
       setEntityExpandedKeys([]);
       setExpandedEntityFlag(false);
     } else {
-      setEntityExpandedKeys([...keys]);
+      setEntityExpandedKeys([...keys, ...firstRowKeys]);
       setExpandedEntityFlag(true);
     }
   };
@@ -1362,6 +1434,8 @@ const MappingStepDetail: React.FC = () => {
                 entityTypeTitle={curationOptions.activeStep.entityName}
                 checkedEntityColumns={checkedEntityColumns}
                 entityTypeProperties={entityTypeProperties}
+                entityMappingId={""}
+                relatedMappings={rootRelatedMappings}
                 entityExpandedKeys={entityExpandedKeys}
                 setEntityExpandedKeys={setEntityExpandedKeys}
                 allEntityKeys={allEntityKeys}
@@ -1369,7 +1443,91 @@ const MappingStepDetail: React.FC = () => {
                 initialEntityKeys={initialEntityKeys}
                 tooltipsData={AdvMapTooltips}
                 updateStep={UpdateMappingArtifact}
+                relatedEntityTypeProperties={relatedEntityTypeProperties}
+                setRelatedEntitiesSelected={setRelatedEntitiesSelected}
+                isRelatedEntity={false}
+                tableColor="#EAE9EE"
+                firstRowTableKeyIndex={firstRowTableKeyIndex++}
+                includedEntityTypeProperties={[]}
+                includedEntitiesSelected={[]}
+                setIncludedEntitiesSelected={[]}
               />
+              {relatedEntitiesSelected.map(entity =>
+                <EntityMapTable
+                  mapResp={mapResp}
+                  mapData={mapData}
+                  setMapResp={setMapResp}
+                  mapExpTouched={mapExpTouched}
+                  setMapExpTouched={setMapExpTouched}
+                  handleExpSubmit={handleExpSubmit}
+                  flatArray={flatArray}
+                  saveMapping={saveMapping}
+                  sourceContext={sourceContext}
+                  setSourceContext={setSourceContext}
+                  dummyNode={dummyNode}
+                  getDataForValueField={getDataForValueField}
+                  getTextForTooltip={getTextForTooltip}
+                  getTextForValueField={getTextForValueField}
+                  canReadWrite={canReadWrite}
+                  entityTypeTitle={entity["entityLabel"]}
+                  checkedEntityColumns={checkedEntityColumns}
+                  entityTypeProperties={entity["entityProps"]}
+                  entityMappingId={entity["entityMappingId"]}
+                  relatedMappings={entity["relatedEntityMappings"]}
+                  entityExpandedKeys={entityExpandedKeys}
+                  setEntityExpandedKeys={setEntityExpandedKeys}
+                  allEntityKeys={allEntityKeys}
+                  setExpandedEntityFlag={setExpandedEntityFlag}
+                  initialEntityKeys={initialEntityKeys}
+                  tooltipsData={AdvMapTooltips}
+                  updateStep={UpdateMappingArtifact}
+                  relatedEntityTypeProperties={relatedEntityTypeProperties}
+                  setRelatedEntitiesSelected={setRelatedEntitiesSelected}
+                  isRelatedEntity={true}
+                  tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
+                  firstRowTableKeyIndex={firstRowTableKeyIndex++}
+                  includedEntityTypeProperties={includedEntityTypeProperties}
+                  includedEntitiesSelected={includedEntitiesSelected}
+                  setIncludedEntitiesSelected={setIncludedEntitiesSelected}
+                />)}
+              {includedEntitiesSelected.map(entity =>
+                <EntityMapTable
+                  mapResp={mapResp}
+                  mapData={mapData}
+                  setMapResp={setMapResp}
+                  mapExpTouched={mapExpTouched}
+                  setMapExpTouched={setMapExpTouched}
+                  handleExpSubmit={handleExpSubmit}
+                  flatArray={flatArray}
+                  saveMapping={saveMapping}
+                  sourceContext={sourceContext}
+                  setSourceContext={setSourceContext}
+                  dummyNode={dummyNode}
+                  getDataForValueField={getDataForValueField}
+                  getTextForTooltip={getTextForTooltip}
+                  getTextForValueField={getTextForValueField}
+                  canReadWrite={canReadWrite}
+                  entityTypeTitle={entity["entityLabel"]}
+                  checkedEntityColumns={checkedEntityColumns}
+                  entityTypeProperties={entity["entityProps"]}
+                  entityMappingId={entity["entityMappingId"]}
+                  relatedMappings={entity["relatedEntityMappings"]}
+                  entityExpandedKeys={entityExpandedKeys}
+                  setEntityExpandedKeys={setEntityExpandedKeys}
+                  allEntityKeys={allEntityKeys}
+                  setExpandedEntityFlag={setExpandedEntityFlag}
+                  initialEntityKeys={initialEntityKeys}
+                  tooltipsData={AdvMapTooltips}
+                  updateStep={UpdateMappingArtifact}
+                  relatedEntityTypeProperties={relatedEntityTypeProperties}
+                  setRelatedEntitiesSelected={setRelatedEntitiesSelected}
+                  isRelatedEntity={true}
+                  tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
+                  firstRowTableKeyIndex={firstRowTableKeyIndex++}
+                  includedEntityTypeProperties={includedEntityTypeProperties}
+                  includedEntitiesSelected={includedEntitiesSelected}
+                  setIncludedEntitiesSelected={setIncludedEntitiesSelected}
+                />)}
             </div>
           </SplitPane>
         </div>

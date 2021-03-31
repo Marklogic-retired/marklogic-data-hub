@@ -270,6 +270,21 @@ ul.ant-cascader-menu:nth-child(2) {
     }
 }
 
+#entityTableContainer { 
+  .ant-table-body {
+    min-height: 12vh;
+    border-radius: 10px;
+  }
+  .ant-table-wrapper {
+    margin-bottom: 20px;
+  }
+}
+
+#rootTableContainer {
+  .ant-table-wrapper {
+    margin-bottom: 20px;
+  }
+}
 .ant-modal-confirm-body{
     margin-top: 18px;
 }

@@ -1,0 +1,17 @@
+{
+  "info": {
+    "title": "ProductType",
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "ProductType": {
+      "properties": {
+        "productType": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

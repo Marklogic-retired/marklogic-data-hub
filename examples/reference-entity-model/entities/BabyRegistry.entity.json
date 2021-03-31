@@ -19,11 +19,11 @@
           "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
           "joinPropertyName": "customerId"
         },
-        "hasProduct": {
+        "includes": {
           "datatype": "array",
           "items": {
             "datatype": "integer",
-            "relatedEntityType": "http://example.org/Product-0.0.1/Product",
+            "relatedEntityType": "http://example.org/Product-1.0.0/Product",
             "joinPropertyName": "productId"
           }
         }

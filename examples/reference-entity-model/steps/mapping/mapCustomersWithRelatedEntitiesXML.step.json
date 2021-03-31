@@ -106,7 +106,7 @@
             "quantity": {
               "sourcedFrom": "*:Quantity"
             },
-            "hasProduct": {
+            "includes": {
               "sourcedFrom": "*:ProductId"
             }
           },
@@ -145,7 +145,7 @@
         "ownedBy": {
           "sourcedFrom": "/customerInfo:Customer/customerInfo:CustomerID"
         },
-        "hasProduct": {
+        "includes": {
           "sourcedFrom": "customerInfo:Products/*:Product/*:ProductId"
         }
       },
