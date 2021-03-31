@@ -24,12 +24,15 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
@@ -37,6 +40,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.deleteSteps("mapping", "mapOrderCustomHeader");
     cy.deleteFlows("orderCustomHeaderFlow", "orderE2eFlow");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Create load step", () => {
     toolbar.getLoadToolbarIcon().click();
@@ -58,14 +62,17 @@ describe("Create and verify load steps, map step and flows with a custom header"
     advancedSettingsDialog.saveSettings(loadStep).should("not.be.exist");
     // add step to a new flow
     loadPage.addStepToNewFlow(loadStep);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", loadStep);
     //Run the ingest with JSON
-    runPage.runStep(loadStep).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(loadStep);
     cy.uploadFile("input/10260.json");
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -121,7 +128,8 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.getExistingFlowFromDropdown(flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName);
-    runPage.runStep(mapStep).click();
+    cy.waitForAsyncRequest();
+    runPage.runStep(mapStep);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
     runPage.deleteStep(mapStep).click();
@@ -152,6 +160,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.be.visible");
     curatePage.runInNewFlow(mapStep).click({force: true});
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
@@ -178,10 +187,14 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.addToNewFlow("Order", mapStep);
+    cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
+    cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Map", mapStep);
     //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
     toolbar.getCurateToolbarIcon().click();

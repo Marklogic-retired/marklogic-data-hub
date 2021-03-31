@@ -67,11 +67,11 @@ class CuratePage {
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.findByTestId(`${entityTypeId}-Merge`).click();
+    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Merge`)).click();
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.findByTestId(`${entityTypeId}-Match`).click();
+    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Match`)).click({force: true});
   }
 
   addNewStep() {

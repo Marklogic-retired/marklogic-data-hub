@@ -16,12 +16,19 @@ describe("json scenario for snippet on browse documents page", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("select \"all entities\" verify docs, hub/entity properties", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

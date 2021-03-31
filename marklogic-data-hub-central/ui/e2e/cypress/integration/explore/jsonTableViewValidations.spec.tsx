@@ -18,9 +18,11 @@ describe("json scenario for table on browse documents page", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
+    cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
@@ -28,6 +30,11 @@ describe("json scenario for table on browse documents page", () => {
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
+  after(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("select \"all entities\" and verify table default columns", () => {
     browsePage.getSelectedEntity().should("contain", "All Entities");

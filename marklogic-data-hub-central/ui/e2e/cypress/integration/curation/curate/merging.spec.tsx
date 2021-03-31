@@ -18,17 +18,21 @@ describe("Merging", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     LoginPage.postLogin();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    cy.waitForAsyncRequest();
   });
   afterEach(() => {
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("merging", "mergeOrderTestStep");
     cy.resetTestUser();
+    cy.waitForAsyncRequest();
   });
   it("Navigate to curate tab and Open Order entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
