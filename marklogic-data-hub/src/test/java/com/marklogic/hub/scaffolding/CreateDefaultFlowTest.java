@@ -17,7 +17,7 @@ public class CreateDefaultFlowTest extends AbstractHubCoreTest {
         File file = new ScaffoldingImpl(getHubConfig()).createDefaultFlow("defaultFlowTest");
         ObjectNode json = readJsonObject(file);
         JsonNode mappingStep = json.get("steps").get("2");
-        
+
         assertEquals("mapping-step", mappingStep.get("name").asText());
         assertEquals(
             "Change this to a valid entity type name; e.g. Customer",

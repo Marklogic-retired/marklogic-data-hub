@@ -176,7 +176,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         else if ("matching".equalsIgnoreCase(stepType) || "merging".equalsIgnoreCase(stepType)){
             assertEquals("query", step.get("selectedSource").asText());
             assertEquals("json", step.get("targetFormat").asText());
-            assertEquals("Change this to a valid entity type name; e.g. Customer", step.get("targetEntity").asText());
+            assertEquals("Change this to a valid entity type name; e.g. Customer", step.get("targetEntityType").asText());
             assertEquals(false, step.get("stepUpdate").asBoolean());
             if ("matching".equalsIgnoreCase(stepType)) {
                 assertNotNull( step.get("matchRulesets"));
