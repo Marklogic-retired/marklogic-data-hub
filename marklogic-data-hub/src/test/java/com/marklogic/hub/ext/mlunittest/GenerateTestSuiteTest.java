@@ -74,7 +74,7 @@ public class GenerateTestSuiteTest extends AbstractHubCoreTest {
         assertEquals(0, getStagingDocCount("stagingTestData"), "The generated test suite should use the " +
             "DH prepareDatabases() helper function to delete documents that are not artifacts");
         assertEquals(0, getFinalDocCount("finalTestData"));
-        assertEquals(0, getJobDocCount("Jobs"), "The prepareDatabases helper function should delete everything " +
+        assertEquals(0, getJobsDocCount("Jobs"), "The prepareDatabases helper function should delete everything " +
             "in the 'Jobs' collection in the jobs database");
     }
 
@@ -89,7 +89,7 @@ public class GenerateTestSuiteTest extends AbstractHubCoreTest {
         writeJsonDoc(getHubClient().getJobsClient(), "/jobDoc.json", "{}", "Jobs");
         assertEquals(1, getStagingDocCount("stagingTestData"));
         assertEquals(1, getFinalDocCount("finalTestData"));
-        assertEquals(1, getJobDocCount("Jobs"));
+        assertEquals(1, getJobsDocCount("Jobs"));
     }
 
     private TestSuiteResult runGeneratedTestSuite(String expectedTestModuleFilename) {

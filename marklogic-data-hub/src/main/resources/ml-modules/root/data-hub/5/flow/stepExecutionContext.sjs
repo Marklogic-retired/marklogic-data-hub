@@ -173,6 +173,20 @@ class StepExecutionContext {
     return "finished";
   }
 
+  batchOutputIsEnabled() {
+    if (this.combinedOptions.disableJobOutput === true || this.combinedOptions.disableJobOutput === "true") {
+      return false;
+    }
+    const value = this.combinedOptions.enableBatchOutput;
+    if (value === "never") {
+      return false;
+    }
+    if (value === "onFailure") {
+      return this.failedItems.length > 0;
+    }
+    return true;
+  }
+
   /**
    * @returns {boolean} true if throwStopError=true in the combined options. The default DHF approach for handling errors
    * is to capture them in the RunFlowResponse (and optionally Batch documents). But in a scenario where that response cannot be 

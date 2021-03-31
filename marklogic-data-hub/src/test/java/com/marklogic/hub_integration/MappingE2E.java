@@ -396,7 +396,7 @@ public class MappingE2E extends AbstractHubCoreTest {
 
         final int originalStagingCount = getStagingDocCount();
         final int originalFinalCount = getFinalDocCount();
-        final int originalJobsCount = getJobDocCount();
+        final int originalJobsCount = getLegacyJobDocCount();
 
         Tuple<LegacyFlowRunner, JobTicket> tuple = runHarmonizeFlow(flowName, dataFormat, completed, failed, options, srcClient, destDb, waitForCompletion);
 
@@ -406,7 +406,7 @@ public class MappingE2E extends AbstractHubCoreTest {
 
             assertEquals(finalCounts.stagingCount + originalStagingCount, getStagingDocCount());
             assertEquals(finalCounts.finalCount + originalFinalCount, getFinalDocCount());
-            assertEquals(finalCounts.jobCount + originalJobsCount, getJobDocCount());
+            assertEquals(finalCounts.jobCount + originalJobsCount, getLegacyJobDocCount());
 
             assertEquals(finalCounts.completedCount, completed.size());
             assertEquals(finalCounts.failedCount, failed.size());

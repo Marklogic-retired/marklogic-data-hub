@@ -2,11 +2,16 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const dhmut = require("/data-hub/ext/marklogic-unit-test/hub-test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.xqy");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
+const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
 const test = require("/test/test-helper.xqy");
 
+const fakeFlow = {"name": "myFlow", "steps": {"1": {}}};
+
 // Insert some job documents so we can verify that they're deleted
-const fakeJob = jobs.createJob("myFlow");
-jobs.createBatch(fakeJob, {}, "1");
+const fakeJob = jobs.createJob(fakeFlow.name);
+
+const stepExecutionContext = new StepExecutionContext(fakeFlow, "1", {}, fakeJob.job.jobId, {});
+jobs.insertBatch(fakeJob, stepExecutionContext, [], {});
 
 const assertions = [];
 

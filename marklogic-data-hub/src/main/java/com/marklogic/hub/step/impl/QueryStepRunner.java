@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.datamovement.*;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.collector.DiskQueue;
@@ -29,8 +30,6 @@ import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -40,7 +39,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class QueryStepRunner implements StepRunner {
+public class QueryStepRunner extends LoggingObject implements StepRunner {
 
     private static final int MAX_ERROR_MESSAGES = 10;
     private Flow flow;
@@ -51,7 +50,6 @@ public class QueryStepRunner implements StepRunner {
     private boolean stopOnFailure = false;
     private String jobId;
     private boolean isFullOutput = false;
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String step = "1";
 
@@ -171,12 +169,15 @@ public class QueryStepRunner implements StepRunner {
         }
     }
 
+    private boolean jobOutputIsEnabled() {
+        if (options != null && options.containsKey("disableJobOutput")) {
+            return !Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        }
+        return true;
+    }
+
     @Override
     public RunStepResponse run() {
-        boolean disableJobOutput = false;
-        if (options != null && options.containsKey("disableJobOutput")) {
-            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
-        }
         runningThread = null;
         if(stepConfig.get("batchSize") != null){
             this.batchSize = (int) stepConfig.get("batchSize");
@@ -201,8 +202,7 @@ public class QueryStepRunner implements StepRunner {
         // Needed to support constrainSourceQueryToJob
         options.put("jobId", jobId);
 
-        //If current step is the first run step job output isn't disabled, a job doc is created
-        if (!disableJobOutput) {
+        if (jobOutputIsEnabled()) {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
         }
 
@@ -220,7 +220,7 @@ public class QueryStepRunner implements StepRunner {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
-            if (!disableJobOutput) {
+            if (jobOutputIsEnabled()) {
                 JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, JobStatus.FAILED_PREFIX + step, runStepResponse.toObjectNode());
                 try {
                     return StepRunnerUtil.getResponse(jobDoc, step);
@@ -244,7 +244,9 @@ public class QueryStepRunner implements StepRunner {
     @Override
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
-        JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+        if (jobOutputIsEnabled()) {
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+        }
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         return this.runHarmonizer(runStepResponse,uris);
     }
@@ -268,15 +270,12 @@ public class QueryStepRunner implements StepRunner {
         StepMetrics stepMetrics = new StepMetrics();
         final int urisCount = uris != null ? uris.size() : 0;
 
-        double batchCount = Math.ceil((double) urisCount / (double) batchSize);
-
-        logger.info(String.format("Number of items collected: %d; These items will be processed in %d batches", urisCount, (int)batchCount));
-
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0,0, "starting step execution");
         });
 
         if (urisCount == 0) {
+            logger.info("No items found to process");
             final String stepStatus = isStopped.get() ?
                 JobStatus.CANCELED_PREFIX + step :
                 JobStatus.COMPLETED_PREFIX + step;
@@ -289,14 +288,25 @@ public class QueryStepRunner implements StepRunner {
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
-            JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
-            try {
-                return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex) {
-                logger.warn("Unexpected error getting step response: " + ex.getMessage(), ex);
+            if (jobOutputIsEnabled()) {
+                JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
+                try {
+                    return StepRunnerUtil.getResponse(jobDoc, step);
+                }
+                catch (Exception ex) {
+                    logger.warn("Unexpected error getting step response: " + ex.getMessage(), ex);
+                    return runStepResponse;
+                }
+            } else {
                 return runStepResponse;
             }
+        }
+
+        double batchCount = Math.ceil((double) urisCount / (double) batchSize);
+        if (batchCount == 1) {
+            logger.info(format("Count of items collected: %d; will be processed in a single batch based on batchSize of %d", urisCount, batchSize));
+        } else {
+            logger.info(format("Count of items collected: %d; will be processed in %d batches based on batchSize of %d", urisCount, (int)batchCount, batchSize));
         }
 
         Vector<String> errorMessages = new Vector<>();
@@ -446,22 +456,25 @@ public class QueryStepRunner implements StepRunner {
             if(isFullOutput) {
                 runStepResponse.withFullOutput(fullResponse);
             }
-            JsonNode jobDoc = null;
-            try {
-                jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
-            }
-            catch (Exception e) {
-                logger.error(e.getMessage());
-            }
-            if(jobDoc != null) {
+
+            if (jobOutputIsEnabled()) {
+                JsonNode jobDoc = null;
                 try {
-                    RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
-                    runStepResponse.setStepStartTime(tempResp.getStepStartTime());
-                    runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+                    jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
                 }
-                catch (Exception ex)
-                {
-                    logger.error(ex.getMessage());
+                catch (Exception e) {
+                    logger.error(e.getMessage());
+                }
+                if(jobDoc != null) {
+                    try {
+                        RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
+                        runStepResponse.setStepStartTime(tempResp.getStepStartTime());
+                        runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.error(ex.getMessage());
+                    }
                 }
             }
         });

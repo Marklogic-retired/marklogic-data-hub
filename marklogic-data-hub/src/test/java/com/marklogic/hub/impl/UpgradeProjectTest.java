@@ -113,7 +113,6 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-step-definition-writer.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-entity-model-reader.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-entity-model-writer.json").toFile().exists());
-        assertTrue(hubProject.getHubSecurityDir().resolve("amps").resolve("amps-dhf-update-batch.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("amps").resolve("amps-dhf-update-job.json").toFile().exists());
 
         ObjectMapper mapper = new ObjectMapper();

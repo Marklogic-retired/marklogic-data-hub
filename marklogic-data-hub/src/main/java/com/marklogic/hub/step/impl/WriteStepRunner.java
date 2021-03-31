@@ -239,17 +239,19 @@ public class WriteStepRunner implements StepRunner {
         return this.batchSize;
     }
 
+    private boolean jobOutputIsEnabled() {
+        if (options != null && options.containsKey("disableJobOutput")) {
+            return !Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        }
+        return true;
+    }
+
     @Override
     public RunStepResponse run() {
-        boolean disableJobOutput = false;
-
         if (options == null) {
             options = new HashMap<>();
         }
 
-        if (options.containsKey("disableJobOutput")) {
-            disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
-        }
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         loadStepRunnerParameters();
@@ -258,7 +260,7 @@ public class WriteStepRunner implements StepRunner {
         }
         options.put("flow", this.flow.getName());
 
-        if (!disableJobOutput) {
+        if (jobOutputIsEnabled()) {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
         }
 
@@ -271,7 +273,7 @@ public class WriteStepRunner implements StepRunner {
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
             runStepResponse.withStepOutput(errors.toString());
-            if (!disableJobOutput) {
+            if (jobOutputIsEnabled()) {
                 JsonNode jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, JobStatus.FAILED_PREFIX + step, runStepResponse.toObjectNode());
 
                 //If not able to read the step resp from the job doc, send the in-memory resp without start/end time
@@ -289,7 +291,9 @@ public class WriteStepRunner implements StepRunner {
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+        if (jobOutputIsEnabled()) {
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+        }
         return this.runIngester(runStepResponse,uris);
     }
 
@@ -438,11 +442,15 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
-            jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
-            try {
-                return StepRunnerUtil.getResponse(jobDoc, step);
-            }
-            catch (Exception ex) {
+            if (jobOutputIsEnabled()) {
+                jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId, step, stepStatus, runStepResponse.toObjectNode());
+                try {
+                    return StepRunnerUtil.getResponse(jobDoc, step);
+                }
+                catch (Exception ex) {
+                    return runStepResponse;
+                }
+            } else {
                 return runStepResponse;
             }
         }
@@ -603,21 +611,24 @@ public class WriteStepRunner implements StepRunner {
             if(isFullOutput) {
                 runStepResponse.withFullOutput(fullResponse);
             }
-            JsonNode jobDoc = null;
-            try {
-                jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId,  step, stepStatus, runStepResponse.toObjectNode());
-            }
-            catch (Exception e) {
-                logger.error("Unable to update job document, cause: " + e.getMessage());
-            }
-            if(jobDoc != null) {
+
+            if (jobOutputIsEnabled()) {
+                JsonNode jobDoc = null;
                 try {
-                    RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
-                    runStepResponse.setStepStartTime(tempResp.getStepStartTime());
-                    runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+                    jobDoc = JobService.on(hubClient.getJobsClient()).finishStep(jobId,  step, stepStatus, runStepResponse.toObjectNode());
                 }
-                catch (Exception ex) {
-                    logger.error("Unable to update step response, cause: " + ex.getMessage());
+                catch (Exception e) {
+                    logger.error("Unable to update job document, cause: " + e.getMessage());
+                }
+                if(jobDoc != null) {
+                    try {
+                        RunStepResponse tempResp =  StepRunnerUtil.getResponse(jobDoc, step);
+                        runStepResponse.setStepStartTime(tempResp.getStepStartTime());
+                        runStepResponse.setStepEndTime(tempResp.getStepEndTime());
+                    }
+                    catch (Exception ex) {
+                        logger.error("Unable to update step response, cause: " + ex.getMessage());
+                    }
                 }
             }
         });

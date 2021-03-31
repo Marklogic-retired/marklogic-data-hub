@@ -3,6 +3,9 @@ function main(contentItem, options) {
   if (!contentItem.value) {
     contentItem.value = {"hello":"world"};
   }
+  if (options.throwErrorOnPurpose === true) {
+    throw Error("Throwing error on purpose");
+  }
   return contentItem;
 }
 

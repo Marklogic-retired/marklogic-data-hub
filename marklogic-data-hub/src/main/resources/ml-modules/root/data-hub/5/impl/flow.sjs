@@ -208,21 +208,14 @@ class Flow {
 
     this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
 
-    if (!(combinedOptions.noBatchWrite || combinedOptions.disableJobOutput)) {
-      const flowStepWithOptions = Object.assign({}, flowStep,
-        {"options": Object.assign({}, flowStep.options, combinedOptions)}
-      );
-      let batchDoc = jobs.createBatch(jobDoc, flowStepWithOptions, stepNumber);
-      stepExecutionContext.batchId = batchDoc.batch.batchId;
-    }
-
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
       this.datahub = this.cloneInstance(this.datahub);
       delete this.datahub.flow;
     }
 
-    const items = contentArray.map(contentItem => contentItem.uri);
+    const batchItems = contentArray.map(contentObject => contentObject.uri);
+
     if (this.isContextDB(stepExecutionContext.getSourceDatabase()) && !combinedOptions.stepUpdate) {
       this.runStep(stepExecutionContext, contentArray);
     } else {
@@ -261,7 +254,17 @@ class Flow {
     }
 
     this.writeProvenanceData(stepExecutionContext);
-    this.updateBatchDocument(stepExecutionContext, items, writeTransactionInfo);
+
+    if (stepExecutionContext.batchOutputIsEnabled()) {
+      if (jobDoc != null) {
+        jobs.insertBatch(jobDoc, stepExecutionContext, batchItems, writeTransactionInfo);
+      } else {
+        hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER,
+          "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
+      }
+    } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW_RUNNER)) {
+      hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER, `Batch document insertion is disabled`);
+    }
 
     let resp = {
       "jobId": stepExecutionContext.jobId,
@@ -324,21 +327,6 @@ class Flow {
 
     // Directly add this to avoid the failedItems count from being incremented
     stepExecutionContext.batchErrors.push(Object.assign(error, {"uri":uri}));
-  }
-
-  /**
-   * Updates the batch document based on what's in the stepExecutionContext. This doesn't care about interceptors at all,
-   * as those don't have any impact on the "items" that were the input to this transaction.
-   *
-   * @param stepExecutionContext
-   * @param items
-   * @param writeTransactionInfo
-   */
-  updateBatchDocument(stepExecutionContext, items, writeTransactionInfo) {
-    const combinedOptions = stepExecutionContext.combinedOptions;
-    if (!combinedOptions.noBatchWrite && !combinedOptions.disableJobOutput) {
-      jobs.updateBatch(stepExecutionContext, items, writeTransactionInfo);
-    }
   }
 
   /**
