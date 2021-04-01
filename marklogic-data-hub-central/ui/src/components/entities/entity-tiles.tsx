@@ -14,7 +14,7 @@ import {CurationContext} from "../../util/curation-context";
 
 
 const EntityTiles = (props) => {
-  const {setActiveStepWarning, setValidateMatchCalled} = useContext(CurationContext);
+  const {setActiveStepWarning, setValidateMatchCalled, setValidateMergeCalled} = useContext(CurationContext);
   const entityModels = props.entityModels || {};
   const location = useLocation<any>();
   const [locationEntityType, setLocationEntityType] = useState<string[]>([]);
@@ -254,9 +254,15 @@ const EntityTiles = (props) => {
     try {
       let response = await axios.post("/api/steps/merging", mergingObj);
       if (response.status === 200) {
+        let warningResponse = await axios.get(`/api/steps/merging/${mergingObj.name}/validate`);
+        if (warningResponse.status === 200) {
+          await setActiveStepWarning(warningResponse["data"]);
+          setValidateMergeCalled(true);
+        }
         updateIsLoadingFlag();
       }
     } catch (error) {
+      setValidateMergeCalled(true);
       let message = error.response.data.message;
       console.error("Error while creating the merging artifact!", message);
       message.indexOf(mergingObj.name) > -1 ? Modal.error({
@@ -272,9 +278,15 @@ const EntityTiles = (props) => {
     try {
       let response = await axios.put(`/api/steps/merging/${mergingObj.name}`, mergingObj);
       if (response.status === 200) {
+        let warningResponse = await axios.get(`/api/steps/merging/${mergingObj.name}/validate`);
+        if (warningResponse.status === 200) {
+          await setActiveStepWarning(warningResponse["data"]);
+          setValidateMergeCalled(true);
+        }
         updateIsLoadingFlag();
       }
     } catch (error) {
+      setValidateMergeCalled(true);
       let message = error;
       console.error("Error updating merging", message);
       return false;

@@ -12,7 +12,9 @@ export interface CurationContextInterface {
   setActiveStep: (stepArtifact: any, modelDefinition: any, entityType: string) => void;
   updateActiveStepArtifact: (stepArtifact: any) => void;
   validateCalled: (boolean);
+  validateMerge:(boolean);
   setValidateMatchCalled: (validateCalled: boolean) => void;
+  setValidateMergeCalled: (validateCalled: boolean) => void;
   setActiveStepWarning: (warning: any) => void;
   mappingOptions: MappingOptionsInterface;
   setOpenStepSettings: (openStepSettings: boolean) => void;

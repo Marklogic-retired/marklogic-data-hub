@@ -98,7 +98,7 @@ const Steps: React.FC<Props> = (props) => {
     // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
     let targetFormat = props.activityType === "ingestion" ? basicPayload["targetFormat"] : advancedPayload["targetFormat"];
-    if (props.activityType === "matching") return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat}, {targetEntityType: props.targetEntityName});
+    if (props.activityType === "matching" || props.activityType === "merging") return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat}, {targetEntityType: props.targetEntityName});
     else return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
   };
 

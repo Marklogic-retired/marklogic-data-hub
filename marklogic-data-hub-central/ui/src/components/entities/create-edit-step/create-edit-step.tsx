@@ -50,7 +50,7 @@ const {TextArea} = Input;
 const CreateEditStep: React.FC<Props>  = (props) => {
   // TODO use steps.config.ts for default values
   const {handleError} = useContext(UserContext);
-  const {curationOptions, setActiveStepWarning, validateCalled, setValidateMatchCalled} = useContext(CurationContext);
+  const {curationOptions, setActiveStepWarning, validateCalled, setValidateMatchCalled, setValidateMergeCalled, validateMerge} = useContext(CurationContext);
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
 
@@ -94,6 +94,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     setTobeDisabled(true);
     setActiveStepWarning([]);
     setValidateMatchCalled(false);
+    setValidateMergeCalled(false);
     props.setIsValid(true);
   };
 
@@ -112,7 +113,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
-  }, [curationOptions.activeStep.hasWarnings.length, validateCalled]);
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && (props.stepType === StepType.Merging) && validateMerge) {
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
+  }, [curationOptions.activeStep.hasWarnings.length, validateCalled, validateMerge]);
 
   const reset = () => {
     setStepName("");
@@ -126,6 +131,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     }
     resetTouchedValues();
     setValidateMatchCalled(false);
+    setValidateMergeCalled(false);
     setActiveStepWarning([]);
     setIsSubmit(false);
   };
@@ -222,7 +228,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     } else {
       props.updateStepArtifact(getPayload());
     }
-    props.stepType === StepType.Matching ? setIsSubmit(true):setIsSubmit(false);
+    ((props.stepType === StepType.Matching) || (props.stepType === StepType.Merging))? setIsSubmit(true):setIsSubmit(false);
+      /* adding props.stepType !== StepType.Merging below will show the warnings, should be added as a part of DHFPROD-6995*/
     if (props.stepType !== StepType.Matching) {
       props.setOpenStepSettings(false);
       props.resetTabs();
@@ -250,7 +257,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           "pattern": value,
         };
         const response = await axios.post(`/api/entitySearch/facet-values?database=${database}`, data);
-        if (response?.status === 200) {
+        if (response.status === 200) {
           setCollectionOptions(response.data);
         }
       } catch (error) {
@@ -419,11 +426,15 @@ const CreateEditStep: React.FC<Props>  = (props) => {
 
   return (
     <div className={styles.createEditStep}>
-      {props.stepType === StepType.Matching ? curationOptions.activeStep.hasWarnings.length > 0 ? (
+      {(props.stepType === StepType.Matching || props.stepType === StepType.Merging) ? curationOptions.activeStep.hasWarnings.length > 0 ? (
         curationOptions.activeStep.hasWarnings.map((warning, index) => {
-          let description = "Please remove source collection from target collections.";
+          let description;
           if (warning["message"].includes("target entity type")) {
             description = "Please remove target entity type from target collections";
+          } else if (warning["message"].includes("source collection")) {
+            description= "Please remove source collection from target collections";
+          } else {
+            description = "";
           }
           return (
             <MLAlert
