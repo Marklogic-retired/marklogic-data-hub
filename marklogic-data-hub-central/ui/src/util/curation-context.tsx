@@ -27,7 +27,9 @@ export const CurationContext = React.createContext<CurationContextInterface>({
   setActiveStep: () => {},
   updateActiveStepArtifact: () => {},
   validateCalled: false,
+  validateMerge: false,
   setValidateMatchCalled: () => {},
+  setValidateMergeCalled: () => {},
   setActiveStepWarning: () => {},
   mappingOptions: DEFAULT_MAPPING_OPTIONS,
   setOpenStepSettings: () => {},
@@ -41,6 +43,7 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
   const [curationOptions, setCurationOptions] = useState<CurationOptionsInterface>(DEFAULT_CURATION_OPTIONS);
   const [mappingOptions, setMappingOptions] = useState<MappingOptionsInterface>(DEFAULT_MAPPING_OPTIONS);
   const [validateCalled, setValidateCalled] = useState(false);
+  const [validateMerge, setValidateMerge] = useState(false);
   /**
     * Sets the current active step in the curate tile
     * Transforms definitions object payload into array of objects with static key values
@@ -60,8 +63,12 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setValidateMatchCalled = (validateCalledUpdate: boolean) => {
-    setValidateCalled(validateCalledUpdate);
+  const setValidateMatchCalled = (validateMatchCalledUpdate: boolean) => {
+    setValidateCalled(validateMatchCalledUpdate);
+  };
+
+  const setValidateMergeCalled = (validateMergeCalledUpdate: boolean) => {
+    setValidateMerge(validateMergeCalledUpdate);
   };
 
   const setActiveStepWarning = (warning: any[]) => {
@@ -114,7 +121,9 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
       setActiveStep,
       updateActiveStepArtifact,
       validateCalled,
+      validateMerge,
       setValidateMatchCalled,
+      setValidateMergeCalled,
       setActiveStepWarning,
       mappingOptions,
       setOpenStepSettings,

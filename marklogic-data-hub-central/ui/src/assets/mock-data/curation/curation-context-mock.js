@@ -127,6 +127,30 @@ export const customerStepWarning = {
   curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
+      stepArtifact: matchingStep.artifacts[1],
+      entityName: matchingStep.entityType,
+      hasWarnings: [
+        {
+          "level": "warn",
+          "message": "Warning: Target Collections includes the target entity type Person"
+        },
+        {
+          "level": "warn",
+          "message": "Warning: Target Collections includes the source collection loadPersonJSON"
+        }
+      ]
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  setValidateMatchCalled: jest.fn()
+};
+
+export const customerStepMergeWarning = {
+  curationOptions: {
+    entityDefinitionsArray: customerEntityDefsArray,
+    activeStep: {
       stepArtifact: mergingStep.artifacts[1],
       entityName: mergingStep.entityType,
       hasWarnings: [
@@ -144,7 +168,7 @@ export const customerStepWarning = {
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn(),
   setActiveStepWarning: jest.fn(),
-  setValidateMatchCalled: jest.fn()
+  setValidateMergeCalled: jest.fn()
 };
 
 export const customerMappingStep = {

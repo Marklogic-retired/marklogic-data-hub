@@ -34,7 +34,7 @@ type Props = {
 }
 
 const AdvancedSettings: React.FC<Props> = (props) => {
-  const {curationOptions, validateCalled, setValidateMatchCalled} = useContext(CurationContext);
+  const {curationOptions, validateCalled, setValidateMatchCalled, setValidateMergeCalled, validateMerge} = useContext(CurationContext);
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = StepsConfig.invalidJSONMessage;
@@ -131,12 +131,19 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   }, [props.openStepSettings]);
 
   useEffect(() => {
-    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === "matching" && validateCalled) {
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === ("matching") && validateCalled) {
       setValidateMatchCalled(false);
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
-  }, [curationOptions.activeStep.hasWarnings.length, validateCalled]);
+    if (isSubmit && curationOptions.activeStep.hasWarnings.length === 0 && stepType === ("merging")  && validateMerge) {
+      setValidateMergeCalled(false);
+      props.setOpenStepSettings(false);
+      props.resetTabs();
+    }
+  }, [curationOptions.activeStep.hasWarnings.length, validateCalled, validateMerge]);
+
+
 
   const isFormValid = () => {
     return headersValid && interceptorsValid && customHookValid && targetPermissionsValid && additionalSettingsValid;
@@ -271,7 +278,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   const getPayload = () => {
-    let payload = 
+    let payload =
     {
       collections: defaultCollections,
       additionalCollections: additionalCollections,
@@ -310,7 +317,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     } else {
       props.updateStep(getPayload());
     }
-    stepType === "matching" ? setIsSubmit(true) : setIsSubmit(false);
+    (stepType === "matching" || stepType === "merging") ? setIsSubmit(true) : setIsSubmit(false);
+    /* adding stepType !== merging will show the warnings, should be added as a part of DHFPROD-6995*/
     if (stepType !== "matching") {
       props.setOpenStepSettings(false);
       props.resetTabs();
@@ -523,11 +531,15 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
   return (
     <div className={styles.newDataForm}>
-      {stepType === "matching" ? curationOptions.activeStep.hasWarnings.length > 0 ? (
+      {(stepType === "matching" || stepType === "merging") ? curationOptions.activeStep.hasWarnings.length > 0 ? (
         curationOptions.activeStep.hasWarnings.map((warning, index) => {
-          let description = "Please remove source collection from target collections.";
+          let description;
           if (warning["message"].includes("target entity type")) {
             description = "Please remove target entity type from target collections";
+          } else if (warning["message"].includes("source collection")) {
+            description= "Please remove source collection from target collections";
+          } else {
+            description = "";
           }
           return (
             <MLAlert

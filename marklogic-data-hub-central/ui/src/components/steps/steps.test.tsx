@@ -395,14 +395,5 @@ describe("Steps settings component", () => {
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
-
-  test("Verify rendering of step warning", async () => {
-    const {getAllByText} = render(
-      <CurationContext.Provider value={customerStepWarning}>
-        <Steps {...data.newMatching} />
-      </CurationContext.Provider>
-    );
-    expect(getAllByText("Warning: Target Collections includes the target entity type Person")).toBeTruthy();
-    expect(getAllByText("Warning: Target Collections includes the source collection loadPersonJSON")).toBeTruthy();
-  });
+  
 });
