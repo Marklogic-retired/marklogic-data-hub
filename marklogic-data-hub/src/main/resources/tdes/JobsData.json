@@ -60,14 +60,14 @@
           },
           {
             "name": "stepStartTime",
-            "scalarType": "string",
-            "val": "./stepStartTime/string()",
+            "scalarType": "dateTime",
+            "val": "./stepStartTime",
             "nullable":true
           },
           {
             "name": "stepEndTime",
-            "scalarType": "string",
-            "val": "./stepEndTime/string()",
+            "scalarType": "dateTime",
+            "val": "./stepEndTime",
             "nullable":true
           },
           {

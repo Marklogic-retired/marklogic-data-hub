@@ -25,23 +25,24 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
     @Test
     public void testDeployTDEWithNoEntities() {
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
 
         installUserModules(getHubConfig(), true);
 
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
     }
 
     @Test
     public void testDeployTDE() throws Exception {
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
 
         installProjectInFolder("es-alignment-test");
 
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
+
 
         runAsFlowOperator();
         DatabaseClient finalClient = getHubClient().getFinalClient();
