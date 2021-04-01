@@ -40,11 +40,9 @@ function targetEntityCollectionWarning(targetEntityType, allCollections = []) {
 }
 
 function sourceCollectionWarning(sourceQuery, allCollections = []) {
-    if (sourceQuery && sourceQuery.startsWith("cts.collectionQuery")) {
-        let sourceCollection = sourceQuery.substring(
-            sourceQuery.lastIndexOf("[") + 2,
-            sourceQuery.lastIndexOf("]") - 1
-        );
+    const collectionQueryRegex = /^\s*cts\.collectionQuery\(\s*\[?\s*['"]([^'"]+)['"]\s*\]?\s*\)\s*$/;
+    if (sourceQuery && collectionQueryRegex.test(sourceQuery)) {
+        let sourceCollection = sourceQuery.replace(collectionQueryRegex, '$1');
         if (allCollections.includes(sourceCollection)) {
             return warningObject(levelWarn, "Warning: Target Collections includes the source collection " + sourceCollection);
         }
