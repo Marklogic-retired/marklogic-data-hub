@@ -12,4 +12,7 @@ export type ViewSettingsType = {
         entityExpandedRows?: string[],
         propertyExpandedRows?: string[],
     }
+    run?: {
+        openFlows?: string[],
+    }
 };

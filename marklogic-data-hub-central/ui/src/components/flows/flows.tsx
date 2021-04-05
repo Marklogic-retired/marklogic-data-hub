@@ -14,7 +14,7 @@ import {useDropzone} from "react-dropzone";
 import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
 import axios from "axios";
-import {UserContext} from "../../util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
 
 
 enum ReorderFlowOrderDirection {
@@ -61,6 +61,9 @@ const StepDefinitionTypeTitles = {
 };
 
 const Flows: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+  const openFlows = storage?.run?.openFlows;
+
   const {handleError} = useContext(UserContext);
   const [newFlow, setNewFlow] = useState(false);
   const [addedFlowName, setAddedFlowName] = useState("");
@@ -78,17 +81,19 @@ const Flows: React.FC<Props> = (props) => {
   const [fileList, setFileList] = useState<any[]>([]);
   const [showUploadError, setShowUploadError] = useState(false);
   const [openNewFlow, setOpenNewFlow] = useState(props.newStepToFlowOptions?.addingStepToFlow && !props.newStepToFlowOptions?.existingFlow);
-  const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ["-1"]);
+  const [activeKeys, setActiveKeys] = useState(openFlows ? openFlows : []);
   const [showLinks, setShowLinks] = useState("");
   const [startRun, setStartRun] = useState(false);
   const [latestJobData, setLatestJobData] = useState<any>({});
   const [createAdd, setCreateAdd] = useState(true);
   const [addFlowDirty, setAddFlowDirty] = useState({});
   const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
+  const [hasQueriedInitialJobData, setHasQueriedInitialJobData] = useState(false);
   const location = useLocation();
 
   // maintain a list of panel refs
   const flowPanels: any = props.flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()}}), {});
+
 
   // If a step was just added scroll the flow step panel fully to the right
   useEffect(() => {
@@ -115,6 +120,19 @@ const Flows: React.FC<Props> = (props) => {
         setExternalAddFlowDirty(false);
       }
     }
+  }, [props.flows]);
+
+  useEffect(() => {
+    if (openFlows === undefined || props.flows.length === 0 || hasQueriedInitialJobData) {
+      return;
+    }
+
+    // Shows job data for steps in a flow that is expanded in session storage
+    openFlows.forEach(flowKey => {
+      getFlowWithJobInfo(Number(flowKey));
+    });
+
+    setHasQueriedInitialJobData(true);
   }, [props.flows]);
 
   useEffect(() => {
@@ -175,6 +193,7 @@ const Flows: React.FC<Props> = (props) => {
     if (activeKeys === undefined) {
       setActiveKeys([]);
     }
+
   }, [props.flows]);
 
   // Get the latest job info after a step (in a flow) run
@@ -602,7 +621,6 @@ const Flows: React.FC<Props> = (props) => {
     }
   };
 
-
   const reorderFlow = (id, flowName, direction: ReorderFlowOrderDirection) => {
     let flowNum = props.flows.findIndex((flow) => flow.name === flowName);
     let flowDesc = props.flows[flowNum]["description"];
@@ -647,7 +665,9 @@ const Flows: React.FC<Props> = (props) => {
         if (response.status === 200 && response.data) {
           let currentFlowJobInfo = {};
           currentFlowJobInfo[currentFlow["name"]] = response.data["steps"];
-          setLatestJobData({...latestJobData, ...currentFlowJobInfo});
+          setLatestJobData(prevJobData => (
+            {...prevJobData, ...currentFlowJobInfo}
+          ));
         }
       } catch (error) {
         console.error("Error getting latest job info ", error);
@@ -821,6 +841,9 @@ const Flows: React.FC<Props> = (props) => {
       getFlowWithJobInfo(key[key.length - 1]);
     }
     setActiveKeys([...key]);
+    const flowStorage = getViewSettings();
+    const newStorage = {...flowStorage, run: {...flowStorage.run, openFlows: [...key]}};
+    setViewSettings(newStorage);
   };
 
   const createFlowKeyDownHandler = (event) => {

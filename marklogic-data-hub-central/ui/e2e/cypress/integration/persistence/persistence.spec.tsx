@@ -9,7 +9,6 @@ describe("Validate persistence across Hub Central", () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     LoginPage.postLogin();
-    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer", "hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
@@ -43,5 +42,13 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     cy.findByTestId("shipping-street-span").should("be.visible");
+  });
+  
+  it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item ant-collapse-item-active");
   });
 });

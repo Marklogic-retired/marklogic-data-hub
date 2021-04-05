@@ -803,7 +803,7 @@ describe("Verify Add Step function", () => {
   test("Verify a flow panel that is closed reopens when a step is added to it", async () => {
     mocks.runAddStepAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
-    const {getByText, getByLabelText, queryByText, getByPlaceholderText, getAllByText} = await render(<MemoryRouter>
+    const {getByText, getByLabelText, getByPlaceholderText, getAllByText} = await render(<MemoryRouter>
       <AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>
     </MemoryRouter>);
 
@@ -817,9 +817,6 @@ describe("Verify Add Step function", () => {
     await wait(() => {
       expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", {name: newFlowValues.name, description: newFlowValues.description});
     });
-
-    // Panel is closed after a new flow is created
-    expect(queryByText(data.flows.data[0].steps[1].stepName)).not.toBeInTheDocument();
 
     // Click to open Add Step menu and click a step
     let addStep = getByText("Add Step");
