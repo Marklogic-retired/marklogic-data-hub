@@ -9,6 +9,7 @@ import axiosMock from "axios";
 import data from "../../assets/mock-data/curation/flows.data";
 import Flows from "./flows";
 import {SecurityTooltips} from "../../config/tooltips.config";
+import {getViewSettings} from "../../util/user-context";
 
 jest.mock("axios");
 
@@ -323,4 +324,59 @@ describe("Flows component", () => {
     fireEvent.keyDown(leftArrowButton, {key: "Enter", code: "Enter"});
     expect(leftArrowButton.onkeydown).toHaveBeenCalledTimes(1);
   });
+});
+
+describe("getViewSettings", () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+    jest.restoreAllMocks();
+  });
+
+  const sessionStorageMock = (() => {
+    let store = {};
+
+    return {
+      getItem(key) {
+        return store[key] || null;
+      },
+      setItem(key, value) {
+        store[key] = value.toString();
+      },
+      removeItem(key) {
+        delete store[key];
+      },
+      clear() {
+        store = {};
+      }
+    };
+  })();
+
+  Object.defineProperty(window, "sessionStorage", {
+    value: sessionStorageMock
+  });
+
+  it("should get stored flows from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({run: {openFlows: ["0", "1", "2"]}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({run: {openFlows: ["0", "1", "2"]}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get stored flows from session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({run: {openFlows: ["0"]}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({run: {openFlows: ["0"]}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get empty object if no info in session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({});
+    expect(window.sessionStorage.getItem).toBeCalledWith("dataHubViewSettings");
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
 });
