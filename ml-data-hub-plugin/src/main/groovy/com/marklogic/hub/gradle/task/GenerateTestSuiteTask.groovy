@@ -20,9 +20,10 @@ class GenerateTestSuiteTask extends HubTask {
 
         Path sourcePath
         if (userDefinedSourcePath != null) {
-            sourcePath = Paths.get(userDefinedSourcePath)
-        }
-        else {
+            // The file path must be made relative to the project for this to work on Java 11 with Gradle 6; otherwise,
+            // files are written relative to the Gradle daemon directory
+            sourcePath = Paths.get(getProject().file(userDefinedSourcePath).getAbsolutePath())
+        } else {
             List<String> modulePaths = getHubConfig().getAppConfig().getModulePaths()
             if (modulePaths == null || modulePaths.isEmpty()) {
                 throw new GradleException("No module paths defined; either define a source path via -PsourcePath=path/to/modules, or define mlModulePaths")
