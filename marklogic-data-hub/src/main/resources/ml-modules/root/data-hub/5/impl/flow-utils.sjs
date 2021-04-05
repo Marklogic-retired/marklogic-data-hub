@@ -686,7 +686,7 @@ const sem = require("/MarkLogic/semantics.xqy");
     return uri;
   }
 
-  /**
+/**
  * @param content
  * @param flowName
  * @param stepName
@@ -763,8 +763,23 @@ function makeCombinedOptions(theFlow, stepDefinition, stepNumber, runtimeOptions
   );
 }
 
+function buildInvokeOptionsForCustomHook(user, database) {
+  // ignoreAmps is true to prevent a user from e.g. overwriting job documents, which could be done via an amp
+  const options = {
+    ignoreAmps: true
+  };
+  if (user && user !== xdmp.getCurrentUser()) {
+    options.userId = xdmp.user(user);
+  }
+  if (database) {
+    options.database = xdmp.database(database);
+  }
+  return options;
+}
+
 module.exports = {
   addMetadataToContent,
+  buildInvokeOptionsForCustomHook,
   cleanData,
   createContentAsObject,
   createHeaders,

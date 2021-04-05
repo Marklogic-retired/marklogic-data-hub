@@ -76,6 +76,7 @@ function transform(content, context = {}) {
 
     if (runStepsInMemory(theFlow, options)) {
       // Let errors propagate to MLCP
+      options.throwStepError = true;
       flowRunner.processContentWithFlow(flowName, contentArray, jobId, options);
       return Sequence.from([]);
     } else {

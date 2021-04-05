@@ -151,7 +151,7 @@ class InstallerThread extends LoggingObject implements Runnable {
             logger.info("Installing test application in host: " + hubConfig.getHost());
 
             installDataHubIfNecessary(hubConfig);
-            TestAppInstaller.loadTestModules(hubConfig, false);
+            TestAppInstaller.loadTestModules(hubConfig, true);
             createTestUsers(hubConfig);
             HubTestBase.applyDatabasePropertiesForTests(hubConfig);
 
