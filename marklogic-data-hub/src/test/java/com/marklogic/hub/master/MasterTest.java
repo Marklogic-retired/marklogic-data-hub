@@ -13,6 +13,7 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MasteringManager;
+import com.marklogic.hub.deploy.commands.FinishHubDeploymentCommand;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
@@ -36,7 +37,8 @@ public class MasterTest extends AbstractHubCoreTest {
     @BeforeEach
     public void beforeEach() {
         runAsAdmin();
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"));
+        new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"), "The hub default jobs TDE exists");
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"), "The hub default jobs TDE exists");
 
         runAsDataHubDeveloper();

@@ -1,6 +1,7 @@
 package com.marklogic.hub_unit_test;
 
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.deploy.commands.FinishHubDeploymentCommand;
 import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
@@ -38,7 +39,7 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
 
             // TODO Shouldn't need to do this, since resetHubProject does it
             resetDatabases();
-
+            new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
             runAsDataHubDeveloper();
             initialized = true;
             logger.info("Finished one-time initialization before running test modules");

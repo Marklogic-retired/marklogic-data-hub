@@ -10,6 +10,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.row.RowManager;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.FinishHubDeploymentCommand;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -22,25 +24,30 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     private static final String TDE_COLLECTION = "http://marklogic.com/xdmp/tde";
 
+    @BeforeEach
+    public void deployTemplates() {
+        new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
+    }
+
     @Test
     public void testDeployTDEWithNoEntities() {
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
 
         installUserModules(getHubConfig(), true);
 
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
     }
 
     @Test
     public void testDeployTDE() throws Exception {
-        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
 
         installProjectInFolder("es-alignment-test");
 
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
         assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
 
 

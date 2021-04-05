@@ -91,7 +91,6 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
 
         try {
             clearDatabase(getHubConfig().newStagingClient(getHubConfig().getDbName(DatabaseKind.STAGING_SCHEMAS)));
-            new DeployHubDefaultTdesCommand(getHubConfig()).execute(newCommandContext());
         } catch (Exception ex) {
             logger.warn("Unable to clear staging schemas database, but will continue: " + ex.getMessage());
         }

@@ -100,8 +100,8 @@ public class InstallIntoDhsCommandTest extends AbstractSimpleHubTest {
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
-        assertTrue(commands.get(index++) instanceof DeployHubDefaultTdesCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
+        assertTrue(commands.get(index++) instanceof FinishHubDeploymentCommand);
         assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
         assertEquals(16, commands.size());
 
