@@ -30,7 +30,7 @@ if (step.additionalCollections && step.additionalCollections.length) {
     warnings.push(targetTypeWarning);
   }
 
-  let sourceCollectionWarning = common.sourceCollectionWarning(step.targetEntityType, step.additionalCollections);
+  let sourceCollectionWarning = common.sourceCollectionWarning(step.sourceQuery, step.additionalCollections);
   if (sourceCollectionWarning) {
     warnings.push(sourceCollectionWarning);
   }

@@ -11,6 +11,8 @@ function invokeService(stepName) {
   test.assertEqual([], invokeService("no-step-warnings"), "No errors, returns empty array"),
   test.assertEqual([{"level":"warn","message":"Warning: Target Collections includes the target entity type Person"}],
     invokeService("targetEntityType-in-additionalCollections"), "targetEntityType-in-additionalCollections warning does not match"),
+  test.assertEqual([{"level":"warn","message":"Warning: Target Collections includes the source collection map-persons"}],
+      invokeService("sourceCollection-in-additionalCollections"), "sourceCollection-in-additionalCollections warning does not match"),
   test.assertEqual([{"level":"warn","message":"Warning: Target Collections includes temporal collection(s): myTemporalCollection"}],
     invokeService("temporal-collection-in-additionalCollections"), "temporal-collection-in-additionalCollections warning does not match")
 ];
