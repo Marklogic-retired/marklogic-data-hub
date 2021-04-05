@@ -48,6 +48,7 @@ public interface SystemService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_getVersions;
+            private BaseProxy.DBFunctionRequest req_finishHubDeployment;
 
             private SystemServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -55,6 +56,8 @@ public interface SystemService {
 
                 this.req_getVersions = this.baseProxy.request(
                     "getVersions.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_finishHubDeployment = this.baseProxy.request(
+                    "finishHubDeployment.sjs", BaseProxy.ParameterValuesKind.NONE);
             }
 
             @Override
@@ -68,6 +71,16 @@ public interface SystemService {
                 request.responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public void finishHubDeployment() {
+                finishHubDeployment(
+                    this.req_finishHubDeployment.on(this.dbClient)
+                    );
+            }
+            private void finishHubDeployment(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
+            }
         }
 
         return new SystemServiceImpl(db, serviceDeclaration);
@@ -80,5 +93,13 @@ public interface SystemService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getVersions();
+
+  /**
+   * Invokes the finishHubDeployment operation on the database server
+   *
+   * 
+   * 
+   */
+    void finishHubDeployment();
 
 }

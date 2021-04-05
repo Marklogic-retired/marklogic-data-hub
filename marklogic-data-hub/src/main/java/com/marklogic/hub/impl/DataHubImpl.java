@@ -674,9 +674,9 @@ public class DataHubImpl implements DataHub, InitializingBean {
         granularPrivilegeCommands.add(new CreateGranularPrivilegesCommand(hubConfig));
         commandMap.put("hubGranularPrivilegeCommands", granularPrivilegeCommands);
 
-        List<Command> defaultTDEsCommand = new ArrayList<>();
-        defaultTDEsCommand.add(new DeployHubDefaultTdesCommand(hubConfig));
-        commandMap.put("hubDefaultTDEsCommand", defaultTDEsCommand);
+        List<Command> finishHubDeploymentCommands = new ArrayList<>();
+        finishHubDeploymentCommands.add(new FinishHubDeploymentCommand(hubConfig));
+        commandMap.put("finishHubDeploymentCommands", finishHubDeploymentCommands);
 
         return commandMap;
     }

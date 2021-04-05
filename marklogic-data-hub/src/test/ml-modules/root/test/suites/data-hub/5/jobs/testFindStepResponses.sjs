@@ -14,23 +14,23 @@
  limitations under the License.
  */
 
-const jobResultsLib = require("/data-hub/5/jobs/job-results-lib.sjs");
+const jobResultsLib = require("/data-hub/5/jobs/job-query-lib.sjs");
 const test = require("/test/test-helper.xqy");
 
-function getJobResults(start, pageLength, sortColumn, sortOperator) {
+function getStepResults(start, pageLength, sortColumn, sortOperator) {
     return fn.head(
         xdmp.invokeFunction(
             function () {
-                return jobResultsLib.getJobData(start, pageLength, sortColumn, sortOperator);
+                return jobResultsLib.findStepResponses(start, pageLength, sortColumn, sortOperator);
             },
             {database: xdmp.database("data-hub-JOBS")}
         )
     );
 }
 
-function verifyJobResults() {
+function verifyStepResponse() {
     const assertions = [];
-    const response = getJobResults(1, 10, 'startTime', 'descending');
+    const response = getStepResults(1, 10, 'startTime', 'descending');
     assertions.push(
         test.assertEqual(10, response.total),
         test.assertEqual(1, response.start),
@@ -46,9 +46,9 @@ function verifyJobResults() {
     return assertions;
 }
 
-function verifySortOrderInJobResults() {
+function verifySortOrderInStepResponse() {
     const assertions = [];
-    const response1 = getJobResults(1, 10, "startTime", "descending");
+    const response1 = getStepResults(1, 10, "startTime", "descending");
     assertions.push(
         test.assertEqual(10, response1.total),
         test.assertEqual(1, response1.start),
@@ -66,7 +66,7 @@ function verifySortOrderInJobResults() {
         test.assertEqual("test-job1", response1.results[9]["jobId"])
     );
 
-    const response2 = getJobResults(1, 10, "startTime", "ascending");
+    const response2 = getStepResults(1, 10, "startTime", "ascending");
     assertions.push(
         test.assertEqual(10, response2.total),
         test.assertEqual(1, response2.start),
@@ -87,9 +87,9 @@ function verifySortOrderInJobResults() {
     return assertions;
 }
 
-function verifyPaginationInJobResults() {
+function verifyPaginationInStepResponse() {
     const assertions = [];
-    const response1 = getJobResults(1, 4, "startTime", "ascending");
+    const response1 = getStepResults(1, 4, "startTime", "ascending");
     assertions.push(
         test.assertEqual(10, response1.total),
         test.assertEqual(1, response1.start),
@@ -101,7 +101,7 @@ function verifyPaginationInJobResults() {
         test.assertEqual("test-job1", response1.results[3]["jobId"])
     );
 
-    const response2 = getJobResults(2, 4, "startTime", "ascending");
+    const response2 = getStepResults(2, 4, "startTime", "ascending");
     assertions.push(
         test.assertEqual(10, response2.total),
         test.assertEqual(2, response2.start),
@@ -113,7 +113,7 @@ function verifyPaginationInJobResults() {
         test.assertEqual("test-job3", response2.results[3]["jobId"])
     );
 
-    const response3 = getJobResults(3, 4, "startTime", "ascending");
+    const response3 = getStepResults(3, 4, "startTime", "ascending");
     assertions.push(
         test.assertEqual(10, response3.total),
         test.assertEqual(3, response3.start),
@@ -127,6 +127,6 @@ function verifyPaginationInJobResults() {
 }
 
 []
-    .concat(verifyJobResults())
-    .concat(verifySortOrderInJobResults())
-    .concat(verifyPaginationInJobResults());
+    .concat(verifyStepResponse())
+    .concat(verifySortOrderInStepResponse())
+    .concat(verifyPaginationInStepResponse());

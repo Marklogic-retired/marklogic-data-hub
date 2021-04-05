@@ -47,7 +47,7 @@ public abstract class AbstractHubClientTest extends TestObject {
 
     protected void clearDatabase(DatabaseClient client) {
         retryIfNecessary(() -> client.newServerEval()
-            .xquery("cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)")
+            .xquery("cts:uris((), (), cts:not-query(cts:collection-query(('hub-core-artifact', 'hub-template')))) ! xdmp:document-delete(.)")
             .evalAs(String.class));
     }
 
