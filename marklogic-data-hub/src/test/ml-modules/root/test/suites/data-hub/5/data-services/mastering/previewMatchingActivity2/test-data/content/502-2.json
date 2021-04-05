@@ -1,0 +1,29 @@
+{
+  "envelope": {
+    "headers": {},
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Patient",
+        "version": "1.0.0",
+        "baseUri": "http://example.org/"
+      },
+      "Patient": {
+        "FirstName": "Smith",
+        "LastName": "Garcia",
+        "DateOfBirth": "1985-11-12",
+        "Address": "Elden St",
+        "Zip": "00501",
+        "PhoneNumber": "1234567890"
+      }
+    },
+    "attachments": {
+      "FirstName": "Smith",
+      "LastName": "Garcia",
+      "Address": "Elden St",
+      "PhoneNumber": "1234567890",
+      "Zip": "00501",
+      "DateOfBirth": "11/12/1985"
+    }
+  }
+}

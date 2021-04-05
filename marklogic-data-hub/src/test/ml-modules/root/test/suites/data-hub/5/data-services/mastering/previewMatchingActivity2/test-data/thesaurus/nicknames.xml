@@ -1,0 +1,35 @@
+<thesaurus xmlns="http://marklogic.com/xdmp/thesaurus">
+  <!--
+  Each entry is lower-cased, as the thesaurus.xqy algorithm lower-cases a value before doing a thesaurus lookup.
+  -->
+  <entry>
+    <term>Mike</term>
+    <synonym>
+      <term>Mic</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Baye</term>
+    <synonym>
+      <term>Bay</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Chres</term>
+    <synonym>
+      <term>Chris</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>John</term>
+    <synonym>
+      <term>Jon</term>
+    </synonym>
+  </entry>
+  <entry>
+    <term>Mark</term>
+    <synonym>
+      <term>Marc</term>
+    </synonym>
+  </entry>
+</thesaurus>
