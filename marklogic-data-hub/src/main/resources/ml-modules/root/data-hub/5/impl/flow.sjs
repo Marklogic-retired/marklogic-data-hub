@@ -17,6 +17,7 @@
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const defaultConfig = require("/com.marklogic.hub/config.sjs")
+const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 const StepExecutionContext = require('/data-hub/5/flow/stepExecutionContext.sjs');
@@ -167,14 +168,14 @@ class Flow {
    *
    * @param flowName Required name of the flow to run
    * @param jobId Required ID of the job associated with the execution of the given step and flow
-   * @param content Array of content "descriptors", where each descriptor is expected to at least have a "uri" property.
+   * @param contentArray Array of content "descriptors", where each descriptor is expected to at least have a "uri" property.
    * The value of the "uri" property is not necessarily a URI; if sourceQueryIsScript is true for the step, then
    * the value of the "uri" property can be any string.
    * @param options Similar to findMatchingContent, this is the combination of options provided by the Java QueryStepRunner
    *  class that ideally would be the same as what's produced by flowUtils.makeCombinedOptions, but it's not yet
    * @param stepNumber The number of the step within the given flow to run
    */
-  runFlow(flowName, jobId, content = [], options, stepNumber) {
+  runFlow(flowName, jobId, contentArray = [], options, stepNumber) {
     const theFlow = this.getFlow(flowName);
     if(!theFlow) {
       throw Error('The flow with the name '+flowName+' could not be found.')
@@ -221,14 +222,14 @@ class Flow {
       delete this.datahub.flow;
     }
 
-    const items = content.map(contentItem => contentItem.uri);
+    const items = contentArray.map(contentItem => contentItem.uri);
     if (this.isContextDB(stepExecutionContext.getSourceDatabase()) && !combinedOptions.stepUpdate) {
-      this.runStep(stepExecutionContext, content);
+      this.runStep(stepExecutionContext, contentArray);
     } else {
       const flowInstance = this;
       xdmp.invoke(
         '/data-hub/5/impl/invoke-step.sjs',
-        {flowInstance, stepExecutionContext, content},
+        {flowInstance, stepExecutionContext, contentArray},
         {
           database: xdmp.database(stepExecutionContext.getSourceDatabase()),
           update: combinedOptions.stepUpdate ? 'true': 'false',
@@ -251,8 +252,9 @@ class Flow {
           .filter((col) => !!col);
 
         const targetDatabase = stepExecutionContext.getTargetDatabase();
-        const contentArray = this.writeQueue.getContentArray(targetDatabase);
-        writeTransactionInfo = this.flowUtils.writeContentArray(contentArray, targetDatabase, configCollections);
+        writeTransactionInfo = this.flowUtils.writeContentArray(
+          this.writeQueue.getContentArray(targetDatabase), targetDatabase, configCollections
+        );
       } catch (e) {
         this.handleWriteError(this, stepExecutionContext, e);
       }
@@ -287,116 +289,15 @@ class Flow {
    * @param content
    */
   runStep(stepExecutionContext, content) {
-    const flowStep = stepExecutionContext.flowStep;
     const stepNumber = stepExecutionContext.stepNumber;
-    const combinedOptions = stepExecutionContext.combinedOptions;
     const flowName = stepExecutionContext.flow.name;
 
-    const items = content.map(contentObject => contentObject.uri);
-
-    let flowInstance = this;
-    let processor = flowInstance.stepDefinition.getStepProcessor(flowInstance, flowStep.stepDefinitionName, flowStep.stepDefinitionType);
-    if (!(processor && processor.run)) {
-      let errorMsq = `Could not find main() function for process ${flowStep.stepDefinitionType}/${flowStep.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
-      flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});
-      throw Error(errorMsq);
-    }
-
-    let hookOperation = function () {};
-    let hook = flowStep.customHook;
-    if (!hook || !hook.module) {
-      hook = processor.customHook;
-    }
-    if (hook && hook.module) {
-      // Include all of the step context in the parameters for the custom hook to make use of
-      let parameters = Object.assign({uris: items, content, options: combinedOptions, flowName, stepNumber, step: flowStep}, hook.parameters);
-      hookOperation = function () {
-        flowInstance.invokeCustomHook(
-          hook.module,
-          parameters,
-          hook.user || xdmp.getCurrentUser(),
-          hook.database || (hook.runBefore ? stepExecutionContext.getSourceDatabase() : stepExecutionContext.getTargetDatabase())
-        );
-      }
-    }
-    if (hook && hook.runBefore) {
-      hookOperation();
-    }
-
-    let contentArray = [];
-
-    if (combinedOptions.acceptsBatch) {
-      try {
-        const stepOutput = processor.run(hubUtils.normalizeToSequence(content), combinedOptions, stepExecutionContext);
-        const results = hubUtils.normalizeToSequence(stepOutput);
-        for (const result of results) {
-          content.previousUri = stepExecutionContext.currentItem;
-          this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, stepExecutionContext.jobId);
-          contentArray.push(result);
-        }
-        stepExecutionContext.setCompletedItems(items);
-      } catch (e) {
-        stepExecutionContext.addErrorForEntireBatch(e, items);
-      }
-    } else {
-      for (let contentItem of content) {
-        stepExecutionContext.currentItem = contentItem.uri;
-        try {
-          const stepOutput = processor.run(contentItem, combinedOptions, stepExecutionContext);
-          const results = hubUtils.normalizeToSequence(stepOutput);
-          for (const result of results) {
-            this.flowUtils.addMetadataToContent(result, flowName, flowStep.name, stepExecutionContext.jobId);
-            contentArray.push(result);
-          }
-          stepExecutionContext.addCompletedItem(stepExecutionContext.currentItem);
-        } catch (e) {
-          stepExecutionContext.addBatchError(e, stepExecutionContext.currentItem);
-        }
-        stepExecutionContext.currentItem = null;
-      }
-    }
-    stepExecutionContext.currentItem = null;
-
-    let stepInterceptorFailed = false;
-    try {
-      this.applyInterceptorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
-    } catch (e) {
-      // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
-      // all items failed; this is analogous to the behavior of acceptsBatch=true
-      stepExecutionContext.setCompletedItems([]);
-      stepInterceptorFailed = true;
-      stepExecutionContext.addErrorForEntireBatch(e, items);
-    }
-
-    // Assumption is that if an interceptor failed, none of the content objects processed by the step module should be written
-    if (!stepInterceptorFailed) {
-      const databaseName = stepExecutionContext.getTargetDatabase();
-      contentArray.forEach(contentObject => {
-        this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);
-      });
-    }
-
-    if (hook && !hook.runBefore) {
-      hookOperation();
-    }
-  }
-
-  invokeCustomHook(moduleUri, parameters, user = null, database) {
-    let options = this.buildCustomHookInvokeOptions(user, database);
-    xdmp.invoke(moduleUri, parameters, options)
-  }
-
-  buildCustomHookInvokeOptions(user = null, database) {
-    let options = {
-      ignoreAmps: true
-    };
-    if (user && user !== xdmp.getCurrentUser()) {
-      options.userId = xdmp.user(user);
-    }
-    if (database) {
-      options.database = xdmp.database(database);
-    }
-    return options;
+    // The array will be empty in case an interceptor failed
+    const outputContentArray = flowRunner.processContentWithStep(stepExecutionContext, content, null);
+    const databaseName = stepExecutionContext.getTargetDatabase();
+    outputContentArray.forEach(contentObject => {
+      this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);
+    });
   }
 
   cloneInstance(instance) {
@@ -407,26 +308,6 @@ class Flow {
       newInstance[key] = instance[key];
     }
     return newInstance;
-  }
-
-  /**
-   * Applies interceptors to the given content array. Interceptors can make any changes they wish to the items in the
-   * content array, including adding and removing items, but the array itself cannot be changed - i.e. an interceptor may
-   * not return a new instance of an array.
-   *
-   * @param flowStep
-   * @param contentArray
-   * @param combinedOptions
-   */
-  applyInterceptorsBeforeContentPersisted(flowStep, contentArray, combinedOptions) {
-    if (flowStep.interceptors) {
-      flowStep.interceptors.filter((interceptor => "beforeContentPersisted" == interceptor.when)).forEach(interceptor => {
-        const vars = Object.assign({}, interceptor.vars);
-        vars.contentArray = contentArray;
-        vars.options = combinedOptions;
-        xdmp.invoke(interceptor.path, vars);
-      });
-    }
   }
 
   handleWriteError(flowInstance, stepExecutionContext, error) {

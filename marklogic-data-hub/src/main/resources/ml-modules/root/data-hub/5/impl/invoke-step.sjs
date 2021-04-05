@@ -1,5 +1,5 @@
 'use strict';
 
-var flowInstance, stepExecutionContext, content;
+var flowInstance, stepExecutionContext, contentArray;
 
-flowInstance.runStep(stepExecutionContext, content);
+flowInstance.runStep(stepExecutionContext, contentArray);

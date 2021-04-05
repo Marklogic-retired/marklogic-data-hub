@@ -58,6 +58,7 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
 
     hubUtils.hubTrace(traceEvent, `Running step number ${stepNumber} in flow ${flowName}`);
     const stepExecutionContext = newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions);
+    prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
     currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, databaseWriteQueue);
     hubUtils.hubTrace(traceEvent, `Finished step number ${stepNumber} in flow ${flowName}`);
 
@@ -97,15 +98,35 @@ function newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions) {
  * @param databaseWriteQueue
  */
 function processContentWithStep(stepExecutionContext, contentArray, databaseWriteQueue) {
-  prepareContentBeforeStepIsRun(contentArray, stepExecutionContext);
+  const batchItems = contentArray.map(content => content.uri);
 
-  let outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
+  const hookRunner = stepExecutionContext.makeCustomHookRunner(contentArray);
+  if (hookRunner && hookRunner.runBefore) {
+    hookRunner.runHook();
+  }
+
+  const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
     runStepOnBatch(contentArray, stepExecutionContext) :
     runStepOnEachItem(contentArray, stepExecutionContext);
 
-  // Copies regular flow behavior, where collections from options are added after the step module runs
-  stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
-  addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue);
+  const stepInterceptorError = applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext, batchItems);
+
+  if (hookRunner && !hookRunner.runBefore) {
+    hookRunner.runHook();
+  }
+
+  // If an interceptor failed, none of the content objects processed by the step module should be written
+  if (stepInterceptorError != null) {
+    return [];
+  }
+
+  if (databaseWriteQueue != null) {
+    // Since DHF 5.0, collections from options have been added after step processing as opposed to before step processing.
+    // The reason for this is not known.
+    stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
+    addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue);
+  }
+  
   return outputContentArray;
 }
 
@@ -120,29 +141,32 @@ function processContentWithStep(stepExecutionContext, contentArray, databaseWrit
  */
 function runStepOnBatch(contentArray, stepExecutionContext) {
   const debugEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG);
-  const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const contentSequence = hubUtils.normalizeToSequence(contentArray);
+
+  if (debugEnabled) {
+    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on batch: ${xdmp.toJsonString(contentSequence)}`);
+  }
+
+  const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
   const batchItems = contentArray.map(content => content.uri);
 
-  if (debugEnabled) {
-    hubUtils.hubTrace(consts.DEBUG, `Running step on batch: ${xdmp.toJsonString(contentSequence)}`);
-  }
-
   try {
     const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions, stepExecutionContext));
-    for (const contentObject of outputSequence) {
-      flowUtils.addMetadataToContent(contentObject, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+    for (const outputContent of outputSequence) {
+      flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
       if (debugEnabled) {
-        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(contentObject)}`);
+        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(outputContent)}`);
       }
-      outputContentArray.push(contentObject);
+      outputContentArray.push(outputContent);
     }
     stepExecutionContext.setCompletedItems(batchItems);
   } catch (error) {
     hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Error while processing batch: ${error.message}`);
     stepExecutionContext.addErrorForEntireBatch(error, batchItems);
-    throw error;
+    if (stepExecutionContext.stepErrorShouldBeThrown()) {
+      throw error;
+    }
   }
 
   return outputContentArray;
@@ -153,8 +177,8 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
  *
  * @param contentArray
  * @param stepExecutionContext
- * @return if an error occurs while processing an item, it is captured in the step execution context and rethrown; else, 
- * the content array returned by the step is returned
+ * @return if an error occurs while processing an item, it is captured in the step execution context; 
+ *  the content array returned by the step is returned
  */
 function runStepOnEachItem(contentArray, stepExecutionContext) {
   const debugEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG);
@@ -167,19 +191,23 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
     }
     try {
       const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentObject, stepExecutionContext.combinedOptions, stepExecutionContext));
-      for (const outputContent of outputSequence) {
-        outputContent.previousUri = thisItem;
-        flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+      if (fn.head(outputSequence)) {
         stepExecutionContext.addCompletedItem(thisItem);
-        if (debugEnabled) {
-          hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(contentObject)}`);
-        }
-        outputContentArray.push(outputContent);
+        for (const outputContent of outputSequence) {
+          outputContent.previousUri = thisItem;
+          flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+          if (debugEnabled) {
+            hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(outputContent)}`);
+          }
+          outputContentArray.push(outputContent);
+        }  
       }
     } catch (error) {
       hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Error while processing item ${thisItem}: ${error.message}`);
       stepExecutionContext.addBatchError(error, thisItem);
-      throw error;
+      if (stepExecutionContext.stepErrorShouldBeThrown()) {
+        throw error;
+      }
     }
   });
 
@@ -282,7 +310,41 @@ function copyContentObject(contentObject) {
   };
 }
 
+/**
+ * Applies interceptors to the given content array. Interceptors can make any changes they wish to the items in the
+ * content array, including adding and removing items, but the array itself cannot be changed - i.e. an interceptor may
+ * not return a new instance of an array.
+ * 
+ * @param contentArray 
+ * @param stepExecutionContext 
+ * @returns if an error occurred, the error is returned
+ */
+function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionContext, batchItems) {
+  const flowStep = stepExecutionContext.flowStep;
+  if (flowStep.interceptors) {
+    let currentInterceptor = null;
+    try {
+      flowStep.interceptors.filter((interceptor => "beforeContentPersisted" == interceptor.when)).forEach(interceptor => {
+        currentInterceptor = interceptor;
+        const vars = Object.assign({}, interceptor.vars);
+        vars.contentArray = contentArray;
+        vars.options = stepExecutionContext.combinedOptions;
+        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Invoking interceptor at path: ${interceptor.path}`);
+        xdmp.invoke(interceptor.path, vars);
+      });  
+    } catch (error) {
+      // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
+      // all items failed; this is analogous to the behavior of acceptsBatch=true
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Caught error invoking interceptor at path: ${currentInterceptor.path}; error: ${error.message}`);
+      stepExecutionContext.setCompletedItems([]);
+      stepExecutionContext.addErrorForEntireBatch(error, batchItems);
+      return error;
+    }
+  }
+}
+
 module.exports = {
-  processContentWithFlow
+  processContentWithFlow,
+  processContentWithStep
 }
 

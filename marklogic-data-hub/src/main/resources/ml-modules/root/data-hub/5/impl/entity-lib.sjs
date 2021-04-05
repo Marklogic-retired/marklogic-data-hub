@@ -192,7 +192,7 @@ function getLatestJobData(entityName) {
  * @returns {null|*}
  */
 function findEntityTypeByEntityName(entityName) {
-  const uri = entityLib.getModelUri(entityName);
+  const uri = getModelUri(entityName);
   if (!fn.docAvailable(uri)) {
     return null;
   }
@@ -294,7 +294,7 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   [...affectedModels].forEach(model => {
     databases.forEach(db => {
       const entityName = getModelName(model);
-      hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
+      hubUtils.writeDocument(getModelUri(entityName), model, permissions, getModelCollection(), db)
     });
   });
 }
@@ -341,9 +341,9 @@ function writeModelToDatabases(entityName, model, databases) {
     // Using xdmp.invoke results in e.g. 20 models being saved in several seconds as opposed to well under a second
     // when calling xdmp.documentInsert directly.
     if (db === xdmp.databaseName(xdmp.database())) {
-      xdmp.documentInsert(entityLib.getModelUri(entityName), model, permissions, getModelCollection());
+      xdmp.documentInsert(getModelUri(entityName), model, permissions, getModelCollection());
     } else {
-      hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
+      hubUtils.writeDocument(getModelUri(entityName), model, permissions, getModelCollection(), db)
     }
   });
 }
