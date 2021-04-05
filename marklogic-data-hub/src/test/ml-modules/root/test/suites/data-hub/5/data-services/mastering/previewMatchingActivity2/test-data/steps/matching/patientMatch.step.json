@@ -1,0 +1,92 @@
+{
+  "batchSize": 100,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntity": "Change this to a valid entity type name; e.g. Customer",
+  "sourceQuery": "cts.collectionQuery(['patientMap'])",
+  "collections": [
+    "patientMatch"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "JSON",
+  "matchRulesets": [{
+      "name": "PhoneNumber - Exact",
+      "weight": 80,
+      "matchRules": [{
+        "entityPropertyPath": "PhoneNumber",
+        "matchType": "exact",
+        "options": {}
+      }]
+    },
+    {
+      "name": "DateOfBirth - Exact",
+      "weight": 71,
+      "matchRules": [{
+        "entityPropertyPath": "DateOfBirth",
+        "matchType": "exact",
+        "options": {}
+      }]
+    },
+    {
+      "name": "FirstName - Synonym",
+      "weight": 65,
+      "matchRules": [{
+        "entityPropertyPath": "FirstName",
+        "matchType": "synonym",
+        "options": {
+          "thesaurusURI": "/thesaurus/nicknames.xml",
+          "filter": ""
+        }
+      }]
+    },
+    {
+      "name": "LastName - Double Metaphone",
+      "weight": 15,
+      "matchRules": [{
+        "entityPropertyPath": "LastName",
+        "matchType": "doubleMetaphone",
+        "options": {
+          "dictionaryURI": "/dictionary/last-names.xml",
+          "distanceThreshold": "100"
+        }
+      }]
+    },
+    {
+      "name": "Zip - Zip",
+      "weight": 3,
+      "matchRules": [{
+        "entityPropertyPath": "Zip",
+        "matchType": "zip",
+        "options": {}
+      }]
+    }
+  ],
+  "thresholds": [{
+      "thresholdName": "Merge",
+      "action": "merge",
+      "score": 83
+    },
+    {
+      "thresholdName": "Notify",
+      "action": "notify",
+      "score": 69
+    }
+  ],
+  "name": "patientMatch",
+  "targetEntityType": "http://example.org/Patient-1.0.0/Patient",
+  "description": "",
+  "collection": "patientMap",
+  "selectedSource": "collection",
+  "additionalCollections": [],
+  "headers": {},
+  "interceptors": [],
+  "provenanceGranularityLevel": "coarse",
+  "validateEntity": "doNotValidate",
+  "customHook": {},
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "patientMatch-matching",
+  "acceptsBatch": true,
+  "stepUpdate": false,
+  "lastUpdated": "2021-02-01T12:06:54.744008-08:00"
+}

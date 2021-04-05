@@ -1,0 +1,1 @@
+{"envelope":{"headers":{}, "triples":[], "instance":{"info":{"title":"Patient", "version":"1.0.0", "baseUri":"http://example.org/"}, "Patient":{"FirstName":"Maria", "LastName":"Williams", "DateOfBirth":"1980-08-18", "PhoneNumber":"2900679806"}}, "attachments":{"FirstName":"Maria", "LastName":"Williams", "PhoneNumber":"2900679806", "DateOfBirth":"08/18/1980"}}}
