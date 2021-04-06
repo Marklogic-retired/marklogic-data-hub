@@ -11,6 +11,7 @@ import {MissingPagePermission} from "../config/messages.config";
 import {CurationContext} from "../util/curation-context";
 import {customerMappingStep} from "../assets/mock-data/curation/curation-context-mock";
 import userEvent from "@testing-library/user-event";
+import {getViewSettings} from "../util/user-context";
 
 jest.mock("axios");
 
@@ -33,11 +34,11 @@ describe("Curate component", () => {
     const {getByText, getAllByText, queryByText, getByTestId, queryByTestId} = await render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}>
         <CurationContext.Provider value={customerMappingStep}>
-          <Curate/>
+          <Curate />
         </CurationContext.Provider>
       </AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await(waitForElement(() => getByText("Customer")))).toBeInTheDocument();
+    expect(await (waitForElement(() => getByText("Customer")))).toBeInTheDocument();
 
     expect(getByText(tiles.curate.intro)).toBeInTheDocument(); // tile intro text
 
@@ -53,9 +54,9 @@ describe("Curate component", () => {
 
     // test edit
     fireEvent.click(getByTestId("Mapping3-edit"));
-    expect(await(waitForElement(() => (mockStepSettingsOpen)))).toHaveBeenCalledWith({isEditing: true, openStepSettings: true}); //Indicates that the mapping settings modal is opened.
+    expect(await (waitForElement(() => (mockStepSettingsOpen)))).toHaveBeenCalledWith({isEditing: true, openStepSettings: true}); //Indicates that the mapping settings modal is opened.
     wait(async () => {
-      expect(await(waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
+      expect(await (waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
       expect(getAllByText("Save")[0]).toBeDisabled();
       userEvent.click(getAllByText("Cancel")[0]);
     });
@@ -72,11 +73,11 @@ describe("Curate component", () => {
     const {getByText, queryByText, getByTestId} = await render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}>
         <CurationContext.Provider value={customerMappingStep}>
-          <Curate/>
+          <Curate />
         </CurationContext.Provider>
       </AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await(waitForElement(() => getByText("Customer")))).toBeInTheDocument();
+    expect(await (waitForElement(() => getByText("Customer")))).toBeInTheDocument();
     // Check for steps to be populated
     expect(axiosMock.get).toBeCalledWith("/api/steps/mapping");
     fireEvent.click(getByText("Customer"));
@@ -92,9 +93,9 @@ describe("Curate component", () => {
 
     // test edit
     fireEvent.click(getByTestId("Mapping1-edit"));
-    expect(await(waitForElement(() => (mockStepSettingsOpen)))).toHaveBeenCalledWith({isEditing: true, openStepSettings: true}); //Indicates that the mapping settings modal is opened.
+    expect(await (waitForElement(() => (mockStepSettingsOpen)))).toHaveBeenCalledWith({isEditing: true, openStepSettings: true}); //Indicates that the mapping settings modal is opened.
     wait(async () => {
-      expect(await(waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
+      expect(await (waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
       expect(getByTestId("mapping-dialog-save")).not.toBeDisabled();
       fireEvent.click(getByTestId("mapping-dialog-cancel"));
     });
@@ -108,11 +109,133 @@ describe("Curate component", () => {
 
   test("Verify user with no authorities cannot access page", async () => {
     const authorityService = new AuthoritiesService();
-    const {getByText, queryByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, queryByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate /></AuthoritiesContext.Provider></MemoryRouter>);
 
-    expect(await(waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
+    expect(await (waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
 
     // entities should not be visible
     expect(queryByText("Customer")).not.toBeInTheDocument();
+  });
+});
+
+describe("getViewSettings", () => {
+  beforeEach(() => {
+    window.sessionStorage.clear();
+    jest.restoreAllMocks();
+  });
+
+  const sessionStorageMock = (() => {
+    let store = {};
+
+    return {
+      getItem(key) {
+        return store[key] || null;
+      },
+      setItem(key, value) {
+        store[key] = value.toString();
+      },
+      removeItem(key) {
+        delete store[key];
+      },
+      clear() {
+        store = {};
+      }
+    };
+  })();
+
+  Object.defineProperty(window, "sessionStorage", {
+    value: sessionStorageMock
+  });
+
+  const mappingStepArtifact = {
+    acceptsBatch: true,
+    batchSize: 100,
+    collections: ["mapped-customers", "map-customers"],
+    name: "map-customers",
+    permissions: "data-hub-common,read,data-hub-common,update",
+    provenanceGranularityLevel: "",
+    sourceDatabase: "data-hub-STAGING",
+    sourceQuery: "cts.collectionQuery('mapCustomersJSON')",
+    stepDefinitionName: "default-mapping",
+    stepDefinitionType: "mapping",
+    stepId: "map-customers-mapping",
+    stepUpdate: false,
+    targetDatabase: "data-hub-FINAL",
+    targetFormat: "json",
+  };
+
+  const mappingModelDefinition = {Customer: {}, Address: {}, Zip: {}};
+
+  const mergingStepArtifact = {
+    acceptsBatch: true,
+    batchSize: 100,
+    collections: ["matched-customers", "match-customers"],
+    name: "match-customers",
+    permissions: "data-hub-common,read,data-hub-common,update",
+    provenanceGranularityLevel: "",
+    sourceDatabase: "data-hub-FINAL",
+    sourceQuery: "cts.collectionQuery('mapCustomersJSON')",
+    stepDefinitionName: "default-matching",
+    stepDefinitionType: "matching",
+    stepId: "match-customers-matching",
+    stepUpdate: false,
+    targetDatabase: "data-hub-FINAL",
+    targetFormat: "json",
+  };
+
+  const mergingModelDefinition = {Customer: {}, Address: {}, Zip: {}};
+
+  const matchingStepArtifact = {
+    acceptsBatch: true,
+    batchSize: 100,
+    collections: ["merged-customers", "merge-customers"],
+    name: "merge-customers",
+    permissions: "data-hub-common,read,data-hub-common,update",
+    provenanceGranularityLevel: "",
+    sourceDatabase: "data-hub-FINAL",
+    sourceQuery: "cts.collectionQuery('mapCustomersJSON')",
+    stepDefinitionName: "default-merging",
+    stepDefinitionType: "merging",
+    stepId: "merge-customers-merging",
+    stepUpdate: false,
+    targetDatabase: "data-hub-FINAL",
+    targetFormat: "json",
+  };
+
+  const matchingModelDefinition = {Customer: {}, Address: {}, Zip: {}};
+
+  // MAPPING
+  it("should store mapping session storage info", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({curate: {stepArtifact: mappingStepArtifact, modelDefinition: mappingModelDefinition, entityType: "Customer"}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({curate: {stepArtifact: mappingStepArtifact, modelDefinition: mappingModelDefinition, entityType: "Customer"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  // MERGING
+  it("should merging session storage info", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({curate: {stepArtifact: mergingStepArtifact, modelDefinition: mergingModelDefinition, entityType: "Customer"}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({curate: {stepArtifact: mergingStepArtifact, modelDefinition: mergingModelDefinition, entityType: "Customer"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  // MATCHING
+  it("should merging session storage info", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    window.sessionStorage.setItem("dataHubViewSettings", JSON.stringify({curate: {stepArtifact: matchingStepArtifact, modelDefinition: matchingModelDefinition, entityType: "Customer"}}));
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({curate: {stepArtifact: matchingStepArtifact, modelDefinition: matchingModelDefinition, entityType: "Customer"}});
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+
+  it("should get empty object if no info in session storage", () => {
+    const getItemSpy = jest.spyOn(window.sessionStorage, "getItem");
+    const actualValue = getViewSettings();
+    expect(actualValue).toEqual({});
+    expect(window.sessionStorage.getItem).toBeCalledWith("dataHubViewSettings");
+    expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
   });
 });

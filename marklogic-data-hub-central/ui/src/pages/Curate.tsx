@@ -2,13 +2,16 @@ import React, {useState, useContext, useEffect} from "react";
 import {Modal} from "antd";
 import styles from "./Curate.module.scss";
 import {AuthoritiesContext} from "../util/authorities";
-import {UserContext} from "../util/user-context";
+import {getViewSettings, UserContext} from "../util/user-context";
 import axios from "axios";
 import EntityTiles from "../components/entities/entity-tiles";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
+import {useHistory} from "react-router-dom";
 
 const Curate: React.FC = () => {
+
+  const storage = getViewSettings();
 
   useEffect(() => {
     getEntityModels();
@@ -19,6 +22,7 @@ const Curate: React.FC = () => {
   // const [isLoading, setIsLoading] = useState(false);
   const [flows, setFlows] = useState<any[]>([]);
   const [entityModels, setEntityModels] = useState<any>({});
+  const history = useHistory<any>();
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -30,6 +34,26 @@ const Curate: React.FC = () => {
   const canReadCustom = authorityService.canReadCustom();
   const canWriteCustom = authorityService.canWriteCustom();
   const canAccessCurate = authorityService.canAccessCurate();
+
+
+  useEffect(() => {
+    const storedCurateArtifact = storage?.curate?.stepArtifact;
+    const storedCurateModel = storage?.curate?.modelDefinition;
+    const storedCurateType = storage?.curate?.entityType;
+
+
+    if (storedCurateArtifact !== undefined && storedCurateModel !== undefined && storedCurateType !== undefined) {
+
+      const stepDefinitionType = storedCurateArtifact["stepDefinitionType"];
+      if (stepDefinitionType === "mapping") {
+        history.push({pathname: "/tiles/curate/map"});
+      } else if (stepDefinitionType === "matching") {
+        history.push({pathname: "/tiles/curate/match"});
+      } else if (stepDefinitionType === "merging") {
+        history.push({pathname: "/tiles/curate/merge"});
+      }
+    }
+  }, []);
 
   const getEntityModels = async () => {
     try {

@@ -15,6 +15,7 @@ import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config"
 import {ConfirmationType} from "../../../types/common-types";
 import {MatchingStep, StepType} from "../../../types/curation-types";
 import Steps from "../../steps/steps";
+import {getViewSettings, setViewSettings} from "../../../util/user-context";
 
 interface Props {
   matchingStepsArray: MatchingStep[];
@@ -34,6 +35,8 @@ interface Props {
 const {Option} = Select;
 
 const MatchingCard: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+
   const history = useHistory<any>();
   const {setActiveStep} = useContext(CurationContext);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
@@ -210,7 +213,19 @@ const MatchingCard: React.FC<Props> = (props) => {
   };
 
   const openStepDetails = (matchingStep: MatchingStep) => {
-    setActiveStep(matchingStep, props.entityModel["model"]["definitions"], props.entityName);
+    const stepArtifact = matchingStep;
+    const modelDefinition = props.entityModel["model"]["definitions"];
+    const entityType = props.entityName;
+
+    setActiveStep(stepArtifact, modelDefinition, entityType);
+    setViewSettings({
+      ...storage,
+      curate: {
+        stepArtifact,
+        modelDefinition,
+        entityType
+      }
+    });
     history.push({pathname: "/tiles/curate/match"});
   };
 

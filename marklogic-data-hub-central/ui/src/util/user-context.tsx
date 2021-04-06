@@ -33,6 +33,18 @@ export function setViewSettings (data: ViewSettingsType): void {
   sessionStorage.setItem("dataHubViewSettings", JSON.stringify(data));
 }
 
+export function clearSessionStorageOnRefresh () {
+  const storage = getViewSettings();
+  window.onbeforeunload = function() {
+    setViewSettings({...storage, curate: {}});
+    return true;
+  };
+
+  return () => {
+    window.onbeforeunload = null;
+  };
+}
+
 export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
   loginAuthenticated: () => {},

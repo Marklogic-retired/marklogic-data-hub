@@ -81,7 +81,7 @@ const Flows: React.FC<Props> = (props) => {
   const [fileList, setFileList] = useState<any[]>([]);
   const [showUploadError, setShowUploadError] = useState(false);
   const [openNewFlow, setOpenNewFlow] = useState(props.newStepToFlowOptions?.addingStepToFlow && !props.newStepToFlowOptions?.existingFlow);
-  const [activeKeys, setActiveKeys] = useState(openFlows ? openFlows : []);
+  const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ["-1"]);
   const [showLinks, setShowLinks] = useState("");
   const [startRun, setStartRun] = useState(false);
   const [latestJobData, setLatestJobData] = useState<any>({});

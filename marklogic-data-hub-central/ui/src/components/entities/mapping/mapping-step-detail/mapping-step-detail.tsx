@@ -25,6 +25,7 @@ import {AdvMapTooltips} from "../../../../config/tooltips.config";
 import arrayIcon from "../../../../assets/icon_array.png";
 import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
 import CustomPageHeader from "../../page-header/page-header";
+import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -51,6 +52,10 @@ const DEFAULT_MAPPING_STEP: MappingStep = {
 };
 
 const MappingStepDetail: React.FC = () => {
+  const storage = getViewSettings();
+
+  // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
+  clearSessionStorageOnRefresh();
 
   const history = useHistory<any>();
   const {curationOptions,
@@ -752,6 +757,7 @@ const MappingStepDetail: React.FC = () => {
     setExpandedSourceFlag(false);
     setExpandedEntityFlag(false);
     setUriIndex(0);
+    setViewSettings({...storage, curate: {}});
   };
 
   const convertMapExpToMapArt = (obj, path, val) => {

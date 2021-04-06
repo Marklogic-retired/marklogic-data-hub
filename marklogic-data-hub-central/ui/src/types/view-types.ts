@@ -11,8 +11,13 @@ export type ViewSettingsType = {
     model?: {
         entityExpandedRows?: string[],
         propertyExpandedRows?: string[],
-    }
+    },
+    curate?: {
+        stepArtifact?: any,
+        modelDefinition?: any,
+        entityType?: string
+    },
     run?: {
         openFlows?: string[],
-    }
+    },
 };

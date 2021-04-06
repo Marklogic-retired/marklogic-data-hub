@@ -11,6 +11,7 @@ import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import Steps from "../../steps/steps";
 import {CurationContext} from "../../../util/curation-context";
 import {StepType} from "../../../types/curation-types";
+import {getViewSettings, setViewSettings} from "../../../util/user-context";
 
 const {Option} = Select;
 
@@ -31,7 +32,7 @@ interface Props {
   }
 
 const MappingCard: React.FC<Props> = (props) => {
-
+  const storage = getViewSettings();
   const {
     mappingOptions,
     setActiveStep,
@@ -158,8 +159,21 @@ const MappingCard: React.FC<Props> = (props) => {
   };
 
   const openMapStepDetails = (name, index) => {
+    const stepArtifact = props.data[index];
+    const modelDefinition = props.entityModel["model"]["definitions"];
+    const entityType = props.entityTypeTitle;
+
     // need step's name and array index to option mapping details
-    setActiveStep(props.data[index], props.entityModel["model"]["definitions"], props.entityTypeTitle);
+
+    setActiveStep(stepArtifact, modelDefinition, entityType);
+    setViewSettings({
+      ...storage,
+      curate: {
+        stepArtifact,
+        modelDefinition,
+        entityType
+      }
+    });
     history.push({pathname: "/tiles/curate/map"});
   };
 
