@@ -1,6 +1,7 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.central.AbstractMvcTest;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,7 @@ public class MappingControllerTest extends AbstractMvcTest {
         loginAsTestUserWithRoles("hub-central-mapping-writer");
 
         getJson("/api/artifacts/mapping/entity/Customer").andExpect(status().isOk()).andDo(result -> {
-            JsonNode customer = parseJsonResponse(result);
+            JsonNode customer = parseJsonResponse(result).get(0).get("entityModel");
             JsonNode properties = customer.get("definitions").get("Customer").get("properties");
 
             JsonNode shipping = properties.get("shipping");
