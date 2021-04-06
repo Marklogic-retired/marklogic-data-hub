@@ -1,5 +1,6 @@
 package com.marklogic.hub.spark.sql.sources.v2.reader;
 
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.spark.sql.sources.v2.Options;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.types.DataTypes;
@@ -20,9 +21,11 @@ public class ReadWithCustomSparkSchemaTest extends AbstractSparkReadTest {
 
     @Test
     void validCustomSparkSchema() {
-        assumeTrue(OS.LINUX.isCurrentOs(), "Running this test on Windows and mac result in SEGFAULT when trying to get partition's row count\n" +
-            "     (reaadLib.sjs's getRowCountForPartition() method. Once server bug https://bugtrack.marklogic.com/55743\n" +
-            "     is fixed, the test should run fine on all platforms");
+        MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
+        assumeTrue(OS.LINUX.isCurrentOs() || (version.getMajor() >= 10 &&
+            version.isNightly()), "Running this test on Windows and mac used to result in SEGFAULT when trying to get" +
+            " partition's row count. The server bug https://bugtrack.marklogic.com/55743 is fixed so the test should run" +
+            " fine on any version > 10.0-5 on Linux and on 10.0-nightly in other platforms.");
         setupTenSimpleCustomers();
 
         Options options = newOptions()
