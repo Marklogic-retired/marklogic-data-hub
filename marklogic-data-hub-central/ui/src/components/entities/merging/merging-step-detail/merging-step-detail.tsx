@@ -20,6 +20,7 @@ import {RightOutlined, DownOutlined} from "@ant-design/icons";
 import {Icon, Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
+import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -48,6 +49,11 @@ const DEFAULT_MERGING_STEP: MergingStep = {
 };
 
 const MergingStepDetail: React.FC = () => {
+  const storage = getViewSettings();
+
+  // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
+  clearSessionStorageOnRefresh();
+
   const history = useHistory<any>();
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
   const [mergingStep, setMergingStep] = useState<MergingStep>(DEFAULT_MERGING_STEP);
@@ -353,7 +359,10 @@ const MergingStepDetail: React.FC = () => {
     <>
       <CustomPageHeader
         title={mergingStep.name}
-        handleOnBack={() => history.push("/tiles/curate")}
+        handleOnBack={() => {
+          history.push("/tiles/curate");
+          setViewSettings({...storage, curate: {}});
+        }}
       />
       <p className={styles.headerDescription}>{MergingStepDetailText.description}</p>
       <div className={styles.mergingDetailContainer}>

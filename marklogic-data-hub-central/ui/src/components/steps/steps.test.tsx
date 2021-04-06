@@ -6,8 +6,6 @@ import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/steps.data";
 import StepsConfig from "../../config/steps.config";
 import {ErrorTooltips} from "../../config/tooltips.config";
-import {CurationContext} from "../../util/curation-context";
-import {customerStepWarning} from "../../assets/mock-data/curation/curation-context-mock";
 
 jest.mock("axios");
 
@@ -395,5 +393,5 @@ describe("Steps settings component", () => {
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
-  
+
 });

@@ -15,7 +15,7 @@ import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config"
 import {ConfirmationType} from "../../../types/common-types";
 import {MergingStep, StepType} from "../../../types/curation-types";
 import Steps from "../../steps/steps";
-
+import {getViewSettings, setViewSettings} from "../../../util/user-context";
 interface Props {
   mergingStepsArray: any;
   flows: any;
@@ -34,6 +34,8 @@ interface Props {
 const {Option} = Select;
 
 const MergingCard: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+
   const history = useHistory<any>();
   const {setActiveStep} = useContext(CurationContext);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
@@ -72,7 +74,19 @@ const MergingCard: React.FC<Props> = (props) => {
   };
 
   const openStepDetails = (mergingStep: MergingStep) => {
-    setActiveStep(mergingStep, props.entityModel["model"]["definitions"], props.entityName);
+    const stepArtifact = mergingStep;
+    const modelDefinition = props.entityModel["model"]["definitions"];
+    const entityType = props.entityName;
+
+    setActiveStep(stepArtifact, modelDefinition, entityType);
+    setViewSettings({
+      ...storage,
+      curate: {
+        stepArtifact,
+        modelDefinition,
+        entityType
+      }
+    });
     history.push({pathname: "/tiles/curate/merge"});
   };
 

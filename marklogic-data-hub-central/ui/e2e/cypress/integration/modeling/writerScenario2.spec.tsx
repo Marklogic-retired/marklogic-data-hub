@@ -192,7 +192,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("OrderedBy").should("exist");
   });
   it("Delete a property, a structured property and then the entity", () => {
-    //Structured Property 
+    //Structured Property
     propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "alt_address-streetAlt").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();

@@ -20,6 +20,7 @@ import {MatchingStep} from "../../../../types/curation-types";
 import {MatchingStepDetailText} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity} from "../../../../api/matching";
 import {DownOutlined} from "@ant-design/icons";
+import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "../../../../util/user-context";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -45,6 +46,11 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
 };
 
 const MatchingStepDetail: React.FC = () => {
+  const storage = getViewSettings();
+
+  // Prevents an infinite loop issue with sessionStorage due to user refreshing in step detail page.
+  clearSessionStorageOnRefresh();
+
   const history = useHistory<any>();
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
 
@@ -396,7 +402,10 @@ const MatchingStepDetail: React.FC = () => {
     <>
       <CustomPageHeader
         title={matchingStep.name}
-        handleOnBack={() => history.push("/tiles/curate")}
+        handleOnBack={() => {
+          history.push("/tiles/curate");
+          setViewSettings({...storage, curate: {}});
+        }}
       />
       <p className={styles.headerDescription}>{MatchingStepDetailText.description}</p>
 
