@@ -1,5 +1,6 @@
 package com.marklogic.hub.spark.sql.sources.v2.reader;
 
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.spark.sql.sources.v2.Options;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.util.ArrayData;
@@ -8,6 +9,7 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.OS;
@@ -32,9 +34,11 @@ public class ReadArraysAndMapsTest extends AbstractSparkReadTest {
 
     @Test
     void arrayOfStrings() {
-        assumeTrue(OS.LINUX.isCurrentOs(), "Running this test on Windows and mac result in SEGFAULT when trying to get partition's row count\n" +
-            "       (readLib.sjs's getRowCountForPartition() method. Once server bug https://bugtrack.marklogic.com/55743\n" +
-            "       is fixed, the test should run fine on all platforms.");
+        MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
+        assumeTrue(OS.LINUX.isCurrentOs() || (version.getMajor() >= 10 &&
+            version.isNightly()), "Running this test on Windows and mac used to result in SEGFAULT when trying to get" +
+            " partition's row count. The server bug https://bugtrack.marklogic.com/55743 is fixed so the test should run" +
+            " fine on any version > 10.0-5 on Linux and on 10.0-nightly in other platforms.");
         loadSimpleCustomers(1);
 
         StructType sparkSchema = new StructType(new StructField[]{
