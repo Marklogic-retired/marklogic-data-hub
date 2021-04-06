@@ -1,12 +1,9 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.dataservices.MappingService;
-import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.entity.HubEntity;
-import com.marklogic.hub.impl.EntityManagerImpl;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +14,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -52,23 +50,9 @@ public class MappingController extends BaseController {
     @RequestMapping(value = "/entity/{entityName}", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_readMapping")
-    public JsonNode getEntityForMapping(@PathVariable String entityName) {
-        ArrayNode array = (ArrayNode) ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
-        JsonNode entityModel = null;
-        for (int i = 0; i < array.size(); i++) {
-            JsonNode model = array.get(i);
-            if (entityName.equals(model.get("entityName").asText())) {
-                entityModel = model.get("model");
-                break;
-            }
-        }
-
-        if (entityModel == null) {
-            throw new RuntimeException("Unable to find entity model with name: " + entityName);
-        }
-
-        HubEntity hubEntity = HubEntity.fromJson(entityName + ".entity.json", entityModel);
-        return new EntityManagerImpl(null).getEntityFromProject(entityName, Arrays.asList(hubEntity), null, true).toJson();
+    @ApiOperation(value = "Returns an entity along with all its related entities for mapping UI", response = MappableEntityList.class)
+    public JsonNode getMappableEntities(@PathVariable String entityName) {
+       return getMappingService().getEntitiesForMapping(entityName);
     }
 
     protected MappingService getMappingService() {
@@ -82,5 +66,24 @@ public class MappingController extends BaseController {
         public String sourceQuery;
         @ApiModelProperty("Each property object has a name matching that of an entity property and a sourceFrom mapping expression")
         public Map<String, Object> properties;
+    }
+
+
+    public static class RelatedEntityMapping {
+        public String mappingLinkText;
+        public String entityMappingId;
+    }
+
+    public static class MappableEntity {
+        public String entityMappingId;
+        public String entityType;
+        public String mappingTitle;
+        public ModelDescriptor entityModel;
+
+        @ApiModelProperty("Each 'mappingLinkText' refers to a mapping whose id is 'entityMappingId'")
+        public List<RelatedEntityMapping> relatedEntityMappings;
+    }
+
+    public static class MappableEntityList extends ArrayList<MappableEntity> {
     }
 }

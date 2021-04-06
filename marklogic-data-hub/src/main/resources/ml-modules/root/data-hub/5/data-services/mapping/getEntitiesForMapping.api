@@ -1,0 +1,14 @@
+{
+    "functionName": "getEntitiesForMapping",
+    "desc": "Gets the specified entity model and all its related entity models",
+    "params": [
+        {
+           "name": "entityName",
+           "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

@@ -47,6 +47,7 @@ public interface MappingService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_getEntitiesForMapping;
             private BaseProxy.DBFunctionRequest req_testMapping;
             private BaseProxy.DBFunctionRequest req_getDocument;
             private BaseProxy.DBFunctionRequest req_getUris;
@@ -58,6 +59,8 @@ public interface MappingService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/mapping/", servDecl);
 
+                this.req_getEntitiesForMapping = this.baseProxy.request(
+                    "getEntitiesForMapping.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_testMapping = this.baseProxy.request(
                     "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getDocument = this.baseProxy.request(
@@ -70,6 +73,21 @@ public interface MappingService {
                     "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getEntitiesForMapping(String entityName) {
+                return getEntitiesForMapping(
+                    this.req_getEntitiesForMapping.on(this.dbClient), entityName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getEntitiesForMapping(BaseProxy.DBFunctionRequest request, String entityName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("entityName", false, BaseProxy.StringType.fromString(entityName))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -162,6 +180,14 @@ public interface MappingService {
 
         return new MappingServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Gets the specified entity model and all its related entity models
+   *
+   * @param entityName	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getEntitiesForMapping(String entityName);
 
   /**
    * Invokes the testMapping operation on the database server
