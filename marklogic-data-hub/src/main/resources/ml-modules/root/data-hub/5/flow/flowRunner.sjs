@@ -150,6 +150,10 @@ function processContentWithStep(stepExecutionContext, contentArray, databaseWrit
     return [];
   }
 
+  if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
+    applyTargetCollectionsAdditivity(contentArray);
+  }
+
   if (databaseWriteQueue != null) {
     // Since DHF 5.0, collections from options have been added after step processing as opposed to before step processing.
     // The reason for this is not known.
@@ -174,6 +178,15 @@ function invokeBeforeMain(stepExecutionContext, contentArray) {
         `in flow '${stepExecutionContext.flow.name}'; cause: ${error.message}`);
     }
   }
+}
+
+function applyTargetCollectionsAdditivity(contentArray) {
+  contentArray.forEach(content => {
+    if (content.context.originalCollections) {
+      let collections = content.context.collections || [];
+      content.context.collections = collections.concat(content.context.originalCollections);
+    }
+  });
 }
 
 /**
