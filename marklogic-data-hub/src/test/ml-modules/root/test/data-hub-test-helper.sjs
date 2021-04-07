@@ -71,9 +71,12 @@ function getRecord(uri, databaseName = null) {
     if (!fn.docAvailable(uri)) {
       throw Error(`Did not find document with URI: ${uri}; database: ${databaseName}`);
     }
+    const doc = cts.doc(uri);
+    // If the doc is an XML document, toObject results in undefined
+    const document = doc.toObject() ? doc.toObject() : doc;
     return {
       uri : uri.toString(),
-      document : cts.doc(uri).toObject(),
+      document : document,
       collections : xdmp.documentGetCollections(uri).sort(),
       permissions : buildPermissionsMap(xdmp.documentGetPermissions(uri)),
       metadata : xdmp.documentGetMetadata(uri)
@@ -83,6 +86,10 @@ function getRecord(uri, databaseName = null) {
 
 function getStagingRecord(uri) {
   return getRecord(uri, config.STAGINGDATABASE);
+}
+
+function getModulesRecord(uri) {
+  return getRecord(uri, config.MODULESDATABASE);
 }
 
 /**
@@ -142,7 +149,8 @@ function createSimpleMappingProject(arrayOfMappingStepProperties) {
         "Customer": {
           "properties": {
             "customerId": {"datatype": "integer"},
-            "name": {"datatype": "string"}
+            "name": {"datatype": "string"},
+            "status": {"datatype": "string"}
           }
         }
       }
@@ -192,6 +200,7 @@ function makeSimpleMappingStep(stepName, mappingStepProperties) {
 
 module.exports = {
   createSimpleMappingProject,
+  getModulesRecord,
   getRecord,
   getRecordInCollection,
   getStagingRecord,

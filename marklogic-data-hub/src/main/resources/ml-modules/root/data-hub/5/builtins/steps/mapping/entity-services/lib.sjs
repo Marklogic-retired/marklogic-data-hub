@@ -2,15 +2,17 @@
 
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
-const es = require('/MarkLogic/entity-services/entity-services');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-const sem = require("/MarkLogic/semantics.xqy");
-const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
-const dhMappingTrace = 'hub-mapping';
-const dhMappingTraceIsEnabled = xdmp.traceEnabled(dhMappingTrace);
+
+const infoEvent = datahub.consts.TRACE_MAPPING;
+const infoEnabled = xdmp.traceEnabled(infoEvent);
+const debugEvent = datahub.consts.TRACE_MAPPING_DEBUG;
+const debugEnabled = xdmp.traceEnabled(debugEvent);
+
 let xqueryLib = null;
 
 const xmlMappingCollections = ['http://marklogic.com/entity-services/mapping', 'http://marklogic.com/data-hub/mappings/xml'];
@@ -38,15 +40,16 @@ const reservedNamespaces = ['m', 'map'];
  * Build an XML mapping template in the http://marklogic.com/entity-services/mapping namespace, which can then be the
  * input to the Entity Services mappingPut function that generates an XSLT template.
  *
- * @param mappingDoc expected to be a document-node and not an object asdfasdf
+ * @param mappingStepDocument expected to be a document-node and not an object
+ * @param userParameterNames
  * @return {*}
  */
-function buildMappingXML(mappingDoc) {
-  if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, 'Building mapping XML');
+function buildMappingXML(mappingStepDocument, userParameterNames) {
+  if (debugEnabled) {
+    hubUtils.hubTrace(debugEvent, 'Building mapping XML');
   }
 
-  const mappingStep = mappingDoc.toObject();
+  const mappingStep = mappingStepDocument.toObject();
   let allEntityMap = [];
   let targetEntityMapping = {};
 
@@ -61,7 +64,6 @@ function buildMappingXML(mappingDoc) {
 
   const namespaces = fetchNamespacesFromMappingStep(mappingStep);
 
-
   let entityTemplates = "";
   for(var i=0; i< allEntityMap.length; i++){
     entityTemplates += generateEntityTemplates(i, allEntityMap[i]).join('\n') + "\n";
@@ -70,7 +72,7 @@ function buildMappingXML(mappingDoc) {
   let xml =
     `<m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
       ${retrieveFunctionImports()}
-      <m:param name="URI"/>
+      ${makeParameterElements(mappingStep, userParameterNames)}
       ${entityTemplates}
       <m:output>
       ${allEntityMap.map((entityMap, index) =>
@@ -100,6 +102,37 @@ function fetchNamespacesFromMappingStep(mappingStep){
   return namespaces;
 }
 
+/**
+ * Makes parameter elements for the XML mapping template, which are then converted into XSLT parameter elements.
+ * 
+ * @param mappingStep 
+ * @param userParameterNames can be passed in for a scenario where the caller has already determined the user parameter 
+ * names based on the mapping step; if null, then the mapping step will be checked to see if user parameters are available
+ * @returns {string} stringified XML, with one m:param element per parameter
+ */
+function makeParameterElements(mappingStep, userParameterNames) {
+  let elements = '<m:param name="URI"/>';
+  if (userParameterNames) {
+    userParameterNames.forEach(param => elements += `<m:param name="${param}"/>`);
+  }
+  else {
+    const modulePath = mappingStep.mappingParametersModulePath;
+    if (modulePath) {
+      if (infoEnabled) {
+        hubUtils.hubTrace(infoEvent, `Applying mapping parameters module at path '${modulePath}`);
+      }
+      try {
+        const paramsFunction = require(modulePath)["getParameterDefinitions"];
+        const userParams = paramsFunction(mappingStep);
+        userParams.forEach(userParam => elements += `<m:param name="${userParam.name}"/>`);
+      } catch (error) {
+        throw Error(`getParameterDefinitions failed in module '${modulePath}'; cause: ${error.message}`);
+      }
+    }  
+  }
+  return elements;
+}
+
 /*
 Every m:entity template that gets created will have a 'name' attribute whose value will be  mapping{index}-{entityName}.
 For example, mapping0-Customer for a 'Customer' mapping. 'index' 0 implies the mapping corresponding to the targetEntity.
@@ -121,13 +154,13 @@ function generateEntityTemplates(index, mappingObject) {
   const entityTemplates = mappings.map(objectPropertyMapping => {
     const propertyPath = Object.keys(objectPropertyMapping)[0];
     const mapping = objectPropertyMapping[propertyPath];
-    if (dhMappingTraceIsEnabled) {
-      xdmp.trace(dhMappingTrace, `Generating template for propertyPath '${propertyPath}' and entityTypeId '${mapping.targetEntityType}'`);
+    if (debugEnabled) {
+      hubUtils.hubTrace(debugEvent, `Generating template for propertyPath '${propertyPath}' and entityTypeId '${mapping.targetEntityType}'`);
     }
     const model = (mapping.targetEntityType.startsWith("#/definitions/")) ? parentEntity : getTargetEntity(fn.string(mapping.targetEntityType));
     const template = buildEntityTemplate(mapping, model, propertyPath, index);
-    if (dhMappingTraceIsEnabled) {
-      xdmp.trace(dhMappingTrace, `Generated template: ${template}`);
+    if (debugEnabled) {
+      hubUtils.hubTrace(debugEvent, `Generated template: ${template}`);
     }
     return template;
   });
@@ -147,17 +180,17 @@ function generateEntityTemplates(index, mappingObject) {
 function buildMapProperties(mapping, model, propertyPath, index) {
   let mapProperties = mapping.properties;
   let propertyLines = [];
-  if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with
+  if (debugEnabled) {
+    hubUtils.hubTrace(debugEvent, `Building mapping properties for '${mapping.targetEntityType}' with
     '${xdmp.describe(model)}'`);
   }
   let entityName = getEntityName(mapping.targetEntityType);
-  if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Using entity name: ${entityName}`);
+  if (debugEnabled) {
+    hubUtils.hubTrace(debugEvent, `Using entity name: ${entityName}`);
   }
   let entityDefinition = model.definitions[entityName];
-  if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Using entity definition: ${entityDefinition}`);
+  if (debugEnabled) {
+    hubUtils.hubTrace(debugEvent, `Using entity definition: ${entityDefinition}`);
   }
   let namespacePrefix = entityDefinition.namespacePrefix ? `${entityDefinition.namespacePrefix}:` : '';
   let entityProperties = entityDefinition.properties;
@@ -221,8 +254,8 @@ function buildMapProperties(mapping, model, propertyPath, index) {
  * @return {*[]}
  */
 function getObjectPropertyMappings(mapping, propertyPath, objectPropertyMappings = []) {
-  if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Getting related mappings for '${xdmp.describe(mapping)}'`);
+  if (debugEnabled) {
+    hubUtils.hubTrace(debugEvent, `Getting related mappings for '${xdmp.describe(mapping)}'`);
   }
   if (mapping.properties) {
     Object.keys(mapping.properties).forEach(propertyTitle => {
@@ -320,17 +353,53 @@ function escapeXML(input = '') {
     .replace(/}/g, '&#125;');
 }
 
-function validateAndRunMapping(mapping, uri) {
-  let validatedMapping = validateMapping(mapping);
-  return runMapping(validatedMapping, uri);
-}
 /**
- * Validates all property mappings in the given mapping object.
+ * Main purpose of this function is for testing a mapping against a persisted document, identified by the uri parameter. 
+ * This is not used when a mapping step is run; this functionality is independent of flows/steps, and should really be moved
+ * into a mapping-specific library that is not under "steps". 
+ * 
+ * @param mapping 
+ * @param uri 
+ * @returns 
+ */
+function validateAndRunMapping(mapping, uri) {
+  if (!fn.docAvailable(uri)) {
+    throw Error(`Unable to validate and run mapping; could not find source document with URI '${uri}'`);
+  }
+
+  const sourceDocument = cts.doc(uri);
+  
+  const modulePath = mapping.mappingParametersModulePath;
+  let userParameterNames = [];
+  let userParameterMap = {};
+  try {
+    if (modulePath) {
+      const contentArray = [{"uri": uri, "value": sourceDocument}];
+      const moduleLib = require(modulePath);
+      userParameterNames = moduleLib["getParameterDefinitions"]().map(def => def.name);
+      userParameterMap = moduleLib["getParameterValues"](contentArray, {});
+    }         
+  } catch (error) {
+    // Need to throw an HTTP error so that the testMapping endpoint returns a proper error
+    httpUtils.throwBadRequest(`Unable to apply mapping parameters module at path '${modulePath}'; cause: ${error.message}`);
+  }
+
+  const parameterMap = Object.assign({}, {"URI":uri}, userParameterMap);
+
+  const validatedMapping = validateMapping(mapping, userParameterNames);
+  const sourceInstance = extractInstance(sourceDocument);
+  return testMapping(validatedMapping, sourceInstance, userParameterNames, parameterMap);
+}
+
+/**
+ * Validates all property mappings in the given mapping object. For any invalid mapping expression, the object representing that expression is given an "errorMessage" property that
+ * captures the validation error.
  *
  * @param mapping
+ * @param {array} userParameterNames
  * @return {{targetEntityType: *, properties: {}}}
  */
-function validateMapping(mapping) {
+function validateMapping(mapping, userParameterNames) {
   // Rebuild the mapping without its "properties"
   // Those will be rebuilt next, but with each property mapping validated
   let validatedMapping = {};
@@ -352,12 +421,12 @@ function validateMapping(mapping) {
         mappedProperty.targetEntityType = fullTargetEntity;
       }
       mappedProperty.namespaces = mapping.namespaces;
-      mappedProperty = validateMapping(mappedProperty);
+      mappedProperty = validateMapping(mappedProperty, userParameterNames);
     }
 
     // Validate the mapping expression, and if an error occurs, add it to the mapped property object
     let sourcedFrom = mappedProperty.sourcedFrom;
-    let errorMessage = validatePropertyMapping(mapping, propertyName, sourcedFrom);
+    let errorMessage = validatePropertyMapping(mapping, userParameterNames, propertyName, sourcedFrom);
     if (errorMessage != null) {
       mappedProperty.errorMessage = errorMessage;
     }
@@ -372,11 +441,12 @@ function validateMapping(mapping) {
  * Validate a single property mapping by constructing a mapping consisting of just the given property mapping.
  *
  * @param fullMapping
+ * @param {array} userParameterNames
  * @param propertyName
  * @param sourcedFrom
  * @return an error message if the mapping validation fails
  */
-function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
+function validatePropertyMapping(fullMapping, userParameterNames, propertyName, sourcedFrom) {
   let mapping = {
     "namespaces": fullMapping.namespaces,
     "targetEntityType": fullMapping.targetEntityType,
@@ -388,7 +458,8 @@ function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
   };
 
   try {
-    let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
+    const mappingDocument = fn.head(xdmp.unquote(xdmp.quote(mapping)));
+    const xmlMapping = buildMappingXML(mappingDocument, userParameterNames);
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
@@ -399,7 +470,23 @@ function validatePropertyMapping(fullMapping, propertyName, sourcedFrom) {
   }
 }
 
-function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties']) {
+/**
+ * Tests the given mapping against the given source instance by returning the mapping with 
+ * each mapping expression containing an "output" property or an "errorMessage" property.
+ * This is not used when running a mapping step; it's only used when testing a mapping.
+ * 
+ * @param {object} mapping The mapping step
+ * @param {document} sourceInstance the instance to be mapped; assumed to have been extracted from a source document
+ * @param {array} userParameterNames
+ * @param {object} parameterMap 
+ * @param propMapping 
+ * @param paths 
+ * @returns 
+ */
+function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
+  propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, 
+  paths=['properties']) 
+{
   Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
     let sourcedFrom = escapeXML(mappedProperty.sourcedFrom);
@@ -409,7 +496,7 @@ function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.target
       if (mappedProperty.hasOwnProperty("targetEntityType")) {
         propMapping = addNode(propMapping, paths, mappedProperty, true);
         paths.push("properties");
-        mappedProperty = runMapping(mappedProperty, uri, propMapping, paths);
+        mappedProperty = testMapping(mappedProperty, sourceInstance, userParameterNames, parameterMap, propMapping, paths);
         paths.pop();
       }
       else {
@@ -417,7 +504,7 @@ function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.target
       }
     }
     if(mappedProperty && !mappedProperty.errorMessage && ! mappedProperty.hasOwnProperty("targetEntityType") && sourcedFrom.length > 0){
-      let resp = getCanonicalInstance(propMapping, uri, propertyName);
+      let resp = testMappingExpression(propMapping, propertyName, sourceInstance, userParameterNames, parameterMap);
       if(resp && resp.output) {
         mappedProperty["output"] = resp.output;
       }
@@ -431,24 +518,34 @@ function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.target
   return mapping;
 }
 
+/**
+ * Tests the given mapping against the given source document, only executing the mapping 
+ * expression associated with the given property name.
+ * 
+ * @param mapping 
+ * @param propertyName 
+ * @param sourceInstance 
+ * @param {array} userParameterNames
+ * @param {object} parameterMap
+ * @returns 
+ */
+// TODO Figure out relevancy of this comment
 //es.nodeMapToCanonical can be used after server bug #53497 is fixed
-function getCanonicalInstance(mapping, uri, propertyName) {
+function testMappingExpression(mapping, propertyName, sourceInstance, userParameterNames, parameterMap) {
   let resp = {};
-  let xmlMapping = buildMappingXML(fn.head(xdmp.unquote(xdmp.quote(mapping))));
-  let doc = cts.doc(uri);
-  let instance = extractInstance(doc);
+  const mappingDocument = fn.head(xdmp.unquote(xdmp.quote(mapping)));
+  const xmlMapping = buildMappingXML(mappingDocument, userParameterNames);
   let mappingXslt = xdmp.invokeFunction(function () {
       const es = require('/MarkLogic/entity-services/entity-services');
       return es.mappingCompile(xmlMapping);
      }, {database: xdmp.modulesDatabase()});
 
   try {
-    let inputDoc = instance;
+    let inputDoc = sourceInstance;
     if (!(inputDoc instanceof Document)) {
-      inputDoc = fn.head(xdmp.unquote(String(instance)));
+      inputDoc = fn.head(xdmp.unquote(String(sourceInstance)));
     }
 
-    const userParams = {"URI":uri};
     /*
     Running the xslt will return an xml doc which looks like
     <instance:entityInstance0><entityName>
@@ -456,7 +553,8 @@ function getCanonicalInstance(mapping, uri, propertyName) {
     </entityName></instance:entityInstance0>. The xpath extracts only the first instance, will be modified in later when UI supports
     multiple instances
      */
-    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, userParams)).xpath('/instance:entityInstance0/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
+
+    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, parameterMap)).xpath('/instance:entityInstance0/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
     if(arr.length <= 1) {

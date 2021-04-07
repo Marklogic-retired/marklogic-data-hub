@@ -13,7 +13,15 @@ var mappings = {};
 let entityModelMap = {};
 const traceEvent = consts.TRACE_MAPPING_DEBUG;
 
-function main(content, options) {
+function beforeMain(contentSequence, stepExecutionContext) {
+  const path = stepExecutionContext.flowStep.options.mappingParametersModulePath;
+  if (path) {
+    const values = require(path)["getParameterValues"](contentSequence, stepExecutionContext);
+    stepExecutionContext.userMappingParameterMap = values;
+  }
+}
+
+function main(content, options, stepExecutionContext) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : consts.DEFAULT_FORMAT;
   if (outputFormat !== consts.JSON && outputFormat !== consts.XML) {
     datahub.debug.log({
@@ -63,11 +71,13 @@ function main(content, options) {
 
   let instance = lib.extractInstance(doc);
 
-  const userParams = {"URI":content.uri};
+  // userMappingParameterMap is set via the beforeMain function
+  const userParams = stepExecutionContext ? stepExecutionContext.userMappingParameterMap || {} : {};
+  const mappingParams = Object.assign({}, {"URI":content.uri}, userParams);
 
   let arrayOfInstanceArrays;
   try {
-    arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, userParams, {"format":outputFormat});
+    arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});
   } catch (e) {
     datahub.debug.log({message: e, type: 'error'});
     throw Error(e);
@@ -260,6 +270,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
 }
 
 module.exports = {
-  main: main,
-  buildEnvelope: buildEnvelope
+  beforeMain,
+  buildEnvelope,
+  main
 };

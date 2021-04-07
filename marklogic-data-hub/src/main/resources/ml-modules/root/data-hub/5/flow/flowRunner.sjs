@@ -28,14 +28,15 @@ const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
  * Processes the given contentArray - a batch of content - against each step in the given flow. Each step
  * is run in-memory, with the output of one step becoming the input of the next step.
  *
- * @param flowName
- * @param contentArray array of objects conforming to ContentObject.schema.json; at a minimum, content.uri 
+ * @param {string} flowName
+ * @param {array} contentArray array of objects conforming to ContentObject.schema.json; at a minimum, content.uri
  * must be specified
- * @param jobId
- * @param runtimeOptions
+ * @param {string} jobId
+ * @param {object} runtimeOptions
+ * @param {array} stepNumbers optional array of the step numbers to run; if not specified, all steps are run
  * @return a JSON object conforming to RunFlowResponse.schema.json
  */
-function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
+function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, stepNumbers) {
   if (contentArray == null || contentArray == undefined) {
     contentArray = [];
   }
@@ -52,23 +53,44 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions) {
   const flowResponse = newFlowResponse(theFlow, jobId);
 
   let currentContentArray = contentArray;
-  Object.keys(theFlow.steps).forEach(stepNumber => {
+
+  const stepNumbersToExecute = stepNumbers != null && stepNumbers.length > 0 ? stepNumbers : Object.keys(theFlow.steps);
+
+  let stepError;
+
+  for (let stepNumber of stepNumbersToExecute) {
     const startDateTime = fn.currentDateTime().add(xdmp.elapsedTime());
     flowResponse.lastAttemptedStep = stepNumber;
 
     hubUtils.hubTrace(traceEvent, `Running step number ${stepNumber} in flow ${flowName}`);
     const stepExecutionContext = newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions);
-    prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
-    currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, databaseWriteQueue);
-    hubUtils.hubTrace(traceEvent, `Finished step number ${stepNumber} in flow ${flowName}`);
+    try {
+      prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
+      currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, databaseWriteQueue);
+      hubUtils.hubTrace(traceEvent, `Finished step number ${stepNumber} in flow ${flowName}`);
+      flowResponse.lastCompletedStep = stepNumber;
+      flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);
+    } catch (error) {
+      const items = currentContentArray.map(content => content.uri);
+      stepExecutionContext.addErrorForEntireBatch(error, items);
+      flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);
+      if (stepExecutionContext.stepErrorShouldBeThrown()) {
+        throw error;
+      }
+      stepError = error;
+      break;
+    }
+  }
 
-    flowResponse.lastCompletedStep = stepNumber;
-    flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);  
-  });    
+  if (stepError) {
+    // TODO Will improve this in DHFPRPOD-6720
+    flowResponse.jobStatus = "failed";
+  } else {
+    databaseWriteQueue.persist();
+    flowResponse.jobStatus = "finished";
+  }
 
-  databaseWriteQueue.persist();
   hubUtils.hubTrace(traceEvent, `Finished processing content with flow ${flowName}`);
-  flowResponse.jobStatus = "finished";
   flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
   return flowResponse;
 }
@@ -85,6 +107,10 @@ function newFlowResponse(theFlow, jobId) {
 }
 
 function newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions) {
+  if (!theFlow.steps || !theFlow.steps[stepNumber]) {
+    httpUtils.throwBadRequest(`Cannot find step number '${stepNumber}' in flow '${flowName}`);
+  }
+
   const flowStep = theFlow.steps[stepNumber];
   const stepDefinition = findStepDefinition(theFlow.name, stepNumber, flowStep);
   return new StepExecutionContext(theFlow, stepNumber, stepDefinition, jobId, runtimeOptions);
@@ -105,10 +131,14 @@ function processContentWithStep(stepExecutionContext, contentArray, databaseWrit
     hookRunner.runHook();
   }
 
+  invokeBeforeMain(stepExecutionContext, contentArray);
+
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
     runStepOnBatch(contentArray, stepExecutionContext) :
     runStepOnEachItem(contentArray, stepExecutionContext);
 
+  // The behavior of an interceptor error being caught, and the custom hook still being run, is consistent with DHF 5.4.0
+  // when interceptors were introduced
   const stepInterceptorError = applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext, batchItems);
 
   if (hookRunner && !hookRunner.runBefore) {
@@ -126,8 +156,24 @@ function processContentWithStep(stepExecutionContext, contentArray, databaseWrit
     stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
     addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue);
   }
-  
+
   return outputContentArray;
+}
+
+function invokeBeforeMain(stepExecutionContext, contentArray) {
+  // If the step module cannot be found, a friendly error will be thrown, which is why this is not included in the
+  // try/catch block below
+  const stepBeforeMainFunction = stepExecutionContext.getStepBeforeMainFunction();
+  if (stepBeforeMainFunction) {
+    try {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Invoking beforeMain on step ${stepExecutionContext.stepNumber} in flow ${stepExecutionContext.flow.name}`);
+      const contentSequence = hubUtils.normalizeToSequence(contentArray);
+      stepBeforeMainFunction(contentSequence, stepExecutionContext);
+    } catch (error) {
+      throw Error(`Unable to invoke beforeMain on step '${stepExecutionContext.stepNumber}' ` +
+        `in flow '${stepExecutionContext.flow.name}'; cause: ${error.message}`);
+    }
+  }
 }
 
 /**
