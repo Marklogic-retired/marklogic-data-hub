@@ -9,6 +9,7 @@
     "cy:run": "npm install && cypress run",
     "cy:run-chrome": "npm install && cypress run --browser chrome --headless",
     "cy:run-firefox": "npm install && cypress run --browser firefox --headless",
+    "cy:run-sanity": "npm install && cypress run --spec cypress/integration/mastering/e2eMasteringflow.spec.tsx",
     "cy:local": "cypress open --config baseUrl=http://localhost:3000"
   },
   "keywords": [],
