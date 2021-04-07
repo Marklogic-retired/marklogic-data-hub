@@ -83,7 +83,7 @@ declare namespace Cypress {
 
       waitForModalToDisappear(): void
 
-      verifyStepAddedToFlow(stepType: string, stepName: string): Chainable<Element>
+      verifyStepAddedToFlow(stepType: string, stepName: string, flowName: string): Chainable<Element>
 
       /**
        * Custom command to upload files for running a load step.

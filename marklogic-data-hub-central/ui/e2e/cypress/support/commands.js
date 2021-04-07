@@ -110,9 +110,20 @@ Cypress.Commands.add("logout", () => {
   });
 });
 
-Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName) => {
-  cy.waitUntil(() => cy.findByText(stepType).should("be.visible"));
-  cy.waitUntil(() => cy.findByText(stepName).should("be.visible"));
+Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => {
+  cy.get("[class=\"ant-collapse-content ant-collapse-content-active\"]").then($body => {
+    if ($body.find(`[aria-label="runStep-${stepName}"]`).length > 0) {
+      cy.findByText(stepType).should("be.visible");
+    } else {
+      cy.reload();
+      cy.wait(1000);
+      cy.waitForAsyncRequest();
+      cy.waitUntil(() => cy.get(`#${flowName}`).should("be.visible"));
+      cy.get(`#${flowName}`).find("[class*=\"ant-collapse-arrow\"]").click({force: true});
+      cy.waitUntil(() => cy.findByText(stepType).should("be.visible"));
+      cy.waitUntil(() => cy.findByText(stepName).should("be.visible"));
+    }
+  });
 });
 
 Cypress.Commands.add("waitForModalToDisappear", () => {

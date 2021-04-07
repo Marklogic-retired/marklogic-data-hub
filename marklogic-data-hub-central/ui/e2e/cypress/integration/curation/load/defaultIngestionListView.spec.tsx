@@ -137,7 +137,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.verifyStepAddedToFlow("Load", stepName, flowName);
   });
   it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName).click();
@@ -152,7 +152,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
@@ -179,7 +179,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
@@ -192,7 +192,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
@@ -207,7 +207,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.verifyStepAddedToFlow("Load", stepName, flowName2);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
@@ -215,7 +215,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();

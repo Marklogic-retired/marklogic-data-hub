@@ -281,6 +281,7 @@ describe("Validate E2E Mastering Flow", () => {
     rulesetSingleModal.selectMatchTypeDropdown("synonym");
     rulesetSingleModal.setThesaurus("/thesaurus/nicknames.xml");
     rulesetSingleModal.saveButton().click();
+    cy.wait(1000);
     cy.waitForAsyncRequest();
     cy.findAllByTestId("FirstName-active").eq(1).trigger("mousedown", {force: true});
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});

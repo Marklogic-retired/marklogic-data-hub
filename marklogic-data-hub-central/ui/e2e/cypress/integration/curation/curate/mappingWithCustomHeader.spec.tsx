@@ -67,7 +67,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
-    cy.verifyStepAddedToFlow("Load", loadStep);
+    cy.verifyStepAddedToFlow("Load", loadStep, flowName);
     //Run the ingest with JSON
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep);
@@ -179,10 +179,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Map", mapStep);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
+    cy.verifyStepAddedToFlow("Map", mapStep, flowName);
   });
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", () => {
     toolbar.getCurateToolbarIcon().click();
@@ -197,7 +197,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Map", mapStep);
+    cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
     //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -206,7 +206,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.verifyStepAddedToFlow("Map", mapStep);
+    cy.verifyStepAddedToFlow("Map", mapStep, flowName);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     runPage.explorerLink().click();
