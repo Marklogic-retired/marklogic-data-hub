@@ -29,10 +29,10 @@ return (
       for $uri in ($trgr:uri, $tde-uri, $schema-xml-uri, $schema-json-uri)
       return
         if (fn:doc-available($uri)) then (
-          xdmp:log("entity-model-delete-trigger.xqy: Deleting: " || $uri),
+          xdmp:trace("hub-entity", "Deleting: " || $uri),
           xdmp:document-delete($uri)
         ) else
-          xdmp:log("entity-model-delete-trigger.xqy: Document not available, so not deleting: " || $uri)
+          xdmp:trace("hub-entity", "Document not available, so not deleting: " || $uri)
     }, map:entry("database", xdmp:schema-database())
   )
 );

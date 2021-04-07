@@ -200,9 +200,22 @@ function isNullOrEmpty(value) {
 
 // END date/dateTime functions
 
+/**
+ * Convenience function for getting the value of a key from a JSON object. An expression such as 
+ * "object['value']" doesn't work because 'value' is interpreted as an XPath predicate, not a value selector.
+ * 
+ * @param object 
+ * @param key 
+ * @returns 
+ */
+function keyValue(object, key) {
+  return object ? object[key] : null;
+}
+
 module.exports = {
-  memoryLookup,
   documentLookup,
+  memoryLookup,
+  keyValue,
   parseDate,
   parseDateTime
 };

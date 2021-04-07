@@ -22,7 +22,19 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
+/**
+ * Captures state associated with the execution of a step.
+ */
 class StepExecutionContext {
+
+  /**
+   * 
+   * @param theFlow required; this must be a flow with inline steps
+   * @param stepNumber required; the number of the step in the flow that is being executed
+   * @param stepDefinition required; the step definition associated with the step being executed
+   * @param jobId optional; the ID of the job associated with this step execution
+   * @param runtimeOptions optional; used to construct the combinedOptions field
+   */
   constructor(theFlow, stepNumber, stepDefinition, jobId, runtimeOptions = {}) {
     this.flow = theFlow;
     this.stepDefinition = stepDefinition;
@@ -146,6 +158,11 @@ class StepExecutionContext {
     }
 
     this.batchErrors.push(batchError);
+  }
+
+  getStepBeforeMainFunction() {
+    const modulePath = this.stepDefinition.modulePath;
+    return new StepDefinition().makeFunction(null, "beforeMain", modulePath);
   }
 
   getStepMainFunction() {
