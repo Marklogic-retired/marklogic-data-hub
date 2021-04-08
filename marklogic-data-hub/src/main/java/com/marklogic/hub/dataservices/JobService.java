@@ -11,7 +11,7 @@ import com.marklogic.client.io.marker.JSONWriteHandle;
 import com.marklogic.client.impl.BaseProxy;
 
 /**
- * This service description will be included in the class comments of the generated Java class
+ * Defines endpoints for managing Job documents
  */
 public interface JobService {
     /**
@@ -52,6 +52,7 @@ public interface JobService {
             private BaseProxy.DBFunctionRequest req_getJob;
             private BaseProxy.DBFunctionRequest req_startJob;
             private BaseProxy.DBFunctionRequest req_finishJob;
+            private BaseProxy.DBFunctionRequest req_findStepResponses;
 
             private JobServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -67,6 +68,8 @@ public interface JobService {
                     "startJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_finishJob = this.baseProxy.request(
                     "finishJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_findStepResponses = this.baseProxy.request(
+                    "findStepResponses.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -145,6 +148,21 @@ public interface JobService {
                           BaseProxy.atomicParam("jobStatus", false, BaseProxy.StringType.fromString(jobStatus))
                           ).responseNone();
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode findStepResponses(com.fasterxml.jackson.databind.JsonNode endpointConstants) {
+                return findStepResponses(
+                    this.req_findStepResponses.on(this.dbClient), endpointConstants
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode findStepResponses(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode endpointConstants) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("endpointConstants", true, BaseProxy.JsonDocumentType.fromJsonNode(endpointConstants))
+                          ).responseSingle(true, Format.JSON)
+                );
+            }
         }
 
         return new JobServiceImpl(db, serviceDeclaration);
@@ -171,7 +189,7 @@ public interface JobService {
     com.fasterxml.jackson.databind.JsonNode finishStep(String jobId, String stepNumber, String stepStatus, com.fasterxml.jackson.databind.JsonNode runStepResponse);
 
   /**
-   * This endpoint description will be included in the method comments of the generated Java method
+   * Get the Job document associated with the given job ID
    *
    * @param jobId	provides input
    * @return	as output
@@ -195,5 +213,13 @@ public interface JobService {
    * 
    */
     void finishJob(String jobId, String jobStatus);
+
+  /**
+   * 
+   *
+   * @param endpointConstants	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode findStepResponses(com.fasterxml.jackson.databind.JsonNode endpointConstants);
 
 }

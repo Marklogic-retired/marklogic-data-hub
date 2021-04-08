@@ -18,13 +18,18 @@
 const op = require('/MarkLogic/optic');
 const config = require("/com.marklogic.hub/config.sjs");
 
-function findStepResponses(start, pageLength, sortColumn, sortDirection) {
+function findStepResponses(query) {
+  const start = query.start;
+  const pageLength = query.pageLength;
+  const sortColumn = query.sortColumn;
+  const sortDirection = query.sortDirection;
+  const response = {};
+
   let orderByConstraint = op.desc('startTime');
   if(sortColumn) {
     orderByConstraint = sortDirection === 'ascending' ? op.asc(sortColumn) : op.desc(sortColumn);
   }
 
-  const response = {};
   const totalCountQuery = 'select count(*) as total from Job.StepResponse';
   const jobsDataQuery = 'select Job.StepResponse.stepName as stepName,' +
       'Job.StepResponse.stepDefinitionType as stepDefinitionType,' +

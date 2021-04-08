@@ -11,6 +11,7 @@
     "hub-central-step-runner",
     "hub-central-saved-query-user",
     "hub-central-entity-exporter",
+    "hub-central-job-monitor",
     "redaction-user"
   ],
   "privilege": []
