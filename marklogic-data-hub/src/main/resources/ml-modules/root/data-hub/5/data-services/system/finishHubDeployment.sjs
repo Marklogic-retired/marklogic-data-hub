@@ -17,5 +17,5 @@
 
 // No privilege required: For now it is only used during installation and installation requires admin privileges.
 
-const jobQueryLib = require("/data-hub/5/jobs/job-query-lib.sjs");
+const jobQueryLib = require("/data-hub/5/flow/job-query-lib.sjs");
 jobQueryLib.installJobTemplates();

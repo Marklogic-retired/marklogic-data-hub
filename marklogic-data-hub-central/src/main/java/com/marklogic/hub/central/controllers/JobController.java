@@ -24,18 +24,23 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.dataservices.JobService;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Controller
 @RequestMapping(value = "/api/jobs")
-public class JobsController extends BaseController {
+public class JobController extends BaseController {
 
     @RequestMapping(value = "/{jobId}", method = RequestMethod.GET)
     @ResponseBody
@@ -46,6 +51,15 @@ public class JobsController extends BaseController {
             throw new RuntimeException("Unable to get job document");
         }
         return flattenJobsJson(jobsJson);
+    }
+
+    @RequestMapping(value = "/stepResponses", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "Get Step Responses from the Job documents", response = StepResponses.class)
+    @Secured("ROLE_jobMonitor")
+    public ResponseEntity<JsonNode> findStepResponses(@RequestBody JsonNode query) {
+        JsonNode stepResponses = JobService.on(getHubClient().getJobsClient()).findStepResponses(query);
+        return new ResponseEntity<>(stepResponses, HttpStatus.OK);
     }
 
     private JsonNode flattenJobsJson(JsonNode jobJSON) {
@@ -104,5 +118,26 @@ public class JobsController extends BaseController {
         public String status;
         public Integer successfulEvents;
         public Integer failedEvents;
+    }
+
+    public static class StepResponseResult {
+        public String stepName;
+        public String stepDefinitionType;
+        public String status;
+        public String entityName;
+        public String startTime;
+        public String duration;
+        public String successfulItemCount;
+        public String failedItemCount;
+        public String user;
+        public String jobId;
+        public String flowName;
+    }
+
+    public static class StepResponses {
+        public Long total;
+        public int start;
+        public int pageLength;
+        public List<StepResponseResult> results;
     }
 }

@@ -17,17 +17,22 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.AbstractMvcTest;
+import com.marklogic.hub.flow.FlowInputs;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class JobsControllerTest extends AbstractHubCentralTest {
+public class JobControllerTest extends AbstractMvcTest {
 
     @Autowired
-    JobsController jobsController;
+    JobController jobController;
+
+    private final static String STEP_RESPONSES_PATH = "/api/jobs/stepResponses";
 
     @Test
     public void testProcessedTargetDatabase() throws JsonProcessingException {
@@ -46,10 +51,38 @@ public class JobsControllerTest extends AbstractHubCentralTest {
                 "   }\n" +
                 "}";
 
-        JsonNode jobNode = jobsController.processTargetDatabase(objectMapper.readTree(jobString));
+        JsonNode jobNode = jobController.processTargetDatabase(objectMapper.readTree(jobString));
 
         assertEquals("staging", jobNode.path("stepResponses").path("1").path("targetDatabase").asText());
         assertEquals("final", jobNode.path("stepResponses").path("2").path("targetDatabase").asText());
         assertEquals("testDatabase", jobNode.path("stepResponses").path("3").path("targetDatabase").asText());
+    }
+
+    @Test
+    public void testFindStepResponses() throws Exception {
+        String json = "{\n" +
+                "  \"start\": 1,\n" +
+                "  \"pageLength\": 10\n" +
+                "}";
+        runAsAdmin();
+        installReferenceModelProject(true);
+
+        loginAsTestUserWithRoles("hub-central-operator");
+        runFlow(new FlowInputs("simpleMapping"));
+
+        postJson(STEP_RESPONSES_PATH, json)
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                ObjectNode response = readJsonObject(result.getResponse().getContentAsString());
+                assertNotNull(response);
+                assertEquals(1, response.get("total").asInt());
+                assertEquals(1, response.get("start").asInt());
+                assertEquals(10, response.get("pageLength").asInt());
+                assertEquals(1, response.get("results").size());
+                assertNotNull(response.get("results").get(0).get("jobId").asText());
+            });
+
+        loginAsTestUserWithRoles("hub-central-user");
+        verifyRequestIsForbidden(buildJsonPost(STEP_RESPONSES_PATH, json));
     }
 }

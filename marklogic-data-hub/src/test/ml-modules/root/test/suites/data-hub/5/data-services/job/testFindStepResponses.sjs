@@ -14,23 +14,19 @@
  limitations under the License.
  */
 
-const jobResultsLib = require("/data-hub/5/jobs/job-query-lib.sjs");
+const jobQueryService = require("/test/suites/data-hub/5/data-services/lib/jobService.sjs");
 const test = require("/test/test-helper.xqy");
-
-function getStepResults(start, pageLength, sortColumn, sortOperator) {
-    return fn.head(
-        xdmp.invokeFunction(
-            function () {
-                return jobResultsLib.findStepResponses(start, pageLength, sortColumn, sortOperator);
-            },
-            {database: xdmp.database("data-hub-JOBS")}
-        )
-    );
-}
 
 function verifyStepResponse() {
     const assertions = [];
-    const response = getStepResults(1, 10, 'startTime', 'descending');
+    const query = {
+        "start": 1,
+        "pageLength": 10,
+        "sortColumn": "startTime",
+        "sortDirection": "descending"
+    };
+    const response = jobQueryService.findStepResponses(query);
+
     assertions.push(
         test.assertEqual(10, response.total),
         test.assertEqual(1, response.start),
@@ -48,7 +44,13 @@ function verifyStepResponse() {
 
 function verifySortOrderInStepResponse() {
     const assertions = [];
-    const response1 = getStepResults(1, 10, "startTime", "descending");
+    const query = {
+        "start": 1,
+        "pageLength": 10,
+        "sortColumn": "startTime",
+        "sortDirection": "descending"
+    };
+    const response1 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response1.total),
         test.assertEqual(1, response1.start),
@@ -66,7 +68,8 @@ function verifySortOrderInStepResponse() {
         test.assertEqual("test-job1", response1.results[9]["jobId"])
     );
 
-    const response2 = getStepResults(1, 10, "startTime", "ascending");
+    query["sortDirection"] = "ascending";
+    const response2 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response2.total),
         test.assertEqual(1, response2.start),
@@ -89,7 +92,13 @@ function verifySortOrderInStepResponse() {
 
 function verifyPaginationInStepResponse() {
     const assertions = [];
-    const response1 = getStepResults(1, 4, "startTime", "ascending");
+    const query = {
+        "start": 1,
+        "pageLength": 4,
+        "sortColumn": "startTime",
+        "sortDirection": "ascending"
+    };
+    const response1 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response1.total),
         test.assertEqual(1, response1.start),
@@ -101,7 +110,8 @@ function verifyPaginationInStepResponse() {
         test.assertEqual("test-job1", response1.results[3]["jobId"])
     );
 
-    const response2 = getStepResults(2, 4, "startTime", "ascending");
+    query["start"] = 2;
+    const response2 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response2.total),
         test.assertEqual(2, response2.start),
@@ -113,7 +123,8 @@ function verifyPaginationInStepResponse() {
         test.assertEqual("test-job3", response2.results[3]["jobId"])
     );
 
-    const response3 = getStepResults(3, 4, "startTime", "ascending");
+    query["start"] = 3;
+    const response3 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response3.total),
         test.assertEqual(3, response3.start),

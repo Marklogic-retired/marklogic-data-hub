@@ -1,0 +1,20 @@
+{
+  "endpoint": "/data-hub/5/data-services/job/findStepResponses.sjs",
+  "functionName": "findStepResponses",
+  "desc": "",
+  "params": [
+    {
+      "name": "endpointConstants",
+      "datatype": "jsonDocument",
+      "multiple": false,
+      "nullable": true,
+      "$javaClass":"com.fasterxml.jackson.databind.JsonNode"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "multiple": false,
+    "nullable": true,
+    "$javaClass":"com.fasterxml.jackson.databind.JsonNode"
+  }
+}
