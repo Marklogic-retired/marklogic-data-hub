@@ -106,6 +106,31 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByRole("presentation").className).toEqual("Resizer vertical ");
   });
 
+  test("Verify legend visibility",  async() => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByTestId = renderResults.getByTestId;
+    });
+
+    //verify legend visibility
+    expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
+    expect(getByTestId("relatedEntityIconLegend")).toBeInTheDocument();
+    expect(getByTestId("multipleIconLegend")).toBeInTheDocument();
+    expect(getByTestId("structuredIconLegend")).toBeInTheDocument();
+
+    //verify table icons
+    expect(getByTestId("multiple-items")).toBeInTheDocument();
+    expect(getByTestId("structured-items/itemCategory")).toBeInTheDocument();
+
+    //TODO: add verification for table foreign-key and related-entity legend icons.
+  });
+
   test("RTL tests with source data", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
@@ -1657,19 +1682,6 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(getByTestId("navigate-uris-left"));
     uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
     wait(() => expect(uriIndex.getByText("1")).toBeInTheDocument());
-  });
-
-  test("Verify legend visibility",  async() => {
-    let getByTestId;
-    await act(async () => {
-      const renderResults = defaultRender(personMappingStepWithData);
-      getByTestId = renderResults.getByTestId;
-    });
-
-    expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
-    expect(getByTestId("relatedEntityIconLegend")).toBeInTheDocument();
-    expect(getByTestId("multipleIconLegend")).toBeInTheDocument();
-    expect(getByTestId("structuredIconLegend")).toBeInTheDocument();
   });
 
   test("Verify Edit Source Doc URI Save/Discard",  async() => {

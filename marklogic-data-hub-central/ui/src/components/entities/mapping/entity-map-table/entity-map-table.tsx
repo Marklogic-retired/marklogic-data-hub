@@ -10,6 +10,8 @@ import {faList, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {getMappingFunctions} from "../../../../api/mapping";
 import EntitySettings from "../entity-settings/entity-settings";
 import {css} from "@emotion/css";
+import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import arrayIcon from "../../../../assets/icon_array.png";
 
 interface Props {
   mapResp: any;
@@ -643,9 +645,36 @@ const EntityMapTable: React.FC<Props> = (props) => {
       sorter: (a: any, b: any) => a.name?.localeCompare(b.name),
       ellipsis: true,
       render: (text, row, index) => {
+        let renderText = text;
         let textToSearchInto = row.key > 100 ? text.split("/").pop() : text;
         let valueToDisplay = textToSearchInto;
-        return {children: getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key), props: (row.key <= 100  && index === 0) ? {colSpan: 4} : {colSpan: 1}};
+        let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
+        renderText =
+          <span> {row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
+            {row.joinPropertyName && row.relatedEntityType &&
+              <span>
+                <MLTooltip title={"Foreign Key Relationship"}>
+                  <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-key-" + text} />
+                </MLTooltip>
+              </span>
+            }
+            {row.key > 100 && row.type.includes("[ ]") &&
+              <span>
+                <MLTooltip title={"Multiple"}>
+                  <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
+                </MLTooltip>
+              </span>
+            }
+            {row.key > 100 && row.children &&
+              <span>
+                <MLTooltip title={"Structured Type"}>
+                  <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
+                </MLTooltip>
+              </span>
+            }
+          </span>;
+
+        return {children: renderText, props: (row.key <= 100 && index === 0) ? {colSpan: 4} : {colSpan: 1}};
       }
     },
     {
