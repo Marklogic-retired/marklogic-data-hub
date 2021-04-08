@@ -159,6 +159,10 @@ function getObjectValues(object){
     return valuesArray;
 }
 
+function evalInDatabase(script, database) {
+  return xdmp.eval(script, null, {database: xdmp.database(database)})
+}
+
 module.exports = {
   capitalize,
   deleteDocument,
@@ -172,5 +176,6 @@ module.exports = {
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
   writeDocument,
-  getObjectValues
+  getObjectValues,
+  evalInDatabase: module.amp(evalInDatabase)
 };
