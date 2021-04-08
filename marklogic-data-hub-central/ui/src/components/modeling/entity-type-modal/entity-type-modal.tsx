@@ -32,6 +32,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, toggleLoading] = useState(false);
 
+  const reservedEntityNamesArray = ["Collection", "createdByJob", "createdByStep", "entity-type"];
+
   useEffect(() => {
     if (props.isVisible) {
       if (props.isEditModal) {
@@ -105,6 +107,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     } else {
       if (!NAME_REGEX.test(name)) {
         setErrorMessage(ModelingTooltips.nameRegex);
+      } else if (reservedEntityNamesArray.indexOf(name) > -1) {
+        setErrorMessage(name + ModelingTooltips.reservedEntityNames);
       } else {
         toggleLoading(true);
         createEntityType(name, description);

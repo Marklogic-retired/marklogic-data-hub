@@ -163,5 +163,29 @@ describe("EntityTypeModal Component", () => {
     expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.put).toHaveBeenCalledTimes(1);
   });
+
+
+  test("Adding a restricted Entity name shows error message", async () => {
+    const {getByText, getByPlaceholderText} = render(
+      <EntityTypeModal
+        isVisible={true}
+        toggleModal={jest.fn()}
+        updateEntityTypesAndHideModal={jest.fn()}
+        isEditModal={false}
+        name={""}
+        description={""}
+      />);
+    expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
+
+    const entityName = "Collection";
+    userEvent.type(getByPlaceholderText("Enter name"), entityName);
+    userEvent.type(getByPlaceholderText("Enter description"), "test");
+
+    await wait(() => {
+      userEvent.click(getByText("Add"));
+    });
+
+    expect(getByText(entityName + ModelingTooltips.reservedEntityNames)).toBeInTheDocument();
+  });
 });
 
