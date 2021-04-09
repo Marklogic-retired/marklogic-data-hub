@@ -1,0 +1,17 @@
+{
+  "name": "mapCustomer",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['dummy'])",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomer-mapping",
+  "properties": {
+    "name": {
+      "sourcedFrom": "name"
+    },
+    "items": {
+      "sourcedFrom": "addOne((1,2,3))"
+    }
+  }
+}

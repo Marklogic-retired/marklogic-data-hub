@@ -4,6 +4,7 @@ const esMappingLib = require('/data-hub/5/builtins/steps/mapping/entity-services
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 
 function mlGenerateFunctionMetadata(context, params, content) {
   let uri = context.uri;
@@ -40,11 +41,11 @@ function mlGenerateFunctionMetadata(context, params, content) {
     if (writeInfo && fn.exists(writeInfo.transaction)) {
       // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
       try {
-        es.functionMetadataPut(uriVal + ".xml");
+        xqueryLib.functionMetadataPut(uriVal + ".xml");
       } catch (e) {
         if (/(prefix|XSLT-UNBPRFX)/ig.test(e.message)) {
           xdmp.moduleCacheClear();
-          es.functionMetadataPut(uriVal + ".xml");
+          xqueryLib.functionMetadataPut(uriVal + ".xml");
         } else {
           throw e;
         }
