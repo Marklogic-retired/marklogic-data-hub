@@ -588,8 +588,8 @@ declare function match-impl:search(
                 return
                   <contributions>
                     <algorithm>{fn:string(fn:head(($query-map ! map:get(., "algorithm") ! fn:string(.), "exact")))}</algorithm>
-                    <nodeName>{$node-name}</nodeName>,
-                    <value>{fn:data($cts:node)}</value>,
+                    <nodeName>{$node-name}</nodeName>
+                    <value>{fn:data($cts:node)}</value>
                     <path>{xdmp:path($cts:node, fn:true())}</path>
                   </contributions>)
             )
