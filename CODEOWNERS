@@ -6,7 +6,7 @@
 # Order is important. The last matching pattern has the most precedence.
 examples/* @rjrudin @srinathgit
 
-marklogic-data-hub/* @rjrudin @srinathgit @ryanjdew @fsnow @rahulvudutala @akshaysonvane
+marklogic-data-hub/* @rjrudin @srinathgit @ryanjdew @rahulvudutala @akshaysonvane
 
 marklogic-data-hub-central/src/* @rjrudin @srinathgit @ryanjdew @rahulvudutala @akshaysonvane
 
