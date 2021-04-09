@@ -73,43 +73,49 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
             }
           let $qname := fn:QName($namespace, helper-impl:NCName-compatible($property-info => map:get("propertyTitle")))
           return
-            function($val, $weight) {
-              $scope-query(
+            function($nodes, $weight) {
+              let $expanded-values := $nodes ! fn:string(.)[. ne '']
+              where fn:exists($expanded-values)
+              return
+                $scope-query(
                   if ($is-json-fun()) then
                     cts:json-property-value-query(
                       fn:local-name-from-QName($qname),
-                      $val,
+                      $nodes[fn:not(. instance of null-node())],
                       (),
                       $weight
                     )
                   else
                     cts:element-value-query(
                         $qname,
-                        $val ! fn:string(.)[. ne ''],
+                        $expanded-values,
                         (),
                         $weight
                     ),
                   $is-json-fun()
-              )
+                )
             }
         else if (fn:exists($property-def)) then
           let $qname := fn:QName(fn:string($property-def/(@namespace|namespace)), fn:string($property-def/(@localname|localname)))
           return
-            function($val, $weight) {
-              if ($is-json-fun()) then
-                cts:json-property-value-query(
-                  fn:string($qname),
-                  $val,
-                  ("case-insensitive"),
-                  $weight
-                )
-              else
-                cts:element-value-query(
-                    $qname,
-                    $val ! fn:string(.)[. ne ''],
+            function($nodes, $weight) {
+              let $expanded-values := $nodes ! fn:string(.)[. ne '']
+              where fn:exists($expanded-values)
+              return
+                if ($is-json-fun()) then
+                  cts:json-property-value-query(
+                    fn:string($qname),
+                    $nodes[fn:not(. instance of null-node())],
                     ("case-insensitive"),
                     $weight
-                )
+                  )
+                else
+                  cts:element-value-query(
+                      $qname,
+                      $expanded-values,
+                      ("case-insensitive"),
+                      $weight
+                  )
             }
         else ()
       return (
