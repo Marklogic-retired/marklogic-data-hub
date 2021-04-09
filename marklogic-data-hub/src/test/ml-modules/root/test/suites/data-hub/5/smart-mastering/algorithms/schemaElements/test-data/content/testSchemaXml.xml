@@ -1,0 +1,10 @@
+<Customer xmlns="schemaTest"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="/matching/test-schema.xsd">
+    <shipping>
+        <address>123 Main Street</address>
+        <city>Pleasantville</city>
+        <country>USA</country>
+        <zip><zipCode5>12345</zipCode5><zipCode4>6789</zipCode4></zip>
+    </shipping>
+</Customer>

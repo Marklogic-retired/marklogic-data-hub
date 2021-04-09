@@ -23,12 +23,13 @@ declare option xdmp:mapping "false";
  : @return a sequence of cts:querys based on the property values in the original document
  :)
 declare function algorithms:zip-match(
-  $expand-values as xs:string*,
+  $expand-values as node()*,
   $expand as node(),
   $options as node()
 )
   as cts:query*
 {
+  let $expand-values := $expand-values ! fn:string(.)
   let $property-name := helper-impl:get-property-name($expand)
   let $weight := $expand/weight
   let $sep := "-"
