@@ -23,7 +23,7 @@ declare option xdmp:mapping "false";
  : https://marklogic-community.github.io/smart-mastering-core/docs/match-algorithms/#thesaurus.
  :)
 declare function algorithms:thesaurus(
-  $expand-values as item()*,
+  $expand-values as node()*,
   $expand as node(),
   $options as node()
 )
@@ -33,12 +33,12 @@ declare function algorithms:thesaurus(
   let $thesaurus := $expand-options/(*:thesaurus|thesaurusURI)
   where fn:exists($thesaurus)
   return
-    for $value in $expand-values
-    let $entries := thsr:lookup($thesaurus, fn:lower-case(fn:string($value)))
+    for $value in ($expand-values ! fn:lower-case(fn:string(.)))
+    let $entries := thsr:lookup($thesaurus, $value)
     where fn:exists($entries)
     return
       let $weight := $expand/(@weight|weight)
-      let $query := helper-impl:property-name-to-query($options, $property-name)(fn:lower-case($value), $weight)
+      let $query := helper-impl:property-name-to-query($options, $property-name)($value, $weight)
       return expand-query($query, $entries, $expand)
 };
 
