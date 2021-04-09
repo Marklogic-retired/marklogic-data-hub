@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:schemaTest="schemaTest" targetNamespace="schemaTest" elementFormDefault="qualified">
+    <xs:element name="Customer">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="shipping">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="address" type="xs:string"/>
+                            <xs:element name="city" type="xs:string"/>
+                            <xs:element name="country" type="xs:string"/>
+                            <xs:element name="zip" type="zipCodes"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- adding a special type so implicit casting doesn't work -->
+    <xs:complexType name="zipCodes">
+        <xs:sequence>
+            <xs:element name="zipCode5" type="zipCode5"/>
+            <xs:element name="zipCode4" type="zipCode4"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="zipCode5">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{5}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="zipCode4">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9]{4}"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
