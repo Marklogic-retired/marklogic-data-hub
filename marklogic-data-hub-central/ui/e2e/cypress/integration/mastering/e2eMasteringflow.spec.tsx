@@ -230,7 +230,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
   });
   it("Add Rulesets", () => {
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("LastName");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
@@ -240,7 +240,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("LastName").trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("SSN");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
@@ -250,7 +250,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("SSN").trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("FirstName");
     rulesetSingleModal.selectMatchTypeDropdown("doubleMetaphone");
@@ -262,7 +262,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("FirstName").trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("DateOfBirth");
     rulesetSingleModal.selectMatchTypeDropdown("custom");
@@ -275,7 +275,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("DateOfBirth").trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("FirstName");
     rulesetSingleModal.selectMatchTypeDropdown("synonym");
@@ -287,7 +287,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});
     cy.findAllByTestId("FirstName-active").eq(1).trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("ZipCode");
     rulesetSingleModal.selectMatchTypeDropdown("zip");
@@ -297,7 +297,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.findByTestId("threshold-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("ZipCode").trigger("mouseup", {force: true});
     cy.waitForAsyncRequest();
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("Address");
     rulesetSingleModal.selectMatchTypeDropdown("exact");

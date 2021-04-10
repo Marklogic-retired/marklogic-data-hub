@@ -10,6 +10,16 @@
   }
 }
 
+.noPropertyCheckedErrorMessage {
+  margin-left: 20vw;
+  margin-top: -40px;
+  width: 45em;
+  text-align: center;
+  .exclamationCircle{
+    margin-left: 5em;
+  }
+}
+
 .modalTitleLegend {
   display: flex;
   justify-content: flex-end;

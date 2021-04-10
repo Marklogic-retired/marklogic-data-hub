@@ -20,12 +20,16 @@ class MatchingStepDetail {
     return cy.findByLabelText("ruleset-less");
   }
 
-  addNewRulesetSingle() {
+  addNewRuleset() {
     cy.findByLabelText("add-ruleset").click();
   }
 
   getSinglePropertyOption() {
     cy.findByLabelText("singlePropertyRulesetOption").click();
+  }
+
+  getMultiPropertyOption() {
+    cy.findByLabelText("multiPropertyRulesetOption").click();
   }
 
   getSliderDeleteText() {

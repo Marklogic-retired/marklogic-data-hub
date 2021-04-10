@@ -75,6 +75,21 @@ export const matchingStep = {
               "matchType": "exact"
             }
           ]
+        },
+        {
+          "name": "MultipleRuleset-Customer",
+          "weight": 1,
+          "matchRules": [
+            {
+              "entityPropertyPath": "customerId",
+              "matchType": "synonym",
+              "options": {
+                "filter": "",
+                "thesaurusURI": "/thesaurus/uri/input.json"
+              }
+            }],
+          "reduce": true,
+          "rulesetType": "multiple"
         }
       ],
       "thresholds": [
