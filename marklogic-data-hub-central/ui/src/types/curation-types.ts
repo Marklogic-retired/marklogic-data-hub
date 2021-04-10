@@ -66,8 +66,9 @@ export interface MatchingStep {
 
 export interface MatchRuleset {
   name: string,
-  weight: number
-  matchRules: MatchRule[]
+  weight: number,
+  matchRules: MatchRule[],
+  rulesetType? : string
 }
 
 export interface MatchRule {

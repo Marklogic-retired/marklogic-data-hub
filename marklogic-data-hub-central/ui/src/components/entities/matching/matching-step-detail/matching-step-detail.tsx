@@ -131,13 +131,15 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
+    const rulesetCategory = i.rulesetType && i.rulesetType === "multiple" ? i.rulesetType : "single";
     const firstMatchRule = i.matchRules[0];
     const firstMatchRuleType = firstMatchRule ? firstMatchRule.matchType : "";
     const rulesetType = firstMatchRuleType;
     const matchRuleOptionsObject = {
       props: [{
         prop: i.name.split(" -")[0],
-        type: rulesetType
+        type: rulesetType,
+        rulesetCategory: rulesetCategory
       }],
       value: i.weight
     };
@@ -196,7 +198,11 @@ const MatchingStepDetail: React.FC = () => {
       let editMatchRuleset = updateStepArtifactRulesets[index];
 
       setEditRuleset({...editMatchRuleset, index});
-      toggleShowRulesetSingleModal(true);
+      if (options["rulesetCategory"] === "single") {
+        toggleShowRulesetSingleModal(true);
+      } else {
+        toggleShowRulesetMultipleModal(true);
+      }
     }
   };
 

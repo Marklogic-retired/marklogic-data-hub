@@ -6,7 +6,7 @@ import {
   multiSlider,
   confirmYesNo
 } from "../../../support/components/common/index";
-import {matchingStepDetail, rulesetSingleModal, thresholdModal} from "../../../support/components/matching/index";
+import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleModal} from "../../../support/components/matching/index";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 
@@ -108,7 +108,7 @@ describe("Matching", () => {
     multiSlider.sliderTooltipValue("20");
   });
   it("Add ruleset", () => {
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("customerId");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
@@ -127,7 +127,7 @@ describe("Matching", () => {
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerId - Exact").should("be.visible");
   });
   it("Add another ruleset", () => {
-    matchingStepDetail.addNewRulesetSingle();
+    matchingStepDetail.addNewRuleset();
     matchingStepDetail.getSinglePropertyOption();
     rulesetSingleModal.selectPropertyToMatch("email");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
@@ -144,6 +144,26 @@ describe("Matching", () => {
     //Verify the possible match combinations
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email - Exact").trigger("mousemove").should("be.visible");
   });
+  it("Add a ruleset with multiple properties", () => {
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getMultiPropertyOption();
+    rulesetMultipleModal.setRulesetName("customerMultiplePropertyRuleset");
+    rulesetMultipleModal.selectPropertyToMatch("customerId");
+    rulesetMultipleModal.selectMatchTypeDropdown("customerId", "exact");
+    rulesetMultipleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findByLabelText("customerMultiplePropertyRuleset").should("have.length.gt", 0));
+    multiSlider.getHandleName("customerMultiplePropertyRuleset").should("be.visible");
+  });
+  it("Edit ruleset with multiple properties", () => {
+    multiSlider.editOption("customerMultiplePropertyRuleset");
+    cy.contains("Edit Match Ruleset for Multiple Properties");
+    rulesetMultipleModal.selectPropertyToMatch("name");
+    rulesetMultipleModal.selectMatchTypeDropdown("name", "zip");
+    rulesetMultipleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findByLabelText("customerMultiplePropertyRuleset").should("have.length.gt", 0));
+  });
   it("Delete a ruleset", () => {
     multiSlider.deleteOption("email");
     matchingStepDetail.getSliderDeleteText().should("be.visible");
@@ -152,6 +172,15 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.findByLabelText("rulesetName-testing-email").should("have.length", 0));
     multiSlider.getHandleName("email").should("not.exist");
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email").should("not.exist");
+  });
+  it("Delete a ruleset with multiple properties", () => {
+    multiSlider.deleteOption("customerMultiplePropertyRuleset");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
+    matchingStepDetail.confirmSliderOptionDeleteButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findByLabelText("rulesetName-testing-customerMultiplePropertyRuleset").should("have.length", 0));
+    multiSlider.getHandleName("customerMultiplePropertyRuleset").should("not.exist");
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "customerMultiplePropertyRuleset").should("not.exist");
   });
   it("Delete threshold", () => {
     multiSlider.deleteOption("testing");
