@@ -15,10 +15,10 @@ hubTest.createSimpleMappingProject([
         "sourcedFrom": "customerId"
       },
       "name": {
-        "sourcedFrom": "keyValue($NAMES, nameKey)"
+        "sourcedFrom": "lookup(nameKey, $NAMES)"
       },
       "status": {
-        "sourcedFrom": "keyValue($STATUSES, statusKey)"
+        "sourcedFrom": "lookup(statusKey, $STATUSES)"
       }
     }
   },

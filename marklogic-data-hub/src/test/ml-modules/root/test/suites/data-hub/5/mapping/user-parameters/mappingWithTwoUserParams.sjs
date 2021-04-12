@@ -49,9 +49,9 @@ const testOutput = esMappingLib.validateAndRunMapping(mappingStep, "/content/cus
 
 assertions.push(
   test.assertEqual("John", testOutput.properties.name.output),
-  test.assertEqual("keyValue($NAMES, nameKey)", testOutput.properties.name.sourcedFrom),
+  test.assertEqual("lookup(nameKey, $NAMES)", testOutput.properties.name.sourcedFrom),
   test.assertEqual("Inactive", testOutput.properties.status.output),
-  test.assertEqual("keyValue($STATUSES, statusKey)", testOutput.properties.status.sourcedFrom)
+  test.assertEqual("lookup(statusKey, $STATUSES)", testOutput.properties.status.sourcedFrom)
 );
 
 assertions;
