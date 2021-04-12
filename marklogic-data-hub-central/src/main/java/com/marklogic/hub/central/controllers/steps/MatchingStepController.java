@@ -87,7 +87,8 @@ public class MatchingStepController extends BaseController {
         if (uris != null) {
             urisStream = Arrays.stream(uris);
         }
-        return ResponseEntity.ok(MasteringService.on(getHubClient().getStagingClient()).previewMatchingActivity(stepName, urisStream, sampleSize));
+        // Using final client as content to match against will most likely be in final, reducing the number of invokes needed
+        return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).previewMatchingActivity(stepName, urisStream, sampleSize));
     }
 
     @RequestMapping(value = "/{stepName}/validate", method = RequestMethod.GET)
