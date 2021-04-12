@@ -1,4 +1,3 @@
-const config = require("/com.marklogic.hub/config.sjs");
 const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
@@ -30,8 +29,7 @@ const assertions = [
     "should overwrite the one outputted by the ingestion step")
 ];
 
-const isAvailable = fn.head(xdmp.eval("fn.docAvailable('/customer1.json')", {}, { database: xdmp.database(config.FINALDATABASE) }));
-
 assertions.concat(
-  test.assertEqual(false, isAvailable, "The doc should not exist in final since both steps write to staging")
+  test.assertEqual(false, hubTest.finalDocumentExists("/customer1.json"), 
+    "The doc should not exist in final since both steps write to staging")
 )

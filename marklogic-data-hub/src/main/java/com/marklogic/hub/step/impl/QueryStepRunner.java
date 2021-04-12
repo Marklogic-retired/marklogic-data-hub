@@ -319,7 +319,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-        Map<String,Object> fullResponse = new HashMap<>();
+        Map<String,JsonNode> fullOutputMap = new HashMap<>();
         queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
@@ -358,11 +358,11 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                         try {
                             for (JsonNode node : response.documents) {
                                 if (node.has("uri")) {
-                                    fullResponse.put(node.get("uri").asText(), node.toString());
+                                    fullOutputMap.put(node.get("uri").asText(), node);
                                 }
                             }
                         } catch (Exception ex) {
-                            logger.warn("Unable to add written documents to fullResponse map in RunStepResponse; cause: " + ex.getMessage(), ex);
+                            logger.warn("Unable to add written documents to fullOutput map in RunStepResponse; cause: " + ex.getMessage());
                         }
                     }
 
@@ -454,7 +454,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                 runStepResponse.withStepOutput(errorMessages);
             }
             if(isFullOutput) {
-                runStepResponse.withFullOutput(fullResponse);
+                runStepResponse.withFullOutput(fullOutputMap);
             }
 
             if (jobOutputIsEnabled()) {

@@ -16,6 +16,7 @@
 package com.marklogic.hub.step;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -41,7 +42,7 @@ public class RunStepResponse {
     private String targetDatabase;
 
     public List<String> stepOutput;
-    private Map<String, Object> fullOutput;
+    private Map<String, JsonNode> fullOutput;
     private String status;
 
     private long totalEvents = 0;
@@ -113,7 +114,7 @@ public class RunStepResponse {
         return this;
     }
 
-    public RunStepResponse withFullOutput(Map<String,Object>  fullOutput) {
+    public RunStepResponse withFullOutput(Map<String,JsonNode>  fullOutput) {
         this.fullOutput = fullOutput;
         return this;
     }
@@ -157,7 +158,7 @@ public class RunStepResponse {
         return flowName;
     }
 
-    public Map<String, Object> getFullOutput() {
+    public Map<String, JsonNode> getFullOutput() {
         return fullOutput;
     }
 
