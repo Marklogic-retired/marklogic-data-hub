@@ -172,60 +172,7 @@ declare %private function hent:fix-options-for-explorer(
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          <search:constraint name="Collection">
-            <search:collection>
-              <search:facet-option>limit=25</search:facet-option>
-              <search:facet-option>frequency-order</search:facet-option>
-              <search:facet-option>descending</search:facet-option>
-            </search:collection>
-          </search:constraint>,
-          <search:constraint name="createdByJob">
-            <search:range facet="false">
-              <search:field name="datahubCreatedByJob"/>
-            </search:range>
-          </search:constraint>,
-          <search:constraint name="createdByStep">
-            <search:range>
-              <search:field name="datahubCreatedByStep"/>
-              <search:facet-option>limit=25</search:facet-option>
-              <search:facet-option>frequency-order</search:facet-option>
-              <search:facet-option>descending</search:facet-option>
-            </search:range>
-          </search:constraint>,
-          <search:constraint name="createdByJobWord">
-            <search:word>
-              <search:field name="datahubCreatedByJob"/>
-            </search:word>
-          </search:constraint>,
-          <search:constraint name="createdOnRange">
-            <search:range facet="false">
-              <search:field name="datahubCreatedOn"/>
-            </search:range>
-          </search:constraint>,
-          <search:constraint name="createdInFlowRange">
-            <search:range>
-              <search:field name="datahubCreatedInFlow"/>
-              <search:facet-option>limit=25</search:facet-option>
-              <search:facet-option>frequency-order</search:facet-option>
-              <search:facet-option>descending</search:facet-option>
-            </search:range>
-          </search:constraint>,
-          <search:constraint name="sourceName">
-            <search:range>
-              <search:field name="datahubSourceName"/>
-              <search:facet-option>limit=25</search:facet-option>
-              <search:facet-option>frequency-order</search:facet-option>
-              <search:facet-option>descending</search:facet-option>
-            </search:range>
-          </search:constraint>,
-          <search:constraint name="sourceType">
-            <search:range>
-              <search:field name="datahubSourceType"/>
-              <search:facet-option>limit=25</search:facet-option>
-              <search:facet-option>frequency-order</search:facet-option>
-              <search:facet-option>descending</search:facet-option>
-            </search:range>
-          </search:constraint>,
+          build-static-explorer-constraints(),
           hent:build-sort-operator($sortable-properties, $entity-namespace-map),
           hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map),
           <search:transform-results apply="snippet">
@@ -283,6 +230,76 @@ declare %private function hent:fix-options-for-explorer(
       case text() return
         fn:replace($n, "es:", "*:")
       default return $n
+};
+
+declare function is-explorer-constraint-name($name as xs:string) as xs:boolean
+{
+  let $default-constraint-names := es:search-options-generate(map:map())/search:constraint/@name/fn:string()
+  let $explorer-constraint-names := build-static-explorer-constraints()/@name/fn:string()
+  return $name = ($default-constraint-names, $explorer-constraint-names)
+};
+
+(:
+Defined in a separate function so that these can be referenced when validating entity names.
+:)
+declare private function build-static-explorer-constraints()
+{
+  (
+    <search:constraint name="Collection">
+      <search:collection>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+      </search:collection>
+    </search:constraint>,
+    <search:constraint name="createdByJob">
+      <search:range facet="false">
+        <search:field name="datahubCreatedByJob"/>
+      </search:range>
+    </search:constraint>,
+    <search:constraint name="createdByStep">
+      <search:range>
+        <search:field name="datahubCreatedByStep"/>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+      </search:range>
+    </search:constraint>,
+    <search:constraint name="createdByJobWord">
+      <search:word>
+        <search:field name="datahubCreatedByJob"/>
+      </search:word>
+    </search:constraint>,
+    <search:constraint name="createdOnRange">
+      <search:range facet="false">
+        <search:field name="datahubCreatedOn"/>
+      </search:range>
+    </search:constraint>,
+    <search:constraint name="createdInFlowRange">
+      <search:range>
+        <search:field name="datahubCreatedInFlow"/>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+      </search:range>
+    </search:constraint>,
+    <search:constraint name="sourceName">
+      <search:range>
+        <search:field name="datahubSourceName"/>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+      </search:range>
+    </search:constraint>,
+    <search:constraint name="sourceType">
+      <search:range>
+        <search:field name="datahubSourceType"/>
+        <search:facet-option>limit=25</search:facet-option>
+        <search:facet-option>frequency-order</search:facet-option>
+        <search:facet-option>descending</search:facet-option>
+      </search:range>
+    </search:constraint>
+  )
 };
 
 declare %private function hent:build-sort-operator(

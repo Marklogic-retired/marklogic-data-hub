@@ -8,7 +8,10 @@ function assertThrowsEntityNameError(model, badEntityName) {
     entityLib.validateModelDefinitions(model);
     throw new Error("Expected model to fail validation: " + xdmp.toJsonString(model));
   } catch (e) {
-    assertions.push(test.assertEqual("Invalid entity name: " + badEntityName + "; must start with a letter and can only contain letters, numbers, hyphens, and underscores.", e.message));
+    assertions.push(
+      test.assertEqual("400", e.data[0]),
+      test.assertEqual("Invalid entity name: " + badEntityName + "; must start with a letter and can only contain letters, numbers, hyphens, and underscores.", e.data[1])
+    );
   }
 }
 
@@ -17,7 +20,10 @@ function assertThrowsPropertyNameError(model, badPropertyName) {
     entityLib.validateModelDefinitions(model);
     throw new Error("Expected model to fail validation: " + xdmp.toJsonString(model));
   } catch (e) {
-    assertions.push(test.assertEqual("Invalid property name: " + badPropertyName + " in entity model ThisIsFine; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.", e.message));
+    assertions.push(
+      test.assertEqual("400", e.data[0]),
+      test.assertEqual("Invalid property name: " + badPropertyName + " in entity model ThisIsFine; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.", e.data[1])
+    );
   }
 }
 
@@ -70,4 +76,5 @@ entityLib.validateModelDefinitions({
     }
   }
 });
+
 assertions;
