@@ -1,5 +1,4 @@
 import axios from "axios";
-import {testMatchingActivity} from "../assets/mock-data/curation/matching.data";
 
 export const updateMatchingArtifact = async (matching) => {
   try {
@@ -30,15 +29,12 @@ export const calculateMatchingActivity = async (matchStepName) => {
 
 export const previewMatchingActivity = async (testMatchData) => {
   try {
-    let response = testMatchingActivity;
-    return response;
-  // Will update it once backend code is integrated
-  //  let response = await axios.post(`/api/steps/matching/${testMatchData.stepName}/previewMatchingActivity?sampleSize=${testMatchData.sampleSize}&uris=${testMatchData.uris}`);
-  //   if (response.status === 200) {
-  //     return response.data;
-  //   }
+    let response = await axios.post(`/api/steps/matching/${testMatchData.stepName}/previewMatchingActivity?sampleSize=${testMatchData.sampleSize}&uris=${testMatchData.uris}`);
+    if (response.status === 200) {
+      return response.data;
+    }
   } catch (error) {
     let message = error;
-    console.error("Error while fetching the match activity!", message);
+    console.error("Error while fetching the preview matching activity!", message);
   }
 };
