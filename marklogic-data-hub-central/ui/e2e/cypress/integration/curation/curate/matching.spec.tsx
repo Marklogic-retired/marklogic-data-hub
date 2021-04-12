@@ -11,8 +11,7 @@ import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 
 const matchStep = "matchCustomerTest";
-const uris = ["/content/CustMatchMerge1.json", "/content/CustMatchMerge2.json", "/content/CustMatchMerge3.json", "/content/CustShippingCityStateMatch1.json", "/content/CustShippingCityStateMatch2.json", "/content/CustShippingCityStateMatch3.json", "/content/CustShippingCityStateMatch4.json"];
-const entityNames = ["Customer1", "Customer2", "Customer3", "Customer4", "Customer6"];
+const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
 
 describe("Matching", () => {
   before(() => {
@@ -200,30 +199,28 @@ describe("Matching", () => {
     matchingStepDetail.getUriInputField().type("/test/Uri2");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("This URI has already been added.").should("not.exist");
-    matchingStepDetail.getTestMatchUriButton().click();
     cy.findByText("The minimum of two URIs are required.").should("not.exist");
-    matchingStepDetail.getUriDeleteIcon().click({multiple: true});
+    cy.waitUntil(() => cy.visit("/tiles"));
   });
   it("Show matched results for test match", () => {
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.toggleEntityTypeId("Person");
+    cy.findByText("Match").click();
+    curatePage.openStepDetails("match-person");
+    //To test when enters uris  and click on test button
     for (let i in uris) {
       matchingStepDetail.getUriInputField().type(uris[i]);
       matchingStepDetail.getAddUriIcon().click();
     }
     matchingStepDetail.getTestMatchUriButton().click();
-    cy.findAllByText("Customer11").trigger("mousemove");
-    for (let j in entityNames) {
-      cy.findAllByText(entityNames[j]).should("be.visible");
+    for (let j in uris) {
+      cy.waitUntil(() => cy.findAllByText(uris[j]).should("have.length.gt", 1));
     }
-    cy.findAllByText("Customer11").trigger("mouseover");
-    //to test tooltip on hovering over entity name
-    cy.waitUntil(() => cy.findAllByText("/content/CustMatchMerge1.json").should("have.length.gt", 1));
-    matchingStepDetail.getUriDeleteIcon().click({multiple: true});
-    //when user selects all data radio and clicks on test button
+    //To test when selects all data and click on test button
     matchingStepDetail.getAllDataRadio().click();
     matchingStepDetail.getTestMatchUriButton().click();
-    cy.findAllByText("Customer11").trigger("mousemove");
-    for (let j in entityNames) {
-      cy.findAllByText(entityNames[j]).should("be.visible");
+    for (let j in uris) {
+      cy.waitUntil(() => cy.findAllByText(uris[j]).should("have.length.gt", 0));
     }
   });
 });

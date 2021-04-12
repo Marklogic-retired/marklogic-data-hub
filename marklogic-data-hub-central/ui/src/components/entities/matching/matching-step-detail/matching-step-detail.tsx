@@ -78,8 +78,8 @@ const MatchingStepDetail: React.FC = () => {
   const [singleUriWarning, setSingleUriWarning] = useState(false);
   const [uriTestMatchClicked, setUriTestMatchClicked] = useState(false);
   const [allDataSelected, setAllDataSelected] = useState(false);
-  const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 10, uris: []});
-  const [previewMatchedActivity, setPreviewMatchedActivity]   = useState<any>({sampleSize: 10, uris: [], actionPreview: []});
+  const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 100, uris: []});
+  const [previewMatchedActivity, setPreviewMatchedActivity]   = useState<any>({sampleSize: 100, uris: [], actionPreview: []});
   const [showRulesetMultipleModal, toggleShowRulesetMultipleModal] = useState(false);
 
   const menu = (
@@ -338,9 +338,9 @@ const MatchingStepDetail: React.FC = () => {
     dataIndex: "uriTestMatchValue",
     render: (text) => (
       <div>
-        <MLTooltip placement="topLeft" title={text.uris[0]}><span className={styles.testMatchedTableRow}><Icon className={styles.expandableIcon} type="right" />
-          {text.entityNames[0]}</span></MLTooltip><br /><br />
-        <MLTooltip placement="top" title={text.uris[1]}><span className={styles.matchedUriRow}>{text.entityNames[1]}</span></MLTooltip>
+        <MLTooltip placement="topLeft"><span className={styles.testMatchedTableRow}><Icon className={styles.expandableIcon} type="right" />
+          {text.uris[0]}</span></MLTooltip><br /><br />
+        <MLTooltip placement="top"><span className={styles.matchedUriRow}>{text.uris[1]}</span></MLTooltip>
       </div>
     )
   }];
@@ -548,7 +548,7 @@ const MatchingStepDetail: React.FC = () => {
             <MLRadio value={2} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
               <span>All Data</span>
               <div aria-label="allDataContent"><br />
-                  Info about All Data goes here... what it is, how to use it, limitations..info about All Data goes here... what it is, how to use it, limitations..
+                  Select All data in order to preview matching activity against all Uris upto maximum count of 100.
               </div>
             </MLRadio>
           </MLRadio.MLGroup>
