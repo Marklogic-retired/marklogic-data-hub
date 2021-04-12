@@ -19,6 +19,7 @@ xquery version "1.0-ml";
 module namespace xquery-lib = "http://marklogic.com/mapping/es/xquery";
 
 import module namespace inst="http://marklogic.com/entity-services-instance" at "/MarkLogic/entity-services/entity-services-instance.xqy";
+import module namespace es="http://marklogic.com/entity-services" at "/MarkLogic/entity-services/entity-services.xqy";
 import module namespace json = "http://marklogic.com/xdmp/json" at "/MarkLogic/json/json.xqy";
 
 declare function document-with-nodes($nodes as node()*) {
@@ -105,3 +106,57 @@ declare function remove-empty-structured-properties($element as item()*) as docu
     }
   }
 };
+
+declare %private variable $fetch := '
+  declare variable $uri as xs:string external;
+  fn:doc($uri)
+';
+declare %private variable $put := '
+  declare variable $uri as xs:string external;
+  declare variable $node as node() external;
+  declare variable $collection as xs:string external;
+  declare variable $xslt-uri as xs:string := $uri||".xslt";
+  declare variable $options :=
+    <options xmlns="xdmp:document-insert">
+      <permissions>{xdmp:document-get-permissions($uri,"elements")}</permissions>
+      <collections>{for $c in xdmp:document-get-collections($uri) return <collection>{$c}</collection>,
+        <collection>{$collection}</collection>
+      }</collections>
+    </options>;
+
+  xdmp:document-insert($xslt-uri, $node, $options)
+';
+
+(: xqueryLib.functionMetadataPut should be used instead of the OOTB es.functionMetadataPut in order to allow
+sequence to be passed to javascript mapping functions. This function makes use of
+/data-hub/5/mapping/entity-services/function-metadata.xsl  (which is the modified version of
+/MarkLogic/entity-services/function-metadata.xsl) to resolve https://project.marklogic.com/jira/browse/DHFPROD-5850
+:)
+declare function function-metadata-put(
+  $uri as xs:string
+) as empty-sequence()
+{
+  let $source :=
+    xdmp:eval(
+      $fetch,
+      map:map()=>map:with("uri",$uri),
+      map:map()=>map:with("database",xdmp:modules-database()))
+  let $compiled := xquery-lib:function-metadata-compile($source)
+  return
+    xdmp:eval($put,
+      map:map()=>map:with("uri",$uri)=>
+      map:with("node",$compiled)=>
+      map:with("collection",$es:FUNCTIONDEF_COLLECTION)
+      ,
+      map:map()=>map:with("database",xdmp:modules-database()))
+};
+
+declare function function-metadata-compile(
+  $function-metadata as node()
+) as node()
+{
+  let $input := es:function-metadata-validate($function-metadata)
+  return
+    xdmp:xslt-invoke("/data-hub/5/mapping/entity-services/function-metadata.xsl", $input)
+};
+

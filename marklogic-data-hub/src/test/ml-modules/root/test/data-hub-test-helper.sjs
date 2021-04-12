@@ -130,8 +130,8 @@ function buildPermissionsMap(permissions) {
 
 /**
  * Convenience function for setting up a project with a simple Customer entity model, one or more mapping steps, and a flow that
- * references those mapping steps. Each mapping step is based on the makeSimpleMappingStep function. 
- * 
+ * references those mapping steps. Each mapping step is based on the makeSimpleMappingStep function.
+ *
  * @param arrayOfMappingStepProperties one or more objects, where each is combined with the output of the makeSimpleMappingStep
  * function to create a new mapping step
  */
@@ -150,7 +150,8 @@ function createSimpleMappingProject(arrayOfMappingStepProperties) {
           "properties": {
             "customerId": {"datatype": "integer"},
             "name": {"datatype": "string"},
-            "status": {"datatype": "string"}
+            "status": {"datatype": "string"},
+            "integers":{"datatype": "array", "items":{"datatype": "integer"}}
           }
         }
       }
