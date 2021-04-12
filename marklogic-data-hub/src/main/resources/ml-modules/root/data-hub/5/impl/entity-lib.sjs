@@ -25,6 +25,8 @@ const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
 const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 /**
@@ -360,15 +362,21 @@ function validateModelDefinitions(definitions) {
   const pattern = /^[a-zA-Z][a-zA-Z0-9\-_]*$/;
   Object.keys(definitions).forEach(entityName => {
     if (!pattern.test(entityName)) {
-      throw new Error(`Invalid entity name: ${entityName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
+      httpUtils.throwBadRequest(`Invalid entity name: ${entityName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
     }
+
+
+    if (hent.isExplorerConstraintName(entityName)) {
+      httpUtils.throwBadRequest(`${entityName} is a reserved term and is not allowed as an entity name.`);
+    }
+
     if (definitions[entityName].properties) {
       Object.keys(definitions[entityName].properties).forEach(propertyName => {
         try{
           fn.QName('',propertyName)
         }
         catch(ex){
-          throw new Error(`Invalid property name: ${propertyName} in entity model ${entityName}; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.`);
+          httpUtils.throwBadRequest(`Invalid property name: ${propertyName} in entity model ${entityName}; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.`);
         }
       });
     }
