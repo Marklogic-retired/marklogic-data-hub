@@ -40,13 +40,12 @@ interface Props {
   tooltipsData: any;
   updateStep?: any;
   relatedEntityTypeProperties: any;
+  relatedEntitiesSelected: any;
   setRelatedEntitiesSelected: any;
+  setRemovedEntities: any;
   isRelatedEntity: boolean;
   tableColor: any;
   firstRowTableKeyIndex: any;
-  includedEntityTypeProperties: any;
-  includedEntitiesSelected: any;
-  setIncludedEntitiesSelected: any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
@@ -106,7 +105,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
 
   useEffect(() => {
-    initializeMapExpressions();
+    if (props.entityMappingId || !props.isRelatedEntity) {
+      initializeMapExpressions();
+    }
     setMappingFunctions();
     return (() => {
       setMapExp({});
@@ -566,17 +567,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
       dropdownClassName={styles.entityFilterDropdown}
     >
 
-      {!props.isRelatedEntity ? props.relatedEntityTypeProperties.map((entity, i) => {
-        let entityLabel = entity.entityLabel;
-        return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={i}>{entityLabel}</Option>;
-      }) :
-        props.includedEntityTypeProperties.map((entity, i) => {
+      {props.relatedEntityTypeProperties?.map((entity, i) => {
+        let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
+        if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) {
           let entityLabel = entity.entityLabel;
-          if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === props.entityMappingId.substring(0, props.entityMappingId.indexOf(":"))) {
-            return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={`${entityLabel}-${i}`}>{entityLabel}</Option>;
-          }
-        })}
-
+          return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={i}>{entityLabel}</Option>;
+        }
+      })}
     </Select>
   );
 
@@ -602,35 +599,32 @@ const EntityMapTable: React.FC<Props> = (props) => {
     </div>
   );
 
-  const handleOptionSelect = (selectedValues) => {
+  const handleOptionSelect = (newlySelectedValues) => {
     let selectedArray: any = [];
-    let entityArray = props.isRelatedEntity ? props.includedEntityTypeProperties : props.relatedEntityTypeProperties;
+    let entityArray = props.relatedEntityTypeProperties;
 
-    if (selectedValues.length !== 0) {
+    if (newlySelectedValues.length !== 0) {
       //in the properties array, push the object that has the key which matches the value of the entity name selected
-      selectedValues.forEach(val => {
+      newlySelectedValues.forEach(val => {
         let index = entityArray.findIndex(object => object.entityLabel === val);
-        selectedArray.push(entityArray[index]);
+        if (!props.relatedEntitiesSelected.includes((entityArray[index]))) {
+          selectedArray.push(entityArray[index]);
+        }
       });
-    } else {
-      selectedArray = [];
+      props.setRelatedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
     }
-    if (props.isRelatedEntity) {
-      //check if values were removed from the filter
-      if (selectedValues.length < selectedOptions.length) {
-        //filter for which value(s) were removed
-        let removedEntities = selectedOptions.filter(options =>  selectedValues.indexOf(options) < 0);
-        removedEntities.forEach(val => {
-          let index = entityArray.findIndex(object => object.entityLabel === val);
-          props.setIncludedEntitiesSelected(prevState => prevState.filter(obj => obj !== entityArray[index]));
-        });
-      } else {
-        props.setIncludedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
-      }
-    } else {
-      props.setRelatedEntitiesSelected(selectedArray);
+    //check for removed values
+    if (newlySelectedValues.length < selectedOptions.length) {
+      //filter for which value(s) were removed
+      let removedOptions = selectedOptions.filter(options => newlySelectedValues.indexOf(options) < 0);
+      let removedEntitiesArray : any = [];
+      removedOptions.forEach(val => {
+        let index = entityArray.findIndex(object => object.entityLabel === val);
+        removedEntitiesArray.push(entityArray[index]);
+      });
+      props.setRemovedEntities(removedEntitiesArray);
     }
-    setSelectedOptions(selectedValues);
+    setSelectedOptions(newlySelectedValues);
   };
 
   const entityColumns = [
@@ -730,11 +724,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
       backgroundColor: props.tableColor,
       paddingTop: "12px",
       paddingBottom: "12px",
+      borderColor: "#CCCCCC"
     },
     "& tbody > tr > td": {
       backgroundColor: props.tableColor,
       lineHeight: "2px",
       verticalAlign: "top",
+      borderColor: "#CCCCCC"
     },
     "& tbody > tr > .ant-table-column-has-actions": {
       backgroundColor: props.tableColor,
@@ -743,7 +739,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
-  return (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"}>
+  return (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"}>
     <Table
       className={tableCSS}
       pagination={false}
@@ -759,7 +755,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
       rowKey={(record: any) => record.key}
       getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
       showHeader={!props.isRelatedEntity}
-    /></div>);
+    /></div>)
+    :
+    null;
 };
 
 export default EntityMapTable;

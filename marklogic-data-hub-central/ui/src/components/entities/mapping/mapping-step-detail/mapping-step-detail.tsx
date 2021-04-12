@@ -59,13 +59,6 @@ const MappingStepDetail: React.FC = () => {
     setOpenStepSettings,
     setStepOpenOptions} = useContext(CurationContext);
 
-  function usePrevious(value) {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  }
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -120,10 +113,8 @@ const MappingStepDetail: React.FC = () => {
   let tgtRefs:any = {};
   const [relatedEntityTypeProperties, setRelatedEntityTypeProperties] = useState<any[]>([]);
   const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
-  const [includedEntityTypeProperties, setIncludedEntityTypeProperties] = useState<any[]>([]);
-  const [includedEntitiesSelected, setIncludedEntitiesSelected] = useState<any[]>([]);
-  const previousSelected : any = usePrevious(relatedEntitiesSelected);
-  const [rootRelatedMappings, setRootRelatedMappings] = useState<any[]>([]);
+  const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
+  const [removedEntities, setRemovedEntities] = useState<any[]>([]);
 
   //For storing docURIs
   const [docUris, setDocUris] = useState<any[]>([]);
@@ -479,7 +470,7 @@ const MappingStepDetail: React.FC = () => {
       let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
       setEntityTypeProperties([...nestedEntityProps]);
       setTgtEntityReferences({...tgtRefs});
-      setRootRelatedMappings(resp.data[0]["relatedEntityMappings"]);
+      setTargetRelatedMappings(resp.data[0]["relatedEntityMappings"]);
       if (resp.data[0]["relatedEntityMappings"] && resp.data[0]["relatedEntityMappings"].length > 0) {
         resp.data.forEach(entityObject => {
           let relatedEntityName = entityObject["entityType"];
@@ -487,11 +478,7 @@ const MappingStepDetail: React.FC = () => {
             let relatedEntProps = entityObject["entityModel"].definitions[relatedEntityName].properties;
             let relatedEntityTempData: any =[];
             let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData);
-            if (/:(.*?)\./.exec(entityObject["entityMappingId"])![1] === curationOptions.activeStep.entityName) {
-              setRelatedEntityTypeProperties(prevState => ([...prevState, {entityType: entityObject.entityType, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps}]));
-            } else {
-              setIncludedEntityTypeProperties(prevState => ([...prevState, {entityType: entityObject.entityType, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps}]));
-            }
+            setRelatedEntityTypeProperties(prevState => ([...prevState, {entityType: entityObject.entityType, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps}]));
           }
         });
       }
@@ -636,26 +623,29 @@ const MappingStepDetail: React.FC = () => {
   }, [sourceData]);
 
   useEffect(() => {
-    if (previousSelected) {
-      if (includedEntitiesSelected.length > 0 && previousSelected.length > relatedEntitiesSelected.length) {
-        let removedSelections = previousSelected.filter(entity => relatedEntitiesSelected.indexOf(entity) < 0);
-        checkRemoveEntityDependencies(removedSelections);
-      }
-    }
-  }, [relatedEntitiesSelected]);
-
-  const checkRemoveEntityDependencies = (removedEntities) => {
-    removedEntities.forEach(entity => {
-      if (entity.relatedEntityMappings.length < 1) {
-        return;
-      } else {
-        entity.relatedEntityMappings.forEach(relatedMapping => {
-          let relatedEntityId : any = relatedMapping["entityMappingId"];
-          setIncludedEntitiesSelected(prevState => prevState.filter(entity => entity["entityMappingId"].substring(0, entity["entityMappingId"].indexOf(".")) !== relatedEntityId.substring(0, relatedEntityId.indexOf("."))));
-        });
-      }
-      return;
+    let allEntitiesToRemove : any = [];
+    removedEntities.forEach(entityRemoved => {
+      let entitiesToRemove: any = checkRemoveEntityDependencies(entityRemoved, []);
+      allEntitiesToRemove = allEntitiesToRemove.concat(entitiesToRemove);
     });
+    let updateSelectedEntities : any = relatedEntitiesSelected.filter(entity => !allEntitiesToRemove.includes(entity));
+    setRelatedEntitiesSelected(updateSelectedEntities);
+  }, [removedEntities]);
+
+  const checkRemoveEntityDependencies = (removedEntity, arrayOfRemoved) => {
+    if (arrayOfRemoved.length < 1) {
+      arrayOfRemoved.push(removedEntity);
+    }
+    if (!removedEntity.relatedEntityMappings) {
+      return arrayOfRemoved;
+    } else {
+      removedEntity.relatedEntityMappings.forEach(relatedMapping => {
+        let index = relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === relatedMapping["entityMappingId"]);
+        arrayOfRemoved.push(relatedEntityTypeProperties[index]);
+        return checkRemoveEntityDependencies(arrayOfRemoved[arrayOfRemoved.length - 1], arrayOfRemoved);
+      });
+    }
+    return arrayOfRemoved;
   };
 
   //Set the collapse/Expand options for Source table, when mapping opens up.
@@ -1434,7 +1424,7 @@ const MappingStepDetail: React.FC = () => {
                 checkedEntityColumns={checkedEntityColumns}
                 entityTypeProperties={entityTypeProperties}
                 entityMappingId={""}
-                relatedMappings={rootRelatedMappings}
+                relatedMappings={targetRelatedMappings}
                 entityExpandedKeys={entityExpandedKeys}
                 setEntityExpandedKeys={setEntityExpandedKeys}
                 allEntityKeys={allEntityKeys}
@@ -1443,15 +1433,14 @@ const MappingStepDetail: React.FC = () => {
                 tooltipsData={AdvMapTooltips}
                 updateStep={UpdateMappingArtifact}
                 relatedEntityTypeProperties={relatedEntityTypeProperties}
+                relatedEntitiesSelected={relatedEntitiesSelected}
                 setRelatedEntitiesSelected={setRelatedEntitiesSelected}
+                setRemovedEntities={setRemovedEntities}
                 isRelatedEntity={false}
                 tableColor="#EAE9EE"
                 firstRowTableKeyIndex={firstRowTableKeyIndex++}
-                includedEntityTypeProperties={[]}
-                includedEntitiesSelected={[]}
-                setIncludedEntitiesSelected={[]}
               />
-              {relatedEntitiesSelected.map(entity =>
+              {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.includes(entity) ?
                 <EntityMapTable
                   mapResp={mapResp}
                   mapData={mapData}
@@ -1481,52 +1470,13 @@ const MappingStepDetail: React.FC = () => {
                   tooltipsData={AdvMapTooltips}
                   updateStep={UpdateMappingArtifact}
                   relatedEntityTypeProperties={relatedEntityTypeProperties}
+                  relatedEntitiesSelected = {relatedEntitiesSelected}
                   setRelatedEntitiesSelected={setRelatedEntitiesSelected}
+                  setRemovedEntities={setRemovedEntities}
                   isRelatedEntity={true}
                   tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
                   firstRowTableKeyIndex={firstRowTableKeyIndex++}
-                  includedEntityTypeProperties={includedEntityTypeProperties}
-                  includedEntitiesSelected={includedEntitiesSelected}
-                  setIncludedEntitiesSelected={setIncludedEntitiesSelected}
-                />)}
-              {includedEntitiesSelected.map(entity =>
-                <EntityMapTable
-                  mapResp={mapResp}
-                  mapData={mapData}
-                  setMapResp={setMapResp}
-                  mapExpTouched={mapExpTouched}
-                  setMapExpTouched={setMapExpTouched}
-                  handleExpSubmit={handleExpSubmit}
-                  flatArray={flatArray}
-                  saveMapping={saveMapping}
-                  sourceContext={sourceContext}
-                  setSourceContext={setSourceContext}
-                  dummyNode={dummyNode}
-                  getDataForValueField={getDataForValueField}
-                  getTextForTooltip={getTextForTooltip}
-                  getTextForValueField={getTextForValueField}
-                  canReadWrite={canReadWrite}
-                  entityTypeTitle={entity["entityLabel"]}
-                  checkedEntityColumns={checkedEntityColumns}
-                  entityTypeProperties={entity["entityProps"]}
-                  entityMappingId={entity["entityMappingId"]}
-                  relatedMappings={entity["relatedEntityMappings"]}
-                  entityExpandedKeys={entityExpandedKeys}
-                  setEntityExpandedKeys={setEntityExpandedKeys}
-                  allEntityKeys={allEntityKeys}
-                  setExpandedEntityFlag={setExpandedEntityFlag}
-                  initialEntityKeys={initialEntityKeys}
-                  tooltipsData={AdvMapTooltips}
-                  updateStep={UpdateMappingArtifact}
-                  relatedEntityTypeProperties={relatedEntityTypeProperties}
-                  setRelatedEntitiesSelected={setRelatedEntitiesSelected}
-                  isRelatedEntity={true}
-                  tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
-                  firstRowTableKeyIndex={firstRowTableKeyIndex++}
-                  includedEntityTypeProperties={includedEntityTypeProperties}
-                  includedEntitiesSelected={includedEntitiesSelected}
-                  setIncludedEntitiesSelected={setIncludedEntitiesSelected}
-                />)}
+                /> : "")}
             </div>
           </SplitPane>
         </div>
