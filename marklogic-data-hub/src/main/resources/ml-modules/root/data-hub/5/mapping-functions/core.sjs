@@ -204,18 +204,20 @@ function isNullOrEmpty(value) {
  * Convenience function for getting the value of a key from a JSON object. An expression such as 
  * "object['value']" doesn't work because 'value' is interpreted as an XPath predicate, not a value selector.
  * 
- * @param object 
+ * Note that "key" is the first argument for consistency with documentLookup and memoryLookup. 
+ * 
  * @param key 
+ * @param object 
  * @returns 
  */
-function keyValue(object, key) {
+function lookup(key, object) {
   return object ? object[key] : null;
 }
 
 module.exports = {
   documentLookup,
+  lookup,
   memoryLookup,
-  keyValue,
   parseDate,
   parseDateTime
 };
