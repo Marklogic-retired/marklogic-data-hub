@@ -88,6 +88,8 @@ for (let content of contentArray) {
     deleteContent(content, temporalCollection);
   } else {
     const metadata = context.metadata;
+    const quality = context.quality || 0;
+
     if (temporalCollection) {
       // temporalDocURI is managed by the temporal package and must not be carried forward.
       if (metadata) {
@@ -100,13 +102,14 @@ for (let content of contentArray) {
       temporal.documentInsert(temporalCollection, content.uri, content.value, {
         permissions,
         collections: targetCollections.filter((col) => !(temporalCollectionMap[col] || collectionsReservedForTemporal.includes(col))),
+        quality: quality,
         metadata
       });
     } else {
       if (traceEnabled) {
         hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${dbName}`);
       }
-      xdmp.documentInsert(content.uri, content.value, {permissions, collections: targetCollections, metadata});
+      xdmp.documentInsert(content.uri, content.value, {permissions, collections: targetCollections, quality: quality, metadata});
     }
   }
 }
