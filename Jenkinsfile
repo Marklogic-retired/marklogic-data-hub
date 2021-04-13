@@ -378,6 +378,95 @@ void smartMastering() {
                         }
 }
 
+void cypressE2EOnPremLinuxTests(String type,String mlVersion){
+    copyRPM type,mlVersion
+    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    sh '''
+       cd $WORKSPACE
+       WAR_NAME=$(basename *central*.war )
+       nohup java -jar $WORKSPACE/$WAR_NAME &
+    '''
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+    sh '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+
+      export NODE_HOME=$NODE_HOME_DIR/bin;
+      export PATH=$NODE_HOME:$JAVA_HOME/bin:$PATH
+      npm run cy:run |& tee -a e2e_err.log
+  '''
+
+    junit '**/e2e/**/*.xml'
+}
+
+void cypressE2EOnPremMacTests(String type,String mlVersion){
+
+    copyDMG type,mlVersion
+    setUpMLMac '$WORKSPACE/xdmp/src/Mark*.dmg'
+
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    sh '''
+       cd $WORKSPACE
+       WAR_NAME=$(basename *central*.war )
+       nohup java -jar $WORKSPACE/$WAR_NAME &
+    '''
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+
+    sh '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+      export PATH=/usr/local/bin/:$PATH
+      npm run cy:run 2>&1 | tee -a e2e_err.log
+   '''
+
+    junit '**/e2e/**/*.xml'
+}
+
+void cypressE2EOnPremWinTests(String type,String mlVersion){
+
+    copyMSI type,mlVersion;
+    def pkgOutput=bat(returnStdout:true , script: '''
+	                    cd xdmp/src
+	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+	                    echo %name%
+	                    ''').trim().split();
+    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+    def bldOutput=bat(returnStdout:true , script: '''
+        	           cd ml-builds/scripts/lib/
+        	           CD
+        	        ''').trim().split();
+    def bldPath=bldOutput[bldOutput.size()-1]
+    setupMLWinCluster bldPath,pkgLoc
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+
+    bat '''
+	    for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
+	    start java -jar %name%
+	'''
+
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
+
+    bat "cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run 2>&1 | tee -a e2e_err.log"
+
+    junit '**/e2e/**/*.xml'
+
+}
+
+
 pipeline{
 	agent none;
 	options {
@@ -1086,5 +1175,100 @@ pipeline{
 
         		    }
         		}
+
+        stage('HC on Prem parallel'){
+            when { expression {return params.regressions} }
+            parallel{
+
+                stage('10.0-Nightly-linux-On-Prem'){
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    agent { label 'dhfLinuxAgent'}
+                    environment{
+                        JAVA_HOME="$JAVA_HOME_DIR"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                    }
+                    steps {
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true) { cypressE2EOnPremLinuxTests("Latest", "10.0") }
+                    }
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME | Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME on $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                stage('10.0-6.2-Win10-On-Prem'){
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    agent { label 'Win10HCPrem'}
+                    environment{
+                        JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                        NODE_JS="C:\\Program Files\\nodejs"
+                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
+                    }
+                    steps{
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-6.2")}
+                    }
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                /*
+                stage('10.0-3-MAC-On-Prem'){
+                    agent { label 'osx-i64-10-test-2'}
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    environment{
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                    }
+                    steps{
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremMacTests("Release","10.0-3")}
+                    }
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                stage('10.0-3-Win12-On-Prem'){
+                    agent { label 'dhfWin12'}
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    steps{
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-3")}
+                    }
+                   post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+                 */
+
+            }}
+
+
 	}
 }
