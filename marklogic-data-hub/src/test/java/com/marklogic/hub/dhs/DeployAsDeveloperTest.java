@@ -4,10 +4,12 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertConfigsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
+import com.marklogic.appdeployer.command.databases.DatabasePlan;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.schemas.LoadSchemasCommand;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
@@ -21,6 +23,7 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
+import com.marklogic.hub.deploy.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
@@ -33,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +53,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
     }
 
     @Test
-    public void prepareAppConfig() {
+    public void prepareAppConfigForDhs() {
         AppConfig appConfig = new AppConfig();
         assertTrue(appConfig.isCreateForests(), "AppConfig should default to creating forests");
         assertNull(appConfig.getResourceFilenamesIncludePattern());
@@ -63,7 +67,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
         testHubConfig.setAppConfig(appConfig);
 
-        assertFalse(testHubConfig.getIsProvisionedEnvironment());
+        testHubConfig.setIsProvisionedEnvironment(true);
 
         new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
@@ -100,6 +104,68 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
             "reference-model project and the e2e hc-qa-projects, where we were able to reproduce the problem.");
     }
 
+    @Test
+    public void prepareAppConfigForOnPrem() {
+        AppConfig appConfig = new AppConfig();
+        assertTrue(appConfig.isCreateForests(), "AppConfig should default to creating forests");
+        assertNull(appConfig.getResourceFilenamesIncludePattern());
+
+        appConfig.getConfigDirs().add(new ConfigDir(new File("hub-internal-config")));
+        appConfig.getConfigDirs().add(new ConfigDir(new File("my-dhs-config")));
+        assertEquals(3, appConfig.getConfigDirs().size(), "Should have 3, including ml-config which is added by default");
+
+        // Enable all CMA usage so we can verify that it's disabled below
+        appConfig.setCmaConfig(new CmaConfig(true));
+
+        testHubConfig.setAppConfig(appConfig);
+
+        testHubConfig.setIsProvisionedEnvironment(false);
+
+        new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
+
+        assertEquals(8000, appConfig.getAppServicesPort(),
+            "For vanilla datahub, 8000 is app services port");
+
+        assertFalse(appConfig.isCreateForests(), "DHS handles forest creation");
+
+        assertEquals(2, appConfig.getConfigDirs().size(), "The hub-internal-config dir should have been removed; also, " +
+            "since src/main/entity-config does not exist, that config dir should not be included");
+        assertEquals("ml-config", appConfig.getConfigDirs().get(0).getBaseDir().getName());
+        assertEquals("my-dhs-config", appConfig.getConfigDirs().get(1).getBaseDir().getName(), "A user is still " +
+            "permitted to deploy their own resources from multiple configuration directories");
+
+        CmaConfig cmaConfig = appConfig.getCmaConfig();
+        assertFalse(cmaConfig.isDeployDatabases());
+        assertFalse(cmaConfig.isDeployPrivileges());
+        assertFalse(cmaConfig.isDeployQueryRolesets());
+        assertFalse(cmaConfig.isDeployRoles());
+
+        assertTrue(cmaConfig.isDeployProtectedPaths(), "Testing for DHFPROD-5626 showed that when 2 or more protected paths " +
+            "are loaded via RMA (not in one operation via CMA) by a data-hub-developer, only the last path works. All the " +
+            "paths look fine, but only the last one works. But it may not always be last - it seems to be a timing condition, " +
+            "and it's likely related to the issue found in DHFPROD-4558 that caused us to deploy query rolesets before " +
+            "protected paths. Oddly, this condition has not been reproducible in a JUnit test, likely because it's related " +
+            "to timing. But we've found that enabling CMA for protected paths fixes the problem - at least in the " +
+            "reference-model project and the e2e hc-qa-projects, where we were able to reproduce the problem.");
+        assertNull(appConfig.getAppServicesSslContext());
+        assertEquals(SecurityContextType.DIGEST, appConfig.getAppServicesSecurityContextType());
+    }
+
+    @Test
+    public void verifySchemaAndTriggersDbSettingIsRemovedForHubDeployAsDeveloperCommand() {
+        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(testHubConfig);
+        Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
+        DeployOtherDatabasesCommand command = (DeployOtherDatabasesCommand) commands.get(1);
+        CommandContext context = newCommandContext();
+        getHubProject().init(new HashMap<>());
+        List<DatabasePlan> plans = command.buildDatabasePlans(context);
+        plans.forEach(plan -> {
+            if ("data-hub-STAGING".equals(plan.getDatabaseName()) || "data-hub-FINAL".equals(plan.getDatabaseName())) {
+                DeployHubDatabaseCommand dbCommand = (DeployHubDatabaseCommand) plan.getDeployDatabaseCommand();
+                assertTrue(dbCommand.isRemoveSchemaAndTriggersDatabaseSettings());
+            }
+        });
+    }
     @Test
     public void knownPropertyValuesShouldBeFixed() {
         HubProjectImpl project = new HubProjectImpl();
@@ -163,7 +229,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
     }
 
     @Test
-    public void copyStagingSslConfigToAppServices() {
+    public void copyStagingSslConfigToAppServicesForDhs() {
         AppConfig appConfig = new AppConfig();
         assertNull(appConfig.getAppServicesSslContext(), "App-Services doesn't use SSL by default");
         assertEquals(SecurityContextType.DIGEST, appConfig.getAppServicesSecurityContextType(), "App-Services connection defaults to DIGEST");
@@ -174,6 +240,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
             testHubConfig.setAppConfig(appConfig);
             testHubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
             testHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
+            testHubConfig.setIsProvisionedEnvironment(true);
 
             new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
