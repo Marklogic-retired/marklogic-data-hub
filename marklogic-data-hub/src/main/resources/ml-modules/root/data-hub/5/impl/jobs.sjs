@@ -39,9 +39,9 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
         jobId: jobId,
         flow: flowName,
         user: xdmp.getCurrentUser(),
-        lastAttemptedStep: 0,
-        lastCompletedStep: 0 ,
-        jobStatus: "started" ,
+        lastAttemptedStep: "0",
+        lastCompletedStep: "0",
+        jobStatus: "started",
         timeStarted:  fn.currentDateTime(),
         stepResponses :{}
       }
@@ -208,7 +208,7 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
     const batchStatus = stepExecutionContext.getBatchStatus();
 
     // Per DHFPROD-2445, ensure that runtime options are included
-    const flowStepWithOptions = Object.assign({}, flowStep, 
+    const flowStepWithOptions = Object.assign({}, flowStep,
       {"options": Object.assign({}, flowStep.options, stepExecutionContext.combinedOptions)}
     );
 

@@ -72,11 +72,11 @@ public class BatchSchema {
     @JsonPropertyDescription("Added in 5.4.0; the ID of the step, where ID = (stepName)-(stepDefinitionType)")
     private String stepId;
     /**
-     * A copy of the step from its flow
+     * A copy of the step from its flow, plus runtime options
      * 
      */
     @JsonProperty("step")
-    @JsonPropertyDescription("A copy of the step from its flow")
+    @JsonPropertyDescription("A copy of the step from its flow, plus runtime options")
     private Step step;
     @JsonProperty("stepNumber")
     private String stepNumber;
@@ -228,7 +228,7 @@ public class BatchSchema {
     }
 
     /**
-     * A copy of the step from its flow
+     * A copy of the step from its flow, plus runtime options
      * 
      */
     @JsonProperty("step")
@@ -237,7 +237,7 @@ public class BatchSchema {
     }
 
     /**
-     * A copy of the step from its flow
+     * A copy of the step from its flow, plus runtime options
      * 
      */
     @JsonProperty("step")

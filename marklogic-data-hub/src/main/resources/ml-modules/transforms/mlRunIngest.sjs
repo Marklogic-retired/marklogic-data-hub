@@ -33,8 +33,8 @@ function transform(context, params, content) {
 
   options.noWrite = true;
   options.fullOutput = true;
-  options.noBatchWrite=true;
-
+  options.enableBatchOutput = "never";
+  
   let newContent = {};
   newContent.uri=context.uri;
   newContent.value=content;

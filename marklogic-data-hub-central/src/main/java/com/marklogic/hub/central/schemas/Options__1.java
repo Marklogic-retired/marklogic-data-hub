@@ -11,14 +11,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * A copy of the step from its flow, plus runtime options
+ * Default options for the step, or in a batch context, options as actually run.
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 
 })
-public class Step {
+public class Options__1 {
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -36,7 +36,7 @@ public class Step {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Step.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(Options__1 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("additionalProperties");
         sb.append('=');
         sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
@@ -61,10 +61,10 @@ public class Step {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Step) == false) {
+        if ((other instanceof Options__1) == false) {
             return false;
         }
-        Step rhs = ((Step) other);
+        Options__1 rhs = ((Options__1) other);
         return ((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties)));
     }
 
