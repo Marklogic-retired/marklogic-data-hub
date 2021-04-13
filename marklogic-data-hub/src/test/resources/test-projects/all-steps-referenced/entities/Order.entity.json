@@ -1,0 +1,31 @@
+{
+  "info": {
+    "title": "Order",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Order": {
+      "required": [ ],
+      "primaryKey": "orderId",
+      "properties": {
+        "orderId": {
+          "datatype": "string"
+        },
+        "address": {
+          "$ref": "#/definitions/Address"
+        }
+      }
+    },
+    "Address": {
+      "properties": {
+        "city": {
+          "datatype": "string"
+        },
+        "state": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
