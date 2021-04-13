@@ -40,6 +40,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     private File databaseFile;
     private boolean mergeEntityConfigFiles = true;
     private boolean mergeExistingArrayProperties = false;
+    private boolean removeSchemaAndTriggersDatabaseSettings = false;
 
     /**
      * In order for sorting to work correctly via DeployDatabaseCommandComparator, must call setDatabaseFile so that
@@ -96,7 +97,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
                 payloadNode = mergeExistingArrayProperties(context, payloadNode);
             }
 
-            removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
+            removeSchemaAndTriggersDatabaseSettings(payloadNode);
 
             if (payloadNode.has("language") && "zxx".equalsIgnoreCase(payloadNode.get("language").asText())) {
                 logger.warn("Removing 'language' property because it has a value of 'zxx'; complete payload: " + payload);
@@ -155,8 +156,8 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         return payloadNode;
     }
 
-    private void removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(ObjectNode payload) {
-        if (hubConfig.getIsProvisionedEnvironment()) {
+    private void removeSchemaAndTriggersDatabaseSettings(ObjectNode payload) {
+        if (removeSchemaAndTriggersDatabaseSettings) {
             payload.remove("schema-database");
             payload.remove("triggers-database");
         }
@@ -164,6 +165,14 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     public void setMergeEntityConfigFiles(boolean mergeEntityConfigFiles) {
         this.mergeEntityConfigFiles = mergeEntityConfigFiles;
+    }
+
+    public void setRemoveSchemaAndTriggersDatabaseSettings(boolean removeSchemaAndTriggersDatabaseSettings){
+        this.removeSchemaAndTriggersDatabaseSettings = removeSchemaAndTriggersDatabaseSettings;
+    }
+
+    public boolean isRemoveSchemaAndTriggersDatabaseSettings() {
+        return removeSchemaAndTriggersDatabaseSettings;
     }
 
     public void setMergeExistingArrayProperties(boolean mergeExistingArrayProperties) {

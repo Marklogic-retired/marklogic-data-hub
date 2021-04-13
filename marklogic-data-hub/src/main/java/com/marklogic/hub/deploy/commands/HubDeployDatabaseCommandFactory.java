@@ -30,6 +30,7 @@ public class HubDeployDatabaseCommandFactory implements DeployDatabaseCommandFac
     private HubConfig hubConfig;
     private boolean mergeEntityConfigFiles = true;
     private boolean mergeExistingArrayProperties = false;
+    private boolean removeSchemaAndTriggersDatabaseSettings = false;
 
     public HubDeployDatabaseCommandFactory(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -41,12 +42,17 @@ public class HubDeployDatabaseCommandFactory implements DeployDatabaseCommandFac
         DeployHubDatabaseCommand c = new DeployHubDatabaseCommand(hubConfig, databaseFile, filename);
         c.setDeployDatabaseCommandFactory(this);
         c.setMergeEntityConfigFiles(this.mergeEntityConfigFiles);
+        c.setRemoveSchemaAndTriggersDatabaseSettings(this.removeSchemaAndTriggersDatabaseSettings);
         c.setMergeExistingArrayProperties(this.mergeExistingArrayProperties);
         return c;
     }
 
     public void setMergeEntityConfigFiles(boolean mergeEntityConfigFiles) {
         this.mergeEntityConfigFiles = mergeEntityConfigFiles;
+    }
+
+    public void setRemoveSchemaAndTriggersDatabaseSettings(boolean removeSchemaAndTriggersDatabaseSettings){
+        this.removeSchemaAndTriggersDatabaseSettings = removeSchemaAndTriggersDatabaseSettings;
     }
 
     public void setMergeExistingArrayProperties(boolean mergeExistingArrayProperties) {
