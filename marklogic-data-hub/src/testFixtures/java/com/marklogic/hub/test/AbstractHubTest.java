@@ -534,6 +534,11 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, "Job");
     }
 
+    protected JsonNode getJobDoc(String jobId) {
+        String uri = format("/jobs/%s.json", jobId);
+        return getHubClient().getJobsClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
+    }
+
     /**
      * @return count of DHF 5 batch documents
      */

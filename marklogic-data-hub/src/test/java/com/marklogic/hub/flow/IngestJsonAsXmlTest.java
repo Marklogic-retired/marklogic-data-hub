@@ -24,6 +24,10 @@ public class IngestJsonAsXmlTest extends AbstractHubCoreTest {
         RunFlowResponse response = runFlow(new FlowInputs(flowName, "1"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
+        assertEquals(0, getBatchDocCount(), "Running an ingestion step, which involves a REST transform, should never " +
+            "write Batch documents because it's not possible to create one Batch doc per actual DMSDK batch; it is " +
+            "thus considered ineffective to create a Batch doc for every ingest document");
+
         // The URI is still written with ".json" by default, since that's the name of the file on disk
         String xml = getHubConfig().newStagingClient().newXMLDocumentManager().read("/xml/data.json", new StringHandle()).get();
         Fragment doc = new Fragment(xml);

@@ -30,6 +30,7 @@ const stepStatus = "running step " + stepNumber;
 
 hubUtils.hubTrace(consts.TRACE_JOB, `Starting step '${stepNumber}' of job '${jobId}'; setting job status to '${stepStatus}'`);
 
+jobDoc.job.lastAttemptedStep = stepNumber;
 jobDoc.job.jobStatus = stepStatus;
 jobDoc.job.stepResponses[stepNumber] = {
   stepStartTime: fn.currentDateTime(),

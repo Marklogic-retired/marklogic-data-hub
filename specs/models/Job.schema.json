@@ -18,10 +18,12 @@
       "description": "Name of the MarkLogic user that ran this job"
     },
     "lastAttemptedStep": {
-      "type": "integer"
+      "type": "string",
+      "description": "Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before"
     },
     "lastCompletedStep": {
-      "type": "integer"
+      "type": "string",
+      "description": "Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before"
     },
     "jobStatus": {
       "type": "string",

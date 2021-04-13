@@ -368,6 +368,11 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         flowRunner.awaitCompletion();
         verifyJobFinished(resp);
         assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "test-collection"));
+        assertEquals("2", resp.getLastAttemptedStep());
+        assertEquals("2", resp.getLastCompletedStep());
+        JsonNode job = getJobDoc(resp.getJobId());
+        assertEquals("2", job.get("job").get("lastAttemptedStep").asText());
+        assertEquals("2", job.get("job").get("lastCompletedStep").asText());
 
         opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
         opts.put("sourceDatabase", HubConfig.DEFAULT_FINAL_NAME);

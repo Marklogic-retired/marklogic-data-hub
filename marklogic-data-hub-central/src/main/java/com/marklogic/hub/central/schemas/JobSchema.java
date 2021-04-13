@@ -56,10 +56,20 @@ public class JobSchema {
     @JsonProperty("user")
     @JsonPropertyDescription("Name of the MarkLogic user that ran this job")
     private String user;
+    /**
+     * Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before
+     * 
+     */
     @JsonProperty("lastAttemptedStep")
-    private Integer lastAttemptedStep;
+    @JsonPropertyDescription("Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before")
+    private String lastAttemptedStep;
+    /**
+     * Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before
+     * 
+     */
     @JsonProperty("lastCompletedStep")
-    private Integer lastCompletedStep;
+    @JsonPropertyDescription("Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before")
+    private String lastCompletedStep;
     /**
      * The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed
      * 
@@ -152,23 +162,39 @@ public class JobSchema {
         this.user = user;
     }
 
+    /**
+     * Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before
+     * 
+     */
     @JsonProperty("lastAttemptedStep")
-    public Integer getLastAttemptedStep() {
+    public String getLastAttemptedStep() {
         return lastAttemptedStep;
     }
 
+    /**
+     * Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before
+     * 
+     */
     @JsonProperty("lastAttemptedStep")
-    public void setLastAttemptedStep(Integer lastAttemptedStep) {
+    public void setLastAttemptedStep(String lastAttemptedStep) {
         this.lastAttemptedStep = lastAttemptedStep;
     }
 
+    /**
+     * Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before
+     * 
+     */
     @JsonProperty("lastCompletedStep")
-    public Integer getLastCompletedStep() {
+    public String getLastCompletedStep() {
         return lastCompletedStep;
     }
 
+    /**
+     * Corrected in 5.5 to always be a string; was sometimes a number in 5.4 and before
+     * 
+     */
     @JsonProperty("lastCompletedStep")
-    public void setLastCompletedStep(Integer lastCompletedStep) {
+    public void setLastCompletedStep(String lastCompletedStep) {
         this.lastCompletedStep = lastCompletedStep;
     }
 
