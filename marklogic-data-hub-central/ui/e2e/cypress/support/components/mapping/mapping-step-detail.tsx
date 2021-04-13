@@ -52,7 +52,7 @@ class MappingStepDetail {
   }
 
   setEntitySearch(propertyName: string) {
-    cy.get("#searchInput-name").focus().type(propertyName);
+    cy.findByTestId("searchInput-name").focus().type(propertyName);
   }
 
   resetEntitySearch() {
@@ -65,6 +65,14 @@ class MappingStepDetail {
 
   stepSettingsLink() {
     return cy.findByLabelText(`stepSettings`);
+  }
+
+  moreLink() {
+    return cy.findByTestId(`moreLink`);
+  }
+
+  lessLink() {
+    return cy.findByTestId(`lessLink`);
   }
 
   /**
