@@ -94,6 +94,17 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("zip").should("not.exist");
     //propertyTable.getWildcardIcon('zip').should('not.exist');
   });
+  it("Add related property to structured type", () => {
+    propertyTable.getAddPropertyToStructureType("Address").click();
+    propertyModal.newPropertyName("OrderedBy");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Related Entity").click();
+    propertyModal.getCascadedTypeFromDropdown("Customer").click();
+    propertyModal.openJoinPropertyDropdown();
+    propertyModal.getJoinProperty("nicknames").should("not.be.enabled");
+    propertyModal.getJoinProperty("customerId").click();
+    propertyModal.getSubmitButton().click();
+  });
   it("Add properties to nested structured type", () => {
     propertyTable.getAddPropertyToStructureType("Zip").click();
     propertyModal.getStructuredTypeName().should("have.text", "Address.Zip");

@@ -493,6 +493,11 @@ const PropertyTable: React.FC<Props> = (props) => {
         newStructuredTypes.isStructured = true;
         newStructuredTypes.name = record.structured;
         newStructuredTypes.propertyName = record.propertyName;
+      } else if (record.joinPropertyType) {
+        propertyType = PropertyType.RelatedEntity;
+        newStructuredTypes.isStructured = true;
+        newStructuredTypes.name = record.structured;
+        newStructuredTypes.propertyName = record.propertyName;
       } else {
         propertyType = PropertyType.Basic;
         newStructuredTypes.isStructured = true;
@@ -718,6 +723,8 @@ const PropertyTable: React.FC<Props> = (props) => {
                   structured: structuredType.name,
                   propertyName: structProperty.name,
                   type: structProperty.datatype === "structured" ? structProperty.ref.split("/").pop() : structProperty.datatype,
+                  joinPropertyName: structProperty.joinPropertyName,
+                  joinPropertyType: structProperty.joinPropertyType,
                   identifier: entityTypeDefinition?.primaryKey === structProperty.name ? structProperty.name : "",
                   multiple: structProperty.multiple ? structProperty.name : "",
                   facetable: structProperty.facetable ? structProperty.name : "",
@@ -745,6 +752,8 @@ const PropertyTable: React.FC<Props> = (props) => {
               facetable: property.facetable ? property.name : "",
               sortable: property.sortable ? property.name : "",
               type: property.ref.split("/").pop(),
+              joinPropertyName: property.joinPropertyName,
+              joinPropertyType: property.joinPropertyType,
               pii: piiValue,
               children: structuredTypeProperties,
               add: addValue,
