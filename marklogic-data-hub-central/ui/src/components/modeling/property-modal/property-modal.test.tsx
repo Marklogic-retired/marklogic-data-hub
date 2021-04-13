@@ -328,6 +328,53 @@ describe("Property Modal Component", () => {
     expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
+  test.only("Add a Property with relationship type to a structured type definition", async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
+    // Mock population of Join Property menu
+    mockPrimaryEntityTypes.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
+
+    let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let addMock = jest.fn();
+
+    const {getByPlaceholderText, getByText, getAllByText, getByLabelText} =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={{isStructured: true, name: "propName,Employee", propertyName: ""}}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={addMock}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
+          deletePropertyFromDefinition={jest.fn()}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByText("Structured Type:")).toBeInTheDocument();
+    expect(getByText("Employee")).toBeInTheDocument();
+
+    userEvent.type(getByPlaceholderText("Enter the property name"), "email");
+
+    // Choose related entity type
+    userEvent.click(getByPlaceholderText("Select the property type"));
+    userEvent.click(getByText("Related Entity"));
+    userEvent.click(getAllByText("Customer")[1]);
+    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+
+    // Choose join property after menu is populated
+    userEvent.click(getByLabelText("joinProperty-select"));
+    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+    await wait(() => userEvent.click(getByText("customerId")));
+
+    userEvent.click(getByLabelText("property-modal-submit"));
+    expect(addMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
+  });
+
   test("Add a Property with a newly created structured type", () => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 

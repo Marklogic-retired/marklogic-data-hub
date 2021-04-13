@@ -345,66 +345,60 @@ export const definitionsParser = (definitions: any): Definition[] => {
 
     entityDefinition.name = definition;
 
-    for (let entityKeys in definitions[definition]) {
-      if (entityKeys === "properties") {
-        for (let properties in definitions[definition][entityKeys]) {
+    for (let key in definitions[definition]) {
+      if (key === "properties") {
+        for (let prop in definitions[definition][key]) {
+          let defProp = definitions[definition][key][prop];
           let property: Property = {
-            name: "",
-            datatype: "",
-            description: "",
+            name: prop,
+            datatype: defProp["datatype"] || "",
+            description: defProp["description"] || "",
             ref: "",
             relatedEntityType: "",
             joinPropertyName: "",
             joinPropertyType: "",
-            collation: "",
-            multiple: false,
-            facetable: false,
-            sortable: false
+            collation: defProp["collation"] || "",
+            multiple: defProp["datatype"] === "array",
+            facetable: defProp["facetable"] || false,
+            sortable: defProp["sortable"] || false
           };
-          property.name = properties;
-          property.description = definitions[definition][entityKeys][properties]["description"] || "";
-          property.collation = definitions[definition][entityKeys][properties]["collation"] || "";
-          property.facetable = definitions[definition][entityKeys][properties]["facetable"] || "";
-          property.sortable = definitions[definition][entityKeys][properties]["sortable"] || "";
 
-          if (definitions[definition][entityKeys][properties]["datatype"]) {
-            property.datatype = definitions[definition][entityKeys][properties]["datatype"];
-
+          if (defProp["datatype"]) {
             // Handle join props if present
-            property.relatedEntityType = definitions[definition][entityKeys][properties]["relatedEntityType"];
-            property.joinPropertyName = definitions[definition][entityKeys][properties]["joinPropertyName"];
-            if (definitions[definition][entityKeys][properties]["relatedEntityType"]) {
+            property.relatedEntityType = defProp["relatedEntityType"];
+            property.joinPropertyName = defProp["joinPropertyName"];
+
+            if (defProp["relatedEntityType"]) {
               // Parse type from relatedEntityType URI
-              let typeSplit = definitions[definition][entityKeys][properties]["relatedEntityType"].split("/");
+              let typeSplit = defProp["relatedEntityType"].split("/");
               property.joinPropertyType = typeSplit[typeSplit.length - 1];
             }
 
-            if (definitions[definition][entityKeys][properties]["datatype"] === "array") {
-              property.multiple = true;
-
-              if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("$ref")) {
+            if (defProp["datatype"] === "array") {
+              if (defProp["items"].hasOwnProperty("$ref")) {
                 // Array of Structured/Entity type
-                if (definitions[definition][entityKeys][properties]["items"]["$ref"].split("/")[1] === "definitions") {
+                if (defProp["items"]["$ref"].split("/")[1] === "definitions") {
                   property.datatype = "structured";
                 } else {
-                  property.datatype = definitions[definition][entityKeys][properties]["items"]["$ref"].split("/").pop();
+                  property.datatype = defProp["items"]["$ref"].split("/").pop();
                 }
-                property.ref = definitions[definition][entityKeys][properties]["items"]["$ref"];
-              } else if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("relatedEntityType")) {
+                property.ref = defProp["items"]["$ref"];
+              } else if (defProp["items"].hasOwnProperty("relatedEntityType")) {
                 // Array of related entity type
-                property.relatedEntityType = definitions[definition][entityKeys][properties]["items"]["relatedEntityType"];
-                property.joinPropertyName = definitions[definition][entityKeys][properties]["items"]["joinPropertyName"];
+                property.relatedEntityType = defProp["items"]["relatedEntityType"];
+                property.joinPropertyName = defProp["items"]["joinPropertyName"];
                 // Parse type from relatedEntityType URI
-                let typeSplit = definitions[definition][entityKeys][properties]["items"]["relatedEntityType"].split("/");
+                let typeSplit = defProp["items"]["relatedEntityType"].split("/");
                 property.joinPropertyType = typeSplit[typeSplit.length - 1];
-              } else if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("datatype")) {
+              } else if (defProp["items"].hasOwnProperty("datatype")) {
                 // Array of datatype
-                property.datatype = definitions[definition][entityKeys][properties]["items"]["datatype"];
-                property.collation = definitions[definition][entityKeys][properties]["items"]["collation"];
+                property.datatype = defProp["items"]["datatype"];
+                property.collation = defProp["items"]["collation"];
               }
             }
-          } else if (definitions[definition][entityKeys][properties]["$ref"]) {
-            let refSplit = definitions[definition][entityKeys][properties]["$ref"].split("/");
+
+          } else if (defProp["$ref"]) {
+            let refSplit = defProp["$ref"].split("/");
             if (refSplit[1] === "definitions") {
               // Structured type
               property.datatype = "structured";
@@ -412,13 +406,13 @@ export const definitionsParser = (definitions: any): Definition[] => {
               // External Entity type
               property.datatype = refSplit[refSplit.length - 1];
             }
-
-            property.ref = definitions[definition][entityKeys][properties]["$ref"];
+            property.ref = defProp["$ref"];
           }
+
           entityProperties.push(property);
         }
       } else {
-        entityDefinition[entityKeys] = definitions[definition][entityKeys];
+        entityDefinition[key] = definitions[definition][key];
       }
       entityDefinition.properties = entityProperties;
     }

@@ -192,6 +192,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           showJoinProp = true;
           showConfigOptions = false;
           newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
+          structuredLabel = props.structuredTypeOptions.name;
 
         } else if (props.structuredTypeOptions.isStructured) {
           structuredLabel = props.structuredTypeOptions.name;
@@ -566,11 +567,13 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     } else if (props.structuredTypeOptions.isStructured) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
+      let relatedEntityDropdown = createRelatedEntityDropdown();
 
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER("1"),
         structuredDropdown,
+        relatedEntityDropdown,
         DROPDOWN_PLACEHOLDER("2"),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
