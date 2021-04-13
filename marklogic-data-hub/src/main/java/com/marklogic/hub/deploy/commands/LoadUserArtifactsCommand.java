@@ -152,28 +152,22 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * @throws IOException
      */
     private void loadModels(HubClient hubClient) throws IOException {
-        final Path modelsPath = hubConfig.getHubEntitiesDir();
-        if (modelsPath.toFile().exists()) {
+        final File modelsDir = hubConfig.getHubEntitiesDir().toFile();
+        if (modelsDir.exists()) {
             ArrayNode modelsArray = objectMapper.createArrayNode();
             EntityDefModulesFinder modulesFinder = new EntityDefModulesFinder();
             List<File> filesWritten = new ArrayList<>();
-            Files.walkFileTree(modelsPath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    logger.info("Loading models from directory " + dir);
-                    modulesFinder.findModules(dir.toString()).getAssets().forEach(r -> {
-                        try {
-                            if(shouldWriteArtifact(r.getFile())){
-                                logger.info("Loading model from file: " + r.getFilename());
-                                modelsArray.add(readArtifact(r.getFile()));
-                                filesWritten.add(r.getFile());
-                            }
-                        }
-                        catch (IOException e) {
-                            throw new RuntimeException("Unable to read model file: " + r.getFilename() + "; cause: " + e.getMessage(), e);
-                        }
-                    });
-                    return FileVisitResult.CONTINUE;
+            logger.info("Loading models from directory " + modelsDir);
+            modulesFinder.findModules(modelsDir.toString()).getAssets().forEach(r -> {
+                try {
+                    if(shouldWriteArtifact(r.getFile())){
+                        logger.info("Loading model from file: " + r.getFilename());
+                        modelsArray.add(readArtifact(r.getFile()));
+                        filesWritten.add(r.getFile());
+                    }
+                }
+                catch (IOException e) {
+                    throw new RuntimeException("Unable to read model file: " + r.getFilename() + "; cause: " + e.getMessage(), e);
                 }
             });
             if (modelsArray.size() > 0) {
