@@ -55,6 +55,10 @@
         "metadata": {
           "type": "object",
           "description": "The metadata keys and values to be included when the document is inserted"
+        },
+        "quality": {
+          "type": "integer",
+          "description": "The quality of documents to be inserted"
         }
       }
     },
