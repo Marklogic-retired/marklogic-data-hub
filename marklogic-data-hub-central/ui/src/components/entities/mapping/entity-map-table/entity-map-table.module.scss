@@ -179,7 +179,8 @@
 
 .highlightStyle {
   background-color: #ffc069;
-  padding: 0px
+  padding: 0px;
+  line-height:normal;
 }
 
 .expandIcon{
@@ -212,4 +213,8 @@
 .arrayImage {
   margin-left: 5px;
   margin-bottom: 1px;
+}
+
+.rowLink  {
+  font-weight: bold;
 }

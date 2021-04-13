@@ -164,6 +164,20 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.validateMapValues("discount", "0");
     mappingStepDetail.validateMapValues("shipRegion", "region1\nregion4\n");
     mappingStepDetail.validateMapValues("shippedDate", "1996-07-17T00:28:30");
+  });
+  it("Verify mapping step filtering for Entity table", () => {
+    mappingStepDetail.toggleEntityFilterMenu();
+    mappingStepDetail.setEntitySearch("city");
+    mappingStepDetail.validateMapValues("city", "Houston");
+    mappingStepDetail.submitEntitySearch().click();
+    cy.waitUntil(() => mappingStepDetail.moreLink()).should("be.visible");
+    mappingStepDetail.moreLink().click();
+    cy.waitUntil(() => mappingStepDetail.lessLink()).should("be.visible");
+    mappingStepDetail.validateMapValues("city", "Houston");
+    mappingStepDetail.validateMapValues("state", "100 Main Street");
+    mappingStepDetail.lessLink().click();
+    mappingStepDetail.toggleEntityFilterMenu();
+    mappingStepDetail.resetEntitySearch().click();
     //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
   });

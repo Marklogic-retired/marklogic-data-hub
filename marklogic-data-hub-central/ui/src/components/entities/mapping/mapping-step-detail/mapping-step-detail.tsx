@@ -108,6 +108,7 @@ const MappingStepDetail: React.FC = () => {
   const [initialEntityKeys, setInitialEntityKeys] = useState<any []>([]);
   const [allSourceKeys, setAllSourceKeys] = useState<any []>([]);
   const [allEntityKeys, setAllEntityKeys] = useState<any []>([]);
+  const [allRelatedEntitiesKeys, setAllRelatedEntitiesKeys] = useState<any[]>([]);
 
   //For Entity table
   const [tgtEntityReferences, setTgtEntityReferences] = useState({});
@@ -120,6 +121,9 @@ const MappingStepDetail: React.FC = () => {
   const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
   const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
   const [removedEntities, setRemovedEntities] = useState<any[]>([]);
+
+  //For Entity table filtering
+  const [filterStr, setFilterStr] = useState("");
 
   //For storing docURIs
   const [docUris, setDocUris] = useState<any[]>([]);
@@ -508,6 +512,8 @@ const MappingStepDetail: React.FC = () => {
         propty = {
           key: EntityTableKeyIndex,
           name: parentKey,
+          filterName: key,
+          filterMatch: false,
           type: dataTp,
           children: []
         };
@@ -524,6 +530,8 @@ const MappingStepDetail: React.FC = () => {
           propty = {
             key: EntityTableKeyIndex,
             name: parentKey ? parentKey + "/" + key : key,
+            filterName: key,
+            filterMatch: false,
             type: dataTp,
             relatedEntityType: relatedEntType,
             joinPropertyName: joinPropName
@@ -533,6 +541,8 @@ const MappingStepDetail: React.FC = () => {
           propty = {
             key: EntityTableKeyIndex,
             name: parentKey ? parentKey + "/" + key : key,
+            filterName: key,
+            filterMatch: false,
             type: dataTp,
           };
         }
@@ -1305,6 +1315,7 @@ const MappingStepDetail: React.FC = () => {
     setOpenStepSettings(false);
   };
 
+
   return (
     <>
       <CustomPageHeader
@@ -1445,6 +1456,10 @@ const MappingStepDetail: React.FC = () => {
                 isRelatedEntity={false}
                 tableColor="#EAE9EE"
                 firstRowTableKeyIndex={firstRowTableKeyIndex++}
+                filterStr={filterStr}
+                setFilterStr={setFilterStr}
+                allRelatedEntitiesKeys={allRelatedEntitiesKeys}
+                setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
               />
               {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.includes(entity) ?
                 <EntityMapTable
@@ -1482,6 +1497,10 @@ const MappingStepDetail: React.FC = () => {
                   isRelatedEntity={true}
                   tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
                   firstRowTableKeyIndex={firstRowTableKeyIndex++}
+                  filterStr={filterStr}
+                  setFilterStr={setFilterStr}
+                  allRelatedEntitiesKeys={allRelatedEntitiesKeys}
+                  setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                 /> : "")}
             </div>
           </SplitPane>

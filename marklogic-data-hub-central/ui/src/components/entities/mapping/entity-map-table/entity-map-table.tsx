@@ -9,9 +9,11 @@ import Highlighter from "react-highlight-words";
 import {faList, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {getMappingFunctions} from "../../../../api/mapping";
 import EntitySettings from "../entity-settings/entity-settings";
-import {css} from "@emotion/css";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
+import {css} from "@emotion/css";
+import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion";
+
 
 interface Props {
   mapResp: any;
@@ -48,6 +50,10 @@ interface Props {
   isRelatedEntity: boolean;
   tableColor: any;
   firstRowTableKeyIndex: any;
+  filterStr: any;
+  setFilterStr: any;
+  allRelatedEntitiesKeys: any;
+  setAllRelatedEntitiesKeys: any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
@@ -55,7 +61,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
-
   const {Option} = Select;
   const {TextArea} = Input;
   let searchInput: any;
@@ -88,8 +93,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [sourceValue, setSourceValue] = useState("");
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
-
   const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
+  const [entityProperties, setEntityProperties] = useState<any[]>(props.entityTypeProperties);
+
+  let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
 
   //Documentation links for using Xpath expressions
   const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -100,7 +107,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     </ul></div>
   </div>;
 
-  const getColumnsForEntityTable:any = () => {
+  const getColumnsForEntityTable: any = () => {
     return entityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item);
   };
 
@@ -116,10 +123,25 @@ const EntityMapTable: React.FC<Props> = (props) => {
       setSearchEntityText("");
       setSearchedEntityColumn("");
     });
+  }, [entityProperties]);
+
+  useEffect(() => {
+    setEntityProperties(props.entityTypeProperties);
+    props.setAllRelatedEntitiesKeys([...props.allRelatedEntitiesKeys, ...getKeys(props.entityTypeProperties)]);
   }, [props.entityTypeProperties]);
 
+  useEffect(() => {
+    if (props.filterStr.length > 0) {
+      let filteredData = [...getFilteredData(props.filterStr.toLowerCase(), props.entityTypeProperties)];
+      setEntityProperties(filteredData);
+      props.setEntityExpandedKeys([...props.entityExpandedKeys, ...props.allRelatedEntitiesKeys]);
+    } else {
+      setEntityProperties(props.entityTypeProperties);
+    }
+  }, [props.filterStr]);
+
   const getEntityDataType = (prop) => {
-    return prop.startsWith("parent-") ? prop.slice(prop.indexOf("-")+1) : prop;
+    return prop.startsWith("parent-") ? prop.slice(prop.indexOf("-") + 1) : prop;
   };
 
   const mapExpressionStyle = (propName) => {
@@ -136,7 +158,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
      json and updates the sourceContext for every entity property */
 
   const updateSourceContext = (mapExp, entityTable) => {
-    let queue:any[] = [];
+
+    let queue: any[] = [];
     entityTable.forEach(element => {
       element["parentVal"] = "";
       queue.push(element);
@@ -179,20 +202,20 @@ const EntityMapTable: React.FC<Props> = (props) => {
     if (props.mapData && props.mapData.properties) {
       initializeMapExpForUI(props.mapData.properties);
       setMapExp({...mapExpUI});
-      updateSourceContext({...mapExpUI}, props.entityTypeProperties);
+      updateSourceContext({...mapExpUI}, entityProperties);
       props.setSourceContext({...tempSourceContext});
     }
   };
 
   //Refresh the UI mapExp from the the one saved in the database
-  const initializeMapExpForUI  = (mapExp, parentKey = "") => {
+  const initializeMapExpForUI = (mapExp, parentKey = "") => {
     Object.keys(mapExp).forEach(key => {
       let val = mapExp[key];
       if (val.hasOwnProperty("properties")) {
         parentKey = parentKey ? parentKey + "/" + key : key;
         mapExpUI[parentKey] = mapExp[key]["sourcedFrom"];
         initializeMapExpForUI(val.properties, parentKey);
-        parentKey = (parentKey.indexOf("/")!==-1) ? parentKey.substring(0, parentKey.lastIndexOf("/")):"";
+        parentKey = (parentKey.indexOf("/") !== -1) ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
       } else {
         let tempKey = parentKey ? parentKey + "/" + key : key;
         mapExpUI[tempKey] = mapExp[key]["sourcedFrom"];
@@ -239,9 +262,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
           props.onExpand(props.record, e);
         }}><Icon type="down" /> </a>;
       } else {
-        return <a  className={styles.expandIcon} onClick={e => {
+        return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="right" data-testid="expandedIcon"/> </a>;
+        }}><Icon type="right" data-testid="expandedIcon" /> </a>;
       }
     } else {
       return <span style={{color: "black"}} onClick={e => {
@@ -281,47 +304,30 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const handleColSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
 
+    confirm();
     setSearchEntityText(selectedKeys[0]);
     setSearchedEntityColumn(dataIndex);
 
-    if (props.entityTypeProperties.length === 1 && props.entityTypeProperties[0].hasOwnProperty("children")) {
-      props.setEntityExpandedKeys([0, 1, ...getKeysToExpandForFilter(props.entityTypeProperties, "key", selectedKeys[0])]);
-    } else {
-      props.setEntityExpandedKeys([0, ...getKeysToExpandForFilter(props.entityTypeProperties, "key", selectedKeys[0])]);
+    let filteredData: any[] = [];
+    if (selectedKeys[0].length) {
+      props.setFilterStr(selectedKeys[0]);
+      filteredData = [...getFilteredData(selectedKeys[0].toLowerCase(), props.entityTypeProperties)];
+      setEntityProperties(filteredData);
     }
+    props.setEntityExpandedKeys([...props.entityExpandedKeys, ...firstRowKeys, ...getKeys(props.entityTypeProperties)]);
   };
 
   const handleSearchReset = (clearFilters, dataIndex) => {
+    props.setFilterStr("");
+
     clearFilters();
     if (searchEntityText) {
       props.setEntityExpandedKeys([...props.initialEntityKeys]);
     }
     setSearchEntityText("");
     setSearchedEntityColumn("");
-  };
-
-  const getKeysToExpandForFilter = (dataArr, rowKey, searchText, allKeysToExpand:any = [], parentRowKey = 0) => {
-    dataArr.forEach(obj => {
-      if (obj.hasOwnProperty("children")) {
-        if (((rowKey === "rowKey" ? obj.key : obj.name) + JSON.stringify(obj["children"])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
-          if (!allKeysToExpand.includes(obj[rowKey])) {
-            allKeysToExpand.push(obj[rowKey]);
-          }
-        }
-        parentRowKey = obj[rowKey];
-        getKeysToExpandForFilter(obj["children"], rowKey, searchText, allKeysToExpand, parentRowKey);
-
-      } else {
-        if ((rowKey === "rowKey" ? obj.key : obj.name).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
-          if (!allKeysToExpand.includes(parentRowKey)) {
-            allKeysToExpand.push(parentRowKey);
-          }
-        }
-      }
-    });
-    return allKeysToExpand;
+    setEntityProperties(props.entityTypeProperties);
   };
 
   const getColumnFilterProps = dataIndex => ({
@@ -339,7 +345,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           className={styles.searchInput}
         />
         <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
-                    Reset
+          Reset
         </MLButton>
         <MLButton
           data-testid={`submitSearch-${dataIndex}`}
@@ -352,10 +358,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
         </MLButton>
       </div>
     ),
-    filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={ filtered ? "active" : "inactive" }  /></i>,
-    onFilter: (value, record) => {
-      let recordString = getPropValueFromDataIndex(record, dataIndex);
-      return recordString.toString().toLowerCase().includes(value.toLowerCase());
+    filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={filtered ? "active" : "inactive"} /></i>,
+    onFilter: () => {
+      return true;
     },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
@@ -364,25 +369,142 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
+  /** Return filtered data source array by the value string.
+    * @param value
+    * @example 'city'
+    * Set the filterMatch parameter of the matched element to true.
+    * Add the more link objects at the end of the array where the match is found. 
+    * The more link object contains the parent key of the matched element if exist and searchKey which is the reference to the matched element.
+    **/
+  const getFilteredData = (value, sourceData) => {
+    let filteredArray = deepCopy(sourceData);
+    const parser = (data) => {
+      let moreRowObj;
+      let searchStr = value.toLowerCase();
+      for (let i = 0; i < data.length; i++) {
+        let name = data[i].filterName.toLowerCase();
+        if (!name.includes(searchStr) && (!data[i].hasOwnProperty("children") || (data[i].hasOwnProperty("children") && data[i].children.length === 0))) {
+          data.splice(i, 1);
+          i--;
+        } else if (!name.includes(searchStr) && data[i].hasOwnProperty("children") && data[i].children.length > 0) {
+          parser(data[i].children);
+        } else if (name.includes(searchStr) && data[i].hasOwnProperty("parentVal") && data[i].name !== data[i].filterName) {
+          data[i].filterMatch = true;
+          let parentKey = getParentKey(data[i].key, props.entityTypeProperties);
+          moreRowObj = {key: parentKey * 10, name: "more", filterName: "more", filterMatch: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
+        }
 
-  const getPropValueFromDataIndex = (record, index) => {
-    let res;
-    if (record.hasOwnProperty("children")) {
-      res = "-"+record[index];
-      record["children"].forEach(obj => {
-        res = res + getPropValueFromDataIndex(obj, index);
-      });
-      return res;
-    } else {
-      return "-"+record[index];
+        if (data[i] && data[i].hasOwnProperty("children") && data[i].children.length === 0) {
+          data.splice(i, 1);
+          i--;
+        }
+      }
+
+      if (moreRowObj && data.length > 0) {
+        data.push(moreRowObj);
+      }
+
+      return filteredArray;
+    };
+    return parser(filteredArray);
+  };
+
+  /** Return children array of the provided parent key object.
+    * @param parentKey
+    **/
+  const getRowSiblings = (parentKey) => {
+    let originArray = deepCopy(props.entityTypeProperties);
+    let filteredArray = new Array();
+    const parser = (data) => {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].key === parentKey && data[i].hasOwnProperty("children")) {
+          filteredArray = [...data[i].children];
+        } else if (data[i].hasOwnProperty("children")) {
+          parser(data[i].children);
+        }
+      }
+      return filteredArray;
+    };
+    return parser(originArray);
+  };
+
+  /** Return array with siblings as a children array of the provided parent key object.
+    * @param parentKey
+    * @param siblings
+    * Set the filterMatch parameter of the matched element to true.
+    * Add the less link objects at the end of the array where the match is found. 
+    * The less link object contains the parent key of the matched element and searchKey which is the reference to the matched element.
+    **/
+  const insertRowSiblings = (parentKey, siblings) => {
+    let filteredArray = deepCopy(entityProperties);
+    const parser = (data) => {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].key === parentKey && data[i].hasOwnProperty("children")) {
+          let oldMatch = data[i].children.filter(el => { return el.filterMatch === true; })[0];
+          data[i].children = [];
+          siblings.forEach(el => {
+            if (el.filterName === oldMatch.filterName) { el.filterMatch = true; }
+          });
+          data[i].children = [...siblings];
+          let lessRowObj = {key: parentKey * 10, name: "less", filterName: "less", filterMatch: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
+          data[i].children.push(lessRowObj);
+        } else if (data[i].hasOwnProperty("children")) {
+          parser(data[i].children);
+        }
+      }
+      return filteredArray;
+    };
+    return parser(filteredArray);
+  };
+
+  /** Return array with added peer level elements.
+    * @param parentKey
+    **/
+  const addRowSiblings = (parentKey) => {
+    let siblings = getRowSiblings(parentKey);
+    let insertedSibligs = insertRowSiblings(parentKey, siblings);
+    return insertedSibligs;
+  };
+
+  /** Return array with removed peer level elements that don't match 'props.filterStr' string and are children of the provided key object.
+    * @param parentKey
+    * @param sourceData
+    **/
+  const removeRowSiblings = (parentKey, sourceData) => {
+    let filteredArray = deepCopy(sourceData);
+    const parser = (data) => {
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].key === parentKey && data[i].hasOwnProperty("children")) {
+          let subTree = getFilteredData(props.filterStr, data[i].children);
+          data[i].children = [...subTree];
+        } else if (data[i].hasOwnProperty("children")) {
+          parser(data[i].children);
+        }
+      }
+      return filteredArray;
+    };
+    return parser(filteredArray);
+  };
+
+  const handleMoreClick = (row) => {
+    if (row.parentKey) {
+      let siblings = addRowSiblings(row.parentKey);
+      setEntityProperties(siblings);
+    }
+  };
+
+  const handleLessClick = (row) => {
+    if (row.parentKey) {
+      let onlyChild = removeRowSiblings(row.parentKey, entityProperties);
+      setEntityProperties(onlyChild);
     }
   };
 
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt, rowNum) => {
-    if (searchedCol === columnName && rowNum !== 0) {
+    if (rowNum > 100) {
       return <Highlighter
         highlightClassName={styles.highlightStyle}
-        searchWords={[searchTxt]}
+        searchWords={[props.filterStr]}
         autoEscape
         textToHighlight={textToSearchInto}
       />;
@@ -392,7 +514,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const setMappingFunctions = async () => {
-    let mappingFuncResponse= await getMappingFunctions();
+    let mappingFuncResponse = await getMappingFunctions();
     if (mappingFuncResponse) {
       setMapFunctions(mappingFuncResponse.data);
     }
@@ -400,7 +522,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   /* Insert Function signature in map expressions */
   const handleFunctionsList = async (name) => {
-    let funcArr: any[]= [];
+    let funcArr: any[] = [];
     mapFunctions.forEach(element => {
       funcArr.push({"key": element.functionName, "value": element.functionName});
     });
@@ -434,7 +556,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       mapExp[propName] = "";
     }
     let newExp = mapExp[propName].substr(0, caretPosition) + content +
-            mapExp[propName].substr(caretPosition, mapExp[propName].length);
+      mapExp[propName].substr(caretPosition, mapExp[propName].length);
     await setMapExp({...mapExp, [propName]: newExp});
 
     setDisplaySelectList(prev => false);
@@ -448,7 +570,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     insertSource(e, propName);
   };
 
-  const insertSource = async  (content, propName) => {
+  const insertSource = async (content, propName) => {
     if (!mapExp[propName]) {
       mapExp[propName] = "";
     }
@@ -459,13 +581,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
     // Trim context from beginning of fieldName if needed
     if (props.sourceContext[propName]) {
       let len = props.sourceContext[propName].length;
-      if (field.substring(0, len+1) === props.sourceContext[propName] + "/") {
-        field = field.slice(len+1);
+      if (field.substring(0, len + 1) === props.sourceContext[propName] + "/") {
+        field = field.slice(len + 1);
       }
     }
 
     let newExp = mapExp[propName].substr(0, caretPosition) + field +
-            mapExp[propName].substr(caretPosition, mapExp[propName].length);
+      mapExp[propName].substr(caretPosition, mapExp[propName].length);
     await setMapExp({...mapExp, [propName]: newExp});
     tempMapExp = Object.assign({}, mapExp);
     tempMapExp[propName] = newExp;
@@ -491,10 +613,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const handleSourceList = async (row) => {
     setSelectedRow(row);
     let name = row.name;
-    let indentList:any = [];
+    let indentList: any = [];
     setPropName(name);
     //flatArray.forEach(element => propList.push(element.key));
-    props.flatArray.forEach(element => indentList.push(20*(element.key.split("/").length - 1)));
+    props.flatArray.forEach(element => indentList.push(20 * (element.key.split("/").length - 1)));
     setSourcePropListForDropDown(props.flatArray);
     setSourceIndentForDropDown(indentList);
     setSourcePropName(name);
@@ -540,7 +662,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       srcData={sourcePropListForDropDown}
       propName={sourcePropName}
       handleDropdownMenu={handleSourceList}
-      indentList = {sourceIndentForDropDown}/>
+      indentList={sourceIndentForDropDown} />
   );
 
   const menu = (
@@ -588,7 +710,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           </strong>
         </div>
         <div className={styles.entitySettingsLink}>
-          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} updateStep={props.updateStep} stepData={props.mapData}/>
+          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} updateStep={props.updateStep} stepData={props.mapData} />
         </div>
       </div>
       { props.relatedMappings && props.relatedMappings.length > 0 ?
@@ -643,33 +765,47 @@ const EntityMapTable: React.FC<Props> = (props) => {
         let renderText = text;
         let textToSearchInto = row.key > 100 ? text.split("/").pop() : text;
         let valueToDisplay = textToSearchInto;
-        let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
-        renderText =
-          <span> {row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
-            {row.joinPropertyName && row.relatedEntityType &&
-              <span>
-                <MLTooltip title={"Foreign Key Relationship"}>
-                  <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-key-" + text} />
-                </MLTooltip>
-              </span>
-            }
-            {row.key > 100 && row.type.includes("[ ]") &&
-              <span>
-                <MLTooltip title={"Multiple"}>
-                  <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
-                </MLTooltip>
-              </span>
-            }
-            {row.key > 100 && row.children &&
-              <span>
-                <MLTooltip title={"Structured Type"}>
-                  <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
-                </MLTooltip>
-              </span>
-            }
-          </span>;
 
-        return {children: renderText, props: (row.key <= 100 && index === 0) ? {colSpan: 4} : {colSpan: 1}};
+        if (row.name === "more") {
+          return (
+            <a className={styles.rowLink} data-testid="moreLink" onClick={() => handleMoreClick(row)}>
+              more
+            </a>
+          );
+        } else if (row.name === "less") {
+          return (
+            <a className={styles.rowLink} data-testid="lessLink" onClick={() => handleLessClick(row)}>
+              less
+            </a>
+          );
+        } else {
+          let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
+          renderText =
+            <span> {row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
+              {row.joinPropertyName && row.relatedEntityType &&
+                <span>
+                  <MLTooltip title={"Foreign Key Relationship"}>
+                    <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-key-" + text} />
+                  </MLTooltip>
+                </span>
+              }
+              {row.key > 100 && row.type.includes("[ ]") &&
+                <span>
+                  <MLTooltip title={"Multiple"}>
+                    <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
+                  </MLTooltip>
+                </span>
+              }
+              {row.key > 100 && row.children &&
+                <span>
+                  <MLTooltip title={"Structured Type"}>
+                    <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
+                  </MLTooltip>
+                </span>
+              }
+            </span>;
+          return {children: renderText, props: (row.key <= 100 && index === 0) ? {colSpan: 4} : {colSpan: 1}};
+        }
       }
     },
     {
@@ -681,13 +817,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
       sorter: (a: any, b: any) => getEntityDataType(a.type).localeCompare(getEntityDataType(b.type)),
       render: (text, row, index) => {
         const expanded = text.startsWith("parent-");
-        const dType = expanded ? text.slice(text.indexOf("-")+1): text;
-        return {children: <div className={styles.typeContainer}>
-          {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
-            content={contextHelp}
-            trigger="click"
-            placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
-        </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}};
+        const dType = expanded ? text.slice(text.indexOf("-") + 1) : text;
+        return {
+          children: <div className={styles.typeContainer}>
+            {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
+              content={contextHelp}
+              trigger="click"
+              placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
+          </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
+        };
       }
     },
     {
@@ -701,27 +839,29 @@ const EntityMapTable: React.FC<Props> = (props) => {
       key: "key",
       width: "45%",
       render: (text, row, index) => {
-        if (row.key > 100) {
-          return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-            <TextArea
-              id={"mapexpression"+row.name.split("/").pop()}
-              data-testid={row.name.split("/").pop()+"-mapexpression"}
-              style={mapExpressionStyle(row.name)}
-              onClick={handleClickInTextArea}
-              value={mapExp[row.name]}
-              onChange={(e) => handleMapExp(row.name, e)}
-              onBlur={handleExpSubmit}
-              autoSize={{minRows: 1}}
-              disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-            <span>
-              <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-                <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
-              </Dropdown>
-            </span>
+        if (row.key > 100 && row.name !== "more" && row.name !== "less") {
+          return {
+            children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+              <TextArea
+                id={"mapexpression" + row.name.split("/").pop()}
+                data-testid={row.name.split("/").pop() + "-mapexpression"}
+                style={mapExpressionStyle(row.name)}
+                onClick={handleClickInTextArea}
+                value={mapExp[row.name]}
+                onChange={(e) => handleMapExp(row.name, e)}
+                onBlur={handleExpSubmit}
+                autoSize={{minRows: 1}}
+                disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
+              <span>
+                <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+                  <i id="listIcon" data-testid={row.name.split("/").pop() + "-listIcon1"}><FontAwesomeIcon icon={faList} size="lg" data-testid={row.name.split("/").pop() + "-listIcon"} className={styles.listIcon} onClick={(e) => handleSourceList(row)} /></i>
+                </Dropdown>
+              </span>
                     &nbsp;&nbsp;
-            <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
-          {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}};
-        } else {
+              <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
+            {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}
+          };
+        } else if (row.name !== "more" && row.name !== "less") {
           return {children: null, props: {colSpan: 0}};
         }
       },
@@ -734,15 +874,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
       ellipsis: true,
       sorter: (a: any, b: any) => props.getDataForValueField(a.name)?.localeCompare(props.getDataForValueField(b.name)),
       render: (text, row, index) => {
-        if (row.key > 100) {
+        if (row.key > 100 && row.name !== "more" && row.name !== "less") {
           return {
             children:
-              <div data-testid={row.name.split("/").pop()+"-value"} className={styles.mapValue}>
+              <div data-testid={row.name.split("/").pop() + "-value"} className={styles.mapValue}>
                 <MLTooltip title={props.getTextForTooltip(row.name)}>{props.getTextForValueField(row)}</MLTooltip>
               </div>,
             props: {colSpan: 1}
           };
-        } else {
+        } else if (row.name !== "more" && row.name !== "less") {
           return {children: null, props: {colSpan: 0}};
         }
       }
@@ -780,7 +920,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       //defaultExpandAllRows={true}
       columns={getColumnsForEntityTable()}
       scroll={{y: "60vh", x: 1000}}
-      dataSource={[{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: "", children: props.entityTypeProperties}]}
+      dataSource={[{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: "", children: entityProperties}]}
       tableLayout="unset"
       rowKey={(record: any) => record.key}
       getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
