@@ -47,20 +47,15 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void isProvisionedEnvironment() {
-        final boolean originalValue = getHubConfig().getIsProvisionedEnvironment();
-        try {
-            getHubConfig().setIsProvisionedEnvironment(true);
-            payload.put("schema-database", "test1");
-            payload.put("triggers-database", "test2");
+    void testRemoveSchemaAndTriggersDbSettings() {
+        command.setRemoveSchemaAndTriggersDatabaseSettings(true);
+        payload.put("schema-database", "test1");
+        payload.put("triggers-database", "test2");
 
-            ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(newCommandContext(), payload.toString()));
-            assertEquals("test", updatedPayload.get("database-name").asText());
-            assertFalse(updatedPayload.has("schema-database"));
-            assertFalse(updatedPayload.has("triggers-database"));
-        } finally {
-            getHubConfig().setIsProvisionedEnvironment(originalValue);
-        }
+        ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(newCommandContext(), payload.toString()));
+        assertEquals("test", updatedPayload.get("database-name").asText());
+        assertFalse(updatedPayload.has("schema-database"));
+        assertFalse(updatedPayload.has("triggers-database"));
     }
 
     @Test
