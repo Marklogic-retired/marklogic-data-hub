@@ -521,6 +521,7 @@ pipeline{
                   success {
                     println("Core Unit Tests Completed")
                     script{
+                    env.TESTS_PASSED=true
                     def email;
                     if(env.CHANGE_AUTHOR){
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
@@ -558,6 +559,7 @@ pipeline{
                   success {
                     println("Unit Tests Completed")
                     script{
+                    env.UNIT_TESTS_PASSED=true
                     def email;
                     if(env.CHANGE_AUTHOR){
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
@@ -597,6 +599,7 @@ pipeline{
                   success {
                     println("E2e Tests Completed")
                     script{
+                    env.CYPRESSE2E_TESTS_PASSED=true
                     def email;
                     if(env.CHANGE_AUTHOR){
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
@@ -630,6 +633,7 @@ pipeline{
                   }}
 		stage('code-review'){
 		when {
+             expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
   			 allOf {
     changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.4-develop', title: '', url: ''
   }
@@ -711,7 +715,8 @@ pipeline{
 		}
 		stage('Merge-PR'){
 		when {
-  			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.4-develop', title: '', url: ''
+            expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
+            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.4-develop', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'dhmaster'};
