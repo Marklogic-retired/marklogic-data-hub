@@ -144,10 +144,12 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     tiles.closeRunMessage();
     runPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
     //Delete the flow
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
     runPage.getFlowName(flowName).should("not.exist");
   });
   it("Verify Run Load step in a New Flow", () => {
