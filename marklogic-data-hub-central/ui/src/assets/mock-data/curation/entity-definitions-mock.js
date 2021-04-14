@@ -447,9 +447,8 @@ export const personRelatedEntityDef = [{
 },
 {
   "entityType": "Product",
-  "entityMappingId": "Product:Order.lineItem.hasProduct",
+  "entityMappingId": "Product:Order.lineItem.orderIncludes",
   "mappingTitle": "Product (Order hasProduct)",
-  "relatedEntityMappings": [],
   "entityModel": {
     "info": {
       "title": "Product",
@@ -518,7 +517,6 @@ export const personRelatedEntityDef = [{
   "entityType": "Product",
   "mappingTitle": "Product (BabyRegistry hasProduct)",
   "entityMappingId": "Product:BabyRegistry.hasProduct",
-  "relatedEntityMappings": [],
   "entityModel": {
     "info": {
       "title": "Product",
