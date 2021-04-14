@@ -21,6 +21,7 @@ declareUpdate();
 // matching the query performed by this endpoint
 
 const config = require("/com.marklogic.hub/config.sjs");
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
 var endpointState;
 if (!endpointState) {
@@ -59,10 +60,7 @@ if (uris.length == 0) {
   uris.forEach(uri => {
     const metadata = xdmp.documentGetMetadata(uri);
 
-    const stepDef = fn.head(cts.search(cts.andQuery([
-      cts.collectionQuery("http://marklogic.com/data-hub/step-definition"),
-      cts.jsonPropertyValueQuery("name", metadata.datahubCreatedByStep)
-    ])));
+    const stepDef = new StepDefinition().getStepDefinition(metadata.datahubCreatedByStep);
 
     // Rare, but the stepDef may no longer exist, e.g. if it was a custom one
     if (stepDef) {

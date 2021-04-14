@@ -19,11 +19,9 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
 
     /*
      https://bugtrack.marklogic.com/54003
-     When stemmed search is set to "advanced", fetching legacy mappings (and/or step definition) fails and hence running
-     testFlow would fail. After that if db is reindexed, fetching of artifacts succeeds. In order to apply the fix for
-     bug 54003 in server, "Reindex JSON language property” trace event has to be added and the test should be run on
-     nightly servers. With the fix applied, the flow will fail after reindexing as well as queries requires 'lang=zxx'
-     to be included so as to fetch artifacts.
+     When stemmed search is set to "advanced", fetching legacy mappings and step definitions should not fail since
+     we are performing unstemmed searches and the artifacts should be fetched regardless and 'testFlow' should run successfully .
+     Reindexing shouldn't have any effect either and 'testFlow' should run fine.
      */
     @Test
     void runFlowWithStemmingSearch() {
@@ -34,7 +32,7 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
 
             makeInputFilePathsAbsoluteInFlow("testFlow");
             RunFlowResponse resp = runFlow(new FlowInputs("testFlow"));
-            assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus().toLowerCase());
+            assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus().toLowerCase());
 
             reindexDatabase();
 
