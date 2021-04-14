@@ -63,6 +63,7 @@ const StepDefinitionTypeTitles = {
 const Flows: React.FC<Props> = (props) => {
   const storage = getViewSettings();
   const openFlows = storage?.run?.openFlows;
+  const hasDefaultKey = JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]);
 
   const {handleError} = useContext(UserContext);
   const [newFlow, setNewFlow] = useState(false);
@@ -81,7 +82,11 @@ const Flows: React.FC<Props> = (props) => {
   const [fileList, setFileList] = useState<any[]>([]);
   const [showUploadError, setShowUploadError] = useState(false);
   const [openNewFlow, setOpenNewFlow] = useState(props.newStepToFlowOptions?.addingStepToFlow && !props.newStepToFlowOptions?.existingFlow);
-  const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ["-1"]);
+  const [activeKeys, setActiveKeys] = useState(
+    hasDefaultKey && (props.newStepToFlowOptions?.flowsDefaultKey ?? []).length > 0 ?
+      props.newStepToFlowOptions?.flowsDefaultKey :
+      (openFlows ? openFlows : [])
+  );
   const [showLinks, setShowLinks] = useState("");
   const [startRun, setStartRun] = useState(false);
   const [latestJobData, setLatestJobData] = useState<any>({});
@@ -94,6 +99,14 @@ const Flows: React.FC<Props> = (props) => {
   // maintain a list of panel refs
   const flowPanels: any = props.flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()}}), {});
 
+  // Persists active keys in session storage as a user interacts with them
+  useEffect(() => {
+    if (activeKeys === undefined) {
+      return;
+    }
+    const newStorage = {...storage, run: {...storage.run, openFlows: activeKeys}};
+    setViewSettings(newStorage);
+  }, [activeKeys]);
 
   // If a step was just added scroll the flow step panel fully to the right
   useEffect(() => {
@@ -139,13 +152,16 @@ const Flows: React.FC<Props> = (props) => {
     if (JSON.stringify(props.flowsDefaultActiveKey) !== JSON.stringify([]) && props.flowsDefaultActiveKey.length >= activeKeys.length) {
       setActiveKeys([...props.flowsDefaultActiveKey]);
     }
+
     // Get the latest job info when a step is added to an existing flow from Curate or Load Tile
     if (JSON.stringify(props.flows) !== JSON.stringify([])) {
       let stepsInFlow = props.flows[props.newStepToFlowOptions?.flowsDefaultKey]?.steps;
+
       if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.existingFlow && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
         getFlowWithJobInfo(props.newStepToFlowOptions.flowsDefaultKey);
         if (startRun) {
           //run step after step is added to an existing flow
+
           if (props.newStepToFlowOptions.stepDefinitionType === "ingestion") {
             setShowUploadError(false);
             setRunningStep(stepsInFlow[stepsInFlow.length - 1]);
@@ -659,6 +675,11 @@ const Flows: React.FC<Props> = (props) => {
 
   const getFlowWithJobInfo = async (flowNum) => {
     let currentFlow = props.flows[flowNum];
+
+    if (currentFlow === undefined) {
+      return;
+    }
+
     if (currentFlow["steps"].length > 0) {
       try {
         let response = await axios.get("/api/flows/" + currentFlow.name + "/latestJobInfo");
@@ -841,9 +862,6 @@ const Flows: React.FC<Props> = (props) => {
       getFlowWithJobInfo(key[key.length - 1]);
     }
     setActiveKeys([...key]);
-    const flowStorage = getViewSettings();
-    const newStorage = {...flowStorage, run: {...flowStorage.run, openFlows: [...key]}};
-    setViewSettings(newStorage);
   };
 
   const createFlowKeyDownHandler = (event) => {
