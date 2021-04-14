@@ -4,7 +4,7 @@ import curatePage from "../../support/pages/curate";
 import loadPage from "../../support/pages/load";
 import LoginPage from "../../support/pages/login";
 
-describe.skip("Validate persistence across Hub Central", () => {
+describe("Validate persistence across Hub Central", () => {
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
@@ -48,22 +48,22 @@ describe.skip("Validate persistence across Hub Central", () => {
 
   it("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Customer");
-    curatePage.openStepDetails("mapCustomersJSON");
-    cy.contains("Entity Type: Customer");
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.openStepDetails("mapPersonJSON");
+    cy.contains("Entity Type: Person");
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.contains("Entity Type: Customer");
+    cy.contains("Entity Type: Person");
     cy.findByTestId("arrow-left").click();
   });
 
-  it("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+  it.skip("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Customer");
-    curatePage.selectMatchTab("Customer");
-    curatePage.openStepDetails("match-customers");
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMatchTab("Person");
+    curatePage.openStepDetails("match-person");
     cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -71,12 +71,12 @@ describe.skip("Validate persistence across Hub Central", () => {
     cy.findByTestId("arrow-left").click();
   });
 
-  it("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+  it.skip("Switch to curate tile, go to Merging step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Customer");
-    curatePage.selectMergeTab("Customer");
-    curatePage.openStepDetails("merge-customers");
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.selectMergeTab("Person");
+    curatePage.openStepDetails("merge-person");
     cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -84,12 +84,11 @@ describe.skip("Validate persistence across Hub Central", () => {
     cy.findByTestId("arrow-left").click();
   });
 
-  // Will be used in DHFPROD-7029
-  // it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
-  //   cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-  //   cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
-  //   cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-  //   cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-  //   cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item ant-collapse-item-active");
-  // });
+  it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item ant-collapse-item-active");
+  });
 });
