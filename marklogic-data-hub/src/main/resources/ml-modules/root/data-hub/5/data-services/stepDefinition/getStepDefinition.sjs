@@ -18,20 +18,16 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
 var name;
 var type;
 
-let query = cts.andQuery([
-  cts.collectionQuery("http://marklogic.com/data-hub/step-definition"),
-  cts.directoryQuery("/step-definitions/" + type.toLowerCase() + "/", "infinity"),
-  cts.jsonPropertyValueQuery("name", name)
-]);
 
-let result = fn.head(fn.subsequence(cts.search(query), 1, 1));
+const stepDef = new StepDefinition().getStepDefinitionByNameAndType(name, type);
 
-if (result != undefined) {
-  result
+if (stepDef != undefined) {
+  stepDef
 } else {
   httpUtils.throwBadRequest(`Could not find a step definition with name '${name}' and type '${type}'`);
 }
