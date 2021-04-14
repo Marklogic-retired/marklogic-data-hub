@@ -564,6 +564,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       style={{width: "98%"}}
       placeholder="Select"
       id={`${props.entityTypeTitle}-entities-filter`}
+      data-testid={`${props.entityTypeTitle}-entities-filter`}
       onChange={value => handleOptionSelect(value)}
       value={selectedOptions}
       dropdownClassName={styles.entityFilterDropdown}
@@ -582,7 +583,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const topRowDetails = (
     <div>
       <div className = {styles.entityTopRow}>
-        <div className={styles.entityTitle}>
+        <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
           <strong>{props.entityTypeTitle}
           </strong>
         </div>

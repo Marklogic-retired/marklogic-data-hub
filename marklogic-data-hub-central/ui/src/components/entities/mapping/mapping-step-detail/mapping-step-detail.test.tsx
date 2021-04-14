@@ -613,20 +613,22 @@ describe("RTL Source-to-entity map tests", () => {
 
   });
 
-  test("Validate Entity table related entities filter", async () => {
+  test("Verify view related entities with selection/deselection in filters", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText, debug;
+    let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
       getByText = renderResults.getByText;
       getAllByText = renderResults.getAllByText;
-      debug = renderResults.debug;
+      queryByTestId = renderResults.queryByTestId;
+      getAllByLabelText = renderResults.getAllByLabelText;
+      queryByLabelText = renderResults.queryByLabelText;
     });
 
     //expand nested levels first
@@ -646,29 +648,81 @@ describe("RTL Source-to-entity map tests", () => {
     //Verify entity settings icon also exist in the first row
     expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
-    let entitiesFilter = getAllByText(
+    let entitiesFilter = getByText(
       (_content, element) =>
         element.className !== null &&
                 element.className === "ant-select-search__field"
-    )[0];
+    );
 
     fireEvent.click(entitiesFilter); // focus on the search box
 
-    debug();
-    //related entity options should appear
+    //Related entity options should appear
     expect(getByText("Order (orderedBy Person)")).toBeInTheDocument();
     expect(getByText("BabyRegistry (ownedBy Person)")).toBeInTheDocument();
-    // expect(getByText("entity3")).toBeInTheDocument();
 
+    //Select both Order and BabyRegistry related entities to display
     fireEvent.click(getByText("Order (orderedBy Person)"));
+    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
 
-    //selected value should appear in filter
-    let entityFilterValue = getByText(
+    let entityFilterValue = getAllByText(
       (_content, element) =>
         element.className !== null &&
                 element.className === "ant-select-selection__choice__content"
     );
-    expect(entityFilterValue).toHaveTextContent("Order (orderedBy Person)");
+
+    //Both selected values should appear in primary table filter
+    expect(entityFilterValue[0]).toHaveTextContent("Order (orderedBy Person)");
+    expect(entityFilterValue[1]).toHaveTextContent("BabyRegistry (ownedBy Person)");
+
+    //Order and BabyRegistry tables should be present on the screen
+    expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument();
+    expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
+
+    //Verify that there are now three entity filters, one in the primary table and one in each related table
+    let entityFilters = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-search__field"
+    );
+
+    expect(entityFilters).toHaveLength(3);
+
+    //Verify related entities can be opened from a related entity table
+    fireEvent.click(getByTestId("Order (orderedBy Person)-entities-filter"));
+    fireEvent.click(getByText("Product (Order hasProduct)"));
+
+    fireEvent.click(getByTestId("BabyRegistry (ownedBy Person)-entities-filter"));
+    fireEvent.click(getByText("Product (BabyRegistry hasProduct)"));
+
+    let relatedEntityFilterValue = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-selection__choice__content"
+    );
+    //Selected value should appear in Order table filter
+    expect(relatedEntityFilterValue[2]).toHaveTextContent("Product (Order hasProduct)");
+
+    //Selected value should appear in BabyRegistry table filter
+    expect(relatedEntityFilterValue[3]).toHaveTextContent("Product (BabyRegistry hasProduct)");
+
+    //BabyRegistry's Product and Order's Product tables should be present on the screen
+    expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument();
+    expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument();
+
+    //Both Products have no related entities so no filter should be available
+    expect(queryByTestId("Product (Order hasProduct)-entities-filter")).not.toBeInTheDocument();
+    expect(queryByTestId("Product (BabyRegistry hasProduct)-entities-filter")).not.toBeInTheDocument();
+
+    //Deselect Order from entity filter in primary entity table
+    fireEvent.click(getAllByLabelText("icon: close")[0]);
+
+    //Both the Order table and Order's related entity table for Product should disappear
+    expect(queryByLabelText("Order (orderedBy Person)-title")).not.toBeInTheDocument();
+    expect(queryByLabelText("BabyRegistry (Order hasProduct)-title")).not.toBeInTheDocument();
+
+    //BabyRegistry table and BabyRegistry's related entity table for Product should remain
+    expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
+    expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument();
   });
 
   test("Verify evaluation of valid expression for mapping writer user", async () => {
