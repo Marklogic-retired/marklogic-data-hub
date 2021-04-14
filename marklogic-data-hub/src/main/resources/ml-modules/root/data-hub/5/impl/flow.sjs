@@ -34,7 +34,7 @@ const defaultGlobalContext = {
 
 class Flow {
 
-  constructor(config = null, globalContext = null, datahub = null, artifactsCore = null) {
+  constructor(config = null, globalContext = null, datahub = null) {
     if (!config) {
       config = require("/com.marklogic.hub/config.sjs");
     }
@@ -48,7 +48,6 @@ class Flow {
     this.stepDefinition = new StepDefinition(config, datahub);
     this.flowUtils = new FlowUtils();
     this.consts = datahub.consts;
-    this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
     this.writeQueue = [];
     if (globalContext) {
       this.globalContext = globalContext;
@@ -100,7 +99,7 @@ class Flow {
 
   getFlow(name) {
     if (cachedFlows[name] === undefined) {
-      cachedFlows[name] =  this.artifactsCore.getFullFlow(name);
+      cachedFlows[name] =  require('/data-hub/5/artifacts/core.sjs').getFullFlow(name);
     }
     return cachedFlows[name];
   }

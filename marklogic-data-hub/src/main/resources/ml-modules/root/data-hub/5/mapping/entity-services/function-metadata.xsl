@@ -40,7 +40,7 @@
       <xsl:otherwise><xsl:value-of select="concat('xs:',$in)"/></xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
+
 
   <xsl:template match="/">
     <xsl:apply-templates/>
@@ -97,7 +97,7 @@
               <xsl:value-of select="@name"/>
             </xsl:attribute>
             <xsl:attribute name="select">
-              <xsl:value-of select="concat('($',@name,',null-node{})[1]')"/>
+                <xsl:value-of select="concat('if (empty($', @name ,')) then null-node{} else $', @name)"/>
             </xsl:attribute>
           </axsl:with-param>
         </xsl:for-each>
