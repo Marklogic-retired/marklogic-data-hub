@@ -46,8 +46,11 @@ class StepDefinition {
     return doc;
   }
 
-  getStepDefinition(name, type = 'custom'){
-    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, 'case-insensitive'), cts.jsonPropertyValueQuery('type', type, 'case-insensitive')];
+  getStepDefinition(name, type){
+    let query = [cts.collectionQuery('http://marklogic.com/data-hub/step-definition'), cts.jsonPropertyValueQuery('name', name, ['unstemmed','case-insensitive'])];
+    if(type){
+      query.concat(cts.jsonPropertyValueQuery('type', type, ['unstemmed','case-insensitive']));
+    }
     return cts.search(cts.andQuery(query)).toArray().find(artifact => artifact.toObject().name === name);
   }
 
@@ -72,7 +75,7 @@ class StepDefinition {
       cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
     }
     return cachedModules[moduleLibraryURI];
-  } 
+  }
 }
 
 module.exports = StepDefinition;

@@ -17,6 +17,7 @@
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
@@ -46,8 +47,8 @@ function getPermissions() {
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-    const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
-    return results.toArray().find(artifact => artifact.toObject().name === artifactName);
+    const stepDef = new StepDefinition().getStepDefinition(artifactName);
+    return stepDef;
 }
 
 function getDirectory(artifactName, artifact) {
