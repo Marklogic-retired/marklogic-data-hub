@@ -107,6 +107,18 @@ function getRecordInCollection(collection) {
   return getRecord(uris[0]);
 }
 
+function stagingDocumentExists(uri) {
+  return documentExists(uri, config.STAGINGDATABASE);
+}
+
+function finalDocumentExists(uri) {
+  return documentExists(uri, config.FINALDATABASE);
+}
+
+function documentExists(uri, databaseName) {
+  return fn.head(xdmp.eval(`fn.docAvailable('${uri}')`, {}, { database: xdmp.database(databaseName) }));
+}
+
 /**
  * Makes life easy for verifying permissions by building a map of them, keyed on role name, with arrays of capabilities
  * as values.
@@ -201,10 +213,12 @@ function makeSimpleMappingStep(stepName, mappingStepProperties) {
 
 module.exports = {
   createSimpleMappingProject,
+  finalDocumentExists,
   getModulesRecord,
   getRecord,
   getRecordInCollection,
   getStagingRecord,
+  stagingDocumentExists,
   verifyJson,
   runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
 };

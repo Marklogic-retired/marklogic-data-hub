@@ -31,10 +31,10 @@ function transform(context, params, content) {
     content = content.content;
   }
 
-  options.noWrite = true;
+  options.writeStepOutput = false;
   options.fullOutput = true;
   options.enableBatchOutput = "never";
-  
+
   let newContent = {};
   newContent.uri=context.uri;
   newContent.value=content;

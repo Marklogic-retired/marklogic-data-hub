@@ -41,7 +41,9 @@ function post(context, params, input) {
   let sourceDatabase = combinedOptions.sourceDatabase || config.STAGINGDATABASE;
 
   combinedOptions.fullOutput = true;
-  combinedOptions.noWrite = params.preview === 'true';
+  if (params.preview === "true") {
+    combinedOptions.writeStepOutput = false;
+  }
   combinedOptions.acceptsBatch = true;
   let jobId = params["job-id"];
   let uris = hubUtils.normalizeToArray(params.uri);
@@ -71,7 +73,7 @@ function deleteFunction(context, params) {
     options.retainAuditTrail = xs.boolean(options.retainAuditTrail);
   }
   options.fullOutput = true;
-  options.noWrite = true;
+  options.writeStepOutput = false;
   const datahub = DataHubSingleton.instance({
     performanceMetrics: !!options.performanceMetrics
   });

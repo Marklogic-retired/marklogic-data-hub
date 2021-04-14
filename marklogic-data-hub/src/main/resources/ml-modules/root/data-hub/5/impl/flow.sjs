@@ -234,7 +234,7 @@ class Flow {
 
     let writeTransactionInfo = {};
     //let's update our jobdoc now
-    if (!combinedOptions.noWrite) {
+    if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {
         const configCollections = [
           options.collections,
@@ -286,11 +286,6 @@ class Flow {
     return resp;
   }
 
-  /**
-   *
-   * @param stepExecutionContext
-   * @param content
-   */
   runStep(stepExecutionContext, content) {
     const stepNumber = stepExecutionContext.stepNumber;
     const flowName = stepExecutionContext.flow.name;

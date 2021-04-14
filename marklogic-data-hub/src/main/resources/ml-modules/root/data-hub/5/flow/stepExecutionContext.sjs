@@ -60,6 +60,10 @@ class StepExecutionContext {
     this.stepOutputErrorMessages = undefined;
   }
 
+  getLabelForLogging() {
+    return `step ${this.stepNumber} in flow '${this.flow.name}'`;
+  }
+
   getSourceDatabase() {
     return this.combinedOptions.sourceDatabase || config.STAGINGDATABASE;
   }
@@ -70,7 +74,7 @@ class StepExecutionContext {
 
   buildStepResponse(startDateTime) {
     const hasFailures = this.failedItems.length > 0;
-    const stepResponse = {
+    return {
       flowName: this.flow.name,
       stepName: this.flowStep.name,
       stepDefinitionName: this.stepDefinition.name,
@@ -88,7 +92,6 @@ class StepExecutionContext {
       stepStartTime: startDateTime,
       stepEndTime: fn.currentDateTime().add(xdmp.elapsedTime())
     };
-    return stepResponse;
   }
 
   // No concept of "stopped" yet
@@ -211,6 +214,10 @@ class StepExecutionContext {
    */
   stepErrorShouldBeThrown() {
     return true == this.combinedOptions.throwStepError;
+  }
+
+  stepOutputShouldBeWritten() {
+    return false !== this.combinedOptions.writeStepOutput;
   }
 
   makeCustomHookRunner(contentArray) {

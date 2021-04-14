@@ -24,6 +24,10 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
+const INFO_EVENT = consts.TRACE_FLOW_RUNNER;
+const DEBUG_EVENT = consts.TRACE_FLOW_RUNNER_DEBUG;
+const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
+
 /**
  * Processes the given contentArray - a batch of content - against each step in the given flow. Each step
  * is run in-memory, with the output of one step becoming the input of the next step.
@@ -44,8 +48,7 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
     contentArray = [contentArray];
   }
 
-  const traceEvent = consts.TRACE_FLOW_RUNNER;
-  hubUtils.hubTrace(traceEvent, `Processing content with flow ${flowName}; content array length: ${contentArray.length}`);
+  hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${contentArray.length}`);
 
   const theFlow = Artifacts.getFullFlow(flowName);
   
@@ -53,23 +56,22 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
   const flowResponse = newFlowResponse(theFlow, jobId);
 
   let currentContentArray = contentArray;
-
   const stepNumbersToExecute = stepNumbers != null && stepNumbers.length > 0 ? stepNumbers : Object.keys(theFlow.steps);
-
   let stepError;
 
   for (let stepNumber of stepNumbersToExecute) {
     const startDateTime = fn.currentDateTime().add(xdmp.elapsedTime());
     flowResponse.lastAttemptedStep = stepNumber;
 
-    hubUtils.hubTrace(traceEvent, `Running step number ${stepNumber} in flow ${flowName}`);
+    hubUtils.hubTrace(INFO_EVENT, `Running step ${stepNumber} in flow '${flowName}'`);
     const stepExecutionContext = newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions);
     try {
       prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
       currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, databaseWriteQueue);
-      hubUtils.hubTrace(traceEvent, `Finished step number ${stepNumber} in flow ${flowName}`);
       flowResponse.lastCompletedStep = stepNumber;
       flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);
+      addFullOutputIfNecessary(stepExecutionContext, currentContentArray, flowResponse);
+      hubUtils.hubTrace(INFO_EVENT, `Finished ${stepExecutionContext.getLabelForLogging()}`);
     } catch (error) {
       const items = currentContentArray.map(content => content.uri);
       stepExecutionContext.addErrorForEntireBatch(error, items);
@@ -90,7 +92,8 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
     flowResponse.jobStatus = "finished";
   }
 
-  hubUtils.hubTrace(traceEvent, `Finished processing content with flow ${flowName}`);
+  hubUtils.hubTrace(INFO_EVENT, `Finished processing content with flow ${flowName}`);
+  
   flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
   return flowResponse;
 }
@@ -154,7 +157,10 @@ function processContentWithStep(stepExecutionContext, contentArray, databaseWrit
     applyTargetCollectionsAdditivity(contentArray);
   }
 
-  if (databaseWriteQueue != null) {
+  if (!stepExecutionContext.stepOutputShouldBeWritten()) {
+    hubUtils.hubTrace(INFO_EVENT, `Not writing step output for ${stepExecutionContext.getLabelForLogging()}`);
+  }
+  else if (databaseWriteQueue != null) {
     // Since DHF 5.0, collections from options have been added after step processing as opposed to before step processing.
     // The reason for this is not known.
     stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
@@ -170,12 +176,11 @@ function invokeBeforeMain(stepExecutionContext, contentArray) {
   const stepBeforeMainFunction = stepExecutionContext.getStepBeforeMainFunction();
   if (stepBeforeMainFunction) {
     try {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Invoking beforeMain on step ${stepExecutionContext.stepNumber} in flow ${stepExecutionContext.flow.name}`);
+      hubUtils.hubTrace(INFO_EVENT, `Invoking beforeMain on step ${stepExecutionContext.getLabelForLogging()}`);
       const contentSequence = hubUtils.normalizeToSequence(contentArray);
       stepBeforeMainFunction(contentSequence, stepExecutionContext);
     } catch (error) {
-      throw Error(`Unable to invoke beforeMain on step '${stepExecutionContext.stepNumber}' ` +
-        `in flow '${stepExecutionContext.flow.name}'; cause: ${error.message}`);
+      throw Error(`Unable to invoke beforeMain on ${stepExecutionContext.getLabelForLogging()}; cause: ${error.message}`);
     }
   }
 }
@@ -199,11 +204,10 @@ function applyTargetCollectionsAdditivity(contentArray) {
  * the content array returned by the step is returned
  */
 function runStepOnBatch(contentArray, stepExecutionContext) {
-  const debugEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG);
   const contentSequence = hubUtils.normalizeToSequence(contentArray);
 
-  if (debugEnabled) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on batch: ${xdmp.toJsonString(contentSequence)}`);
+  if (DEBUG_ENABLED) {
+    hubUtils.hubTrace(DEBUG_EVENT, `Running step on batch: ${xdmp.toJsonString(contentSequence)}`);
   }
 
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
@@ -214,14 +218,14 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
     const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions, stepExecutionContext));
     for (const outputContent of outputSequence) {
       flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
-      if (debugEnabled) {
-        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(outputContent)}`);
+      if (DEBUG_ENABLED) {
+        hubUtils.hubTrace(DEBUG_EVENT, `Returning content: ${xdmp.toJsonString(outputContent)}`);
       }
       outputContentArray.push(outputContent);
     }
     stepExecutionContext.setCompletedItems(batchItems);
   } catch (error) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Error while processing batch: ${error.message}`);
+    hubUtils.hubTrace(INFO_EVENT, `Error while processing batch: ${error.message}`);
     stepExecutionContext.addErrorForEntireBatch(error, batchItems);
     if (stepExecutionContext.stepErrorShouldBeThrown()) {
       throw error;
@@ -240,13 +244,12 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
  *  the content array returned by the step is returned
  */
 function runStepOnEachItem(contentArray, stepExecutionContext) {
-  const debugEnabled = xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG);
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
   contentArray.map(contentObject => {
     const thisItem = contentObject.uri;
-    if (debugEnabled) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
+    if (DEBUG_ENABLED) {
+      hubUtils.hubTrace(DEBUG_EVENT, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
     }
     try {
       const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentObject, stepExecutionContext.combinedOptions, stepExecutionContext));
@@ -255,14 +258,14 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
         for (const outputContent of outputSequence) {
           outputContent.previousUri = thisItem;
           flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
-          if (debugEnabled) {
-            hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Returning content: ${xdmp.toJsonString(outputContent)}`);
+          if (DEBUG_ENABLED) {
+            hubUtils.hubTrace(DEBUG_EVENT, `Returning content: ${xdmp.toJsonString(outputContent)}`);
           }
           outputContentArray.push(outputContent);
         }  
       }
     } catch (error) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Error while processing item ${thisItem}: ${error.message}`);
+      hubUtils.hubTrace(INFO_EVENT, `Error while processing item ${thisItem}: ${error.message}`);
       stepExecutionContext.addBatchError(error, thisItem);
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
@@ -339,6 +342,7 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
  * @param writeQueue
  */
 function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, writeQueue) {
+  hubUtils.hubTrace(INFO_EVENT, `Adding output content objects to write queue for ${stepExecutionContext.getLabelForLogging()}`);
   const targetDatabase = stepExecutionContext.getTargetDatabase();
   outputContentArray.forEach(content => {
     const contentCopy = copyContentObject(content);
@@ -347,26 +351,47 @@ function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, 
 }
 
 /**
- * Before a content object is added to the write queue, a copy needs to be made of it. This ensure that subsequent steps don't
- * modify the object that should be persisted. 
+ * Effectively a copy constructor for a content object, with one exception - a shallow copy is used for content.value. This is based
+ * on an assumption that the content.value will not be modified until another step tries to modify it, and by that point, the content.value
+ * has been converted into a node (because that's what a step module expects). 
+ * 
+ * A shallow copy of content.value is also used because a reliable solution hasn't yet been found for a deep copy. JSON.parse/xdmp/quote was 
+ * initially used; that works for JSON, not for an XML document. JSON.parse/JSON.stringify does not work when content.value is a node, which 
+ * it can be. So until a reliable solution is found for a deep copy of content.value that works for JSON objects/nodes and for XML nodes, 
+ * a shallow copy will be used. 
  * 
  * @param contentObject 
  */
-function copyContentObject(contentObject) {
-  // TODO We'll see if a shallow copy of contentObject.value holds up. For JSON, this works because the prepare
-  // method calls xdmp.toJSON on it, thus creating a new node. For XML - we'll when we test custom steps, which may not create 
-  // a new object the way a mapping step does. 
-  // Note that JSON.parse/xdmp.quote was initially used; that works for JSON, but not for an XML content.value.
-  // JSON.parse/stringify did not work when the content.value is a node, which it can be. 
-  return {
+ function copyContentObject(contentObject) {
+  const copy = {
     uri: contentObject.uri,
     value: contentObject.value,
-    context: {
-      collections: JSON.parse(xdmp.quote(contentObject.context.collections)),
-      metadata: JSON.parse(xdmp.quote(contentObject.context.metadata)),
-      permissions: JSON.parse(xdmp.quote(contentObject.context.permissions))
-    }
+    context: {}
   };
+
+  Object.keys(contentObject).forEach(key => {
+    if (key !== "context" && key !== "uri" && key !== "context") {
+      // For anything DHF does not know about, just do a simple copy
+      // TODO Figure out what to do for provenance in DHFPROD-6725
+      copy[key] = contentObject[key];
+    }
+  });
+
+  const originalContext = contentObject.context || {};
+  Object.keys(originalContext).forEach(key => {
+    // All known context keys can be safely deep-copied
+    // Note that per https://docs.marklogic.com/xdmp.documentSetMetadata , metadata keys always have string values
+    if (key === "collections" || key === "metadata" || key === "permissions" || key === "originalCollections") {
+      copy.context[key] = JSON.parse(xdmp.quote(originalContext[key]));
+    }
+    else {
+      // For anything DHF does not know about it, just do a simple copy, as it's not know for certain if 
+      // JSON.parse/xdmp.quote can be used
+      copy.context[key] = originalContext[key];
+    }
+  });
+
+  return copy;
 }
 
 /**
@@ -388,13 +413,13 @@ function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionCont
         const vars = Object.assign({}, interceptor.vars);
         vars.contentArray = contentArray;
         vars.options = stepExecutionContext.combinedOptions;
-        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Invoking interceptor at path: ${interceptor.path}`);
+        hubUtils.hubTrace(INFO_EVENT, `Invoking interceptor at path: ${interceptor.path}`);
         xdmp.invoke(interceptor.path, vars);
       });  
     } catch (error) {
       // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
       // all items failed; this is analogous to the behavior of acceptsBatch=true
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Caught error invoking interceptor at path: ${currentInterceptor.path}; error: ${error.message}`);
+      hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor at path: ${currentInterceptor.path}; error: ${error.message}`);
       stepExecutionContext.setCompletedItems([]);
       stepExecutionContext.addErrorForEntireBatch(error, batchItems);
       return error;
@@ -402,7 +427,29 @@ function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionCont
   }
 }
 
+/**
+ * 
+ * @param stepExecutionContext 
+ * @param outputContentArray 
+ * @param flowResponse the step response associated with the stepNumber in stepExecutionContext is expected to exist already
+ */
+function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, flowResponse) {
+  if (stepExecutionContext.combinedOptions.fullOutput === true) {
+    // This follows the DHF 5.0 design where fullOutput is a map of URI to content object
+    const fullOutput = {};
+    outputContentArray.forEach(contentObject => {
+      // copyContentObject, which performs a shallow copy of content.value, is assumed to be safe here because if
+      // content.value were to be modified, it would be done by a subsequent step. And it is assumed that content.value
+      // will first be converted into a node before that step runs, since the step module functions require content.value
+      // to be a node. 
+      fullOutput[contentObject.uri] = copyContentObject(contentObject);
+    });
+    flowResponse.stepResponses[stepExecutionContext.stepNumber].fullOutput = fullOutput;
+  }  
+}
+
 module.exports = {
+  copyContentObject,
   processContentWithFlow,
   processContentWithStep
 }

@@ -7,7 +7,7 @@
     "targetEntity": "Customer",
     "sourceQuery": "cts.values(cts.uriReference())",
     "sourceQueryIsScript": true,
-    "noWrite": true
+    "writeStepOutput": false
   },
   "description": "flow description",
   "steps": {

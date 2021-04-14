@@ -94,7 +94,6 @@ public class WriteStepRunner implements StepRunner {
     private Map<String, Object> options;
     private boolean stopOnFailure = false;
     private String jobId;
-    private boolean isFullOutput = false;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String step = "1";
@@ -464,7 +463,6 @@ public class WriteStepRunner implements StepRunner {
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
         double uriSize = uris.size();
-        Map<String,Object> fullResponse = new HashMap<>();
 
         ServerTransform serverTransform = new ServerTransform("mlRunIngest");
         serverTransform.addParameter("job-id", jobId);
@@ -607,9 +605,6 @@ public class WriteStepRunner implements StepRunner {
             runStepResponse.withStatus(stepStatus);
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);
-            }
-            if(isFullOutput) {
-                runStepResponse.withFullOutput(fullResponse);
             }
 
             if (jobOutputIsEnabled()) {

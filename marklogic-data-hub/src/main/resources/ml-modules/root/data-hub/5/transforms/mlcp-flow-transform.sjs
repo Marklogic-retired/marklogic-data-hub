@@ -81,7 +81,7 @@ function transform(content, context = {}) {
       return Sequence.from([]);
     } else {
       const step = params['step'] ? xdmp.urlDecode(params['step']) : null;
-      options.noWrite = true;
+      options.writeStepOutput = false;
       options.fullOutput = true;
       // This maps to the ResponseHolder Java class; it's not a RunFlowResponse or RunStepResponse
       const responseHolder = datahub.flow.runFlow(flowName, jobId, contentArray, options, step);
