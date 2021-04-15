@@ -94,15 +94,16 @@ class WriteQueue {
   }
 
   /**
-   * TODO Once we do job data, we'll have to figure out what to do with multiple transaction IDs and timestamps,
-   * as those aren't at the step level but rather at the batch level, and per database.
-   *
-   * TODO Add error handling. Each step may have succeeded, but the batch fails.
+   * TODO Add error handling in DHFPROD-6720. Each step may have succeeded, but the batch fails.
+   * 
+   * @return {array} an array of objects about each transaction; each object consists of properties "databaseName", "transactionId", and "transactionDateTime"
    */
   persist() {
+    const writeInfos = [];
     Object.keys(this.databaseToContentMap).forEach(databaseName => {
-      flowUtils.writeContentArray(this.getContentArray(databaseName), databaseName);
+      writeInfos.push(flowUtils.writeContentArray(this.getContentArray(databaseName), databaseName));
     });
+    return writeInfos;
   }
 }
 

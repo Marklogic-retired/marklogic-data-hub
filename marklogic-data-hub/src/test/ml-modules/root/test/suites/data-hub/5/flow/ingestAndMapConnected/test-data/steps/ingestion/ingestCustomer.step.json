@@ -10,6 +10,5 @@
   ],
   "targetDatabase": "data-hub-STAGING",
   "permissions": "data-hub-common,read,data-hub-common,update",
-  "provenanceGranularityLevel": "off",
-  "disableJobOutput": true
+  "provenanceGranularityLevel": "off"
 }
