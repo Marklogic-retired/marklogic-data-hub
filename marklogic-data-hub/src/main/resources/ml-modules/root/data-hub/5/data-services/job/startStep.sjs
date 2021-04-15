@@ -17,24 +17,9 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
-const consts = require('/data-hub/5/impl/consts.sjs');
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
+const Job = require("/data-hub/5/flow/job.sjs");
 
 var jobId;
 var stepNumber;
 
-const jobDoc = jobs.getRequiredJob(jobId);
-
-const stepStatus = "running step " + stepNumber;
-
-hubUtils.hubTrace(consts.TRACE_JOB, `Starting step '${stepNumber}' of job '${jobId}'; setting job status to '${stepStatus}'`);
-
-jobDoc.job.lastAttemptedStep = stepNumber;
-jobDoc.job.jobStatus = stepStatus;
-jobDoc.job.stepResponses[stepNumber] = {
-  stepStartTime: fn.currentDateTime(),
-  status: stepStatus
-};
-
-jobs.updateJob(jobDoc);
+Job.getRequiredJob(jobId).startStep(stepNumber).update()

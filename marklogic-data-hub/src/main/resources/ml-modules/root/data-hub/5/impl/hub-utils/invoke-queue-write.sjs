@@ -30,7 +30,7 @@ const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
 
 const traceEvent = consts.TRACE_FLOW_RUNNER_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
-const dbName = traceEnabled ? xdmp.databaseName(xdmp.database()) : null;
+const databaseName = xdmp.databaseName(xdmp.database());
 
 /**
  * Delete the document with the URI in the given content object.
@@ -97,7 +97,7 @@ for (let content of contentArray) {
       }
       const collectionsReservedForTemporal = ['latest', content.uri];
       if (traceEnabled) {
-        hubUtils.hubTrace(traceEvent, `Inserting temporal document ${content.uri} into database ${dbName}`);
+        hubUtils.hubTrace(traceEvent, `Inserting temporal document ${content.uri} into database ${databaseName}`);
       }
       temporal.documentInsert(temporalCollection, content.uri, content.value, {
         permissions,
@@ -107,7 +107,7 @@ for (let content of contentArray) {
       });
     } else {
       if (traceEnabled) {
-        hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${dbName}`);
+        hubUtils.hubTrace(traceEvent, `Inserting document ${content.uri} into database ${databaseName}`);
       }
       xdmp.documentInsert(content.uri, content.value, {permissions, collections: targetCollections, quality: quality, metadata});
     }
@@ -115,8 +115,9 @@ for (let content of contentArray) {
 }
 
 const writeInfo = {
-  transaction: xdmp.transaction(),
-  dateTime: fn.currentDateTime()
+  databaseName,
+  transactionId: xdmp.transaction(),
+  transactionDateTime: fn.currentDateTime()
 };
 
 writeInfo;

@@ -92,6 +92,15 @@ function getModulesRecord(uri) {
   return getRecord(uri, config.MODULESDATABASE);
 }
 
+function getJobRecord(jobId) {
+  return getRecord("/jobs/" + jobId + ".json", config.JOBDATABASE);
+}
+
+function getFirstBatchRecord() {
+  const uri = getUriInCollection("Batch", config.JOBDATABASE);
+  return getRecord(uri, config.JOBDATABASE);
+}
+
 /**
  * Intended for the common use case of - I know my test module just did something that resulted in one document being
  * written to a certain collection, so gimme back a Record for that document.
@@ -100,11 +109,19 @@ function getModulesRecord(uri) {
  * @returns {*|*}
  */
 function getRecordInCollection(collection) {
-  const uris = xdmp.eval('cts.uris(null, null, cts.collectionQuery("' + collection + '"))').toArray();
+  const uri = getUriInCollection(collection, xdmp.databaseName(xdmp.database()));
+  return getRecord(uri);
+}
+
+function getUriInCollection(collection, databaseName) {
+  const uris = xdmp.eval(
+    'cts.uris(null, null, cts.collectionQuery("' + collection + '"))', {},
+    { database: xdmp.database(databaseName) }
+  ).toArray();
   if (uris.length != 1) {
     throw Error("Expected single document to be in collection: " + collection);
   }
-  return getRecord(uris[0]);
+  return uris[0];
 }
 
 function stagingDocumentExists(uri) {
@@ -214,6 +231,8 @@ function makeSimpleMappingStep(stepName, mappingStepProperties) {
 module.exports = {
   createSimpleMappingProject,
   finalDocumentExists,
+  getFirstBatchRecord,
+  getJobRecord,
   getModulesRecord,
   getRecord,
   getRecordInCollection,

@@ -1,3 +1,4 @@
+const Batch = require("/data-hub/5/flow/batch.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const dhmut = require("/data-hub/ext/marklogic-unit-test/hub-test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.xqy");
@@ -11,7 +12,9 @@ const fakeFlow = {"name": "myFlow", "steps": {"1": {}}};
 const fakeJob = jobs.createJob(fakeFlow.name);
 
 const stepExecutionContext = new StepExecutionContext(fakeFlow, "1", {}, fakeJob.job.jobId, {});
-jobs.insertBatch(fakeJob, stepExecutionContext, [], {});
+const batch = new Batch(fakeJob.job.jobId, fakeFlow.name);
+batch.addSingleStepResult(stepExecutionContext, [], {});
+batch.persist();
 
 const assertions = [];
 

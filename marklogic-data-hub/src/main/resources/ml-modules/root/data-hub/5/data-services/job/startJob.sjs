@@ -19,25 +19,19 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execut
 
 const consts = require('/data-hub/5/impl/consts.sjs');
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const Job = require("/data-hub/5/flow/job.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 var jobId;
 var flowName;
 
-let jobDoc = jobs.getJob(jobId);
-
 // A user is allowed to reuse a jobId, in which case the existing job document will be overwritten.
 // The updateJob function must be used in that scenario so that the amp associated with that function can be
 // used to let the user overwrite the document.
-
-if (jobDoc) {
-  hubUtils.hubTrace(consts.TRACE_JOB, `Overwriting job '${jobId}' for flow '${flowName}'`);
-  jobDoc = jobs.buildNewJob(jobId, flowName);
-  jobs.updateJob(jobDoc);
-  jobDoc
+if (jobs.getJob(jobId)) {
+  hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Overwriting job '${jobId}' for flow '${flowName}'`);
+  Job.newJob(flowName, jobId).update();
 }
 else {
-  hubUtils.hubTrace(consts.TRACE_JOB, `Creating job '${jobId}' for flow '${flowName}'`);
-  const job = jobs.createJob(flowName, jobId);
-  job
+  Job.newJob(flowName, jobId).create();
 }

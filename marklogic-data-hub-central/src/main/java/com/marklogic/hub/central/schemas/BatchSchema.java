@@ -38,13 +38,15 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "reqTrnxID",
     "writeTimeStamp",
     "writeTrnxID",
+    "writeTransactions",
     "uris",
     "processedItemHashes",
     "fileName",
     "lineNumber",
     "errorStack",
     "error",
-    "completeError"
+    "completeError",
+    "stepResults"
 })
 public class BatchSchema {
 
@@ -112,6 +114,13 @@ public class BatchSchema {
     @JsonProperty("writeTrnxID")
     private String writeTrnxID;
     /**
+     * Added in 5.5 to capture the results of multiple write transactions that can occur when running multiple steps on a batch
+     * 
+     */
+    @JsonProperty("writeTransactions")
+    @JsonPropertyDescription("Added in 5.5 to capture the results of multiple write transactions that can occur when running multiple steps on a batch")
+    private List<WriteTransaction> writeTransactions = new ArrayList<WriteTransaction>();
+    /**
      * Starting in 5.3.0, this is not necessarily 'uris' and should be thought of as 'items', as other values besides URIs are possible
      * 
      */
@@ -160,6 +169,13 @@ public class BatchSchema {
     @JsonProperty("completeError")
     @JsonPropertyDescription("Contains several properties from the original error created by MarkLogic, along with 'uri' if available")
     private CompleteError completeError;
+    /**
+     * Added in 5.5 to support capturing the execution of multiple steps on a single batch of items
+     * 
+     */
+    @JsonProperty("stepResults")
+    @JsonPropertyDescription("Added in 5.5 to support capturing the execution of multiple steps on a single batch of items")
+    private List<StepResult> stepResults = new ArrayList<StepResult>();
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -360,6 +376,24 @@ public class BatchSchema {
     }
 
     /**
+     * Added in 5.5 to capture the results of multiple write transactions that can occur when running multiple steps on a batch
+     * 
+     */
+    @JsonProperty("writeTransactions")
+    public List<WriteTransaction> getWriteTransactions() {
+        return writeTransactions;
+    }
+
+    /**
+     * Added in 5.5 to capture the results of multiple write transactions that can occur when running multiple steps on a batch
+     * 
+     */
+    @JsonProperty("writeTransactions")
+    public void setWriteTransactions(List<WriteTransaction> writeTransactions) {
+        this.writeTransactions = writeTransactions;
+    }
+
+    /**
      * Starting in 5.3.0, this is not necessarily 'uris' and should be thought of as 'items', as other values besides URIs are possible
      * 
      */
@@ -485,6 +519,24 @@ public class BatchSchema {
         this.completeError = completeError;
     }
 
+    /**
+     * Added in 5.5 to support capturing the execution of multiple steps on a single batch of items
+     * 
+     */
+    @JsonProperty("stepResults")
+    public List<StepResult> getStepResults() {
+        return stepResults;
+    }
+
+    /**
+     * Added in 5.5 to support capturing the execution of multiple steps on a single batch of items
+     * 
+     */
+    @JsonProperty("stepResults")
+    public void setStepResults(List<StepResult> stepResults) {
+        this.stepResults = stepResults;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -555,6 +607,10 @@ public class BatchSchema {
         sb.append('=');
         sb.append(((this.writeTrnxID == null)?"<null>":this.writeTrnxID));
         sb.append(',');
+        sb.append("writeTransactions");
+        sb.append('=');
+        sb.append(((this.writeTransactions == null)?"<null>":this.writeTransactions));
+        sb.append(',');
         sb.append("uris");
         sb.append('=');
         sb.append(((this.uris == null)?"<null>":this.uris));
@@ -583,6 +639,10 @@ public class BatchSchema {
         sb.append('=');
         sb.append(((this.completeError == null)?"<null>":this.completeError));
         sb.append(',');
+        sb.append("stepResults");
+        sb.append('=');
+        sb.append(((this.stepResults == null)?"<null>":this.stepResults));
+        sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');
         sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
@@ -598,23 +658,25 @@ public class BatchSchema {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.reqTrnxID == null)? 0 :this.reqTrnxID.hashCode()));
         result = ((result* 31)+((this.hostName == null)? 0 :this.hostName.hashCode()));
         result = ((result* 31)+((this.reqTimeStamp == null)? 0 :this.reqTimeStamp.hashCode()));
         result = ((result* 31)+((this.fileName == null)? 0 :this.fileName.hashCode()));
-        result = ((result* 31)+((this.writeTrnxID == null)? 0 :this.writeTrnxID.hashCode()));
         result = ((result* 31)+((this.stepId == null)? 0 :this.stepId.hashCode()));
-        result = ((result* 31)+((this.timeStarted == null)? 0 :this.timeStarted.hashCode()));
+        result = ((result* 31)+((this.writeTransactions == null)? 0 :this.writeTransactions.hashCode()));
         result = ((result* 31)+((this.batchId == null)? 0 :this.batchId.hashCode()));
         result = ((result* 31)+((this.error == null)? 0 :this.error.hashCode()));
+        result = ((result* 31)+((this.timeEnded == null)? 0 :this.timeEnded.hashCode()));
+        result = ((result* 31)+((this.completeError == null)? 0 :this.completeError.hashCode()));
+        result = ((result* 31)+((this.processedItemHashes == null)? 0 :this.processedItemHashes.hashCode()));
+        result = ((result* 31)+((this.reqTrnxID == null)? 0 :this.reqTrnxID.hashCode()));
+        result = ((result* 31)+((this.stepResults == null)? 0 :this.stepResults.hashCode()));
+        result = ((result* 31)+((this.writeTrnxID == null)? 0 :this.writeTrnxID.hashCode()));
+        result = ((result* 31)+((this.timeStarted == null)? 0 :this.timeStarted.hashCode()));
         result = ((result* 31)+((this.flowName == null)? 0 :this.flowName.hashCode()));
         result = ((result* 31)+((this.jobId == null)? 0 :this.jobId.hashCode()));
         result = ((result* 31)+((this.uris == null)? 0 :this.uris.hashCode()));
-        result = ((result* 31)+((this.timeEnded == null)? 0 :this.timeEnded.hashCode()));
         result = ((result* 31)+((this.writeTimeStamp == null)? 0 :this.writeTimeStamp.hashCode()));
-        result = ((result* 31)+((this.completeError == null)? 0 :this.completeError.hashCode()));
         result = ((result* 31)+((this.step == null)? 0 :this.step.hashCode()));
-        result = ((result* 31)+((this.processedItemHashes == null)? 0 :this.processedItemHashes.hashCode()));
         result = ((result* 31)+((this.stepNumber == null)? 0 :this.stepNumber.hashCode()));
         result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
         result = ((result* 31)+((this.lineNumber == null)? 0 :this.lineNumber.hashCode()));
@@ -632,7 +694,7 @@ public class BatchSchema {
             return false;
         }
         BatchSchema rhs = ((BatchSchema) other);
-        return (((((((((((((((((((((((this.reqTrnxID == rhs.reqTrnxID)||((this.reqTrnxID!= null)&&this.reqTrnxID.equals(rhs.reqTrnxID)))&&((this.hostName == rhs.hostName)||((this.hostName!= null)&&this.hostName.equals(rhs.hostName))))&&((this.reqTimeStamp == rhs.reqTimeStamp)||((this.reqTimeStamp!= null)&&this.reqTimeStamp.equals(rhs.reqTimeStamp))))&&((this.fileName == rhs.fileName)||((this.fileName!= null)&&this.fileName.equals(rhs.fileName))))&&((this.writeTrnxID == rhs.writeTrnxID)||((this.writeTrnxID!= null)&&this.writeTrnxID.equals(rhs.writeTrnxID))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.batchId == rhs.batchId)||((this.batchId!= null)&&this.batchId.equals(rhs.batchId))))&&((this.error == rhs.error)||((this.error!= null)&&this.error.equals(rhs.error))))&&((this.flowName == rhs.flowName)||((this.flowName!= null)&&this.flowName.equals(rhs.flowName))))&&((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId))))&&((this.uris == rhs.uris)||((this.uris!= null)&&this.uris.equals(rhs.uris))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.writeTimeStamp == rhs.writeTimeStamp)||((this.writeTimeStamp!= null)&&this.writeTimeStamp.equals(rhs.writeTimeStamp))))&&((this.completeError == rhs.completeError)||((this.completeError!= null)&&this.completeError.equals(rhs.completeError))))&&((this.step == rhs.step)||((this.step!= null)&&this.step.equals(rhs.step))))&&((this.processedItemHashes == rhs.processedItemHashes)||((this.processedItemHashes!= null)&&this.processedItemHashes.equals(rhs.processedItemHashes))))&&((this.stepNumber == rhs.stepNumber)||((this.stepNumber!= null)&&this.stepNumber.equals(rhs.stepNumber))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.lineNumber == rhs.lineNumber)||((this.lineNumber!= null)&&this.lineNumber.equals(rhs.lineNumber))))&&((this.batchStatus == rhs.batchStatus)||((this.batchStatus!= null)&&this.batchStatus.equals(rhs.batchStatus))))&&((this.errorStack == rhs.errorStack)||((this.errorStack!= null)&&this.errorStack.equals(rhs.errorStack))));
+        return (((((((((((((((((((((((((this.hostName == rhs.hostName)||((this.hostName!= null)&&this.hostName.equals(rhs.hostName)))&&((this.reqTimeStamp == rhs.reqTimeStamp)||((this.reqTimeStamp!= null)&&this.reqTimeStamp.equals(rhs.reqTimeStamp))))&&((this.fileName == rhs.fileName)||((this.fileName!= null)&&this.fileName.equals(rhs.fileName))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.writeTransactions == rhs.writeTransactions)||((this.writeTransactions!= null)&&this.writeTransactions.equals(rhs.writeTransactions))))&&((this.batchId == rhs.batchId)||((this.batchId!= null)&&this.batchId.equals(rhs.batchId))))&&((this.error == rhs.error)||((this.error!= null)&&this.error.equals(rhs.error))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.completeError == rhs.completeError)||((this.completeError!= null)&&this.completeError.equals(rhs.completeError))))&&((this.processedItemHashes == rhs.processedItemHashes)||((this.processedItemHashes!= null)&&this.processedItemHashes.equals(rhs.processedItemHashes))))&&((this.reqTrnxID == rhs.reqTrnxID)||((this.reqTrnxID!= null)&&this.reqTrnxID.equals(rhs.reqTrnxID))))&&((this.stepResults == rhs.stepResults)||((this.stepResults!= null)&&this.stepResults.equals(rhs.stepResults))))&&((this.writeTrnxID == rhs.writeTrnxID)||((this.writeTrnxID!= null)&&this.writeTrnxID.equals(rhs.writeTrnxID))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.flowName == rhs.flowName)||((this.flowName!= null)&&this.flowName.equals(rhs.flowName))))&&((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId))))&&((this.uris == rhs.uris)||((this.uris!= null)&&this.uris.equals(rhs.uris))))&&((this.writeTimeStamp == rhs.writeTimeStamp)||((this.writeTimeStamp!= null)&&this.writeTimeStamp.equals(rhs.writeTimeStamp))))&&((this.step == rhs.step)||((this.step!= null)&&this.step.equals(rhs.step))))&&((this.stepNumber == rhs.stepNumber)||((this.stepNumber!= null)&&this.stepNumber.equals(rhs.stepNumber))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.lineNumber == rhs.lineNumber)||((this.lineNumber!= null)&&this.lineNumber.equals(rhs.lineNumber))))&&((this.batchStatus == rhs.batchStatus)||((this.batchStatus!= null)&&this.batchStatus.equals(rhs.batchStatus))))&&((this.errorStack == rhs.errorStack)||((this.errorStack!= null)&&this.errorStack.equals(rhs.errorStack))));
     }
 
 

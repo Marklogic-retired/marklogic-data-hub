@@ -60,6 +60,25 @@
     "writeTrnxID": {
       "type": "string"
     },
+    "writeTransactions": {
+      "type": "array",
+      "description": "Added in 5.5 to capture the results of multiple write transactions that can occur when running multiple steps on a batch",
+      "items": {
+        "type": "object",
+        "properties": {
+          "databaseName": {
+            "type":"string"
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "Captures the output of xdmp.transaction()"
+          },
+          "transactionDateTime": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "uris": {
       "type": "array",
       "description": "Starting in 5.3.0, this is not necessarily 'uris' and should be thought of as 'items', as other values besides URIs are possible",
@@ -106,6 +125,24 @@
         "uri": {
           "type": "string",
           "description": "Will be populated when the step configuration does not have 'acceptsBatch' set to 'true'"
+        }
+      }
+    },
+    "stepResults": {
+      "type": "array",
+      "description": "Added in 5.5 to support capturing the execution of multiple steps on a single batch of items",
+      "items": {
+        "type": "object",
+        "description": "Can contain any of: step, stepId, stepNumber, uris, processedItemHashes, error, fileName, lineNumber, errorStack, error, completeError; as defined above",
+        "properties": {
+          "stepStartDateTime": {
+            "type": "string",
+            "description": "The dateTime at which this step started processing the batch"
+          },
+          "stepEndDateTime": {
+            "type": "string",
+            "description": "The dateTime at which this step finished processing the batch"
+          }
         }
       }
     }

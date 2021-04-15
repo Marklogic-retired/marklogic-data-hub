@@ -19,19 +19,34 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
-  function createJob(flowName, jobId = null ) {
-    let job = null;
-    if(!jobId) {
-      jobId = sem.uuidString();
-    }
-    job = buildNewJob(jobId, flowName);
-    const jobUri = "/jobs/" + jobId + ".json";
-    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting job document with URI '${jobUri}`);
-    }
-    hubUtils.writeDocument(jobUri, job, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
-    return job;
+/**
+ * 
+ * @param flowName 
+ * @param jobId 
+ * @returns {object} the Job object (object, not a document node)
+ */
+function createJob(flowName, jobId = null ) {
+  let job = null;
+  if(!jobId) {
+    jobId = sem.uuidString();
   }
+  job = buildNewJob(jobId, flowName);
+  saveNewJob(job);
+  return job;
+}
+
+/**
+ * Saves a newly constructed Job; use createJob to both construct and save a Job.
+ * 
+ * @param job 
+ */
+function saveNewJob(job) {
+  const jobUri = "/jobs/" + job.job.jobId + ".json";
+  if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
+    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Creating job with URI '${jobUri}' for flow '${job.job.flow}'`);
+  }
+  hubUtils.writeDocument(jobUri, job, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
+}
 
   function buildNewJob(jobId, flowName) {
     return {
@@ -190,83 +205,6 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
   }
 
   /**
-   * Create a Batch document in the jobs database. A Batch is intended to capture the set of items processed by
-   * a given step.
-   *
-   * @param job the Job associated with this Batch. This is expected to be a JSON object with jobId as a key, rather
-   * than the Job document that is persisted, which has "job" as its only key.
-   * @param stepExecutionContext
-   * @param batchItems {array}
-   * @param writeTransactionInfo
-   * @returns {object} the inserted Batch document
-   */
-  function insertBatch(job, stepExecutionContext, batchItems, writeTransactionInfo) {
-    const timestamp = xdmp.requestTimestamp() ? xdmp.timestampToWallclock(xdmp.requestTimestamp()) : fn.currentDateTime();
-
-    const flowStep = stepExecutionContext.flowStep;
-    const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
-    const batchStatus = stepExecutionContext.getBatchStatus();
-
-    // Per DHFPROD-2445, ensure that runtime options are included
-    const flowStepWithOptions = Object.assign({}, flowStep,
-      {"options": Object.assign({}, flowStep.options, stepExecutionContext.combinedOptions)}
-    );
-
-    let batchExecution = {
-      batch: {
-        jobId: job.jobId,
-        batchId: sem.uuidString(),
-        flowName: job.flow,
-        stepId : stepId,
-        step: flowStepWithOptions,
-        stepNumber: stepExecutionContext.stepNumber,
-        batchStatus: batchStatus,
-        timeStarted: fn.currentDateTime(),
-        timeEnded: fn.currentDateTime().add(xdmp.elapsedTime()),
-        hostName: xdmp.hostName(),
-        reqTimeStamp: timestamp,
-        reqTrnxID: xdmp.transaction(),
-        writeTimeStamp: writeTransactionInfo.timestamp,
-        writeTrnxID: writeTransactionInfo.dateTime,
-        uris: batchItems
-      }
-    };
-
-    // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
-    const combinedOptions = stepExecutionContext.combinedOptions;
-    if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
-      // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
-      const prefix = stepExecutionContext.flow.name + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
-      batchExecution.batch.processedItemHashes = batchItems.map(item => xdmp.hash64(prefix + item));
-    }
-
-    const firstError = stepExecutionContext.batchErrors.length ? stepExecutionContext.batchErrors[0] : null;
-    if (firstError){
-      // Sometimes we don't get the stackFrames
-      if (firstError.stackFrames) {
-        let stackTraceObj = firstError.stackFrames[0];
-        batchExecution.batch.fileName = stackTraceObj.uri;
-        batchExecution.batch.lineNumber = stackTraceObj.line;
-        // If we don't get stackFrames, see if we can get the stack
-      } else if (firstError.stack) {
-        batchExecution.batch.errorStack = firstError.stack;
-      }
-      batchExecution.batch.error = `${firstError.name || firstError.code}: ${firstError.message}`;
-      // Include the complete error so that this module doesn't have to have knowledge of everything that a step or flow
-      // may add to the error, such as the URI of the failed document
-      batchExecution.batch.completeError = firstError;
-    }
-
-    const batchUri = "/jobs/batches/" + batchExecution.batch.batchId + ".json";
-    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting batch document with URI '${batchUri}'`);
-    }
-    hubUtils.writeDocument(batchUri, batchExecution, buildJobPermissions(), ['Jobs','Batch'], config.JOBDATABASE);
-
-    return batchExecution;
-  }
-
-  /**
    * This logic was originally in updateJob, and it was expected to be triggered when a step was finished.
    * The intent is to give a step a chance to perform some processing after all batches have been completed. Right
    * now, that logic is specific to the notion of a "job report", which is specific to the OOTB merging step. This
@@ -320,14 +258,20 @@ module.exports = {
   getJobDocsByFlow,
   getJobDocsForFlows,
   getRequiredJob,
-  insertBatch
+  saveNewJob
 }
 
 /**
  * This function is amped to allow for the Job document to be updated by users that do not have the required
  * roles that permit doing so.
  */
- module.exports.updateJob = module.amp(
+module.exports.updateJob = module.amp(
+  /**
+   * Only updates the document, does not make any modifications to it, so nothing is returned.
+   * 
+   * @param jobDoc
+   * @returns 
+   */
   function updateJob(jobDoc) {
     const jobId = jobDoc.job.jobId;
     const jobUri = "/jobs/" + jobId + ".json";
