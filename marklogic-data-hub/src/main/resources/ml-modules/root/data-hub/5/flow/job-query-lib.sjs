@@ -24,16 +24,20 @@ function findStepResponses(query) {
   const sortColumn = query.sortColumn;
   const sortDirection = query.sortDirection;
   const response = {};
+  const orderByConstraint = [];
 
-  let orderByConstraint = op.desc('startTime');
   if(sortColumn) {
-    orderByConstraint = sortDirection === 'ascending' ? op.asc(sortColumn) : op.desc(sortColumn);
+    orderByConstraint.push(sortDirection === 'ascending' ? op.asc(sortColumn) : op.desc(sortColumn));
+  }
+
+  if(sortColumn !== 'startTime') {
+    orderByConstraint.push(op.desc('startTime'));
   }
 
   const totalCountQuery = 'select count(*) as total from Job.StepResponse';
   const jobsDataQuery = 'select Job.StepResponse.stepName as stepName,' +
       'Job.StepResponse.stepDefinitionType as stepDefinitionType,' +
-      'Job.StepResponse.stepStatus as status,' +
+      'Job.StepResponse.jobStatus as jobStatus,' +
       'Job.StepResponse.targetEntityType as entityName,' +
       'Job.StepResponse.stepStartTime as startTime,' +
       'Job.StepResponse.stepEndTime - Job.StepResponse.stepStartTime as duration,' +
@@ -107,7 +111,7 @@ function installJobTemplates() {
             {
               "name": "targetEntityType",
               "scalarType": "string",
-              "val": "./targetEntityType/string()",
+              "val": "./tokenize(targetEntityType/string(),'/')[last()]",
               "nullable": true
             },
             {
