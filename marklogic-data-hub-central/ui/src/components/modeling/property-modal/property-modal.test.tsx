@@ -317,8 +317,8 @@ describe("Property Modal Component", () => {
     const piiRadio = screen.getByLabelText("pii-yes");
     fireEvent.change(piiRadio, {target: {value: "yes"}});
     expect(piiRadio["value"]).toBe("yes");
-    expect(queryByLabelText("Sort")).toBeNull();
-    expect(queryByLabelText("Facet")).toBeNull();
+    expect(queryByLabelText("Sort")).toBeInTheDocument();
+    expect(queryByLabelText("Facet")).toBeInTheDocument();
     // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
     // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     // expect(wildcardCheckbox).toBeChecked();
@@ -648,8 +648,8 @@ describe("Property Modal Component", () => {
     fireEvent.change(piiRadio, {target: {value: "yes"}});
     expect(piiRadio["value"]).toBe("yes");
 
-    expect(queryByLabelText("Sort")).toBeNull();
-    expect(queryByLabelText("Facet")).toBeNull();
+    expect(queryByLabelText("Sort")).toBeInTheDocument();
+    expect(queryByLabelText("Facet")).toBeInTheDocument();
 
     userEvent.click(getByLabelText("property-modal-submit"));
     expect(editMock).toHaveBeenCalledTimes(1);
