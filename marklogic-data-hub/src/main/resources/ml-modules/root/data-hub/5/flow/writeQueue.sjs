@@ -101,9 +101,7 @@ class WriteQueue {
    */
   persist() {
     Object.keys(this.databaseToContentMap).forEach(databaseName => {
-      const databaseContent = this.databaseToContentMap[databaseName];
-      const contentArray = Object.values(databaseContent);
-      flowUtils.writeContentArray(contentArray, databaseName);
+      flowUtils.writeContentArray(this.getContentArray(databaseName), databaseName);
     });
   }
 }
