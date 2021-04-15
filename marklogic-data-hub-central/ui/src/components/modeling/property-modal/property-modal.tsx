@@ -196,7 +196,6 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else if (props.structuredTypeOptions.isStructured) {
           structuredLabel = props.structuredTypeOptions.name;
           newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1, 3);
-          showConfigOptions = false;
           if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) {
             typeDisplayValue = ["structured", props.editPropertyOptions.propertyOptions.type];
           }
@@ -301,7 +300,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           typeValue = value[1];
           setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1, 3));
-          toggleShowConfigurationOptions(false);
+          toggleShowConfigurationOptions(true);
         }
         break;
       case "moreStringTypes":
@@ -314,7 +313,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
         }
-        toggleShowConfigurationOptions(props.structuredTypeOptions.isStructured ? false : true);
+        toggleShowConfigurationOptions(true);
         break;
       default:
         newSelectedPropertyOptions.propertyType = PropertyType.Basic;
@@ -324,7 +323,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
         }
-        toggleShowConfigurationOptions(props.structuredTypeOptions.isStructured ? false : true);
+        toggleShowConfigurationOptions(true);
         break;
       }
 
