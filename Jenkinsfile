@@ -21,7 +21,7 @@ def dhflinuxTests(String mlVersion,String type){
     		props = readProperties file:'data-hub/pipeline.properties';
     		copyRPM type,mlVersion
     		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;"'
+    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/"'
     		junit '**/TEST-*.xml'
             def output=readFile 'data-hub/console.log'
                     def result=false;
@@ -74,35 +74,6 @@ def dhfCypressE2ETests(String mlVersion, String type){
         }
     }
 }
-def dhfqsLinuxTests(String mlVersion,String type){
-	script{
-         copyRPM type,mlVersion
-         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-         env.mlVersion=mlVersion;
-         sh(script:'''#!/bin/bash
-            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
-            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
-            export M2_HOME=$MAVEN_HOME/bin;
-            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
-            cd $WORKSPACE/data-hub;
-            rm -rf $GRADLE_USER_HOME/caches;
-            ./gradlew clean;
-            ./gradlew build -x test --parallel -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;
-            nohup ./gradlew web:bootRun >> $WORKSPACE/bootRun.out &
-            sleep 120s;
-            nohup ./gradlew web:runUI >> $WORKSPACE/runUI.out &
-            sleep 120s;
-            cd web;
-            ./node_modules/.bin/ng e2e --devServerTarget="" --suite all || true;
-            mkdir -p ${mlVersion};
-            mv e2e/reports ${mlVersion};
-            mv e2e/screenshoter-plugin ${mlVersion};
-            mv $WORKSPACE/nohup.out ${mlVersion};
-         ''')
-         junit "**/${mlVersion}/**/*.xml"
-         archiveArtifacts artifacts: "data-hub/web/${mlVersion}/**/*"
-	     }
-}
 def dhfWinTests(String mlVersion, String type){
     script{
         copyMSI type,mlVersion;
@@ -119,12 +90,11 @@ def dhfWinTests(String mlVersion, String type){
         	        ''').trim().split();
         def bldPath=bldOutput[bldOutput.size()-1]
         setupMLWinCluster bldPath,pkgLoc
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat clean'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat clean'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
         junit '**/TEST-*.xml'
     }
 }
@@ -144,12 +114,11 @@ script{
                                 	        ''').trim().split();
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat clean'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\openjdk1.8.0_41\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat clean'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
                                 junit '**/TEST-*.xml'
                             }
 }
@@ -236,57 +205,12 @@ def runCypressE2e(){
     }
 }
 
-def flexcodeScanAndReport(){
-
-    def email=''
-    if(env.CHANGE_AUTHOR){
-        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-        email=getEmailFromGITUser author
-    }
-    else { email=Email }
-
-    email = email + ',Kavitha.Sivagnanam@marklogic.com'
-    def palamida_url="http://palamida-2.marklogic.com:8888"
-    def emailbody = ''
-    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
-
-    withCredentials([string(credentialsId: 'palamida_jwt', variable: 'jwt')]) {
-
-        StartScan(baseUrl: palamida_url, projectName: 'ml-dhf', token: jwt)
-
-        emailbody = sh(returnStdout: true, script: '''
-
-         report_json="marklogic-data-hub-report.json"
-         report_p1="marklogic-data-hub-report-p1.json"
-
-         curl -X GET ''' + palamida_url + '''/codeinsight/api/project/inventory/21 -H "Authorization: Bearer $jwt" > $report_json
-
-         jq '[[.inventoryItems | .[] | select(.vulnerabilities != null) | select(.vulnerabilities[].vulnerabilityCvssV3Severity == "CRITICAL" or .vulnerabilities[].vulnerabilityCvssV2Severity == "HIGH")] | unique | .[] | del(.vulnerabilities[] | select(.vulnerabilityCvssV3Severity != "CRITICAL" and .vulnerabilityCvssV2Severity != "HIGH"))]' $report_json>$report_p1
-
-         if [ "$(cat $report_p1)" != '[]' ]
-         then
-          cat $report_p1 | jq '.[] | {(.name): (.vulnerabilities+.filePaths)}' | sed '1d;$d;/vulnerabilityId/d;/vulnerabilityDescription/d;/vulnerabilityCvssV.Score/d;/vulnerabilitySource/d;/^{/d;/^}/d' | sed '1s/^/******** HIGH VULNERABILITIES: \\n\\n/;'
-         else
-          echo ''
-         fi
-
-        ''')
-    }
-
-    if(emailbody.trim() != ''){
-     emailext mimeType: 'text/plain', body: emailbody.trim(), subject: 'FlexCode report', to: email
-    }
-
-    archiveArtifacts artifacts: '*.json'
-
-}
-
 void UnitTest(){
     script{
         props = readProperties file:'data-hub/pipeline.properties';
         copyRPM 'Release','10.0-6'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:lintUI -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:lintUI -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/'
         junit '**/TEST-*.xml'
         cobertura coberturaReportFile: '**/cobertura-coverage.xml'
         jacoco classPattern: 'data-hub/marklogic-data-hub-central/build/classes/java/main/com/marklogic/hub/central,data-hub/marklogic-data-hub-spark-connector/build/classes/java/main/com/marklogic/hub/spark,data-hub/marklogic-data-hub/build/classes/java/main/com/marklogic/hub',exclusionPattern: '**/*Test*.class'
@@ -356,7 +280,7 @@ void BuildDatahub(){
     }
     println(BRANCH_NAME)
     sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew build -x test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;'
-    archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/web/build/libs/* , data-hub/marklogic-data-hub-central/build/libs/* , data-hub/marklogic-data-hub-central/build/**/*.rpm , data-hub/marklogic-data-hub-spark-connector/build/libs/*', onlyIfSuccessful: true
+    archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/marklogic-data-hub-central/build/libs/* , data-hub/marklogic-data-hub-central/build/**/*.rpm , data-hub/marklogic-data-hub-spark-connector/build/libs/* , data-hub/installer-for-dhs/build/libs/marklogic* , data-hub/marklogic-data-hub-client-jar/build/libs/*client.jar ', onlyIfSuccessful: true
 
 }
 
@@ -454,6 +378,165 @@ void smartMastering() {
                         }
 }
 
+void codeReview(){
+        def count=0;
+        retry(4){
+            count++;
+            props = readProperties file:'data-hub/pipeline.properties';
+            def reviewState=getReviewState()
+            if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
+                println("Automated PR")
+                sh 'exit 0'
+            }
+            else if(reviewState.equalsIgnoreCase("APPROVED")){
+                sh 'exit 0'
+            }
+            else if(reviewState.equalsIgnoreCase("CHANGES_REQUESTED")){
+                println("Changes Requested")
+                def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                email=getEmailFromGITUser author;
+
+                if(count==4){
+                    sendMail email,'<h3>Changes Requested for <a href=${CHANGE_URL}>PR</a>. Please resolve those Changes</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Changes Requested for $BRANCH_NAME '
+                }
+                currentBuild.result = 'ABORTED'
+            }
+            else{
+                withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+                    def  reviewersList = sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
+                   ''')
+                    def  reviewesList = sh (returnStdout: true, script:'''
+                                      curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/reviews
+                                      ''')
+                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
+                    def emailList="";
+                    if(slurper.users.isEmpty() && reviewesList.isEmpty()){
+                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                        email=getEmailFromGITUser author;
+                        if(count==4){
+                            sendMail email,'<h3>Please assign some code reviewers <a href=${CHANGE_URL}>PR</a>. and restart this stage to continue.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'No Code reviewers assigned for $BRANCH_NAME '
+                        }
+                        sh 'exit 123'
+                    }else{
+                        for(def user:slurper.users){
+                            email=getEmailFromGITUser user.login;
+                            emailList+=email+',';
+                        }
+                        sendMail emailList,'<h3>Code Review Pending on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please click on proceed button from the pipeline view below if all the reviewers approved the code </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review Pending on $BRANCH_NAME '
+                        try{
+                            timeout(time: 15, unit: 'MINUTES') {
+                                input message:'Code-Review Done?'
+                            }
+                        }catch(FlowInterruptedException err){
+                            user = err.getCauses()[0].getUser().toString();
+                            println(user)
+                            if(user.equalsIgnoreCase("SYSTEM")){
+                                echo "Timeout 15mins"
+                                sh 'exit 123'
+                            }else{
+                                currentBuild.result = 'ABORTED'
+                            }
+                        }
+                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                        email=getEmailFromGITUser author;
+                        if(count==4){
+                            sendMail email,'<h3>Code Review is incomplete on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please Restart this stage from the pipeline view once code review is completed. </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review is incomplete on $BRANCH_NAME  '
+                        }
+                    }
+                }
+            }
+        }
+}
+
+void cypressE2EOnPremLinuxTests(String type,String mlVersion){
+    copyRPM type,mlVersion
+    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    sh '''
+       cd $WORKSPACE
+       WAR_NAME=$(basename *central*.war )
+       nohup java -jar $WORKSPACE/$WAR_NAME &
+    '''
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+    sh '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+
+      export NODE_HOME=$NODE_HOME_DIR/bin;
+      export PATH=$NODE_HOME:$JAVA_HOME/bin:$PATH
+      npm run cy:run |& tee -a e2e_err.log
+  '''
+
+    junit '**/e2e/**/*.xml'
+}
+
+void cypressE2EOnPremMacTests(String type,String mlVersion){
+
+    copyDMG type,mlVersion
+    setUpMLMac '$WORKSPACE/xdmp/src/Mark*.dmg'
+
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    sh '''
+       cd $WORKSPACE
+       WAR_NAME=$(basename *central*.war )
+       nohup java -jar $WORKSPACE/$WAR_NAME &
+    '''
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+
+    sh '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+      export PATH=/usr/local/bin/:$JAVA_HOME/bin:$PATH
+      npm run cy:run 2>&1 | tee -a e2e_err.log
+   '''
+
+    junit '**/e2e/**/*.xml'
+}
+
+void cypressE2EOnPremWinTests(String type,String mlVersion){
+
+    copyMSI type,mlVersion;
+    def pkgOutput=bat(returnStdout:true , script: '''
+	                    cd xdmp/src
+	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+	                    echo %name%
+	                    ''').trim().split();
+    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+    def bldOutput=bat(returnStdout:true , script: '''
+        	           cd ml-builds/scripts/lib/
+        	           CD
+        	        ''').trim().split();
+    def bldPath=bldOutput[bldOutput.size()-1]
+    setupMLWinCluster bldPath,pkgLoc
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+
+    bat '''
+	    for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
+	    start java -jar %name%
+	'''
+
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
+
+    bat "cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run 2>&1 | tee -a e2e_err.log"
+
+    junit '**/e2e/**/*.xml'
+
+}
+
 pipeline{
 	agent none;
 	options {
@@ -461,7 +544,7 @@ pipeline{
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
-	JAVA_HOME_DIR="~/java/openjdk-1.8.0-161"
+	JAVA_HOME_DIR="~/java/openjdk-1.8.0-262"
 	GRADLE_DIR="/.gradle"
 	MAVEN_HOME="/usr/local/maven"
 	M2_HOME_REPO="/repository"
@@ -625,98 +708,27 @@ pipeline{
                       }
                   }
                   }
-                  }}
-                   post{
-                     unstable { script{
-                         if(!params.regressions) error("Pre merge tests Failed");
-                     }}
-                  }}
-		stage('code-review'){
-		when {
-             expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
-  			 allOf {
-    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.4-develop', title: '', url: ''
-  }
-  			beforeAgent true
-		}
-		agent {label 'dhmaster'};
-		steps{
-		script{
-		def count=0;
-		retry(4){
-		count++;
-		    props = readProperties file:'data-hub/pipeline.properties';
-		    def reviewState=getReviewState()
-			if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
-				println("Automated PR")
-				sh 'exit 0'
-			}
-			else if(reviewState.equalsIgnoreCase("APPROVED")){
-			  sh 'exit 0'
-			}
-			else if(reviewState.equalsIgnoreCase("CHANGES_REQUESTED")){
-			    println("Changes Requested")
-                def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                email=getEmailFromGITUser author;
+		}}
+        post{
+           unstable { script{
+               if(!params.regressions) error("Pre merge tests Failed");
+           }}
+        }}
 
-                if(count==4){
-                sendMail email,'<h3>Changes Requested for <a href=${CHANGE_URL}>PR</a>. Please resolve those Changes</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Changes Requested for $BRANCH_NAME '
-                }
-			    currentBuild.result = 'ABORTED'
-			}
-			else{
-                    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-                  def  reviewersList = sh (returnStdout: true, script:'''
-                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
-                   ''')
-                   def  reviewesList = sh (returnStdout: true, script:'''
-                                      curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/reviews
-                                      ''')
-                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
-                    def emailList="";
-                    if(slurper.users.isEmpty() && reviewesList.isEmpty()){
-                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                        email=getEmailFromGITUser author;
-                        if(count==4){
-                        sendMail email,'<h3>Please assign some code reviewers <a href=${CHANGE_URL}>PR</a>. and restart this stage to continue.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'No Code reviewers assigned for $BRANCH_NAME '
-                        }
-                        sh 'exit 123'
-                    }else{
-                        for(def user:slurper.users){
-                            email=getEmailFromGITUser user.login;
-                            emailList+=email+',';
-                        }
-                        sendMail emailList,'<h3>Code Review Pending on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please click on proceed button from the pipeline view below if all the reviewers approved the code </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review Pending on $BRANCH_NAME '
-                        try{
-                            timeout(time: 15, unit: 'MINUTES') {
-                                input message:'Code-Review Done?'
-                            }
-                        }catch(FlowInterruptedException err){
-                            user = err.getCauses()[0].getUser().toString();
-                            println(user)
-                            if(user.equalsIgnoreCase("SYSTEM")){
-                                 echo "Timeout 15mins"
-                                 sh 'exit 123'
-                            }else{
-                                   currentBuild.result = 'ABORTED'
-                            }
-                        }
-                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                        email=getEmailFromGITUser author;
-                        if(count==4){
-                        sendMail email,'<h3>Code Review is incomplete on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please Restart this stage from the pipeline view once code review is completed. </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review is incomplete on $BRANCH_NAME  '
-                        }
-                    }
-                 }
-            }
-        }
-        }
+		stage('code-review'){
+		 when {
+            expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
+            allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
+  			beforeAgent true
+		 }
+		 agent {label 'dhmaster'};
+		 steps{codeReview()}
 		}
-		}
+
 		stage('Merge-PR'){
 		when {
             expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
-            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.4-develop', title: '', url: ''
+            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'dhmaster'};
@@ -799,11 +811,9 @@ pipeline{
         stage('publishing'){
          when {
            expression {
-                    node('dhmaster') {
-                        props = readProperties file: 'data-hub/pipeline.properties';
-                        println(props['ExecutionBranch'])
-                        return (env.BRANCH_NAME == props['ExecutionBranch']  && !params.regressions)
-                   }
+                 props = readProperties file: 'data-hub/pipeline.properties';
+                 println(props['ExecutionBranch'])
+                 return (env.BRANCH_NAME == props['ExecutionBranch'] && !params.regressions)
            }
          }
          agent { label 'dhfLinuxAgent' }
@@ -822,29 +832,28 @@ pipeline{
             }
         }
 
-        stage('rh7-singlenode'){
-            options {timeout(time: 3, unit: 'HOURS')}
+		stage('rh7-singlenode'){
             when { expression {return params.regressions} }
-            agent { label 'dhfLinuxAgent'}
-            steps{
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
-
-                    script{
-                        props = readProperties file:'data-hub/pipeline.properties';
-                        copyRPM 'Release','9.0-11'
-                        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-                        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
-                        junit '**/TEST-*.xml'
-                        def output=readFile 'data-hub/console.log'
-                        def result=false;
-                        if(output.contains("npm ERR!")){
-                            result=true;
-                        }
-                        if(result){
-                            currentBuild.result='UNSTABLE'
-                        }
-                    }
-                }}
+            options {timeout(time: 3, unit: 'HOURS')}
+			agent { label 'dhfLinuxAgent'}
+			steps{
+             catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
+			 script{
+                props = readProperties file:'data-hub/pipeline.properties';
+				copyRPM 'Release','9.0-11'
+				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/'
+				junit '**/TEST-*.xml'
+                def output=readFile 'data-hub/console.log'
+				def result=false;
+                if(output.contains("npm ERR!")){
+                   result=true;
+                }
+                if(result){
+                   currentBuild.result='UNSTABLE'
+                }
+			 }}
+			}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -861,17 +870,16 @@ pipeline{
                       sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Failed'
                   }
                   }
-        }
-
-       stage('Linux Core Parallel Execution'){
-         when { expression {return params.regressions} }
-         parallel{
-	  stage('rh7_cluster_10.0-Nightly'){
-          options {timeout(time: 3, unit: 'HOURS')}
-          agent { label 'dhfLinuxAgent'}
+		}
+		stage('Linux Core Parallel Execution'){
+        when { expression {return params.regressions} }
+		parallel{
+		stage('rh7_cluster_10.0-Nightly'){
+            options {timeout(time: 3, unit: 'HOURS')}
+			agent { label 'dhfLinuxAgent'}
 			steps{
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true) { dhflinuxTests("10.0","Latest")}
-            }
+             catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0","Latest")}
+			}
 			post{
 				 always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -911,7 +919,7 @@ pipeline{
             options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
+              catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
 			}
 			post{
 				always{
@@ -927,12 +935,12 @@ pipeline{
                   }
 		}
          stage('rh7_cluster_10.0-3'){
-               options {timeout(time: 3, unit: 'HOURS')}
-               agent { label 'dhfLinuxAgent'}
-               steps{
-                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
-               }
-               post{
+             options {timeout(time: 3, unit: 'HOURS')}
+             agent { label 'dhfLinuxAgent'}
+             steps{
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
+             }
+             post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
                    }
@@ -950,7 +958,7 @@ pipeline{
                options {timeout(time: 3, unit: 'HOURS')}
                agent { label 'dhfLinuxAgent'}
                steps{
-                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
                }
                post{
                  always{
@@ -970,7 +978,7 @@ pipeline{
                 options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
                 }
                 post{
                   always{
@@ -987,12 +995,12 @@ pipeline{
                             }
               }
 		stage('rh7_cluster_10.0-6'){
-                options {timeout(time: 3, unit: 'HOURS')}
-                agent { label 'dhfLinuxAgent'}
-                steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
-                }
-                post{
+            options {timeout(time: 3, unit: 'HOURS')}
+            agent { label 'dhfLinuxAgent'}
+            steps{
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
+            }
+            post{
                   always{
                       sh 'rm -rf $WORKSPACE/xdmp'
                     }
@@ -1008,8 +1016,7 @@ pipeline{
               }
 		}
 	}
-
-        stage('example projects parallel'){
+		stage('example projects parallel'){
             when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
@@ -1018,11 +1025,11 @@ pipeline{
                 steps {
                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dh5Example()}
                 }
-                 post{
+                post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
-                 }
-                 success{
+                }
+                success{
                     sendMail Email,'<h3>dh5example ran successfully on the  branch $BRANCH_NAME </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'dh5-example on $BRANCH_NAME Passed'
                  }
                  unstable{
@@ -1052,7 +1059,7 @@ pipeline{
                 options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
                  }
                  post{
                  always{
@@ -1070,9 +1077,9 @@ pipeline{
                 options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
-                 }
-                 post{
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
+                }
+                post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
                  }
@@ -1086,15 +1093,15 @@ pipeline{
             }
 		}
 		}
-          stage('Windows Core Parallel'){
+		stage('Windows Core Parallel'){
             when { expression {return params.regressions} }
-      	    parallel{
-            stage('w10_SN_9.0-Nightly'){
-                options {timeout(time: 3, unit: 'HOURS')}
-        		agent { label 'dhfWinagent'}
-        		steps{
-                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
-        		}
+            parallel{
+        		stage('w10_SN_9.0-Nightly'){
+                    options {timeout(time: 3, unit: 'HOURS')}
+        			agent { label 'dhfWinagent'}
+        			steps{
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
+                    }
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
@@ -1113,7 +1120,7 @@ pipeline{
                     options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
-                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
         			}
         			post{
         				always{
@@ -1133,7 +1140,7 @@ pipeline{
                     options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
-                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
         			}
         			post{
         				always{
@@ -1173,5 +1180,105 @@ pipeline{
         		    }
         		}
 
-	}
+        stage('HC on Prem parallel'){
+            when { expression {return params.regressions} }
+            parallel{
+
+                stage('10.0-Nightly-linux-On-Prem'){
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    agent { label 'dhfLinuxAgent'}
+                    environment{
+                        JAVA_HOME="$JAVA_HOME_DIR"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                    }
+                    steps {
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true) { cypressE2EOnPremLinuxTests("Latest", "10.0") }
+                    }
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME | Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME on $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                stage('10.0-6.2-Win10-On-Prem'){
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    agent { label 'Win10HCPrem'}
+                    environment{
+                        JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                        NODE_JS="C:\\Program Files\\nodejs"
+                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
+                    }
+                    steps{
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-6.2")}
+                    }
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                /*
+                stage('10.0-3-MAC-On-Prem'){
+                    agent { label 'osx-i64-10-test-2'}
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    environment{
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                    }
+                    steps{
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremMacTests("Release","10.0-3")}
+                    }
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                stage('10.0-3-Win12-On-Prem'){
+                    agent { label 'dhfWin12'}
+                    options {timeout(time: 3, unit: 'HOURS')}
+                    environment{
+                        JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                        NODE_JS="C:\\Program Files\\nodejs"
+                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
+                    }
+
+                    steps{
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-3")}
+                    }
+                   post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+                 */
+
+            }}
+
+    }
 }
