@@ -16,6 +16,7 @@
 'use strict';
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const Batch = require("/data-hub/5/flow/batch.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs")
 const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
@@ -257,7 +258,9 @@ class Flow {
 
     if (stepExecutionContext.batchOutputIsEnabled()) {
       if (jobDoc != null) {
-        jobs.insertBatch(jobDoc, stepExecutionContext, batchItems, writeTransactionInfo);
+        const batch = new Batch(jobId, flowName);
+        batch.addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo);
+        batch.persist();
       } else {
         hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER,
           "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
@@ -290,7 +293,8 @@ class Flow {
     const stepNumber = stepExecutionContext.stepNumber;
     const flowName = stepExecutionContext.flow.name;
 
-    // The array will be empty in case an interceptor failed
+    // No writeQueue is passed in because if we pass in our own, nothing will be added to it if step output is disabled.
+    // But this module currently needs everything in the write queue, and then chooses whether or not to persist it later.
     const outputContentArray = flowRunner.processContentWithStep(stepExecutionContext, content, null);
     const databaseName = stepExecutionContext.getTargetDatabase();
     outputContentArray.forEach(contentObject => {

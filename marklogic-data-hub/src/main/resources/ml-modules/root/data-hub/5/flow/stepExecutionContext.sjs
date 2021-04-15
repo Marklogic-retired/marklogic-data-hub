@@ -28,28 +28,63 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 class StepExecutionContext {
 
   /**
+   * Factory method for the normal approach of creating a step execution context, which uses data from the given 
+   * flow execution context. For testing purposes, it is often easier to use the constructor directly.
    * 
-   * @param theFlow required; this must be a flow with inline steps
+   * @param flowExecutionContext
+   * @param stepNumber 
+   * @returns 
+   */
+  static newContext(flowExecutionContext, stepNumber) {
+    const flow = flowExecutionContext.flow;
+    if (!flow.steps || !flow.steps[stepNumber]) {
+      httpUtils.throwBadRequest(`Cannot find step number '${stepNumber}' in flow '${flow.name}`);
+    }
+
+    const flowStep = flow.steps[stepNumber];
+    const name = flowStep.stepDefinitionName;
+    if (!name) {
+      httpUtils.throwBadRequest(`stepDefinitionName not found in step '${stepNumber}' in flow '${flowName}'`);
+    }
+    const type = flowStep.stepDefinitionType;
+    if (!type) {
+      httpUtils.throwBadRequest(`stepDefinitionType not found in step '${stepNumber}' in flow '${flowName}'`);
+    }
+
+    const stepDef = new StepDefinition().getStepDefinitionByNameAndType(name, type);
+    if (!stepDef) {
+      let message = `stepDefinition not found for step '${stepNumber}' in flow '${flowName}';`;
+      message += `name: '${name}'; type: '${type}'`;
+      httpUtils.throwBadRequest(message);
+    }
+
+    return new StepExecutionContext(flow, stepNumber, stepDef, flowExecutionContext.jobId, flowExecutionContext.runtimeOptions);
+  }
+
+  /**
+   * 
+   * @param flow required; this must be a flow with inline steps
    * @param stepNumber required; the number of the step in the flow that is being executed
    * @param stepDefinition required; the step definition associated with the step being executed
    * @param jobId optional; the ID of the job associated with this step execution
    * @param runtimeOptions optional; used to construct the combinedOptions field
    */
-  constructor(theFlow, stepNumber, stepDefinition, jobId, runtimeOptions = {}) {
-    this.flow = theFlow;
+  constructor(flow, stepNumber, stepDefinition, jobId, runtimeOptions = {}) {
+    this.startDateTime = fn.currentDateTime().add(xdmp.elapsedTime());
+    this.flow = flow;
     this.stepDefinition = stepDefinition;
     this.stepNumber = stepNumber;
-    this.flowStep = theFlow.steps[stepNumber];
+    this.flowStep = flow.steps[stepNumber];
     this.jobId = jobId;
     this.throwStepError = false;
 
-    this.combinedOptions = flowUtils.makeCombinedOptions(theFlow, stepDefinition, stepNumber, runtimeOptions);
+    this.combinedOptions = flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, runtimeOptions);
 
     // Copies what flow.sjs does for combining collections from options
     this.collectionsFromOptions = [
       runtimeOptions.collections,
       ((this.flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
-      (theFlow.options || {}).collections
+      (flow.options || {}).collections
     ]
     .reduce((previousValue, currentValue) => (previousValue || []).concat(currentValue || []))
     .filter(col => !!col); // filter out any null/empty collections that may exist
@@ -72,7 +107,7 @@ class StepExecutionContext {
     return this.combinedOptions.targetDatabase || config.FINALDATABASE;
   }
 
-  buildStepResponse(startDateTime) {
+  buildStepResponse() {
     const hasFailures = this.failedItems.length > 0;
     return {
       flowName: this.flow.name,
@@ -89,12 +124,11 @@ class StepExecutionContext {
       successfulBatches: !hasFailures && this.completedItems.length > 0 ? 1 : 0,
       failedBatches: hasFailures ? 1 : 0,
       success: !hasFailures,
-      stepStartTime: startDateTime,
+      stepStartTime: this.startDateTime,
       stepEndTime: fn.currentDateTime().add(xdmp.elapsedTime())
     };
   }
 
-  // No concept of "stopped" yet
   determineStepStatus() {
     if (this.failedItems.length > 0) {
       return this.completedItems.length > 0 ? "completed with errors step " + this.stepNumber : "failed step " + this.stepNumber;
@@ -193,8 +227,12 @@ class StepExecutionContext {
     return "finished";
   }
 
+  jobOutputIsEnabled() {
+    return String(this.combinedOptions.disableJobOutput) !== "true";
+  }
+
   batchOutputIsEnabled() {
-    if (this.combinedOptions.disableJobOutput === true || this.combinedOptions.disableJobOutput === "true") {
+    if (!this.jobOutputIsEnabled()) {
       return false;
     }
     const value = this.combinedOptions.enableBatchOutput;

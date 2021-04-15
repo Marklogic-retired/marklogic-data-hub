@@ -16,12 +16,10 @@
 'use strict';
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const StepExecutionContext = require('stepExecutionContext.sjs');
 const consts = require("/data-hub/5/impl/consts.sjs");
+const FlowExecutionContext = require("flowExecutionContext.sjs");
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
 const INFO_EVENT = consts.TRACE_FLOW_RUNNER;
@@ -41,82 +39,48 @@ const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
  * @return a JSON object conforming to RunFlowResponse.schema.json
  */
 function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, stepNumbers) {
-  if (contentArray == null || contentArray == undefined) {
-    contentArray = [];
-  }
-  else if (!Array.isArray(contentArray)) {
-    contentArray = [contentArray];
-  }
+  let currentContentArray = normalizeContentArray(contentArray);
+  runtimeOptions = runtimeOptions || {};
 
-  hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${contentArray.length}`);
+  hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${currentContentArray.length}`);
 
-  const theFlow = Artifacts.getFullFlow(flowName);
-  
-  const databaseWriteQueue = new WriteQueue();
-  const flowResponse = newFlowResponse(theFlow, jobId);
-
-  let currentContentArray = contentArray;
-  const stepNumbersToExecute = stepNumbers != null && stepNumbers.length > 0 ? stepNumbers : Object.keys(theFlow.steps);
+  const writeQueue = new WriteQueue();
+  const flowExecutionContext = new FlowExecutionContext(Artifacts.getFullFlow(flowName), jobId, runtimeOptions, stepNumbers);
   let stepError;
 
-  for (let stepNumber of stepNumbersToExecute) {
-    const startDateTime = fn.currentDateTime().add(xdmp.elapsedTime());
-    flowResponse.lastAttemptedStep = stepNumber;
-
-    hubUtils.hubTrace(INFO_EVENT, `Running step ${stepNumber} in flow '${flowName}'`);
-    const stepExecutionContext = newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions);
+  for (let stepNumber of flowExecutionContext.stepNumbers) {
+    const stepExecutionContext = flowExecutionContext.startStep(stepNumber);
+    const batchItems = currentContentArray.map(content => content.uri);
+    
     try {
       prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
-      currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, databaseWriteQueue);
-      flowResponse.lastCompletedStep = stepNumber;
-      flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);
-      addFullOutputIfNecessary(stepExecutionContext, currentContentArray, flowResponse);
+      currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, writeQueue);
+      const stepResponse = stepExecutionContext.buildStepResponse();
+      addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
+      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems);
       hubUtils.hubTrace(INFO_EVENT, `Finished ${stepExecutionContext.getLabelForLogging()}`);
     } catch (error) {
-      const items = currentContentArray.map(content => content.uri);
-      stepExecutionContext.addErrorForEntireBatch(error, items);
-      flowResponse.stepResponses[stepNumber] = stepExecutionContext.buildStepResponse(startDateTime);
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
       }
+      stepExecutionContext.addErrorForEntireBatch(error, batchItems);
+      flowExecutionContext.finishStep(stepExecutionContext, stepExecutionContext.buildStepResponse(), batchItems);
       stepError = error;
       break;
     }
   }
 
-  if (stepError) {
-    // TODO Will improve this in DHFPRPOD-6720
-    flowResponse.jobStatus = "failed";
-  } else {
-    databaseWriteQueue.persist();
-    flowResponse.jobStatus = "finished";
-  }
-
-  hubUtils.hubTrace(INFO_EVENT, `Finished processing content with flow ${flowName}`);
-  
-  flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
-  return flowResponse;
+  // TODO Will improve error handling in DHFPROD-6720
+  const writeInfos = !stepError ? writeQueue.persist() : null;
+  flowExecutionContext.finishJob(stepError, writeInfos);
+  return flowExecutionContext.flowResponse;
 }
 
-function newFlowResponse(theFlow, jobId) {
-  return {
-    jobId,
-    jobStatus: "started",
-    flow: theFlow.name,
-    user: xdmp.getCurrentUser(),
-    timeStarted: fn.currentDateTime(),
-    stepResponses: {}
-  };
-}
-
-function newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions) {
-  if (!theFlow.steps || !theFlow.steps[stepNumber]) {
-    httpUtils.throwBadRequest(`Cannot find step number '${stepNumber}' in flow '${flowName}`);
+function normalizeContentArray(contentArray) {
+  if (contentArray == null || contentArray == undefined) {
+    return [];
   }
-
-  const flowStep = theFlow.steps[stepNumber];
-  const stepDefinition = findStepDefinition(theFlow.name, stepNumber, flowStep);
-  return new StepExecutionContext(theFlow, stepNumber, stepDefinition, jobId, runtimeOptions);
+  return Array.isArray(contentArray) ? contentArray : [contentArray];
 }
 
 /**
@@ -124,9 +88,9 @@ function newStepExecutionContext(theFlow, stepNumber, jobId, runtimeOptions) {
  *
  * @param stepExecutionContext
  * @param contentArray
- * @param databaseWriteQueue
+ * @param writeQueue
  */
-function processContentWithStep(stepExecutionContext, contentArray, databaseWriteQueue) {
+function processContentWithStep(stepExecutionContext, contentArray, writeQueue) {
   const batchItems = contentArray.map(content => content.uri);
 
   const hookRunner = stepExecutionContext.makeCustomHookRunner(contentArray);
@@ -160,11 +124,11 @@ function processContentWithStep(stepExecutionContext, contentArray, databaseWrit
   if (!stepExecutionContext.stepOutputShouldBeWritten()) {
     hubUtils.hubTrace(INFO_EVENT, `Not writing step output for ${stepExecutionContext.getLabelForLogging()}`);
   }
-  else if (databaseWriteQueue != null) {
+  else if (writeQueue != null) {
     // Since DHF 5.0, collections from options have been added after step processing as opposed to before step processing.
     // The reason for this is not known.
     stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
-    addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, databaseWriteQueue);
+    addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, writeQueue);
   }
 
   return outputContentArray;
@@ -274,30 +238,6 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
   });
 
   return outputContentArray;
-}
-
-
-/**
- * @param flowName needed for nice error messages
- * @param stepNumber needed for nice error messages
- * @param flowStep
- */
-function findStepDefinition(flowName, stepNumber, flowStep) {
-  const name = flowStep.stepDefinitionName;
-  if (!name) {
-    httpUtils.throwBadRequest(`stepDefinitionName not found in step '${stepNumber}' in flow '${flowName}'`);
-  }
-  const type = flowStep.stepDefinitionType;
-  if (!type) {
-    httpUtils.throwBadRequest(`stepDefinitionType not found in step '${stepNumber}' in flow '${flowName}'`);
-  }
-  const stepDef = new StepDefinition().getStepDefinitionByNameAndType(name, type);
-  if (!stepDef) {
-    let message = `stepDefinition not found for step '${stepNumber}' in flow '${flowName}';`;
-    message += `name: '${name}'; type: '${type}'`;
-    httpUtils.throwBadRequest(message);
-  }
-  return stepDef;
 }
 
 /**
@@ -431,20 +371,19 @@ function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionCont
  * 
  * @param stepExecutionContext 
  * @param outputContentArray 
- * @param flowResponse the step response associated with the stepNumber in stepExecutionContext is expected to exist already
+ * @param stepResponse the step response associated with the stepNumber in stepExecutionContext
  */
-function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, flowResponse) {
+function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, stepResponse) {
   if (stepExecutionContext.combinedOptions.fullOutput === true) {
     // This follows the DHF 5.0 design where fullOutput is a map of URI to content object
-    const fullOutput = {};
+    stepResponse.fullOutput = {};
     outputContentArray.forEach(contentObject => {
       // copyContentObject, which performs a shallow copy of content.value, is assumed to be safe here because if
       // content.value were to be modified, it would be done by a subsequent step. And it is assumed that content.value
       // will first be converted into a node before that step runs, since the step module functions require content.value
       // to be a node. 
-      fullOutput[contentObject.uri] = copyContentObject(contentObject);
+      stepResponse.fullOutput[contentObject.uri] = copyContentObject(contentObject);
     });
-    flowResponse.stepResponses[stepExecutionContext.stepNumber].fullOutput = fullOutput;
   }  
 }
 

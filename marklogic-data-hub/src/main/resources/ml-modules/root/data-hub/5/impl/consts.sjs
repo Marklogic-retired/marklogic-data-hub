@@ -85,7 +85,6 @@ module.exports = {
   TRACE_STEP: "hub-step",
   TRACE_FLOW_RUNNER: "hub-flow-runner",
   TRACE_FLOW_RUNNER_DEBUG: "hub-flow-runner-debug",
-  TRACE_JOB: "hub-job",
   TRACE_MAPPING: "hub-mapping",
   TRACE_MAPPING_DEBUG: "hub-mapping-debug"
 };
