@@ -5,7 +5,7 @@
     "user": "admin",
     "lastAttemptedStep": "3",
     "lastCompletedStep": "3",
-    "jobStatus": "finished",
+    "jobStatus": "running",
     "timeStarted": "2019-06-26T23:12:04.09029Z",
     "timeEnded": "2019-06-26T23:12:04.744321Z",
     "stepResponses": {
@@ -48,6 +48,7 @@
         "stepName": "json-mastering-step-json",
         "stepDefinitionName": "default-mastering",
         "stepDefinitionType": "mastering",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
         "stepOutput": null,
         "fullOutput": null,
         "status": "completed step 3",

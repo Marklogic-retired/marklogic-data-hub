@@ -5,7 +5,7 @@
     "user": "admin",
     "lastAttemptedStep": "3",
     "lastCompletedStep": "3",
-    "jobStatus": "finished",
+    "jobStatus": "finished_with_errors",
     "timeStarted": "2019-06-26T23:11:58.109392Z",
     "timeEnded": "2019-06-26T23:11:59.561797Z",
     "stepResponses": {
