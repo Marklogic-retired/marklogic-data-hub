@@ -35,7 +35,7 @@ function verifyStepResponse() {
     );
 
     for(let result in response.results) {
-        for (let key in Object.entries(result)) {
+        for (let key in Object.keys(result)) {
             assertions.push(test.assertNotEqual(null, result[key]));
         }
     }
