@@ -31,3 +31,7 @@ module.exports = (on) => {
   };
   on("file:preprocessor", wp(options));
 };
+module.exports = (on, config) => {
+  require("cypress-fail-fast/plugin")(on, config);
+  return config;
+};
