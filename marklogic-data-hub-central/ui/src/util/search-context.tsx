@@ -17,6 +17,7 @@ type SearchContextInterface = {
   zeroState: boolean,
   selectedTableProperties: any,
   view: JSX.Element|null,
+  tileId: string,
   sortOrder: any,
   database: string
 }
@@ -35,6 +36,7 @@ const defaultSearchOptions = {
   zeroState: true,
   selectedTableProperties: [],
   view: null,
+  tileId: "",
   sortOrder: [],
   database: "final"
 };
@@ -46,7 +48,9 @@ interface ISearchContextInterface {
   setSearchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
+    setMonitorPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
+    setMonitorPageLength: (current: number, pageSize: number) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
   setNextEntity: (option: string) => void;
@@ -61,6 +65,7 @@ interface ISearchContextInterface {
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
   greyedOptions: SearchContextInterface;
+  monitorOptions: SearchContextInterface;
   setAllGreyedOptions: (facets: any) => void;
   clearGreyFacet: (constraint: string, val: string) => void;
   clearConstraint: (constraint: string) => void;
@@ -70,7 +75,7 @@ interface ISearchContextInterface {
   setSelectedQuery: (query: string) => void;
   setZeroState: (zeroState: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
-  setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
+  setView: (tileId:string, viewId: JSX.Element| null, zeroState?:boolean) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
   setPageQueryOptions: (query: any) => void;
@@ -85,6 +90,7 @@ interface ISearchContextInterface {
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
   greyedOptions: defaultSearchOptions,
+  monitorOptions: defaultSearchOptions,
   savedQueries: [],
   setSavedQueries: () => { },
   entityDefinitionsArray: [],
@@ -92,7 +98,9 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
+  setMonitorPage: () => { },
   setPageLength: () => { },
+  setMonitorPageLength: () => { },
   setSearchFacets: () => { },
   setEntity: () => { },
   setNextEntity: () => { },
@@ -127,6 +135,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
+  const [monitorOptions, setMonitorOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
   const {user} = useContext(UserContext);
@@ -174,11 +183,35 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const setMonitorPage = (pageNumber: number, totalDocuments: number) => {
+    let pageLength = monitorOptions.pageSize;
+    let start = pageNumber ;
+    setMonitorOptions({
+      ...monitorOptions,
+      start,
+      pageLength,
+      pageNumber
+    });
+  };
+
+
   const setPageLength = (current: number, pageSize: number) => {
     setSearchOptions({
       ...searchOptions,
       start: 1,
       pageNumber: 1,
+      pageLength: pageSize,
+      pageSize,
+    });
+  };
+
+
+
+  const setMonitorPageLength = (current: number, pageSize: number) => {
+    setMonitorOptions({
+      ...monitorOptions,
+      start: current,
+      pageNumber: current,
       pageLength: pageSize,
       pageSize,
     });
@@ -505,11 +538,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setView = (viewId: JSX.Element|null, zeroState=false) => {
+  const setView = (tileId:string, viewId: JSX.Element|null, zeroState=false) => {
     setSearchOptions({
       ...searchOptions,
       view: viewId,
-      zeroState: zeroState
+      zeroState: zeroState,
+      tileId: tileId,
+
     });
   };
 
@@ -594,6 +629,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     <SearchContext.Provider value={{
       searchOptions,
       greyedOptions,
+      monitorOptions,
+      setMonitorPage,
+      setMonitorPageLength,
       savedQueries,
       setSavedQueries,
       entityDefinitionsArray,

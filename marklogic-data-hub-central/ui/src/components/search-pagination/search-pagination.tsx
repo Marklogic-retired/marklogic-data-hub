@@ -12,7 +12,7 @@ interface Props {
 }
 
 const SearchPagination: React.FC<Props> = (props) => {
-  const {setPage, setPageLength} = useContext(SearchContext);
+  const {searchOptions, setPage, setPageLength, setMonitorPage, setMonitorPageLength} = useContext(SearchContext);
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
@@ -37,11 +37,11 @@ const SearchPagination: React.FC<Props> = (props) => {
   }, [props.maxRowsPerPage]);
 
   const onPageChange = (pageNumber) => {
-    setPage(pageNumber, props.total);
+    searchOptions.tileId === "explore" ? setPage(pageNumber, props.total):setMonitorPage(pageNumber, props.total);
   };
 
   const onPageSizeChange = (current, pageSize) => {
-    setPageLength(current, pageSize);
+    searchOptions.tileId === "explore" ?  setPageLength(current, pageSize):setMonitorPageLength(current, pageSize);
   };
 
   return (

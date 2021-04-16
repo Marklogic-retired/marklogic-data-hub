@@ -4,6 +4,7 @@ import {BrowserRouter as Router} from "react-router-dom";
 import JobResultsTableView from "./job-results-table-view";
 import {jobResults} from "../../assets/mock-data/monitor/job-results";
 
+
 describe("Job results Table view component", () => {
   test("Job Results table with data renders", async () => {
     const {getByText, getByTestId} = render(
@@ -22,10 +23,10 @@ describe("Job results Table view component", () => {
     expect(getByText("Duration")).toBeInTheDocument();
 
     //check table data is rendered correctly
-    expect(getByText("CustomerLoad")).toBeInTheDocument();
-    expect(getByText("ingestion")).toBeInTheDocument();
-    expect(getByText("2021-01-10 00:00")).toBeInTheDocument();
-    expect(getByText("1h 20m 5s")).toBeInTheDocument();
+    expect(getByText("mapClientJSON")).toBeInTheDocument();
+    expect(getByText("mapping")).toBeInTheDocument();
+    expect(getByText("2021-04-21 20:37")).toBeInTheDocument();
+    expect(getByText("0.066399s")).toBeInTheDocument();
     expect(getByText("pari")).toBeInTheDocument();
 
     //Check if the tooltip on 'completed Status works fine'.

@@ -15,13 +15,13 @@ const DEFAULT_JOB_RESULTS_HEADER = [
   },
   {
     title: "Step Type",
-    dataIndex: "stepType",
+    dataIndex: "stepDefinitionType",
     visible: true,
     width: 150
   },
   {
     title: "Status",
-    dataIndex: "status",
+    dataIndex: "jobStatus",
     visible: true,
     width: 100,
     align: "center",
@@ -78,21 +78,21 @@ const DEFAULT_JOB_RESULTS_HEADER = [
   },
   {
     title: "Records Processed",
-    dataIndex: "successfulEvents",
+    dataIndex: "successfulItemCount",
     visible: true,
     width: 150,
-    render: (successfulEvents, record) => {
+    render: (successfulItemCount, record) => {
       return <>
         <div>
           <CheckCircleFilled style={{color: "#389E0D"}}/>
           <span className={styles.events}>
-            {successfulEvents}
+            {successfulItemCount}
           </span>
         </div>
         <div>
           <CloseCircleFilled style={{color: "#B32424"}}/>
           <span className={styles.events}>
-            {record.failedEvents}
+            {record.failedItemCount}
           </span>
         </div>
       </>;
@@ -101,7 +101,7 @@ const DEFAULT_JOB_RESULTS_HEADER = [
   },
   {
     title: "User",
-    dataIndex: "userId",
+    dataIndex: "user",
     visible: true,
     width: 150
   },
@@ -126,6 +126,7 @@ const JobResultsTableView = (props) => {
         data-testid="job-result-table"
         rowKey="job"
         dataSource={props.data}
+        pagination={false}
         columns={DEFAULT_JOB_RESULTS_HEADER}
       />
     </div>
