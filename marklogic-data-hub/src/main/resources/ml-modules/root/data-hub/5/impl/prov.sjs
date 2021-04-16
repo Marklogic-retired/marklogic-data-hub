@@ -14,34 +14,20 @@
   limitations under the License.
 */
 'use strict';
-const defaultConfig = require("/com.marklogic.hub/config.sjs");
+const consts = require("/data-hub/5/impl/consts.sjs");
+const config = require("/com.marklogic.hub/config.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const ps = require('/MarkLogic/provenance');
 const op = require('/MarkLogic/optic');
 
+/**
+ * Encapsulates an array of provenance records to be persisted to the jobs database, and provides functions for generating
+ * and adding provenance records to this array.
+ */
 class Provenance {
-  /**
-   * @desc Provenance Class constructor
-   * @param {Object} [config]
-   * @param {string} [config.granularityLevel=coarse] - for setting the Prov object granularity level (currently unused)
-   */
-  constructor(config = null, datahub = null) {
-    this.OFF_LEVEL = 'off';
-    this.FINE_LEVEL = 'fine';
-    this.COARSE_LEVEL = 'coarse';
-    this.granularityLevels          = [this.FINE_LEVEL,this.COARSE_LEVEL];
-    this.config = {};
-    this.config.granularityLevel    = config && config.granularityLevel || 'coarse';
-    this.config.JOBDATABASE         = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
-    this.config.autoCommit          = config && config.autoCommit !== undefined ? config.autoCommit : true;
-    this.config.commitQueue         = [];
-  }
 
-  granularityLevel(level = null) {
-    if (level) {
-      this.config.granularityLevel = level;
-    }
-    return this.config.granularityLevel;
+  constructor() {
+    this.commitQueue = [];
   }
 
   _newProvId(jobId, flowId, stepType, docUri) {
@@ -53,7 +39,7 @@ class Provenance {
    * @param {string} stepDefinitionType - step definition type ['ingestion','mapping','mastering','matching','merging','custom']
    */
   _validStepDefinitionType(stepDefinitionType) {
-    return ['ingestion','mapping','mastering','matching','merging','custom'].includes(stepDefinitionType)
+    return ['ingestion', 'mapping', 'mastering', 'matching', 'merging', 'custom'].includes(stepDefinitionType)
   }
   /**
    * Validate that the info Object to ensure the metadata passed doesn't stomp on roles or location values
@@ -75,11 +61,11 @@ class Provenance {
   _validProvInfoForStepType(stepDefinitionType, info) {
     let requiredInfoParams = {
       'ingestion': ['derivedFrom'],  // the entity, file or document URI that this ingested document was derived from
-      'mapping': ['derivedFrom','influencedBy'],
-      'mastering': ['derivedFrom','influencedBy'],
-      'matching': ['derivedFrom','influencedBy'],
-      'merging': ['derivedFrom','influencedBy'],
-      'custom': ['derivedFrom','influencedBy']
+      'mapping': ['derivedFrom', 'influencedBy'],
+      'mastering': ['derivedFrom', 'influencedBy'],
+      'matching': ['derivedFrom', 'influencedBy'],
+      'merging': ['derivedFrom', 'influencedBy'],
+      'custom': ['derivedFrom', 'influencedBy']
     };
     let provTypes = {
       'ingestion': function () {
@@ -140,28 +126,16 @@ class Provenance {
       }
     } else {
       let missingParams = [
-        ['flowId',flowId],
-        ['stepName',stepName],
-        ['stepDefinitionName',stepDefinitionName],
-        ['stepDefinitionType',stepDefinitionType],
+        ['flowId', flowId],
+        ['stepName', stepName],
+        ['stepDefinitionName', stepDefinitionName],
+        ['stepDefinitionType', stepDefinitionType],
         ['info', info]
       ].filter((pair) => !pair[1])
         .reduce((pair) => pair[0]);
       isValid = new Error(`Function requires all params 'flowId', 'stepName', 'stepDefinitionName', 'stepDefinitionType' and 'info' to be defined. Missing: ${missingParams}`);
     }
     return isValid;
-  }
-
-  /**
-   * General create provenance record function that adds the same relations,
-   * attributes, dateTime & namespaces info each record requires.
-   * @param {string} id - the identifier of this provenance information
-   * @param {Object} options - provenance record options (see individual type requirements below)
-   * @param {Object} metadata - provenance record metadata
-   */
-  _createRecord(id, options, metadata) {
-    this._createRecords([{id, options, metadata}]);
-    return id;
   }
 
   /**
@@ -199,7 +173,7 @@ class Provenance {
       `,
       { recordsQueue },
       {
-        database: xdmp.database(this.config.JOBDATABASE),
+        database: xdmp.database(config.JOBDATABASE),
         commit: 'auto',
         update: 'true',
         ignoreAmps: true
@@ -214,11 +188,14 @@ class Provenance {
    * @param {Object} metadata - provenance record metadata
    */
   _queueForCommit(id, options, metadata) {
-    let existingForId = this.config.commitQueue.find((recordDetails) => recordDetails.id === id);
+    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Queueing provenance record with ID: ${id}`);
+    }
+    let existingForId = this.commitQueue.find((recordDetails) => recordDetails.id === id);
     if (existingForId) {
-      Object.assign(existingForId, {id, options, metadata});
+      Object.assign(existingForId, { id, options, metadata });
     } else {
-      this.config.commitQueue.push({id, options, metadata});
+      this.commitQueue.push({ id, options, metadata });
     }
   };
 
@@ -246,7 +223,7 @@ class Provenance {
    */
   _createIngestionStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
     let provId = this._newProvId(jobId, flowId, 'ingestion', docURI);
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:IngestionStep','dhf:IngestionStepEntity'];
+    let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:IngestionStep', 'dhf:IngestionStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -260,9 +237,7 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ?
-      this._createRecord(provId, recordOpts, info.metadata) :
-      this._queueForCommit(provId, recordOpts, info.metadata);
+    return this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -290,7 +265,7 @@ class Provenance {
    */
   _createMappingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
     let provId = this._newProvId(jobId, flowId, 'mapping', docURI);
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MappingStep','dhf:MappingStepEntity'];
+    let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MappingStep', 'dhf:MappingStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -305,9 +280,7 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ?
-      this._createRecord(provId, recordOpts, info.metadata) :
-      this._queueForCommit(provId, recordOpts, info.metadata);
+    return this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -335,7 +308,7 @@ class Provenance {
    */
   _createMasteringStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
     let provId = this._newProvId(jobId, flowId, 'mastering', docURI);
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MasteringStep','dhf:MasteringStepEntity'];
+    let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MasteringStep', 'dhf:MasteringStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -350,9 +323,7 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ?
-      this._createRecord(provId, recordOpts, info.metadata) :
-      this._queueForCommit(provId, recordOpts, info.metadata);
+    return this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -380,7 +351,7 @@ class Provenance {
    */
   _createMatchingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
     let provId = this._newProvId(jobId, flowId, 'matching', docURI);
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MatchingStep','dhf:MatchingStepEntity'];
+    let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MatchingStep', 'dhf:MatchingStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -395,9 +366,7 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ?
-      this._createRecord(provId, recordOpts, info.metadata) :
-      this._queueForCommit(provId, recordOpts, info.metadata);
+    return this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -425,7 +394,7 @@ class Provenance {
    */
   _createMergingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
     let provId = this._newProvId(jobId, flowId, 'merging', docURI);
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MergingStep','dhf:MergingStepEntity'];
+    let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MergingStep', 'dhf:MergingStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -440,9 +409,7 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ?
-      this._createRecord(provId, recordOpts, info.metadata) :
-      this._queueForCommit(provId, recordOpts, info.metadata);
+    return this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -469,7 +436,7 @@ class Provenance {
    */
   _createCustomStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
     let provId = this._newProvId(jobId, flowId, 'custom', docURI);
-    let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:CustomStep','dhf:CustomStepEntity'];
+    let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:CustomStep', 'dhf:CustomStepEntity'];
     if (info && info.status)
       provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -484,9 +451,7 @@ class Provenance {
       attributes: { location: docURI }
     };
 
-    return (this.config.autoCommit) ?
-      this._createRecord(provId, recordOpts, info.metadata) :
-      this._queueForCommit(provId, recordOpts, info.metadata);
+    return this._queueForCommit(provId, recordOpts, info.metadata);
   }
 
   /**
@@ -540,7 +505,7 @@ class Provenance {
     if (!(isValid instanceof Error)) {
       if (properties && properties.length > 0) {
         let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
-        for (let i=0; i<properties.length; i++) {
+        for (let i = 0; i < properties.length; i++) {
           let property = properties[i];
           let encodedPropertyName = property;
           if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
@@ -548,7 +513,7 @@ class Provenance {
           }
           let docPropProvId = `${jobId + flowId + stepDefinitionType + docURI}_${property}`
           let docPropProvOptions = {
-            provTypes: [ 'ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', encodedPropertyName ],
+            provTypes: ['ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', encodedPropertyName],
             relations: {
               associatedWith: [flowId, stepName, stepDefinitionName],
               generatedBy: jobId,
@@ -559,14 +524,12 @@ class Provenance {
           // append to return Object
           docPropertyProvIds[property] = docPropProvId;
           docPropertyProvIdsArray.push(docPropProvId);
-          (this.config.autoCommit) ?
-            this._createRecord(docPropProvId, docPropProvOptions, info.metadata) :
-            this._queueForCommit(docPropProvId, docPropProvOptions, info.metadata);
+          this._queueForCommit(docPropProvId, docPropProvOptions, info.metadata);
         }
 
         // create document record
         docProvId = `${jobId + flowId + stepDefinitionType + docURI}`;
-        let provTypes = ['ps:Flow','ps:Entity','dhf:Entity',`dhf:${capitalizedStepType}Entity`];
+        let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', `dhf:${capitalizedStepType}Entity`];
         let recordOpts = {
           provTypes,
           relations: {
@@ -578,9 +541,7 @@ class Provenance {
           attributes: { location: docURI }
         };
 
-        (this.config.autoCommit) ?
-          this._createRecord(docProvId, recordOpts, info.metadata) :
-          this._queueForCommit(docProvId, recordOpts, info.metadata);
+        this._queueForCommit(docProvId, recordOpts, info.metadata);
 
         // construct response
         resp = [docProvId, docPropertyProvIds];
@@ -626,7 +587,7 @@ class Provenance {
         if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
           encodedPropertyName = xdmp.encodeForNCName(encodedPropertyName);
         }
-        let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntityProperty',`dhf:${capitalizedStepType}AlteredEntityProperty`, encodedPropertyName];
+        let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:AlteredEntityProperty', `dhf:${capitalizedStepType}AlteredEntityProperty`, encodedPropertyName];
         let recordOpts = {
           provTypes,
           relations: {
@@ -636,9 +597,7 @@ class Provenance {
             influencedBy: info && info.influencedBy,
           }
         };
-        (this.config.autoCommit) ?
-          this._createRecord(provId, recordOpts, info.metadata) :
-          this._queueForCommit(provId, recordOpts, info.metadata);
+        this._queueForCommit(provId, recordOpts, info.metadata);
 
         resp = provId;
       } else {
@@ -672,7 +631,7 @@ class Provenance {
         alteredPropertyProvIds && alteredPropertyProvIds.length > 0) {
         let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
         let provId = this._newProvId(jobId, flowId, stepDefinitionType, newDocURI);
-        let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntity',`dhf:${capitalizedStepType}AlteredEntity`];
+        let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:AlteredEntity', `dhf:${capitalizedStepType}AlteredEntity`];
         let recordOpts = {
           provTypes,
           relations: {
@@ -684,9 +643,7 @@ class Provenance {
           },
           attributes: { location: newDocURI }
         };
-        (this.config.autoCommit) ?
-          this._createRecord(provId, recordOpts, info.metadata) :
-          this._queueForCommit(provId, recordOpts, info.metadata);
+        this._queueForCommit(provId, recordOpts, info.metadata);
         resp = provId;
       } else {
         resp = new Error(`Function requires param 'documentProvIds' & 'alteredPropertyProvIds' to be defined.`);
@@ -697,118 +654,39 @@ class Provenance {
     return resp;
   }
 
-  /**
-   * @desc Commit all queued Provenance records.  Only works if config.autoCommit === false
-   *       and records are being saved, rather than committed instantly.
-   */
   commit() {
-    if (this.config.autoCommit === false && this.config.commitQueue.length > 0) {
-      this._createRecords(this.config.commitQueue);
-      this.config.commitQueue = [];
+    if (this.commitQueue.length > 0) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Committing provenance records, count: ${this.commitQueue.length}`);
+      this._createRecords(this.commitQueue);
+      this.commitQueue = [];
+    } else {
+      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `No provenance records were queued, so not committing any to the jobs database`);
     }
-  }
-
-  /**
-   * @desc Discard all queued Provenance records.  Only works if config.autoCommit === false
-   *       and records are being saved, rather than committed instantly.
-   */
-  discard() {
-    if (this.config.autoCommit === false && this.config.commitQueue.length > 0) {
-      this.config.commitQueue = [];
-    }
-  }
-
-  /**
-   * @desc Create a provenance record when a Flow is created
-   * @param docURI - The URI of the document
-   * @param {Object} [info]
-   * TODO: create more convenient ways to query
-   */
-  queryDocRecords(docURI, info) {
-    let resp;
-    if (docURI)
-      resp = xdmp.eval(`
-        const ps = require('/MarkLogic/provenance');
-        const op = require('/MarkLogic/optic');
-        var match = {
-          attributes: {
-            location: docURI
-          }
-        };
-        // TODO: change "out" so output for a single prov record is
-        // combined into a single Object in the Array
-        var out = {
-          dateTime: '?',
-          provTypes: '?',
-          attributes : {'location' : '?'}
-        };
-        let kvPattern = ps.opTriplePattern(match, out);
-        op.fromTriples(kvPattern).result().toArray();
-        `,
-        { docURI },
-        {
-          database: xdmp.database(this.config.JOBDATABASE),
-          commit: 'auto',
-          update: 'true',
-          ignoreAmps: true
-      })
-    else
-       resp = new Error(`Function requires param 'docURI' to be defined.`);
-
-    return resp;
-  }
-
-
-  /**
-   * @desc Create a provenance record when a Flow is created
-   * @param docURI - The URI of the document
-   * @param {Object} [info]
-   * TODO: create more convenient ways to query
-   */
-  queryDocRecordsNoEval(docURI, info) {
-    let resp;
-    if (docURI) {
-      var match = {
-        attributes: {
-          location: docURI
-        }
-      };
-      // TODO: change "out" so output for a single prov record is
-      // combined into a single Object in the Array
-      var out = {
-        dateTime: '?',
-        provTypes: '?',
-        attributes : {'location' : '?'}
-      };
-      let kvPattern = ps.opTriplePattern(match, out);
-      resp = op.fromTriples(kvPattern).result().toArray();
-    }
-    else
-       resp = new Error(`Function requires param 'docURI' to be defined.`);
-
-    return resp;
   }
 }
 
+module.exports = {
+  Provenance
+};
+
 module.exports.findProvenance = module.amp(
-    function findProvenance(docUri, relations) {
-      return xdmp.invokeFunction(function () {
-        const match = {
-          attributes: {
-            location: docUri
-          }
-        };
-        const output = {
-          dateTime: '?',
-          relations: relations
-        };
-        const kvPattern = ps.opTriplePattern(match, output);
-        return op.fromTriples(kvPattern)
-            .select(['provID', 'dateTime', 'attributedTo', op.as('associatedWithDetail', op.jsonString(op.col('associatedWith')))])
-            .groupBy(['provID', 'dateTime', 'attributedTo'], op.arrayAggregate('associatedWith', 'associatedWithDetail'))
-            .orderBy(op.desc('dateTime')).result();
-      }, { 'database' : xdmp.database(defaultConfig.JOBDATABASE)}).toArray();
-    }
+  function findProvenance(docUri, relations) {
+    return xdmp.invokeFunction(function () {
+      const match = {
+        attributes: {
+          location: docUri
+        }
+      };
+      const output = {
+        dateTime: '?',
+        relations: relations
+      };
+      const kvPattern = ps.opTriplePattern(match, output);
+      return op.fromTriples(kvPattern)
+        .select(['provID', 'dateTime', 'attributedTo', op.as('associatedWithDetail', op.jsonString(op.col('associatedWith')))])
+        .groupBy(['provID', 'dateTime', 'attributedTo'], op.arrayAggregate('associatedWith', 'associatedWithDetail'))
+        .orderBy(op.desc('dateTime')).result();
+    }, { 'database': xdmp.database(config.JOBDATABASE) }).toArray();
+  }
 );
 
-module.exports.Provenance = Provenance;

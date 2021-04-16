@@ -19,7 +19,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const consts = require('/data-hub/5/impl/consts.sjs');
 const es = require('/MarkLogic/entity-services/entity-services');
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
-const Provenance = require("/data-hub/5/impl/prov.sjs");
+const prov = require("/data-hub/5/impl/prov.sjs");
 
 // TODO Will move this to /data-hub/5/entities soon
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
@@ -546,7 +546,7 @@ function isHubEntityInstance(docUri) {
 function getRecordHistory(docUri) {
   const history = [];
   const relations = {'associatedWith': '?', 'attributedTo': '?'};
-  const provenanceRecords = Provenance.findProvenance(docUri, relations);
+  const provenanceRecords = prov.findProvenance(docUri, relations);
 
   if(provenanceRecords.length) {
     const flowsMap = findFlowsAsMap();

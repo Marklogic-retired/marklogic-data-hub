@@ -18,6 +18,6 @@
       "sourcedFrom": "customerId"
     }
   },
-  "provenanceGranularityLevel": "off",
+  "provenanceGranularityLevel": "coarse",
   "selectedSource": "query"
 }

@@ -18,8 +18,10 @@
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const consts = require("/data-hub/5/impl/consts.sjs");
 const FlowExecutionContext = require("flowExecutionContext.sjs");
+const flowProvenance = require("flowProvenance.sjs");
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const prov = require("/data-hub/5/impl/prov.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
 const INFO_EVENT = consts.TRACE_FLOW_RUNNER;
@@ -45,6 +47,7 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
   hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${currentContentArray.length}`);
 
   const writeQueue = new WriteQueue();
+  const provInstance = new prov.Provenance();
   const flowExecutionContext = new FlowExecutionContext(Artifacts.getFullFlow(flowName), jobId, runtimeOptions, stepNumbers);
   let stepError;
 
@@ -57,6 +60,11 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
       currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, writeQueue);
       const stepResponse = stepExecutionContext.buildStepResponse();
       addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
+      if (stepExecutionContext.provenanceIsEnabled()) {
+        flowProvenance.queueProvenanceData(stepExecutionContext, provInstance, currentContentArray);
+      } else {
+        hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.getLabelForLogging()}`);
+      }
       flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems);
       hubUtils.hubTrace(INFO_EVENT, `Finished ${stepExecutionContext.getLabelForLogging()}`);
     } catch (error) {
@@ -72,6 +80,7 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
 
   // TODO Will improve error handling in DHFPROD-6720
   const writeInfos = !stepError ? writeQueue.persist() : null;
+  provInstance.commit();
   flowExecutionContext.finishJob(stepError, writeInfos);
   return flowExecutionContext.flowResponse;
 }
@@ -84,7 +93,7 @@ function normalizeContentArray(contentArray) {
 }
 
 /**
- * Ignoring provenance for now; ignoring invoking step against a different database for now
+ * TODO ignoring invoking step against a different database for now
  *
  * @param stepExecutionContext
  * @param contentArray

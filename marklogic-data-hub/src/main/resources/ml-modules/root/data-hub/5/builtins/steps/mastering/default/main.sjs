@@ -20,7 +20,7 @@ const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/l
 const requiredOptionProperties = ['matchOptions', 'mergeOptions'];
 const emptySequence = Sequence.from([]);
 
-function main(content, options) {
+function main(content, options, stepExecutionContext) {
   const filteredContent = [];
   masteringStepLib.checkOptions(content, options, filteredContent);
   let mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
@@ -34,7 +34,7 @@ function main(content, options) {
       matchOptions,
       options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
       persistResults,
-      datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
+      stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
     );
   } else {
     return emptySequence;

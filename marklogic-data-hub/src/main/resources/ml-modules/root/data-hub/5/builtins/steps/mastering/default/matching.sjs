@@ -79,7 +79,7 @@ function main(content, options, stepExecutionContext) {
     filteredContent,
     options,
     options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
-    datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL || options.provenanceGranularityLevel === datahub.prov.FINE_LEVEL
+    stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
   );
 
   return buildResult(matchSummaryJson, options, collections);

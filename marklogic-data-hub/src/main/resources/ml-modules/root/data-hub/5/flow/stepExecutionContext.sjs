@@ -231,6 +231,15 @@ class StepExecutionContext {
     return String(this.combinedOptions.disableJobOutput) !== "true";
   }
 
+  provenanceIsEnabled() {
+    const val = String(this.combinedOptions.provenanceGranularityLevel);
+    return val === consts.PROVENANCE_COARSE || val === consts.PROVENANCE_FINE;
+  }
+  
+  fineProvenanceIsEnabled() {
+    return String(this.combinedOptions.provenanceGranularityLevel) === consts.PROVENANCE_FINE;
+  }
+  
   batchOutputIsEnabled() {
     if (!this.jobOutputIsEnabled()) {
       return false;

@@ -158,4 +158,9 @@ assertions.push(
   test.assertTrue(new Date(mapResult.stepStartDateTime) < new Date(mapResult.stepEndDateTime))
 );
 
+assertions.push(
+  test.assertEqual(4, hubTest.getProvenanceCount(), 
+    "Expected 2 prov docs for the ingestion step, and 2 for the mapping step, as both have prov enabled")
+);
+
 assertions;

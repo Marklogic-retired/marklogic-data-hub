@@ -81,6 +81,10 @@ module.exports = {
     STEP_COLLECTION
   ],
 
+  PROVENANCE_OFF: "off",
+  PROVENANCE_COARSE: "coarse",
+  PROVENANCE_FINE: "fine",
+  
   // Define all DH trace events here
   TRACE_STEP: "hub-step",
   TRACE_FLOW_RUNNER: "hub-flow-runner",
