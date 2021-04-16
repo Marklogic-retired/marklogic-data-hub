@@ -832,11 +832,11 @@ pipeline{
             }
         }
 
-		stage('rh7-singlenode'){
+		stage('rh7-singlenode-9.0-11'){
             when { expression {return params.regressions} }
-            options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
+            timeout(time: 3,  unit: 'HOURS'){
              catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
@@ -852,7 +852,7 @@ pipeline{
                 if(result){
                    currentBuild.result='UNSTABLE'
                 }
-			 }}
+			 }}}
 			}
 			post{
 				always{
@@ -878,8 +878,9 @@ pipeline{
             options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
-             catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0","Latest")}
-			}
+            timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0","Latest")}
+            }}
 			post{
 				 always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -896,11 +897,11 @@ pipeline{
                   }
 		}
 		stage('rh7_cluster_9.0-Nightly'){
-            options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
+             timeout(time: 3,  unit: 'HOURS'){
               catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0","Latest")}
-			}
+			}}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -916,11 +917,11 @@ pipeline{
                   }
 		}
         stage('rh7_cluster_9.0-11'){
-            options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
+             timeout(time: 3,  unit: 'HOURS'){
               catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
-			}
+			}}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -935,11 +936,11 @@ pipeline{
                   }
 		}
          stage('rh7_cluster_10.0-3'){
-             options {timeout(time: 3, unit: 'HOURS')}
              agent { label 'dhfLinuxAgent'}
              steps{
+              timeout(time: 3,  unit: 'HOURS'){
                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
-             }
+             }}
              post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
@@ -955,11 +956,11 @@ pipeline{
                            }
              }
              stage('rh7_cluster_10.0-4'){
-               options {timeout(time: 3, unit: 'HOURS')}
                agent { label 'dhfLinuxAgent'}
                steps{
+                timeout(time: 3,  unit: 'HOURS'){
                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
-               }
+               }}
                post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
@@ -975,11 +976,11 @@ pipeline{
                            }
              }
              stage('rh7_cluster_10.0-5'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
+                timeout(time: 3,  unit: 'HOURS'){
                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
-                }
+                }}
                 post{
                   always{
                       sh 'rm -rf $WORKSPACE/xdmp'
@@ -995,11 +996,11 @@ pipeline{
                             }
               }
 		stage('rh7_cluster_10.0-6'){
-            options {timeout(time: 3, unit: 'HOURS')}
             agent { label 'dhfLinuxAgent'}
             steps{
+             timeout(time: 3,  unit: 'HOURS'){
                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
-            }
+            }}
             post{
                   always{
                       sh 'rm -rf $WORKSPACE/xdmp'
@@ -1020,11 +1021,11 @@ pipeline{
             when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps {
+                timeout(time: 3,  unit: 'HOURS'){
                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dh5Example()}
-                }
+                }}
                 post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1038,11 +1039,11 @@ pipeline{
                  }
             }
             stage('dhf-customhook'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
+                 timeout(time: 3,  unit: 'HOURS'){
                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhCustomHook()}
-                 }
+                 }}
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1056,11 +1057,11 @@ pipeline{
                  }
             }
             stage('mapping-example'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
-                 }
+                 timeout(time: 3,  unit: 'HOURS'){
+                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
+                 }}
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1074,11 +1075,11 @@ pipeline{
                  }
             }
             stage('smart-mastering-complete'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
+                 timeout(time: 3,  unit: 'HOURS'){
                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
-                }
+                }}
                 post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1097,11 +1098,11 @@ pipeline{
             when { expression {return params.regressions} }
             parallel{
         		stage('w10_SN_9.0-Nightly'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
+                     timeout(time: 3,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
-                    }
+                    }}
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
@@ -1117,11 +1118,11 @@ pipeline{
                           }
         		}
                 stage('w10_SN_10.0-Nightly'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
+                     timeout(time: 3,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
-        			}
+        			}}
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
@@ -1137,11 +1138,11 @@ pipeline{
                           }
         		}
         		stage('w10_SN_9.0-11'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
+                    timeout(time: 3,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
-        			}
+        			}}
         			post{
         				always{
                                bat 'RMDIR /S/Q xdmp'
@@ -1157,11 +1158,11 @@ pipeline{
                           }
         		}
         		stage('w12_cluster_10.0-6'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinCluster'}
         			steps{
+                    timeout(time: 3,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){winParallel()}
-        			}
+        			}}
         			post{
         				always{
         				  	bat 'RMDIR /S/Q xdmp'
@@ -1185,15 +1186,15 @@ pipeline{
             parallel{
 
                 stage('10.0-Nightly-linux-On-Prem'){
-                    options {timeout(time: 3, unit: 'HOURS')}
                     agent { label 'dhfLinuxAgent'}
                     environment{
                         JAVA_HOME="$JAVA_HOME_DIR"
                         M2_LOCAL_REPO="$WORKSPACE/repository"
                     }
                     steps {
+                     timeout(time: 3,  unit: 'HOURS'){
                         catchError(buildResult: 'SUCCESS', catchInterruptions: true) { cypressE2EOnPremLinuxTests("Latest", "10.0") }
-                    }
+                    }}
                     post{
                         success {
                             println("$STAGE_NAME Completed")
@@ -1207,7 +1208,6 @@ pipeline{
                 }
 
                 stage('10.0-6.2-Win10-On-Prem'){
-                    options {timeout(time: 3, unit: 'HOURS')}
                     agent { label 'Win10HCPrem'}
                     environment{
                         JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
@@ -1216,8 +1216,9 @@ pipeline{
                         PATH="$JAVA_HOME;$NODE_JS;$PATH"
                     }
                     steps{
+                     timeout(time: 3,  unit: 'HOURS'){
                         catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-6.2")}
-                    }
+                    }}
                     post{
                         success {
                             println("$STAGE_NAME Completed")
@@ -1233,13 +1234,13 @@ pipeline{
                 /*
                 stage('10.0-3-MAC-On-Prem'){
                     agent { label 'osx-i64-10-test-2'}
-                    options {timeout(time: 3, unit: 'HOURS')}
                     environment{
                         M2_LOCAL_REPO="$WORKSPACE/repository"
                     }
                     steps{
+                     timeout(time: 3,  unit: 'HOURS'){
                         catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremMacTests("Release","10.0-3")}
-                    }
+                    }}
                     post{
                         success {
                             println("$STAGE_NAME Completed")
@@ -1254,7 +1255,6 @@ pipeline{
 
                 stage('10.0-3-Win12-On-Prem'){
                     agent { label 'dhfWin12'}
-                    options {timeout(time: 3, unit: 'HOURS')}
                     environment{
                         JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
                         M2_LOCAL_REPO="$WORKSPACE/repository"
@@ -1263,8 +1263,9 @@ pipeline{
                     }
 
                     steps{
+                     timeout(time: 3,  unit: 'HOURS'){
                         catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-3")}
-                    }
+                    }}
                    post{
                         success {
                             println("$STAGE_NAME Completed")
