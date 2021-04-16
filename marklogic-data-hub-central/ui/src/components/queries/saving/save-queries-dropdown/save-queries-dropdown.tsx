@@ -82,15 +82,14 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
       <Select
         id="dropdownList"
         placeholder={"select a query"}
-        className={styles.dropDownStyle}
+        className={searchOptions.selectedQuery === "select a query" ? styles.dropDownStyle_placeholder : styles.dropDownStyle}
         onChange={checkCurrentQueryChange}
         value={(() => {
           if (props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === "select a query") {
             onItemSelect(searchOptions.selectedQuery);
           }
           return searchOptions.selectedQuery;
-        })()
-        }
+        })()}
         getPopupContainer={() => document.getElementById("dropdownList") || document.body}
         data-testid="dropdown-list"
       >

@@ -1,9 +1,3 @@
-.saveDropdown {
-    margin-top: -39px;
-    margin-bottom: 43px;
-    margin-left: 10px;
-}
-
 .description {
   margin-left: 10px;
   font-size: 12px;
@@ -32,4 +26,30 @@
   cursor: pointer;
   color: #5b69af;
   marginBottom: 9px;
+}
+
+.queryBar {
+  // maximum percentage of screen width allocated to dropdown + icons
+  max-width: 80%;
+  // positioning
+  position: relative;
+  top: -39px;
+  right: -10px;
+  margin: 0 0 43px;
+  // lines up icons with dropdown (do not touch)
+  display: flex;
+}
+.saveDropdown {
+  clear: both;
+  // limits the size of the dropdown to 80% of the screen width (config in .queryBar)
+  max-width: 100%;
+}
+.iconBar {
+  // horizontally aligns icons (do not touch)
+  display: flex;
+  align-items: center;
+  position: relative;
+  div {
+    margin: 0px 4px; // governs horizontal spacing between icons
+  }
 }
