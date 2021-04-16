@@ -106,7 +106,14 @@ function generateExplorerWithFacetableAndSortableProperties() {
         "rangeIndex": [ "street" ],
         "properties": {
           "street": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"},
-          "city": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"}
+          "city": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"},
+          "zip": {"$ref": "#/definitions/Zip"}
+        }
+      },
+      "Zip": {
+        "properties": {
+          "fiveDigit": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint", "facetable": true},
+          "plusFour": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"}
         }
       }
     }
@@ -127,6 +134,7 @@ function generateExplorerWithFacetableAndSortableProperties() {
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/completedDate", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'completedDate')]/*:range/*:path-index/text()")))),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/publishedDate", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'publishedDate')]/*:range/*:path-index/text()")))),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Address/street", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'street')]/*:range/*:path-index/text()")))),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/publishedAtAddress/Address/zip/Zip/fiveDigit", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'publishedAtAddress.Address.zip.Zip.fiveDigit')]/*:range/*:path-index/text()")))),
 
     test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'title')]/*:range/@facet")))),
     test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'authors')]/*:range/@facet")))),
@@ -135,6 +143,7 @@ function generateExplorerWithFacetableAndSortableProperties() {
     test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'publishedDate')]/*:range/@facet")))),
     test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'street')]/*:range/@facet")))),
     test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'city')]/*:range/@facet")))),
+    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'publishedAtAddress.Address.zip.Zip.fiveDigit')]/*:range/@facet")))),
 
     test.assertNotExists(expOptions.xpath("/*:constraint[contains(@name, 'bookId')]/*:range/*:path-index"))
   ];
