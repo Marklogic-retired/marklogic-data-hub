@@ -18,6 +18,7 @@
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const Batch = require("/data-hub/5/flow/batch.sjs");
 const defaultConfig = require("/com.marklogic.hub/config.sjs")
+const flowProvenance = require("/data-hub/5/flow/flowProvenance.sjs");
 const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
@@ -207,8 +208,6 @@ class Flow {
     const stepExecutionContext = new StepExecutionContext(theFlow, stepNumber, stepDefinition, jobId, options);
     const combinedOptions = stepExecutionContext.combinedOptions;
 
-    this.datahub.prov.granularityLevel(combinedOptions.provenanceGranularityLevel);
-
     if (this.datahub.flow) {
       //clone and remove flow to avoid circular references
       this.datahub = this.cloneInstance(this.datahub);
@@ -254,7 +253,11 @@ class Flow {
       }
     }
 
-    this.writeProvenanceData(stepExecutionContext);
+    const outputContentArray = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
+    
+    if (stepExecutionContext.provenanceIsEnabled()) {
+      flowProvenance.writeProvenanceData(stepExecutionContext, outputContentArray);
+    }
 
     if (stepExecutionContext.batchOutputIsEnabled()) {
       if (jobDoc != null) {
@@ -269,7 +272,8 @@ class Flow {
       hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER, `Batch document insertion is disabled`);
     }
 
-    let resp = {
+    // This maps to the Java ResponseHolder class
+    const responseHolder = {
       "jobId": stepExecutionContext.jobId,
       // using failed/completed items length instead of content length since a step can create more or less documents than were passed to the step
       "totalCount": stepExecutionContext.failedItems.length + stepExecutionContext.completedItems.length,
@@ -279,14 +283,14 @@ class Flow {
       "errors": stepExecutionContext.batchErrors
     };
     if (combinedOptions.fullOutput) {
-      resp.documents = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
+      responseHolder.documents = outputContentArray;
     }
     if (this.datahub.performance.performanceMetricsOn()) {
-      resp.performanceMetrics = this.datahub.performance.stepMetrics;
+      responseHolder.performanceMetrics = this.datahub.performance.stepMetrics;
     }
 
     this.writeQueue = new WriteQueue();
-    return resp;
+    return responseHolder;
   }
 
   runStep(stepExecutionContext, content) {
@@ -326,113 +330,6 @@ class Flow {
 
     // Directly add this to avoid the failedItems count from being incremented
     stepExecutionContext.batchErrors.push(Object.assign(error, {"uri":uri}));
-  }
-
-  /**
-   * Writes provenance data based on what's in the writeQueue.
-   *
-   * @param stepExecutionContext
-   */
-  writeProvenanceData(stepExecutionContext) {
-    const jobId = stepExecutionContext.jobId;
-    const flowName = stepExecutionContext.flow.name;
-    const stepDefinition = stepExecutionContext.stepDefinition;
-    const flowStep = stepExecutionContext.flowStep;
-
-    const prov = this.datahub.prov;
-    if (stepExecutionContext.completedItems.length && prov.granularityLevel() !== prov.OFF_LEVEL) {
-      const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase(): stepDefinition.type;
-      const stepName = flowStep.name || flowStep.stepDefinitionName;
-      const contentArray = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
-      for (let content of contentArray) {
-        // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
-        if (content.provenance !== false) {
-          const previousUris = hubUtils.normalizeToArray(content.previousUri || content.uri);
-          const info = {
-            derivedFrom: previousUris,
-            influencedBy: stepName,
-            status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
-            metadata: {}
-          };
-
-          const isFineGranularity = prov.granularityLevel() === prov.FINE_LEVEL;
-          const isMappingStep = flowStep.stepDefinitionName === "entity-services-mapping";
-
-          if (isFineGranularity && isMappingStep) {
-            xdmp.trace(this.datahub.consts.TRACE_FLOW_RUNNER, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
-          }
-
-          const provResult = isFineGranularity && !isMappingStep && content.provenance ?
-            this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) :
-            prov.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
-
-          if (provResult instanceof Error) {
-            this.datahub.debug.log({message: provResult.message, type: 'error'});
-          }
-        }
-      }
-      this.datahub.prov.commit();
-    }
-  }
-
-  buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
-    let previousUris = fn.distinctValues(Sequence.from([Sequence.from(Object.keys(content.provenance)),Sequence.from(info.derivedFrom)]));
-    let prov = this.datahub.prov;
-    let newDocURI = content.uri;
-    let docProvIDs = [];
-    // setup variables to group prov info by properties
-    let docProvPropertyIDsByProperty = {};
-    let docProvPropertyMetadataByProperty = {};
-    let docProvDocumentIDsByProperty = {};
-    for (let prevUri of previousUris) {
-      let docProvenance = content.provenance[prevUri];
-      if (docProvenance) {
-        let docProperties = Object.keys(docProvenance);
-        let docPropRecords = prov.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
-        let docProvID = docPropRecords[0];
-        docProvIDs.push(docProvID);
-        let docProvPropertyIDKeyVals = docPropRecords[1];
-        // accumulating changes here, since merges can have multiple docs with input per property.
-        for (let origProp of Object.keys(docProvPropertyIDKeyVals)) {
-          let propDetails = docProvenance[origProp];
-          let prop = propDetails.type || propDetails.destination;
-
-          docProvPropertyMetadataByProperty[prop] = docProvPropertyMetadataByProperty[prop] || {};
-          const propMetadata = docProvPropertyMetadataByProperty[prop];
-          for (const propDetailsKey of Object.keys(propDetails)) {
-            if (propDetails.hasOwnProperty(propDetailsKey) && propDetails[propDetailsKey]) {
-              propMetadata[propDetailsKey] = propMetadata[propDetailsKey] || [];
-              propMetadata[propDetailsKey] = propMetadata[propDetailsKey].concat(hubUtils.normalizeToArray(propDetails[propDetailsKey]));
-            }
-          }
-          docProvPropertyIDsByProperty[prop] = docProvPropertyIDsByProperty[prop] || [];
-          docProvPropertyIDsByProperty[prop].push(docProvPropertyIDKeyVals[origProp]);
-          docProvDocumentIDsByProperty[prop] = docProvDocumentIDsByProperty[prop] || [];
-          docProvDocumentIDsByProperty[prop].push(docProvID);
-        }
-      }
-    }
-
-    let newPropertyProvIDs = [];
-    for (let prop of Object.keys(docProvPropertyIDsByProperty)) {
-      let docProvDocumentIDs = docProvDocumentIDsByProperty[prop];
-      let docProvPropertyIDs = docProvPropertyIDsByProperty[prop];
-      let docProvPropertyMetadata = docProvPropertyMetadataByProperty[prop];
-      for (const propDetailsKey of Object.keys(docProvPropertyMetadata)) {
-        if (docProvPropertyMetadata.hasOwnProperty(propDetailsKey)) {
-          let dedupedMeta = Sequence.from(docProvPropertyMetadata[propDetailsKey]);
-          docProvPropertyMetadata[propDetailsKey] = fn.count(dedupedMeta) <= 1 ? fn.string(fn.head(dedupedMeta)) : dedupedMeta.toArray();
-          if (!(typeof docProvPropertyMetadata[propDetailsKey] === 'string' || docProvPropertyMetadata[propDetailsKey] instanceof xs.string)) {
-            docProvPropertyMetadata[propDetailsKey] = xdmp.toJsonString(docProvPropertyMetadata[propDetailsKey]);
-          }
-        }
-      }
-      let propInfo = Object.assign({}, info, { metadata: docProvPropertyMetadata });
-      let newPropertyProvID = prov.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
-      newPropertyProvIDs.push(newPropertyProvID);
-    }
-    // Now create the merged document record from both the original document records & the merged property records
-    return prov.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
   }
 
   isContextDB(databaseName) {

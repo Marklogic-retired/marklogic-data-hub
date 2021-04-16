@@ -137,6 +137,16 @@ function documentExists(uri, databaseName) {
 }
 
 /**
+ * For many scenarios, it'll be sufficient to just verify the count of provenance docs - i.e. was the expected number
+ * created, or were no docs created. 
+ */
+function getProvenanceCount() {
+  return fn.head(xdmp.invokeFunction(function() {
+    return cts.estimate(cts.collectionQuery("http://marklogic.com/provenance-services/record"));
+  }, {database: xdmp.database(config.JOBDATABASE)}));
+}
+
+/**
  * Makes life easy for verifying permissions by building a map of them, keyed on role name, with arrays of capabilities
  * as values.
  *
@@ -234,6 +244,7 @@ module.exports = {
   getFirstBatchRecord,
   getJobRecord,
   getModulesRecord,
+  getProvenanceCount,
   getRecord,
   getRecordInCollection,
   getStagingRecord,

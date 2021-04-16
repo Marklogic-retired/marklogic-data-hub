@@ -20,6 +20,7 @@
  */
 
 const matching = require('/data-hub/5/builtins/steps/mastering/default/matching.sjs');
+const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
 const test = require("/test/test-helper.xqy");
 
 // Prefixed with "/zzz" so it's almost certainly the last one in a match summary doc
@@ -39,7 +40,8 @@ const TEST_DOC_URI = "/zzz/test-doc.json";
  */
 function match(entityTypeName, entityProperties, options) {
   const content = buildMatchingContent(entityTypeName, entityProperties);
-  const stepExecutionContext = {jobId:"doesnt-matter"};
+  const fakeFlow = {"name":"fake", "steps": {"1": {}}};
+  const stepExecutionContext = new StepExecutionContext(fakeFlow, "1", {});
   return fn.head(matching.main(content, options, stepExecutionContext)).value.matchSummary;
 }
 

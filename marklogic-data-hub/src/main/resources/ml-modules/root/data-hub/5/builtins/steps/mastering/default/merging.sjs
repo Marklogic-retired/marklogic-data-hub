@@ -24,7 +24,7 @@ const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
-function main(content, options) {
+function main(content, options, stepExecutionContext) {
   let isSeparateMergeStep = false;
   // These index references can't be out this function scope or the jobReport will error, since they don't exist for the jobs DB
   if (options.stepId) {
@@ -113,7 +113,7 @@ function main(content, options) {
         Sequence.from(urisToProcess),
         thisMatchSummary,
         options,
-        datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
+        stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
     );
   }
 

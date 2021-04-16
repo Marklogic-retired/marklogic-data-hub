@@ -1,14 +1,10 @@
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.xqy");
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
+const flowProvenance = require("/data-hub/5/flow/flowProvenance.sjs");
 const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
 
 const assertions = [];
 const flowName = "doesntMatter";
-
-// Simulate a processed URI so that prov can be generated
-datahub.flow.writeQueue.addContent(xdmp.databaseName(xdmp.database()), {"uri": "test.json"});
 
 const fakeFlow = {
   name:flowName,
@@ -21,7 +17,7 @@ const fakeFlow = {
 let stepExecutionContext = new StepExecutionContext(fakeFlow, "1", {"name":"myCustomStep", "type": "unrecognized"});
 stepExecutionContext.completedItems = ["test.json"];
 
-datahub.flow.writeProvenanceData(stepExecutionContext);
+flowProvenance.writeProvenanceData(stepExecutionContext, [{"uri": "test.json"}]);
 
 assertions.push(test.assertEqual(null, hubTest.getFirstProvDocument(),
   "Because the type of the step definition is not a recognized value, a validation error should be logged, and no prov " +
@@ -32,7 +28,7 @@ assertions.push(test.assertEqual(null, hubTest.getFirstProvDocument(),
 stepExecutionContext = new StepExecutionContext(fakeFlow, "1", {"name":"myCustomStep", "type": "custom"});
 stepExecutionContext.completedItems = ["test.json"];
 
-datahub.flow.writeProvenanceData(stepExecutionContext);
+flowProvenance.writeProvenanceData(stepExecutionContext, [{"uri": "test.json"}]);
 
 assertions.push(
   test.assertEqual("document", hubTest.getFirstProvDocument().xpath("/*/fn:local-name()"),
