@@ -373,7 +373,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     * @param value
     * @example 'city'
     * Set the filterMatch parameter of the matched element to true.
-    * Add the more link objects at the end of the array where the match is found. 
+    * Add the more link objects at the end of the array where the match is found.
     * The more link object contains the parent key of the matched element if exist and searchKey which is the reference to the matched element.
     **/
   const getFilteredData = (value, sourceData) => {
@@ -432,7 +432,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     * @param parentKey
     * @param siblings
     * Set the filterMatch parameter of the matched element to true.
-    * Add the less link objects at the end of the array where the match is found. 
+    * Add the less link objects at the end of the array where the match is found.
     * The less link object contains the parent key of the matched element and searchKey which is the reference to the matched element.
     **/
   const insertRowSiblings = (parentKey, siblings) => {

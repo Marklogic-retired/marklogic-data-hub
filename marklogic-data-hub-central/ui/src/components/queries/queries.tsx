@@ -384,118 +384,7 @@ const Query: React.FC<Props> = (props) => {
     <>
       <div>
         {props.cardView === false && <div>
-          <div>
-            {(props.selectedFacets.length > 0 || searchOptions.query
-              || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
-              showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === "select a query" &&
-              <div style={{marginTop: "-22px"}}>
-                <MLTooltip title={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"}>
-                  <FontAwesomeIcon
-                    icon={faSave}
-                    onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
-                    className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
-                    data-testid="save-modal"
-                    style={props.queries.length > 0 ? {
-                      marginLeft: "170px", marginBottom: "9px"
-                    } : {
-                      marginLeft: "18px", marginBottom: "9px"
-                    }}
-                    size="lg" />
-                </MLTooltip>
-                <div id={"savedQueries"}>
-                  {openSaveModal &&
-                    <SaveQueryModal
-                      setSaveModalVisibility={() => setOpenSaveModal(false)}
-                      setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                      saveNewQuery={saveNewQuery}
-                      greyFacets={props.greyFacets}
-                      toggleApply={(clicked) => toggleApply(clicked)}
-                      toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-                      currentQueryName={currentQueryName}
-                      setCurrentQueryName={setCurrentQueryName}
-                      currentQueryDescription={currentQueryDescription}
-                      setCurrentQueryDescription={setCurrentQueryDescription}
-                      resetYesClicked={resetYesClicked}
-                      setColumnSelectorTouched={props.setColumnSelectorTouched}
-                      existingQueryYesClicked={existingQueryYesClicked}
-                    />}
-                </div>
-              </div>}
-            {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
-              <div style={{marginTop: "-22px"}}>
-                <MLTooltip title={"Save changes"}>
-                  <FontAwesomeIcon
-                    icon={faSave}
-                    className={styles.iconHover}
-                    title="save-changes"
-                    onClick={() => setOpenSaveChangesModal(true)}
-                    data-testid="save-changes-modal"
-                    style={props.queries.length > 0 ? {
-                      color: "#5b69af",
-                      marginLeft: "170px",
-                      marginBottom: "9px",
-                      cursor: "pointer"
-                    } : {
-                      color: "#5b69af", marginLeft: "18px",
-                      marginBottom: "9px",
-                      cursor: "pointer"
-                    }}
-                    size="lg" />
-                </MLTooltip>
-                <div id={"saveChangedQueries"}>
-                  {openSaveChangesModal &&
-                    <SaveChangesModal
-                      setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
-                      setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                      greyFacets={props.greyFacets}
-                      toggleApply={(clicked) => toggleApply(clicked)}
-                      toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-                      currentQuery={currentQuery}
-                      currentQueryName={currentQueryName}
-                      setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
-                      setCurrentQueryName={(name) => setCurrentQueryName(name)}
-                      nextQueryName={nextQueryName}
-                      savedQueryList={props.queries}
-                      setCurrentQueryOnEntityChange={setCurrentQueryOnEntityChange}
-                      getSaveQueryWithId={(key) => getSaveQueryWithId(key)}
-                      isSaveQueryChanged={isSaveQueryChanged}
-                      entityQueryUpdate={entityQueryUpdate}
-                      toggleEntityQueryUpdate={() => toggleEntityQueryUpdate(false)}
-                      resetYesClicked={resetYesClicked}
-                      setColumnSelectorTouched={props.setColumnSelectorTouched}
-                    />}
-                </div>
-              </div>}
-            {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
-              <div style={{marginTop: "-30px", maxWidth: "100px"}}>
-                <MLTooltip title={"Discard changes"}>
-                  <FontAwesomeIcon
-                    icon={faUndo}
-                    className={styles.iconHover}
-                    title="discard-changes"
-                    onClick={() => setOpenDiscardChangesModal(true)}
-                    style={props.queries.length > 0 ? {
-                      color: "#5b69af",
-                      marginLeft: "192px",
-                      marginBottom: "9px",
-                      cursor: "pointer"
-                    } : {
-                      color: "#5b69af", marginLeft: "192px",
-                      marginBottom: "9px",
-                      cursor: "pointer"
-                    }}
-                    size="lg" />
-                </MLTooltip>
-                <div>
-                  {openDiscardChangesModal &&
-                    <DiscardChangesModal
-                      setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
-                      savedQueryList={props.queries}
-                      toggleApply={(clicked) => toggleApply(clicked)}
-                      toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-                    />}
-                </div>
-              </div>}
+          <div className={styles.queryBar}>
             <div className={styles.saveDropdown}>
               {props.queries.length > 0 &&
                 <SaveQueriesDropdown
@@ -515,97 +404,188 @@ const Query: React.FC<Props> = (props) => {
                 />
               }
             </div>
+
+            <div className={styles.iconBar}>
+              {(props.selectedFacets.length > 0 || searchOptions.query
+                || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
+                showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === "select a query" &&
+                <div>
+                  <MLTooltip title={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"}>
+                    <FontAwesomeIcon
+                      icon={faSave}
+                      onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
+                      className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
+                      data-testid="save-modal"
+                      size="lg"
+                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
+                    />
+                  </MLTooltip>
+                  <div id={"savedQueries"}>
+                    {openSaveModal &&
+                      <SaveQueryModal
+                        setSaveModalVisibility={() => setOpenSaveModal(false)}
+                        setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
+                        saveNewQuery={saveNewQuery}
+                        greyFacets={props.greyFacets}
+                        toggleApply={(clicked) => toggleApply(clicked)}
+                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                        currentQueryName={currentQueryName}
+                        setCurrentQueryName={setCurrentQueryName}
+                        currentQueryDescription={currentQueryDescription}
+                        setCurrentQueryDescription={setCurrentQueryDescription}
+                        resetYesClicked={resetYesClicked}
+                        setColumnSelectorTouched={props.setColumnSelectorTouched}
+                        existingQueryYesClicked={existingQueryYesClicked}
+                      />}
+                  </div>
+                </div>}
+              {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
+                <div>
+                  <MLTooltip title={"Save changes"}>
+                    <FontAwesomeIcon
+                      icon={faSave}
+                      className={styles.iconHover}
+                      title="save-changes"
+                      onClick={() => setOpenSaveChangesModal(true)}
+                      data-testid="save-changes-modal"
+                      size="lg"
+                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
+                    />
+                  </MLTooltip>
+                  <div id={"saveChangedQueries"}>
+                    {openSaveChangesModal &&
+                      <SaveChangesModal
+                        setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
+                        setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
+                        greyFacets={props.greyFacets}
+                        toggleApply={(clicked) => toggleApply(clicked)}
+                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                        currentQuery={currentQuery}
+                        currentQueryName={currentQueryName}
+                        setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
+                        setCurrentQueryName={(name) => setCurrentQueryName(name)}
+                        nextQueryName={nextQueryName}
+                        savedQueryList={props.queries}
+                        setCurrentQueryOnEntityChange={setCurrentQueryOnEntityChange}
+                        getSaveQueryWithId={(key) => getSaveQueryWithId(key)}
+                        isSaveQueryChanged={isSaveQueryChanged}
+                        entityQueryUpdate={entityQueryUpdate}
+                        toggleEntityQueryUpdate={() => toggleEntityQueryUpdate(false)}
+                        resetYesClicked={resetYesClicked}
+                        setColumnSelectorTouched={props.setColumnSelectorTouched}
+                      />}
+                  </div>
+                </div>}
+              {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
+                <div>
+                  <MLTooltip title={"Discard changes"}>
+                    <FontAwesomeIcon
+                      icon={faUndo}
+                      className={styles.iconHover}
+                      title="discard-changes"
+                      onClick={() => setOpenDiscardChangesModal(true)}
+                      size="lg"
+                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
+                    />
+                  </MLTooltip>
+                  <div>
+                    {openDiscardChangesModal &&
+                      <DiscardChangesModal
+                        setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
+                        savedQueryList={props.queries}
+                        toggleApply={(clicked) => toggleApply(clicked)}
+                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                      />}
+                  </div>
+                </div>}
+
+              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div>
+                <MLTooltip title={"Edit query details"}>
+                  {hoverOverDropdown && <FontAwesomeIcon
+                    icon={faPencilAlt}
+                    className={styles.iconHover}
+                    title="edit-query"
+                    size="lg"
+                    onClick={() => setOpenEditDetail(true)}
+                    style={{width: "16px", color: "#5b69af", cursor: "pointer"}}
+                  />}
+                </MLTooltip>
+                {openEditDetail &&
+                  <EditQueryDetails
+                    setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
+                    currentQuery={currentQuery}
+                    currentQueryName={currentQueryName}
+                    setCurrentQueryName={setCurrentQueryName}
+                    currentQueryDescription={currentQueryDescription}
+                    setCurrentQueryDescription={setCurrentQueryDescription}
+                  />
+                }
+              </div>}
+              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+                <div>
+                  <MLTooltip title={"Save a copy"}>
+                    {hoverOverDropdown && <FontAwesomeIcon
+                      icon={faCopy}
+                      className={styles.iconHover}
+                      size="lg"
+                      onClick={() => setOpenSaveCopyModal(true)}
+                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
+                    />}
+                  </MLTooltip>
+                  {openSaveCopyModal &&
+                    <SaveQueryModal
+                      setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
+                      setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
+                      saveNewQuery={saveNewQuery}
+                      greyFacets={props.greyFacets}
+                      toggleApply={(clicked) => toggleApply(clicked)}
+                      toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                      currentQueryName={currentQueryName}
+                      setCurrentQueryName={setCurrentQueryName}
+                      currentQueryDescription={currentQueryDescription}
+                      setCurrentQueryDescription={setCurrentQueryDescription}
+                      resetYesClicked={resetYesClicked}
+                      setColumnSelectorTouched={props.setColumnSelectorTouched}
+                      existingQueryYesClicked={existingQueryYesClicked}
+                    />}
+                </div>}
+              {resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
+                <div>
+                  <Tooltip title={"Clear query"}>
+                    <FontAwesomeIcon
+                      className={styles.iconHover}
+                      icon={faWindowClose}
+                      title={"reset-changes"}
+                      size="lg"
+                      onClick={() => resetIconClicked()}
+                      style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
+                      id="reset-changes"
+                    />
+                  </Tooltip>
+                  <Modal
+                    visible={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
+                    title={"Confirmation"}
+                    onCancel={() => onResetCancel()}
+                    footer={[
+                      <Button key="cancel" id="reset-confirmation-cancel-button" onClick={() => onResetCancel()}>Cancel</Button>,
+                      <Button key="back" id="reset-confirmation-no-button" onClick={() => onNoResetClick()}>
+                      No
+                      </Button>,
+                      <Button key="submit" id="reset-confirmation-yes-button" type="primary" onClick={() => onResetOk()}>
+                      Yes
+                      </Button>
+                    ]}>
+                    {showResetQueryEditedConfirmation &&
+                    <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                      <br />
+                      <p>Would you like to save the changes before switching to another query?</p>
+                    </div>}
+                    {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
+                  </Modal>
+                </div>}
+            </div>
           </div>
-          {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div style={hoverOverDropdown ? {marginLeft: "214px", marginTop: "-66px"} : {marginLeft: "214px"}}>
-            <MLTooltip title={"Edit query details"}>
-              {hoverOverDropdown && <FontAwesomeIcon
-                icon={faPencilAlt}
-                className={styles.iconHover}
-                title="edit-query"
-                size="lg"
-                onClick={() => setOpenEditDetail(true)}
-                style={{width: "16px", color: "#5b69af", cursor: "pointer"}}
-              />}
-            </MLTooltip>
-            {openEditDetail &&
-              <EditQueryDetails
-                setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
-                currentQuery={currentQuery}
-                currentQueryName={currentQueryName}
-                setCurrentQueryName={setCurrentQueryName}
-                currentQueryDescription={currentQueryDescription}
-                setCurrentQueryDescription={setCurrentQueryDescription}
-              />
-            }
-          </div>}
-          {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
-            <div style={{marginLeft: "234px", marginTop: "-23px"}}>
-              <MLTooltip title={"Save a copy"}>
-                {hoverOverDropdown && <FontAwesomeIcon
-                  icon={faCopy}
-                  className={styles.iconHover}
-                  size="lg"
-                  onClick={() => setOpenSaveCopyModal(true)}
-                  style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                />}
-              </MLTooltip>
-              {openSaveCopyModal &&
-                <SaveQueryModal
-                  setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
-                  setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
-                  saveNewQuery={saveNewQuery}
-                  greyFacets={props.greyFacets}
-                  toggleApply={(clicked) => toggleApply(clicked)}
-                  toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-                  currentQueryName={currentQueryName}
-                  setCurrentQueryName={setCurrentQueryName}
-                  currentQueryDescription={currentQueryDescription}
-                  setCurrentQueryDescription={setCurrentQueryDescription}
-                  resetYesClicked={resetYesClicked}
-                  setColumnSelectorTouched={props.setColumnSelectorTouched}
-                  existingQueryYesClicked={existingQueryYesClicked}
-                />}
-            </div>}
-          {resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
-            <div style={searchOptions.selectedQuery !== "select a query" ? {
-              marginLeft: "256px",
-              marginTop: "-21px",
-            } : {
-              marginLeft: "192px",
-              marginTop: "-66px",
-            }}>
-              <Tooltip title={"Clear query"}>
-                <FontAwesomeIcon
-                  className={styles.iconHover}
-                  icon={faWindowClose}
-                  title={"reset-changes"}
-                  size="lg"
-                  onClick={() => resetIconClicked()}
-                  style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
-                  id="reset-changes"
-                />
-              </Tooltip>
-              <Modal
-                visible={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
-                title={"Confirmation"}
-                onCancel={() => onResetCancel()}
-                footer={[
-                  <Button key="cancel" id="reset-confirmation-cancel-button" onClick={() => onResetCancel()}>Cancel</Button>,
-                  <Button key="back" id="reset-confirmation-no-button" onClick={() => onNoResetClick()}>
-                    No
-                  </Button>,
-                  <Button key="submit" id="reset-confirmation-yes-button" type="primary" onClick={() => onResetOk()}>
-                    Yes
-                  </Button>
-                ]}>
-                {showResetQueryEditedConfirmation &&
-                  <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
-                    <br />
-                    <p>Would you like to save the changes before switching to another query?</p>
-                  </div>}
-                {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
-              </Modal>
-            </div>}
+
           <div id="selected-query-description" style={props.isSavedQueryUser ? {marginTop: "10px"} : {marginTop: "-36px"}}
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
             <MLTooltip title={currentQueryDescription}>

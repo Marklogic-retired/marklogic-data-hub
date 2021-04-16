@@ -1,4 +1,40 @@
-.dropDownStyle{
-    width: 150px;
-    color: black;
+// when a query is selected
+.dropDownStyle,
+.dropDownStyle:focus {
+  // spacing between rightmost end of query name and dropdown arrow
+  padding-right: 16px;
+  // min-width is the minimum width, do not touch width prop
+  min-width: 200px;
+  width: 100%;
+  // font color and size
+  color: #333333;
+  font-size: 20px;
+  div {
+    // removes border of dropdown select
+    border: none;
+    box-shadow: none !important;
+    div {
+      // extra spacing between query name and dropdown
+      margin-right: 16px
+    }
+  }
 }
+
+// when placeholder query is in effect
+.dropDownStyle_placeholder,
+.dropDownStyle_placeholder:focus {
+  // spacing between rightmost end of query name and dropdown arrow
+  padding-right: 16px;
+  // width of the 
+  width: 200px;
+  // font color and size
+  color: #cccccc;
+  font-size: 14px;
+  border: none;
+  div {
+    // removes border of dropdown select
+    border: none;
+    box-shadow: none !important;
+  }
+}
+
