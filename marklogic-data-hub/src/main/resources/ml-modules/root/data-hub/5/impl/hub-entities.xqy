@@ -186,7 +186,7 @@ declare %private function hent:fix-options-for-explorer(
         where fn:not($container-for-entity-property-generated-by-es)
         return
           element {fn:node-name($n)} {
-            $n/@*,
+            $n/@* ! attribute {fn:node-name()} { fn:replace(., "/", ".")},
             let $path-expression := fix-path-expression(fn:string($n/search:range/search:path-index))
             let $search-range-node := $n/search:range
             let $is-sortable-only :=
@@ -775,6 +775,33 @@ declare function hent:json-schema-generate($entity-title as xs:string, $uber-mod
   return xdmp:to-json($uber-model)
 };
 
+declare %private function hent:build-indexes-for-structured-entity-properties($entity-path as xs:string, $definiton-name as xs:string, $definitions as map:map, $primary-entity-definition as map:map) {
+  let $entity-type := map:get($definitions, $definiton-name)
+  let $entity-type-properties := map:get($entity-type, "properties")
+
+  let $_ :=
+    for $entity-type-property in map:keys($entity-type-properties)
+    let $ref := map:get($entity-type-properties, $entity-type-property)=>map:get("$ref")
+    let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
+    return
+      if (fn:empty($ref) and (fn:empty($items) or fn:not(fn:starts-with(map:get($items, "$ref"), "#")))) then
+        if (map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")) then
+          json:array-push(map:get($primary-entity-definition, "rangeIndex"), $entity-path || "/" || $entity-type-property)
+        else ()
+      else
+        let $definiton-name :=
+          if (fn:empty($items)) then
+            fn:substring-after($ref, "#/definitions/")
+          else
+            fn:substring-after(map:get($items, "$ref"), "#/definitions/")
+        where $definiton-name
+        return
+          let $path := $entity-path || "/" || $entity-type-property || "/" || $definiton-name
+          let $_ := hent:build-indexes-for-structured-entity-properties($path, $definiton-name, $definitions, $primary-entity-definition)
+          return ()
+  return $primary-entity-definition
+};
+
 (:
   this function finds the first level facetable entityType properties and constrcuts and adds the rangeIndex array to
   the entityModel. All the structured properties are ignored for now even if a property is modeled as facetable as per
@@ -789,44 +816,55 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
   let $_ :=
     for $model as map:map in $models
       let $entity-title := map:get($model, "info")=>map:get("title")
-      let $entity-type := map:get($model, "definitions")=>map:get($entity-title)
+      let $entity-definition := map:get($model, "definitions")=>map:get($entity-title)
       let $entity-type-properties :=
         let $empty-map := map:map()
           return
-            if (fn:empty($entity-type)) then
+            if (fn:empty($entity-definition)) then
               let $_ := xdmp:log("Could not find entity definition with name: " || $entity-title)
               return $empty-map
             else
               let $_ :=
-                if (fn:empty(map:get($entity-type, "rangeIndex"))) then map:put($entity-type, "rangeIndex", json:array())
+                if (fn:empty(map:get($entity-definition, "rangeIndex"))) then map:put($entity-definition, "rangeIndex", json:array())
                 else ()
-              return map:get($entity-type, "properties")
+              return map:get($entity-definition, "properties")
 
-      let $namespace := if (fn:exists($entity-type)) then map:get($entity-type, "namespace") else ()
-      let $namespace-prefix := if (fn:exists($entity-type)) then map:get($entity-type, "namespacePrefix") else ()
+      let $namespace := if (fn:exists($entity-definition)) then map:get($entity-definition, "namespace") else ()
+      let $namespace-prefix := if (fn:exists($entity-definition)) then map:get($entity-definition, "namespacePrefix") else ()
 
       let $_ :=
         for $entity-type-property in map:keys($entity-type-properties)
           let $ref := map:get($entity-type-properties, $entity-type-property)=>map:get("$ref")
-          where fn:empty($ref)
           return
+            let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
             let $is-facetable :=
-              let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
-              return
-                if(fn:empty($items)) then
-                  map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
-                else
-                  fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
-                  map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
+              if (fn:empty($ref) and (fn:empty($items) or fn:not(fn:starts-with(map:get($items, "$ref"), "#")))) then
+                map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
+              else
+                let $definiton-name :=
+                  if (fn:empty($items)) then
+                    fn:substring-after($ref, "#/definitions/")
+                  else
+                    fn:substring-after(map:get($items, "$ref"), "#/definitions/")
+                where $definiton-name
+                return
+                  let $definitions := map:get($model, "definitions")
+                  let $entity-path := $entity-type-property || "/" || $definiton-name
+                  let $model := hent:build-indexes-for-structured-entity-properties($entity-path, $definiton-name, $definitions, $entity-definition)
+            return
+              fn:false()
 
             let $is-sortable :=
-              let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
-              return
-                if(fn:empty($items)) then
-                  map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
-                else
-                  fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
-                  map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
+              if (fn:empty($ref)) then
+                let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
+                return
+                  if (fn:empty($items)) then
+                    map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
+                  else
+                    fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
+                            map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
+              else
+                fn:false()
 
             let $_ :=
               if ($is-sortable) then
@@ -854,7 +892,7 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
               else ()
 
             where $is-facetable or $is-sortable
-            return json:array-push(map:get($entity-type, "rangeIndex"), $entity-type-property)
+            return json:array-push(map:get($entity-definition, "rangeIndex"), $entity-type-property)
 
       return json:array-push($updated-models, $model)
 

@@ -232,22 +232,82 @@ function generateIndexConfigWithStructuredProperties() {
       "definitions": {
         "Book": {
           "properties": {
-            "title": {"datatype": "string", "facetable": true, "collation": "http://marklogic.com/collation/"},
-            "authors": {"datatype": "array", "facetable": true, "items": {"datatype": "string"}},
-            "rating": {"datatype": "integer", "facetable": true, "items": {"datatype": "string"}},
-            "id": {"datatype": "string", "facetable": false, "collation": "http://marklogic.com/collation/"},
-            "customer": {"datatype": "array", "items": {"$ref": "#/definitions/Address"}, "facetable": true},
-            "address": {"$ref": "#/definitions/Address", "facetable": true}
+            "title": {
+              "datatype": "string",
+              "facetable": true,
+              "collation": "http://marklogic.com/collation/"
+            },
+            "authors": {
+              "datatype": "array",
+              "facetable": true,
+              "items": {
+                "datatype": "string"
+              }
+            },
+            "rating": {
+              "datatype": "integer",
+              "facetable": true,
+              "items": {
+                "datatype": "string"
+              }
+            },
+            "id": {
+              "datatype": "string",
+              "facetable": false,
+              "collation": "http://marklogic.com/collation/"
+            },
+            "addresses": {
+              "datatype": "array",
+              "items": {
+                "$ref": "#/definitions/Address"
+              }
+            },
+            "address": {
+              "$ref": "#/definitions/Address"
+            }
+          }
+        },
+        "Address": {
+          "properties": {
+            "city": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint",
+              "facetable": true
+            },
+            "state": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint"
+            },
+            "zip": {
+              "$ref": "#/definitions/Zip"
+            }
+          }
+        },
+        "Zip": {
+          "properties": {
+            "fiveDigit": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint",
+              "facetable": true
+            },
+            "plusFour": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint"
+            }
           }
         }
       }
     }
   ]);
   return [
-    test.assertEqual(3, indexes.length),
+    test.assertEqual(7, indexes.length),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", indexes[0]["path-expression"]),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", indexes[1]["path-expression"]),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", indexes[2]["path-expression"])
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", indexes[2]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/addresses/Address/city", indexes[3]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/addresses/Address/zip/Zip/fiveDigit", indexes[4]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/address/Address/city", indexes[5]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/address/Address/zip/Zip/fiveDigit", indexes[6]["path-expression"])
   ];
 }
 
