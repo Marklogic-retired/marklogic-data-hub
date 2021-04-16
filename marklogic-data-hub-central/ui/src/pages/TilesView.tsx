@@ -76,7 +76,7 @@ const TilesView = (props) => {
     setSelection(INITIAL_SELECTION);
     setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
     setOptions(null);
-    setView(null);
+    setView("", null);
     history.push("/tiles");
   };
 
@@ -99,13 +99,13 @@ const TilesView = (props) => {
       setSelection(props.id);
       setCurrentNode(props.id); // TODO Handle multiple with nested objects
       setOptions(tiles[props.id]);
-      setView(views[props.id], true);
+      setView(props.id, views[props.id], true);
     }
     return (() => {
       setSelection(INITIAL_SELECTION);
       setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
       setOptions(null);
-      setView(null);
+      setView("", null, false);
     });
   }, []);
 

@@ -20,6 +20,11 @@ class Toolbar {
     return cy.findByLabelText("tool-explore");
   }
 
+  getMonitorToolbarIcon() {
+    return cy.findByLabelText("tool-monitor");
+  }
+
+
   getToolBarIcon(tile: string) {
     return cy.findByLabelText(`tool-${tile.toLowerCase()}`);
   }
