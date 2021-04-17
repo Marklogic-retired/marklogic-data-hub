@@ -29,6 +29,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     cy.waitForAsyncRequest();
+    cy.intercept("/api/jobs/**").as("getJobs");
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -73,6 +74,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.runStep(loadStep);
     cy.uploadFile("input/10260.json");
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -132,6 +136,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.confirmAddStepToFlow(mapStep, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(mapStep);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
     runPage.deleteStep(mapStep).click();
@@ -146,6 +153,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     //Step should automatically run
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });
@@ -168,6 +178,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     //Step should automatically run
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });
@@ -179,6 +192,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
@@ -206,6 +222,9 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);

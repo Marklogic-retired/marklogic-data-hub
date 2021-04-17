@@ -81,6 +81,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.duplicateStepErrorMessageClosed();
   });
   it("Add step to new flow and Run", () => {
+    cy.intercept("/api/jobs/**").as("getJobs");
     loadPage.addStepToNewFlow(loadStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -96,6 +97,9 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep);
     cy.uploadFile("input/10259.json");
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -250,6 +254,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     runPage.runStep(mapStep);
     cy.waitForAsyncRequest();
+    cy.wait('@getJobs',{timeout:120000}).its('response.statusCode').should('eq', 200);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     runPage.explorerLink().click();
     browsePage.getTableViewSourceIcon().click();

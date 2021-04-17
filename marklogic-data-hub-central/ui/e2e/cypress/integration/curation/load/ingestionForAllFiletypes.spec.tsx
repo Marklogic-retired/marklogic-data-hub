@@ -18,6 +18,7 @@ describe("Verify ingestion for all filetypes", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     cy.waitForAsyncRequest();
+    cy.intercept("/api/jobs/**").as("getJobs");
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -54,6 +55,9 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.csv");
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -82,6 +86,9 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -112,6 +119,9 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.xml");
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     //Verify step name appears as a collection facet in explorer
     runPage.explorerLink().click();
