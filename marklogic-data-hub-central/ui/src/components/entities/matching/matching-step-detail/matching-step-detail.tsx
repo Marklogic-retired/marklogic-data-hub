@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown, Icon} from "antd";
+import {Modal, Row, Col, Card, Menu, Dropdown, Collapse} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
+import arrayIcon from "../../../../assets/icon_array.png";
+import {faLayerGroup, faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
-import {MLButton, MLTable, MLInput, MLRadio, MLTooltip} from "@marklogic/design-system";
+import {MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
 import "./matching-step-detail.scss";
 import CustomPageHeader from "../../page-header/page-header";
@@ -21,6 +22,8 @@ import {MatchingStepDetailText} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity} from "../../../../api/matching";
 import {DownOutlined} from "@ant-design/icons";
 import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "../../../../util/user-context";
+import ExpandCollapse from "../../../expand-collapse/expand-collapse";
+import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -82,6 +85,11 @@ const MatchingStepDetail: React.FC = () => {
   const [previewMatchedActivity, setPreviewMatchedActivity]   = useState<any>({sampleSize: 100, uris: [], actionPreview: []});
   const [showRulesetMultipleModal, toggleShowRulesetMultipleModal] = useState(false);
 
+  const [rulesetDataList, setRulesetDataList] = useState<any>([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
+  const {Panel} = Collapse;
+  const [activeMatchedRuleset, setActiveMatchedRuleset] = useState<string[]>([]);
+  const [activeMatchedUri, setActiveMatchedUri] = useState<string[]>([]);
+
   const menu = (
     <Menu>
       <Menu.Item key="singlePropertyRuleset">
@@ -126,8 +134,29 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const handlePreviewMatchingActivity = async (testMatchData) => {
+    const test = () => {
+      for (let i = 0; i < curationOptions.activeStep.stepArtifact.thresholds.length; i++) {
+        let ruleset = curationOptions.activeStep.stepArtifact.thresholds[i].thresholdName.concat(" - ") + curationOptions.activeStep.stepArtifact.thresholds[i].action;
+        let score = curationOptions.activeStep.stepArtifact.thresholds[i].score;
+        let actionPreviewList = [{}];
+        for (let j = 0; j < previewMatchActivity.actionPreview.length; j++) {
+          if (curationOptions.activeStep.stepArtifact.thresholds[i].thresholdName === previewMatchActivity.actionPreview[j].name && curationOptions.activeStep.stepArtifact.thresholds[i].action === previewMatchActivity.actionPreview[j].action) {
+            actionPreviewList.push(previewMatchActivity.actionPreview[j]);
+          }
+        }
+        actionPreviewList.shift();
+        let localData = {rulesetName: "", actionPreviewData: [{}], score: 0};
+        localData.rulesetName = ruleset;
+        localData.score = score;
+        localData.actionPreviewData = actionPreviewList;
+        if (localData.actionPreviewData.length > 0) { rulesetDataList.push(localData); }
+      }
+      rulesetDataList.shift();
+    };
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    await test();
     setPreviewMatchedActivity(previewMatchActivity);
+    setRulesetDataList(rulesetDataList);
   };
 
   const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
@@ -279,7 +308,6 @@ const MatchingStepDetail: React.FC = () => {
     if (!rulesetComb.rulesetName && Array.isArray(matchRules) && matchRules.length) {
       rulesetName = matchRules[0].entityPropertyPath + " - " + matchRules[0].matchAlgorithm;
     }
-
     return rulesetName;
   };
 
@@ -320,13 +348,6 @@ const MatchingStepDetail: React.FC = () => {
     };
   });
 
-  const renderTestMatchUriData = previewMatchedActivity.actionPreview.map((testMatchedUriData, index) => {
-    return {
-      key: index,
-      uriTestMatchValue: testMatchedUriData,
-    };
-  });
-
   const UriColumns = [{
     key: "uriValue",
     title: "uriValues",
@@ -336,19 +357,6 @@ const MatchingStepDetail: React.FC = () => {
         <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg"/></i>
       </span>
     ),
-  }];
-
-  const testMatchedUriColumns = [{
-    key: "key",
-    title: "Matched URI",
-    dataIndex: "uriTestMatchValue",
-    render: (text) => (
-      <div>
-        <MLTooltip placement="topLeft"><span className={styles.testMatchedTableRow}><Icon className={styles.expandableIcon} type="right" />
-          {text.uris[0]}</span></MLTooltip><br /><br />
-        <MLTooltip placement="top"><span className={styles.matchedUriRow}>{text.uris[1]}</span></MLTooltip>
-      </div>
-    )
   }];
 
   const handleDeleteUri = (event) => {
@@ -367,6 +375,7 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const handleAllDataRadioClick = (event) => {
+    testMatchedData.uris=[];
     setAllDataSelected(true);
     setUriTableData([]);
     setUriContent("");
@@ -374,9 +383,14 @@ const MatchingStepDetail: React.FC = () => {
     setDuplicateUriWarning(false);
     setSingleUriWarning(false);
     setUriTestMatchClicked(false);
+    setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
   };
 
-  const handleTestButtonClick = () => {
+  const handleTestButtonClick = async () => {
+    testMatchedData.uris=[];
+    setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
+    setActiveMatchedUri([]);
+    setActiveMatchedRuleset([]);
     if (UriTableData.length < 2 && !allDataSelected) {
       setDuplicateUriWarning(false);
       setSingleUriWarning(true);
@@ -389,7 +403,7 @@ const MatchingStepDetail: React.FC = () => {
         }
         testMatchedData.stepName=matchingStep.name;
         setTestMatchedData(testMatchedData);
-        handlePreviewMatchingActivity(testMatchedData);
+        await handlePreviewMatchingActivity(testMatchedData);
       }
     }
   };
@@ -402,6 +416,27 @@ const MatchingStepDetail: React.FC = () => {
     setInputUriDisabled(false);
     setAllDataSelected(false);
     setUriTestMatchClicked(false);
+    setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
+  };
+
+  const handleExpandCollapse = () => {
+    //Logic to be added during dedicated story for expand collapse icons
+  };
+
+  const handleRulesetCollapseChange = async   (keys) => {
+    Array.isArray(keys) ? setActiveMatchedRuleset(keys):setActiveMatchedRuleset([keys]);
+    let arr=activeMatchedUri;
+    for (let i=0;i<activeMatchedUri.length;i++) {
+      let rulesetName = activeMatchedUri[i].split("/")[0];
+      if (!activeMatchedRuleset.includes(rulesetName)) {
+        arr = arr.filter(e => e !== activeMatchedUri[i]);
+      }
+    }
+    handleUrisCollapseChange(arr);
+  };
+
+  const handleUrisCollapseChange = (keys) => {
+    Array.isArray(keys) ? setActiveMatchedUri(keys):setActiveMatchedUri([keys]);
   };
 
   return (
@@ -565,16 +600,36 @@ const MatchingStepDetail: React.FC = () => {
             <Menu.Item key="notMatched">Not Matched</Menu.Item>
           </Menu>
         </div>
-        {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" && uriTestMatchClicked ? <div className={styles.UriMatchedDataTable}>
-          <MLTable
-            columns={testMatchedUriColumns}
-            className={styles.tableContent}
-            dataSource={renderTestMatchUriData}
-            rowKey="key"
-            id="uriData"
-            pagination={false}
-          />
-        </div> : ""}
+        {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" && uriTestMatchClicked ?
+          <div className={styles.UriMatchedDataTable}>
+            <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
+              <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
+              <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+              <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={handleExpandCollapse} currentSelection={""} /></div>
+            </div>
+            <Collapse activeKey={activeMatchedRuleset} onChange={handleRulesetCollapseChange}>
+              {rulesetDataList.map((rulesetDataList) => (
+                <Panel id="testMatchedPanel" key={rulesetDataList.rulesetName} header={
+                  <div><span className={styles.matchRulesetStyle}>{rulesetDataList.rulesetName}</span>
+                    <span className={styles.thresholdDisplay}> (Threshold: {rulesetDataList.score})</span>
+                    <div className={styles.scoreDisplay}>{rulesetDataList.actionPreviewData.length} pair matches</div>
+                  </div>
+                }>
+                  <div className={styles.actionPreviewRows}>
+                    <Collapse activeKey={activeMatchedUri} onChange={handleUrisCollapseChange} bordered={false}>
+                      {rulesetDataList.actionPreviewData.map((actionPreviewData, index) => (
+                        <Panel id="testMatchedUriDataPanel" key={actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + index} header={
+                          <span><div className={styles.uri1Position}>{actionPreviewData.uris[0]}<span className={styles.scoreDisplay}>  (Score: {actionPreviewData.score})</span></div>
+                            <div className={styles.uri2Position}>{actionPreviewData.uris[1]}</div></span>
+                        }>
+                          <span><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets}/></span>
+                        </Panel>))}
+                    </Collapse>
+                  </div>
+                </Panel>
+              ))}
+            </Collapse>
+          </div> : ""}
       </div>
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}

@@ -11,6 +11,18 @@ import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 
 const matchStep = "matchCustomerTest";
+
+const uriMatchedResults  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "6"},
+  {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "5"}];
+
+const ruleset  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "7"},
+  {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "6"},
+  {ruleName: "Slight Match - custom", threshold: "4", matchedPairs: "1"}];
+
+const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 0", score: "score 10"},
+  {ruleset: "fname - Double Metaphone", matchType: "Double Metaphone 1", score: "score 10"}];
+
+const urisMerged = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json"];
 const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
 
 describe("Matching", () => {
@@ -234,25 +246,43 @@ describe("Matching", () => {
     cy.findByText("The minimum of two URIs are required.").should("not.exist");
     cy.waitUntil(() => cy.visit("/tiles"));
   });
+
   it("Show matched results for test match", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Person");
     cy.findByText("Match").click();
     curatePage.openStepDetails("match-person");
-    //To test when enters uris  and click on test button
+
+    //To test when user enters uris and click on test button
     for (let i in uris) {
-      matchingStepDetail.getUriInputField().type(uris[i]);
+      cy.waitUntil(() => matchingStepDetail.getUriInputField().type(uris[i]));
       matchingStepDetail.getAddUriIcon().click();
     }
     matchingStepDetail.getTestMatchUriButton().click();
-    for (let j in uris) {
-      cy.waitUntil(() => cy.findAllByText(uris[j]).should("have.length.gt", 1));
+    for (let j in uriMatchedResults) {
+      cy.findByText(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
+      cy.findByText("(Threshold: "+uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
     }
-    //To test when selects all data and click on test button
+
+    //To test when user selects all data and click on test button
     matchingStepDetail.getAllDataRadio().click();
     matchingStepDetail.getTestMatchUriButton().click();
-    for (let j in uris) {
-      cy.waitUntil(() => cy.findAllByText(uris[j]).should("have.length.gt", 0));
+    for (let j in ruleset) {
+      cy.waitUntil(() => cy.findByText(ruleset[j].ruleName).should("have.length.gt", 0).trigger("mousemove"));
+      cy.waitUntil(() => cy.findByText("(Threshold: "+ruleset[j].threshold + ")").should("have.length.gt", 0));
     }
+    cy.findByText(ruleset[0].ruleName).click();
+    for (let k in urisMerged) {
+      cy.waitUntil(() => cy.findAllByText(urisMerged[k]).should("have.length.gt", 0));
+    }
+    cy.findByText("/json/persons/first-name-double-metaphone1.json").first().click();
+
+    //To test expanded uri table content
+    for (let i in allDataMatchedResults) {
+      cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
+      cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
+      cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
+    }
+    cy.findByText("Total Score: 20").should("be.visible");
   });
 });
