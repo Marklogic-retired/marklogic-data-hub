@@ -25,6 +25,7 @@ describe("Add Matching step to a flow", () => {
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
     cy.waitForAsyncRequest();
+    cy.intercept("/api/jobs/**").as("getJobs");
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -75,6 +76,9 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
@@ -97,6 +101,9 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
@@ -122,6 +129,9 @@ describe("Add Matching step to a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -141,6 +151,9 @@ describe("Add Matching step to a flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -157,6 +170,9 @@ describe("Add Matching step to a flow", () => {
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -188,6 +204,9 @@ describe("Add Matching step to a flow", () => {
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);

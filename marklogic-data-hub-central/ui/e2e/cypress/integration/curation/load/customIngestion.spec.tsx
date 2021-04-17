@@ -21,6 +21,7 @@ describe("Custom Ingestion", () => {
     cy.waitForAsyncRequest();
   });
   it("verify that custom ingestion step shows up and can be run", () => {
+    cy.intercept("/api/jobs/**").as("getJobs");
     const flowName = "testCustomFlow";
     const loadStep = "ingestion-step";
     // create load step
@@ -40,7 +41,9 @@ describe("Custom Ingestion", () => {
     runPage.runStep(loadStep);
     cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.get("span p"));
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
 

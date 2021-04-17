@@ -91,6 +91,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getApplyFacetsButton().should("be.disabled");
   });
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", () => {
+    cy.intercept("/api/jobs/**").as("getJobs");
     browsePage.selectEntity("Person");
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
@@ -108,6 +109,9 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
     runPage.runStep("mapPersonJSON");
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();

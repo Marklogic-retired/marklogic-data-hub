@@ -46,6 +46,7 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Add custom step from Run tile and Run the step", () => {
+    cy.intercept("/api/jobs/**").as("getJobs");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
@@ -60,6 +61,9 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.runStep(stepName);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });
@@ -71,6 +75,7 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Add custom steps from Curate tile and Run steps", () => {
+    cy.intercept("/api/jobs/**").as("getJobs");
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
@@ -90,6 +95,9 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.runStep(stepName);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });

@@ -14,6 +14,7 @@ describe("Run Tile tests", () => {
     LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    cy.intercept("/api/jobs/**").as("getJobs");
   });
 
   after(() => {
@@ -54,14 +55,23 @@ describe("Run Tile tests", () => {
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML");
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
     runPage.runStep("match-xml-person");
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", "match-xml-person");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
     runPage.runStep("merge-xml-person");
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
 
     //Navigate to explorer tile using the explorer link

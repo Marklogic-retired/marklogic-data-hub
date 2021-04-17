@@ -135,15 +135,14 @@ Cypress.Commands.add("uploadFile", (filePath) => {
   cy.get("input[type=\"file\"]").attachFile(filePath, {force: true});
   cy.waitForAsyncRequest();
   //cy.waitUntil(() => cy.findByTestId("spinner").should("not.be.visible"));
-  cy.waitUntil(() => cy.get("span p"));
 });
 
 Cypress.Commands.add("verifyStepRunResult", (jobStatus, stepType, stepName) => {
   if (jobStatus === "success") {
-    cy.waitUntil(() => cy.get("[data-icon=\"check-circle\"]").should("be.visible"));
+    cy.waitUntil(() => cy.get("[data-icon=\"check-circle\"]").should("be.visible"), {timeout: 120000});
     cy.get("span p").should("contain.text", `The ${stepType.toLowerCase()} step ${stepName} completed successfully`);
   } else {
-    cy.waitUntil(() => cy.get("[data-icon=\"exclamation-circle\"]").should("be.visible"));
+    cy.waitUntil(() => cy.get("[data-icon=\"exclamation-circle\"]").should("be.visible"), {timeout: 120000});
     cy.get("span p").should("contain.text", `The ${stepType.toLowerCase()} step ${stepName} failed`);
     cy.get("#error-list").should("contain.text", "Message:");
   }

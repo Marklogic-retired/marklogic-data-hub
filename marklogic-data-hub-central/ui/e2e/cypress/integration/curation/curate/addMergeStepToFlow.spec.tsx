@@ -25,6 +25,7 @@ describe("Add Merge step to a flow", () => {
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
     cy.waitForAsyncRequest();
+    cy.intercept("/api/jobs/**").as("getJobs");
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -79,6 +80,9 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -100,6 +104,9 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep);
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -122,6 +129,9 @@ describe("Add Merge step to a flow", () => {
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
@@ -142,6 +152,9 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
@@ -158,6 +171,9 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
@@ -188,6 +204,9 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
+    Cypress.config("defaultCommandTimeout", 120000);
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
