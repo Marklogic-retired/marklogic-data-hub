@@ -1,5 +1,32 @@
+#testMatchedUriDataPanel .ant-collapse-content-inactive{
+    display: none;
+}
 #uriData .ant-table-thead{
     display: none;
+}
+#testMatchedPanel .ant-collapse-content-inactive{
+    display: none !important;
+}
+#testMatchedUriDataPanel .ant-collapse-item{
+    border-top: transparent !important;
+}
+
+#testMatchedUriDataPanel .ant-collapse-arrow{
+    color: #5b69af;
+    margin-top: 2px !important;
+}
+#testMatchedPanel .ant-collapse-arrow{
+    color: #5b69af;
+    margin-top: -11px;
+}
+#testMatchedPanel .ant-collapse-item{
+    border-bottom: transparent;
+}
+#testMatchedPanel .ant-collapse-content{
+    border-top: transparent;
+}
+.ant-table-row-expand-icon-cell{
+    color: #5b69af;
 }
 
 #addDataRadio .ant-radio-wrapper{
@@ -19,3 +46,15 @@
     border: solid 1px #ddd;
 }
 
+#uriMatchedDataTable td:nth-child(2n) {
+    background-color: #f1f1f1;
+}
+
+#uriMatchedDataTable .ant-table-thead {
+    text-align-last: center;
+    display: contents !important;
+}
+
+#uriMatchedDataTable th:nth-child(1) {
+    text-align-last: left;
+}

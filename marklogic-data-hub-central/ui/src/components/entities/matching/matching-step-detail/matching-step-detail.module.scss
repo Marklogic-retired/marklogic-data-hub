@@ -185,7 +185,7 @@
     padding-top: 20px;
     width: 90.7vw;
     overflow-y: auto;
-    max-height: 30vh;
+    max-height: 60vh;
     margin-left: 1vw;
 }
 
@@ -195,10 +195,6 @@
 
 .tableRow {
     display: flex;
-    height: 1em;
-}
-
-.testMatchedTableRow {
     height: 1em;
 }
 
@@ -236,13 +232,66 @@
     margin: 1vh 0vh -0.5vh 1.3vw;
 }
 
-.expandableIcon {
-    font-size: 15px;
-    margin-right: 1vw;
-    cursor: pointer
+.expandCollapseIcon {
+    font-size: 11px;
+    margin-left: 96%;
+    margin-bottom: 2vh;
 }
 
-.matchedUriRow{
-    margin-top: 2vh;
-    margin-left: 1.9vw;
+.modalTitleLegend {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    margin-top: -40px;
+    margin-bottom: 10px;
+
+    .legendText {
+        font-size: 13px;
+        margin-left: 15px;
+        margin-bottom: 2.5vh;
+    }
+
+    .expandCollapseIcon {
+        font-size: 11px;
+        margin-left: 5em;
+        margin-top: 4vh;
+        margin-right: 2em;
+    }
+}
+
+.structuredIcon {
+    color: #5B69AF;
+    font-size: 14px;
+}
+
+.matchRulesetStyle {
+    color: #5b69af;
+    margin-left: 0vw;
+    font-weight: bold;
+    margin-bottom: 1vh;
+    margin-top: 1vh;
+}
+
+.thresholdDisplay {
+    margin-left: 0vw;
+    font-weight: bold;
+    margin-bottom: 1vh;
+}
+
+.actionPreviewRows {
+    margin-top: -4vh;
+}
+
+.uri1Position {
+    margin-top: 1.5vh;
+    color: #5b69af;
+}
+
+.uri2Position {
+    margin-bottom: -1.5vh;
+    color: #5b69af;
+}
+
+.scoreDisplay {
+    color: black;
 }
