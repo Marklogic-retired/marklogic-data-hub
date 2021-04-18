@@ -19,6 +19,20 @@ export const createModelErrorResponse = {
   "details": "An entity type already exists with a name of Testing"
 };
 
+export const createModelErrorResponseNamespace = {
+  "code": 400,
+  "message": "Invalid model: Namespace property must be a valid absolute URI. Value is badURI.",
+  "suggestion": "Resend the request in the correct format.",
+  "details": "Invalid model: Namespace property must be a valid absolute URI. Value is badURI."
+};
+
+export const createModelErrorResponsePrefix = {
+  "code": 400,
+  "message": "Invalid model: Namespace prefix xml is not valid. It is a reserved pattern.",
+  "suggestion": "Resend the request in the correct format.",
+  "details": "Invalid model: Namespace prefix xml is not valid. It is a reserved pattern."
+};
+
 export const getEntityTypes = [
   {
     "entityName": "AnotherModel",

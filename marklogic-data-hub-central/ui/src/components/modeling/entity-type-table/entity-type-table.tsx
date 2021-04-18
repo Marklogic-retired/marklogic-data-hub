@@ -22,7 +22,7 @@ type Props = {
   canWriteEntityModel: boolean;
   autoExpand: string;
   revertAllEntity: boolean;
-  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string) => void;
+  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified) => void;
   toggleRevertAllEntity: (state: boolean) => void;
@@ -229,27 +229,29 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.tableText,
       width: 400,
       render: text => {
-        let parseText = text.split(",");
-        let entityName = parseText[0];
-        let entityDescription = parseText[1];
-
+        let entityName = text;
         return (
           <>
             {props.canWriteEntityModel && props.canReadEntityModel ? (
               <MLTooltip title={ModelingTooltips.entityTypeName}>
-                <span data-testid={parseText[0] + "-span"} className={styles.link}
+                <span data-testid={entityName + "-span"} className={styles.link}
                   onClick={() => {
-                    props.editEntityTypeDescription(entityName, entityDescription);
+                    props.editEntityTypeDescription(
+                      entityName,
+                      getEntityTypeProp(entityName, "description"),
+                      getEntityTypeProp(entityName, "namespace"),
+                      getEntityTypeProp(entityName, "namespacePrefix")
+                    );
                   }}>
                   {entityName}</span>
               </MLTooltip>
-            ) : <span data-testid={parseText[0] + "-span"}>{entityName}</span>}
+            ) : <span data-testid={entityName + "-span"}>{entityName}</span>}
           </>
         );
       },
       sortDirections: ["ascend", "descend", "ascend"],
       sorter: (a, b) => {
-        return a["entityName"].split(",")[0].localeCompare(b["entityName"].split(",")[0]);
+        return a["entityName"].localeCompare(b["entityName"]);
       }
     },
     {
@@ -390,11 +392,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   ];
 
-  const getEntityTypeDescription = (entity: any) => {
+  const getEntityTypeProp = (entityName: any, prop: string) => {
+    const entity = allEntityTypes.find(e => e.entityName === entityName);
     return (entity.hasOwnProperty("model") &&
       entity.model.hasOwnProperty("definitions") &&
       entity.model.definitions.hasOwnProperty(entity.entityName) &&
-      entity.model.definitions[entity.entityName].hasOwnProperty("description")) ? entity.model.definitions[entity.entityName].description : "";
+      entity.model.definitions[entity.entityName].hasOwnProperty(prop)) ? entity.model.definitions[entity.entityName][prop] : "";
   };
 
   const expandedRowRender = (entity) => {
@@ -419,13 +422,14 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   };
 
   const renderTableData = allEntityTypes.map((entity) => {
-    return {
-      entityName: entity.entityName + "," + getEntityTypeDescription(entity),
+    let result = {
+      entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
       actions: entity.entityName,
       definitions: entity.model.definitions
     };
+    return result;
   });
 
   return (

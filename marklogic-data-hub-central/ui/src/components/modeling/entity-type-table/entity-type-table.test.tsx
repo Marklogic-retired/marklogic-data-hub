@@ -101,41 +101,41 @@ describe("EntityTypeModal Component", () => {
     let entityTable = document.querySelectorAll(".ant-table-row-level-0");
 
     //Initial sort should be in descending 'Last Processed' order
-    validateTableRow(entityTable, ["AnotherModel,Testing", "Protein,", "Product,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root.", "Order,", "Customer,"]);
+    validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Order", "Customer"]);
     //verify sort by ascending 'Last Processed' order is next and works
     fireEvent.click(getByTestId("lastProcessed"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["Customer,", "Order,", "AnotherModel,Testing", "Protein,", "Product,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root."]);
+    validateTableRow(entityTable, ["Customer", "Order", "AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping"]);
     //verify third click does not return to default, but returns to descending order
     fireEvent.click(getByTestId("lastProcessed"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["AnotherModel,Testing", "Protein,", "Product,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root.", "Order,", "Customer,"]);
+    validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Order", "Customer"]);
 
     //verify sort by name alphabetically works in ascending order
     fireEvent.click(getByTestId("entityName"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["AnotherModel,Testing", "Customer,", "Order,", "Product,", "Protein,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root."]);
+    validateTableRow(entityTable, ["AnotherModel", "Customer", "Order", "Product", "Protein", "Provider", "TestEntityForMapping"]);
     //verify sort by name alphabetically works in descending order
     fireEvent.click(getByTestId("entityName"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["TestEntityForMapping,The TestEntityForMapping entity root.", "Provider,", "Protein,", "Product,", "Order,", "Customer,", "AnotherModel,Testing"]);
+    validateTableRow(entityTable, ["TestEntityForMapping", "Provider", "Protein", "Product", "Order", "Customer", "AnotherModel"]);
     //verify third click does not return to default, but returns to ascending order
     fireEvent.click(getByTestId("entityName"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["AnotherModel,Testing", "Customer,", "Order,", "Product,", "Protein,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root."]);
+    validateTableRow(entityTable, ["AnotherModel", "Customer", "Order", "Product", "Protein", "Provider", "TestEntityForMapping"]);
 
     //verify sort by instances works in ascending order
     fireEvent.click(getByTestId("Instances"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["AnotherModel,Testing", "Protein,", "Product,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root.", "Customer,", "Order,"]);
+    validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Customer", "Order"]);
     //verify sort by instances works in descending order
     fireEvent.click(getByTestId("Instances"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["Order,", "Customer,", "AnotherModel,Testing", "Protein,", "Product,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root.", "Order,", "Customer,"]);
+    validateTableRow(entityTable, ["Order", "Customer", "AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Order", "Customer"]);
     //verify third click does not return to default, but returns to ascending order
     fireEvent.click(getByTestId("Instances"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
-    validateTableRow(entityTable, ["AnotherModel,Testing", "Protein,", "Product,", "Provider,", "TestEntityForMapping,The TestEntityForMapping entity root.", "Customer,", "Order,"]);
+    validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Customer", "Order"]);
 
   });
 
