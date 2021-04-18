@@ -117,8 +117,6 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.newEntityDescription("Description has changed");
     entityTypeModal.getAddButton().click();
     entityTypeModal.getAddButton().should("have.css", "width", "0px");
-    cy.findByLabelText(`Buyer-add-property`).should("not.exist");
-    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon("Buyer")).click();
     propertyTable.editProperty("newId");
     propertyModal.getDeleteIcon("newId").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");

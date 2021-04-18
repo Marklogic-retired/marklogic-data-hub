@@ -30,6 +30,8 @@ const Modeling: React.FC = () => {
   const [isEditModal, toggleIsEditModal] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [namespace, setNamespace] = useState("");
+  const [prefix, setPrefix] = useState("");
   const [autoExpand, setAutoExpand] = useState("");
   const [revertAllEntity, toggleRevertAllEntity] = useState(false);
 
@@ -89,18 +91,20 @@ const Modeling: React.FC = () => {
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
-      setAutoExpand(entityName + "," + description);
+      setAutoExpand(entityName);
     }
     toggleShowEntityModal(false);
     await setEntityTypesFromServer();
   };
 
-  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string) => {
+  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string) => {
     if (canWriteEntityModel) {
       toggleIsEditModal(true);
       toggleShowEntityModal(true);
       setName(entityTypeName);
       setDescription(entityTypeDescription);
+      setNamespace(entityTypeNamespace);
+      setPrefix(entityTypePrefix);
     }
   };
 
@@ -229,6 +233,8 @@ const Modeling: React.FC = () => {
           isEditModal={isEditModal}
           name={name}
           description={description}
+          namespace={namespace}
+          prefix={prefix}
         />
         <EntityTypeTable
           canReadEntityModel={canReadEntityModel}

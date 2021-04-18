@@ -14,6 +14,8 @@ type Props = {
   isEditModal: boolean;
   name: string;
   description: string;
+  namespace: string;
+  prefix: string;
   toggleModal: (isVisible: boolean) => void;
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
 };
@@ -27,9 +29,12 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const [name, setName] = useState("");
+  const [errorName, setErrorName] = useState("");
   const [, toggleIsNameDisabled] = useState(true);
   const [description, setDescription] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [namespace, setNamespace] = useState("");
+  const [prefix, setPrefix] = useState("");
+  const [errorServer, setErrorServer] = useState(""); // Uncategorized errors from backend
   const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
@@ -37,12 +42,17 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       if (props.isEditModal) {
         setName(props.name);
         setDescription(props.description);
+        setNamespace(props.namespace);
+        setPrefix(props.prefix);
       } else {
         // Add Modal
         setName("");
         setDescription("");
+        setNamespace("");
+        setPrefix("");
       }
-      setErrorMessage("");
+      setErrorName("");
+      setErrorServer("");
       toggleIsNameDisabled(true);
       toggleLoading(false);
     }
@@ -54,42 +64,75 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         toggleIsNameDisabled(true);
       } else {
         toggleIsNameDisabled(false);
-        setErrorMessage("");
+        setErrorName("");
       }
       setName(event.target.value);
     }
     if (event.target.id === "description") {
       setDescription(event.target.value);
     }
+    if (event.target.id === "namespace") {
+      setNamespace(event.target.value);
+    }
+    if (event.target.id === "prefix") {
+      setPrefix(event.target.value);
+    }
   };
 
-  const updateEntityDescription = async (name: string, description: string) => {
+  // Parse server error message to determine its type
+  // TODO Server should categorize the error messages it returns so parsing is not needed
+  const isErrorOfType = (type: string) => {
+    let result = false;
+    if (errorServer) {
+      if (errorServer.includes("type already exists")) {
+        result = type === "name";
+      } else if (errorServer.includes("valid absolute URI")) {
+        result = type === "namespace";
+      } else if (errorServer.includes("prefix without specifying")) {
+        result = type === "namespace";
+      } else if (errorServer.includes("reserved pattern")) {
+        result = type === "namespacePrefix";
+      } else if (errorServer.includes("must specify a prefix")) {
+        result = type === "namespacePrefix";
+      }
+    }
+    return result;
+  };
+
+  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string) => {
     try {
-      const response = await updateModelInfo(name, description);
+      const response = await updateModelInfo(name, description, namespace, prefix);
       if (response["status"] === 200) {
         props.updateEntityTypesAndHideModal(name, description);
       }
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
-          setErrorMessage(error["response"]["data"]["message"]);
+          setErrorServer(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
       }
+      toggleLoading(false);
     }
   };
 
   const createEntityType = async (name: string, description: string) => {
     try {
-      const response = await axios.post("/api/models", {name, description});
+      const payload = {
+        name: name,
+        description: description,
+        namespace: namespace,
+        namespacePrefix: prefix
+      };
+      const response = await axios.post("/api/models", payload);
       if (response["status"] === 201) {
         props.updateEntityTypesAndHideModal(name, description);
       }
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
-          setErrorMessage(error["response"]["data"]["message"]);
+          setErrorServer(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
@@ -99,12 +142,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const onOk = (event) => {
+    setErrorName("");
+    setErrorServer("");
     event.preventDefault();
     if (props.isEditModal) {
-      updateEntityDescription(name, description);
+      toggleLoading(true);
+      updateEntityDescription(name, description, namespace, prefix);
     } else {
       if (!NAME_REGEX.test(name)) {
-        setErrorMessage(ModelingTooltips.nameRegex);
+        setErrorName(ModelingTooltips.nameRegex);
       } else {
         toggleLoading(true);
         createEntityType(name, description);
@@ -116,13 +162,19 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     props.toggleModal(false);
   };
 
+  const formItemLayout = {
+    labelCol: {span: 5},
+    wrapperCol: {span: 18}
+  };
+
   return (
     <Modal
       className={styles.modal}
       visible={props.isVisible}
       closable={true}
-      confirmLoading={props.isEditModal ? false : loading}
+      confirmLoading={loading}
       title={props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}
+      width="680px"
       cancelText="Cancel"
       cancelButtonProps={{id: "entity-modal-cancel"}}
       onCancel={() => onCancel()}
@@ -138,14 +190,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       >
         <Form.Item
           className={styles.formItem}
+          {...formItemLayout}
           label={<span>
             Name:&nbsp;{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}
             &nbsp;
           </span>}
           colon={false}
           labelAlign="left"
-          validateStatus={errorMessage ? "error" : ""}
-          help={errorMessage}
+          validateStatus={(errorName || isErrorOfType("name") ? "error" : "")}
+          help={errorName}
         >
           {props.isEditModal ? <span>{name}</span> : <Input
             id="entity-name"
@@ -162,6 +215,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
         <Form.Item
           label={<span className={styles.label}>Description:</span>}
+          {...formItemLayout}
           labelAlign="left"
           className={styles.formItem}
           colon={false}
@@ -178,6 +232,50 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
         </Form.Item>
+
+        <Form.Item
+          label="Namespace URI:"
+          labelAlign="left"
+          style={{marginLeft: 7, marginBottom: 0}}
+          {...formItemLayout}
+        >
+          <Form.Item
+            style={{display: "inline-block"}}
+            validateStatus={isErrorOfType("namespace") ? "error" : ""}
+          >
+            <Input
+              id="namespace"
+              placeholder="Example: http://example.org/es/gs"
+              className={styles.input}
+              value={namespace}
+              onChange={handleChange}
+              onBlur={handleChange}
+              style={{width: "250px"}}
+            />
+          </Form.Item>
+          <span className={styles.prefixLabel}>Prefix:</span>
+          <Form.Item
+            className={styles.formItem}
+            colon={false}
+            style={{display: "inline-block"}}
+            validateStatus={isErrorOfType("namespacePrefix") ? "error" : ""}
+          >
+            <Input
+              id="prefix"
+              placeholder="Example: esgs"
+              className={styles.input}
+              value={prefix}
+              onChange={handleChange}
+              onBlur={handleChange}
+              style={{width: "120px"}}
+            />
+            <MLTooltip title={ModelingTooltips.namespace}>
+              <Icon type="question-circle" className={styles.icon} theme="filled" />
+            </MLTooltip>
+          </Form.Item>
+          { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
+        </Form.Item>
+
       </Form>
     </Modal>
   );

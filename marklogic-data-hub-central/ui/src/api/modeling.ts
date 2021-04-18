@@ -5,8 +5,12 @@ export const primaryEntityTypes = async () => {
   return await axios.get(`/api/models/primaryEntityTypes`);
 };
 
-export const updateModelInfo = async (name: string, description: string) => {
-  return await axios.put(`/api/models/${name}/info`, {description});
+export const updateModelInfo = async (name: string, description: string, namespace: string, prefix: string) => {
+  return await axios.put(`/api/models/${name}/info`, {
+    description: description,
+    namespace: namespace,
+    namespacePrefix: prefix
+  });
 };
 
 export const entityReferences = async (entityName: string) => {
