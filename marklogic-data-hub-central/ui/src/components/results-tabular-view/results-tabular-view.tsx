@@ -301,12 +301,27 @@ const ResultsTabularView = (props) => {
     return dataObj;
   };
 
+  const formatTableVal = (val) => {
+    const imgRegex = (/(https?:\/\/.*\.(?:png|jpg|gif))/i).exec(val);
+    const vidRegex = (/(https?:\/\/.*\.mp4)/i).exec(val);
+    const urlRegex = (/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/).exec(val);
+    if (imgRegex) {
+      return <img src={imgRegex[0]} alt={imgRegex[0]} height="150" />;
+    } else if (vidRegex) {
+      return <video height="150" autoPlay loop muted playsInline><source src={vidRegex[0]} type="video/mp4"/></video>;
+    } else if (urlRegex) {
+      return <a href={urlRegex[0]} title={urlRegex[0]} target="_blank">Link</a>;
+    } else {
+      return val;
+    }
+  }
+
   const generateTableData = (item, dataObj = {}) => {
     if (item) {
       for (let subItem of item) {
         if (!Array.isArray(subItem)) {
           if (!Array.isArray(subItem.propertyValue) || subItem.propertyValue[0] === null || typeof (subItem.propertyValue[0]) !== "object") {
-            dataObj[subItem.propertyPath] = subItem.propertyValue;
+            dataObj[subItem.propertyPath] = formatTableVal(subItem.propertyValue);
           } else {
             let dataObjArr: any[] = [];
             subItem.propertyValue.forEach((el, index) => {
