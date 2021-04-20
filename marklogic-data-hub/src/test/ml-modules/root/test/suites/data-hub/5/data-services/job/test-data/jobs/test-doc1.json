@@ -11,7 +11,7 @@
     "stepResponses": {
       "1": {
         "flowName": "ingestion_mapping-flow",
-        "stepName": "ingest-step-json",
+        "stepName": "ingest-ste'p-jso'n",
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
         "stepOutput": null,
@@ -41,7 +41,8 @@
         "failedBatches": 0,
         "success": true,
         "stepStartTime": "2019-06-26T23:11:27.510711Z",
-        "stepEndTime": "2019-06-26T23:11:31.219158Z"
+        "stepEndTime": "2019-06-26T23:11:31.219158Z",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
       },
       "3": {
         "flowName": "ingestion_mapping-flow",
