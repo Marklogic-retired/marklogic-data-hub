@@ -12,6 +12,7 @@
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
   "stepId": "mapCustomersXML-mapping",
+  "uriExpression": "hubURI('Customer')",
   "namespaces": {
     "entity-services": "http://marklogic.com/entity-services",
     "customerInfo": "customerInfo"

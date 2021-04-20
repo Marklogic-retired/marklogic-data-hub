@@ -3,6 +3,9 @@
   "steps" : {
     "1" : {
       "stepId" : "mapCustomersJSON-mapping"
+    },
+    "2" : {
+      "stepId" : "mapCustomersXML-mapping"
     }
   }
 }

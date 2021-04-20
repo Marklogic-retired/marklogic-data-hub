@@ -12,6 +12,7 @@
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
   "stepId": "mapCustomersWithRelatedEntitiesXML-mapping",
+  "uriExpression": "$URI",
   "namespaces": {
     "entity-services": "http://marklogic.com/entity-services",
     "customerInfo": "customerInfo"
@@ -87,6 +88,7 @@
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Order"],
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order",
       "permissions": "data-hub-common,read,data-hub-common,update",
+      "uriExpression": "concat('/Order/', customerInfo:OrderID)",
       "properties": {
         "orderId": {
           "sourcedFrom": "customerInfo:OrderID"
@@ -120,6 +122,7 @@
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order/customerInfo:Products/customerInfo:Product",
+      "uriExpression": "concat('/Product/', *:ProductId)",
       "properties": {
         "productId": {
           "sourcedFrom": "*:ProductId"
@@ -134,6 +137,7 @@
       "relatedEntityMappingId": "BabyRegistry:Customer.customerId",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "BabyRegistry"],
       "expressionContext": "/customerInfo:Customer/customerInfo:BabyRegistry",
+      "uriExpression": "concat('/BabyRegistry/', *:BabyRegistryId)",
       "permissions": "data-hub-common,read,data-hub-common,update",
       "properties": {
         "babyRegistryId": {
@@ -156,6 +160,7 @@
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/*:Customer/customerInfo:BabyRegistry/customerInfo:Products/customerInfo:Product",
+      "uriExpression": "concat('/Product/', customerInfo:ProductId)",
       "properties": {
         "productId": {
           "sourcedFrom": "customerInfo:ProductId"

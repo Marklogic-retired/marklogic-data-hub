@@ -269,24 +269,45 @@ let expectedFullTemplate = tidyXML(`
       </LineItem>
    </m:entity>
    <m:output>
-      <instance:entityInstance0>
+      <instance:mapping0Instances>
          <m:for-each>
             <m:select>/</m:select>
-            <m:call-template name="mapping0-Customer" />
+            <instance:entityInstance>
+               <uri>
+                  <m:val>$URI</m:val>
+               </uri>
+               <value>
+                  <m:call-template name="mapping0-Customer" />
+               </value>
+            </instance:entityInstance>
          </m:for-each>
-      </instance:entityInstance0>
-      <instance:entityInstance1>
+      </instance:mapping0Instances>
+      <instance:mapping1Instances>
          <m:for-each>
             <m:select>/Orders/Products</m:select>
-            <m:call-template name="mapping1-Product" />
+            <instance:entityInstance>
+               <uri>
+                  <m:val>hubURI('Product')</m:val>
+               </uri>
+               <value>
+                  <m:call-template name="mapping1-Product" />
+               </value>
+            </instance:entityInstance>
          </m:for-each>
-      </instance:entityInstance1>
-      <instance:entityInstance2>
+      </instance:mapping1Instances>
+      <instance:mapping2Instances>
          <m:for-each>
             <m:select>/Orders</m:select>
-            <m:call-template name="mapping2-Order" />
+            <instance:entityInstance>
+               <uri>
+                  <m:val>hubURI('Order')</m:val>
+               </uri>
+               <value>
+                  <m:call-template name="mapping2-Order" />
+               </value>
+            </instance:entityInstance>
          </m:for-each>
-      </instance:entityInstance2>
+      </instance:mapping2Instances>
    </m:output>
 </m:mapping>
 

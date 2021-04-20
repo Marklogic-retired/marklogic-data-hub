@@ -112,12 +112,9 @@ function main(content, options, stepExecutionContext) {
       let entityContent = {};
       if(entityName == targetEntityName){
         entityContent = Object.assign(entityContent, content);
-        entityContent["uri"] = flowUtils.properExtensionURI(content.uri, outputFormat);
       }
-      else{
-        entityContent["uri"] = flowUtils.properExtensionURI("/"+entityName + "/" + sem.uuidString() + ".json", outputFormat)
-      }
-      entityContent["value"] = entityInstance;
+      entityContent["value"] = entityInstance.value;
+      entityContent["uri"] = flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
       entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options);
       hubUtils.hubTrace(traceEvent, `Entity instance envelope created with mapping ${mappingStep.name} and source document ${content.uri}: ${entityContent.value}`);
       contentResponse.push(entityContent);

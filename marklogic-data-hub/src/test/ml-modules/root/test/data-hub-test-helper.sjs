@@ -124,6 +124,10 @@ function getUriInCollection(collection, databaseName) {
   return uris[0];
 }
 
+function getUrisInCollection(collection){
+  return fn.head(xdmp.eval('cts.uris(null, null, cts.collectionQuery("'+ collection+ '")).toArray()'));
+}
+
 function stagingDocumentExists(uri) {
   return documentExists(uri, config.STAGINGDATABASE);
 }
@@ -250,5 +254,6 @@ module.exports = {
   getStagingRecord,
   stagingDocumentExists,
   verifyJson,
+  getUrisInCollection,
   runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
 };

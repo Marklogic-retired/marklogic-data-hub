@@ -56,10 +56,14 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   targetEntityMapping.targetEntityType = mappingStep.targetEntityType;
   targetEntityMapping.properties = mappingStep.properties;
   targetEntityMapping.expressionContext = mappingStep.expressionContext ? mappingStep.expressionContext : "/";
+  targetEntityMapping.uriExpression = mappingStep.uriExpression ? mappingStep.uriExpression : "$URI";
 
   allEntityMap.push(targetEntityMapping);
   if(mappingStep["relatedEntityMappings"] && mappingStep["relatedEntityMappings"].length > 0){
-    mappingStep["relatedEntityMappings"].forEach(entityMap => allEntityMap.push(entityMap));
+    mappingStep["relatedEntityMappings"].forEach(entityMap => {
+      entityMap.uriExpression = entityMap.uriExpression ? entityMap.uriExpression : "hubURI('" + getEntityName(entityMap.targetEntityType) + "')";
+      allEntityMap.push(entityMap)
+    });
   }
 
   const namespaces = fetchNamespacesFromMappingStep(mappingStep);
@@ -76,12 +80,19 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
       ${entityTemplates}
       <m:output>
       ${allEntityMap.map((entityMap, index) =>
-        `<instance:entityInstance${index}>
+        `<instance:mapping${index}Instances>
            <m:for-each>
            <m:select>${entityMap["expressionContext"] ? entityMap["expressionContext"]: "/" }</m:select>
-           <m:call-template name="mapping${index}-${getEntityName(entityMap.targetEntityType)}"/>
+           <instance:entityInstance>
+               <uri>
+                    <m:val>${entityMap.uriExpression}</m:val>
+                </uri>
+                <value>
+                    <m:call-template name="mapping${index}-${getEntityName(entityMap.targetEntityType)}"/>
+                </value>
+            </instance:entityInstance>
            </m:for-each>
-        </instance:entityInstance${index}>`).join("\n")}
+        </instance:mapping${index}Instances>`).join("\n")}
       </m:output>
     </m:mapping>`;
   return xdmp.unquote(xml);
@@ -104,9 +115,9 @@ function fetchNamespacesFromMappingStep(mappingStep){
 
 /**
  * Makes parameter elements for the XML mapping template, which are then converted into XSLT parameter elements.
- * 
- * @param mappingStep 
- * @param userParameterNames can be passed in for a scenario where the caller has already determined the user parameter 
+ *
+ * @param mappingStep
+ * @param userParameterNames can be passed in for a scenario where the caller has already determined the user parameter
  * names based on the mapping step; if null, then the mapping step will be checked to see if user parameters are available
  * @returns {string} stringified XML, with one m:param element per parameter
  */
@@ -128,7 +139,7 @@ function makeParameterElements(mappingStep, userParameterNames) {
       } catch (error) {
         throw Error(`getParameterDefinitions failed in module '${modulePath}'; cause: ${error.message}`);
       }
-    }  
+    }
   }
   return elements;
 }
@@ -354,13 +365,13 @@ function escapeXML(input = '') {
 }
 
 /**
- * Main purpose of this function is for testing a mapping against a persisted document, identified by the uri parameter. 
+ * Main purpose of this function is for testing a mapping against a persisted document, identified by the uri parameter.
  * This is not used when a mapping step is run; this functionality is independent of flows/steps, and should really be moved
- * into a mapping-specific library that is not under "steps". 
- * 
- * @param mapping 
- * @param uri 
- * @returns 
+ * into a mapping-specific library that is not under "steps".
+ *
+ * @param mapping
+ * @param uri
+ * @returns
  */
 function validateAndRunMapping(mapping, uri) {
   if (!fn.docAvailable(uri)) {
@@ -368,7 +379,7 @@ function validateAndRunMapping(mapping, uri) {
   }
 
   const sourceDocument = cts.doc(uri);
-  
+
   const modulePath = mapping.mappingParametersModulePath;
   let userParameterNames = [];
   let userParameterMap = {};
@@ -378,7 +389,7 @@ function validateAndRunMapping(mapping, uri) {
       const moduleLib = require(modulePath);
       userParameterNames = moduleLib["getParameterDefinitions"]().map(def => def.name);
       userParameterMap = moduleLib["getParameterValues"](contentArray, {});
-    }         
+    }
   } catch (error) {
     // Need to throw an HTTP error so that the testMapping endpoint returns a proper error
     httpUtils.throwBadRequest(`Unable to apply mapping parameters module at path '${modulePath}'; cause: ${error.message}`);
@@ -471,21 +482,21 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
 }
 
 /**
- * Tests the given mapping against the given source instance by returning the mapping with 
+ * Tests the given mapping against the given source instance by returning the mapping with
  * each mapping expression containing an "output" property or an "errorMessage" property.
  * This is not used when running a mapping step; it's only used when testing a mapping.
- * 
+ *
  * @param {object} mapping The mapping step
  * @param {document} sourceInstance the instance to be mapped; assumed to have been extracted from a source document
  * @param {array} userParameterNames
- * @param {object} parameterMap 
- * @param propMapping 
- * @param paths 
- * @returns 
+ * @param {object} parameterMap
+ * @param propMapping
+ * @param paths
+ * @returns
  */
 function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
-  propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}}, 
-  paths=['properties']) 
+  propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}},
+  paths=['properties'])
 {
   Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
@@ -519,15 +530,15 @@ function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
 }
 
 /**
- * Tests the given mapping against the given source document, only executing the mapping 
+ * Tests the given mapping against the given source document, only executing the mapping
  * expression associated with the given property name.
- * 
- * @param mapping 
- * @param propertyName 
- * @param sourceInstance 
+ *
+ * @param mapping
+ * @param propertyName
+ * @param sourceInstance
  * @param {array} userParameterNames
  * @param {object} parameterMap
- * @returns 
+ * @returns
  */
 // TODO Figure out relevancy of this comment
 //es.nodeMapToCanonical can be used after server bug #53497 is fixed
@@ -554,7 +565,7 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
     multiple instances
      */
 
-    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, parameterMap)).xpath('/instance:entityInstance0/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
+    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance/*:value/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
     if(arr.length <= 1) {
