@@ -295,7 +295,7 @@ function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, 
   const targetDatabase = stepExecutionContext.getTargetDatabase();
   outputContentArray.forEach(content => {
     const contentCopy = copyContentObject(content);
-    writeQueue.addContent(targetDatabase, contentCopy, stepExecutionContext.flowName, stepExecutionContext.stepNumber);
+    writeQueue.addContent(targetDatabase, contentCopy, stepExecutionContext.flow.name, stepExecutionContext.stepNumber);
   });
 }
 
@@ -311,7 +311,7 @@ function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, 
  * 
  * @param contentObject 
  */
- function copyContentObject(contentObject) {
+function copyContentObject(contentObject) {
   const copy = {
     uri: contentObject.uri,
     value: contentObject.value,

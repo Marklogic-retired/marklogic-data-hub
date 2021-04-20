@@ -74,11 +74,8 @@ class WriteQueue {
    * @returns an array of URIs corresponding to the content objects that will be persisted to the given database
    */
   getContentUris(databaseName) {
-    if (this.databaseToContentMap[databaseName]) {
-      return Object.keys(this.databaseToContentMap[databaseName]);
-    } else {
-      return [];
-    }
+    const contentMap = this.getContentMap(databaseName);
+    return contentMap ? Object.keys(contentMap) : [];
   }
 
   /**
@@ -86,11 +83,12 @@ class WriteQueue {
    * @returns an array of content objects that will be persisted to the given database
    */
   getContentArray(databaseName) {
-    if (this.databaseToContentMap[databaseName]) {
-      return hubUtils.getObjectValues(this.databaseToContentMap[databaseName]);
-    } else {
-      return [];
-    }
+    const contentMap = this.getContentMap(databaseName);
+    return contentMap ? hubUtils.getObjectValues(contentMap) : [];
+  }
+
+  getContentMap(databaseName) {
+    return this.databaseToContentMap[databaseName];
   }
 
   /**

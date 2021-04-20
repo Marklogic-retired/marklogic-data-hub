@@ -41,6 +41,7 @@ class StepExecutionContext {
       httpUtils.throwBadRequest(`Cannot find step number '${stepNumber}' in flow '${flow.name}`);
     }
 
+    const flowName = flow.name;
     const flowStep = flow.steps[stepNumber];
     const name = flowStep.stepDefinitionName;
     if (!name) {

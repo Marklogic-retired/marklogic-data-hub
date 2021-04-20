@@ -24,11 +24,13 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
     void jsonContent() {
         installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
 
-        HubFlowRunnerResource.Input input = new HubFlowRunnerResource.Input("ingestAndMap");
+        HubFlowRunnerResource.Input input = new HubFlowRunnerResource.Input("ingestAndMap").withJobId("json123");
         input.addContent("/customer1.json").put("customerId", "1");
         input.addContent("/customer2.json").put("customerId", "2");
 
         verifyResults(newResource().runFlow(input));
+
+        assertNotNull(getJobDoc("json123"), "The jobId parameter should have been used instead of generating a random jobId");
     }
 
     @Test
@@ -42,6 +44,7 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
         String input = format("<input><flowName>%s</flowName>", flowName);
         input += "<content><uri>/customer1.xml</uri><value><customerId>1</customerId></value></content>";
         input += "<content><uri>/customer2.xml</uri><value><customerId>2</customerId></value></content>";
+        input += "<jobId>xml123</jobId>";
         input += "</input>";
 
         RunFlowResponse response = newResource().runFlowWithXmlInput(input);
@@ -61,6 +64,8 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
         assertEquals("1", doc.getElementValue("/es:envelope/es:instance/Customer/customerId"));
         doc = getFinalXmlDoc("/customer2.xml");
         assertEquals("2", doc.getElementValue("/es:envelope/es:instance/Customer/customerId"));
+
+        assertNotNull(getJobDoc("xml123"), "The jobId parameter should have been used instead of generating a random jobId");
     }
 
     @Test
@@ -129,7 +134,10 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
     }
 
     private void verifyFlowResponseFields(RunFlowResponse response) {
-        assertNotNull("job123", response.getJobId());
+        String jobId = response.getJobId();
+        assertNotNull(jobId, "If a jobId wasn't provided, then one should have been generated as a uuid");
+        assertNotNull(getJobDoc(jobId), "A job document should exist with the same jobIs as the flow response");
+
         assertEquals("finished", response.getJobStatus());
         assertEquals("2", response.getLastAttemptedStep());
         assertEquals("2", response.getLastCompletedStep());
