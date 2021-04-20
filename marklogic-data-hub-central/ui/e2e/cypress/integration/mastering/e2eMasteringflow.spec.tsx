@@ -71,7 +71,7 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.saveButton().click();
     cy.findByText(loadStepName).should("be.visible");
   });
-  it("Add load Step to New Flow", () => {
+  it("Add load Step to New Flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.addStepToNewFlow(loadStepName);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -84,9 +84,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => cy.get("input[type=\"file\"]"));
     cy.get("input[type=\"file\"]").attachFile(["patients/first-name-double-metaphone1.json", "patients/first-name-double-metaphone2.json", "patients/first-name-synonym1.json", "patients/first-name-synonym2.json", "patients/last-name-address-reduce1.json", "patients/last-name-address-reduce2.json", "patients/last-name-dob-custom1.json", "patients/last-name-dob-custom2.json", "patients/last-name-plus-zip-boost1.json", "patients/last-name-plus-zip-boost2.json", "patients/last-name-slight-match1.json", "patients/last-name-slight-match2.json", "patients/ssn-match1.json", "patients/ssn-match2.json"], {force: true});
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", loadStepName);
     //Verify step name appears as a collection facet in explorer
     runPage.explorerLink().click();
@@ -173,14 +171,12 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.testMap().click();
     mappingStepDetail.goBackToCurateHomePage();
   });
-  it("Add Map step to existing flow Run", () => {
+  it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     curatePage.toggleEntityTypeId("Patient");
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     //Explore Mapped data
     runPage.explorerLink().click();
@@ -318,15 +314,13 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     mappingStepDetail.goBackToCurateHomePage();
   });
-  it("Add Match step to existing flow Run", () => {
+  it("Add Match step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
@@ -378,15 +372,13 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     mappingStepDetail.goBackToCurateHomePage();
   });
-  it("Add Merge step to existing flow Run", () => {
+  it("Add Merge step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMergeTab("Patient");
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     //Verify merged Data
     runPage.explorerLink().click();

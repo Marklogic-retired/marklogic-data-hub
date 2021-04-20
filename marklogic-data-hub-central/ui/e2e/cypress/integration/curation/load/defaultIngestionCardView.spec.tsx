@@ -127,7 +127,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
-  it("Verify Run Load step in an Existing Flow", () => {
+  it("Verify Run Load step in an Existing Flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
@@ -135,19 +135,15 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("failed", "Ingestion", stepName)
       .should("contain.text", "Document is not JSON");
     tiles.closeRunMessage();
   });
-  it("Run the flow with JSON input", () => {
+  it("Run the flow with JSON input", {defaultCommandTimeout: 120000}, () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
     runPage.deleteStep(stepName).click();
@@ -160,7 +156,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName).should("not.exist");
   });
-  it("Verify Run Load step in a New Flow", () => {
+  it("Verify Run Load step in a New Flow", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.runStep(stepName).click();
@@ -175,15 +171,13 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     //Upload file to start running
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.waitForAsyncRequest();
   });
-  it("Verify Run Load step in flow where step exists, should run automatically", () => {
+  it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.runStep(stepName).click();
@@ -192,13 +186,11 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
-  it("add step to a new flow and Verify Run Load step where step exists in multiple flows", () => {
+  it("add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.addStepToNewFlow(stepName);
@@ -218,9 +210,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -231,7 +221,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
-  it("Verify Add to Existing Flow after changing source/target format to TEXT", () => {
+  it("Verify Add to Existing Flow after changing source/target format to TEXT", {defaultCommandTimeout: 120000}, () => {
     loadPage.loadView("th-large").click();
     loadPage.editStepInCardView(stepName).click();
     loadPage.selectSourceFormat("TEXT");
@@ -247,9 +237,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     //Run the flow with TEXT input
     runPage.runLastStepInAFlow(stepName);
     cy.uploadFile("input/test-1.txt");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });

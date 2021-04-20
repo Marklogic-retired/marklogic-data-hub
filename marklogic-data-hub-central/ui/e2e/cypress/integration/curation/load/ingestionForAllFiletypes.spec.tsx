@@ -30,7 +30,7 @@ describe("Verify ingestion for all filetypes", () => {
     cy.deleteFlows("zipE2eFlow", "csvE2eFlow", "xmlE2eFlow");//'csvE2eFlow', 'xmlE2eFlow',
     cy.resetTestUser();
   });
-  it("Verify ingestion for csv filetype", () => {
+  it("Verify ingestion for csv filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyCSVTest";
     let flowName= "csvE2eFlow";
     loadPage.loadView("th-large").click();
@@ -55,13 +55,11 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.csv");
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
-  it("Verify ingestion for zip filetype", () => {
+  it("Verify ingestion for zip filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyZIPTest";
     let flowName= "zipE2eFlow";
     loadPage.loadView("th-large").click();
@@ -86,13 +84,11 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
-  it("Verify ingestion for xml filetype", () => {
+  it("Verify ingestion for xml filetype", {defaultCommandTimeout: 120000}, () => {
     let stepName = "cyXMTest";
     let flowName= "xmlE2eFlow";
     loadPage.loadView("th-large").click();
@@ -119,9 +115,7 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.xml");
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     //Verify step name appears as a collection facet in explorer
     runPage.explorerLink().click();

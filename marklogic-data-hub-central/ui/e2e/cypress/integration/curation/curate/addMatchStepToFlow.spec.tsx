@@ -65,7 +65,7 @@ describe("Add Matching step to a flow", () => {
     loadPage.confirmationOptions("OK").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
-  it("Add the Match step to new flow and Run the step(new)", () => {
+  it("Add the Match step to new flow and Run the step(new)", {defaultCommandTimeout: 120000}, () => {
     curatePage.addToNewFlow("Customer", matchStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -76,9 +76,7 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
@@ -92,7 +90,7 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to an existing flow and Run the step(existing)", () => {
+  it("Add the Match step to an existing flow and Run the step(existing)", {defaultCommandTimeout: 120000}, () => {
     curatePage.openExistingFlowDropdown("Customer", matchStep);
     curatePage.getExistingFlowFromDropdown(flowName1).click();
     curatePage.addStepToFlowConfirmationMessage();
@@ -101,9 +99,7 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
@@ -118,7 +114,7 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to new flow from card run button and should automatically run", () => {
+  it("Add the Match step to new flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runInNewFlow(matchStep).click();
     cy.waitForAsyncRequest();
@@ -129,9 +125,7 @@ describe("Add Matching step to a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.wait(500);
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -146,14 +140,12 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to an existing flow from card run button and should automatically run", () => {
+  it("Add the Match step to an existing flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -165,14 +157,12 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Run the Match step from card run button and should automatically run in the flow where step exists", () => {
+  it("Run the Match step from card run button and should automatically run in the flow where step exists", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -198,15 +188,13 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Run the Match step from card run button and should display all flows where step exists, choose one to automatically run in", () => {
+  it("Run the Match step from card run button and should display all flows where step exists, choose one to automatically run in", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);

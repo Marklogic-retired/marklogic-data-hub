@@ -67,7 +67,7 @@ describe("Add Merge step to a flow", () => {
     loadPage.confirmationOptions("OK").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
-  it("Add the Merge step to new flow and Run the step(new)", () => {
+  it("Add the Merge step to new flow and Run the step(new)", {defaultCommandTimeout: 120000}, () => {
     curatePage.addToNewFlow("Customer", mergeStep);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -80,9 +80,7 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -95,7 +93,7 @@ describe("Add Merge step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Add the Merge step to an existing flow and Run the step(existing)", () => {
+  it("Add the Merge step to an existing flow and Run the step(existing)", {defaultCommandTimeout: 120000}, () => {
     curatePage.openExistingFlowDropdown("Customer", mergeStep);
     curatePage.getExistingFlowFromDropdown(flowName1).click();
     curatePage.addStepToFlowConfirmationMessage();
@@ -104,9 +102,7 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -121,7 +117,7 @@ describe("Add Merge step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Add the Merge step to new flow from card run button and should automatically run", () => {
+  it("Add the Merge step to new flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runInNewFlow(mergeStep).click();
     cy.waitForAsyncRequest();
@@ -129,9 +125,7 @@ describe("Add Merge step to a flow", () => {
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
@@ -147,14 +141,12 @@ describe("Add Merge step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Add the Merge step to an existing flow from card run button and should automatically run", () => {
+  it("Add the Merge step to an existing flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
@@ -166,14 +158,12 @@ describe("Add Merge step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Run the Merge step from card run button and should automatically run in the flow where step exists", () => {
+  it("Run the Merge step from card run button and should automatically run in the flow where step exists", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
@@ -199,14 +189,12 @@ describe("Add Merge step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Run the Merge step from card run button and should display all flows where step exists, choose one to automatically run in", () => {
+  it("Run the Merge step from card run button and should display all flows where step exists, choose one to automatically run in", {defaultCommandTimeout: 120000}, () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
