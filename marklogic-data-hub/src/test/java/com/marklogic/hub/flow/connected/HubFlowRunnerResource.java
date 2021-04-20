@@ -68,5 +68,10 @@ public class HubFlowRunnerResource extends ResourceManager {
         public ObjectNode getRootNode() {
             return rootNode;
         }
+
+        public Input withJobId(String jobId) {
+            rootNode.put("jobId", jobId);
+            return this;
+        }
     }
 }

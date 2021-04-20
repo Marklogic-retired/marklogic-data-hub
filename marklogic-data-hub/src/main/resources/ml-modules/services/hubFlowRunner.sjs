@@ -32,15 +32,13 @@ function isXmlInput(context) {
 }
 
 function processJsonInput(input) {
-  // TODO This will become user-configurable in a subsequent user story
-  const jobId = sem.uuidString();
   input = input.toObject();
+  const jobId = input.jobId || sem.uuidString();
   return flowRunner.processContentWithFlow(input.flowName, input.content, jobId, input.options);
 }
 
 function processXmlInput(input) {
-  // TODO This will become user-configurable in a subsequent user story
-  const jobId = sem.uuidString();
+  const jobId = fn.head(input.xpath("/input/jobId/text()")) || sem.uuidString();
   const flowName = input.xpath("/input/flowName/text()");
   const options = parseJsonOptions(input);
   const contentArray = buildContentArray(input);
