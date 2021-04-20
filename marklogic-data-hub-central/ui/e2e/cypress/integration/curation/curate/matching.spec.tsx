@@ -158,8 +158,11 @@ describe("Matching", () => {
   it("Edit ruleset with multiple properties", () => {
     multiSlider.editOption("customerMultiplePropertyRuleset");
     cy.contains("Edit Match Ruleset for Multiple Properties");
-    rulesetMultipleModal.selectPropertyToMatch("name");
-    rulesetMultipleModal.selectMatchTypeDropdown("name", "zip");
+    rulesetMultipleModal.selectMatchTypeDropdown("name", "doubleMetaphone");
+    rulesetMultipleModal.setDictionaryUri("name", "/dictionary/first-names.xml");
+    rulesetMultipleModal.setDistanceThreshold("name", "100");
+    rulesetMultipleModal.selectPropertyToMatch("email");
+    rulesetMultipleModal.selectMatchTypeDropdown("email", "zip");
     rulesetMultipleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findByLabelText("customerMultiplePropertyRuleset").should("have.length.gt", 0));
