@@ -252,14 +252,22 @@ expectedTemplate = tidyXML(`
         <m:optional><LastName xsi:type="xs:string"><m:val>ns2:surName</m:val></LastName></m:optional>
       </Name>
     </m:entity>
-      <m:output>
-        <instance:entityInstance0>
-            <m:for-each><m:select>/</m:select>
-                <m:call-template name="mapping0-Customer" />
-            </m:for-each>
-        </instance:entityInstance0>
-      </m:output>
-    </m:mapping>
+    <m:output>
+      <instance:mapping0Instances>
+         <m:for-each>
+            <m:select>/</m:select>
+            <instance:entityInstance>
+               <uri>
+                  <m:val>$URI</m:val>
+               </uri>
+               <value>
+                  <m:call-template name="mapping0-Customer" />
+               </value>
+            </instance:entityInstance>
+         </m:for-each>
+      </instance:mapping0Instances>
+    </m:output>
+  </m:mapping>
 `);
 
 template = constructEntireNestedTemplateWithOverrides({}, {});

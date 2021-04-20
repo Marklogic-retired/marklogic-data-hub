@@ -82,6 +82,7 @@
       "relatedEntityMappingId": "Order:Customer.customerId",
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "Order"],
       "expressionContext": "/Orders",
+      "uriExpression": "concat('/Order/', OrderId)",
       "permissions": "data-hub-common,read,data-hub-common,update",
       "properties": {
         "orderId": {
@@ -116,6 +117,7 @@
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/Orders/Products",
+      "uriExpression": "concat('/Product/', ProductId)",
       "properties": {
         "productId": {
           "sourcedFrom": "ProductId"
@@ -130,6 +132,7 @@
       "relatedEntityMappingId": "BabyRegistry:Customer.customerId",
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "BabyRegistry"],
       "expressionContext": "BabyRegistry",
+      "uriExpression": "concat('/BabyRegistry/', BabyRegistryId)",
       "permissions": "data-hub-common,read,data-hub-common,update",
       "properties": {
         "babyRegistryId": {
@@ -152,6 +155,7 @@
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/BabyRegistry/Products",
+      "uriExpression": "concat('/Product/', ProductId)",
       "properties": {
         "productId": {
           "sourcedFrom": "ProductId"

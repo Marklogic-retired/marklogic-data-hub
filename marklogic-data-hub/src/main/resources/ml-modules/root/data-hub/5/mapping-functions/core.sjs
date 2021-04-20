@@ -201,17 +201,27 @@ function isNullOrEmpty(value) {
 // END date/dateTime functions
 
 /**
- * Convenience function for getting the value of a key from a JSON object. An expression such as 
+ * Convenience function for getting the value of a key from a JSON object. An expression such as
  * "object['value']" doesn't work because 'value' is interpreted as an XPath predicate, not a value selector.
- * 
- * Note that "key" is the first argument for consistency with documentLookup and memoryLookup. 
- * 
- * @param key 
- * @param object 
- * @returns 
+ *
+ * Note that "key" is the first argument for consistency with documentLookup and memoryLookup.
+ *
+ * @param key
+ * @param object
+ * @returns
  */
 function lookup(key, object) {
   return object ? object[key] : null;
+}
+
+function hubURI(entityType) {
+  if(typeof entityType != "string"){
+    httpUtils.throwBadRequest(`Unable to generate uri: 'entityType' should be of type 'string'`);
+  }
+  if(!entityType.toString() || !entityType.toString().trim()){
+    httpUtils.throwBadRequest(`Unable to generate uri: 'entityType' should not be an empty or whitespace string`);
+  }
+  return "/" + entityType + "/" + sem.uuidString() + ".json";
 }
 
 module.exports = {
@@ -219,5 +229,6 @@ module.exports = {
   lookup,
   memoryLookup,
   parseDate,
-  parseDateTime
+  parseDateTime,
+  hubURI
 };

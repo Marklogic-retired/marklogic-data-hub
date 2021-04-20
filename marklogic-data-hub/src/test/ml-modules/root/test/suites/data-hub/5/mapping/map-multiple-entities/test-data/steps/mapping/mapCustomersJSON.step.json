@@ -12,6 +12,7 @@
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
   "stepId": "mapCustomersJSON-mapping",
+  "uriExpression": "$URI",
   "properties": {
     "customerId": {
       "sourcedFrom": "CustomerID"
@@ -29,6 +30,7 @@
       "collections": ["mapCustomersJSON", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/Orders/Products",
+      "uriExpression": "concat('/Product/', ProductId)",
       "properties": {
         "productId": {
           "sourcedFrom": "ProductId"
@@ -43,6 +45,7 @@
       "relatedEntityMappingId": "Order:Customer.customerId",
       "collections": ["mapCustomersJSON", "Order"],
       "expressionContext": "/Orders",
+      "uriExpression": "concat('/Order/', OrderId)",
       "permissions": "data-hub-common,read,data-hub-common,update",
       "properties": {
         "orderId": {
