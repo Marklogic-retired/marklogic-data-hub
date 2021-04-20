@@ -23,7 +23,7 @@ describe("Run Tile tests", () => {
     cy.resetTestUser();
   });
 
-  it("can create flow and add steps to flow, should load xml merged document and display content", () => {
+  it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
 
     const flowName = "testPersonXML";
     //Verify create flow and add all user-defined steps to flow via Run tile
@@ -55,23 +55,17 @@ describe("Run Tile tests", () => {
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
     runPage.runStep("match-xml-person");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Matching", "match-xml-person");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
     runPage.runStep("merge-xml-person");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
 
     //Navigate to explorer tile using the explorer link

@@ -53,7 +53,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     loadPage.confirmationOptions("Save").click();
     cy.findByText(loadStep).should("be.visible");
   });
-  it("Edit load step and Run", () => {
+  it("Edit load step and Run", {defaultCommandTimeout: 120000}, () => {
     // Open step settings and switch to Advanced tab
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();
@@ -74,9 +74,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.runStep(loadStep);
     cy.uploadFile("input/10260.json");
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -122,7 +120,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();
   });
-  it("Add Map step to new flow and Run", () => {
+  it("Add Map step to new flow and Run", {defaultCommandTimeout: 120000}, () => {
     curatePage.toggleEntityTypeId("Order");
     //Cancel add to new flow
     curatePage.addToNewFlow("Order", mapStep);
@@ -136,15 +134,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.confirmAddStepToFlow(mapStep, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(mapStep);
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
     runPage.deleteStep(mapStep).click();
     loadPage.confirmationOptions("Yes").click();
   });
-  it("Add Map step to existing flow Run", () => {
+  it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
     //Verify Run Map step in an existing Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
@@ -153,13 +149,11 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     //Step should automatically run
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });
-  it("Delete the flow and Verify Run Map step in a new Flow", () => {
+  it("Delete the flow and Verify Run Map step in a new Flow", {defaultCommandTimeout: 120000}, () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
@@ -178,13 +172,11 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     //Step should automatically run
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });
-  it("Verify Run Map step in flow where step exists, should run automatically", () => {
+  it("Verify Run Map step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
@@ -192,15 +184,13 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
   });
-  it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", () => {
+  it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
@@ -222,9 +212,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);

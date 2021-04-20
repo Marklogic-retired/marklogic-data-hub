@@ -148,7 +148,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.loadView("table").click();
     cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
   });
-  it("Verify Run in an existing flow", () => {
+  it("Verify Run in an existing flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
@@ -157,9 +157,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -169,7 +167,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("Yes").click();
     runPage.getFlowName(flowName).should("not.exist");
   });
-  it("Verify Run in a new flow", () => {
+  it("Verify Run in a new flow", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
@@ -187,13 +185,11 @@ describe("Validate CRUD functionality from list view", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
-  it("Verify Run Load step in flow where step exists, should run automatically", () => {
+  it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
@@ -202,13 +198,11 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
-  it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", () => {
+  it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.addStepToNewFlowListView(stepName);
@@ -228,9 +222,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    Cypress.config("defaultCommandTimeout", 120000);
     cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    Cypress.config("defaultCommandTimeout", 10000);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
