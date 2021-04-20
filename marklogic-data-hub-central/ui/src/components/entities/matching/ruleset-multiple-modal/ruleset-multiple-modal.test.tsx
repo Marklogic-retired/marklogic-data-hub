@@ -349,22 +349,15 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByText, getByTestId, queryByTestId, getByLabelText;
-    await act(async () => {
-      const renderResults = render(
-        <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
-      );
-      getByText = renderResults.getByText;
-      getByTestId = renderResults.getByTestId;
-      queryByTestId = renderResults.queryByTestId;
-      getByLabelText = renderResults.getByLabelText;
-    });
+    const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetMultipleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
@@ -395,22 +388,15 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByText, getByTestId, queryByTestId, getByLabelText;
-    await act(async () => {
-      const renderResults = render(
-        <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
-      );
-      getByText = renderResults.getByText;
-      getByTestId = renderResults.getByTestId;
-      queryByTestId = renderResults.queryByTestId;
-      getByLabelText = renderResults.getByLabelText;
-    });
+    const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetMultipleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
@@ -451,22 +437,15 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByText, getByTestId, queryByTestId, getByLabelText;
-    await act(async () => {
-      const renderResults = render(
-        <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
-      );
-      getByText = renderResults.getByText;
-      getByTestId = renderResults.getByTestId;
-      queryByTestId = renderResults.queryByTestId;
-      getByLabelText = renderResults.getByLabelText;
-    });
+    const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetMultipleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
@@ -507,20 +486,15 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByText, getByLabelText;
-    await act(async () => {
-      const renderResults = render(
-        <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
-      );
-      getByLabelText = renderResults.getByLabelText;
-      getByText = renderResults.getByText;
-    });
+    const {getByLabelText, getByText} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetMultipleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
@@ -544,20 +518,15 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByLabelText, getByText;
-    await act(async () => {
-      const renderResults = render(
-        <CurationContext.Provider value={customerMatchingStep}>
-          <RulesetMultipleModal
-            isVisible={true}
-            toggleModal={toggleModalMock}
-            editRuleset={{}}
-          />
-        </CurationContext.Provider>
-      );
-      getByLabelText = renderResults.getByLabelText;
-      getByText = renderResults.getByText;
-    });
+    const {getByLabelText, getByText} = render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetMultipleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
