@@ -52,7 +52,7 @@ assertions.push(
   test.assertEqual(stepName, options.collections[0]),
   test.assertEqual("Customer", options.collections[1]),
   test.assertEqual("doNotValidate", options.validateEntity),
-  test.assertEqual("coarse", options.provenanceGranularityLevel),
+  test.assertEqual("off", options.provenanceGranularityLevel),
   test.assertEqual("data-hub-common,read,data-hub-common,update", options.permissions),
   test.assertEqual("could be anything", options.someWackyUserProperty,
     "Any unrecognized property should be copied to the options object"),

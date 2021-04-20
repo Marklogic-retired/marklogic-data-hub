@@ -41,7 +41,7 @@ expectedStep.sourceDatabase = "data-hub-STAGING";
 expectedStep.targetDatabase = "data-hub-FINAL";
 expectedStep.collections = [stepName, "Customer"];
 expectedStep.validateEntity = "doNotValidate";
-expectedStep.provenanceGranularityLevel = "coarse";
+expectedStep.provenanceGranularityLevel = "off";
 expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
 expectedStep.targetFormat = "json";
 

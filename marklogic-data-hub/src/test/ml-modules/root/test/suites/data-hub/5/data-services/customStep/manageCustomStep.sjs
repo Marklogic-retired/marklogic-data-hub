@@ -43,7 +43,7 @@ expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
 expectedStep.sourceDatabase = "data-hub-STAGING";
 expectedStep.targetDatabase = "data-hub-FINAL";
 expectedStep.batchSize = 52;
-expectedStep.provenanceGranularityLevel = "coarse"
+expectedStep.provenanceGranularityLevel = "off";
 expectedStep.stepId = stepName + "-" + "custom";
 
 

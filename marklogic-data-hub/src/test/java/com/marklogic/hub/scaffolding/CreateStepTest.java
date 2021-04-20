@@ -182,6 +182,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
                 assertNotNull( step.get("matchRulesets"));
                 assertNotNull( step.get("thresholds"));
                 assertEquals(true, step.get("acceptsBatch").asBoolean());
+                assertEquals("off", step.get("provenanceGranularityLevel").asText());
             }
             else {
                 assertNotNull( step.get("mergeRules"));
@@ -193,6 +194,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         else {
             assertEquals("query", step.get("selectedSource").asText());
             assertEquals("cts.collectionQuery('changeme')", step.get("sourceQuery").asText());
+            assertEquals("off", step.get("provenanceGranularityLevel").asText());
         }
     }
 

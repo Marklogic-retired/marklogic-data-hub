@@ -60,7 +60,7 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     cy.findByText("Please add target collections").should("exist");
     loadPage.defaultCollections(matchStep).should("be.visible");
     cy.get("#targetPermissions").should("have.value", "data-hub-common,read,data-hub-common,update");
-    cy.get("[id=\"provGranularity\"] [class=\"ant-select-selection-selected-value\"]").should("have.text", "Coarse-grained");
+    cy.get("[id=\"provGranularity\"] [class=\"ant-select-selection-selected-value\"]").should("have.text", "Off");
     cy.get("#batchSize").should("have.value", "100");
     advancedSettingsDialog.toggleInterceptors();
     cy.get("#interceptors").should("have.text", "[]");
