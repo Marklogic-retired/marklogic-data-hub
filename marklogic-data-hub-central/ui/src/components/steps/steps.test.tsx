@@ -229,7 +229,7 @@ describe("Steps settings component", () => {
     expect(getByText("Target Permissions")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Off")).toBeInTheDocument();
     expect(getByText("Batch Size")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     expect(getByLabelText("headers-textarea")).toBeEmpty();
@@ -283,7 +283,7 @@ describe("Steps settings component", () => {
     expect(getByText("Target Format")).toBeInTheDocument();
     expect(getByText(StepsConfig.defaultTargetFormat)).toBeInTheDocument();
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Off")).toBeInTheDocument();
     expect(getByText("Entity Validation")).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
     expect(getByText("Batch Size")).toBeInTheDocument();
@@ -335,7 +335,7 @@ describe("Steps settings component", () => {
     expect(getByText("Target Permissions")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Off")).toBeInTheDocument();
     expect(getByText("Batch Size")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default
@@ -384,7 +384,7 @@ describe("Steps settings component", () => {
     expect(getByText("Target Permissions")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Off")).toBeInTheDocument();
     expect(getByText("Batch Size")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default

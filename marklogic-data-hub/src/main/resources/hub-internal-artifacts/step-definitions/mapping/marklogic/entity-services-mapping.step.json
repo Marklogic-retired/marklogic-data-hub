@@ -16,7 +16,7 @@
       "mdm-content"
     ],
     "validateEntity": "doNotValidate",
-    "provenanceGranularityLevel": "coarse",
+    "provenanceGranularityLevel": "off",
     "permissions": "data-hub-common,read,data-hub-common,update"
   }
 }

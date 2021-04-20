@@ -75,7 +75,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const defaultprovGranularity = StepsConfig.defaultProvGran;
   const fineGrainProvAvailable = stepType === "matching" || stepType === "merging";
-  const provGranularityOptions = fineGrainProvAvailable ? {"Coarse-grained": "coarse", "Fine-grained": "fine", "Off": "off"} : {"Coarse-grained": "coarse", "Off": "off"};
+  const provGranularityOptions = fineGrainProvAvailable ? {"Off": "off", "Coarse-grained": "coarse", "Fine-grained": "fine"} : {"Off": "off", "Coarse-grained": "coarse"};
   const [provGranularity, setProvGranularity] = useState(defaultprovGranularity);
   const [provGranularityTouched, setProvGranularityTouched] = useState(false);
 

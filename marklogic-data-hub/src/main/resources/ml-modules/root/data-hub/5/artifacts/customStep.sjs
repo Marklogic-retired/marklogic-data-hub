@@ -78,7 +78,7 @@ function defaultArtifact(artifactName, entityTypeId) {
     batchSize: 100,
     sourceDatabase: config.STAGINGDATABASE,
     targetDatabase: config.FINALDATABASE,
-    provenanceGranularityLevel: 'coarse',
+    provenanceGranularityLevel: 'off',
   };
 }
 

@@ -16,7 +16,7 @@
     "collections": [
       "mastering-summary"
     ],
-    "provenanceGranularityLevel": "coarse",
+    "provenanceGranularityLevel": "off",
     "permissions": "data-hub-common,read,data-hub-common,update"
   }
 }
