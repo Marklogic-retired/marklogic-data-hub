@@ -184,7 +184,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(document.querySelector(`[name="billing.zip.plusFour"]`)).toBeChecked(); //Billing > Zip > plusFour
   });
 
-  it("can validate if row selection checkbox gets checked automatically when corresponding match type for the row is updated", async () => {
+  it("can validate if row selection checkbox and matchon tag gets checked automatically when corresponding match type for the row is updated", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
@@ -209,13 +209,14 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(getByLabelText("synonym-option"));
 
     expect(customerId).toBeChecked();
+    expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument();
   });
 
-  it("can reset match type for a row by de-selecting it using row selection checkbox ", async () => {
+  it("can reset match type for a row and match on tag by de-selection using row selection checkbox ", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByLabelText, queryByTitle;
+    let getByLabelText, queryByTitle, queryByLabelText;
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
@@ -228,6 +229,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
       );
       getByLabelText = renderResults.getByLabelText;
       queryByTitle = renderResults.queryByTitle;
+      queryByLabelText = renderResults.queryByLabelText;
     });
 
     let customerId:any = document.querySelector(`[name="customerId"]`);
@@ -235,6 +237,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(getByLabelText("customerId-match-type-dropdown"));
     userEvent.click(getByLabelText("synonym-option"));
     expect(customerId).toBeChecked();
+    expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument();
 
     //Provide values for thesaurus and filter input fields
     userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
@@ -242,8 +245,89 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     userEvent.click(customerId); //de-selecting customerId resets all provided field values
     expect(queryByTitle("Synonym")).not.toBeInTheDocument();
+    expect(queryByLabelText("customerId-matchOn-tag")).not.toBeInTheDocument();
 
     userEvent.click(customerId); //selecting customerId again and check that field values should not be available
+    userEvent.click(getByLabelText("customerId-match-type-dropdown"));
+    userEvent.click(getByLabelText("synonym-option"));
+    expect(customerId).toBeChecked();
+    expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument();
+    expect(getByLabelText("customerId-thesaurus-uri-input")).toHaveValue("");
+    expect(getByLabelText("customerId-filter-input")).toHaveValue("");
+  });
+
+  it("can manipulate match on tags using row selection checkboxes and vice-versa ", async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+
+    let getByLabelText, queryByTitle, queryByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <CurationContext.Provider value={customerMatchingStep}>
+          <RulesetMultipleModal
+            isVisible={true}
+            toggleModal={toggleModalMock}
+            editRuleset={{}}
+          />
+        </CurationContext.Provider>
+      );
+      getByLabelText = renderResults.getByLabelText;
+      queryByTitle = renderResults.queryByTitle;
+      queryByLabelText = renderResults.queryByLabelText;
+      getByTestId = renderResults.getByTestId;
+    });
+
+    let customerId:any = document.querySelector(`[name="customerId"]`);
+    const validateMatchOnTag = (matchOnTag) => {
+      expect(getByLabelText(matchOnTag)).toBeInTheDocument();
+    };
+
+    expect(queryByLabelText("customerId-matchOn-tag")).not.toBeInTheDocument();
+    expect(queryByLabelText("shipping.street-matchOn-tag")).not.toBeInTheDocument();
+    expect(queryByLabelText("shipping.zip.fiveDigit-matchOn-tag")).not.toBeInTheDocument();
+
+    userEvent.click(getByLabelText("customerId-match-type-dropdown"));
+    userEvent.click(getByLabelText("synonym-option"));
+    expect(customerId).toBeChecked();
+
+    validateMatchOnTag("customerId-matchOn-tag");
+
+    //Provide values for thesaurus and filter input fields
+    userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
+    userEvent.type(getByLabelText("customerId-filter-input"), "filterInputText");
+
+    //Expand shipping hierarchy and select street
+    userEvent.click(within(getByTestId("mltable-expand-shipping")).getByRole("img"));
+    let shippingStreet:any = document.querySelector(`[name="shipping.street"]`);
+    userEvent.click(shippingStreet);
+    validateMatchOnTag("shipping.street-matchOn-tag");
+
+    //Expand Zip hierarchy and select fiveDigit
+    let zip:any = document.querySelector(`[data-row-key="shipping.zip.zip"]`);
+    let zipDropdown = within(zip).getByTestId("mltable-expand-zip");
+    userEvent.click(within(zipDropdown).getByRole("img"));
+    let shippingZipFiveDigit:any = document.querySelector(`[name="shipping.zip.fiveDigit"]`);
+    userEvent.click(shippingZipFiveDigit);
+
+    validateMatchOnTag("shipping.zip.fiveDigit-matchOn-tag");
+
+    //Removing the match tag resets the row selection.
+    userEvent.click(within(getByLabelText("customerId-matchOn-tag")).getByLabelText("icon: close"));
+
+    expect(queryByLabelText("customerId-matchOn-tag")).not.toBeInTheDocument(); //Check the tag is removed
+
+    //Other tags are still available.
+    validateMatchOnTag("shipping.street-matchOn-tag");
+    validateMatchOnTag("shipping.zip.fiveDigit-matchOn-tag");
+
+    expect(customerId).not.toBeChecked(); //CustomerId row should not be selected now.
+    expect(queryByTitle("Synonym")).not.toBeInTheDocument(); //match type is reset
+    expect(queryByLabelText("customerId-thesaurus-uri-input")).not.toBeInTheDocument();
+    expect(queryByLabelText("customerId-filter-input")).not.toBeInTheDocument();
+
+    userEvent.click(customerId);
+    expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument();
+
     userEvent.click(getByLabelText("customerId-match-type-dropdown"));
     userEvent.click(getByLabelText("synonym-option"));
     expect(customerId).toBeChecked();

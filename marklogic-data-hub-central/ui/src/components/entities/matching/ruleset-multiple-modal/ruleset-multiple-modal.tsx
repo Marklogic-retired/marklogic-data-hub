@@ -517,8 +517,6 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     if (!selectedRowKeys.includes(propertyPath)) {
       let selectedKeys = [...selectedRowKeys, propertyPath];
       setSelectedRowKeys(selectedKeys);
-      // let matchOnTagsArr = getMatchOnTags(selectedKeys);
-      // setMatchOnTags(matchOnTagsArr)
     }
   };
 
@@ -969,6 +967,22 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
+  const handlePropertyDeselection = (tagKey) => {
+    if (tagKey in matchTypes) {
+      let obj = matchTypes;
+      let matchType = matchTypes[tagKey];
+      delete obj[tagKey];
+      setMatchTypes(obj);
+      resetPropertyErrorsAndValues(tagKey, matchType);
+    } else {
+      if (tagKey in matchTypeErrorMessages) {
+        let matchTypeErrorMessagesObj = matchTypeErrorMessages;
+        delete matchTypeErrorMessagesObj[tagKey];
+        setMatchTypeErrorMessages(matchTypeErrorMessagesObj);
+      }
+    }
+  };
+
   const rowSelection = {
     onChange: (selected, selectedRows) => {
       let fkeys = selectedRows.map(row =>  row.propertyPath);
@@ -976,41 +990,22 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     },
     onSelect: (record, selected, selectedRows) => {
       if (!selected) {
-        if (record.propertyPath in matchTypes) {
-          let obj = matchTypes;
-          let matchType = matchTypes[record.propertyPath];
-          delete obj[record.propertyPath];
-          setMatchTypes(obj);
-          resetPropertyErrorsAndValues(record.propertyPath, matchType);
-        } else {
-          if (record.propertyPath in matchTypeErrorMessages) {
-            let matchTypeErrorMessagesObj = matchTypeErrorMessages;
-            delete matchTypeErrorMessagesObj[record.propertyPath];
-            setMatchTypeErrorMessages(matchTypeErrorMessagesObj);
-          }
-        }
+        handlePropertyDeselection(record.propertyPath);
       }
     },
     selectedRowKeys: selectedRowKeys,
     getCheckboxProps: record => ({name: record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? "hidden" : record.propertyPath}),
   };
 
-  const handleMatchOnTags = (tag) => {
-    const filteredByValue = Object.fromEntries(Object.entries(matchOnTags).filter(([key, value]) => value !== tag));
-    let rowkeys = Object.keys(filteredByValue);
-    setSelectedRowKeys(rowkeys);
-    let obj = matchTypes;
-    Object.keys(matchTypes).forEach(el => {
-      if (!rowkeys.includes(el)) {
-        delete obj[el];
-      }
-    });
-    setMatchTypes(obj);
+  const closeMatchOnTag = (tagKey) => {
+    const filteredKeys = Object.keys(matchOnTags).filter(key => key !== tagKey);
+    setSelectedRowKeys(filteredKeys);
+    handlePropertyDeselection(tagKey);
   };
 
   const displayMatchOnTags = () => {
-    return Object.values(matchOnTags).map((prop) => <MLTag className={styles.matchOnTags} closable onClose={() => handleMatchOnTags(prop)}>
-      {prop}
+    return Object.keys(matchOnTags).map((prop) => <MLTag key={prop} aria-label={`${prop}-matchOn-tag`} className={styles.matchOnTags} closable onClose={() => closeMatchOnTag(prop)}>
+      {matchOnTags[prop]}
     </MLTag>);
   };
 
