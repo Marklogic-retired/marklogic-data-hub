@@ -875,7 +875,6 @@ pipeline{
         when { expression {return params.regressions} }
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
-            options {timeout(time: 3, unit: 'HOURS')}
 			agent { label 'dhfLinuxAgent'}
 			steps{
             timeout(time: 3,  unit: 'HOURS'){
