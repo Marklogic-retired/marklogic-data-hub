@@ -454,6 +454,165 @@ void smartMastering() {
                         }
 }
 
+void codeReview(){
+    def count=0;
+    retry(4){
+        count++;
+        props = readProperties file:'data-hub/pipeline.properties';
+        def reviewState=getReviewState()
+        if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
+            println("Automated PR")
+            sh 'exit 0'
+        }
+        else if(reviewState.equalsIgnoreCase("APPROVED")){
+            sh 'exit 0'
+        }
+        else if(reviewState.equalsIgnoreCase("CHANGES_REQUESTED")){
+            println("Changes Requested")
+            def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+            email=getEmailFromGITUser author;
+
+            if(count==4){
+                sendMail email,'<h3>Changes Requested for <a href=${CHANGE_URL}>PR</a>. Please resolve those Changes</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Changes Requested for $BRANCH_NAME '
+            }
+            currentBuild.result = 'ABORTED'
+        }
+        else{
+            withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+                def  reviewersList = sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
+                   ''')
+                def  reviewesList = sh (returnStdout: true, script:'''
+                                      curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/reviews
+                                      ''')
+                def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
+                def emailList="";
+                if(slurper.users.isEmpty() && reviewesList.isEmpty()){
+                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    email=getEmailFromGITUser author;
+                    if(count==4){
+                        sendMail email,'<h3>Please assign some code reviewers <a href=${CHANGE_URL}>PR</a>. and restart this stage to continue.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'No Code reviewers assigned for $BRANCH_NAME '
+                    }
+                    sh 'exit 123'
+                }else{
+                    for(def user:slurper.users){
+                        email=getEmailFromGITUser user.login;
+                        emailList+=email+',';
+                    }
+                    sendMail emailList,'<h3>Code Review Pending on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please click on proceed button from the pipeline view below if all the reviewers approved the code </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review Pending on $BRANCH_NAME '
+                    try{
+                        timeout(time: 15, unit: 'MINUTES') {
+                            input message:'Code-Review Done?'
+                        }
+                    }catch(FlowInterruptedException err){
+                        user = err.getCauses()[0].getUser().toString();
+                        println(user)
+                        if(user.equalsIgnoreCase("SYSTEM")){
+                            echo "Timeout 15mins"
+                            sh 'exit 123'
+                        }else{
+                            currentBuild.result = 'ABORTED'
+                        }
+                    }
+                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    email=getEmailFromGITUser author;
+                    if(count==4){
+                        sendMail email,'<h3>Code Review is incomplete on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please Restart this stage from the pipeline view once code review is completed. </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review is incomplete on $BRANCH_NAME  '
+                    }
+                }
+            }
+        }
+    }
+}
+
+void cypressE2EOnPremLinuxTests(String type,String mlVersion){
+    copyRPM type,mlVersion
+    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    sh '''
+       cd $WORKSPACE
+       WAR_NAME=$(basename *central*.war )
+       nohup java -jar $WORKSPACE/$WAR_NAME &
+    '''
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+    sh '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+
+      export NODE_HOME=$NODE_HOME_DIR/bin;
+      export PATH=$NODE_HOME:$JAVA_HOME/bin:$PATH
+      npm run cy:run |& tee -a e2e_err.log
+  '''
+
+    junit '**/e2e/**/*.xml'
+}
+
+void cypressE2EOnPremMacTests(String type,String mlVersion){
+
+    copyDMG type,mlVersion
+    setUpMLMac '$WORKSPACE/xdmp/src/Mark*.dmg'
+
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+    sh '''
+       cd $WORKSPACE
+       WAR_NAME=$(basename *central*.war )
+       nohup java -jar $WORKSPACE/$WAR_NAME &
+    '''
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
+
+
+    sh '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+      export PATH=/usr/local/bin/:$JAVA_HOME/bin:$PATH
+      npm run cy:run 2>&1 | tee -a e2e_err.log
+   '''
+
+    junit '**/e2e/**/*.xml'
+}
+
+void cypressE2EOnPremWinTests(String type,String mlVersion){
+
+    copyMSI type,mlVersion;
+    def pkgOutput=bat(returnStdout:true , script: '''
+	                    cd xdmp/src
+	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+	                    echo %name%
+	                    ''').trim().split();
+    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+    def bldOutput=bat(returnStdout:true , script: '''
+        	           cd ml-builds/scripts/lib/
+        	           CD
+        	        ''').trim().split();
+    def bldPath=bldOutput[bldOutput.size()-1]
+    setupMLWinCluster bldPath,pkgLoc
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+
+    bat '''
+	    for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
+	    start java -jar %name%
+	'''
+
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
+
+    bat "cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run 2>&1 | tee -a e2e_err.log"
+
+    junit '**/e2e/**/*.xml'
+
+}
+
 pipeline{
 	agent none;
 	options {
@@ -632,87 +791,15 @@ pipeline{
                      }}
                   }}
 		stage('code-review'){
-		when {
-             expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
-  			 allOf {
-    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/5.4-develop', title: '', url: ''
-  }
-  			beforeAgent true
-		}
-		agent {label 'dhmaster'};
-		steps{
-		script{
-		def count=0;
-		retry(4){
-		count++;
-		    props = readProperties file:'data-hub/pipeline.properties';
-		    def reviewState=getReviewState()
-			if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
-				println("Automated PR")
-				sh 'exit 0'
-			}
-			else if(reviewState.equalsIgnoreCase("APPROVED")){
-			  sh 'exit 0'
-			}
-			else if(reviewState.equalsIgnoreCase("CHANGES_REQUESTED")){
-			    println("Changes Requested")
-                def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                email=getEmailFromGITUser author;
-
-                if(count==4){
-                sendMail email,'<h3>Changes Requested for <a href=${CHANGE_URL}>PR</a>. Please resolve those Changes</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Changes Requested for $BRANCH_NAME '
-                }
-			    currentBuild.result = 'ABORTED'
-			}
-			else{
-                    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-                  def  reviewersList = sh (returnStdout: true, script:'''
-                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
-                   ''')
-                   def  reviewesList = sh (returnStdout: true, script:'''
-                                      curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/reviews
-                                      ''')
-                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
-                    def emailList="";
-                    if(slurper.users.isEmpty() && reviewesList.isEmpty()){
-                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                        email=getEmailFromGITUser author;
-                        if(count==4){
-                        sendMail email,'<h3>Please assign some code reviewers <a href=${CHANGE_URL}>PR</a>. and restart this stage to continue.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'No Code reviewers assigned for $BRANCH_NAME '
-                        }
-                        sh 'exit 123'
-                    }else{
-                        for(def user:slurper.users){
-                            email=getEmailFromGITUser user.login;
-                            emailList+=email+',';
-                        }
-                        sendMail emailList,'<h3>Code Review Pending on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please click on proceed button from the pipeline view below if all the reviewers approved the code </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review Pending on $BRANCH_NAME '
-                        try{
-                            timeout(time: 15, unit: 'MINUTES') {
-                                input message:'Code-Review Done?'
-                            }
-                        }catch(FlowInterruptedException err){
-                            user = err.getCauses()[0].getUser().toString();
-                            println(user)
-                            if(user.equalsIgnoreCase("SYSTEM")){
-                                 echo "Timeout 15mins"
-                                 sh 'exit 123'
-                            }else{
-                                   currentBuild.result = 'ABORTED'
-                            }
-                        }
-                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                        email=getEmailFromGITUser author;
-                        if(count==4){
-                        sendMail email,'<h3>Code Review is incomplete on <a href=${CHANGE_URL}>PR</a>.</h3><h3>Please Restart this stage from the pipeline view once code review is completed. </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Code Review is incomplete on $BRANCH_NAME  '
-                        }
-                    }
-                 }
+            when {
+                expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
+                allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
+                beforeAgent true
             }
+            agent {label 'dhmaster'};
+            steps{codeReview()}
         }
-        }
-		}
-		}
+
 		stage('Merge-PR'){
 		when {
             expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
@@ -822,14 +909,13 @@ pipeline{
             }
         }
 
-        stage('rh7-singlenode'){
-            options {timeout(time: 3, unit: 'HOURS')}
+        stage('rh7-singlenode-9.0-11'){
             when { expression {return params.regressions} }
             agent { label 'dhfLinuxAgent'}
             steps{
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
-
-                    script{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
+                     script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         copyRPM 'Release','9.0-11'
                         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
@@ -843,8 +929,8 @@ pipeline{
                         if(result){
                             currentBuild.result='UNSTABLE'
                         }
-                    }
-                }}
+                    }}}
+            }
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -866,12 +952,12 @@ pipeline{
        stage('Linux Core Parallel Execution'){
          when { expression {return params.regressions} }
          parallel{
-	  stage('rh7_cluster_10.0-Nightly'){
-          options {timeout(time: 3, unit: 'HOURS')}
+	      stage('rh7_cluster_10.0-Nightly'){
           agent { label 'dhfLinuxAgent'}
-			steps{
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true) { dhflinuxTests("10.0","Latest")}
-            }
+          steps{
+              timeout(time: 3,  unit: 'HOURS'){
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0","Latest")}
+            }}
 			post{
 				 always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -886,13 +972,13 @@ pipeline{
                       sendMail Email,'<h3>Some Tests Failed on Nightly 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-Nightly | Cluster | Failed'
                   }
                   }
-		}
-		stage('rh7_cluster_9.0-Nightly'){
-            options {timeout(time: 3, unit: 'HOURS')}
-			agent { label 'dhfLinuxAgent'}
-			steps{
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0","Latest")}
-			}
+		  }
+		  stage('rh7_cluster_9.0-Nightly'){
+            agent { label 'dhfLinuxAgent'}
+            steps{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0","Latest")}
+            }}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -908,11 +994,11 @@ pipeline{
                   }
 		}
         stage('rh7_cluster_9.0-11'){
-            options {timeout(time: 3, unit: 'HOURS')}
-			agent { label 'dhfLinuxAgent'}
-			steps{
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
-			}
+            agent { label 'dhfLinuxAgent'}
+            steps{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
+            }}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -925,13 +1011,13 @@ pipeline{
                       println("rh7_cluster_9.0-11 Tests Failed")
                   }
                   }
-		}
+		 }
          stage('rh7_cluster_10.0-3'){
-               options {timeout(time: 3, unit: 'HOURS')}
-               agent { label 'dhfLinuxAgent'}
-               steps{
-                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
-               }
+             agent { label 'dhfLinuxAgent'}
+             steps{
+                 timeout(time: 3,  unit: 'HOURS'){
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
+               }}
                post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
@@ -947,11 +1033,11 @@ pipeline{
                            }
              }
              stage('rh7_cluster_10.0-4'){
-               options {timeout(time: 3, unit: 'HOURS')}
-               agent { label 'dhfLinuxAgent'}
-               steps{
-                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
-               }
+                agent { label 'dhfLinuxAgent'}
+                steps{
+                     timeout(time: 3,  unit: 'HOURS'){
+                         catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
+                     }}
                post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
@@ -967,11 +1053,11 @@ pipeline{
                            }
              }
              stage('rh7_cluster_10.0-5'){
-                options {timeout(time: 3, unit: 'HOURS')}
-                agent { label 'dhfLinuxAgent'}
-                steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
-                }
+               agent { label 'dhfLinuxAgent'}
+               steps{
+                     timeout(time: 3,  unit: 'HOURS'){
+                         catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
+                }}
                 post{
                   always{
                       sh 'rm -rf $WORKSPACE/xdmp'
@@ -987,11 +1073,11 @@ pipeline{
                             }
               }
 		stage('rh7_cluster_10.0-6'){
-                options {timeout(time: 3, unit: 'HOURS')}
-                agent { label 'dhfLinuxAgent'}
-                steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
-                }
+            agent { label 'dhfLinuxAgent'}
+            steps{
+                timeout(time: 3,  unit: 'HOURS'){
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
+                }}
                 post{
                   always{
                       sh 'rm -rf $WORKSPACE/xdmp'
@@ -1013,12 +1099,12 @@ pipeline{
             when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps {
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dh5Example()}
-                }
-                 post{
+                timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){dh5Example()}
+                }}
+                post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
                  }
@@ -1031,11 +1117,11 @@ pipeline{
                  }
             }
             stage('dhf-customhook'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhCustomHook()}
-                 }
+                    timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhCustomHook()}
+                 }}
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1049,11 +1135,11 @@ pipeline{
                  }
             }
             stage('mapping-example'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
-                 }
+                  timeout(time: 3,  unit: 'HOURS'){
+                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
+                 }}
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -1067,13 +1153,13 @@ pipeline{
                  }
             }
             stage('smart-mastering-complete'){
-                options {timeout(time: 3, unit: 'HOURS')}
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
-                 }
+                    timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
+                 }}
                  post{
-                 always{
+                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
                  }
                  success{
@@ -1084,17 +1170,17 @@ pipeline{
                  }
                  }
             }
-		}
-		}
-          stage('Windows Core Parallel'){
+		}}
+
+        stage('Windows Core Parallel'){
             when { expression {return params.regressions} }
       	    parallel{
             stage('w10_SN_9.0-Nightly'){
-                options {timeout(time: 3, unit: 'HOURS')}
         		agent { label 'dhfWinagent'}
         		steps{
-                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
-        		}
+                    timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
+                    }}
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
@@ -1110,11 +1196,11 @@ pipeline{
                           }
         		}
                 stage('w10_SN_10.0-Nightly'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
-                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
-        			}
+                        timeout(time: 3,  unit: 'HOURS'){
+                            catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
+                    }}
         			post{
         				always{
         				  	 bat 'RMDIR /S/Q xdmp'
@@ -1130,11 +1216,11 @@ pipeline{
                           }
         		}
         		stage('w10_SN_9.0-11'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinagent'}
         			steps{
-                      catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
-        			}
+                      timeout(time: 3,  unit: 'HOURS'){
+                         catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
+                    }}
         			post{
         				always{
                                bat 'RMDIR /S/Q xdmp'
@@ -1150,11 +1236,11 @@ pipeline{
                           }
         		}
         		stage('w12_cluster_10.0-6'){
-                    options {timeout(time: 3, unit: 'HOURS')}
         			agent { label 'dhfWinCluster'}
         			steps{
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){winParallel()}
-        			}
+                      timeout(time: 3,  unit: 'HOURS'){
+                            catchError(buildResult: 'SUCCESS', catchInterruptions: true){winParallel()}
+                    }}
         			post{
         				always{
         				  	bat 'RMDIR /S/Q xdmp'
@@ -1172,6 +1258,106 @@ pipeline{
 
         		    }
         		}
+
+        stage('HC on Prem parallel'){
+            when { expression {return params.regressions} }
+            parallel{
+
+                stage('10.0-Nightly-linux-On-Prem'){
+                    agent { label 'dhfLinuxAgent'}
+                    environment{
+                        JAVA_HOME="$JAVA_HOME_DIR"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                    }
+                    steps {
+                        timeout(time: 3,  unit: 'HOURS'){
+                            catchError(buildResult: 'SUCCESS', catchInterruptions: true) { cypressE2EOnPremLinuxTests("Latest", "10.0") }
+                        }}
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME | Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME on $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                stage('10.0-6.2-Win10-On-Prem'){
+                    agent { label 'Win10HCPrem'}
+                    environment{
+                        JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                        NODE_JS="C:\\Program Files\\nodejs"
+                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
+                    }
+                    steps{
+                        timeout(time: 3,  unit: 'HOURS'){
+                            catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-6.2")}
+                        }}
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                /*
+                stage('10.0-3-MAC-On-Prem'){
+                    agent { label 'osx-i64-10-test-2'}
+                    environment{
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                    }
+                    steps{
+                     timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremMacTests("Release","10.0-3")}
+                    }}
+                    post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+
+                stage('10.0-3-Win12-On-Prem'){
+                    agent { label 'dhfWin12'}
+                    environment{
+                        JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
+                        M2_LOCAL_REPO="$WORKSPACE/repository"
+                        NODE_JS="C:\\Program Files\\nodejs"
+                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
+                    }
+
+                    steps{
+                     timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-3")}
+                    }}
+                   post{
+                        success {
+                            println("$STAGE_NAME Completed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME branch $STAGE_NAME Passed"
+                        }
+                        unstable {
+                            println("$STAGE_NAME Failed")
+                            sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME branch $STAGE_NAME Failed"
+                        }
+                    }
+                }
+                 */
+
+            }}
 
 	}
 }
