@@ -435,14 +435,13 @@ declare function opt-impl:compile-match-options(
           ()
       let $is-reduce :=  ($is-complex-rule and $rule-set/reduce = fn:true()) or $local-name eq "reduce"
       let $abs-weight :=
-        fn:abs(
           (: This is a special case for the legacy zip options :)
           if ($rule-set/(algorithmRef|@algorithms-ref) = "zip-match" and fn:empty($rule-set/(@weight|weight))) then
-            fn:max($rule-set/zip/(@weight|weight) ! fn:number(.))
+            fn:max($rule-set/zip/(@weight|weight) ! fn:abs(fn:number(.)))
           else
-            fn:number($rule-set/(@weight|weight))
-        )
-      let $weight := if ($is-reduce) then -$abs-weight else $abs-weight
+            (: We want to allow weight to be empty because if weight is empty we will score from cts query weights instead. See https://project.marklogic.com/jira/browse/DHFPROD-7234 :)
+            $rule-set/(@weight|weight)[. castable as xs:double] ! fn:abs(fn:number(.))
+      let $weight := if (fn:exists($abs-weight) and $is-reduce) then -$abs-weight else $abs-weight
       let $rules-count := fn:count($match-rules)
       let $match-queries :=
           for $match-rule in $match-rules
@@ -729,13 +728,16 @@ declare function opt-impl:build-collection-query($collections as xs:string*)
 declare function opt-impl:minimum-threshold-combinations($query-results, $threshold as xs:double)
   as map:map*
 {
-  (: Each of $queries-ge-threshold has a weight high enough to hit the $threshold :)
-  let $queries-ge-threshold := $query-results[(. => map:get("weight")) ge $threshold]
-  let $queries-lt-threshold := $query-results[(. => map:get("weight")) lt $threshold]
-  return (
-    $queries-ge-threshold ! (map:entry("queries", .) => map:with("weight", map:get(., "weight"))),
-    opt-impl:filter-for-required-queries($queries-lt-threshold, 0, $threshold, ())
-  )
+  if ($threshold eq 0) then
+    $query-results[fn:empty((. => map:get("weight"))) or (. => map:get("weight")) >= $threshold] !  (map:entry("queries", .) => map:with("weight", map:get(., "weight")))
+  else
+    (: Each of $queries-ge-threshold has a weight high enough to hit the $threshold :)
+    let $queries-ge-threshold := $query-results[(. => map:get("weight")) >= $threshold]
+    let $queries-lt-threshold := $query-results[(. => map:get("weight")) <= $threshold]
+    return (
+      $queries-ge-threshold ! (map:entry("queries", .) => map:with("weight", map:get(., "weight"))),
+      opt-impl:filter-for-required-queries($queries-lt-threshold, 0, $threshold, ())
+    )
 };
 
 (:
