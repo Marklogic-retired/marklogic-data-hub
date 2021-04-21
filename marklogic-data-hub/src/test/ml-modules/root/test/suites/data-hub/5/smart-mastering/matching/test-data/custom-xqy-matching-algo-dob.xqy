@@ -19,7 +19,7 @@ declare function algorithms:dob-match(
 ) as cts:query*
 {
   let $property-name := $expand-xml/@property-name
-  let $weight := $expand-xml/@weight
+  let $weight := $expand-xml/(@weight|*:customWeight)
 
   for $value in $expand-values
   where $value castable as xs:date

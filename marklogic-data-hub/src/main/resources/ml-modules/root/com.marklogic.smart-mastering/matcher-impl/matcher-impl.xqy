@@ -523,12 +523,24 @@ declare function match-impl:search(
     for $query-map in $queries-for-scoring
     let $query := $query-map => map:get("query")
     let $contains := cts:contains($result,$query)
+    let $weight := $query-map => map:get("weight")
+    let $weight :=
+      if (fn:empty($weight)) then
+        (: This allows a weight to not be specified for a match ruleset and then the weight of the cts:queries will determine the weight.
+          See https://project.marklogic.com/jira/browse/DHFPROD-7234.:)
+        let $custom-weight := match-impl:score-from-cts-query($result, $query)
+        return (
+          map:put($query-map, "weight", $custom-weight),
+          $custom-weight
+        )
+      else
+        $weight
     let $_trace :=
       if ($match-trace-is-enabled) then
-        let $weight := $query-map => map:get("weight")
+
         let $name := $query-map => map:get("name")
         return (
-          xdmp:trace($const:TRACE-MATCH-RESULTS, "Checking cts.doc('" || $uri ||"') for match against ruleset '" || $name || " with weight "|| $weight ||": " || $contains),
+          xdmp:trace($const:TRACE-MATCH-RESULTS, "Checking cts.doc('" || $uri ||"') for match against ruleset '" || $name || " with weight "|| fn:string($weight) ||": " || $contains),
           xdmp:trace($const:TRACE-MATCH-RESULTS, "Ruleset '" || $name || "' query: " || xdmp:describe($query, (),()))
         )
       else ()
@@ -648,4 +660,15 @@ declare function match-impl:instance-query-wrapper(
     if (fn:exists($const:XML-INSTANCE)) then
       cts:element-query($const:XML-INSTANCE, $query)
     else ()
+};
+
+declare function match-impl:score-from-cts-query($result as node(), $query as cts:query) as xs:double {
+  fn:sum(
+      cts:walk(
+          $result,
+          $query,
+          document{$cts:queries}
+          //schema-element(cts:query)[fn:node-name(.) = $QUERIES_WITH_WEIGHT] ! fn:number(fn:head((./@weight, 1)))
+      )
+  )
 };

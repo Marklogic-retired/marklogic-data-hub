@@ -42,5 +42,6 @@ declare variable $MATCH-OPTIONS-NAME := "match-test";
 declare variable $SCORE-OPTIONS-NAME := "score-options";
 declare variable $SCORE-OPTIONS-NAME2 := "score-options2";
 declare variable $MATCH-OPTIONS-CUST-XQY-DOB := "custom-xqy-matching-algo-dob-options";
+declare variable $MATCH-OPTIONS-CUST-ALG-CUST-WEIGHT := "custom-matching-with-custom-weight-options";
 
 declare variable $NAMESPACED-MATCH-OPTIONS-NAME := "namespaced-match-test";
