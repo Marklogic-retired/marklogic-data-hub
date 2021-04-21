@@ -3,15 +3,9 @@ package com.marklogic.hub.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.marklogic.client.document.DocumentWriteOperation;
-import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.document.*;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.InputStreamHandle;
-import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.*;
 import com.marklogic.hub.HubClient;
 
 import java.io.ByteArrayInputStream;
@@ -44,6 +38,15 @@ public class ReferenceModelProject extends TestObject {
             .withCollections(INPUT_COLLECTION)
             .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/customer" + customerId + ".json", metadata, new JacksonHandle(customer));
+    }
+
+    public void createRawXmlCustomer(int customerId, String name) {
+        XMLDocumentManager mgr = hubClient.getStagingClient().newXMLDocumentManager();
+        String content = "<content><customerId>" + customerId + "</customerId><name>" + name + "</name></content>";
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle()
+            .withCollections(INPUT_COLLECTION)
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        mgr.write("/customer" + customerId + ".xml", metadata, new StringHandle(content).withFormat(Format.XML));
     }
 
     public void createCustomerInstance(Customer customer) {

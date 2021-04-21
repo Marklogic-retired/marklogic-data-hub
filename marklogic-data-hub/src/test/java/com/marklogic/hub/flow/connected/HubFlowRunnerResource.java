@@ -18,7 +18,7 @@ import java.util.Map;
 
 public class HubFlowRunnerResource extends ResourceManager {
 
-    protected HubFlowRunnerResource(DatabaseClient client) {
+    public HubFlowRunnerResource(DatabaseClient client) {
         super();
         client.init("hubFlowRunner", this);
     }
