@@ -27,13 +27,16 @@ describe("Facet component", () => {
   });
 
   it("Facet component renders with nested data properly", () => {
-    const {getByTestId, getByText} = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
+    const {getByTestId, getByText, queryByText} = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
     expect(getByText(/Sales.sales_region/i)).toBeInTheDocument();
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
     expect(getByText(/50/i)).toBeInTheDocument();
     expect(getByText(/OrderDetail/i)).toBeInTheDocument();
     expect(getByText(/15,000/i)).toBeInTheDocument();
+
+    // path should not show sales > ... > sales_region
+    expect(queryByText(/\.\.\./)).not.toBeInTheDocument();
 
     fireEvent.click(getByTestId("show-more-sales.sales_region"));
     // show extra facets
@@ -43,6 +46,19 @@ describe("Facet component", () => {
     expect(getByText(/607/i)).toBeInTheDocument();
     expect(getByText(/CustomerType/i)).toBeInTheDocument();
     expect(getByText(/999/i)).toBeInTheDocument();
+  });
+
+  it("Facet component shortens long name paths in structured properties", () => {
+    const {getByText, queryByText} = render(<Facet {...facetProps} name="client.shipping.address.state"/>);
+
+    // facet name should show client > ... > state
+    expect(getByText(/client/)).toBeInTheDocument();
+    expect(getByText(/state/)).toBeInTheDocument();
+    expect(getByText(/\.\.\./)).toBeInTheDocument();
+
+    // paths in the middle should be omitted
+    expect(queryByText(/shipping/)).not.toBeInTheDocument();
+    expect(queryByText(/address/)).not.toBeInTheDocument();
   });
 
   it("Collapse/Expand carets render properly for facet properties", () => {

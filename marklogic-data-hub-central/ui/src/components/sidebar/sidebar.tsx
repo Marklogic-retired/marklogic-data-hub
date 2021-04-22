@@ -96,10 +96,9 @@ const Sidebar: React.FC<Props> = (props) => {
 
         if (newEntityFacets) {
           for (let i in newEntityFacets) {
-            let entityFacetName = newEntityFacets[i]["facetName"].split(".");
             newEntityFacets[i].referenceType = "path";
             newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
-            newEntityFacets[i].propertyPath = entityFacetName.length > 1 ? entityFacetName.pop() : entityFacetName[0];
+            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".")+1);
           }
         }
         entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];

@@ -4,7 +4,7 @@ import {SearchContext} from "../../util/search-context";
 import {FacetName} from "./facet-element";
 import styles from "./facet.module.scss";
 import {stringConverter} from "../../util/string-conversion";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faInfoCircle, faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
 import {MLTooltip} from "@marklogic/design-system";
@@ -130,12 +130,22 @@ const Facet: React.FC<Props> = (props) => {
     );
   });
 
+  // right arrow icon for displaying structured props
+  const arrowIcon = (key = 0) => {
+    return <FontAwesomeIcon icon={faChevronRight} style={{fontSize: 12}} key={key}/>;
+  };
+
   const formatTitle = () => {
     let objects = props.name.split(".");
     if (objects.length > 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return first + ". ... ." + last;
+      // returns an array for rendering that looks like "first > ... > last"
+      return [first + " ", arrowIcon(1), " ... ", arrowIcon(2), " " + last];
+    } else if (objects.length === 2) {
+      let first = objects[0];
+      let last = objects.slice(-1);
+      return [first + " ", arrowIcon(1), " " + last];
     }
     return props.name;
   };
@@ -148,7 +158,7 @@ const Facet: React.FC<Props> = (props) => {
           data-cy={stringConverter(props.name) + "-facet"}
           data-testid={stringConverter(props.name) + "-facet"}
         >
-          <MLTooltip title={props.name}>{formatTitle()}</MLTooltip>
+          <MLTooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</MLTooltip>
           <MLTooltip
             title={props.tooltip} placement="topLeft">
             {props.tooltip ?
