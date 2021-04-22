@@ -477,7 +477,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
     let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
     xdmp.xsltEval(stylesheet, [], {staticCheck: true});
   } catch (e) {
-    return getErrorMessage(e);
+    return hubUtils.getErrorMessage(e);
   }
 }
 
@@ -576,7 +576,7 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
     }
   }
   catch(e){
-    resp.errorMessage = getErrorMessage(e);
+    resp.errorMessage = hubUtils.getErrorMessage(e);
   }
   return resp;
 }
@@ -594,14 +594,6 @@ function addNode(obj, paths, mappedProperty, isNested ) {
    obj[paths[paths.length -1]] = {"sourcedFrom": mappedProperty.sourcedFrom};
   }
   return res;
-}
-
-function getErrorMessage(e) {
-  let errorMessage = e.message;
-  if (e.data != null && e.data.length > 0) {
-    errorMessage += ": " + e.data[0];
-  }
-  return errorMessage;
 }
 
 function extractInstance(docNode) {

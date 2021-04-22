@@ -14,8 +14,7 @@
         "description" : {
           "type" : "string"
         }
-      },
-      "required" : [ "name" ]
+      }
     }
   } ],
   "return" : {

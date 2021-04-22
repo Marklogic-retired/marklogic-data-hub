@@ -98,6 +98,7 @@ public class SwaggerConfig {
                 ModelController.LatestJobInfo.class,
                 ModelController.ModelReferencesInfo.class,
                 ModelController.UpdateModelInput.class,
+                ModelController.UpdateModelInfoInput.class,
                 ModelDefinitions.class,
                 ModelDescriptor.class,
                 PrimaryEntityType.class,

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.controllers.ModelController;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CreateAndUpdateModelTest extends AbstractModelTest {
@@ -61,6 +63,45 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         updateModelEntityTypes();
     }
 
+    @Test
+    @WithMockUser(roles = {"writeEntityModel"})
+    void testCreateNamespacedModel() {
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
+        createNamespacedModel();
+    }
+
+    private void createNamespacedModel() {
+        ArrayNode existingEntityTypes = (ArrayNode) controller.getPrimaryEntityTypes().getBody();
+        assertEquals(0, existingEntityTypes.size(), "Any existing models should have been deleted when this test started");
+
+        ObjectNode input = objectMapper.createObjectNode();
+        input.put("name", MODEL_NAME);
+        input.put("namespace", "http://example.org/");
+
+        FailedRequestException ex = assertThrows(FailedRequestException.class, () -> controller.createModel(input));
+        assertTrue(ex.getMessage().contains("Since you entered a namespace, you must specify a prefix"));
+
+        input.remove("namespace");
+        input.put("namespacePrefix", "ex");
+
+        ex = assertThrows(FailedRequestException.class, () -> controller.createModel(input));
+        assertTrue(ex.getMessage().contains("You cannot enter a prefix without specifying a namespace URI"));
+
+        input.put("namespace", "http://example.org/");
+        input.put("namespacePrefix", "xsi");
+
+        ex = assertThrows(FailedRequestException.class, () -> controller.createModel(input));
+        assertTrue(ex.getMessage().contains("Namespace prefix xsi is not valid.  It is a reserved pattern"));
+
+        input.put("namespacePrefix", "ex");
+        JsonNode model = controller.createModel(input).getBody();
+
+        assertEquals(MODEL_NAME, model.get("info").get("title").asText());
+        assertEquals("ex", model.get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
+        assertEquals("http://example.org/", model.get("definitions").get(MODEL_NAME).get("namespace").asText());
+        assertSearchOptions(MODEL_NAME, Assertions::assertTrue, true);
+    }
+
     private void createModel() {
         ArrayNode existingEntityTypes = (ArrayNode) controller.getPrimaryEntityTypes().getBody();
         assertEquals(0, existingEntityTypes.size(), "Any existing models should have been deleted when this test started");
@@ -85,11 +126,40 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
     }
 
     private void updateModelInfo() {
-        ModelController.UpdateModelInfoInput info = new ModelController.UpdateModelInfoInput();
-        info.description = "Updated description";
-        controller.updateModelInfo(MODEL_NAME, info);
+        ObjectNode input = objectMapper.createObjectNode();
+        input.put("name", MODEL_NAME);
 
+        input.put("description", "description");
+        input.put("namespace" , "http://example.org/");
+        FailedRequestException ex = assertThrows(FailedRequestException.class, () -> controller.updateModelInfo(MODEL_NAME, input));
+        assertTrue(ex.getMessage().contains("Since you entered a namespace, you must specify a prefix"));
+
+        input.remove("namespace");
+        input.put("namespacePrefix", "ex");
+        ex = assertThrows(FailedRequestException.class, () -> controller.updateModelInfo(MODEL_NAME, input));
+        assertTrue(ex.getMessage().contains("You cannot enter a prefix without specifying a namespace URI"));
+
+
+        input.put("namespace" , "http://example.org/");
+        input.put("namespacePrefix", "xml");
+        ex = assertThrows(FailedRequestException.class, () -> controller.updateModelInfo(MODEL_NAME, input));
+        assertTrue(ex.getMessage().contains("Namespace prefix xml is not valid.  It is a reserved pattern"));
+
+        input.put("namespace" , "http://example.org/");
+        input.put("namespacePrefix", "ex");
+        input.put("description", "Updated description");
+        controller.updateModelInfo(MODEL_NAME, input);
+        assertEquals("http://example.org/", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespace").asText());
+        assertEquals("ex", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
         assertEquals("Updated description", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
+
+        input.put("description", "Description updated again");
+        input.remove("namespace");
+        input.remove("namespacePrefix");
+        controller.updateModelInfo(MODEL_NAME, input);
+        assertEquals("Description updated again", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
+        assertEquals("http://example.org/", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespace").asText());
+        assertEquals("ex", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
     }
 
     private void updateModelEntityTypes() {

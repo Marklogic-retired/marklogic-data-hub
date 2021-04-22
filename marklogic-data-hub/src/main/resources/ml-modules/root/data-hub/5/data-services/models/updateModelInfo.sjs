@@ -20,10 +20,15 @@ declareUpdate();
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var name;
-var description;
+var input = fn.head(xdmp.fromJSON(input));
+
+const description = input.description ? input.description : "";
+const namespace = input.namespace ? input.namespace : null;
+const namespacePrefix = input.namespacePrefix ? input.namespacePrefix : null;
 
 const uri = entityLib.getModelUri(name);
 if (!fn.docAvailable(uri)) {
@@ -37,6 +42,24 @@ if (!model.definitions[name]) {
 }
 
 model.definitions[name].description = description;
-entityLib.writeModel(name, model);
+
+if(namespace || namespacePrefix){
+  if(!namespace){
+    httpUtils.throwBadRequest(`You cannot enter a prefix without specifying a namespace URI.`);
+  }
+  if(!namespacePrefix){
+    httpUtils.throwBadRequest(`Since you entered a namespace, you must specify a prefix.`);
+  }
+  model.definitions[name].namespace = namespace;
+  model.definitions[name].namespacePrefix = namespacePrefix;
+}
+
+
+try{
+  entityLib.writeModel(name, model);
+}
+catch (e){
+  httpUtils.throwBadRequest(hubUtils.getErrorMessage(e));
+}
 
 model;
