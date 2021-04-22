@@ -91,9 +91,13 @@ public class ModelController extends BaseController {
     }
 
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
+    @ApiImplicitParam(required = true, paramType = "body", dataType = "UpdateModelInfoInput")
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody UpdateModelInfoInput input) {
-        newService().updateModelInfo(modelName, input.description);
+    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody @ApiParam(hidden = true) JsonNode input) {
+        if(input.get("name") != null && !(input.get("name").asText().equals(modelName))){
+            throw new RuntimeException("Unable to update entity model; incorrect model name: " + input.get("name").asText());
+        }
+        newService().updateModelInfo(modelName, input);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -258,10 +262,15 @@ public class ModelController extends BaseController {
     public static class CreateModelInput {
         public String name;
         public String description;
+        public String namespace;
+        public String namespacePrefix;
     }
 
     public static class UpdateModelInfoInput {
+        public String name;
         public String description;
+        public String namespace;
+        public String namespacePrefix;
     }
 
     public static class ModelReferencesInfo {

@@ -163,9 +163,24 @@ function evalInDatabase(script, database) {
   return xdmp.eval(script, null, {database: xdmp.database(database)})
 }
 
+
+function getErrorMessage(e) {
+  let errorMessage = e.message;
+  if (e.data != null && e.data.length > 0) {
+    if(isNaN(Number(e.data[0]))){
+      errorMessage += ": " + e.data[0];
+    }
+    else if(e.data.length > 1){
+      errorMessage += ": " + e.data[1];
+    }
+  }
+  return errorMessage;
+}
+
 module.exports = {
   capitalize,
   deleteDocument,
+  getErrorMessage,
   hubTrace,
   hubTraceJson,
   warn,

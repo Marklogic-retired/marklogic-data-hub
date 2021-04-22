@@ -21,11 +21,14 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 var input = fn.head(xdmp.fromJSON(input));
 
 const name = input.name;
 const description = input.description;
+const namespace = input.namespace ? input.namespace : null;
+const namespacePrefix = input.namespacePrefix ? input.namespacePrefix : null;
 
 if (name == null) {
   httpUtils.throwBadRequest("The model must have an info object with a title property");
@@ -46,10 +49,26 @@ model.definitions[name] = {
   properties: {}
 };
 
+if(namespace || namespacePrefix){
+  if(!namespace){
+    httpUtils.throwBadRequest(`You cannot enter a prefix without specifying a namespace URI `);
+  }
+  if(!namespacePrefix){
+    httpUtils.throwBadRequest(`Since you entered a namespace, you must specify a prefix.`);
+  }
+  model.definitions[name].namespace = namespace;
+  model.definitions[name].namespacePrefix = namespacePrefix;
+}
+
 if (input.description) {
   model.definitions[name].description = description;
 }
 
-entityLib.writeModel(name, model);
+try{
+  entityLib.writeModel(name, model);
+}
+catch (e){
+  httpUtils.throwBadRequest(hubUtils.getErrorMessage(e));
+}
 
 model;

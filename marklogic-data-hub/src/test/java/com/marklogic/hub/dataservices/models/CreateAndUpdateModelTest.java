@@ -37,7 +37,8 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
         verifyModelContents(model, "Initial description");
         verifyPersistedModels("Initial description");
 
-        service.updateModelInfo(CUSTOMER_MODEL_NAME, "Modified description");
+        customerNode.put("description", "Modified description");
+        service.updateModelInfo(CUSTOMER_MODEL_NAME, customerNode);
         verifyPersistedModels("Modified description");
 
         updateEntityTypes();

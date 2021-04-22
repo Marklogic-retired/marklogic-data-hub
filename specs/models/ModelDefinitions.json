@@ -36,6 +36,12 @@
             "type": "string"
           }
         },
+        "namespace": {
+          "type": "string"
+        },
+        "namespacePrefix": {
+          "type": "string"
+        },
         "properties": {
           "type": "object",
           "additionalProperties": false,

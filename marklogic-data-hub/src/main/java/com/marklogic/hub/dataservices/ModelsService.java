@@ -64,7 +64,7 @@ public interface ModelsService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/", servDecl);
 
                 this.req_updateModelInfo = this.baseProxy.request(
-                    "updateModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "updateModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_saveModel = this.baseProxy.request(
                     "saveModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_generateProtectedPathConfig = this.baseProxy.request(
@@ -88,17 +88,17 @@ public interface ModelsService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode updateModelInfo(String name, String description) {
+            public com.fasterxml.jackson.databind.JsonNode updateModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input) {
                 return updateModelInfo(
-                    this.req_updateModelInfo.on(this.dbClient), name, description
+                    this.req_updateModelInfo.on(this.dbClient), name, input
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode updateModelInfo(BaseProxy.DBFunctionRequest request, String name, String description) {
+            private com.fasterxml.jackson.databind.JsonNode updateModelInfo(BaseProxy.DBFunctionRequest request, String name, com.fasterxml.jackson.databind.JsonNode input) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
-                          BaseProxy.atomicParam("description", false, BaseProxy.StringType.fromString(description))
+                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -244,13 +244,13 @@ public interface ModelsService {
     }
 
   /**
-   * Update the description of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations.
+   * Update the description and optionally the namespace and namespace prefix of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations.
    *
    * @param name	The name of the model
-   * @param description	provides input
+   * @param input	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode updateModelInfo(String name, String description);
+    com.fasterxml.jackson.databind.JsonNode updateModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input);
 
   /**
    * Save a model, where the input is a JSON model
