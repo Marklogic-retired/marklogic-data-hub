@@ -6,6 +6,9 @@ import styles from "./numeric-facet.module.scss";
 import {rangeFacet} from "../../api/facets";
 import {MLSlider, MLTooltip} from "@marklogic/design-system";
 
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
+
 interface Props {
   name: any;
   step: number;
@@ -129,19 +132,29 @@ const NumericFacet: React.FC<Props> = (props) => {
     }
   }, [searchOptions]);
 
+  // right arrow icon for displaying structured props
+  const arrowIcon = (key = 0) => {
+    return <FontAwesomeIcon icon={faChevronRight} style={{fontSize: 12}} key={key}/>;
+  };
+
   const formatTitle = () => {
     let objects = props.name.split(".");
     if (objects.length > 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return first + ". ... ." + last;
+      // returns an array for rendering that looks like "first > ... > last"
+      return [first + " ", arrowIcon(1), " ... ", arrowIcon(2), " " + last];
+    } else if (objects.length === 2) {
+      let first = objects[0];
+      let last = objects.slice(-1);
+      return [first + " ", arrowIcon(1), " " + last];
     }
     return props.name;
   };
 
   return (
     <div className={styles.facetName} >
-      <p className={styles.name}>{<MLTooltip title={props.name}>{formatTitle()}</MLTooltip>}</p>
+      <p className={styles.name}>{<MLTooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</MLTooltip>}</p>
       <div className={styles.numericFacet} data-testid="numeric-slider">
         <MLSlider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
         <div id={"min-numeric-value"}><InputNumber data-testid="numeric-slider-min" className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>

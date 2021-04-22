@@ -19,10 +19,10 @@ describe("Date facet", () => {
     expect(dateFacet).toHaveTextContent("date-facet");
   });
 
-  test("Nested Date facet component renders without crashing", async () => {
-    const {getByTestId} = render(<DateFacet
-      name={"OrderDetail.DateTime"}
-      constraint={"OrderDetail.DateTime"}
+  test("Can render with nested properties", async () => {
+    const {getByTestId, getByText, queryByText} = render(<DateFacet
+      name={"Order.OrderDetail.DateTime"}
+      constraint={"Order.OrderDetail.DateTime"}
       datatype={"dateTime"}
       propertyPath={"DateTime"}
       key={"0"}
@@ -31,7 +31,13 @@ describe("Date facet", () => {
 
     const dateFacet = getByTestId("facet-date-picker");
     expect(dateFacet).toBeInTheDocument();
-    expect(dateFacet).toHaveTextContent("OrderDetail.DateTime");
+
+    expect(getByText(/Order/)).toBeInTheDocument();
+    expect(getByText(/DateTime/)).toBeInTheDocument();
+    expect(getByText(/\.\.\./)).toBeInTheDocument();
+
+    // paths in the middle should be omitted
+    expect(queryByText(/OrderDetail/)).not.toBeInTheDocument();
   });
 
 });

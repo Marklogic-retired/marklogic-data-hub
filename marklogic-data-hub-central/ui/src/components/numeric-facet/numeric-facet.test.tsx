@@ -46,6 +46,26 @@ describe("<NumericFacet/>", () => {
       });
     });
   });
+
+  test("Can render name with nested property", async () => {
+    const {getByText, queryByText} = render(<NumericFacet
+      name={"Order.OrderDetail.DateTime"}
+      constraint={"Order.OrderDetail.DateTime"}
+      step={0}
+      datatype={""}
+      onChange={jest.fn()}
+      referenceType={""}
+      entityTypeId={""}
+      propertyPath={""}
+    />);
+
+    expect(getByText(/Order/)).toBeInTheDocument();
+    expect(getByText(/DateTime/)).toBeInTheDocument();
+    expect(getByText(/\.\.\./)).toBeInTheDocument();
+
+    // paths in the middle should be omitted
+    expect(queryByText(/OrderDetail/)).not.toBeInTheDocument();
+  });
 });
 
 
