@@ -27,8 +27,8 @@ var name;
 var input = fn.head(xdmp.fromJSON(input));
 
 const description = input.description ? input.description : "";
-const namespace = input.namespace ? input.namespace : null;
-const namespacePrefix = input.namespacePrefix ? input.namespacePrefix : null;
+const namespace = input.namespace;
+const namespacePrefix = input.namespacePrefix;
 
 const uri = entityLib.getModelUri(name);
 if (!fn.docAvailable(uri)) {
@@ -50,10 +50,20 @@ if(namespace || namespacePrefix){
   if(!namespacePrefix){
     httpUtils.throwBadRequest(`Since you entered a namespace, you must specify a prefix.`);
   }
+}
+/*
+If payload doesn't contain namespace and namespacePrefix, entity model didn't have them in the first place or
+user wants to remove the values he had set earlier
+ */
+
+if(!namespace){
+  delete model.definitions[name].namespace;
+  delete model.definitions[name].namespacePrefix;
+}
+else{
   model.definitions[name].namespace = namespace;
   model.definitions[name].namespacePrefix = namespacePrefix;
 }
-
 
 try{
   entityLib.writeModel(name, model);
