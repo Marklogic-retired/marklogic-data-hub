@@ -114,6 +114,16 @@ declare variable $test-docs := (
   document { object-node { "property": "val2" } }
 );
 
+declare variable $test-content-objects := (
+  map:new((
+    map:entry("uri", "test1"),
+    map:entry("value", $test-docs[1])
+  )),
+  map:new((
+    map:entry("uri", "test2"),
+    map:entry("value", $test-docs[2])
+  ))
+);
 
   (: Test XQuery triple functions :)
   try {
@@ -134,14 +144,16 @@ declare variable $test-docs := (
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for XQuery Hub Central triple merge. Exception: " || xdmp:describe($e, (), ()))
   },
+
   try {
-    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($quickstart-xquery-options) => map:get("mergeRulesInfo"), $test-docs, map:map(), map:map(), "options-ref")
+    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($quickstart-xquery-options) => map:get("mergeRulesInfo"), $test-content-objects, map:map(), map:map(), "options-ref")
     return test:assert-equal("QuickStart XQuery Merge", fn:string($results => map:get("values")), " should have 'QuickStart XQuery Merge' as the values.")
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for QuickStart XQuery Merge. Exception: " || xdmp:describe($e, (), ()))
   },
+
   try {
-    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($hub-central-xquery-options) => map:get("mergeRulesInfo"), $test-docs, map:map(), map:map(), "options-ref")
+    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($hub-central-xquery-options) => map:get("mergeRulesInfo"), $test-content-objects, map:map(), map:map(), "options-ref")
     return test:assert-equal("Hub Central XQuery Merge", fn:string($results => map:get("values")), " should have 'Hub Central XQuery Merge' as the values.")
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for Hub Central XQuery Merge. Exception: " || xdmp:describe($e, (), ()))
@@ -165,14 +177,16 @@ declare variable $test-docs := (
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for JavaScript Hub Central triple merge. Exception: " || xdmp:describe($e, (), ()))
   },
+
   try {
-    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($quickstart-javascript-options) => map:get("mergeRulesInfo"), $test-docs, map:map(), map:map(), "options-ref")
+    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($quickstart-javascript-options) => map:get("mergeRulesInfo"), $test-content-objects, map:map(), map:map(), "options-ref")
     return test:assert-equal("QuickStart JavaScript Merge", fn:string($results => map:get("values")), " should have 'QuickStart JavaScript Merge' as the values.")
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for QuickStart JavaScript Merge. Exception: " || xdmp:describe($e, (), ()))
   },
+
   try {
-    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($hub-central-javascript-options) => map:get("mergeRulesInfo"), $test-docs, map:map(), map:map(), "options-ref")
+    let $results := merging-impl:get-merge-values(merging-impl:compile-merge-options($hub-central-javascript-options) => map:get("mergeRulesInfo"), $test-content-objects, map:map(), map:map(), "options-ref")
     return test:assert-equal("Hub Central JavaScript Merge", fn:string($results => map:get("values")), " should have 'Hub Central JavaScript Merge' as the values.")
   } catch ($e) {
     test:assert-false(fn:true(), "Unexpected exception for Hub Central JavaScript Merge. Exception: " || xdmp:describe($e, (), ()))

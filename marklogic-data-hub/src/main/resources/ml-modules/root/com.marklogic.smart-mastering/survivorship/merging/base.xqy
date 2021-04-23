@@ -734,10 +734,16 @@ declare function merge-impl:build-headers(
     ()
   else httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "merge-impl:build-headers called with invalid format " || $format),
   let $current-dateTime := fn:current-dateTime()
+
+  (: 
+  For in-memory docs, no URI will be returned, but the associated URI for an in-memory doc
+  should already be in the $uris variable.
+  :)
   let $all-uris :=
       for $uri in fn:distinct-values(($docs ! xdmp:node-uri(.), $uris))
       order by $uri
       return $uri
+  
   let $all-merged-docs := $all-uris[fn:starts-with(., $MERGED-DIR)] ! fn:doc(.)
   let $is-xml := $format = $const:FORMAT-XML
   (: remove "/*:envelope/*:headers" from the paths; already accounted for :)
@@ -1516,16 +1522,19 @@ declare function merge-impl:get-instances($docs)
 };
 
 declare function merge-impl:get-sources(
-  $docs,
+  $content-objects,
   $compiled-merge-options as item())
   as object-node()*
 {
   let $last-timestamp-function := $compiled-merge-options => map:get("lastUpdatedFunction")
-  for $doc in $docs
+
+  for $content-object in $content-objects
+  let $doc := map:get($content-object, "value")
+  let $doc-uri := (xdmp:node-uri($doc), map:get($content-object, "uri"))[1]
   let $sources := $doc/(es:envelope|object-node("envelope"))
       /(es:headers|object-node("headers"))
       /(*:sources/(*:source|*:name)[self::element()]|array-node("sources")/object-node("sources")|object-node("sources"))
-  let $sources := if (fn:empty($sources)) then object-node { "name": xdmp:node-uri($doc) } else $sources
+  let $sources := if (fn:empty($sources)) then object-node {"name": $doc-uri} else $sources
   for $source in $sources
   let $last-updated := $last-timestamp-function($doc)
   order by $last-updated descending
@@ -1533,9 +1542,8 @@ declare function merge-impl:get-sources(
     object-node {
       "name": fn:string($source/descendant-or-self::*[fn:local-name(.) = ('name','datahubSourceName')]),
       "dateTime": fn:string($last-updated),
-      "documentUri": xdmp:node-uri($doc)
+      "documentUri": $doc-uri
     }
-
 };
 
 declare variable $PROPKEY-HEADERS-NS-MAP := "headers-ns-map";
@@ -1554,13 +1562,16 @@ declare function merge-impl:parse-final-properties-for-merge(
 ) as map:map
 {
   let $compiled-merge-options := merge-impl:compile-merge-options($merge-options)
-  let $docs :=
+  
+  let $content-objects :=
     for $uri in $uris
-    return
-      fn:doc($uri)
+    return util-impl:retrieve-write-object($uri)
+
+  let $docs := merge-impl:get-content-docs($content-objects)
   let $first-doc := fn:head($docs)
   let $first-instance := merge-impl:get-instances($first-doc)
   let $instances := ($first-instance, merge-impl:get-instances(fn:tail($docs)))
+  
   let $wrapper-qnames :=
     fn:reverse(
       ($first-instance/ancestor-or-self::*
@@ -1568,22 +1579,29 @@ declare function merge-impl:parse-final-properties-for-merge(
       $first-doc/(es:envelope|object-node("envelope"))/(es:instance|object-node("instance"))/ancestor-or-self::*)
       ! fn:node-name(.)
     )
-  let $sources := merge-impl:get-sources($docs, $compiled-merge-options)
+  
+  let $sources := merge-impl:get-sources($content-objects, $compiled-merge-options)
   let $sources-by-document-uri as map:map := util-impl:combine-maps(map:map(), for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
+  
   let $final-properties := merge-impl:build-final-properties(
     $compiled-merge-options,
     $instances,
-    $docs,
-    $sources-by-document-uri)
-  let $final-headers := merge-impl:build-final-headers(
-    $compiled-merge-options,
-    $docs,
+    $content-objects,
     $sources-by-document-uri
   )
+
+  let $final-headers := merge-impl:build-final-headers(
+    $compiled-merge-options,
+    $content-objects,
+    $sources-by-document-uri
+  )
+
   let $final-triples := merge-impl:build-final-triples(
     $compiled-merge-options,
     $docs,
-    $sources)
+    $sources
+  )
+
   return
     map:new((
       map:entry("instances", $instances),
@@ -1602,7 +1620,7 @@ declare function merge-impl:parse-final-properties-for-merge(
  : algorithm used to do the merging, the merged values, and the sources of
  : those values (embedded in the values).
  : @param $merge-options  an element or object containing the merge options
- : @param $docs  the source documents the header values will be drawn from
+ : @param $content-objects DHF content wrappers around the source documents for building headers
  : @param $sources  information about the source of the header data
  : @return sequence of maps. First map is the mapping from namespace prefixes
  :         to namespace URIs, as configured on the property-defs element. The
@@ -1610,7 +1628,7 @@ declare function merge-impl:parse-final-properties-for-merge(
  :)
 declare function merge-impl:build-final-headers(
   $compiled-merge-options as item(),
-  $docs,
+  $content-objects,
   $sources-by-document-uri as map:map
 ) as map:map*
 {
@@ -1618,6 +1636,8 @@ declare function merge-impl:build-final-headers(
   let $ns-map := $compiled-merge-options => map:get("namespaces")
   let $default-merge-rule-info := $compiled-merge-options => map:get("defaultMergeRuleInfo")
   let $header-merge-rules-info := ($compiled-merge-options => map:get("mergeRulesInfo"))[map:contains(., "path")][fn:matches(map:get(., "path"),"^/[\w]*:?envelope/[\w]*:?headers/")]
+
+  let $docs := merge-impl:get-content-docs($content-objects)
   let $top-level-properties := fn:distinct-values(($docs/*:envelope/*:headers/node()[fn:not(fn:local-name-from-QName(fn:node-name(.)) = ("id","merges","sources"))] ! (fn:node-name(.))))
   let $is-hub-central-format := $compiled-merge-options => map:get("isHubCentralFormat")
   return (
@@ -1637,20 +1657,19 @@ declare function merge-impl:build-final-headers(
         "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
         "optionsReference": $merge-options-ref
       }
-    let $properties :=  $docs/*:envelope/*:headers/node()[fn:node-name(.) eq $top-level-property]
-    let $raw-values :=
-      for $prop-value in $properties
-      let $curr-uri := xdmp:node-uri($prop-value)
-      let $prop-sources := map:get($sources-by-document-uri, $curr-uri)
+      
+      let $properties := $docs/*:envelope/*:headers/node()[fn:node-name(.) eq $top-level-property]
+
+      let $raw-values :=
+        for $property in $properties
+        let $doc-uri := merge-impl:get-uri-for-property($property, $content-objects)
+        where fn:exists($doc-uri)
+        return 
+          let $prop-sources := map:get($sources-by-document-uri, $doc-uri)
+          return merge-impl:wrap-revision-info($top-level-property, $property, $prop-sources, (), ())
+      
+      where fn:exists($raw-values)
       return
-          merge-impl:wrap-revision-info(
-            $top-level-property,
-            $prop-value,
-            $prop-sources,
-            (), ()
-          )
-    return
-      if (fn:exists($raw-values)) then
         prop-def:new()
           => prop-def:with-algorithm-info($algorithm-info)
           => prop-def:with-path('/es:envelope/es:headers/' || $local-name)
@@ -1675,8 +1694,8 @@ declare function merge-impl:build-final-headers(
                   $merge-rule
                 )
             )
-          )
-      else (),
+          ),
+      
     for $header-merge-rule-info in $header-merge-rules-info
     let $algorithm-name := fn:string($header-merge-rule-info => map:get("mergeAlgorithmName"))
     let $algorithm := $header-merge-rule-info => map:get("mergeAlgorithm")
@@ -1688,7 +1707,7 @@ declare function merge-impl:build-final-headers(
       }
     let $merge-rule := $header-merge-rule-info => map:get("mergeRule")
     let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
-    let $raw-values := merge-impl:get-raw-values($docs, $header-merge-rule-info, $sources-by-document-uri)
+    let $raw-values := merge-impl:get-raw-values($content-objects, $header-merge-rule-info, $sources-by-document-uri)
     return
       if (fn:exists($raw-values)) then
         prop-def:new()
@@ -1713,6 +1732,18 @@ declare function merge-impl:build-final-headers(
           => prop-def:with-path($header-merge-rule-info => map:get("path"))
       else ()
   )
+};
+
+(:
+Given a property, find the content object whose document contains the property, and then return the associated URI.
+This technique is used to support both in-memory documents and documents loaded from the database.
+:)
+declare private function merge-impl:get-uri-for-property($property, $content-objects) as xs:string?
+{
+  let $doc := fn:root($property)
+  let $content-object := $content-objects[map:get(., "value") is $doc]
+  where fn:exists($content-object)
+  return map:get($content-object, "uri")
 };
 
 (:~
@@ -1758,7 +1789,7 @@ declare function merge-impl:build-final-triples(
 
 (:~
  : Identify and merge any headers whose paths are given in the merge options.
- : @param $docs  the source documents
+ : @param $content-objects  DHF content wrappers around the source documents
  : @param $property  the property specification, which includes the path to
  :                   look for source values
  : @param $sources  structure reflecting the origin of the data
@@ -1767,15 +1798,17 @@ declare function merge-impl:build-final-triples(
  :         source document
  :)
 declare function merge-impl:get-raw-values(
-  $docs,
+  $content-objects,
   $merge-rule-info as map:map,
   $sources-by-document-uri as map:map
 ) as map:map*
 {
   let $path := $merge-rule-info => map:get("path")
-  for $doc in $docs
+
+  for $content-object in $content-objects
+  let $doc := map:get($content-object, "value")
   let $values := ($merge-rule-info => map:get("documentToValuesFunction"))($doc)
-  let $curr-uri := xdmp:node-uri($doc)
+  let $curr-uri := (xdmp:node-uri($doc), map:get($content-object, "uri"))[1]
   let $prop-sources := map:get($sources-by-document-uri, $curr-uri)
   let $res :=
     if (fn:exists($values)) then
@@ -1830,18 +1863,23 @@ declare function merge-impl:get-instance-props-by-path(
 declare function merge-impl:build-final-properties(
   $compiled-merge-options as map:map,
   $instances,
-  $docs,
+  $content-objects,
   $sources-by-document-uri as map:map
 ) as map:map*
 {
-  merge-impl:build-final-properties(
+  let $is-json := 
+    let $docs := merge-impl:get-content-docs($content-objects)
+    return fn:exists($docs/(object-node()|array-node()))
+
+  return merge-impl:build-final-properties(
     $compiled-merge-options,
     $instances,
-    $docs,
+    $content-objects,
     $sources-by-document-uri,
-    fn:exists($docs/(object-node()|array-node()))
+    $is-json
   )
 };
+
 (:
  : Returns a sequence of map:maps, one for each top-level property. Each map has the following keys:
  : - "algorithm" -- object-node with the name and optionsReference of the algorithm used for this property
@@ -1853,23 +1891,11 @@ declare function merge-impl:build-final-properties(
 declare function merge-impl:build-final-properties(
   $compiled-merge-options as map:map,
   $instances,
-  $docs,
+  $content-objects,
   $sources-by-document-uri as map:map,
   $is-json
 ) as map:map*
 {
-(:
-xdmp:log("top of build-final-properties"),
-xdmp:log("compiled-merge-options"),
-xdmp:log($compiled-merge-options),
-xdmp:log("instances"),
-xdmp:log($instances),
-xdmp:log("sources"),
-xdmp:log($sources-by-document-uri),
-xdmp:log("is-json"),
-xdmp:log($is-json)
-,
-:)
   let $entity-definition := $compiled-merge-options => map:get("targetEntityTypeDefinition")
   let $namespaces-map := $compiled-merge-options => map:get("namespaces")
   let $merge-options-ref := $compiled-merge-options => map:get("mergeOptionsRef")
@@ -1879,7 +1905,7 @@ xdmp:log($is-json)
   let $explicit-merges :=
     for $merge-rule-info in $merge-rules-info[fn:not(map:contains(., "path") and fn:matches(map:get(., "path"), "^/[\w]*:?envelope/[\w]*:?headers/"))]
     where fn:exists(map:get($merge-rule-info,"path")) or map:get($merge-rule-info, "propertyQName") = $top-level-qnames
-    return merge-impl:get-merge-values($merge-rule-info, $docs, $namespaces-map, $sources-by-document-uri, $merge-options-ref)
+    return merge-impl:get-merge-values($merge-rule-info, $content-objects, $namespaces-map, $sources-by-document-uri, $merge-options-ref)
   let $implicit-merges :=
     if (fn:empty($entity-definition)) then
       let $default-merge-rule-info := $compiled-merge-options => map:get("defaultMergeRuleInfo")
@@ -1893,7 +1919,7 @@ xdmp:log($is-json)
               => map:with("documentToValuesFunction", function($doc) {
                 $property-instances[fn:root(.) is $doc]
               }),
-            $docs,
+            $content-objects,
             $namespaces-map,
             $sources-by-document-uri,
             $merge-options-ref
@@ -1908,7 +1934,7 @@ xdmp:log($is-json)
 (:~
  : Executes the appropriate function for a merge rule.
  : @param $merge-rule-info as map:map from the compiled merge options with relevant information about a merge  rule
- : @param $docs  as document-node()* the documents that are being
+ : @param $content-objects DHF content wrappers around documents
  : @param $namespaces-map as map:map  namespace prefixes mapped to their full URI
  : @param $sources-by-document-uri as map:map  maps document URIs to object-node()* with relevant source information (i.e., name, dateTime, documentUri)
  : @param $merge-options-ref as xs:string  A string identifier for merge options primarily used for provenance
@@ -1918,7 +1944,7 @@ xdmp:log($is-json)
  :)
 declare function merge-impl:get-merge-values(
   $merge-rule-info as map:map,
-  $docs as document-node()*,
+  $content-objects,
   $namespaces-map as map:map,
   $sources-by-document-uri as map:map,
   $merge-options-ref as xs:string
@@ -1939,7 +1965,7 @@ declare function merge-impl:get-merge-values(
   let $instance-props-by-root-id := map:map()
   let $document-to-values-function := $merge-rule-info => map:get("documentToValuesFunction")
   let $instance-props :=
-    for $doc in $docs
+    for $doc in merge-impl:get-content-docs($content-objects)
     let $instance-properties := $document-to-values-function($doc)
     return (
       map:put($instance-props-by-root-id, fn:generate-id($doc), $instance-properties),
@@ -1948,12 +1974,14 @@ declare function merge-impl:get-merge-values(
   where fn:exists($instance-props)
   return
     let $wrapped-properties :=
-      for $doc at $pos in $docs
+      for $content-object at $pos in $content-objects
+      let $doc := map:get($content-object, "value")
       let $generate-id := fn:generate-id($doc)
       for $prop-value in map:get($instance-props-by-root-id, $generate-id)
       let $prop-qname := fn:node-name($prop-value)
-      let $lineage-uris := merge-impl:node-uri($doc)
-      let $prop-sources := $lineage-uris ! map:get($sources-by-document-uri, .)
+      let $prop-sources := 
+        let $uri := (merge-impl:node-uri($doc), map:get($content-object, "uri"))[1]
+        return map:get($sources-by-document-uri, $uri)
       let $ns-map := fn:head(($merge-rule-info => map:get("namespaces"),$namespaces-map))
       return
         merge-impl:wrap-revision-info($prop-qname, $prop-value, $prop-sources, $path, $ns-map)
@@ -2277,4 +2305,12 @@ declare function merge-impl:lock-for-update($uri as xs:string) {
     (: Below is to identify locks specific to mastering  :)
     $lock-for-update-fun($lock-task-prefix || $uri)
   ) else ()
+};
+
+(:
+Used to ensure consistent ordering of returned docs, as opposed to using the "!" operator.
+:)
+declare private function merge-impl:get-content-docs($content-objects) {
+  for $c in $content-objects
+  return map:get($c, "value")
 };

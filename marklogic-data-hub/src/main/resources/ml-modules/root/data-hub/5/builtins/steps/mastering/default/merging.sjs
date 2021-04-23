@@ -13,19 +13,27 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
-const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
+ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+ const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const utilImpl = require("/com.marklogic.smart-mastering/impl/util.xqy");
+
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function main(content, options, stepExecutionContext) {
-  let isSeparateMergeStep = false;
+
+  let matchingStepContentExists = false;
+  if (stepExecutionContext != null && stepExecutionContext.flowExecutionContext != null) {
+    const contentArray = stepExecutionContext.flowExecutionContext.matchingStepContentArray;
+    if (contentArray && Array.isArray(contentArray)) {
+      matchingStepContentExists = true;
+      addMatchingStepContentToCache(contentArray);
+    }
+  }
+
   // These index references can't be out this function scope or the jobReport will error, since they don't exist for the jobs DB
   if (options.stepId) {
     const stepDoc = fn.head(cts.search(cts.andQuery([
@@ -34,7 +42,6 @@ function main(content, options, stepExecutionContext) {
     ])));
     if (stepDoc) {
       options = stepDoc.toObject();
-      isSeparateMergeStep = true;
     } else {
       httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
@@ -58,13 +65,16 @@ function main(content, options, stepExecutionContext) {
   let theseURIsToProcess = thisMatchSummary.matchSummary.URIsToProcess;
 
   for (let uriToProcess of theseURIsToProcess) {
-
-    // don't process this "URIsToProcess" URI unless we are processing the last matchSummary document
-    // (in URI order) that contains it
-    let lastSummaryWithURI = cts.uris(null, ["descending", "limit=1"],
-      cts.pathRangeQuery("/matchSummary/URIsToProcess", "=" , uriToProcess));
-    if (lastSummaryWithURI != thisMatchSummaryURI) {
-      continue;
+    // If we found matching step content, then we're running connected steps, and we don't care about any
+    // other match summaries (and we likely only have 1, as a matching step just ran and produced 1 summary).
+    if (!matchingStepContentExists) {
+      // don't process this "URIsToProcess" URI unless we are processing the last matchSummary document
+      // (in URI order) that contains it
+      let lastSummaryWithURI = cts.uris(null, ["descending", "limit=1"],
+        cts.pathRangeQuery("/matchSummary/URIsToProcess", "=" , uriToProcess));
+      if (lastSummaryWithURI != thisMatchSummaryURI) {
+        continue;
+      }
     }
 
     let uriActionDetails = thisMatchSummary.matchSummary.actionDetails[uriToProcess];
@@ -114,7 +124,7 @@ function main(content, options, stepExecutionContext) {
         thisMatchSummary,
         options,
         stepExecutionContext != null ? stepExecutionContext.fineProvenanceIsEnabled() : false
-    );
+    );  
   }
 
   content["$delete"] = true;
@@ -143,8 +153,25 @@ function applyPermissionsFromOptions(results, options) {
   }
 }
 
-function jobReport(jobID, stepResponse, options) {
-  return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);
+function jobReport(jobID, stepResponse, options, outputContentArray) {
+  return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
+}
+
+/**
+ * If matching step content exists from the flowExecutionContext, then we want to add that to the
+ * "write object" catch in util.xqy so that calls to retrieve-write-object will find it, as opposed
+ * to checking the database.
+ * 
+ * @param contentArray
+ */
+ function addMatchingStepContentToCache(contentArray) {
+  contentArray.forEach(contentObject => {
+    // Collections must be converted to a sequence so that it's handled properly in XQuery 
+    if (contentObject.context && contentObject.context.collections) {
+      contentObject.context.collections = Sequence.from(contentObject.context.collections);
+    }
+  });
+  utilImpl.addAllWriteObjects(contentArray);  
 }
 
 module.exports = {

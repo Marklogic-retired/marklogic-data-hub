@@ -32,14 +32,18 @@ let $shallow-prop := $merge-rules-info[map:get(., "propertyName") = "shallow"]
 let $deep-prop := $merge-rules-info[map:get(., "propertyName") = "deep"]
 
 let $docs := map:keys($lib:TEST-DATA) ! fn:doc(.)
+let $content-objects := $docs ! map:new((
+  map:entry("uri", xdmp:node-uri(.)),
+  map:entry("value", .)
+))
 
-let $sources := merge-impl:get-sources($docs, $compiled-merge-options)
+let $sources := merge-impl:get-sources($content-objects, $compiled-merge-options)
 
 let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
 
 let $actual :=
   merge-impl:get-raw-values(
-    $docs,
+    $content-objects,
     $shallow-prop,
     $sources-by-document-uri
   )
@@ -82,7 +86,7 @@ let $assertions := (
 
 let $actual :=
   merge-impl:get-raw-values(
-    $docs,
+    $content-objects,
     $deep-prop,
     $sources-by-document-uri
   )

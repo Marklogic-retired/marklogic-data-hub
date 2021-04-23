@@ -37,11 +37,11 @@ class StepExecutionContext {
    */
   static newContext(flowExecutionContext, stepNumber) {
     const flow = flowExecutionContext.flow;
+    const flowName = flow.name;
     if (!flow.steps || !flow.steps[stepNumber]) {
-      httpUtils.throwBadRequest(`Cannot find step number '${stepNumber}' in flow '${flow.name}`);
+      httpUtils.throwBadRequest(`Cannot find step number '${stepNumber}' in flow '${flowName}`);
     }
 
-    const flowName = flow.name;
     const flowStep = flow.steps[stepNumber];
     const name = flowStep.stepDefinitionName;
     if (!name) {
@@ -59,7 +59,9 @@ class StepExecutionContext {
       httpUtils.throwBadRequest(message);
     }
 
-    return new StepExecutionContext(flow, stepNumber, stepDef, flowExecutionContext.jobId, flowExecutionContext.runtimeOptions);
+    const context = new StepExecutionContext(flow, stepNumber, stepDef, flowExecutionContext.jobId, flowExecutionContext.runtimeOptions);
+    context.flowExecutionContext = flowExecutionContext;
+    return context;
   }
 
   /**
@@ -104,13 +106,23 @@ class StepExecutionContext {
     return this.combinedOptions.sourceDatabase || config.STAGINGDATABASE;
   }
 
+  /**
+   * 
+   * @returns {boolean} true if the sourceDatabase for this execution is the same as this transaction's database
+   */
+  sourceDatabaseIsCurrentDatabase() {
+    const db = this.getSourceDatabase();
+    return !db || db === xdmp.databaseName(xdmp.database());
+  }
+
   getTargetDatabase() {
     return this.combinedOptions.targetDatabase || config.FINALDATABASE;
   }
 
-  buildStepResponse() {
+  buildStepResponse(jobId) {
     const hasFailures = this.failedItems.length > 0;
     return {
+      jobId,
       flowName: this.flow.name,
       stepName: this.flowStep.name,
       stepDefinitionName: this.stepDefinition.name,
@@ -165,12 +177,24 @@ class StepExecutionContext {
     this.completedItems.push(item);
   }
 
+  /**
+   * 
+   * @param error 
+   * @param batchItems 
+   * @returns the constructed error object
+   */
   addErrorForEntireBatch(error, batchItems) {
     this.failedItems = batchItems;
     this.completedItems = [];
-    this.addBatchError(error, null);
+    return this.addBatchError(error, null);
   }
 
+  /**
+   * 
+   * @param error 
+   * @param batchItem 
+   * @returns the constructed error object
+   */
   addBatchError(error, batchItem) {
     // Object.assign doesn't work on an error object; gotta manually copy over each thing we care about
     const batchError = {
@@ -184,6 +208,9 @@ class StepExecutionContext {
       "uri": batchItem
     };
 
+    // Temporary until DHFPROD-6720
+    console.warn("Batch error!", batchError);
+    
     if (batchItem != null) {
       this.failedItems.push(batchItem);
     }
@@ -196,6 +223,7 @@ class StepExecutionContext {
     }
 
     this.batchErrors.push(batchError);
+    return batchError;
   }
 
   getStepBeforeMainFunction() {

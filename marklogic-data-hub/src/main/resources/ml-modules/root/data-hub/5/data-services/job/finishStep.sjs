@@ -18,13 +18,11 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
 const Job = require("/data-hub/5/flow/job.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 var jobId;
 var stepNumber;
 var stepStatus;
 var runStepResponse = fn.head(xdmp.fromJSON(runStepResponse));
 
-const job = Job.getRequiredJob(jobId).finishStep(stepNumber, stepStatus, runStepResponse).update();
-jobs.createJobReport(runStepResponse);
+const job = Job.getRequiredJob(jobId).finishStep(stepNumber, stepStatus, runStepResponse, null).update();
 job;

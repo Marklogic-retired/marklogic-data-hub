@@ -796,6 +796,7 @@ module.exports = {
   makeCombinedOptions,
   makeEnvelope,
   mergeHeaders,
+  normalizeTriple,
   normalizeValuesInNode,
   parseText,
   properExtensionURI,
