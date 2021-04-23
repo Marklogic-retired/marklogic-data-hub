@@ -59,6 +59,43 @@ function findStepResponses(query) {
   return response;
 }
 
+function valuesExist(values) {
+  return !(values || values.length);
+}
+
+function findJobDocuments({start, pageLength, jobId, status, startTimeBegin, startTimeEnd, endTimeBegin, endTimeEnd, user}) {
+  const queries = [cts.collectionQuery('Job')];
+  if (valuesExist(jobId)) {
+    queries.push(cts.jsonPropertyValueQuery('jobId', jobId));
+  }
+  if (valuesExist(status)) {
+    queries.push(cts.jsonPropertyValueQuery('jobStatus', status));
+  }
+  if (valuesExist(startTimeBegin)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("startTime"), ["type=dateTime"]), '>=', startTimeBegin));
+  }
+  if (valuesExist(startTimeEnd)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("startTime"), ["type=dateTime"]), '<=', startTimeEnd));
+  }
+  if (valuesExist(endTimeBegin)``) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("endTime"), ["type=dateTime"]), '>=', endTimeBegin));
+  }
+  if (valuesExist(endTimeEnd)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("endTime"), ["type=dateTime"]), '<=', endTimeEnd));
+  }
+  if (valuesExist(user)) {
+    queries.push(cts.jsonPropertyValueQuery('user', user));
+  }
+  const finalQuery = cts.andQuery(queries);
+  const total = cts.estimate(finalQuery);
+  return {
+    total,
+    start,
+    pageLength,
+    results: fn.subsequence(cts.search(finalQuery), start, pageLength)
+  };
+}
+
 function installJobTemplates() {
   const stepResponseTemplate = {
     "template": {
@@ -179,5 +216,6 @@ function insertDocument(uri, content, permissions, collections, targetDatabase) 
 
 module.exports = {
   findStepResponses,
+  findJobDocuments,
   installJobTemplates
 };
