@@ -833,6 +833,106 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument();
   });
 
+  test("Verify right XPATH with source context selection and testing in related entity tables", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataRelated});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+
+    let getByTestId, getByLabelText, getByText, queryByTestId, getAllByRole, getAllByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
+      getByText = renderResults.getByText;
+      queryByTestId = renderResults.queryByTestId;
+      getAllByRole = renderResults.getAllByRole;
+      getAllByTestId = renderResults.getAllByTestId;
+    });
+
+    //expand nested levels first
+    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
+
+    let entitiesFilter = getByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-search__field"
+    );
+
+    //open BabyRegistry related table
+    fireEvent.click(entitiesFilter);
+    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
+
+    //BabyRegistry table should be present on the screen
+    expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
+
+    //Verify Context name and xpath field is present for only the related entity table
+    expect(queryByTestId("Customer-Context-name")).not.toBeInTheDocument();
+    expect(queryByTestId("BabyRegistry (ownedBy Person)-Context-name")).toBeInTheDocument();
+
+    expect(queryByTestId("Customer-Context-mapexpression")).not.toBeInTheDocument();
+    expect(queryByTestId("BabyRegistry (ownedBy Person)-Context-mapexpression")).toBeInTheDocument();
+
+    let mapExp = getByTestId("BabyRegistry (ownedBy Person)-Context-mapexpression");
+    //Context value should be "/" by default
+    expect(mapExp).toHaveTextContent("/");
+
+    userEvent.type(mapExp, "{selectall}{backspace}");
+
+    let sourceSelector = await waitForElement(() => getByTestId("BabyRegistry (ownedBy Person)-Context-listIcon"));
+
+    //corresponds to 'Context' source selector
+    fireEvent.click(sourceSelector);
+
+    await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
+    //Set 'Context' for BabyRegistry related entity to 'BabyRegistry'
+
+    fireEvent.click(getByTestId("BabyRegistry-option"));
+    // await wait(() => expect(findByTestId("successMessage")));
+
+    //Right Xpath is populated
+    expect(mapExp).toHaveTextContent("BabyRegistry");
+
+    //Verify Xpath for properties is correct when source context parent is set
+    sourceSelector = getByTestId("babyRegistryId-listIcon");
+
+    fireEvent.click(sourceSelector);
+
+    await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
+
+    fireEvent.click(getAllByTestId("BabyRegistryId-option")[1]);
+
+    mapExp = getByTestId("babyRegistryId-mapexpression");
+
+    //Right Xpath is populated (and not BabyRegistry/BabyRegistryId since sourceContext is set)
+    expect(mapExp).toHaveTextContent("BabyRegistryId");
+
+    //Verify Xpath is populated with full context when no sourceContext is set
+
+    //Clear input boxes
+    userEvent.type(mapExp, "{selectall}{backspace}");
+    fireEvent.blur(mapExp);
+    expect(mapExp).toHaveTextContent("");
+    mapExp = getByTestId("BabyRegistry (ownedBy Person)-Context-mapexpression");
+    userEvent.type(mapExp, "{selectall}{backspace}");
+    fireEvent.blur(mapExp);
+    expect(mapExp).toHaveTextContent("");
+
+    fireEvent.click(sourceSelector);
+
+    fireEvent.click(getAllByTestId("BabyRegistryId-option")[1]);
+
+    mapExp = getByTestId("babyRegistryId-mapexpression");
+
+    //Right Xpath is populated (BabyRegistry/BabyRegistryId) since sourceContext is empty)
+    expect(mapExp).toHaveTextContent("BabyRegistry/BabyRegistryId");
+
+  });
+
   test("Verify evaluation of valid expression for mapping writer user", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});

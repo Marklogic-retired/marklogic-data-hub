@@ -113,7 +113,7 @@
       "targetEntityType": "http://example.org/Order-0.0.1/Order"
     },
     {
-      "relatedEntityMappingId": "Product:Order.lineItems.orderIncludes",
+      "relatedEntityMappingId": "Product:Order.lineItems.includes",
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/Orders/Products",
@@ -151,7 +151,7 @@
       "targetEntityType": "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
     },
     {
-      "relatedEntityMappingId": "Product:BabyRegistry.babyRegistryIncludes",
+      "relatedEntityMappingId": "Product:BabyRegistry.includes",
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/BabyRegistry/Products",

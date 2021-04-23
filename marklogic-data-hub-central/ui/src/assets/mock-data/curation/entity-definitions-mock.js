@@ -337,56 +337,54 @@ export const personRelatedEntityDef = [{
   }
   ],
   "entityModel": {
-    "Person": {
-      "info": {
-        "title": "Person",
-        "version": "0.0.1",
-        "baseUri": "http://example.org/"
-      },
-      "definitions": {
-        "Person": {
-          "required": [
-            "propId"
-          ],
-          "primaryKey": "propId",
-          "properties": {
-            "propId": {
-              "datatype": "integer",
-              "sortable": true
-            },
-            "propName": {
-              "datatype": "string"
-            },
-            "propAttribute": {
-              "datatype": "string"
-            },
+    "info": {
+      "title": "Person",
+      "version": "0.0.1",
+      "baseUri": "http://example.org/"
+    },
+    "definitions": {
+      "Person": {
+        "required": [
+          "propId"
+        ],
+        "primaryKey": "propId",
+        "properties": {
+          "propId": {
+            "datatype": "integer",
+            "sortable": true
+          },
+          "propName": {
+            "datatype": "string"
+          },
+          "propAttribute": {
+            "datatype": "string"
+          },
+          "items": {
+            "datatype": "array",
             "items": {
-              "datatype": "array",
-              "items": {
-                "$ref": "#/definitions/ItemType"
+              "$ref": "#/definitions/ItemType"
+            },
+            "subProperties": {
+              "itemTypes": {
+                "datatype": "string"
               },
-              "subProperties": {
-                "itemTypes": {
-                  "datatype": "string"
-                },
-                "itemCategory": {
-                  "datatype": "object",
-                  "$ref": "#/definitions/catItem",
-                  "subProperties": {
-                    "artCraft": {
-                      "datatype": "string"
-                    },
-                    "automobile": {
-                      "datatype": "string"
-                    }
+              "itemCategory": {
+                "datatype": "object",
+                "$ref": "#/definitions/catItem",
+                "subProperties": {
+                  "artCraft": {
+                    "datatype": "string"
+                  },
+                  "automobile": {
+                    "datatype": "string"
                   }
                 }
               }
-            },
-            "gender": {
-              "datatype": "string"
-            },
-          }
+            }
+          },
+          "gender": {
+            "datatype": "string"
+          },
         }
       }
     }

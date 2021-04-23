@@ -221,6 +221,43 @@ const jsonSourceDataDefault = {
   }
 };
 
+const jsonSourceDataRelated = {
+  "envelope": {
+    "headers": {},
+    "triples": [],
+    "instance": {
+      "proteinId": "123EAC",
+      "proteinType": "home",
+      "nutFreeName": [
+        {
+          "FirstNamePreferred": "John",
+          "LastName": {
+            "#text": "Smith",
+            "suffix": "Sr."
+          }
+        }
+      ],
+      "proteinCat": "commercial",
+      "proteinDog": ["retriever, golden, labrador"],
+      "emptyString": "",
+      "nullValue": null,
+      "numberValue": 321,
+      "booleanValue": true,
+      "whitespaceValue": " ",
+      "emptyArrayValue": [],
+      "numberArray": [1, 2, 3],
+      "booleanArray": [true, false, true],
+      "BabyRegistry": [
+        {
+          "BabyRegistryId": "3039",
+          "Arrival_Date": "2021-06-07"
+        }
+      ]
+    },
+    "attachments": null
+  }
+};
+
 const xmlSourceDataMultipleSiblings = "<envelope><headers><sources xmlns=\"\"><name>loadPersonXML</name></sources><createdOn xmlns=\"\">2021-02-26T14:09:13.783548-08:00</createdOn><createdBy xmlns=\"\">hc-developer</createdBy></headers><triples/><instance xmlns=\"\"><sampleProtein proteinType=\"home\" xmlns:nutFree=\"http://uniprot.org/nutFree\" xmlns:withNuts=\"http://uniprot.org/withNuts\"><proteinId>123EAC</proteinId><nutFree:name><FirstNamePreferred>John</FirstName><LastName>Smith</LastName></nutFree:name><nutFree:name><FirstNamePreferred>Eric</FirstName><LastName>Johnson</LastName></nutFree:name><proteinCat><withNuts:Organism><OrganismName>Frog virus 3</OrganismName><OrganismType>scientific</OrganismType></withNuts:Organism></proteinCat></sampleProtein></instance><attachments/></envelope>";
 
 const xmlSourceDataDefault = "<envelope><headers><sources xmlns=\"\"><name>loadPersonXML</name></sources><createdOn xmlns=\"\">2021-02-26T14:09:13.783548-08:00</createdOn><createdBy xmlns=\"\">hc-developer</createdBy></headers><triples/><instance><sampleProtein proteinType=\"home\" xmlns:nutFree=\"http://uniprot.org/nutFree\" xmlns:withNuts=\"http://uniprot.org/withNuts\"><proteinId>123EAC</proteinId><nutFree:name><FirstNamePreferred>John</FirstName><LastName>Smith</LastName></nutFree:name><proteinCat>commercial</proteinCat><nutFree:proteinDog>retriever</nutFree:proteinDog><nutFree:proteinDog> </nutFree:proteinDog><nutFree:proteinDog>golden</nutFree:proteinDog><nutFree:proteinDog>labrador</nutFree:proteinDog></sampleProtein></instance><attachments/></envelope>";
@@ -612,6 +649,7 @@ const data = {
   noNamespaceXmlInstance: noNamespaceXmlInstance,
   loadDataPagination: loadDataPagination,
   jsonSourceDataDefault: jsonSourceDataDefault,
+  jsonSourceDataRelated: jsonSourceDataRelated,
   xmlSourceDataDefault: xmlSourceDataDefault
 };
 

@@ -7,7 +7,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
 import {faList, faSearch} from "@fortawesome/free-solid-svg-icons";
-import {getMappingFunctions} from "../../../../api/mapping";
 import EntitySettings from "../entity-settings/entity-settings";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
@@ -22,16 +21,14 @@ interface Props {
   dummyNode: any;
   flatArray: any;
   saveMapping: any;
-  sourceContext: any;
-  setSourceContext: any;
   mapExpTouched: any;
   setMapExpTouched: any;
-  handleExpSubmit: any;
   getDataForValueField: any;
   getTextForTooltip: any;
   getTextForValueField: any;
   canReadWrite: any;
   entityTypeTitle: any;
+  entityModel: any;
   checkedEntityColumns: any;
   entityTypeProperties: any;
   entityMappingId: any;
@@ -54,11 +51,11 @@ interface Props {
   setFilterStr: any;
   allRelatedEntitiesKeys: any;
   setAllRelatedEntitiesKeys: any;
+  mapFunctions : any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
   const [mapExp, setMapExp] = useState({});
-
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
   const {Option} = Select;
@@ -67,16 +64,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
   let tempMapExp: any = {};
   let mapExpUI: any = {};
   let tempSourceContext: any = {};
+  let relatedEntityMapData = props.isRelatedEntity ? props.mapData.relatedEntityMappings?.find(entity => entity.relatedEntityMappingId === props.entityMappingId) : {};
 
   //Text for Context Icon
   const contextHelp = <div className={styles.contextHelp}>An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances). Use a slash (&quot;/&quot;) if the source model is flat.</div>;
 
-  //For storing  mapping functions
-  const [mapFunctions, setMapFunctions] = useState<any>([]);
-
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
   const [searchedEntityColumn, setSearchedEntityColumn] = useState("");
+  const [sourceContext, setSourceContext] = useState({});
+  const [updateContextFlag, setUpdateContextFlag] = useState(false);
+  const [expressionContext, setExpressionContext] = useState(relatedEntityMapData?.expressionContext ? relatedEntityMapData.expressionContext : "/");
 
   //For Dropdown menu
   const [propName, setPropName] = useState("");
@@ -117,7 +115,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
     if (props.entityMappingId || !props.isRelatedEntity) {
       initializeMapExpressions();
     }
-    setMappingFunctions();
     return (() => {
       setMapExp({});
       setSearchEntityText("");
@@ -139,6 +136,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
       setEntityProperties(props.entityTypeProperties);
     }
   }, [props.filterStr]);
+
+  useEffect(() => {
+    if (updateContextFlag) {
+      tempSourceContext = {};
+      updateSourceContext(mapExp, props.entityTypeProperties);
+      setSourceContext({...tempSourceContext});
+      setUpdateContextFlag(false);
+    }
+  }, [updateContextFlag]);
 
   const getEntityDataType = (prop) => {
     return prop.startsWith("parent-") ? prop.slice(prop.indexOf("-") + 1) : prop;
@@ -171,12 +177,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
       let parentVal = element["parentVal"];
       if (element.hasOwnProperty("children")) {
         if (!parentVal) {
-          tempSourceContext[name] = "";
+          tempSourceContext[name] = props.isRelatedEntity ? expressionContext : "";
+          parentVal = expressionContext;
         } else {
-          tempSourceContext[name] = parentVal;
+          tempSourceContext[name] = props.isRelatedEntity ? expressionContext : parentVal;
         }
         if (mapExp[name]) {
-          if (parentVal) {
+          if (parentVal && parentVal !== "/") {
             parentVal = parentVal + "/" + mapExp[name];
           } else {
             parentVal = mapExp[name];
@@ -192,19 +199,26 @@ const EntityMapTable: React.FC<Props> = (props) => {
         if (parentVal) {
           tempSourceContext[name] = parentVal;
         } else {
-          tempSourceContext[name] = "";
+          tempSourceContext[name] = props.isRelatedEntity ? expressionContext : "";
         }
       }
     }
   };
 
   const initializeMapExpressions = () => {
-    if (props.mapData && props.mapData.properties) {
-      initializeMapExpForUI(props.mapData.properties);
-      setMapExp({...mapExpUI});
-      updateSourceContext({...mapExpUI}, entityProperties);
-      props.setSourceContext({...tempSourceContext});
+    let entityMapDataProperties;
+    if (!props.isRelatedEntity) {
+      entityMapDataProperties = props.mapData.properties;
+    } else {
+      //find the corresponding related entity from the array that has its map properties
+      entityMapDataProperties = relatedEntityMapData?.properties;
     }
+    if (props.mapData && entityMapDataProperties) {
+      initializeMapExpForUI(entityMapDataProperties);
+      setMapExp({...mapExpUI});
+    }
+    updateSourceContext({...mapExpUI}, props.entityTypeProperties);
+    setSourceContext({...tempSourceContext});
   };
 
   //Refresh the UI mapExp from the the one saved in the database
@@ -212,6 +226,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     Object.keys(mapExp).forEach(key => {
       let val = mapExp[key];
       if (val.hasOwnProperty("properties")) {
+        if (val["sourcedFrom"] === "") {
+          val["sourcedFrom"] = "/";
+        }
         parentKey = parentKey ? parentKey + "/" + key : key;
         mapExpUI[parentKey] = mapExp[key]["sourcedFrom"];
         initializeMapExpForUI(val.properties, parentKey);
@@ -298,7 +315,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const handleExpSubmit = async () => {
     if (props.mapExpTouched) {
-      await props.saveMapping(mapExp);
+      setUpdateContextFlag(true);
+      await props.saveMapping(mapExp, props.entityMappingId, expressionContext, props.entityModel);
     }
     props.setMapExpTouched(false);
   };
@@ -391,7 +409,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else if (name.includes(searchStr) && data[i].hasOwnProperty("parentVal") && data[i].name !== data[i].filterName) {
           data[i].filterMatch = true;
           let parentKey = getParentKey(data[i].key, props.entityTypeProperties);
-          moreRowObj = {key: parentKey * 10, name: "more", filterName: "more", filterMatch: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
+          moreRowObj = {key: parentKey * 10, name: "more", filterName: "more", filterMatch: false, isProperty: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
         }
 
         if (data[i] && data[i].hasOwnProperty("children") && data[i].children.length === 0) {
@@ -446,7 +464,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
             if (el.filterName === oldMatch.filterName) { el.filterMatch = true; }
           });
           data[i].children = [...siblings];
-          let lessRowObj = {key: parentKey * 10, name: "less", filterName: "less", filterMatch: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
+          let lessRowObj = {key: parentKey * 10, name: "less", filterName: "less", filterMatch: false, isProperty: false, parentVal: "", type: "", parentKey: parentKey, searchKey: data[i].key};
           data[i].children.push(lessRowObj);
         } else if (data[i].hasOwnProperty("children")) {
           parser(data[i].children);
@@ -509,21 +527,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
         textToHighlight={textToSearchInto}
       />;
     } else {
-      return valueToDisplay;
+      return <div data-testId={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{valueToDisplay}</div>;
     }
   };
 
-  const setMappingFunctions = async () => {
-    let mappingFuncResponse = await getMappingFunctions();
-    if (mappingFuncResponse) {
-      setMapFunctions(mappingFuncResponse.data);
-    }
-  };
 
   /* Insert Function signature in map expressions */
   const handleFunctionsList = async (name) => {
     let funcArr: any[] = [];
-    mapFunctions.forEach(element => {
+    props.mapFunctions.forEach(element => {
       funcArr.push({"key": element.functionName, "value": element.functionName});
     });
     setPropListForDropDown(funcArr);
@@ -540,7 +552,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const functionsDef = (functionName) => {
-    return mapFunctions.find(func => {
+    return props.mapFunctions.find(func => {
       return func.functionName === functionName;
     }).signature;
 
@@ -571,27 +583,44 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const insertSource = async (content, propName) => {
-    if (!mapExp[propName]) {
+    let insertedContext = expressionContext;
+    if (!mapExp[propName] && selectedRow.isProperty) {
       mapExp[propName] = "";
     }
     let field = content;//.replace(/[^\/]+\:/g, '');
     if (/(&|>|<|'|"|}|{|\s)/g.test(String(field))) {
       field = "*[local-name(.)='" + escapeXML(field) + "']";
     }
-    // Trim context from beginning of fieldName if needed
-    if (props.sourceContext[propName]) {
-      let len = props.sourceContext[propName].length;
-      if (field.substring(0, len + 1) === props.sourceContext[propName] + "/") {
-        field = field.slice(len + 1);
-      }
-    }
 
-    let newExp = mapExp[propName].substr(0, caretPosition) + field +
-      mapExp[propName].substr(caretPosition, mapExp[propName].length);
-    await setMapExp({...mapExp, [propName]: newExp});
-    tempMapExp = Object.assign({}, mapExp);
-    tempMapExp[propName] = newExp;
-    props.saveMapping(tempMapExp);
+    if (propName === "Context" && !selectedRow.isProperty) {
+      insertedContext = expressionContext.substr(0, caretPosition) + field + expressionContext.substr(caretPosition, expressionContext.length);
+      setExpressionContext(insertedContext);
+      await setMapExp({...mapExp});
+      tempMapExp = Object.assign({}, mapExp);
+    } else {
+      // Trim context from beginning of fieldName if needed
+      let contextValue = sourceContext[propName];
+      if (contextValue) {
+        let len = contextValue.length;
+        if (contextValue[0] === "/") {
+          if (field.substring(0, len) === contextValue.substring(1, len + 1) + "/") {
+            field = field.slice(len);
+          }
+        } else {
+          if (field.substring(0, len+1) === contextValue + "/") {
+            field = field.slice(len+1);
+          }
+        }
+      }
+
+      let newExp = mapExp[propName].substr(0, caretPosition) + field +
+            mapExp[propName].substr(caretPosition, mapExp[propName].length);
+      await setMapExp({...mapExp, [propName]: newExp});
+      tempMapExp = Object.assign({}, mapExp);
+      tempMapExp[propName] = newExp;
+    }
+    setUpdateContextFlag(true);
+    await props.saveMapping(tempMapExp, props.entityMappingId, insertedContext, props.entityModel);
     setDisplaySourceList(false);
     setDisplaySourceMenu(false);
 
@@ -630,25 +659,33 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   };
 
-  const handleMapExp = (name, event) => {
+  const handleMapExp = (row, event) => {
     setCaretPosition(event.target.selectionStart);
     props.setMapExpTouched(true);
-    setMapExp({...mapExp, [name]: event.target.value});
+    setMapExp({...mapExp, [row.name]: event.target.value});
+  };
+
+  const handleExpressionContext = (row, event) => {
+    setCaretPosition(event.target.selectionStart);
+    props.setMapExpTouched(true);
+    setExpressionContext(event.target.value);
   };
 
   //simulate a click event to destroy both dropdown and select on option select
   const simulateMouseClick = (element) => {
-    let mouseClickEvents = ["mousedown", "click", "mouseup"];
-    mouseClickEvents.forEach(mouseEventType =>
-      element.dispatchEvent(
-        new MouseEvent(mouseEventType, {
-          view: window,
-          bubbles: true,
-          cancelable: true,
-          buttons: 1
-        })
-      )
-    );
+    if (element) {
+      let mouseClickEvents = ["mousedown", "click", "mouseup"];
+      mouseClickEvents.forEach(mouseEventType =>
+        element.dispatchEvent(
+          new MouseEvent(mouseEventType, {
+            view: window,
+            bubbles: true,
+            cancelable: true,
+            buttons: 1
+          })
+        )
+      );
+    }
   };
 
   const sourceSearchMenu = (
@@ -689,7 +726,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       data-testid={`${props.entityTypeTitle}-entities-filter`}
       onChange={value => handleOptionSelect(value)}
       value={selectedOptions}
-      dropdownClassName={styles.entityFilterDropdown}
+      dropdownClassName={props.isRelatedEntity ? styles.relatedEntityFilterDropdown : styles.entityFilterDropdown}
     >
 
       {props.relatedEntityTypeProperties?.map((entity, i) => {
@@ -781,7 +818,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
           renderText =
-            <span> {row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}
+            <span><span data-testId={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
                   <MLTooltip title={"Multiple"}>
@@ -795,6 +832,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
                     <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
                   </MLTooltip>
                 </span>
+              }
+              {row.key > 100 && row.name === "Context" && !row.isProperty &&
+              <span>
+                 &nbsp;<Popover
+                  content={contextHelp}
+                  trigger="click"
+                  placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                </Popover>
+              </span>
               }
             </span>;
           return {children: renderText, props: (row.key <= 100 && index === 0) ? {colSpan: 4} : {colSpan: 1}};
@@ -845,27 +891,47 @@ const EntityMapTable: React.FC<Props> = (props) => {
       width: "45%",
       render: (text, row, index) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
-          return {
-            children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+          if (row.name === "Context" && !row.isProperty) {
+            return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
               <TextArea
-                id={"mapexpression" + row.name.split("/").pop()}
-                data-testid={row.name.split("/").pop() + "-mapexpression"}
+                id={"mapexpression"+row.name.split("/").pop()}
+                data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
                 style={mapExpressionStyle(row.name)}
                 onClick={handleClickInTextArea}
-                value={mapExp[row.name]}
-                onChange={(e) => handleMapExp(row.name, e)}
+                value={expressionContext}
+                onChange={(e) => handleExpressionContext(row, e)}
                 onBlur={handleExpSubmit}
                 autoSize={{minRows: 1}}
                 disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
               <span>
                 <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-                  <i id="listIcon" data-testid={row.name.split("/").pop() + "-listIcon1"}><FontAwesomeIcon icon={faList} size="lg" data-testid={row.name.split("/").pop() + "-listIcon"} className={styles.listIcon} onClick={(e) => handleSourceList(row)} /></i>
+                  <i  id="listIcon" data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
                 </Dropdown>
               </span>
-                    &nbsp;&nbsp;
+            </div>
+            {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}};
+          } else {
+            return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+              <TextArea
+                id={"mapexpression"+row.name.split("/").pop()}
+                data-testid={row.name.split("/").pop()+"-mapexpression"}
+                style={mapExpressionStyle(row.name)}
+                onClick={handleClickInTextArea}
+                value={mapExp[row.name]}
+                onChange={(e) => handleMapExp(row, e)}
+                onBlur={handleExpSubmit}
+                autoSize={{minRows: 1}}
+                disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
+              <span>
+                <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+                  <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
+                </Dropdown>
+              </span>
+                      &nbsp;&nbsp;
               <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
             {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}
-          };
+            };
+          }
         } else if (row.name !== "more" && row.name !== "less") {
           return {children: null, props: {colSpan: 0}};
         }

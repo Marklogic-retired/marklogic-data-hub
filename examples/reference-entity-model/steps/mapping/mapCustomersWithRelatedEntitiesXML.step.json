@@ -118,7 +118,7 @@
       "targetEntityType": "http://example.org/Order-0.0.1/Order"
     },
     {
-      "relatedEntityMappingId": "Product:Order.lineItems.orderIncludes",
+      "relatedEntityMappingId": "Product:Order.lineItems.includes",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order/customerInfo:Products/customerInfo:Product",
@@ -156,7 +156,7 @@
       "targetEntityType": "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
     },
     {
-      "relatedEntityMappingId": "Product:BabyRegistry.babyRegistryIncludes",
+      "relatedEntityMappingId": "Product:BabyRegistry.includes",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/*:Customer/customerInfo:BabyRegistry/customerInfo:Products/customerInfo:Product",
