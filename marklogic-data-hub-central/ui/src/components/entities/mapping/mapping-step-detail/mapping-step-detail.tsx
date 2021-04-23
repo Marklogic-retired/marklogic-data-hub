@@ -19,7 +19,7 @@ import {xmlParserForMapping} from "../../../../util/record-parser";
 import {CurationContext} from "../../../../util/curation-context";
 import {AuthoritiesContext} from "../../../../util/authorities";
 import {MappingStep, StepType} from "../../../../types/curation-types";
-import {getMappingArtifactByMapName, updateMappingArtifact} from "../../../../api/mapping";
+import {getMappingArtifactByMapName, updateMappingArtifact, getMappingFunctions} from "../../../../api/mapping";
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips} from "../../../../config/tooltips.config";
 import arrayIcon from "../../../../assets/icon_array.png";
@@ -69,9 +69,6 @@ const MappingStepDetail: React.FC = () => {
   const authorityService = useContext(AuthoritiesContext);
   const canReadOnly = authorityService.canReadMapping();
   const canReadWrite = authorityService.canWriteMapping();
-  const [mapExp, setMapExp] = useState({});
-  const [sourceContext, setSourceContext] = useState({});
-  let tempSourceContext: any = {};
   let trackUniqueKeys: any = [];
   /*-------------------*/
 
@@ -88,13 +85,16 @@ const MappingStepDetail: React.FC = () => {
   const [mapSaved, setMapSaved] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [errorInSaving, setErrorInSaving] = useState("");
 
+  //For storing  mapping functions
+  const [mapFunctions, setMapFunctions] = useState<any>([]);
+
   //For source dropdown search menu
   const [flatArray, setFlatArray]   = useState<any[]>([]);
 
   //For TEST and Clear buttons
   const [mapResp, setMapResp] = useState({});
   const [isTestClicked, setIsTestClicked] = useState(false);
-  const [savedMappingArt, setSavedMappingArt] = useState(DEFAULT_MAPPING_STEP);
+  const [savedMappingArt, setSavedMappingArt] = useState<any>(DEFAULT_MAPPING_STEP);
 
   //Navigate URI buttons
   const [uriIndex, setUriIndex] = useState(0);
@@ -245,6 +245,13 @@ const MappingStepDetail: React.FC = () => {
   const getParsedXMLDoc = (xmlDoc) => {
     let parsedDoc = xmlParserForMapping(xmlDoc.data);
     return parsedDoc;
+  };
+
+  const setMappingFunctions = async () => {
+    let mappingFuncResponse = await getMappingFunctions();
+    if (mappingFuncResponse) {
+      setMapFunctions(mappingFuncResponse.data);
+    }
   };
 
   const updateMappingWithNamespaces = async (mapDataLocal) => {
@@ -478,19 +485,24 @@ const MappingStepDetail: React.FC = () => {
       let entEntityTempData: any = [];
       let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
       setEntityTypeProperties([...nestedEntityProps]);
-      setTgtEntityReferences({...tgtRefs});
       setTargetRelatedMappings(resp.data[0]["relatedEntityMappings"]);
+      let relatedEntities = new Array();
       if (resp.data[0]["relatedEntityMappings"] && resp.data[0]["relatedEntityMappings"].length > 0) {
         resp.data.forEach(entityObject => {
           let relatedEntityName = entityObject["entityType"];
           if (relatedEntityName !== curationOptions.activeStep.entityName && entityObject["entityModel"].definitions && entityObject.mappingTitle && entityObject["entityMappingId"]) {
             let relatedEntProps = entityObject["entityModel"].definitions[relatedEntityName].properties;
             let relatedEntityTempData: any =[];
+            let contextKey = EntityTableKeyIndex + 1;
+            EntityTableKeyIndex++;
             let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData);
-            setRelatedEntityTypeProperties(prevState => ([...prevState, {entityType: entityObject.entityType, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps}]));
+            relatedEntityProps.unshift({key: contextKey, name: "Context", type: "", isProperty: false, filterName: "Context", filterMatch: false}); //add Context field to front of properties
+            relatedEntities.push({entityType: entityObject.entityType, entityModel: entityObject.entityModel, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps});
           }
         });
       }
+      setRelatedEntityTypeProperties(relatedEntities);
+      setTgtEntityReferences({...tgtRefs});
     }
   };
 
@@ -514,6 +526,7 @@ const MappingStepDetail: React.FC = () => {
           name: parentKey,
           filterName: key,
           filterMatch: false,
+          isProperty: true,
           type: dataTp,
           children: []
         };
@@ -532,6 +545,7 @@ const MappingStepDetail: React.FC = () => {
             name: parentKey ? parentKey + "/" + key : key,
             filterName: key,
             filterMatch: false,
+            isProperty: true,
             type: dataTp,
             relatedEntityType: relatedEntType,
             joinPropertyName: joinPropName
@@ -543,6 +557,7 @@ const MappingStepDetail: React.FC = () => {
             name: parentKey ? parentKey + "/" + key : key,
             filterName: key,
             filterMatch: false,
+            isProperty: true,
             type: dataTp,
           };
         }
@@ -596,6 +611,7 @@ const MappingStepDetail: React.FC = () => {
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
       const mappingStepArtifact: MappingStep = curationOptions.activeStep.stepArtifact;
+      setMappingFunctions();
       setMapData(mappingStepArtifact);
       setSavedMappingArt(mappingStepArtifact);
       setMappingStepDetailPageData(mappingStepArtifact);
@@ -620,7 +636,6 @@ const MappingStepDetail: React.FC = () => {
     onClear();
     initializeEntityExpandKeys();
     return (() => {
-      setMapExp({});
       setSearchSourceText("");
       setSearchedSourceColumn("");
       // setSearchEntityText("");
@@ -636,6 +651,7 @@ const MappingStepDetail: React.FC = () => {
       setSearchedSourceColumn("");
     });
   }, [sourceData]);
+
 
   useEffect(() => {
     let allEntitiesToRemove : any = [];
@@ -707,51 +723,6 @@ const MappingStepDetail: React.FC = () => {
 
   const navigationButtons = <SourceNavigation currentIndex={uriIndex} startIndex={0} endIndex={docUris && docUris.length - 1} handleSelection={onNavigateURIList} />;
 
-
-  /*  The source context is updated when mapping is saved/loaded, this function does a level order traversal of entity
-     json and updates the sourceContext for every entity property */
-
-  const updateSourceContext = (mapExp, entityTable) => {
-    let queue:any[] = [];
-    entityTable.forEach(element => {
-      element["parentVal"] = "";
-      queue.push(element);
-    });
-
-    while (queue.length > 0) {
-      let element = queue.shift();
-      let name = element.name;
-      let parentVal = element["parentVal"];
-      if (element.hasOwnProperty("children")) {
-        if (!parentVal) {
-          tempSourceContext[name] = "";
-        } else {
-          tempSourceContext[name] = parentVal;
-        }
-        if (mapExp[name]) {
-          if (parentVal) {
-            parentVal = parentVal + "/" + mapExp[name];
-          } else {
-            parentVal = mapExp[name];
-          }
-        } else {
-          parentVal = "";
-        }
-        element.children.forEach(ele => {
-          ele.parentVal = parentVal;
-          queue.push(ele);
-        });
-      } else {
-        if (parentVal) {
-          tempSourceContext[name] = parentVal;
-        } else {
-          tempSourceContext[name] = "";
-        }
-      }
-    }
-  };
-
-
   const onBack = () => {
     history.push("/tiles/curate");
     setExpandedSourceFlag(false);
@@ -783,13 +754,6 @@ const MappingStepDetail: React.FC = () => {
         }
       }
     });
-  };
-
-  const handleExpSubmit = async () => {
-    if (mapExpTouched) {
-      await saveMapping(mapExp);
-    }
-    setMapExpTouched(false);
   };
 
   const getDataForValueField = (name) => {
@@ -1136,20 +1100,39 @@ const MappingStepDetail: React.FC = () => {
   };
 
 
-  const saveMapping =  async (mapObject) => {
+  const saveMapping =  async (mapObject, entityMappingId, updatedContext, relatedEntityModel) => {
     let obj = {};
     Object.keys(mapObject).forEach(key => {
       convertMapExpToMapArt(obj, key, {"sourcedFrom": mapObject[key]});
     });
     await getTgtEntityTypesInMap(obj);
-    let {lastUpdated, properties, ...dataPayload} = mapData;
-
-    dataPayload = {...dataPayload, properties: obj};
-
+    let {lastUpdated, properties, ...dataPayload} = savedMappingArt;
+    if (entityMappingId) {
+      if (!dataPayload.relatedEntityMappings) {
+        //if new step with new related entity mapping added, create relatedEntityMappings array in payload
+        dataPayload = {...dataPayload, relatedEntityMappings: []};
+      }
+      //when saveMapping is called by related entities, parse payload to make update inside the proper index of the relatedEntityMappings array
+      let updateRelatedMappings : any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings)); //make deep copy of related mappings to update without triggering useEffects
+      let indexToUpdate = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityMappingId);
+      if (indexToUpdate !== -1) {
+        if (updatedContext.trim() === "") {
+          updatedContext = "/";
+        }
+        updateRelatedMappings[indexToUpdate].properties = obj;
+        updateRelatedMappings[indexToUpdate].expressionContext = updatedContext;
+        dataPayload = {...dataPayload, relatedEntityMappings: updateRelatedMappings};
+      } else {
+        //add object to relatedEntityMappings in payload array
+        let tgtEntityType = relatedEntityModel.info.baseUri + relatedEntityModel.info.title + "-" + relatedEntityModel.info.version + "/" + relatedEntityModel.info.title;
+        let relatedEntityCollections = [curationOptions.activeStep.stepArtifact.name, relatedEntityModel.info.title];
+        let relatedEntity = {relatedEntityMappingId: entityMappingId, expressionContext: updatedContext, properties: obj, targetEntityType: tgtEntityType, collections: relatedEntityCollections, permissions: curationOptions.activeStep.stepArtifact.permissions};
+        dataPayload.relatedEntityMappings.push(relatedEntity);
+      }
+    } else {
+      dataPayload = {...dataPayload, properties: obj};
+    }
     let mapSavedResult = await updateMappingArtifact(dataPayload);
-    tempSourceContext = {};
-    updateSourceContext(mapObject, entityTypeProperties);
-    setSourceContext({...tempSourceContext});
     if (mapSavedResult) {
       setErrorInSaving("noError");
     } else {
@@ -1427,17 +1410,15 @@ const MappingStepDetail: React.FC = () => {
                 setMapResp={setMapResp}
                 mapExpTouched={mapExpTouched}
                 setMapExpTouched={setMapExpTouched}
-                handleExpSubmit={handleExpSubmit}
                 flatArray={flatArray}
                 saveMapping={saveMapping}
-                sourceContext={sourceContext}
-                setSourceContext={setSourceContext}
                 dummyNode={dummyNode}
                 getDataForValueField={getDataForValueField}
                 getTextForTooltip={getTextForTooltip}
                 getTextForValueField={getTextForValueField}
                 canReadWrite={canReadWrite}
                 entityTypeTitle={curationOptions.activeStep.entityName}
+                entityModel={""}
                 checkedEntityColumns={checkedEntityColumns}
                 entityTypeProperties={entityTypeProperties}
                 entityMappingId={""}
@@ -1460,6 +1441,7 @@ const MappingStepDetail: React.FC = () => {
                 setFilterStr={setFilterStr}
                 allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                 setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
+                mapFunctions = {mapFunctions}
               />
               {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.includes(entity) ?
                 <EntityMapTable
@@ -1468,17 +1450,15 @@ const MappingStepDetail: React.FC = () => {
                   setMapResp={setMapResp}
                   mapExpTouched={mapExpTouched}
                   setMapExpTouched={setMapExpTouched}
-                  handleExpSubmit={handleExpSubmit}
                   flatArray={flatArray}
                   saveMapping={saveMapping}
-                  sourceContext={sourceContext}
-                  setSourceContext={setSourceContext}
                   dummyNode={dummyNode}
                   getDataForValueField={getDataForValueField}
                   getTextForTooltip={getTextForTooltip}
                   getTextForValueField={getTextForValueField}
                   canReadWrite={canReadWrite}
                   entityTypeTitle={entity["entityLabel"]}
+                  entityModel={entity["entityModel"]}
                   checkedEntityColumns={checkedEntityColumns}
                   entityTypeProperties={entity["entityProps"]}
                   entityMappingId={entity["entityMappingId"]}
@@ -1501,6 +1481,7 @@ const MappingStepDetail: React.FC = () => {
                   setFilterStr={setFilterStr}
                   allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                   setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
+                  mapFunctions = {mapFunctions}
                 /> : "")}
             </div>
           </SplitPane>
