@@ -5,7 +5,7 @@
 
 .mapContainer{
     height: auto;
-    width: 92.8vw;
+    width: 94vw;
 }
 
 .header{
@@ -39,6 +39,8 @@
     padding-right: 20px;
     padding-left: 20px;
     word-break: break-all;
+    height: calc(100vh - 315px);
+    overflow-y: auto;
 }
 
 .sourceTable{
@@ -95,8 +97,10 @@
     display: flex;
     flex-direction: column;
     padding-left: 20px;
+    padding-right: 20px;
     word-break: break-all;
-
+    height: calc(100vh - 315px);
+    overflow-y: auto;
     > .entityDetails{
         display: inline-block;
         vertical-align: middle;
@@ -391,6 +395,7 @@ hr {
   display: flex;
   justify-content: flex-end;
   margin-bottom: -80px;
+  padding-right: 20px;
 
   .legendText {
     font-size: 14px;

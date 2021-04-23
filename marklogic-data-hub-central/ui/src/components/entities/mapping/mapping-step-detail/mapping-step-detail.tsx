@@ -1261,7 +1261,7 @@ const MappingStepDetail: React.FC = () => {
       setEntityExpandedKeys([]);
       setExpandedEntityFlag(false);
     } else {
-      setEntityExpandedKeys([...keys, ...firstRowKeys]);
+      setEntityExpandedKeys([...allRelatedEntitiesKeys, ...firstRowKeys]);
       setExpandedEntityFlag(true);
     }
   };
@@ -1388,7 +1388,7 @@ const MappingStepDetail: React.FC = () => {
                       expandedRowKeys={sourceExpandedKeys}
                       className={styles.sourceTable}
                       rowClassName={() => styles.sourceTableRows}
-                      scroll={{y: "60vh", x: 300}}
+                      scroll={{x: 300}}
                       indentSize={20}
                       //defaultExpandAllRows={true}
                       //size="small"

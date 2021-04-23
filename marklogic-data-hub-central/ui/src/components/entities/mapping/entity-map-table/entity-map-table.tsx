@@ -919,7 +919,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       indentSize={18}
       //defaultExpandAllRows={true}
       columns={getColumnsForEntityTable()}
-      scroll={{y: "60vh", x: 1000}}
+      scroll={{x: 1000}}
       dataSource={[{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: "", children: entityProperties}]}
       tableLayout="unset"
       rowKey={(record: any) => record.key}
