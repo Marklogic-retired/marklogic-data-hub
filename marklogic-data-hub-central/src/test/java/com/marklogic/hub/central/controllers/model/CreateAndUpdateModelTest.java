@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -153,13 +154,14 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         assertEquals("ex", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
         assertEquals("Updated description", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
 
+        //Remove namespace and namespacePrefix from entity model
         input.put("description", "Description updated again");
         input.remove("namespace");
         input.remove("namespacePrefix");
         controller.updateModelInfo(MODEL_NAME, input);
         assertEquals("Description updated again", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
-        assertEquals("http://example.org/", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespace").asText());
-        assertEquals("ex", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
+        assertNull(loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespace"));
+        assertNull(loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix"));
     }
 
     private void updateModelEntityTypes() {
