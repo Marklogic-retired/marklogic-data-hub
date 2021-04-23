@@ -732,7 +732,7 @@ declare function opt-impl:minimum-threshold-combinations($query-results, $thresh
     $query-results[fn:empty((. => map:get("weight"))) or (. => map:get("weight")) >= $threshold] !  (map:entry("queries", .) => map:with("weight", map:get(., "weight")))
   else
     (: Each of $queries-ge-threshold has a weight high enough to hit the $threshold :)
-    let $queries-ge-threshold := $query-results[(. => map:get("weight")) >= $threshold]
+    let $queries-ge-threshold := $query-results[fn:empty((. => map:get("weight"))) or (. => map:get("weight")) >= $threshold]
     let $queries-lt-threshold := $query-results[(. => map:get("weight")) <= $threshold]
     return (
       $queries-ge-threshold ! (map:entry("queries", .) => map:with("weight", map:get(., "weight"))),
