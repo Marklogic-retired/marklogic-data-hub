@@ -118,6 +118,10 @@ class SourceToEntityMap {
   validateMapValues(propertyName: string, value:string) {
     cy.findByTestId(`${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
   }
+
+  goBackToCurateHomePage() {
+    cy.findByLabelText("Back").click();
+  }
 }
 
 const sourceToEntityMap = new SourceToEntityMap();
