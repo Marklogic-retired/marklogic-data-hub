@@ -182,14 +182,48 @@ function getCollectionSetting(collectionsSettings, collectionType, defaultCollec
   return currentSettings && currentSettings.length ? currentSettings : defaultCollections;
 }
 
-function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOptionProperties) {
+/**
+ * 
+ * @param jobID 
+ * @param stepResponse 
+ * @param options 
+ * @param outputContentArray will not be null when connected steps are being run
+ * @param reqOptProperties 
+ * @returns 
+ */
+function jobReport(jobID, stepResponse, options, outputContentArray, reqOptProperties = requiredOptionProperties) {
   let collectionsInformation = checkOptions(null, options, null, reqOptProperties);
   let jobQuery = cts.fieldWordQuery('datahubCreatedByJob', jobID);
-  let mergedQuery = cts.andQuery([
-    jobQuery,
-    cts.collectionQuery(collectionsInformation.mergedCollection),
-    cts.collectionQuery(collectionsInformation.contentCollection)
-  ]);
+
+  const mergedCount = outputContentArray ? 
+    getContentInCollectionCount(outputContentArray, collectionsInformation.mergedCollection) : 
+    cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.mergedCollection),
+      cts.collectionQuery(collectionsInformation.contentCollection)
+    ]));
+
+  const archivedCount = outputContentArray ? 
+    getContentInCollectionCount(outputContentArray, collectionsInformation.archivedCollection) : 
+    cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.archivedCollection)
+    ]));
+  
+  const masteredCount = outputContentArray ? 
+    getContentInCollectionCount(outputContentArray, collectionsInformation.contentCollection) : 
+    cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.contentCollection)
+    ]));
+  
+  const notificationCount = outputContentArray ? 
+    getContentInCollectionCount(outputContentArray, collectionsInformation.notificationCollection) : 
+    cts.estimate(cts.andQuery([
+      jobQuery,
+      cts.collectionQuery(collectionsInformation.notificationCollection)
+    ]));
+  
   return {
     jobID,
     jobReportID: sem.uuidString(),
@@ -199,28 +233,19 @@ function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOpti
     numberOfDocumentsProcessed: stepResponse.totalEvents,
     numberOfDocumentsSuccessfullyProcessed: stepResponse.successfulEvents,
     resultingMerges: {
-      count: cts.estimate(mergedQuery),
+      count: mergedCount,
       query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.mergedCollection}" AND Collection:"${collectionsInformation.contentCollection}"`
     },
     documentsArchived: {
-      count: cts.estimate(cts.andQuery([
-        jobQuery,
-        cts.collectionQuery(collectionsInformation.archivedCollection)
-      ])),
+      count: archivedCount,
       query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.archivedCollection}"`
     },
     masterDocuments: {
-      count: cts.estimate(cts.andQuery([
-        jobQuery,
-        cts.collectionQuery(collectionsInformation.contentCollection)
-      ])),
+      count: masteredCount,
       query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.contentCollection}"`
     },
     notificationDocuments: {
-      count: cts.estimate(cts.andQuery([
-        jobQuery,
-        cts.collectionQuery(collectionsInformation.notificationCollection)
-      ])),
+      count: notificationCount,
       query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.notificationCollection}"`
     },
     collectionsInformation,
@@ -240,6 +265,21 @@ function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOpti
     masteringLib.matchDetailsByMergedQuery(mergedAndNotifiedQuery);
     `
   };
+}
+
+/**
+ * Convenience function for getting the count of content objects in the given collection.
+ * 
+ * @param outputContentArray
+ * @param collection 
+ * @returns 
+ */
+function getContentInCollectionCount(outputContentArray, collection) {
+  return outputContentArray.filter(content => {
+    return content.context && content.context.collections && 
+      Array.isArray(content.context.collections) && 
+      content.context.collections.includes(collection);
+  }).length;
 }
 
 module.exports = {

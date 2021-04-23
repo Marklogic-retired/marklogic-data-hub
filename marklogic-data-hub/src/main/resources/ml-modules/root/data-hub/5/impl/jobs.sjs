@@ -210,9 +210,12 @@ function saveNewJob(job) {
    * now, that logic is specific to the notion of a "job report", which is specific to the OOTB merging step. This
    * could certainly be generalized in the future to be a generic "after batches completed" function.
    *
-   * @param stepResponse
+   * @param jobId
+   * @param stepNumber
+   * @param {object} stepResponse
+   * @param {array} outputContentArray optional; will be passed to jobReport function
    */
-  function createJobReport(stepResponse) {
+  function createJobReport(jobId, stepNumber, stepResponse, outputContentArray) {
     if (stepResponse.stepDefinitionName && stepResponse.stepDefinitionType) {
       const stepDefinition = fn.head(hubUtils.invokeFunction(function () {
           return new StepDefinition().getStepDefinitionByNameAndType(stepResponse.stepDefinitionName, stepResponse.stepDefinitionType);
@@ -234,13 +237,15 @@ function saveNewJob(job) {
         ));
         const options = Object.assign({}, stepDefinition.options, flowStep.options);
         const jobReport = fn.head(hubUtils.invokeFunction(function () {
-            return jobReportFunction(jobId, stepResponse, options);
+            return jobReportFunction(jobId, stepResponse, options, outputContentArray);
           },
           options.targetDatabase || config.FINALDATABASE
         ));
         if (jobReport) {
+          const reportUri = `/jobs/reports/${stepResponse.flowName}/${stepNumber}/${jobId}.json`;
+          hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting job report with URI: ${reportUri}`);
           hubUtils.writeDocument(
-            `/jobs/reports/${stepResponse.flowName}/${stepNumber}/${jobId}.json`, jobReport,
+            reportUri, jobReport,
             buildJobPermissions(), ['Jobs', 'JobReport'], config.JOBDATABASE
           );
         }

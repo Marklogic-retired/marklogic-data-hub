@@ -106,11 +106,15 @@ function getFirstBatchRecord() {
  * written to a certain collection, so gimme back a Record for that document.
  *
  * @param collection
+ * @param databaseName
  * @returns {*|*}
  */
-function getRecordInCollection(collection) {
-  const uri = getUriInCollection(collection, xdmp.databaseName(xdmp.database()));
-  return getRecord(uri);
+function getRecordInCollection(collection, databaseName) {
+  if (!databaseName) {
+    databaseName = xdmp.databaseName(xdmp.database());
+  }
+  const uri = getUriInCollection(collection, databaseName);
+  return getRecord(uri, databaseName);
 }
 
 function getUriInCollection(collection, databaseName) {
@@ -172,14 +176,13 @@ function buildPermissionsMap(permissions) {
 }
 
 /**
- * Convenience function for setting up a project with a simple Customer entity model, one or more mapping steps, and a flow that
- * references those mapping steps. Each mapping step is based on the makeSimpleMappingStep function.
- *
- * @param arrayOfMappingStepProperties one or more objects, where each is combined with the output of the makeSimpleMappingStep
- * function to create a new mapping step
+ * Convenience function for setting up a project with a simple Customer entity model and a flow consisting of the 
+ * given steps.
+ * 
+ * @param arrayOfStepProperties 
  */
-function createSimpleMappingProject(arrayOfMappingStepProperties) {
-  // Must invoke this in a separate transaction so that the mapping step can see the model
+function createSimpleProject(flowName, arrayOfStepProperties) {
+  // Must invoke this in a separate transaction so that steps can see the model
   xdmp.invokeFunction(function() {
     declareUpdate();
     entityLib.writeModel("Customer", {
@@ -193,6 +196,7 @@ function createSimpleMappingProject(arrayOfMappingStepProperties) {
           "properties": {
             "customerId": {"datatype": "integer"},
             "name": {"datatype": "string"},
+            "nicknames":{"datatype": "array", "items":{"datatype": "string"}},
             "status": {"datatype": "string"},
             "integers":{"datatype": "array", "items":{"datatype": "integer"}}
           }
@@ -202,20 +206,40 @@ function createSimpleMappingProject(arrayOfMappingStepProperties) {
   });
 
   const flow = {
-    "name": "simpleMappingFlow",
+    "name": flowName,
     "steps": {}
   };
 
   let index = 1;
-  arrayOfMappingStepProperties.forEach(mappingProps => {
-    const stepName = "mappingStep" + index;
-    const step = makeSimpleMappingStep(stepName, mappingProps);
-    Artifacts.setArtifact("mapping", stepName, step);
-    flow.steps["" + index] = {"stepId": stepName + "-mapping"};
+  arrayOfStepProperties.forEach(stepProps => {
+    if (!stepProps.name) {
+      stepProps.name = "step" + index;
+    }
+    const stepType = stepProps.stepDefinitionType.toLowerCase();
+    if (!stepProps.stepId) {
+      stepProps.stepId = stepProps.name.toLowerCase() + "-" + stepType;
+    }
+    Artifacts.setArtifact(stepType, stepProps.name, stepProps);
+    flow.steps["" + index] = {"stepId": stepProps.stepId};
     index++;
   });
 
   Artifacts.setArtifact("flow", flow.name, flow);
+}
+
+/**
+ * Convenience function for setting up a project with a simple Customer entity model, one or more mapping steps, and a flow that
+ * references those mapping steps. Each mapping step is based on the makeSimpleMappingStep function.
+ *
+ * @param arrayOfMappingStepProperties one or more objects, where each is combined with the output of the makeSimpleMappingStep
+ * function to create a new mapping step
+ */
+function createSimpleMappingProject(arrayOfMappingStepProperties) {
+  let index = 1;
+  const stepProps = arrayOfMappingStepProperties.map(mappingProps => {
+    return makeSimpleMappingStep("mappingStep" + index++, mappingProps);
+  });
+  createSimpleProject("simpleMappingFlow", stepProps);
 }
 
 function makeSimpleMappingStep(stepName, mappingStepProperties) {
@@ -234,7 +258,8 @@ function makeSimpleMappingStep(stepName, mappingStepProperties) {
     "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
     "properties": {
       "customerId": {"sourcedFrom": "customerId"},
-      "name": {"sourcedFrom": "name"}
+      "name": {"sourcedFrom": "name"},
+      "status": {"sourcedFrom": "status"}
     },
     "provenanceGranularityLevel": "off"
   };
@@ -243,6 +268,7 @@ function makeSimpleMappingStep(stepName, mappingStepProperties) {
 }
 
 module.exports = {
+  createSimpleProject,
   createSimpleMappingProject,
   finalDocumentExists,
   getFirstBatchRecord,
@@ -252,6 +278,7 @@ module.exports = {
   getRecord,
   getRecordInCollection,
   getStagingRecord,
+  makeSimpleMappingStep,
   stagingDocumentExists,
   verifyJson,
   getUrisInCollection,

@@ -43,8 +43,8 @@ function main(content, options, stepExecutionContext) {
 
 
 
-function jobReport(jobID, stepResponse, options) {
-   return masteringStepLib.jobReport(jobID, stepResponse, options, requiredOptionProperties);
+function jobReport(jobID, stepResponse, options, outputContentArray) {
+   return masteringStepLib.jobReport(jobID, stepResponse, options, outputContentArray, requiredOptionProperties);
 }
 
 module.exports = {

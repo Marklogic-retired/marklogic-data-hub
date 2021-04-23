@@ -1,0 +1,35 @@
+{
+  "envelope": {
+    "headers": {
+      "headerFromMatchingCustomer": true
+    },
+    "triples": [
+      {
+        "triple": {
+          "subject": "matchingCustomer",
+          "predicate": "myPredicate",
+          "object": "myObject"
+        }
+      },
+      {
+        "triple": {
+          "subject": "duplicateSubject",
+          "predicate": "dupe",
+          "object": "dupe"
+        }
+      }
+    ],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 1,
+        "name": "Existing Jane",
+        "nicknames": ["Existing nickname"]
+      }
+    }
+  }
+}

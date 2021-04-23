@@ -193,7 +193,7 @@ declare function merging:standard-triples(
   $property-spec as node()?)
 {
   let $uris := $docs ! xdmp:node-uri(.)
-  return
+  let $triples := 
     sem:sparql(
       'construct { ?s ?p ?o } where {
         ?s ?p ?o.
@@ -202,5 +202,36 @@ declare function merging:standard-triples(
       }',
       (), "map",
       sem:store((), cts:document-query($uris))
+    )
+
+  return ($triples, get-triples-from-in-memory-docs($docs, $triples))
+};
+
+(:
+This is intended to grab triples from in-memory docs that can exist when e.g. running a
+merging step as a connected step. The indexed-triples are required so that we don't return any 
+triples that already exist. The undocumented sem:triple-hash function is used to generate a unique
+identifier for each triple so that we can determine duplicates.
+:)
+declare function get-triples-from-in-memory-docs(
+  $docs, 
+  $indexed-triples (: triples that were obtained already from the triple index :)
+)
+{
+  let $triple-hashes := map:new(
+    for $triple in $indexed-triples
+    return map:entry(fn:string(sem:triple-hash($triple)), $triple)
+  )
+
+  for $doc in $docs
+  where fn:not(xdmp:node-uri($doc))
+  return 
+    for $triple-node in $doc/*:envelope/*:triples/node()
+    let $triple := sem:triple($triple-node)
+    let $hash := fn:string(sem:triple-hash($triple))
+    where fn:not(map:contains($triple-hashes, $hash))
+    return (
+      map:put($triple-hashes, $hash, $triple),
+      $triple
     )
 };

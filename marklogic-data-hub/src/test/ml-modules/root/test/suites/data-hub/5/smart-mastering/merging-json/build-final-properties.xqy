@@ -23,15 +23,19 @@ declare function local:all-true($seq as xs:boolean*) as xs:boolean
 
 let $uris := map:keys($lib:TEST-DATA)
 let $docs := $uris ! fn:doc(.)
+let $content-objects := $uris ! map:new((
+  map:entry("uri", .),
+  map:entry("value", fn:doc(.))
+))
 let $merge-options := merging:get-JSON-options($lib:OPTIONS-NAME)
 let $compiled-merge-options := merging-impl:compile-merge-options($merge-options)
-let $sources := merging-impl:get-sources($docs, $compiled-merge-options)
+let $sources := merging-impl:get-sources($content-objects, $compiled-merge-options)
 let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
 let $instances := merging-impl:get-instances($docs)
 let $actual := merging-impl:build-final-properties(
   $compiled-merge-options,
   $instances,
-  $docs,
+  $content-objects,
   $sources-by-document-uri
 )
 

@@ -60,8 +60,8 @@ class Job {
     };
     return this;
   }
-
-  finishStep(stepNumber, stepStatus, stepResponse) {
+  
+  finishStep(stepNumber, stepStatus, stepResponse, outputContentArray) {
     hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Finishing step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
 
     this.data.job.jobStatus = stepStatus;
@@ -77,6 +77,8 @@ class Job {
     if (!stepResponse.stepEndTime) {
       stepResponse.stepEndTime = fn.currentDateTime();
     }
+
+    jobs.createJobReport(this.data.job.jobId, stepNumber, stepResponse, outputContentArray);
 
     this.data.job.stepResponses[stepNumber] = stepResponse;
     return this;

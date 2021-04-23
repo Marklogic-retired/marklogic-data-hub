@@ -13,8 +13,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
 const quickStartRequiredOptionProperty = 'matchOptions';
@@ -52,6 +50,14 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
 }
 
 function main(content, options, stepExecutionContext) {
+  // Hack to allow for a merging step to be able to access the in-memory content objects
+  // that this step receives. This matching step only returns a content object for the 
+  // match summary that it generates, but the merging step needs access to the content 
+  // objects that this step receives.
+  if (stepExecutionContext != null && stepExecutionContext.flowExecutionContext != null) {
+    stepExecutionContext.flowExecutionContext.matchingStepContentArray = content.toArray();
+  }
+
   if (options.stepId) {
     const stepDoc = fn.head(cts.search(cts.andQuery([
       cts.collectionQuery("http://marklogic.com/data-hub/steps"),

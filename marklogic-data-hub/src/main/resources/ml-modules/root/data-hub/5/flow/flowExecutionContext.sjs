@@ -18,6 +18,7 @@
 const Batch = require("batch.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
 const Job = require("job.sjs");
 const StepExecutionContext = require("stepExecutionContext.sjs");
 
@@ -71,12 +72,12 @@ class FlowExecutionContext {
     return stepExecutionContext;
   }
 
-  finishStep(stepExecutionContext, stepResponse, batchItems) {
+  finishStep(stepExecutionContext, stepResponse, batchItems, outputContentArray) {
     const stepNumber = stepExecutionContext.stepNumber;
     this.flowResponse.lastCompletedStep = stepNumber;
     this.flowResponse.stepResponses[stepNumber] = stepResponse;
     if (this.jobOutputIsEnabled()) {
-      this.job.finishStep(stepNumber, "completed step " + stepNumber, stepResponse);
+      this.job.finishStep(stepNumber, "completed step " + stepNumber, stepResponse, outputContentArray);
       if (stepExecutionContext.batchOutputIsEnabled()) {
         if (this.batch == null) {
           this.batch = new Batch(this.flowResponse.jobId, this.flow.name);

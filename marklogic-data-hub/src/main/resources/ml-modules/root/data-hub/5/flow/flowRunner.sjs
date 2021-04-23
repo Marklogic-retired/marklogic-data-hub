@@ -57,22 +57,28 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
     
     try {
       prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
-      currentContentArray = processContentWithStep(stepExecutionContext, currentContentArray, writeQueue);
-      const stepResponse = stepExecutionContext.buildStepResponse();
+
+      currentContentArray = stepExecutionContext.sourceDatabaseIsCurrentDatabase() ? 
+        processContentWithStep(stepExecutionContext, currentContentArray, writeQueue) : 
+        fn.head(xdmp.invokeFunction(function() {
+          return processContentWithStep(stepExecutionContext, currentContentArray, writeQueue);
+        }, {database: xdmp.database(stepExecutionContext.getSourceDatabase())}));
+      
+      const stepResponse = stepExecutionContext.buildStepResponse(jobId);
       addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
       if (stepExecutionContext.provenanceIsEnabled()) {
         flowProvenance.queueProvenanceData(stepExecutionContext, provInstance, currentContentArray);
       } else {
         hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.getLabelForLogging()}`);
       }
-      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems);
+      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);
       hubUtils.hubTrace(INFO_EVENT, `Finished ${stepExecutionContext.getLabelForLogging()}`);
     } catch (error) {
+      stepExecutionContext.addErrorForEntireBatch(error, batchItems);
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
       }
-      stepExecutionContext.addErrorForEntireBatch(error, batchItems);
-      flowExecutionContext.finishStep(stepExecutionContext, stepExecutionContext.buildStepResponse(), batchItems);
+      flowExecutionContext.finishStep(stepExecutionContext, stepExecutionContext.buildStepResponse(jobId), batchItems);
       stepError = error;
       break;
     }
@@ -280,7 +286,6 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
     // added under "originalCollections"
     if (content.context.collections) {
       content.context.originalCollections = content.context.collections;
-      content.context.collections = [];
     }
   });
 }
@@ -319,24 +324,32 @@ function copyContentObject(contentObject) {
   };
 
   Object.keys(contentObject).forEach(key => {
-    if (key !== "context" && key !== "uri" && key !== "context") {
+    if (key !== "context" && key !== "uri" && key !== "value") {
       // For anything DHF does not know about, just do a simple copy
-      // TODO Figure out what to do for provenance in DHFPROD-6725
       copy[key] = contentObject[key];
     }
   });
 
   const originalContext = contentObject.context || {};
   Object.keys(originalContext).forEach(key => {
-    // All known context keys can be safely deep-copied
-    // Note that per https://docs.marklogic.com/xdmp.documentSetMetadata , metadata keys always have string values
-    if (key === "collections" || key === "metadata" || key === "permissions" || key === "originalCollections") {
-      copy.context[key] = JSON.parse(xdmp.quote(originalContext[key]));
-    }
-    else {
-      // For anything DHF does not know about it, just do a simple copy, as it's not know for certain if 
-      // JSON.parse/xdmp.quote can be used
-      copy.context[key] = originalContext[key];
+    if (originalContext[key] && originalContext[key] !== null) {
+      // All known context keys can be safely deep-copied
+      // Note that per https://docs.marklogic.com/xdmp.documentSetMetadata , metadata keys always have string values
+      if (key === "collections" || key === "metadata" || key === "permissions" || key === "originalCollections") {
+        try {
+          const quoted = xdmp.quote(originalContext[key]);
+          if (quoted && quoted !== "") {
+            copy.context[key] = JSON.parse(quoted);
+          }
+        } catch (error) {
+          console.log("Copy error: " + error + "; uri: " + contentObject.uri + "; key: " + key);
+        }
+      }
+      else {
+        // For anything DHF does not know about it, just do a simple copy, as it's not know for certain if 
+        // JSON.parse/xdmp.quote can be used
+        copy.context[key] = originalContext[key];
+      }
     }
   });
 
