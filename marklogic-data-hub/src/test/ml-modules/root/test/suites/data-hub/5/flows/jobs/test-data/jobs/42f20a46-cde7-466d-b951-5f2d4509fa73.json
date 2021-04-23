@@ -1,0 +1,52 @@
+{
+  "job": {
+    "jobId": "42f20a46-cde7-466d-b951-5f2d4509fa73",
+    "flow": "CurateNamespacedCustomers",
+    "user": "john",
+    "lastAttemptedStep": "2",
+    "lastCompletedStep": "2",
+    "jobStatus": "finished",
+    "timeStarted": "2021-05-06T04:40:07.71653Z",
+    "stepResponses": {
+      "1": {
+        "flowName": "CurateNamespacedCustomers",
+        "stepName": "loadNamespacedCustomers",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "targetEntityType": null,
+        "targetDatabase": "data-hub-STAGING",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 2,
+        "successfulEvents": 2,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2021-05-06T04:40:07.73284Z",
+        "stepEndTime": "2021-05-06T04:40:07.798791Z"
+      },
+      "2": {
+        "flowName": "CurateNamespacedCustomers",
+        "stepName": "mapNamespacedCustomers",
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "mapping",
+        "targetEntityType": "http://example.org/NamespacedCustomer-0.0.1/NamespacedCustomer",
+        "targetDatabase": "data-hub-FINAL",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 2",
+        "totalEvents": 2,
+        "successfulEvents": 2,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2021-05-06T04:40:07.816053Z",
+        "stepEndTime": "2021-05-06T04:40:07.918853Z"
+      }
+    },
+    "timeEnded": "2021-05-06T04:40:07.936612Z"
+  }
+}

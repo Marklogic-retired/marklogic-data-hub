@@ -16,6 +16,7 @@
 'use strict';
 
 const op = require('/MarkLogic/optic');
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const config = require("/com.marklogic.hub/config.sjs");
 
 function findStepResponses(query) {
@@ -62,6 +63,22 @@ function findStepResponses(query) {
   return response;
 }
 
+function sanitizeSqlValue(value) {
+  return "'".concat(value.replace(/'/g, "''")).concat("'");
+}
+
+function buildDateTimeSqlCondition(fieldName, beginTime, endTime) {
+  const fullFieldName = "Job.StepResponse.".concat(fieldName);
+  if (beginTime && endTime) {
+    const betweenConditionParts = [beginTime, endTime].map(element => sanitizeSqlValue(element));
+    return fullFieldName + " BETWEEN " + betweenConditionParts[0] + "AND " + betweenConditionParts[1];
+  } else if (beginTime || endTime) {
+    const condition = beginTime ? " >= " : " <= ";
+    const sanitizedValue = sanitizeSqlValue(beginTime || endTime);
+    return fullFieldName + condition + sanitizedValue;
+  }
+}
+
 function buildWhereClause(selectedFacets) {
   if(!selectedFacets || !Object.keys(selectedFacets).length) {
     return "";
@@ -69,11 +86,15 @@ function buildWhereClause(selectedFacets) {
 
   let whereClause = "WHERE";
   Object.keys(selectedFacets).forEach((facetType, index, keys) => {
-    if(facetType === 'startTime') {
-      const betweenCondition = selectedFacets[facetType].map(element => "'".concat(element.replace(/'/g, "''")).concat("'"));
-      whereClause = whereClause + " " + "Job.StepResponse.stepStartTime" + " BETWEEN " + betweenCondition[0] + "AND " + betweenCondition[1];
+    if (facetType === 'startTime') {
+      const beginTime = selectedFacets[facetType][0];
+      const endTime = selectedFacets[facetType][1];
+      const dateTimeCondition = buildDateTimeSqlCondition('stepStartTime', beginTime, endTime);
+      if (dateTimeCondition) {
+        whereClause = whereClause + " " + dateTimeCondition;
+      }
     } else {
-      const inCondition = selectedFacets[facetType].map(element => "'".concat(element.replace(/'/g, "''")).concat("'")).join();
+      const inCondition = selectedFacets[facetType].map(element => sanitizeSqlValue(element)).join();
       whereClause = whereClause + " " + "Job.StepResponse.".concat(facetType) + " IN (" + inCondition + ")";
     }
 
@@ -109,6 +130,94 @@ function buildFacetQueries(whereClause) {
     queries[simplifiedColumnName] = selectStatement.concat(" ").concat(whereClause).concat(" ").concat(limitClause);
   });
   return queries;
+}
+
+function valuesExist(values) {
+  return (values && values.length !== 0);
+}
+
+function buildJobDocumentQuery({jobId, jobStatus, startTimeBegin, startTimeEnd, endTimeBegin, endTimeEnd, user}) {
+  const queries = [cts.collectionQuery('Job')];
+  // TODO investigate more scalable cts queries using the triple index
+  if (valuesExist(jobId)) {
+    queries.push(cts.jsonPropertyValueQuery('jobId', jobId));
+  }
+  if (valuesExist(jobStatus)) {
+    queries.push(cts.jsonPropertyValueQuery('jobStatus', jobStatus));
+  }
+  if (valuesExist(startTimeBegin)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("timeStarted"), ["type=dateTime"]), '>=', xs.dateTime(startTimeBegin)));
+  }
+  if (valuesExist(startTimeEnd)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("timeStarted"), ["type=dateTime"]), '<=', xs.dateTime(startTimeEnd)));
+  }
+  if (valuesExist(endTimeBegin)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("timeEnded"), ["type=dateTime"]), '>=', xs.dateTime(endTimeBegin)));
+  }
+  if (valuesExist(endTimeEnd)) {
+    queries.push(cts.rangeQuery(cts.elementReference(xs.QName("timeEnded"), ["type=dateTime"]), '<=', xs.dateTime(endTimeEnd)));
+  }
+  if (valuesExist(user)) {
+    queries.push(cts.jsonPropertyValueQuery('user', user));
+  }
+  return cts.andQuery(queries);
+}
+
+function findJobs(parameters) {
+  const finalQuery = buildJobDocumentQuery(parameters);
+  const total = cts.estimate(finalQuery);
+  const {start = 1, pageLength = 100} = parameters;
+  // Use fragment plan to ensure we are a paginating on job document rather than step response row
+  const fragmentPlan = op.fromView('Job','StepResponse', 'fragmentIds', op.fragmentIdCol('fragmentId1'))
+      .groupBy(op.fragmentIdCol('fragmentId1'), [op.min('firstStartTime',op.col('stepStartTime')),op.max('lastEndTime',op.col('stepEndTime'))])
+      .where(finalQuery)
+      .orderBy([op.desc('firstStartTime')])
+      .offset(pageLength * (start-1)).limit(pageLength);
+  const stepResponses = op.fromView('Job','StepResponse', 'stepResponses', op.fragmentIdCol('fragmentId2'));
+  // Join stepResponses plan to fragmentPlan and construct JSON Objects
+  const jsonPlan = fragmentPlan.joinInner(stepResponses,op.on(op.fragmentIdCol('fragmentId1'),op.fragmentIdCol('fragmentId2')))
+      .select([op.fragmentIdCol('fragmentId1'),op.col('firstStartTime'),
+        op.as('job',
+          op.jsonObject([
+            op.prop('jobId', op.jsonString(op.col('jobId'))),
+            op.prop('jobStatus', op.jsonString(op.col('jobStatus'))),
+            op.prop('user', op.jsonString(op.col('user'))),
+            op.prop('flowName', op.jsonString(op.col('flowName'))),
+            op.prop('startTime', op.jsonString(op.col('firstStartTime'))),
+            op.prop('endTime', op.jsonString(op.col('lastEndTime'))),
+            op.prop('stepResponses', op.jsonArray([op.jsonObject([
+              op.prop('stepName', op.jsonString(op.col('stepName'))),
+              op.prop('stepDefinitionType', op.jsonString(op.col('stepDefinitionType'))),
+              op.prop('stepStatus', op.jsonString(op.col('stepStatus'))),
+              op.prop('stepStartTime', op.jsonString(op.col('stepStartTime'))),
+              op.prop('stepEndTime', op.jsonString(op.col('stepEndTime'))),
+              op.prop('failedItemCount', op.jsonNumber(op.col('failedItemCount'))),
+              op.prop('successfulItemCount', op.jsonNumber(op.col('successfulItemCount')))
+            ])]))
+          ])
+      )])
+      .orderBy([op.desc('firstStartTime'), op.fragmentIdCol('fragmentId1')])
+      // Consolidate JSON Objects that are for the same JobId
+      .reduce((previous, result) => {
+        const job = result.job.toObject();
+        if (Array.isArray(previous)) {
+          const lastJob = previous[previous.length - 1];
+          if (lastJob.jobId === job.jobId) {
+            lastJob.stepResponses.push(job.stepResponses[0]);
+          } else {
+            previous.push(job);
+          }
+          return previous;
+        }
+        return [job];
+      });
+  return {
+    total,
+    start,
+    pageLength,
+    // normalizing to array so even a single result return as an array
+    results: hubUtils.normalizeToArray(jsonPlan.result())
+  };
 }
 
 function installJobTemplates() {
@@ -231,5 +340,6 @@ function insertDocument(uri, content, permissions, collections, targetDatabase) 
 
 module.exports = {
   findStepResponses,
+  findJobs,
   installJobTemplates
 };

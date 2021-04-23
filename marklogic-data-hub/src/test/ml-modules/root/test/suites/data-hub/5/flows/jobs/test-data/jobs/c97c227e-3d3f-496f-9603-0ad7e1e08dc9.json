@@ -1,0 +1,54 @@
+{
+  "job": {
+    "jobId": "c97c227e-3d3f-496f-9603-0ad7e1e08dc9",
+    "flow": "CurateCustomerJSON",
+    "user": "admin",
+    "lastAttemptedStep": "2",
+    "lastCompletedStep": "1",
+    "jobStatus": "finished_with_errors",
+    "timeStarted": "2021-05-06T04:40:02.140287Z",
+    "stepResponses": {
+      "1": {
+        "flowName": "CurateCustomerJSON",
+        "stepName": "loadCustomersJSON",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "targetEntityType": null,
+        "targetDatabase": "data-hub-STAGING",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 6,
+        "successfulEvents": 6,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2021-05-06T04:40:02.523156Z",
+        "stepEndTime": "2021-05-06T04:40:04.193234Z"
+      },
+      "2": {
+        "flowName": "CurateCustomerJSON",
+        "stepName": "mapCustomersJSON",
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "mapping",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        "targetDatabase": "data-hub-FINAL",
+        "stepOutput": [
+          "com.marklogic.client.FailedRequestException: Local message: failed to POST at /data-hub/5/data-services/stepRunner/processBatch.sjs: Bad Request. Server Message: XDMP-ELEMRIDXNOTFOUND: cts.elementValueCoOccurrences(fn.QName(\"\",\"zipCode\"), fn.QName(\"\",\"geoPoint\"), null, cts.andQuery([cts.collectionQuery(\"zipCode\"), cts.jsonPropertyRangeQuery(\"zipCode\", \"=\", [\"31807\", \"94070\", \"66601\", ...], [\"collation=http://marklogic.com/collation/\"], 1)], [])) -- No string element range index for zipCode collation=http://marklogic.com/collation/ "
+        ],
+        "fullOutput": null,
+        "status": "failed step 2",
+        "totalEvents": 6,
+        "successfulEvents": 0,
+        "failedEvents": 6,
+        "successfulBatches": 0,
+        "failedBatches": 1,
+        "success": false,
+        "stepStartTime": "2021-05-06T04:40:04.33376Z",
+        "stepEndTime": "2021-05-06T04:40:05.02601Z"
+      }
+    },
+    "timeEnded": "2021-05-06T04:40:05.260078Z"
+  }
+}

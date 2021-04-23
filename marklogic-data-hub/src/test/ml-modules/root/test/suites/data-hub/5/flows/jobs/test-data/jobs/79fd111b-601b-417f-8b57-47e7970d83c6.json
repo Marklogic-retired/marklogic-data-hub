@@ -1,0 +1,52 @@
+{
+  "job": {
+    "jobId": "79fd111b-601b-417f-8b57-47e7970d83c6",
+    "flow": "CurateCustomerXML",
+    "user": "admin",
+    "lastAttemptedStep": "2",
+    "lastCompletedStep": "2",
+    "jobStatus": "finished",
+    "timeStarted": "2021-05-06T04:40:07.059719Z",
+    "stepResponses": {
+      "1": {
+        "flowName": "CurateCustomerXML",
+        "stepName": "loadCustomersXML",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "targetEntityType": null,
+        "targetDatabase": "data-hub-STAGING",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 1",
+        "totalEvents": 5,
+        "successfulEvents": 5,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2021-05-06T04:40:07.074625Z",
+        "stepEndTime": "2021-05-06T04:40:07.155515Z"
+      },
+      "2": {
+        "flowName": "CurateCustomerXML",
+        "stepName": "mapCustomersXML",
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "mapping",
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        "targetDatabase": "data-hub-FINAL",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 2",
+        "totalEvents": 5,
+        "successfulEvents": 5,
+        "failedEvents": 0,
+        "successfulBatches": 1,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2021-05-06T04:40:07.170784Z",
+        "stepEndTime": "2021-05-06T04:40:07.408751Z"
+      }
+    },
+    "timeEnded": "2021-05-06T04:40:07.42656Z"
+  }
+}
