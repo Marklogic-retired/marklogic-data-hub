@@ -133,6 +133,10 @@ class LoadPage {
     return cy.findByPlaceholderText("Enter Source Name");
   }
 
+  stepSourceNameType() {
+    return cy.findByPlaceholderText("Enter Source Type");
+  }
+
   selectSourceFormat(format: string) {
     cy.get("#sourceFormat").click();
     cy.findAllByText(`${format}`).last().click({force: true});
