@@ -529,10 +529,7 @@ declare function match-impl:search(
         (: This allows a weight to not be specified for a match ruleset and then the weight of the cts:queries will determine the weight.
           See https://project.marklogic.com/jira/browse/DHFPROD-7234.:)
         let $custom-weight := match-impl:score-from-cts-query($result, $query)
-        return (
-          map:put($query-map, "weight", $custom-weight),
-          $custom-weight
-        )
+        return $custom-weight
       else
         $weight
     let $_trace :=
@@ -545,7 +542,7 @@ declare function match-impl:search(
         )
       else ()
     where $contains
-    return $query-map
+    return $query-map => map:with("weight", $weight)
   let $score :=
       fn:sum(
           $matching-query-maps ! map:get(., "weight")
