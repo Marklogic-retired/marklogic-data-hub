@@ -21,8 +21,12 @@ function verifyStepResponse() {
     const query = {
         "start": 1,
         "pageLength": 1,
-        "sortColumn": "startTime",
-        "sortDirection": "descending"
+        "sortOrder": [
+            {
+                "propertyName": "startTime",
+                "sortDirection": "descending"
+            }
+        ]
     };
     const response = jobQueryService.findStepResponses(query);
     return [
@@ -50,8 +54,12 @@ function verifySortOrderByColumnAndSecondarySortOnStartTimeDescending() {
     const query = {
         "start": 1,
         "pageLength": 6,
-        "sortColumn": "jobId",
-        "sortDirection": "descending"
+        "sortOrder": [
+            {
+                "propertyName": "jobId",
+                "sortDirection": "descending"
+            }
+        ]
     };
     const response1 = jobQueryService.findStepResponses(query);
     assertions.push(
@@ -74,7 +82,7 @@ function verifySortOrderByColumnAndSecondarySortOnStartTimeDescending() {
     );
 
     query["pageLength"] = 7;
-    query["sortDirection"] = "ascending";
+    query["sortOrder"][0]["sortDirection"] = "ascending";
     const response2 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response2.total),
@@ -103,8 +111,12 @@ function verifyStartTimeAsPrimarySortOrderConstraint() {
     const query = {
         "start": 1,
         "pageLength": 10,
-        "sortColumn": "startTime",
-        "sortDirection": "descending"
+        "sortOrder": [
+            {
+                "propertyName": "startTime",
+                "sortDirection": "descending"
+            }
+        ]
     };
     const response1 = jobQueryService.findStepResponses(query);
     assertions.push(
@@ -124,7 +136,7 @@ function verifyStartTimeAsPrimarySortOrderConstraint() {
         test.assertEqual("test-job1", response1.results[9]["jobId"])
     );
 
-    query["sortDirection"] = "ascending";
+    query["sortOrder"][0]["sortDirection"] = "ascending";
     const response2 = jobQueryService.findStepResponses(query);
     assertions.push(
         test.assertEqual(10, response2.total),
@@ -151,8 +163,12 @@ function verifyPaginationInStepResponse() {
     const query = {
         "start": 1,
         "pageLength": 4,
-        "sortColumn": "startTime",
-        "sortDirection": "ascending"
+        "sortOrder": [
+            {
+                "propertyName": "startTime",
+                "sortDirection": "ascending"
+            }
+        ]
     };
     const response1 = jobQueryService.findStepResponses(query);
     assertions.push(
