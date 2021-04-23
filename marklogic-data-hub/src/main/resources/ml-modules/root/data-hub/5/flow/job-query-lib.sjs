@@ -21,8 +21,8 @@ const config = require("/com.marklogic.hub/config.sjs");
 function findStepResponses(query) {
   const start = query.start;
   const pageLength = query.pageLength;
-  const sortColumn = query.sortColumn;
-  const sortDirection = query.sortDirection;
+  const sortColumn = query.sortOrder && query.sortOrder.length ? query.sortOrder[0].propertyName : undefined;
+  const sortDirection = query.sortOrder && query.sortOrder.length ? query.sortOrder[0].sortDirection : undefined;
   const response = {};
   const orderByConstraint = [];
 
