@@ -44,32 +44,6 @@ class Flow {
     this.writeQueue = new WriteQueue();
   }
 
-  getFlowNames() {
-    let names = [];
-    let query = [cts.directoryQuery("/flows/"), cts.collectionQuery('http://marklogic.com/data-hub/flow')];
-    let docs = cts.search(cts.andQuery(query));
-    if(docs) {
-      for(let doc of docs) {
-        let name = doc.xpath('/name');
-        if(name) {
-          names.push(name);
-        }
-      }
-    }
-
-    return names;
-  }
-
-  getFlows(){
-    let docs = [];
-    let query = cts.directoryQuery("/flows/");
-    let uris = cts.uris("", null ,query);
-    for (let doc of uris) {
-      docs.push(cts.doc(doc).toObject());
-    }
-    return docs;
-  }
-
   getFlow(name) {
     if (cachedFlows[name] === undefined) {
       cachedFlows[name] = Artifacts.getFullFlow(name);
