@@ -463,15 +463,17 @@ void cypressE2EOnPremLinuxTests(String type,String mlVersion){
     timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
 
     sh '''
-      cd $WORKSPACE/data-hub
-      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
-      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
 
       export NODE_HOME=$NODE_HOME_DIR/bin;
       export PATH=$NODE_HOME:$JAVA_HOME/bin:$PATH
-      npm run cy:run |& tee -a e2e_err.log
-  '''
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+      cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      sed -i "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO #g" setup.sh
+      ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
+      npm run cy:run 2>&1 |& tee -a e2e_err.log
+
+    '''
 
     junit '**/e2e/**/*.xml'
 }
@@ -490,14 +492,16 @@ void cypressE2EOnPremMacTests(String type,String mlVersion){
     //wait for prem to start
     timeout(10) {waitUntil initialRecurrencePeriod: 15000, { sh(script: 'ps aux | grep ".central.*\\.war" | grep -v grep | grep -v timeout', returnStatus: true) == 0 }}
 
-
     sh '''
+
+      export PATH=/usr/local/bin/:$JAVA_HOME/bin:$PATH
       cd $WORKSPACE/data-hub
       ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
       cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+      sed -i '.bak' "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO #g" setup.sh
       ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
-      export PATH=/usr/local/bin/:$JAVA_HOME/bin:$PATH
       npm run cy:run 2>&1 | tee -a e2e_err.log
+
    '''
 
     junit '**/e2e/**/*.xml'
@@ -530,7 +534,7 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
     timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
 
     bat "cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
-    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sed -i 's#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO #g' setup.sh &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
     bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run 2>&1 | tee -a e2e_err.log"
 
     junit '**/e2e/**/*.xml'
@@ -544,11 +548,11 @@ pipeline{
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
-	JAVA_HOME_DIR="~/java/openjdk-1.8.0-262"
+	JAVA_HOME_DIR="/home/builder/java/openjdk-1.8.0-262"
 	GRADLE_DIR="/.gradle"
 	MAVEN_HOME="/usr/local/maven"
 	M2_HOME_REPO="/repository"
-	NODE_HOME_DIR="~/nodeJs/node-v12.18.3-linux-x64"
+	NODE_HOME_DIR="/home/builder/nodeJs/node-v12.18.3-linux-x64"
 	DMC_USER     = credentials('MLBUILD_USER')
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
@@ -837,7 +841,7 @@ pipeline{
 			agent { label 'dhfLinuxAgent'}
 			steps{
             timeout(time: 3,  unit: 'HOURS'){
-             catchError(buildResult: 'SUCCESS', catchInterruptions: true) {
+             catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
 				copyRPM 'Release','9.0-11'
@@ -878,7 +882,7 @@ pipeline{
 			agent { label 'dhfLinuxAgent'}
 			steps{
             timeout(time: 3,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0","Latest")}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0","Latest")}
             }}
 			post{
 				 always{
@@ -899,7 +903,7 @@ pipeline{
 			agent { label 'dhfLinuxAgent'}
 			steps{
              timeout(time: 3,  unit: 'HOURS'){
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0","Latest")}
+              catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0","Latest")}
 			}}
 			post{
 				always{
@@ -919,7 +923,7 @@ pipeline{
 			agent { label 'dhfLinuxAgent'}
 			steps{
              timeout(time: 3,  unit: 'HOURS'){
-              catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("9.0-11","Release")}
+              catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0-11","Release")}
 			}}
 			post{
 				always{
@@ -938,7 +942,7 @@ pipeline{
              agent { label 'dhfLinuxAgent'}
              steps{
               timeout(time: 3,  unit: 'HOURS'){
-               catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-3","Release")}
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-3","Release")}
              }}
              post{
                  always{
@@ -958,7 +962,7 @@ pipeline{
                agent { label 'dhfLinuxAgent'}
                steps{
                 timeout(time: 3,  unit: 'HOURS'){
-                 catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-4.4","Release")}
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-4.4","Release")}
                }}
                post{
                  always{
@@ -978,7 +982,7 @@ pipeline{
                 agent { label 'dhfLinuxAgent'}
                 steps{
                 timeout(time: 3,  unit: 'HOURS'){
-                 catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-5.3","Release")}
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-5.3","Release")}
                 }}
                 post{
                   always{
@@ -998,7 +1002,7 @@ pipeline{
             agent { label 'dhfLinuxAgent'}
             steps{
              timeout(time: 3,  unit: 'HOURS'){
-               catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhflinuxTests("10.0-6","Release")}
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-6","Release")}
             }}
             post{
                   always{
@@ -1023,7 +1027,7 @@ pipeline{
                 agent { label 'dhfLinuxAgent'}
                 steps {
                 timeout(time: 3,  unit: 'HOURS'){
-                  catchError(buildResult: 'SUCCESS', catchInterruptions: true){dh5Example()}
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dh5Example()}
                 }}
                 post{
                  always{
@@ -1041,7 +1045,7 @@ pipeline{
                 agent { label 'dhfLinuxAgent'}
                 steps{
                  timeout(time: 3,  unit: 'HOURS'){
-                    catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhCustomHook()}
+                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhCustomHook()}
                  }}
                  post{
                  always{
@@ -1059,7 +1063,7 @@ pipeline{
                 agent { label 'dhfLinuxAgent'}
                 steps{
                  timeout(time: 3,  unit: 'HOURS'){
-                   catchError(buildResult: 'SUCCESS', catchInterruptions: true){mappingExample()}
+                   catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){mappingExample()}
                  }}
                  post{
                  always{
@@ -1077,7 +1081,7 @@ pipeline{
                 agent { label 'dhfLinuxAgent'}
                 steps{
                  timeout(time: 3,  unit: 'HOURS'){
-                 catchError(buildResult: 'SUCCESS', catchInterruptions: true){smartMastering()}
+                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){smartMastering()}
                 }}
                 post{
                  always{
@@ -1100,7 +1104,7 @@ pipeline{
         			agent { label 'dhfWinagent'}
         			steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0","Latest")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0","Latest")}
                     }}
         			post{
         				always{
@@ -1120,7 +1124,7 @@ pipeline{
         			agent { label 'dhfWinagent'}
         			steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("10.0","Latest")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10.0","Latest")}
         			}}
         			post{
         				always{
@@ -1140,7 +1144,7 @@ pipeline{
         			agent { label 'dhfWinagent'}
         			steps{
                     timeout(time: 3,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){dhfWinTests("9.0-11","Release")}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0-11","Release")}
         			}}
         			post{
         				always{
@@ -1160,7 +1164,7 @@ pipeline{
         			agent { label 'dhfWinCluster'}
         			steps{
                     timeout(time: 3,  unit: 'HOURS'){
-                     catchError(buildResult: 'SUCCESS', catchInterruptions: true){winParallel()}
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){winParallel()}
         			}}
         			post{
         				always{
@@ -1192,7 +1196,7 @@ pipeline{
                     }
                     steps {
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true) { cypressE2EOnPremLinuxTests("Latest", "10.0") }
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') { cypressE2EOnPremLinuxTests("Latest", "10.0") }
                     }}
                     post{
                         success {
@@ -1216,7 +1220,7 @@ pipeline{
                     }
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-6.2")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinTests("Release","10.0-6.2")}
                     }}
                     post{
                         success {
@@ -1238,7 +1242,7 @@ pipeline{
                     }
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremMacTests("Release","10.0-3")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremMacTests("Release","10.0-3")}
                     }}
                     post{
                         success {
@@ -1263,7 +1267,7 @@ pipeline{
 
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true){cypressE2EOnPremWinTests("Release","10.0-3")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinTests("Release","10.0-3")}
                     }}
                    post{
                         success {
