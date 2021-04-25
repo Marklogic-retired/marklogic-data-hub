@@ -78,6 +78,7 @@ interface ISearchContextInterface {
   setView: (tileId:string, viewId: JSX.Element| null, zeroState?:boolean) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
+  setMonitorSortOrder:(propertyName: string, sortOrder: any) => void;
   setPageQueryOptions: (query: any) => void;
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
@@ -126,6 +127,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setView: () => { },
   setPageWithEntity: () => { },
   setSortOrder: () => { },
+  setMonitorSortOrder: () => { },
   setPageQueryOptions: () => { },
   setDatabase: () => { },
   setLatestDatabase: () => { },
@@ -587,6 +589,32 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const setMonitorSortOrder = (propertyName: string, sortOrder: any) => {
+    let sortingOrder: any = [];
+    switch (sortOrder) {
+    case "ascend":
+      sortingOrder = [{
+        propertyName: propertyName,
+        sortDirection: "ascending"
+      }];
+      break;
+    case "descend":
+      sortingOrder = [{
+        propertyName: propertyName,
+        sortDirection: "descending"
+      }];
+      break;
+    default:
+      sortingOrder = [];
+      break;
+    }
+    setMonitorOptions({
+      ...monitorOptions,
+      sortOrder: sortingOrder
+    });
+  };
+
+
   const setPageQueryOptions = (query: any) => {
     setSearchOptions({
       ...searchOptions,
@@ -665,6 +693,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setView,
       setPageWithEntity,
       setSortOrder,
+      setMonitorSortOrder,
       setPageQueryOptions,
       setDatabase,
       setLatestDatabase
