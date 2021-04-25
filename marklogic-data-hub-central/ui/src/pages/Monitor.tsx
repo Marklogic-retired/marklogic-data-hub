@@ -32,8 +32,9 @@ const Monitor: React.FC = () => {
         method: "POST",
         url: `/api/jobs/stepResponses`,
         data: {
-          "start": monitorOptions.start,
-          "pageLength": monitorOptions.pageLength
+          start: monitorOptions.start,
+          pageLength: monitorOptions.pageLength,
+          sortOrder: monitorOptions.sortOrder
         }
       });
       if (response.data) {
