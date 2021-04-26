@@ -38,7 +38,7 @@
               }
             },
             "IncidentCategoryCodeDate": null,
-            "id": "6986792174",
+            "id": ["6986792174", "repeating ID to ensure score is only counted once","6986792174"],
             "PersonBirthDate": "19801001",
             "PersonSex": "F",
             "CaseAmount": 1287.9,
