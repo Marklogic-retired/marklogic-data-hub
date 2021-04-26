@@ -113,7 +113,8 @@ Cypress.Commands.add("logout", () => {
 Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => {
   cy.get("[class=\"ant-collapse-content ant-collapse-content-active\"]").then($body => {
     if ($body.find(`[aria-label="runStep-${stepName}"]`).length > 0) {
-      cy.findByText(stepType).should("be.visible");
+      const text = $body.find("[class=\"ant-card-head-title\"]").text();
+      expect(text).to.equal(stepType);
     } else {
       cy.reload();
       cy.wait(1000);
