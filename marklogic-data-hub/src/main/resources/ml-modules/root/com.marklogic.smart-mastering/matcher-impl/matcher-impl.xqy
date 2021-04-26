@@ -542,7 +542,7 @@ declare function match-impl:search(
         )
       else ()
     where $contains
-    return $query-map => map:with("weight", $weight)
+    return map:new(($query-map, map:entry("weight", $weight)))
   let $score :=
       fn:sum(
           $matching-query-maps ! map:get(., "weight")
@@ -660,12 +660,20 @@ declare function match-impl:instance-query-wrapper(
 };
 
 declare function match-impl:score-from-cts-query($result as node(), $query as cts:query) as xs:double {
-  fn:sum(
+  (: We don't want to double count for the same query/value pair hit :)
+  let $queries-and-values-hit := map:map()
+  return
+    fn:sum(
       cts:walk(
           $result,
           $query,
-          document{$cts:queries}
-          //schema-element(cts:query)[fn:node-name(.) = $QUERIES_WITH_WEIGHT] ! fn:number(fn:head((./@weight, 1)))
+          let $key := xdmp:hash64(xdmp:describe($cts:queries, (), ())) ||  ":" || $cts:text
+          where fn:not(map:contains($queries-and-values-hit, $key))
+          return (
+            map:put($queries-and-values-hit, $key, fn:true()),
+            document{$cts:queries}
+              //schema-element(cts:query)[fn:node-name(.) = $QUERIES_WITH_WEIGHT] ! fn:number(fn:head((./@weight, 1)))
+          )
       )
-  )
+    )
 };
