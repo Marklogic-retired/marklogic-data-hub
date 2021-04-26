@@ -12,18 +12,18 @@
     "propertyDefs": {
       "property": [
         {
-          "localname": "DateOfBirth",
-          "name": "DateOfBirth"
+          "localname": "id",
+          "name": "id"
         }
       ]
     },
     "algorithms": {
       "algorithm": [
         {
-          "name": "dob-match",
-          "function": "dob-match",
+          "name": "custom-id",
+          "function": "custom-id",
           "namespace": "http://marklogic.com/smart-mastering/algorithms",
-          "at": "/custom-xqy-matching-algo-dob.xqy"
+          "at": "/test/suites/data-hub/5/smart-mastering/matching/test-data/custom-matching-with-custom-weight.xqy"
         }
       ]
     },
@@ -33,9 +33,8 @@
     "scoring": {
       "expand": [
         {
-          "propertyName": "DateOfBirth",
-          "algorithmRef": "dob-match",
-          "customWeight": "10"
+          "propertyName": "id",
+          "algorithmRef": "custom-id"
         }
       ]
     },
