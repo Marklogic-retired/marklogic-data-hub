@@ -144,6 +144,10 @@ class DataHubPlugin implements Plugin<Project> {
                 "This consists of downloading user configuration files (entity models, entity model-based files, flows, and steps) as a zip, " +
                 "deleting all such user configuration files in the project directory, "+
                 "and finally extracting the contents of the downloaded zip into the project directory.")
+        project.task("hubDeleteJobs", type: DeleteJobsTask, group: developGroup,
+            description: "Clears job and batch in the job database older than a given duration " +
+                "specify a duration to retain via -PretainDuration=(duration) " +
+                "(e.g. -PretainDuration=P30D)")
         project.task("hubClearUserData", type: ClearUserDataTask, group: developGroup,
             description: "Clears user data in the staging, final, and job databases, only leaving behind hub and user " +
                 "artifacts. Requires sufficient privilege to be able to clear each of the databases. " +
@@ -232,11 +236,11 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Create a DHF 4 input flow in the project directory")
         project.task("hubRunLegacyFlow", group: legacyFlowGroup, type: RunLegacyFlowTask,
             description: "Run a DHF 4 flow")
-        project.task("hubDeleteJobs", group: legacyFlowGroup, type: DeleteJobsTask,
+        project.task("hubDeleteLegacyJobs", group: legacyFlowGroup, type: DeleteLegacyJobsTask,
             description: "Delete DHF 4 jobs data")
         project.task("hubExportLegacyJobs", group: legacyFlowGroup, type: ExportLegacyJobsTask,
             description: "Export DHF jobs data")
-        project.task("hubImportJobs", group: legacyFlowGroup, type: ImportJobsTask,
+        project.task("hubImportLegacyJobs", group: legacyFlowGroup, type: ImportJobsTask,
             description: "Import DHF 4 jobs data")
 
         ((UpdateIndexesTask)project.tasks.getByName("mlUpdateIndexes")).command = new HubUpdateIndexesCommand(dataHub)

@@ -22,9 +22,9 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const XS_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
 
 /**
- * 
- * @param flowName 
- * @param jobId 
+ *
+ * @param flowName
+ * @param jobId
  * @returns {object} the Job object (object, not a document node)
  */
 function createJob(flowName, jobId = null ) {
@@ -39,8 +39,8 @@ function createJob(flowName, jobId = null ) {
 
 /**
  * Saves a newly constructed Job; use createJob to both construct and save a Job.
- * 
- * @param job 
+ *
+ * @param job
  */
 function saveNewJob(job) {
   const jobUri = "/jobs/" + job.job.jobId + ".json";
@@ -324,9 +324,9 @@ module.exports = {
 module.exports.updateJob = module.amp(
   /**
    * Only updates the document, does not make any modifications to it, so nothing is returned.
-   * 
+   *
    * @param jobDoc
-   * @returns 
+   * @returns
    */
   function updateJob(jobDoc) {
     const jobId = jobDoc.job.jobId;
@@ -339,3 +339,16 @@ module.exports.updateJob = module.amp(
   }
 );
 
+module.exports.deleteJobs = module.amp(
+  /**
+   * Delete all job and batch document URIs passed in.
+   *
+   * @param jobDocumentURIs URIs of job documents to delete.
+   *
+   */
+  function deleteJobs(jobDocumentURIs) {
+    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-jobs", "execute");
+    for (let uri of jobDocumentURIs) {
+      xdmp.documentDelete(uri);
+    }
+  });

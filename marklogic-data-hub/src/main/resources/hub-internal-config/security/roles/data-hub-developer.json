@@ -10,6 +10,7 @@
     "data-hub-entity-model-writer",
     "data-hub-flow-writer",
     "data-hub-ingestion-writer",
+    "data-hub-job-deleter",
     "data-hub-mapping-writer",
     "data-hub-match-merge-writer",
     "data-hub-module-writer",
