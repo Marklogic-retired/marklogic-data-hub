@@ -47,6 +47,16 @@ const ModelingTooltips = {
   /* Form fields */
   joinProperty: 'Structured type properties and arrays cannot be used as join properties.',
 
+   /* Foreign key relationship */
+   foreignKey: function (relatedEntityName, joinPropertyName, type) {
+    return (
+      <span>
+        This property establishes a foreign key relationship with the <b>{relatedEntityName}</b> entity through the 
+        <b> {joinPropertyName}</b> property ({type}). The value of this property and the 
+        <b> {joinPropertyName}</b> property in <b>{relatedEntityName}</b> should be identical.
+      </span>
+    )
+  },
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',

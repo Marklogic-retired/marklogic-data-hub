@@ -334,8 +334,10 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByTestId("customerRelationship-span")).toBeInTheDocument();
     userEvent.click(screen.getByTestId("customerRelationship-span"));
 
+    expect(getByText("customerRelationship")).toBeInTheDocument();
     fireEvent.mouseOver((getByTestId("foreign-customerRelationship")));
-    await wait(() => expect(screen.getByText("Foreign Key Relationship")).toBeInTheDocument());
+    await wait(() => expect(document.querySelector("#tooltip-customerRelationship")).toBeInTheDocument());
+    expect(screen.getByText("array (Customer)")).toBeInTheDocument();
 
     userEvent.clear(screen.getByLabelText("input-name"));
     userEvent.type(screen.getByLabelText("input-name"), "basicID");
