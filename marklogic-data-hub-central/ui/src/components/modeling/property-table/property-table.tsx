@@ -141,21 +141,30 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(text, record);
             }}>
-            {record.joinPropertyName && record.joinPropertyType ?
-              <span>{text}
-                <MLTooltip title={"Foreign Key Relationship"}>
-                  <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + text}/>
-                </MLTooltip></span>  : text}
+            {text}
           </span>;
         }
-
         return renderText;
       }
     },
     {
       title: "Type",
       dataIndex: "type",
-      width: 125
+      width: 125,
+      render: (text, record) => {
+        let renderText = text;
+        if (record.joinPropertyName && record.joinPropertyType) {
+          let tooltip = ModelingTooltips.foreignKey(record.joinPropertyType, record.joinPropertyName, text);
+          renderText =
+          <span>
+            {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
+            <MLTooltip title={tooltip} id={"tooltip-" + record.propertyName} >
+              <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/>
+            </MLTooltip>
+          </span>;
+        }
+        return renderText;
+      }
     },
     {
       title: (

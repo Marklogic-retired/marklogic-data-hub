@@ -418,7 +418,7 @@ export const personRelatedEntityDef = [{
           },
           "orderedBy": {
             "datatype": "integer",
-            "relatedEntityType": "http://example.org/",
+            "relatedEntityType": "http://example.org/Person-0.0.1/Person",
             "joinPropertyName": "items"
           },
           "deliveredTo": {
