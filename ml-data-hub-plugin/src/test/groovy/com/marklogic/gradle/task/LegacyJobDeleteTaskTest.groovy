@@ -28,7 +28,7 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class JobDeleteTaskTest extends BaseTest {
+class LegacyJobDeleteTaskTest extends BaseTest {
     private final int JOB_COUNT = 3
 
     def setupSpec() {
@@ -72,16 +72,16 @@ class JobDeleteTaskTest extends BaseTest {
         return resultItr
     }
 
-    def "delete Job and Batch documents when running hubDeleteJobs task"() {
+    def "delete Job and Batch documents when running hubDeleteLegacyJobs task"() {
         when:
         String jobId = "10584668255644629399"
         int jobsCount = getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs")
         int batchCount = getDocCount(HubConfig.DEFAULT_JOB_NAME, "Batch")
 
-        def result = runTask('hubDeleteJobs', '-PjobIds=' + jobId)
+        def result = runTask('hubDeleteLegacyJobs', '-PjobIds=' + jobId)
 
         then:
-        result.task(":hubDeleteJobs").outcome == SUCCESS
+        result.task(":hubDeleteLegacyJobs").outcome == SUCCESS
         getDocCount(HubConfig.DEFAULT_JOB_NAME, "Jobs") == 2
         getDocCount(HubConfig.DEFAULT_JOB_NAME, "Batch") == 0
 
@@ -93,10 +93,10 @@ class JobDeleteTaskTest extends BaseTest {
         EvalResult res = resultItr.next()
         String jobId = res.getString()
 
-        def result = runTask('hubDeleteJobs', '-PjobIds=' + jobId)
+        def result = runTask('hubDeleteLegacyJobs', '-PjobIds=' + jobId)
 
         then:
-        result.task(":hubDeleteJobs").outcome == SUCCESS
+        result.task(":hubDeleteLegacyJobs").outcome == SUCCESS
         getDocCount(HubConfig.DEFAULT_JOB_NAME, null) == JOB_COUNT - 1
     }
 
@@ -111,10 +111,10 @@ class JobDeleteTaskTest extends BaseTest {
         res = resultItr.next()
         String jobIds = firstJobId + ',' + res.getString()
 
-        def result = runTask('hubDeleteJobs', '-PjobIds=' + jobIds)
+        def result = runTask('hubDeleteLegacyJobs', '-PjobIds=' + jobIds)
 
         then:
-        result.task(":hubDeleteJobs").outcome == SUCCESS
+        result.task(":hubDeleteLegacyJobs").outcome == SUCCESS
         getDocCount(HubConfig.DEFAULT_JOB_NAME, null) == JOB_COUNT - 2
     }
 
@@ -127,10 +127,10 @@ class JobDeleteTaskTest extends BaseTest {
         """
 
         when:
-        def result = runTask('hubDeleteJobs')
+        def result = runTask('hubDeleteLegacyJobs')
 
         then:
-        result.task(":hubDeleteJobs").outcome == SUCCESS
+        result.task(":hubDeleteLegacyJobs").outcome == SUCCESS
         getDocCount(HubConfig.DEFAULT_JOB_NAME, null) == JOB_COUNT
     }
 
@@ -143,22 +143,22 @@ class JobDeleteTaskTest extends BaseTest {
         """
 
         when:
-        def result = runTask('hubDeleteJobs')
+        def result = runTask('hubDeleteLegacyJobs')
 
         then:
-        result.task(":hubDeleteJobs").outcome == SUCCESS
+        result.task(":hubDeleteLegacyJobs").outcome == SUCCESS
         getDocCount(HubConfig.DEFAULT_JOB_NAME, null) == JOB_COUNT
     }
 
     def "delete with missing job id"() {
 
         when:
-        def result = runFailTask('hubDeleteJobs')
+        def result = runFailTask('hubDeleteLegacyJobs')
 
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains('jobIds property is required')
-        result.task(":hubDeleteJobs").outcome == FAILED
+        result.task(":hubDeleteLegacyJobs").outcome == FAILED
         getDocCount(HubConfig.DEFAULT_JOB_NAME, null) == JOB_COUNT
     }
 

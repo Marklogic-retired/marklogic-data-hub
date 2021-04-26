@@ -17,40 +17,16 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.gradle.exception.JobIdsRequiredException
-import com.marklogic.hub.legacy.job.JobDeleteResponse
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
+import com.marklogic.hub.flow.JobManager
 import org.gradle.api.tasks.TaskAction
 
 class DeleteJobsTask extends HubTask {
 
-    @Input
-    @Optional
-    public String jobIds
-
-    String getJobIds() {
-        return jobIds
-    }
-
     @TaskAction
-    void deleteJobs() {
-        if (jobIds == null) {
-            jobIds = project.hasProperty("jobIds") ? project.property("jobIds") : null
-        }
-        if (jobIds == null) {
-            throw new JobIdsRequiredException()
-        }
-
-        println("Deleting jobs: " + jobIds)
-        def jobManager = getJobManager()
-        def dh = getDataHub()
-        if (!isHubInstalled()) {
-            println("Data Hub is not installed.")
-            return
-        }
-        def jobDeleteResponse = jobManager.deleteJobs(jobIds)
-        print jobDeleteResponse
+    void cleanJobsData() {
+        def propName = "retainDuration"
+        def retainDuration = project.hasProperty(propName) ? project.property(propName) : null
+        JobManager jobManager = new JobManager(getHubConfig().newHubClient());
+        jobManager.deleteJobs(retainDuration);
     }
-
 }

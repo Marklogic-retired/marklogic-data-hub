@@ -1,0 +1,24 @@
+{
+    "endpoint": "/data-hub/5/data-services/bulk/deleteJobs.sjs",
+    "desc": "Delete all job and batch documents older than a specified duration.",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name":     "endpointConstants",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": false
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": true,
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
