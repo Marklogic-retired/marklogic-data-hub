@@ -233,10 +233,11 @@ describe("Matching", () => {
     cy.findByText("/test/Uri1").should("not.exist");
 
     //to test validation check
-    matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton().click();
-    cy.findByText("The minimum of two URIs are required.").should("be.visible");
+    cy.findByText("At least one URI is required.").should("be.visible");
+    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("This URI has already been added.").should("be.visible");
@@ -284,5 +285,27 @@ describe("Matching", () => {
       cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
     }
     cy.findByText("Total Score: 20").should("be.visible");
+
+    // To test when user click on expand all icon
+    cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {
+      cy.findByLabelText("expand-collapse").within(() => {
+        cy.get(".ant-radio-group").within(() => {
+          cy.get("label:first").click();
+        });
+      });
+    });
+    cy.findAllByLabelText("matchedUrisPanel").should("have.length.gt", 0);
+    cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
+
+    // To test when user click on collapse all icon
+    cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {
+      cy.findByLabelText("expand-collapse").within(() => {
+        cy.get(".ant-radio-group").within(() => {
+          cy.get("label:last").click();
+        });
+      });
+    });
+    cy.findAllByLabelText("matchedUrisPanel").should("not.visible");
+    cy.findAllByLabelText("expandedTableView").should("not.visible");
   });
 });
