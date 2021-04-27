@@ -3,9 +3,9 @@ const test = require("/test/test-helper.xqy");
 
 const entityType = "http://www.marklogic.com/Customer-0.0.1/Customer";
 
-function testValidateAndRunMapping(mapURI = "/mappings/CustomerMapping/CustomerMapping-0.mapping.json", uri = "/content/valid-customer.json") {
+function testvalidateAndTestMapping(mapURI = "/mappings/CustomerMapping/CustomerMapping-0.mapping.json", uri = "/content/valid-customer.json") {
   let map = cts.doc(mapURI).toObject();
-  let result = esMappingLib.validateAndRunMapping(map, uri);
+  let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
     test.assertEqual(111, fn.number(result.properties.Id.output), `Expected output '111', got '${xdmp.describe(result.properties.Id)}'`),
     test.assertEqual("Smith", result.properties.LastName.output, `Expected output 'Smith', got '${xdmp.describe(result.properties.LastName)}'`),
@@ -14,4 +14,4 @@ function testValidateAndRunMapping(mapURI = "/mappings/CustomerMapping/CustomerM
   ];
 }
 
-testValidateAndRunMapping();
+testvalidateAndTestMapping();

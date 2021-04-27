@@ -45,7 +45,7 @@ assertions.push(
 
 // Now test validating and testing a mapping against a persisted document
 const mappingStep = hubTest.getRecord("/steps/mapping/mappingStep1.step.json").document;
-const testOutput = esMappingLib.validateAndRunMapping(mappingStep, "/content/customer1.json");
+const testOutput = esMappingLib.validateAndTestMapping(mappingStep, "/content/customer1.json");
 
 assertions.push(
   test.assertEqual("John", testOutput.properties.name.output),

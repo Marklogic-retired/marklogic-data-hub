@@ -22,5 +22,5 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 var jsonMapping, uri, database;
 hubUtils.invokeFunction(function () {
-  return esMappingLib.validateAndRunMapping(jsonMapping.toObject(), uri);
+  return esMappingLib.validateAndTestMapping(jsonMapping.toObject(), uri);
 }, database);

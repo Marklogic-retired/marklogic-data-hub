@@ -5,7 +5,7 @@ const entityType = "http://marklogic.com/data-hub/example/CustomerType-0.0.1/Cus
 
 // Convenience function for simplifying tests
 function validateAndRunGenderMapping(sourcedFrom) {
-  return esMappingLib.validateAndRunMapping({
+  return esMappingLib.validateAndTestMapping({
     targetEntityType: entityType,
     properties: {
       gender: {sourcedFrom: sourcedFrom}
@@ -13,7 +13,7 @@ function validateAndRunGenderMapping(sourcedFrom) {
 
 
 }
-// The first 4 tests are same as validateMapping.sjs, there are being run to ensure validateAndRunMapping() returns
+// The first 4 tests are same as validateMapping.sjs, there are being run to ensure validateAndTestMapping() returns
 // the same result as well.
 function validMapping() {
   let sourcedFrom = "memoryLookup(customer/gender, '{\"m\": \"Male\", \"f\": \"Female\", \"nb\": \"Non-Binary\"}')";
@@ -27,7 +27,7 @@ function validMapping() {
 }
 
 function unrecognizedProperty() {
-  let result = esMappingLib.validateAndRunMapping({
+  let result = esMappingLib.validateAndTestMapping({
     targetEntityType: entityType,
     properties: {
       genderr: {sourcedFrom: "gender"}
@@ -54,9 +54,9 @@ function incorrectNumberOfFunctionArguments() {
   ];
 }
 
-function testValidateAndRunMapping(mapURI = "/mappings/PersonMapping/PersonMapping-3.mapping.json", uri = "/content/person2.json") {
+function testvalidateAndTestMapping(mapURI = "/mappings/PersonMapping/PersonMapping-3.mapping.json", uri = "/content/person2.json") {
   let map = cts.doc(mapURI).toObject();
-  let result = esMappingLib.validateAndRunMapping(map, uri);
+  let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
     test.assertEqual(222, fn.number(result.properties.id.output), `Expected output '222', got '${xdmp.describe(result.properties.id)}'`),
     test.assertEqual("Middle", result.properties.name.properties.middle.output, `Expected output 'Middle', got '${xdmp.describe(result.properties.name.properties.middle)}'`),
@@ -66,9 +66,9 @@ function testValidateAndRunMapping(mapURI = "/mappings/PersonMapping/PersonMappi
   ];
 }
 
-function testValidateAndRunMappingArrayValues(mapURI = "/mappings/OrdersMapping/OrdersMapping-3.mapping.json", uri = "/content/orderTest.json") {
+function testvalidateAndTestMappingArrayValues(mapURI = "/mappings/OrdersMapping/OrdersMapping-3.mapping.json", uri = "/content/orderTest.json") {
   let map = cts.doc(mapURI).toObject();
-  let result = esMappingLib.validateAndRunMapping(map, uri);
+  let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
     test.assertEqual(1, fn.number(result.properties.id.output), `Expected output '1', got '${xdmp.describe(result.properties.id)}'`),
     test.assertEqualJson(["Voltsillam", "Latlux", "Biodex","Fixflex", "Keylex"], result.properties.items.properties.name.output, `Expected output ["Voltsillam", "Latlux", "Biodex","Fixflex", "Keylex"], got '${xdmp.describe(result.properties.items.properties.name)}'`),
@@ -77,7 +77,7 @@ function testValidateAndRunMappingArrayValues(mapURI = "/mappings/OrdersMapping/
   ];
 }
 
-function testValidateAndRunMappingWithErrors() {
+function testvalidateAndTestMappingWithErrors() {
   let map = {
               "targetEntityType": "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
               "properties": {
@@ -85,7 +85,7 @@ function testValidateAndRunMappingWithErrors() {
               }
             };
   let uri = "/content/person2.json";
-  let result = esMappingLib.validateAndRunMapping(map, uri);
+  let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
     test.assertEqual("Invalid lexical value: \"Nicky-ID\"", result.properties.id.errorMessage, "Error thrown since int prop is mapped to string"),
   ];
@@ -96,11 +96,11 @@ function testValidateAndRunMappingWithErrors() {
   .concat(unrecognizedProperty())
   .concat(missingFunctionReference())
   .concat(incorrectNumberOfFunctionArguments())
-  .concat(testValidateAndRunMapping())
-  .concat(testValidateAndRunMappingArrayValues())
-  .concat(testValidateAndRunMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
+  .concat(testvalidateAndTestMapping())
+  .concat(testvalidateAndTestMappingArrayValues())
+  .concat(testvalidateAndTestMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
   // Test JSON to XML scenario
-  .concat(testValidateAndRunMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))
-  .concat(testValidateAndRunMappingWithErrors())
+  .concat(testvalidateAndTestMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))
+  .concat(testvalidateAndTestMappingWithErrors())
 ;
 
