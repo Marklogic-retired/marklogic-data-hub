@@ -81,7 +81,7 @@ const tiles: Record<TileId, TileItem>  = {
         border: '#BFBFBF',
         controlColor: '#777',
         controls: ['menu', 'close'],
-        intro: 'Monitor the Job Database.',
+        intro: 'Monitor Flows and Steps.',
     }
 };
 
