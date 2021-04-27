@@ -4,14 +4,14 @@
     src: url('../../fonts/icomoon.ttf') format('truetype');
 }
 
-.exploreIcon:before { 
+.exploreIcon:before {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
     content: "\68";
     font-family: MLCustomFont;
-    font-size: 24px; 
+    font-size: 24px;
     position: relative;
     background-color: #FFF;
     border: 1px solid #7F86B5;
@@ -135,7 +135,8 @@
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    content: "\e955";
+    content: "\e97a";
+    color: #000000;
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;

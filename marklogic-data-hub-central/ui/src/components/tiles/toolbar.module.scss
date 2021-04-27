@@ -37,6 +37,16 @@
     .toolTallWrapper {
         height: 120px;
     }
+    .toolTallWrapper:after {
+        background-color: #d8d8d8;
+        content: "";
+        display: inline-block;
+        height: 1px;
+        position: relative;
+        vertical-align: middle;
+        width: 100%;
+        margin-top: 40px;
+    }
     :hover {
         color: var(--hoverColor) !important;
     }
