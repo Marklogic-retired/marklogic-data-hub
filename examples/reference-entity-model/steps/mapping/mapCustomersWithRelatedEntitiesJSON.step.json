@@ -110,7 +110,7 @@
           "targetEntityType": "#/definitions/LineItem"
         }
       },
-      "targetEntityType": "http://example.org/Order-0.0.1/Order"
+      "targetEntityType": "http://marklogic.com/example/Order-0.0.1/Order"
     },
     {
       "relatedEntityMappingId": "Product:Order.lineItems.includes",
@@ -148,7 +148,7 @@
           "sourcedFrom": "Products/ProductId"
         }
       },
-      "targetEntityType": "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
+      "targetEntityType": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry"
     },
     {
       "relatedEntityMappingId": "Product:BabyRegistry.includes",

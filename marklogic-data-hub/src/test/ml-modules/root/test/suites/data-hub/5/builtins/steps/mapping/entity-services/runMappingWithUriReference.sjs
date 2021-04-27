@@ -15,7 +15,7 @@ function verifyUriIsResolvedByMappingStep() {
 }
 
 function verifyUriResolvedWhenTestingMapping() {
-  const result = esMappingLib.validateAndRunMapping({
+  const result = esMappingLib.validateAndTestMapping({
     targetEntityType: "http://marklogic.com/data-hub/example/Person-1.0.0/Person",
     properties: {
       nickname: {sourcedFrom: "$URI"}

@@ -25,7 +25,7 @@ function validMapping() {
 }
 
 function unrecognizedProperty() {
-  let result = esMappingLib.validateAndRunMapping({
+  let result = esMappingLib.validateAndTestMapping({
     targetEntityType: entityType,
     properties: {
       genderr: {sourcedFrom: "gender"}

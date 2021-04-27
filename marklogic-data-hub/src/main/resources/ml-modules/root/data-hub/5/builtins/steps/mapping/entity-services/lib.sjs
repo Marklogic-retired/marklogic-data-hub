@@ -373,7 +373,7 @@ function escapeXML(input = '') {
  * @param uri
  * @returns
  */
-function validateAndRunMapping(mapping, uri) {
+function validateAndTestMapping(mapping, uri) {
   if (!fn.docAvailable(uri)) {
     throw Error(`Unable to validate and run mapping; could not find source document with URI '${uri}'`);
   }
@@ -396,10 +396,39 @@ function validateAndRunMapping(mapping, uri) {
   }
 
   const parameterMap = Object.assign({}, {"URI":uri}, userParameterMap);
-
-  const validatedMapping = validateMapping(mapping, userParameterNames);
   const sourceInstance = extractInstance(sourceDocument);
-  return testMapping(validatedMapping, sourceInstance, userParameterNames, parameterMap);
+  const validatedMappingsArray = validateMappings(mapping, userParameterNames);
+  return testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
+}
+
+function validateMappings(mapping, userParameterNames){
+  const mappingCount = 1 + (mapping.relatedEntityMappings ? mapping.relatedEntityMappings.length : 0);
+  let validatedMappingsArray = [];
+  validatedMappingsArray.push(mapping);
+
+  if(mapping.relatedEntityMappings) {
+    for(let i=0; i < mappingCount-1 ; i++){
+      mapping.relatedEntityMappings[i].namespaces = mapping.namespaces;
+      validatedMappingsArray.push(mapping.relatedEntityMappings[i]);
+    }
+  }
+  validatedMappingsArray = validatedMappingsArray.map(mappingToTest => {
+    return validateMapping(mappingToTest, userParameterNames);
+  });
+  return validatedMappingsArray;
+}
+
+function testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap){
+  for(let i =0 ; i < validatedMappingsArray.length; i++){
+    const response = testMapping(validatedMappingsArray[i], sourceInstance, userParameterNames, parameterMap);
+    if(i ==0){
+      mapping.properties = response.properties;
+    }
+    else{
+      mapping.relatedEntityMappings[i-1] = response;
+    }
+  }
+  return mapping;
 }
 
 /**
@@ -432,6 +461,7 @@ function validateMapping(mapping, userParameterNames) {
         mappedProperty.targetEntityType = fullTargetEntity;
       }
       mappedProperty.namespaces = mapping.namespaces;
+      mappedProperty.expressionContext = mapping.expressionContext;
       mappedProperty = validateMapping(mappedProperty, userParameterNames);
     }
 
@@ -461,6 +491,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
   let mapping = {
     "namespaces": fullMapping.namespaces,
     "targetEntityType": fullMapping.targetEntityType,
+    "expressionContext": fullMapping.expressionContext ? fullMapping.expressionContext : "/",
     "properties": {}
   };
 
@@ -495,8 +526,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
  * @returns
  */
 function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
-  propMapping={"targetEntityType":mapping.targetEntityType, "namespaces": mapping.namespaces,"properties": {}},
-  paths=['properties'])
+  propMapping={"targetEntityType":mapping.targetEntityType, "expressionContext": mapping.expressionContext ? mapping.expressionContext : "/", "namespaces": mapping.namespaces,"properties": {}}, paths=['properties'])
 {
   Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
@@ -504,6 +534,7 @@ function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
     paths.push(propertyName);
     //Don't run mapping if the property is unset (sourcedFrom.length==0) or if the validation returns errors
     if(!mappedProperty.errorMessage && sourcedFrom.length > 0){
+      propMapping.expressionContext = mapping.expressionContext;
       if (mappedProperty.hasOwnProperty("targetEntityType")) {
         propMapping = addNode(propMapping, paths, mappedProperty, true);
         paths.push("properties");
@@ -565,7 +596,7 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
     multiple instances
      */
 
-    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance/*:value/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
+    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance[1]/*:value/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
     if(arr.length <= 1) {
@@ -711,5 +742,5 @@ module.exports = {
   // Exporting retrieveFunctionImports for unit test
   retrieveFunctionImports,
   validateMapping,
-  validateAndRunMapping
+  validateAndTestMapping
 };

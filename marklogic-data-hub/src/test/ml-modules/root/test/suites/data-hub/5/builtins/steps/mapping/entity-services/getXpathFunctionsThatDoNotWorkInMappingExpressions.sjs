@@ -4,7 +4,7 @@ const test = require("/test/test-helper.xqy");
 const entityType = "http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType";
 
 function testFunctionInMapping(functionSignature) {
-  return esMappingLib.validateAndRunMapping({
+  return esMappingLib.validateAndTestMapping({
     targetEntityType: entityType,
     properties: {
       gender: {

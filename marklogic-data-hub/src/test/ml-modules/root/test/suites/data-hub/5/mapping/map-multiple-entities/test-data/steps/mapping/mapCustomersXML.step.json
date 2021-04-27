@@ -72,7 +72,7 @@
           "targetEntityType": "#/definitions/LineItem"
         }
       },
-      "targetEntityType": "http://example.org/Order-0.0.1/Order"
+      "targetEntityType": "http://marklogic.com/example/Order-0.0.1/Order"
     }
   ]
 }
