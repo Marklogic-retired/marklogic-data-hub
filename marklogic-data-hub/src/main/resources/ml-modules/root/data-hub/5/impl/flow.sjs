@@ -254,7 +254,7 @@ class Flow {
       "errorCount": stepExecutionContext.failedItems.length,
       "completedItems": stepExecutionContext.completedItems,
       "failedItems": stepExecutionContext.failedItems,
-      "errors": stepExecutionContext.batchErrors
+      "errors": stepExecutionContext.stepErrors
     };
     if (combinedOptions.fullOutput) {
       responseHolder.documents = outputContentArray;
@@ -303,7 +303,7 @@ class Flow {
     }
 
     // Directly add this to avoid the failedItems count from being incremented
-    stepExecutionContext.batchErrors.push(Object.assign(error, {"uri":uri}));
+    stepExecutionContext.stepErrors.push(Object.assign(error, {"uri":uri}));
   }
 }
 

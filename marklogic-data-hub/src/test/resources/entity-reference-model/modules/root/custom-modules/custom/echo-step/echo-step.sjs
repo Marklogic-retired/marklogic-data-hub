@@ -5,6 +5,9 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
  * Simple custom step that just marks the content as processed via a URI alteration.
  */
 function main(contentItem, options) {
+  if (options.throwErrorOnPurpose) {
+    throw Error("Throwing error on purpose: " + contentItem.uri);
+  }
   const instance = cts.doc(contentItem.uri).toObject();
   return {
     uri: "/echo" + contentItem.uri,

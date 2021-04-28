@@ -1,7 +1,9 @@
 
 package com.marklogic.hub.central.schemas;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -31,7 +33,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "timeStarted",
     "timeEnded",
     "externalMetadata",
-    "stepResponses"
+    "stepResponses",
+    "flowErrors"
 })
 public class JobSchema {
 
@@ -105,6 +108,13 @@ public class JobSchema {
     @JsonProperty("stepResponses")
     @JsonPropertyDescription("For each step that was executed, a key with a name equaling the step number of the step will be present")
     private StepResponses stepResponses;
+    /**
+     * Added in 5.5.0 to capture flow-level errors
+     * 
+     */
+    @JsonProperty("flowErrors")
+    @JsonPropertyDescription("Added in 5.5.0 to capture flow-level errors")
+    private List<FlowError> flowErrors = new ArrayList<FlowError>();
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -288,6 +298,24 @@ public class JobSchema {
         this.stepResponses = stepResponses;
     }
 
+    /**
+     * Added in 5.5.0 to capture flow-level errors
+     * 
+     */
+    @JsonProperty("flowErrors")
+    public List<FlowError> getFlowErrors() {
+        return flowErrors;
+    }
+
+    /**
+     * Added in 5.5.0 to capture flow-level errors
+     * 
+     */
+    @JsonProperty("flowErrors")
+    public void setFlowErrors(List<FlowError> flowErrors) {
+        this.flowErrors = flowErrors;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -342,6 +370,10 @@ public class JobSchema {
         sb.append('=');
         sb.append(((this.stepResponses == null)?"<null>":this.stepResponses));
         sb.append(',');
+        sb.append("flowErrors");
+        sb.append('=');
+        sb.append(((this.flowErrors == null)?"<null>":this.flowErrors));
+        sb.append(',');
         sb.append("additionalProperties");
         sb.append('=');
         sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
@@ -357,16 +389,17 @@ public class JobSchema {
     @Override
     public int hashCode() {
         int result = 1;
-        result = ((result* 31)+((this.jobId == null)? 0 :this.jobId.hashCode()));
         result = ((result* 31)+((this.jobStatus == null)? 0 :this.jobStatus.hashCode()));
+        result = ((result* 31)+((this.externalMetadata == null)? 0 :this.externalMetadata.hashCode()));
+        result = ((result* 31)+((this.timeStarted == null)? 0 :this.timeStarted.hashCode()));
+        result = ((result* 31)+((this.jobId == null)? 0 :this.jobId.hashCode()));
         result = ((result* 31)+((this.stepResponses == null)? 0 :this.stepResponses.hashCode()));
         result = ((result* 31)+((this.timeEnded == null)? 0 :this.timeEnded.hashCode()));
-        result = ((result* 31)+((this.externalMetadata == null)? 0 :this.externalMetadata.hashCode()));
         result = ((result* 31)+((this.lastAttemptedStep == null)? 0 :this.lastAttemptedStep.hashCode()));
-        result = ((result* 31)+((this.timeStarted == null)? 0 :this.timeStarted.hashCode()));
         result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
         result = ((result* 31)+((this.user == null)? 0 :this.user.hashCode()));
         result = ((result* 31)+((this.lastCompletedStep == null)? 0 :this.lastCompletedStep.hashCode()));
+        result = ((result* 31)+((this.flowErrors == null)? 0 :this.flowErrors.hashCode()));
         result = ((result* 31)+((this.flow == null)? 0 :this.flow.hashCode()));
         return result;
     }
@@ -380,7 +413,7 @@ public class JobSchema {
             return false;
         }
         JobSchema rhs = ((JobSchema) other);
-        return ((((((((((((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId)))&&((this.jobStatus == rhs.jobStatus)||((this.jobStatus!= null)&&this.jobStatus.equals(rhs.jobStatus))))&&((this.stepResponses == rhs.stepResponses)||((this.stepResponses!= null)&&this.stepResponses.equals(rhs.stepResponses))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.externalMetadata == rhs.externalMetadata)||((this.externalMetadata!= null)&&this.externalMetadata.equals(rhs.externalMetadata))))&&((this.lastAttemptedStep == rhs.lastAttemptedStep)||((this.lastAttemptedStep!= null)&&this.lastAttemptedStep.equals(rhs.lastAttemptedStep))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.user == rhs.user)||((this.user!= null)&&this.user.equals(rhs.user))))&&((this.lastCompletedStep == rhs.lastCompletedStep)||((this.lastCompletedStep!= null)&&this.lastCompletedStep.equals(rhs.lastCompletedStep))))&&((this.flow == rhs.flow)||((this.flow!= null)&&this.flow.equals(rhs.flow))));
+        return (((((((((((((this.jobStatus == rhs.jobStatus)||((this.jobStatus!= null)&&this.jobStatus.equals(rhs.jobStatus)))&&((this.externalMetadata == rhs.externalMetadata)||((this.externalMetadata!= null)&&this.externalMetadata.equals(rhs.externalMetadata))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId))))&&((this.stepResponses == rhs.stepResponses)||((this.stepResponses!= null)&&this.stepResponses.equals(rhs.stepResponses))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.lastAttemptedStep == rhs.lastAttemptedStep)||((this.lastAttemptedStep!= null)&&this.lastAttemptedStep.equals(rhs.lastAttemptedStep))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.user == rhs.user)||((this.user!= null)&&this.user.equals(rhs.user))))&&((this.lastCompletedStep == rhs.lastCompletedStep)||((this.lastCompletedStep!= null)&&this.lastCompletedStep.equals(rhs.lastCompletedStep))))&&((this.flowErrors == rhs.flowErrors)||((this.flowErrors!= null)&&this.flowErrors.equals(rhs.flowErrors))))&&((this.flow == rhs.flow)||((this.flow!= null)&&this.flow.equals(rhs.flow))));
     }
 
 

@@ -116,6 +116,27 @@
           }
         }
       }
+    },
+    "flowErrors": {
+      "type": "array",
+      "description": "Added in 5.5.0 to capture flow-level errors",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The MarkLogic-defined name for the error"
+          },
+          "message": {
+            "type": "string",
+            "description": "The MarkLogic-defined message associated with the error"
+          },
+          "description": {
+            "type": "string",
+            "description": "Contains the MarkLogic-defined output of calling toString() on the error"
+          }
+        }
+      }
     }
   }
 }

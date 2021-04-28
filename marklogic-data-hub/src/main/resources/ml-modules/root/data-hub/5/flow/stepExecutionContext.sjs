@@ -94,11 +94,11 @@ class StepExecutionContext {
 
     this.completedItems = [];
     this.failedItems = [];
-    this.batchErrors = [];
+    this.stepErrors = [];
     this.stepOutputErrorMessages = undefined;
   }
 
-  getLabelForLogging() {
+  describe() {
     return `step ${this.stepNumber} in flow '${this.flow.name}'`;
   }
 
@@ -183,36 +183,51 @@ class StepExecutionContext {
    * @param batchItems 
    * @returns the constructed error object
    */
-  addErrorForEntireBatch(error, batchItems) {
+  addStepErrorForEntireBatch(error, batchItems) {
     this.failedItems = batchItems;
     this.completedItems = [];
-    return this.addBatchError(error, null);
+    return this.addStepError(error, null);
+  }
+
+  stopWithError(error, batchItem) {
+    this.stopped = true;
+    return this.addStepError(error, batchItem);
+  }
+
+  /**
+   * 
+   * @returns {boolean} true if all the items were processed by the step, even if one or more failed
+   */
+  wasCompleted() {
+    return this.stopped !== true && !this.determineStepStatus().startsWith("failed");
   }
 
   /**
    * 
    * @param error 
-   * @param batchItem 
+   * @param itemThatFailed {string} optional; used for when a step that processes each item individually has 
+   * a failure for a particular item
    * @returns the constructed error object
    */
-  addBatchError(error, batchItem) {
+  addStepError(error, itemThatFailed) {
     // Object.assign doesn't work on an error object; gotta manually copy over each thing we care about
-    const batchError = {
-      "stack": error.stack,
-      "code": error.code,
-      "data": error.data,
-      "message": error.message,
-      "name": error.name,
-      "retryable": error.retryable,
-      "stackFrames": error.stackFrames,
-      "uri": batchItem
-    };
+    const stepError = {};
+    ["stack", "code", "data", "message", "name", "retryable", "stackFrames"].forEach(key => {
+      if (error[key]) {
+        stepError[key] = error[key];
+      }
+    });
 
-    // Temporary until DHFPROD-6720
-    console.warn("Batch error!", batchError);
-    
-    if (batchItem != null) {
-      this.failedItems.push(batchItem);
+    if (itemThatFailed) {
+      stepError.uri = itemThatFailed;
+    }
+
+    // A user may either have job/batch data disabled and/or not see the flow response, so log the error
+    // to ensure it is visible somewhere
+    console.warn(`Caught error while executing ${this.describe()}`, stepError);
+
+    if (itemThatFailed != null) {
+      this.failedItems.push(itemThatFailed);
     }
 
     if (error.message) {
@@ -222,8 +237,8 @@ class StepExecutionContext {
       this.stepOutputErrorMessages.push(error.message);
     }
 
-    this.batchErrors.push(batchError);
-    return batchError;
+    this.stepErrors.push(stepError);
+    return stepError;
   }
 
   getStepBeforeMainFunction() {

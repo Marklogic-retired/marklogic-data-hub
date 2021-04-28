@@ -414,6 +414,17 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                     // if exception is thrown update the failed related metrics
                     stepMetrics.getFailedBatches().addAndGet(1);
                     stepMetrics.getFailedEvents().addAndGet(batch.getItems().length);
+
+                    if (flow != null && flow.isStopOnError()) {
+                        // Stop the job, and then we need to call processFailure to force the FlowRunner to stop the flow
+                        JobTicket jobTicket = ticketWrapper.get("jobTicket");
+                        if (jobTicket != null) {
+                            dataMovementManager.stopJob(jobTicket);
+                        }
+                        stepItemFailureListeners.forEach((StepItemFailureListener listener) -> {
+                            listener.processFailure(runStepResponse.getJobId(), null);
+                        });
+                    }
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {
@@ -485,6 +496,9 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
 
     private String determineStepStatus(StepMetrics stepMetrics) {
         if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
+            // Re: DHFPROD-6720 - it is surprising that stop-on-error is only feasible when the undocumented
+            // stopOnFailure option is used (it's actually documented for DHF 4, but not for DHF 5). If the
+            // documented stopOnError option is used, then 'canceled' becomes the step status.
             return JobStatus.STOP_ON_ERROR_PREFIX + step;
         } else if( isStopped.get()){
             return JobStatus.CANCELED_PREFIX + step;
