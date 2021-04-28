@@ -28,7 +28,6 @@ describe("Facet component", () => {
 
   it("Facet component renders with nested data properly", () => {
     const {getByTestId, getByText, queryByText} = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
-    expect(getByText(/Sales.sales_region/i)).toBeInTheDocument();
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
     expect(getByText(/50/i)).toBeInTheDocument();

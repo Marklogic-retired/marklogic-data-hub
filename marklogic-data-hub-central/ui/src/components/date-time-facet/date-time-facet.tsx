@@ -5,9 +5,6 @@ import moment from "moment";
 import styles from "./date-time-facet.module.scss";
 import {MLTooltip} from "@marklogic/design-system";
 
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
-
 const {RangePicker} = DatePicker;
 
 interface Props {
@@ -54,24 +51,19 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     }
   }, [searchOptions, greyedOptions]);
 
-  // right arrow icon for displaying structured props
-  const arrowIcon = (key = 0) => {
-    return <FontAwesomeIcon icon={faChevronRight} style={{fontSize: 12}} key={key}/>;
-  };
-
   const formatTitle = () => {
     let objects = props.name.split(".");
     if (objects.length > 2) {
       let first = objects[0];
       let last = objects.slice(-1);
       // returns an array for rendering that looks like "first > ... > last"
-      return [first + " ", arrowIcon(1), " ... ", arrowIcon(2), " " + last];
+      return <p>{first} &gt; ... &gt; <b>{last}</b></p>;
     } else if (objects.length === 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return [first + " ", arrowIcon(1), " " + last];
+      return <p>{first} &gt; <b>{last}</b></p>;
     }
-    return props.name;
+    return <b>{props.name}</b>;
   };
 
   return (
