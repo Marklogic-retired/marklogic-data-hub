@@ -1,0 +1,59 @@
+.compareValuesModalHeading {
+    font-size: 2.3vh;
+}
+
+.compareValuesTable {
+    margin-top: 2vh;
+}
+
+.matchedRow {
+    background : #39944D;
+}
+
+.nameColumnStyle {
+    margin-left: 3px;
+}
+
+.matchIcon {
+    background : #85BF97;
+    margin-left: 95%;
+    width: 2vh;
+    height: 2vh;
+}
+
+.compareTableHeader {
+    display: flex;
+    align-items: stretch;
+}
+
+.matchIconText {
+    font-weight: bold;
+    float: right;
+}
+
+.customer1 {
+    font-weight: bold;
+    margin-left: 20%;
+}
+
+.customer2 {
+    font-weight: bold;
+    margin-left: 34.8%;
+}
+
+.uri1 {
+    font-weight: bold;
+    color: #5B69AF;
+    min-width: 40.5% !important;
+    max-width: 40.5% !important;;
+    margin-left: 20%;
+}
+
+.uri2 {
+    font-weight: bold;
+    color: #5B69AF;
+     margin-right: 10%;
+     min-width: 37%;
+     max-width: 37%;
+}
+

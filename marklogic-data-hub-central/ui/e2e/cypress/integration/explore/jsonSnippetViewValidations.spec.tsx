@@ -192,7 +192,7 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
-    detailPage.getDocumentUri().should("contain", "/json/customers/Cust%205.json");
+    detailPage.getDocumentUri().should("contain", "/json/customers/Cust5.json");
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
   });

@@ -119,9 +119,9 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     let scores: string[] = [];
     let ruleName: string[] = [];
     let key= counter++;
-    matchRulseset =  matchRulseset.replace(/([.])/g, " > ");
-    ruleName.push(matchRulseset);
-    let ruleset = matchRulseset.split(" - ");
+    let updatedMatchRuleset =  matchRulseset.replace(/([.])/g, " > ");
+    ruleName.push(updatedMatchRuleset);
+    let ruleset = updatedMatchRuleset.split(" - ");
     if (ruleset.length <2) {
       for (let i=0;i<props.entityData.stepArtifact.matchRulesets.length;i++) {
         let name = props.entityData.stepArtifact.matchRulesets[i].name;
