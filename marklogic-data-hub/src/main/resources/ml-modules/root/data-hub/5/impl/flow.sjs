@@ -262,20 +262,27 @@ class Flow {
       delete this.datahub.flow;
     }
 
-    if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
-      this.runStep(items, content, combinedOptions, flowName, stepNumber, flowStep);
-    } else {
-      const flowInstance = this;
-      xdmp.invoke(
-        '/data-hub/5/impl/invoke-step.sjs',
-        {flowInstance, items, content, combinedOptions, flowName, flowStep, stepNumber},
-        {
-          database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
-          update: combinedOptions.stepUpdate ? 'true': 'false',
-          commit: 'auto',
-          ignoreAmps: true
-        }
-      );
+    try {
+      if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
+        this.runStep(items, content, combinedOptions, flowName, stepNumber, flowStep);
+      } else {
+        const flowInstance = this;
+        xdmp.invoke(
+          '/data-hub/5/impl/invoke-step.sjs',
+          {flowInstance, items, content, combinedOptions, flowName, flowStep, stepNumber},
+          {
+            database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
+            update: combinedOptions.stepUpdate ? 'true': 'false',
+            commit: 'auto',
+            ignoreAmps: true
+          }
+        );
+      }  
+    } catch (error) {
+      this.globalContext.failedItems = items;
+      this.globalContext.batchErrors.push(error);
+      this.updateBatchDocument(flowName, flowStep, combinedOptions, items, {});
+      throw error;
     }
 
     let writeTransactionInfo = {};
