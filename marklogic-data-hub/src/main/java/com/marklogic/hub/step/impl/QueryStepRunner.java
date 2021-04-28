@@ -381,7 +381,6 @@ public class QueryStepRunner implements StepRunner {
 
         ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
         Map<String,Object> fullResponse = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
         queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
             .withThreadCount(threadCount)
@@ -464,9 +463,22 @@ public class QueryStepRunner implements StepRunner {
                     if (errorMessages.size() < MAX_ERROR_MESSAGES) {
                         errorMessages.add(e.toString());
                     }
-                    // if exception is thrown update the failed related metrics
+
                     stepMetrics.getFailedBatches().addAndGet(1);
-                    stepMetrics.getFailedEvents().addAndGet(batchSize);
+                    // This fixes a problem already fixed in >= 5.4, where batchSize was being used instead of the actual
+                    // number of items in the batch
+                    stepMetrics.getFailedEvents().addAndGet(batch.getItems().length);
+
+                    if (flow != null && flow.isStopOnError()) {
+                        // Stop the job, and then we need to call processFailure to force the FlowRunner to stop the flow
+                        JobTicket jobTicket = ticketWrapper.get("jobTicket");
+                        if (jobTicket != null) {
+                            dataMovementManager.stopJob(jobTicket);
+                        }
+                        stepItemFailureListeners.forEach((StepItemFailureListener listener) -> {
+                            listener.processFailure(runStepResponse.getJobId(), null);
+                        });
+                    }
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {

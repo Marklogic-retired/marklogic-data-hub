@@ -16,12 +16,16 @@
 
 package com.marklogic.hub.flow;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
@@ -38,7 +42,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExtendWith(SpringExtension.class)
@@ -63,6 +67,55 @@ public class FlowRunnerTest extends HubTestBase {
     public void setupEach() {
         setupProjectForRunningTestFlow();
         runAsDataHubOperator();
+    }
+
+    @Test
+    public void hookThrowsErrorAndStopOnErrorIsTrue() throws Exception {
+        String customHook = "declareUpdate();\n" +
+            "\n" +
+            "var uris;\n" +
+            "var content;\n" +
+            "var options;\n" +
+            "var flowName;\n" +
+            "var stepNumber;\n" +
+            "var step;\n" +
+            "\n" +
+            "if (stepNumber === '2') {\n" +
+            "  throw Error('Throwing error on purpose');\n" +
+            "}\n";
+
+        DatabaseClient modulesClient = getDataHubAdminConfig().newModulesDbClient();
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        metadata.getPermissions().add("rest-extension-user", DocumentMetadataHandle.Capability.EXECUTE);
+        metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        modulesClient.newTextDocumentManager().write("/custom-modules/testCustomHook.sjs", metadata, new StringHandle(customHook).withFormat(Format.TEXT));
+
+        RunFlowResponse response = runFlow("customHookFlow", "1,2,3", null, null, null);
+        flowRunner.awaitCompletion();
+
+        assertEquals("stop-on-error", response.getJobStatus());
+        assertEquals("2", response.getLastAttemptedStep());
+        assertEquals("1", response.getLastCompletedStep());
+        assertEquals(2, response.getStepResponses().keySet().size(), "The third step should not have been run");
+
+        RunStepResponse mapResponse = response.getStepResponses().get("2");
+        assertEquals("canceled step 2", mapResponse.getStatus());
+        assertTrue(mapResponse.getStepOutput().get(0).contains("Throwing error on purpose"));
+        assertEquals(1, mapResponse.getTotalEvents());
+        assertEquals(0, mapResponse.getSuccessfulEvents());
+        assertEquals(1, mapResponse.getFailedEvents());
+        assertEquals(0, mapResponse.getSuccessfulBatches());
+        assertEquals(1, mapResponse.getFailedBatches());
+        assertFalse(mapResponse.isSuccess());
+
+        DatabaseClient jobClient = getDataHubAdminConfig().newJobDbClient();
+        String batchDocCount = jobClient.newServerEval().javascript("cts.estimate(cts.collectionQuery('Batch'))").evalAs(String.class);
+        assertEquals(1, Integer.parseInt(batchDocCount), "When a custom hook fails, a Batch document should still be created " +
+            "so that the URIs in the batch can be found; this helps with re-processing the batch");
+        JsonNode batchDoc = new ObjectMapper().readTree(jobClient.newServerEval().javascript("fn.head(fn.collection('Batch'))").evalAs(String.class));
+        assertEquals("failed", batchDoc.get("batch").get("batchStatus").asText());
+        assertEquals("/ingest-xml.xml", batchDoc.get("batch").get("uris").get(0).asText());
+        assertTrue(batchDoc.get("batch").has("completeError"));
     }
 
     @Test
@@ -349,8 +402,7 @@ public class FlowRunnerTest extends HubTestBase {
         r.run();
         flowRunner.awaitCompletion();
 
-        //Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") > 0);
-        Assertions.assertTrue(JobStatus.CANCELED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        assertEquals(JobStatus.CANCELED.toString(), resp.getJobStatus());
     }
 
     @Test
