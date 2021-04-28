@@ -347,11 +347,7 @@ public class FlowRunnerImpl implements FlowRunner {
 
                 AtomicLong errorCount = new AtomicLong();
                 AtomicLong successCount = new AtomicLong();
-                /*  If an exception occurs in step execution, we don't want the thread to die and affect other step execution.
-                    If an exception occurs, the exception message is written to job output
-                 */
                 RunStepResponse stepResp = null;
-                //Initializing stepBatchSize to default flow batch size
 
                 try {
                     stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)

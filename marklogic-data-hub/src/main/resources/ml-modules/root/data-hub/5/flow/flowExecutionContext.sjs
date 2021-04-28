@@ -18,7 +18,6 @@
 const Batch = require("batch.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const jobs = require("/data-hub/5/impl/jobs.sjs");
 const Job = require("job.sjs");
 const StepExecutionContext = require("stepExecutionContext.sjs");
 
@@ -58,6 +57,10 @@ class FlowExecutionContext {
     }
   }
 
+  describe() {
+    return `flow '${this.flow.name}' and jobId '${this.jobId}'`;
+  }
+
   jobOutputIsEnabled() {
     return String(this.combinedFlowOptions.disableJobOutput) !== "true";
   }
@@ -74,10 +77,12 @@ class FlowExecutionContext {
 
   finishStep(stepExecutionContext, stepResponse, batchItems, outputContentArray) {
     const stepNumber = stepExecutionContext.stepNumber;
-    this.flowResponse.lastCompletedStep = stepNumber;
+    if (stepExecutionContext.wasCompleted()) {
+      this.flowResponse.lastCompletedStep = stepNumber;
+    }
     this.flowResponse.stepResponses[stepNumber] = stepResponse;
     if (this.jobOutputIsEnabled()) {
-      this.job.finishStep(stepNumber, "completed step " + stepNumber, stepResponse, outputContentArray);
+      this.job.finishStep(stepNumber, stepResponse, null, outputContentArray);
       if (stepExecutionContext.batchOutputIsEnabled()) {
         if (this.batch == null) {
           this.batch = new Batch(this.flowResponse.jobId, this.flow.name);
@@ -85,19 +90,61 @@ class FlowExecutionContext {
         this.batch.addStepResult(stepExecutionContext, batchItems);
       }
     }
+    hubUtils.hubTrace(INFO_EVENT, `Finished ${stepExecutionContext.describe()}`);
   }
 
-  // TODO Will improve this error handling in DHFPRPOD-6720
-  finishJob(stepError, writeInfos) {
-    this.flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
-    if (stepError) {
-      this.flowResponse.jobStatus = "failed";
+  addFlowError(error) {
+    // The error has other keys, but the 3 below seem to suffice. stack/stackFrames both have a large amount of content that is 
+    // unlikely to help with debugging. The main thing the user needs to see is what document failed and why did it fail; the 3 
+    // keys below answer those questions.
+    const flowError = {
+      name: error.name,
+      message: error.message,
+      description: error.toString()
+    };
+    if (!this.flowResponse.flowErrors) {
+      this.flowResponse.flowErrors = [flowError];
     } else {
-      this.flowResponse.jobStatus = "finished";
+      this.flowResponse.flowErrors.push(flowError);
+    }
+  }
+
+  determineJobStatus() {
+    if (this.flowResponse.flowErrors && this.flowResponse.flowErrors.length > 0) {
+      return "finished_with_errors";
     }
 
+    for (var key of Object.keys(this.flowResponse.stepResponses)) {
+      const stepStatus = this.flowResponse.stepResponses[key].status;
+      if (stepStatus) {
+        if (stepStatus.startsWith("failed")) {
+          return "failed";
+        }
+        if (stepStatus.startsWith("completed with errors")) {
+          return "finished_with_errors";
+        }  
+      }
+    }
+    return "finished";
+  }
+
+  flowFailed() {
+    return "failed" === this.determineJobStatus();
+  }
+
+  /**
+   * Update the flowResponse and also save Job/Batch documents if enabled.
+   * 
+   * @param writeInfos 
+   */
+  finishAndSaveJob(writeInfos) {
+    this.flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
+    this.flowResponse.jobStatus = this.determineJobStatus();
+
     if (this.job) {
-      this.job.finishJob(this.flowResponse.jobStatus, this.flowResponse.timeEnded).create();
+      this.job.finishJob(
+        this.flowResponse.jobStatus, this.flowResponse.timeEnded, this.flowResponse.flowErrors
+      ).create();
     }
 
     if (this.batch) {

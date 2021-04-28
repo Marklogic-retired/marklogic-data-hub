@@ -449,6 +449,13 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         verifyFlowStopsOnError(options);
     }
 
+    /**
+     * Note that this tests an error where the step is unable to run, and the error is then thrown by ML to the
+     * Java code. This does not account for an error that the ML code catches, such as when a step fails to process
+     * an item but still completes.
+     *
+     * @param options
+     */
     private void verifyFlowStopsOnError(Map<String, Object> options) {
         runAsDataHubOperator();
 
@@ -463,6 +470,35 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         flowRunner.awaitCompletion();
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), "Unexpected job status: " + resp.toJson());
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+    }
+
+    /**
+     * In this test, the step throws an error for an item, but it still completes. FlowRunner should still detect
+     * this as an error and thus stop the flow.
+     */
+    @Test
+    void stopOnErrorWhenStepFailsItem() {
+        installReferenceModelProject().createRawCustomer(1, "Jane");
+
+        RunFlowResponse response = runFlow(new FlowInputs("customHookFlow", "1", "2")
+            .withOption("stopOnError", true)
+            .withOption("throwErrorOnPurpose", true)
+        );
+
+        assertEquals("stop-on-error", response.getJobStatus());
+        assertEquals("1", response.getLastAttemptedStep());
+        assertEquals("0", response.getLastCompletedStep());
+
+        RunStepResponse stepResponse = response.getStepResponses().get("1");
+        assertEquals(1, stepResponse.getTotalEvents());
+        assertEquals(0, stepResponse.getSuccessfulEvents());
+        assertEquals(1, stepResponse.getFailedEvents());
+        assertEquals("canceled step 1", stepResponse.getStatus(),
+            "'stop on error' is only possible as a step status if the undocumented stopOnFailure option " +
+                "is used. If only stopOnError (which is documented) is used, then 'canceled' is the step status.");
+
+        assertEquals(1, response.getStepResponses().keySet().size(),
+            "The second step should not have been run since stopOnError=true");
     }
 
     @Test

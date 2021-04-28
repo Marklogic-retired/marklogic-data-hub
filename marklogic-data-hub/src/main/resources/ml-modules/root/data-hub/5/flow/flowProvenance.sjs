@@ -51,7 +51,7 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
   const flowStep = stepExecutionContext.flowStep;
 
   if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Generating provenance records for ${stepExecutionContext.getLabelForLogging()}`);
+    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Generating provenance records for ${stepExecutionContext.describe()}`);
   }
   
   const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase() : stepDefinition.type;

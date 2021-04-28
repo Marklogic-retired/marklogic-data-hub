@@ -43,18 +43,18 @@ const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
 function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, stepNumbers) {
   let currentContentArray = normalizeContentArray(contentArray);
   runtimeOptions = runtimeOptions || {};
-
+  jobId = jobId || sem.uuidString();
+  
   hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${currentContentArray.length}`);
 
   const writeQueue = new WriteQueue();
   const provInstance = new prov.Provenance();
   const flowExecutionContext = new FlowExecutionContext(Artifacts.getFullFlow(flowName), jobId, runtimeOptions, stepNumbers);
-  let stepError;
 
   for (let stepNumber of flowExecutionContext.stepNumbers) {
     const stepExecutionContext = flowExecutionContext.startStep(stepNumber);
     const batchItems = currentContentArray.map(content => content.uri);
-    
+
     try {
       prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
 
@@ -62,32 +62,45 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
         processContentWithStep(stepExecutionContext, currentContentArray, writeQueue) : 
         fn.head(xdmp.invokeFunction(function() {
           return processContentWithStep(stepExecutionContext, currentContentArray, writeQueue);
-        }, {database: xdmp.database(stepExecutionContext.getSourceDatabase())}));
+        }, {
+          // Uses the same options as flow.sjs
+          database: xdmp.database(stepExecutionContext.getSourceDatabase()),
+          update: stepExecutionContext.combinedOptions.stepUpdate ? 'true': 'false',
+          ignoreAmps: true
+        }));
       
       const stepResponse = stepExecutionContext.buildStepResponse(jobId);
-      addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
-      if (stepExecutionContext.provenanceIsEnabled()) {
-        flowProvenance.queueProvenanceData(stepExecutionContext, provInstance, currentContentArray);
-      } else {
-        hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.getLabelForLogging()}`);
+
+      if (!stepExecutionContext.wasCompleted()) {
+        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);
+        break;
       }
-      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);
-      hubUtils.hubTrace(INFO_EVENT, `Finished ${stepExecutionContext.getLabelForLogging()}`);
+      else {
+        addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
+        if (stepExecutionContext.provenanceIsEnabled()) {
+          flowProvenance.queueProvenanceData(stepExecutionContext, provInstance, currentContentArray);
+        } else {
+          hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
+        }
+        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);  
+      }
     } catch (error) {
-      stepExecutionContext.addErrorForEntireBatch(error, batchItems);
+      // Catches any error thrown by a step, except for an error when an individual item is processed
+      // Note that stopOnError is not intended to have any impact here; it only affects the execution of 
+      // steps that are not acceptsBatch=true, where it may be valid to continue as long as the step successfully
+      // processed at least one item. That's because we don't have an output content array in this scenario, and
+      // thus there's nothing to pass onto the next step.
+      stepExecutionContext.addStepErrorForEntireBatch(error, batchItems);
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
       }
-      flowExecutionContext.finishStep(stepExecutionContext, stepExecutionContext.buildStepResponse(jobId), batchItems);
-      stepError = error;
+      const stepResponse = stepExecutionContext.buildStepResponse(jobId);
+      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems);
       break;
     }
   }
 
-  // TODO Will improve error handling in DHFPROD-6720
-  const writeInfos = !stepError ? writeQueue.persist() : null;
-  provInstance.commit();
-  flowExecutionContext.finishJob(stepError, writeInfos);
+  finishFlowExecution(flowExecutionContext, writeQueue, provInstance);
   return flowExecutionContext.flowResponse;
 }
 
@@ -99,15 +112,13 @@ function normalizeContentArray(contentArray) {
 }
 
 /**
- * TODO ignoring invoking step against a different database for now
- *
- * @param stepExecutionContext
- * @param contentArray
- * @param writeQueue
+ * 
+ * @param stepExecutionContext {array} defines the step to execute and context for executing the step
+ * @param contentArray {array} array of content objects to process
+ * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
+ * by the executed step is added to it
  */
 function processContentWithStep(stepExecutionContext, contentArray, writeQueue) {
-  const batchItems = contentArray.map(content => content.uri);
-
   const hookRunner = stepExecutionContext.makeCustomHookRunner(contentArray);
   if (hookRunner && hookRunner.runBefore) {
     hookRunner.runHook();
@@ -115,29 +126,25 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
 
   invokeBeforeMain(stepExecutionContext, contentArray);
 
-  const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
-    runStepOnBatch(contentArray, stepExecutionContext) :
-    runStepOnEachItem(contentArray, stepExecutionContext);
+  let outputContentArray;
+  if (stepExecutionContext.stepModuleAcceptsBatch()) {
+    outputContentArray = runStepOnBatch(contentArray, stepExecutionContext);
+  } else {
+    outputContentArray = runStepOnEachItem(contentArray, stepExecutionContext);
+    if (!stepExecutionContext.wasCompleted()) {
+      return [];
+    }
+  }
 
-  // The behavior of an interceptor error being caught, and the custom hook still being run, is consistent with DHF 5.4.0
-  // when interceptors were introduced
-  const stepInterceptorError = applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext, batchItems);
+  applyTargetCollectionsAdditivity(stepExecutionContext, contentArray);
+  applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext);
 
   if (hookRunner && !hookRunner.runBefore) {
     hookRunner.runHook();
   }
 
-  // If an interceptor failed, none of the content objects processed by the step module should be written
-  if (stepInterceptorError != null) {
-    return [];
-  }
-
-  if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
-    applyTargetCollectionsAdditivity(contentArray);
-  }
-
   if (!stepExecutionContext.stepOutputShouldBeWritten()) {
-    hubUtils.hubTrace(INFO_EVENT, `Not writing step output for ${stepExecutionContext.getLabelForLogging()}`);
+    hubUtils.hubTrace(INFO_EVENT, `Not writing step output for ${stepExecutionContext.describe()}`);
   }
   else if (writeQueue != null) {
     // Since DHF 5.0, collections from options have been added after step processing as opposed to before step processing.
@@ -149,34 +156,47 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
   return outputContentArray;
 }
 
+/**
+ * Invokes the "beforeMain" function if a step module defines it. If an error is thrown, it is caught and rethrown
+ * with a more helpful message. 
+ * 
+ * @param stepExecutionContext 
+ * @param contentArray 
+ */
 function invokeBeforeMain(stepExecutionContext, contentArray) {
   // If the step module cannot be found, a friendly error will be thrown, which is why this is not included in the
   // try/catch block below
   const stepBeforeMainFunction = stepExecutionContext.getStepBeforeMainFunction();
   if (stepBeforeMainFunction) {
     try {
-      hubUtils.hubTrace(INFO_EVENT, `Invoking beforeMain on step ${stepExecutionContext.getLabelForLogging()}`);
+      hubUtils.hubTrace(INFO_EVENT, `Invoking beforeMain on step ${stepExecutionContext.describe()}`);
       const contentSequence = hubUtils.normalizeToSequence(contentArray);
       stepBeforeMainFunction(contentSequence, stepExecutionContext);
     } catch (error) {
-      throw Error(`Unable to invoke beforeMain on ${stepExecutionContext.getLabelForLogging()}; cause: ${error.message}`);
+      throw Error(`Unable to invoke beforeMain on ${stepExecutionContext.describe()}; cause: ${error.message}`);
     }
   }
 }
 
-function applyTargetCollectionsAdditivity(contentArray) {
-  contentArray.forEach(content => {
-    if (content.context.originalCollections) {
-      let collections = content.context.collections || [];
-      content.context.collections = collections.concat(content.context.originalCollections);
-    }
-  });
+function applyTargetCollectionsAdditivity(stepExecutionContext, contentArray) {
+  if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
+    contentArray.forEach(content => {
+      if (content.context.originalCollections) {
+        let collections = content.context.collections || [];
+        content.context.collections = collections.concat(content.context.originalCollections);
+      }
+    });
+  }
 }
 
 /**
  * When a step has acceptsBatch=true, then the step module will be invoked once with the entire content array
  * passed to it.
- *
+ *  
+ * If an error occurs within the step module, it is associated with the entire batch. That makes it equivalent to an 
+ * error thrown when running any part of the step execution, such as an interceptor or custom hook or the beforeMain 
+ * function. So the error is not caught here; it is expected to be caught by the client that runs a step. 
+ * 
  * @param contentArray
  * @param stepExecutionContext
  * @return if an error occurs while processing the batch, in the step execution context and rethrown; else, 
@@ -193,23 +213,16 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
   const outputContentArray = [];
   const batchItems = contentArray.map(content => content.uri);
 
-  try {
-    const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions, stepExecutionContext));
-    for (const outputContent of outputSequence) {
-      flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
-      if (DEBUG_ENABLED) {
-        hubUtils.hubTrace(DEBUG_EVENT, `Returning content: ${xdmp.toJsonString(outputContent)}`);
-      }
-      outputContentArray.push(outputContent);
+  const outputSequence = hubUtils.normalizeToSequence(stepMainFunction(contentSequence, stepExecutionContext.combinedOptions, stepExecutionContext));
+
+  for (const outputContent of outputSequence) {
+    flowUtils.addMetadataToContent(outputContent, stepExecutionContext.flow.name, stepExecutionContext.flowStep.name, stepExecutionContext.jobId);
+    if (DEBUG_ENABLED) {
+      hubUtils.hubTrace(DEBUG_EVENT, `Returning content: ${xdmp.toJsonString(outputContent)}`);
     }
-    stepExecutionContext.setCompletedItems(batchItems);
-  } catch (error) {
-    hubUtils.hubTrace(INFO_EVENT, `Error while processing batch: ${error.message}`);
-    stepExecutionContext.addErrorForEntireBatch(error, batchItems);
-    if (stepExecutionContext.stepErrorShouldBeThrown()) {
-      throw error;
-    }
+    outputContentArray.push(outputContent);
   }
+  stepExecutionContext.setCompletedItems(batchItems);
 
   return outputContentArray;
 }
@@ -225,7 +238,8 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
 function runStepOnEachItem(contentArray, stepExecutionContext) {
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
-  contentArray.map(contentObject => {
+
+  for (var contentObject of contentArray) {
     const thisItem = contentObject.uri;
     if (DEBUG_ENABLED) {
       hubUtils.hubTrace(DEBUG_EVENT, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
@@ -244,14 +258,17 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
         }  
       }
     } catch (error) {
-      hubUtils.hubTrace(INFO_EVENT, `Error while processing item ${thisItem}: ${error.message}`);
-      stepExecutionContext.addBatchError(error, thisItem);
+      if (stepExecutionContext.combinedOptions.stopOnError === true) {
+        stepExecutionContext.stopWithError(error, thisItem);
+        hubUtils.hubTrace(INFO_EVENT, `Stopping execution of ${stepExecutionContext.describe()}`);
+        return [];
+      }
+      stepExecutionContext.addStepError(error, thisItem);
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
       }
     }
-  });
-
+  }
   return outputContentArray;
 }
 
@@ -296,7 +313,7 @@ function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
  * @param writeQueue
  */
 function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, writeQueue) {
-  hubUtils.hubTrace(INFO_EVENT, `Adding output content objects to write queue for ${stepExecutionContext.getLabelForLogging()}`);
+  hubUtils.hubTrace(INFO_EVENT, `Adding content objects to write queue for ${stepExecutionContext.describe()}; content array length: ${outputContentArray.length}`);
   const targetDatabase = stepExecutionContext.getTargetDatabase();
   outputContentArray.forEach(content => {
     const contentCopy = copyContentObject(content);
@@ -365,7 +382,7 @@ function copyContentObject(contentObject) {
  * @param stepExecutionContext 
  * @returns if an error occurred, the error is returned
  */
-function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionContext, batchItems) {
+function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionContext) {
   const flowStep = stepExecutionContext.flowStep;
   if (flowStep.interceptors) {
     let currentInterceptor = null;
@@ -382,9 +399,7 @@ function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionCont
       // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
       // all items failed; this is analogous to the behavior of acceptsBatch=true
       hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor at path: ${currentInterceptor.path}; error: ${error.message}`);
-      stepExecutionContext.setCompletedItems([]);
-      stepExecutionContext.addErrorForEntireBatch(error, batchItems);
-      return error;
+      throw error;
     }
   }
 }
@@ -407,6 +422,41 @@ function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, step
       stepResponse.fullOutput[contentObject.uri] = copyContentObject(contentObject);
     });
   }  
+}
+
+/**
+ * "Finish" = write all data produced by executing the flow, including provenance data. Then write the job/batch 
+ * data if those are enabled. The flowResponse in the flowExecutionContext is updated as part of this process.
+ * 
+ * @param flowExecutionContext 
+ * @param writeQueue 
+ * @param provInstance 
+ */
+function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
+  // Any error in here is logged since the user may not see the flowResponse or have job data enabled
+  let writeInfos;
+  if (!flowExecutionContext.flowFailed()) {
+    try {
+      writeInfos = writeQueue.persist();
+    } catch (error) {
+      console.warn(`Unable to persist content for ${flowExecutionContext.describe()}`, error);
+      flowExecutionContext.addFlowError(error);
+    }
+
+    try {
+      provInstance.commit();
+    } catch (error) {
+      console.warn(`Unable to persist provenance for ${flowExecutionContext.describe()}`, error);
+      flowExecutionContext.addFlowError(error);
+    }
+  }
+  
+  try {
+    flowExecutionContext.finishAndSaveJob(writeInfos);
+  } catch (error) {
+    console.warn(`Unable to finish job for ${flowExecutionContext.describe()}`, error);
+    flowExecutionContext.addFlowError(error);
+  }
 }
 
 module.exports = {

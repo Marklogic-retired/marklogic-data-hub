@@ -24,5 +24,5 @@ var stepNumber;
 var stepStatus;
 var runStepResponse = fn.head(xdmp.fromJSON(runStepResponse));
 
-const job = Job.getRequiredJob(jobId).finishStep(stepNumber, stepStatus, runStepResponse, null).update();
+const job = Job.getRequiredJob(jobId).finishStep(stepNumber, runStepResponse, stepStatus, null).update();
 job;

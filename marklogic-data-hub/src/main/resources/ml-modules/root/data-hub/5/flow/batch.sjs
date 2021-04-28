@@ -23,6 +23,8 @@ const jobs = require("/data-hub/5/impl/jobs.sjs");
 /**
  * Encapsulates a Batch object and provides convenience operations for updating the object and persisting it
  * to the jobs database.
+ * 
+ * Note that nothing is written to the database until the "persist" function is called.
  */
 class Batch {
 
@@ -127,7 +129,7 @@ class Batch {
       target.processedItemHashes = batchItems.map(item => xdmp.hash64(prefix + item));
     }
 
-    const firstError = stepExecutionContext.batchErrors.length ? stepExecutionContext.batchErrors[0] : null;
+    const firstError = stepExecutionContext.stepErrors.length ? stepExecutionContext.stepErrors[0] : null;
     if (firstError) {
       // Sometimes we don't get the stackFrames
       if (firstError.stackFrames) {

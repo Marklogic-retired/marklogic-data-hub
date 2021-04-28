@@ -22,6 +22,9 @@ const jobs = require("/data-hub/5/impl/jobs.sjs");
 /**
  * Encapsulates a Job object and provides convenience operations for updating the object and persisting it
  * to the jobs database.
+ * 
+ * Note that nothing is written to the database unless either "create" or "update"
+ * is invoked.
  */
 class Job {
 
@@ -61,7 +64,17 @@ class Job {
     return this;
   }
   
-  finishStep(stepNumber, stepStatus, stepResponse, outputContentArray) {
+  /**
+   * 
+   * @param stepNumber 
+   * @param stepResponse 
+   * @param stepStatus {string} optional; if specified, the status in stepResponse will be ignored
+   * @param outputContentArray {array} optional; will be passed along to the jobReport function for the step if one exists
+   * @returns 
+   */
+  finishStep(stepNumber, stepResponse, stepStatus, outputContentArray) {
+    stepStatus = stepStatus || stepResponse.status;
+
     hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Finishing step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
 
     this.data.job.jobStatus = stepStatus;
@@ -84,10 +97,22 @@ class Job {
     return this;
   }
 
-  finishJob(jobStatus, timeEnded) {
+  /**
+   * 
+   * @param jobStatus 
+   * @param timeEnded 
+   * @param flowErrors {array} optional array of flow-level errors; as of 5.5, will only exist for connected steps 
+   * @returns 
+   */
+  finishJob(jobStatus, timeEnded, flowErrors) {
     hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Setting status of job '${this.data.job.jobId}' to '${jobStatus}'`);
     this.data.job.jobStatus = jobStatus;
     this.data.job.timeEnded = timeEnded;
+
+    if (flowErrors) {
+      this.data.job.flowErrors = flowErrors;
+    }
+
     return this;
   }
 }
