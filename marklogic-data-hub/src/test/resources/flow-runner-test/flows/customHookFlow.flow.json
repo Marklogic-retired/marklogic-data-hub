@@ -1,0 +1,63 @@
+{
+  "name": "customHookFlow",
+  "stopOnError": "true",
+  "steps": {
+    "1": {
+      "stepDefinitionName": "default-ingestion",
+      "name": "ingestXml",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "xml",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "outputFormat": "xml",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "collections": [
+          "xml-coll"
+        ]
+      }
+    },
+    "2": {
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "name": "mapXml",
+      "options": {
+        "collections": [
+          "xml-map"
+        ],
+        "outputFormat": "xml",
+        "mapping": {
+          "name": "e2e-mapping",
+          "version": 1
+        },
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "sourceQuery": "cts.collectionQuery('xml-coll')"
+      },
+      "customHook": {
+        "module": "/custom-modules/testCustomHook.sjs",
+        "runBefore": true
+      },
+      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+    },
+    "3": {
+      "stepDefinitionName": "default-mapping",
+      "stepDefinitionType": "MAPPING",
+      "name": "otherMapXml",
+      "options": {
+        "collections": [
+          "xml-map"
+        ],
+        "outputFormat": "xml",
+        "mapping": {
+          "name": "e2e-mapping",
+          "version": 1
+        },
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "sourceQuery": "cts.collectionQuery('xml-coll')"
+      },
+      "modulePath": "/data-hub/5/builtins/steps/mapping/default/main.sjs"
+    }
+  }
+}

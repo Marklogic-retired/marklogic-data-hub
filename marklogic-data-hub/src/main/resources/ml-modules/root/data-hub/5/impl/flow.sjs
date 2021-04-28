@@ -206,23 +206,35 @@ class Flow {
     }
     let flowInstance = this;
 
-    if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
-      this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
-    } else {
-      xdmp.invoke(
-        '/data-hub/5/impl/invoke-step.sjs',
-        {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
-        {
-          database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
-          update: combinedOptions.stepUpdate ? 'true': 'false',
-          commit: 'auto',
-          ignoreAmps: true
-        }
-      );
+    try {
+      if (this.isContextDB(this.globalContext.sourceDatabase) && !combinedOptions.stepUpdate) {
+        this.runStep(uris, content, combinedOptions, flowName, stepNumber, stepRef);
+      } else {
+        xdmp.invoke(
+          '/data-hub/5/impl/invoke-step.sjs',
+          {flow: flowInstance, uris, content, options: combinedOptions, flowName, step: stepRef, stepNumber},
+          {
+            database: this.globalContext.sourceDatabase ? xdmp.database(this.globalContext.sourceDatabase) : xdmp.database(),
+            update: combinedOptions.stepUpdate ? 'true': 'false',
+            commit: 'auto',
+            ignoreAmps: true
+          }
+        );
+      }
+    } catch (error) {
+      // If runStep throws an error that isn't caught (i.e. isn't caught for the step's main function), then we treat
+      // the batch as having failed. Need to update the Batch document to reflect this failure. The error is then
+      // rethrown so that QueryStepRunner can handle it.
+      if (!combinedOptions.noBatchWrite && !combinedOptions.disableJobOutput) {
+        let batchStatus = "failed";
+        this.globalContext.failedItems = uris;
+        this.globalContext.batchErrors.push(error);
+        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, uris, {}, this.globalContext.batchErrors[0]);
+      }
+      throw error;
     }
 
     let writeTransactionInfo = {};
-    //let's update our jobdoc now
     if (!combinedOptions.noWrite) {
       try {
         writeTransactionInfo = this.datahub.hubUtils.writeDocuments(this.writeQueue, 'xdmp.defaultPermissions()', collections, this.globalContext.targetDatabase);
