@@ -24,6 +24,8 @@ const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 1", 
 
 const urisMerged = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json"];
 const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
+const compareValuesData = [{propertyName: "id", uriValue1: "empty", uriValue2: "empty"}, {propertyName: "fname", uriValue1: "Alexandria", uriValue2: "Alexandria"},
+  {propertyName: "lname", uriValue1: "Wilson", uriValue2: "Wilson"}, {propertyName: "Address", uriValue1: "123 Wilson Rd", uriValue2: "123 Wilson Rd"}];
 
 describe("Matching", () => {
   before(() => {
@@ -318,27 +320,6 @@ describe("Matching", () => {
     for (let k in urisMerged) {
       cy.waitUntil(() => cy.findAllByText(urisMerged[k]).should("have.length.gt", 0));
     }
-    cy.findByText("/json/persons/first-name-double-metaphone1.json").first().click();
-    cy.findByLabelText("right").first().click();
-
-    //To verify content of multiple properties
-    cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
-    cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
-    cy.waitUntil(() => cy.findAllByText("ZipCode").should("have.length.gt", 0));
-    cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
-
-    //To test expanded uri table content
-    for (let i in allDataMatchedResults) {
-      cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
-      cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
-      cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
-    }
-    cy.findByText("Total Score: 40").should("have.length.gt", 0);
-
-    multiSlider.deleteOption("testMultipleProperty");
-    matchingStepDetail.getSliderDeleteText().should("be.visible");
-    matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    cy.waitForAsyncRequest();
 
     // To test when user click on expand all icon
     cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {
@@ -348,8 +329,42 @@ describe("Matching", () => {
         });
       });
     });
-    cy.findAllByLabelText("matchedUrisPanel").should("have.length.gt", 0);
     cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
+
+    // To verify content of multiple properties
+    cy.findAllByLabelText("right").first().click();
+    cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findAllByText("ZipCode").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
+
+    // To test compare values for matched Uris
+    cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().click();
+    for (let i in compareValuesData) {
+      cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
+      cy.findAllByLabelText(compareValuesData[i].uriValue1).should("have.length.gt", 0);
+      cy.findAllByLabelText(compareValuesData[i].uriValue2).should("have.length.gt", 0);
+    }
+
+    // To test highlighted matched rows
+    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByLabelText("Close").click();
+
+    // To test expanded uri table content
+    cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().click());
+    for (let i in allDataMatchedResults) {
+      cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
+      cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
+      cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
+    }
+    cy.findAllByText("Total Score: 40").should("have.length.gt", 0);
+
+    multiSlider.deleteOption("testMultipleProperty");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
+    matchingStepDetail.confirmSliderOptionDeleteButton().click();
+    cy.waitForAsyncRequest();
 
     // To test when user click on collapse all icon
     cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {
@@ -359,7 +374,6 @@ describe("Matching", () => {
         });
       });
     });
-    cy.findAllByLabelText("matchedUrisPanel").should("not.visible");
     cy.findAllByLabelText("expandedTableView").should("not.visible");
   });
 });

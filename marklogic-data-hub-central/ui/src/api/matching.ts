@@ -38,3 +38,7 @@ export const previewMatchingActivity = async (testMatchData) => {
     console.error("Error while fetching the preview matching activity!", message);
   }
 };
+
+export const getDocFromURI = async (uri) => {
+  return await axios.get(`/api/entitySearch?docUri=${uri}`);
+};
