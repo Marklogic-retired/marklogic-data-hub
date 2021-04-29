@@ -15,6 +15,7 @@ type Props = {
   tooltipsData: any;
   updateStep: any
   stepData: any
+  entityMappingId: any;
 }
 
 const EntitySettings: React.FC<Props> = (props) => {
@@ -47,14 +48,27 @@ const EntitySettings: React.FC<Props> = (props) => {
   }, [popoverVisibility]);
 
   const getSettings = async () => {
-    if (props.stepData.collections) {
-      setDefaultCollections(props.stepData.collections);
-    }
-    if (props.stepData.additionalCollections) {
-      setAdditionalCollections([...props.stepData.additionalCollections]);
-    }
-    if (props.stepData.permissions) {
-      setTargetPermissions(props.stepData.permissions);
+    if (props.stepData?.relatedEntityMappings && props.entityMappingId?.length) {
+      let relatedEntity = props.stepData.relatedEntityMappings.filter(entity => { return entity.relatedEntityMappingId === props.entityMappingId; })[0];
+      if (relatedEntity.collections) {
+        setDefaultCollections(relatedEntity.collections);
+      }
+      if (relatedEntity.additionalCollections) {
+        setAdditionalCollections([...relatedEntity.additionalCollections]);
+      }
+      if (relatedEntity.permissions) {
+        setTargetPermissions(relatedEntity.permissions);
+      }
+    } else {
+      if (props.stepData.collections) {
+        setDefaultCollections(props.stepData.collections);
+      }
+      if (props.stepData.additionalCollections) {
+        setAdditionalCollections([...props.stepData.additionalCollections]);
+      }
+      if (props.stepData.permissions) {
+        setTargetPermissions(props.stepData.permissions);
+      }
     }
   };
 
@@ -98,7 +112,16 @@ const EntitySettings: React.FC<Props> = (props) => {
   };
 
   const updateStep = async (payload) => {
-    let stepPayload = Object.assign(props.stepData, payload);
+    let stepPayload;
+    if (props.stepData?.relatedEntityMappings && props.entityMappingId?.length) {
+      let relatedEntityIndex = props.stepData.relatedEntityMappings.findIndex(entity => { return entity.relatedEntityMappingId === props.entityMappingId; });
+      if (relatedEntityIndex !== -1) {
+        props.stepData.relatedEntityMappings[relatedEntityIndex] = Object.assign(props.stepData.relatedEntityMappings[relatedEntityIndex], payload);
+        stepPayload = props.stepData;
+      }
+    } else {
+      stepPayload = Object.assign(props.stepData, payload);
+    }
     await props.updateStep(stepPayload);
   };
 

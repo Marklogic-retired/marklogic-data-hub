@@ -52,6 +52,7 @@ interface Props {
   allRelatedEntitiesKeys: any;
   setAllRelatedEntitiesKeys: any;
   mapFunctions : any;
+  savedMappingArt : any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
@@ -95,7 +96,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [entityProperties, setEntityProperties] = useState<any[]>(props.entityTypeProperties);
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
-
   //Documentation links for using Xpath expressions
   const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
     <div><ul className={styles.docLinksUl}>
@@ -747,7 +747,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           </strong>
         </div>
         <div className={styles.entitySettingsLink}>
-          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} updateStep={props.updateStep} stepData={props.mapData} />
+          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId}/>
         </div>
       </div>
       { props.relatedMappings && props.relatedMappings.length > 0 ?
@@ -980,7 +980,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
-  return (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"}>
+  return (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
     <Table
       className={tableCSS}
       pagination={false}

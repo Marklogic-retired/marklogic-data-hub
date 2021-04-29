@@ -727,7 +727,7 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText;
+    let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText, getByPlaceholderText,  container;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByTestId = renderResults.getByTestId;
@@ -737,6 +737,8 @@ describe("RTL Source-to-entity map tests", () => {
       queryByTestId = renderResults.queryByTestId;
       getAllByLabelText = renderResults.getAllByLabelText;
       queryByLabelText = renderResults.queryByLabelText;
+      container = renderResults.container;
+      getByPlaceholderText = renderResults.getByPlaceholderText;
     });
 
     //expand nested levels first
@@ -820,6 +822,32 @@ describe("RTL Source-to-entity map tests", () => {
     //Both Products have no related entities so no filter should be available
     expect(queryByTestId("Product (Order hasProduct)-entities-filter")).not.toBeInTheDocument();
     expect(queryByTestId("Product (BabyRegistry hasProduct)-entities-filter")).not.toBeInTheDocument();
+
+    //verify advanced settings of related entity
+    //click on the related entity table order settings
+    fireEvent.click(container.querySelector("[data-testid=order-table] [data-testid=entity-settings]"));
+
+    //verify Target Collections
+    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Please add target collections")).toBeInTheDocument();
+
+    //verify Default Collections
+    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Order")).toBeInTheDocument();
+
+    //verify Target Permissions
+    expect(getByText("Target Permissions")).toBeInTheDocument();
+    fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-operator"}});
+    expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-operator");
+    fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
+
+    expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
+
+    fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-operator,read"}});
+    expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-operator,read");
+    fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
+    expect(getByTestId("validationError")).toHaveTextContent("");
+
 
     //Deselect Order from entity filter in primary entity table
     fireEvent.click(getAllByLabelText("icon: close")[0]);

@@ -652,6 +652,9 @@ const MappingStepDetail: React.FC = () => {
     });
   }, [sourceData]);
 
+  useEffect(() => {
+    relatedEntityTypeProperties.length && setRelatedEntityObject();
+  }, [relatedEntityTypeProperties]);
 
   useEffect(() => {
     let allEntitiesToRemove : any = [];
@@ -1099,6 +1102,23 @@ const MappingStepDetail: React.FC = () => {
     return flatArray;
   };
 
+  const setRelatedEntityObject = () => {
+    let relatedEntities: any[] = [];
+    if (savedMappingArt.relatedEntityMappings?.length) {
+      relatedEntities = [...savedMappingArt.relatedEntityMappings];
+    }
+    relatedEntityTypeProperties?.length && relatedEntityTypeProperties.forEach(entity => {
+      if (relatedEntities.length === 0 || relatedEntities.findIndex(el => el.relatedEntityMappingId === entity.entityMappingId) === -1) {
+        let tgtEntityType = entity.entityModel.info.baseUri + entity.entityModel.info.title + "-" + entity.entityModel.info.version + "/" + entity.entityModel.info.title;
+        let relatedEntityCollections = [curationOptions.activeStep.stepArtifact.name, entity.entityModel.info.title];
+        let relatedEntity = {relatedEntityMappingId: entity.entityMappingId, expressionContext: "", properties: {}, targetEntityType: tgtEntityType, collections: relatedEntityCollections, permissions: curationOptions.activeStep.stepArtifact.permissions};
+        relatedEntities.push(relatedEntity);
+      }
+    });
+    let {...dataPayload} = savedMappingArt;
+    dataPayload.relatedEntityMappings = relatedEntities;
+    setSavedMappingArt(dataPayload);
+  };
 
   const saveMapping =  async (mapObject, entityMappingId, updatedContext, relatedEntityModel) => {
     let obj = {};
@@ -1298,7 +1318,6 @@ const MappingStepDetail: React.FC = () => {
     setOpenStepSettings(false);
   };
 
-
   return (
     <>
       <CustomPageHeader
@@ -1442,8 +1461,9 @@ const MappingStepDetail: React.FC = () => {
                 allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                 setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                 mapFunctions = {mapFunctions}
+                savedMappingArt = {savedMappingArt}
               />
-              {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.includes(entity) ?
+              {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
                 <EntityMapTable
                   mapResp={mapResp}
                   mapData={mapData}
@@ -1482,6 +1502,7 @@ const MappingStepDetail: React.FC = () => {
                   allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                   setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                   mapFunctions = {mapFunctions}
+                  savedMappingArt = {savedMappingArt}
                 /> : "")}
             </div>
           </SplitPane>
