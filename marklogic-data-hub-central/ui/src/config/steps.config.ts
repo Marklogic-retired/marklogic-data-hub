@@ -13,6 +13,9 @@ const defaultBatchSize = 100;
 const defaultSelectedSource = "collections";
 const defaultFieldSeparator = ",";
 
+const defaultPrimaryUri = "$URI";
+const defaultRelatedUri = (entityName) => `hubURI('${entityName}')`;
+
 export default {
     invalidJSONMessage,
     stagingDb,
@@ -26,4 +29,6 @@ export default {
     defaultBatchSize,
     defaultSelectedSource,
     defaultFieldSeparator,
+    defaultPrimaryUri,
+    defaultRelatedUri
 };

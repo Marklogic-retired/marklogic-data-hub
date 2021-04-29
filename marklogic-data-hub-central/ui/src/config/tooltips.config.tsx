@@ -216,6 +216,11 @@ const MappingStepTooltips = {
   provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.'
 };
 
+const MappingDetailsTooltips = {
+  context: "An element in the source data from which to derive the values of this entity property's children. Both the source data element and the entity property must be of the same type (Object or an array of Object instances). Use a slash (\"/\") if the source model is flat.",
+  uri: "URI for the records created by the mapping step for this entity."
+};
+
 const MappingStepPlaceholders = {
   name: 'Enter the name.',  /* intended dupe: common */
   description: 'Enter the description.',  /* intended dupe: common */
@@ -629,6 +634,7 @@ export {
   LoadingStepMessages,
   MappingStepIntros,
   MappingStepTooltips,
+  MappingDetailsTooltips,
   MappingStepPlaceholders,
   MappingStepMessages,
   MatchingStepIntros,

@@ -16,6 +16,7 @@ import {personEntityDef, personNestedEntityDef, personNestedEntityDefSameNames, 
 import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authorities";
 import SplitPane from "react-split-pane";
 import userEvent from "@testing-library/user-event";
+import StepsConfig from "../../../../config/steps.config";
 
 jest.mock("axios");
 jest.mock("../../../../api/mapping");
@@ -653,74 +654,6 @@ describe("RTL Source-to-entity map tests", () => {
     validateMappingTableRow(srcTable, ["123EAC", "home", undefined, "commercial", "retriever, golden, labrador", "", "null", "321", "true", " ", "[ ]", "1, 2, 3", "true, false, true"], "val", data.mapProps.sourceData, "source");
   });
 
-  test("Validate Entity table and sorting", async () => {
-    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
-    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
-    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
-    mockGetNestedEntities.mockResolvedValue({status: 200, data: personEntityDef});
-
-    let getByTestId, getByLabelText, queryByText;
-    await act(async () => {
-      const renderResults = defaultRender(personMappingStepWithData);
-      getByTestId = renderResults.getByTestId;
-      getByLabelText = renderResults.getByLabelText;
-      queryByText = renderResults.queryByText;
-    });
-
-
-    const entityTableNameSort = getByTestId("entityTableName"); // For value column sorting
-    const entityTableTypeSort = getByTestId("entityTableType"); // For Type column sorting
-
-    //expand nested levels first
-    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
-
-    //Verify utility in first row of Entity table
-
-    //Entity type title should be visible
-    let entTableTopRow: any;
-    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
-    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
-
-    //Verify related entity filter does not exist in table with no related entities
-    expect(queryByText("Map related entities:")).toBeNull();
-
-    //Verify entity settings icon exists in the first row
-    expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
-
-    //Check sort order of Name Column before clicking on sort button
-    let entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["propId", "propName", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties, "entity");
-
-    //Click on the Name column to sort the rows by Ascending order
-    fireEvent.click(entityTableNameSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["gender", "items", "propAttribute", "propId", "propName"], "name", data.mapProps.entityTypeProperties, "entity");
-
-    //Entity type title should remain in the first row after sort is applied
-    entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
-    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
-
-    //Click on the Name column again to sort the rows by Descending order
-    fireEvent.click(entityTableNameSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["propName", "propId", "propAttribute", "items", "gender"], "name", data.mapProps.entityTypeProperties, "entity");
-
-    fireEvent.click(entityTableNameSort); //Reset the sort order to go back to default order
-
-    //Click on the Type column to sort the rows by Ascending order
-    fireEvent.click(entityTableTypeSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["int", "ItemType [ ]", "string", "string", "string"], "type", data.mapProps.entityTypeProperties, "entity");
-
-    //Click on the Type column again to sort the rows by Descending order
-    fireEvent.click(entityTableTypeSort);
-    entTable = document.querySelectorAll("#entityContainer .ant-table-row-level-1");
-    validateMappingTableRow(entTable, ["string", "string", "string", "ItemType [ ]", "int"], "type", data.mapProps.entityTypeProperties, "entity");
-
-  });
-
   test("Verify view related entities with selection/deselection in filters", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[1]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
@@ -916,10 +849,10 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
 
     //Verify Context name and xpath field is present for only the related entity table
-    expect(queryByTestId("Customer-Context-name")).not.toBeInTheDocument();
+    expect(queryByTestId("Person-Context-name")).not.toBeInTheDocument();
     expect(queryByTestId("BabyRegistry (ownedBy Person)-Context-name")).toBeInTheDocument();
 
-    expect(queryByTestId("Customer-Context-mapexpression")).not.toBeInTheDocument();
+    expect(queryByTestId("Person-Context-mapexpression")).not.toBeInTheDocument();
     expect(queryByTestId("BabyRegistry (ownedBy Person)-Context-mapexpression")).toBeInTheDocument();
 
     let mapExp = getByTestId("BabyRegistry (ownedBy Person)-Context-mapexpression");
@@ -975,6 +908,51 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Right Xpath is populated (BabyRegistry/BabyRegistryId) since sourceContext is empty)
     expect(mapExp).toHaveTextContent("BabyRegistry/BabyRegistryId");
+
+  });
+
+  test("Verify URI fields for primary and related entity tables.", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
+
+    let getByTestId, getByText, queryByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getByTestId = renderResults.getByTestId;
+      getByText = renderResults.getByText;
+      queryByTestId = renderResults.queryByTestId;
+    });
+
+    // URI field should exist for primary entity table and have default value
+    let primaryUriExp = getByTestId("Person-URI-mapexpression");
+    expect(primaryUriExp).toHaveTextContent(StepsConfig.defaultPrimaryUri);
+
+    // URI field should NOT exist for unopened related entity table
+    expect(queryByTestId("BabyRegistry (ownedBy Person)-URI-mapexpression")).not.toBeInTheDocument();
+
+    // Primary entity URI field can be edited
+    userEvent.type(primaryUriExp, "editedPrimaryUri");
+    expect(primaryUriExp).toHaveTextContent("editedPrimaryUri");
+
+    // Open related entity table
+    let entitiesFilter = getByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-search__field"
+    );
+    fireEvent.click(entitiesFilter);
+    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
+
+    // URI field should exist for related entity table and have default value
+    let relatedUriExp = getByTestId("BabyRegistry (ownedBy Person)-URI-mapexpression");
+    expect(relatedUriExp).toHaveTextContent(StepsConfig.defaultRelatedUri("BabyRegistry"));
+
+    // Related entity URI field can be edited
+    userEvent.type(relatedUriExp, "editedRelatedUri");
+    expect(relatedUriExp).toHaveTextContent("editedRelatedUri");
 
   });
 
@@ -1142,7 +1120,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("propAttribute-value")).not.toHaveTextContent("home");
 
     //Verify that fx/source-data list is disabled for mapping reader user
-    expect(getByTestId("propId-101-functionIcon")).toBeDisabled();
+    expect(getByTestId("propId-102-functionIcon")).toBeDisabled();
     expect(getByTestId("propId-listIcon1")).toHaveAttribute("disabled");
   });
 
@@ -1195,7 +1173,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByTestId("propId-expErr")).toBeNull();
 
     //Verify that fx/source-data list is enabled for mapping writer user
-    expect(getByTestId("propId-101-functionIcon")).toBeEnabled();
+    expect(getByTestId("propId-102-functionIcon")).toBeEnabled();
     expect(getByTestId("propId-listIcon1")).not.toHaveAttribute("disabled");
   });
 
@@ -1429,7 +1407,7 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.change(propAttributeExpression, {target: {value: ""}});
     fireEvent.blur(propAttributeExpression);
 
-    let functionSelector = getByTestId("propAttribute-103-functionIcon");
+    let functionSelector = getByTestId("propAttribute-104-functionIcon");
     fireEvent.click(functionSelector);
     let inputBox = getAllByText(
       (_content, element) =>
