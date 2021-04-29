@@ -1,4 +1,4 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -18,7 +18,7 @@ const contentArray = [
 
 const assertions = [];
 
-const response = flowRunner.processContentWithFlow(flowName, contentArray, jobId, runtimeOptions);
+const response = flowApi.runFlowOnContent(flowName, contentArray, jobId, runtimeOptions);
 
 const ingestResponse = response.stepResponses["1"];
 assertions.push(

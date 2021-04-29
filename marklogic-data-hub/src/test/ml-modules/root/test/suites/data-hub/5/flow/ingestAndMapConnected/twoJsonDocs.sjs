@@ -1,4 +1,4 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -62,7 +62,7 @@ const contentArray = [
   { "uri": "/customer2.json", "value": { "customerId": "2" } }
 ];
 
-const response = flowRunner.processContentWithFlow(flowName, contentArray, jobId, options);
+const response = flowApi.runFlowOnContent(flowName, contentArray, jobId, options);
 
 const assertions = [
   test.assertEqual("finished", response.jobStatus, "Unexpected status: " + xdmp.toJsonString(response)),

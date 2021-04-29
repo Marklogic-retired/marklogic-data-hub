@@ -1,10 +1,10 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
 const flowName = "myFlow";
 
-const response = flowRunner.processContentWithFlow(flowName,
+const response = flowApi.runFlowOnContent(flowName,
   [{
     "uri": "/incomingCustomer.json",
     "value": {

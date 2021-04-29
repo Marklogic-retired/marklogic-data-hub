@@ -5,7 +5,7 @@ const test = require("/test/test-helper.xqy");
 const flowName = "myFlow";
 
 // decimalProp is expected have a decimal range index on it that the bootstrap process deploys
-const response = flowRunner.processContentWithFlow(flowName,
+const response = flowRunner.runFlowOnContent(flowName,
   [
     { "uri": "/customer1.json", "value": { "decimalProp": 1 } },
     { "uri": "/customer2.json", "value": { "decimalProp": "invalid value" } }

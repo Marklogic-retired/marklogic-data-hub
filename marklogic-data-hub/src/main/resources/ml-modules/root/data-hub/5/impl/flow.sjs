@@ -266,7 +266,7 @@ class Flow {
 
     // No writeQueue is passed in because if we pass in our own, nothing will be added to it if step output is disabled.
     // But this module currently needs everything in the write queue, and then chooses whether or not to persist it later.
-    const outputContentArray = flowRunner.processContentWithStep(stepExecutionContext, content, null);
+    const outputContentArray = flowRunner.runStepOnContent(stepExecutionContext, content, null);
     const databaseName = stepExecutionContext.getTargetDatabase();
     outputContentArray.forEach(contentObject => {
       this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);

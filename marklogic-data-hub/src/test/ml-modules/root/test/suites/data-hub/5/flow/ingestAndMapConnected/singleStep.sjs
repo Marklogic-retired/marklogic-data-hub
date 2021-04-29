@@ -1,4 +1,4 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -12,7 +12,7 @@ const stepNumbers = ["1"];
 
 const assertions = [];
 
-const response = flowRunner.processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, stepNumbers);
+const response = flowApi.runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNumbers);
 
 assertions.push(
   test.assertEqual("finished", response.jobStatus),

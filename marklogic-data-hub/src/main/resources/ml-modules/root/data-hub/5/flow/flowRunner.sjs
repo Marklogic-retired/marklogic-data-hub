@@ -40,7 +40,7 @@ const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
  * @param {array} stepNumbers optional array of the step numbers to run; if not specified, all steps are run
  * @return a JSON object conforming to RunFlowResponse.schema.json
  */
-function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, stepNumbers) {
+function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNumbers) {
   let currentContentArray = normalizeContentArray(contentArray);
   runtimeOptions = runtimeOptions || {};
   jobId = jobId || sem.uuidString();
@@ -59,9 +59,9 @@ function processContentWithFlow(flowName, contentArray, jobId, runtimeOptions, s
       prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
 
       currentContentArray = stepExecutionContext.sourceDatabaseIsCurrentDatabase() ? 
-        processContentWithStep(stepExecutionContext, currentContentArray, writeQueue) : 
+        runStepOnContent(stepExecutionContext, currentContentArray, writeQueue) : 
         fn.head(xdmp.invokeFunction(function() {
-          return processContentWithStep(stepExecutionContext, currentContentArray, writeQueue);
+          return runStepOnContent(stepExecutionContext, currentContentArray, writeQueue);
         }, {
           // Uses the same options as flow.sjs
           database: xdmp.database(stepExecutionContext.getSourceDatabase()),
@@ -118,7 +118,7 @@ function normalizeContentArray(contentArray) {
  * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
  * by the executed step is added to it
  */
-function processContentWithStep(stepExecutionContext, contentArray, writeQueue) {
+function runStepOnContent(stepExecutionContext, contentArray, writeQueue) {
   const hookRunner = stepExecutionContext.makeCustomHookRunner(contentArray);
   if (hookRunner && hookRunner.runBefore) {
     hookRunner.runHook(contentArray);
@@ -435,7 +435,7 @@ function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
 
 module.exports = {
   copyContentObject,
-  processContentWithFlow,
-  processContentWithStep
+  runFlowOnContent,
+  runStepOnContent
 }
 
