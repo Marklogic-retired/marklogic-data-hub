@@ -48,7 +48,8 @@ const DEFAULT_MAPPING_STEP: MappingStep = {
   validateEntity: "",
   batchSize: 100,
   interceptors: [],
-  customHook: {}
+  customHook: {},
+  uriExpression: ""
 };
 
 const MappingStepDetail: React.FC = () => {
@@ -483,7 +484,10 @@ const MappingStepDetail: React.FC = () => {
       let rootEntityName = curationOptions.activeStep.entityName;
       let entProps = resp.data && resp.data[0]["entityModel"].definitions ? resp.data[0]["entityModel"].definitions[rootEntityName].properties : {};
       let entEntityTempData: any = [];
+      let uriKey = EntityTableKeyIndex + 1;
+      EntityTableKeyIndex++;
       let nestedEntityProps = extractNestedEntityData(entProps, entEntityTempData);
+      nestedEntityProps.unshift({key: uriKey, name: "URI", type: "", isProperty: false, filterName: "URI", filterMatch: false}); //add URI field to front of properties
       setEntityTypeProperties([...nestedEntityProps]);
       setTargetRelatedMappings(resp.data[0]["relatedEntityMappings"]);
       let relatedEntities = new Array();
@@ -494,8 +498,10 @@ const MappingStepDetail: React.FC = () => {
             let relatedEntProps = entityObject["entityModel"].definitions[relatedEntityName].properties;
             let relatedEntityTempData: any =[];
             let contextKey = EntityTableKeyIndex + 1;
-            EntityTableKeyIndex++;
+            uriKey = contextKey + 1;
+            EntityTableKeyIndex += 2;
             let relatedEntityProps = extractNestedEntityData(relatedEntProps, relatedEntityTempData);
+            relatedEntityProps.unshift({key: uriKey, name: "URI", type: "", isProperty: false, filterName: "URI", filterMatch: false}); //add URI field to front of properties
             relatedEntityProps.unshift({key: contextKey, name: "Context", type: "", isProperty: false, filterName: "Context", filterMatch: false}); //add Context field to front of properties
             relatedEntities.push({entityType: entityObject.entityType, entityModel: entityObject.entityModel, entityLabel: entityObject.mappingTitle, entityMappingId: entityObject.entityMappingId, relatedEntityMappings: entityObject.relatedEntityMappings, entityProps: relatedEntityProps});
           }
@@ -1131,7 +1137,7 @@ const MappingStepDetail: React.FC = () => {
     setSavedMappingArt(dataPayload);
   };
 
-  const saveMapping =  async (mapObject, entityMappingId, updatedContext, relatedEntityModel) => {
+  const saveMapping =  async (mapObject, entityMappingId, updatedContext, updatedUri, relatedEntityModel) => {
     let obj = {};
     Object.keys(mapObject).forEach(key => {
       convertMapExpToMapArt(obj, key, {"sourcedFrom": mapObject[key]});
@@ -1147,11 +1153,12 @@ const MappingStepDetail: React.FC = () => {
       let updateRelatedMappings : any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings)); //make deep copy of related mappings to update without triggering useEffects
       let indexToUpdate = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityMappingId);
       if (indexToUpdate !== -1) {
-        if (updatedContext.trim() === "") {
+        if (updatedContext && updatedContext.trim() === "") {
           updatedContext = "/";
         }
         updateRelatedMappings[indexToUpdate].properties = obj;
         updateRelatedMappings[indexToUpdate].expressionContext = updatedContext;
+        updateRelatedMappings[indexToUpdate].uriExpression = updatedUri;
         dataPayload = {...dataPayload, relatedEntityMappings: updateRelatedMappings};
       } else {
         //add object to relatedEntityMappings in payload array
@@ -1161,7 +1168,7 @@ const MappingStepDetail: React.FC = () => {
         dataPayload.relatedEntityMappings.push(relatedEntity);
       }
     } else {
-      dataPayload = {...dataPayload, properties: obj};
+      dataPayload = {...dataPayload, uriExpression: updatedUri, properties: obj};
     }
     let mapSavedResult = await updateMappingArtifact(dataPayload);
     if (mapSavedResult) {

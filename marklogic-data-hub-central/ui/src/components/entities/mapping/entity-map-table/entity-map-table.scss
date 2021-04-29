@@ -9,9 +9,13 @@
   .ant-select-selection__clear {
     margin-top: -5px;
   }
-
   .ant-select-dropdown-menu-item-selected {
     background-color: #E9F7FE;
   }
 }
 
+.settingRow.ant-table-row, .settingRow.ant-table-row:hover {
+  td {
+    background-image: url("../../../../assets/grey-for-white-bg.png");
+  }
+}

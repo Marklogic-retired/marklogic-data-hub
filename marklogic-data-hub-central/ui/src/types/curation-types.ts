@@ -145,5 +145,6 @@ export interface MappingStep {
   batchSize: number,
   interceptors: any,
   customHook: any,
-  validateEntity: string
+  validateEntity: string,
+  uriExpression: string
 }
