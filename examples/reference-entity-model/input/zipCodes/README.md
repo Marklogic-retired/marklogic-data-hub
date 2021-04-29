@@ -1,0 +1,1 @@
+The zipCodes.csv file in the zip in this directory was copied from https://gist.github.com/erichurst/7882666 

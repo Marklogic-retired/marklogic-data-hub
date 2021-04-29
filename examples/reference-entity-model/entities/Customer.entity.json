@@ -92,6 +92,10 @@
         "plusFour": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "geoPoint": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         }
       }
     }

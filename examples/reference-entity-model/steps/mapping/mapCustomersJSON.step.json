@@ -16,7 +16,8 @@
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "JSON",
   "permissions": "data-hub-common,read,data-hub-operator,update",
-  "provenanceGranularityLevel": "coarse",
+  "provenanceGranularityLevel": "off",
+  "mappingParametersModulePath": "/custom-modules/mapping-params/example-mapping-params.sjs",
   "properties": {
     "customerId": {
       "sourcedFrom": "CustomerID"
@@ -44,6 +45,9 @@
             },
             "plusFour": {
               "sourcedFrom": "substring(Postal, 7)"
+            },
+            "geoPoint": {
+              "sourcedFrom": "lookup(substring(Postal, 1, 5), $ZIP_POINTS)"
             }
           },
           "targetEntityType": "#/definitions/Zip"
@@ -88,7 +92,7 @@
       "sourcedFrom": "SSN"
     }
   },
-  "lastUpdated": "2020-06-05T00:34:51.96953Z",
+  "lastUpdated": "2021-04-29T18:28:01.183569Z",
   "customHook": {
     "module": "",
     "parameters": "{}",
