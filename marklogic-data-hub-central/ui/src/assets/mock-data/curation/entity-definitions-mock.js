@@ -329,7 +329,9 @@ export const personRelatedEntityDef = [{
   "mappingTitle": "Person",
   "relatedEntityMappings": [{
     "mappingLinkText": "Order (orderedBy Person)",
-    "entityMappingId": "Order:Person.items"
+    "entityMappingId": "Order:Person.items",
+    "additionalCollections": [],
+    "collections": ["Order"]
   },
   {
     "mappingLinkText": "BabyRegistry (ownedBy Person)",
