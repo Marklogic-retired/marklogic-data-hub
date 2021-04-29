@@ -469,7 +469,7 @@ void cypressE2EOnPremLinuxTests(String type,String mlVersion){
       cd $WORKSPACE/data-hub
       ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
       cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-      sed -i "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO #g" setup.sh
+      sed -i "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g" setup.sh
       ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
       npm run cy:run 2>&1 |& tee -a e2e_err.log
 
@@ -498,7 +498,7 @@ void cypressE2EOnPremMacTests(String type,String mlVersion){
       cd $WORKSPACE/data-hub
       ./gradlew -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
       cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-      sed -i '.bak' "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO #g" setup.sh
+      sed -i '.bak' "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g" setup.sh
       ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
       npm run cy:run 2>&1 | tee -a e2e_err.log
 
@@ -534,7 +534,7 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
     timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
 
     bat "cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
-    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sed -i 's#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO #g' setup.sh &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
+    bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sed -i 's#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g' setup.sh &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
     bat "cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run 2>&1 | tee -a e2e_err.log"
 
     junit '**/e2e/**/*.xml'
