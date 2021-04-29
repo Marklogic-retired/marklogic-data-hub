@@ -1,10 +1,9 @@
 const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
-const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
 const flowName = "myFlow";
 
-const response = flowRunner.processContentWithFlow(flowName,
+const response = flowRunner.runFlowOnContent(flowName,
   [
     { "uri": "/customer1.json", "value": { "customerId": 1 } },
     { "uri": "/customer2.json", "value": { "customerId": 2 } }

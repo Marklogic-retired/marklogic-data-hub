@@ -1,5 +1,5 @@
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -22,7 +22,7 @@ assertions.push(
 
 
 // Test running a step against a document
-const response = flowRunner.processContentWithFlow("simpleMappingFlow",
+const response = flowApi.runFlowOnContent("simpleMappingFlow",
   [{
     "uri": "/inputCustomer.json",
     "value": {

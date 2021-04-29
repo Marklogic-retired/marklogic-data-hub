@@ -19,7 +19,7 @@ const datahub = DataHubSingleton.instance();
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const consts = require("/data-hub/5/impl/consts.sjs");
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
@@ -77,7 +77,7 @@ function transform(content, context = {}) {
     if (runStepsInMemory(theFlow, options)) {
       // Let errors propagate to MLCP
       options.throwStepError = true;
-      flowRunner.processContentWithFlow(flowName, contentArray, jobId, options);
+      flowApi.runFlowOnContent(flowName, contentArray, jobId, options);
       return Sequence.from([]);
     } else {
       const step = params['step'] ? xdmp.urlDecode(params['step']) : null;

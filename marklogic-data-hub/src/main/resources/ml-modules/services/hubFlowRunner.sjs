@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function post(context, params, input) {
@@ -34,7 +34,7 @@ function isXmlInput(context) {
 function processJsonInput(input) {
   input = input.toObject();
   const jobId = input.jobId || sem.uuidString();
-  return flowRunner.processContentWithFlow(input.flowName, input.content, jobId, input.options);
+  return flowApi.runFlowOnContent(input.flowName, input.content, jobId, input.options);
 }
 
 function processXmlInput(input) {
@@ -42,7 +42,7 @@ function processXmlInput(input) {
   const flowName = input.xpath("/input/flowName/text()");
   const options = parseJsonOptions(input);
   const contentArray = buildContentArray(input);
-  return flowRunner.processContentWithFlow(flowName, contentArray, jobId, options);
+  return flowApi.runFlowOnContent(flowName, contentArray, jobId, options);
 }
 
 function parseJsonOptions(input) {

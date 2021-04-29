@@ -1,6 +1,6 @@
-const test = require("/test/test-helper.xqy");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const test = require("/test/test-helper.xqy");
 
 let assertions = [];
 let results, collections;
@@ -17,7 +17,7 @@ const content = [{uri:"/customer1.json",
   context: {originalCollections: ["source"]}
 }];
 
-results = flowRunner.processContentWithFlow("simpleMappingFlow", content, "1", options);
+results = flowApi.runFlowOnContent("simpleMappingFlow", content, "1", options);
 collections = hubTest.getRecord("/customer1.json").collections;
 
 assertions.push(

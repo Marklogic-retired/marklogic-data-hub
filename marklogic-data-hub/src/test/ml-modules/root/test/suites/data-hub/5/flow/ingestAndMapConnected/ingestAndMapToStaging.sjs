@@ -1,4 +1,4 @@
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -19,7 +19,7 @@ const contentArray = [
   { "uri": "/customer1.json", "value": { "customerId": "1" } }
 ];
 
-flowRunner.processContentWithFlow(flowName, contentArray, jobId, runtimeOptions);
+flowApi.runFlowOnContent(flowName, contentArray, jobId, runtimeOptions);
 
 const mappedCustomer = hubTest.getStagingRecord("/customer1.json");
 const assertions = [

@@ -1,9 +1,9 @@
 const config = require("/com.marklogic.hub/config.sjs");
-const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
+const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
-const response = flowRunner.processContentWithFlow("simpleMappingFlow",
+const response = flowApi.runFlowOnContent("simpleMappingFlow",
   [{
     "uri": "/customer1.json",
     "value": {
