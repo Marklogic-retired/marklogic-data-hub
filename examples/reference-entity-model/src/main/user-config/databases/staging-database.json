@@ -1,0 +1,23 @@
+{
+  "database-name": "%%mlStagingDbName%%",
+  "geospatial-element-index": [
+    {
+      "namespace-uri": "",
+      "localname": "geoPoint",
+      "coordinate-system": "wgs84",
+      "point-format": "point",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }
+  ],
+  "range-element-index": [
+    {
+      "scalar-type": "string",
+      "namespace-uri": "",
+      "localname": "zipCode",
+      "collation": "http://marklogic.com/collation/",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    }
+  ]
+}

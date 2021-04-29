@@ -19,8 +19,35 @@ plugins {
 }
 apply plugin: "com.marklogic.ml-data-hub"
 
+repositories {
+    mavenCentral()
+    maven { url "http://developer.marklogic.com/maven2/" }
+}
 configurations {
     mlcp
+}
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.6.1"
+    mlcp files("lib")
+}
+
+
+task importZipCodes(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Imports a document for each zip code defined in the zipCodes.zip file. These are used by the mapCustomersJSON mapping step."
+	classpath = configurations.mlcp
+	command = "IMPORT"
+    port = 8010
+    input_file_path = "input/zipCodes/zipCodes.zip"
+	input_file_type = "delimited_text"
+    input_compressed = true
+    document_type = "json"
+    output_uri_prefix = "/zipCode/"
+    output_uri_suffix = ".json"
+	output_permissions = "data-hub-common,read,data-hub-developer,update"
+    output_collections = "zipCode"
+    thread_count = 16
+    transform_module = "/custom-modules/mlcp/zipCodeTransform.sjs"
+	delimiter = ","
 }
 
 ["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers",
@@ -43,20 +70,13 @@ task mergeJsonCustomers(type: com.marklogic.gradle.task.RunFlowTask) {
     steps = ["3", "4"]
 }
 
-mlDeploy.finalizedBy runFlows, mergeJsonCustomers
+mlDeploy.finalizedBy importZipCodes, runFlows, mergeJsonCustomers
+runFlows.mustRunAfter importZipCodes
 mergeJsonCustomers.mustRunAfter runFlows
 
 
 // The following config is used for manual ad hoc testing of loading data via MLCP and the DHF MLCP transform
-repositories {
-    jcenter()
-    maven { url "http://developer.marklogic.com/maven2/" }
-}
-dependencies {
-    mlcp "com.marklogic:mlcp:10.0.5"
-    mlcp files("lib")
-}
-task loadCustomersViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+task importCustomersViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     description = "Example of using the MLCP DHF transform to load documents via MLCP"
     classpath = configurations.mlcp
     command = "IMPORT"
