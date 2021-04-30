@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Alert} from "antd";
+import {Modal, Form, Input, Icon, Switch, Alert, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
-import {MLButton, MLTooltip, MLSelect, MLTable, MLTag} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLSelect, MLTag} from "@marklogic/design-system";
+import "./ruleset-multiple-modal.scss";
 import styles from "./ruleset-multiple-modal.module.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
@@ -89,10 +90,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const [saveClicked, setSaveClicked] = useState(false);
 
+  //For expand-collapse
+  const [expandedRowKeys, setExpandedRowKeys] = useState<any []>([]);
+
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
       let nestedEntityProps = parseDefinitionsToTable(curationOptions.entityDefinitionsArray);
       setMultipleRulesetsData(nestedEntityProps);
+      let initialKeysToExpand:any = generateExpandRowKeys(nestedEntityProps);
+      setExpandedRowKeys([...initialKeysToExpand]);
     }
 
     if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
@@ -138,7 +144,6 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       }
 
       setSelectedRowKeys(selectedKeys);
-
       setMatchTypes(matchTypes);
       setUriValues(uriValues);
       setFunctionValues(functionValues);
@@ -147,7 +152,6 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       setDistanceThresholdValues(distanceThresholdValues);
       setThesaurusValues(thesaurusValues);
       setFilterValues(filterValues);
-
     }
   }, [props.isVisible]);
 
@@ -231,7 +235,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const handleInputChange = (event, propertyPath) => {
-    switch (event.target.id) {
+    let eventId = event.target.id === "rulesetName-input" ? event.target.id : event.target.id.slice(event.target.id.indexOf("-") + 1);
+    switch (eventId) {
     case "rulesetName-input":
       if (event.target.value === "") {
         setIsRulesetNameTouched(false);
@@ -325,6 +330,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     setRulesetName("");
     setRulesetNameErrorMessage("");
     setMatchTypes({});
+    setMatchTypeErrorMessages({});
     setSelectedRowKeys([]);
     setReduceValue(false);
     setThesaurusValues({});
@@ -379,12 +385,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     event.preventDefault();
     setSaveClicked(true);
     let propertyErrorMessage = "";
-    let matchErrorMessage = "";
-    let thesaurusErrorMessage = "";
-    let dictionaryUriErrorMessage = "";
-    let distanceThresholdErrorMessage = "";
-    let uriErrorMessage = "";
-    let functionErrorMessage = "";
+    let matchErrorMessageObj = {};
+    let thesaurusErrorMessageObj = {};
+    let dictionaryUriErrorMessageObj = {};
+    let distanceThresholdErrorMessageObj = {};
+    let uriErrorMessageObj = {};
+    let functionErrorMessageObj = {};
 
     if (rulesetName === "" || rulesetName === undefined) {
       setRulesetNameErrorMessage("A ruleset name is required");
@@ -397,115 +403,136 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       selectedRowKeys.forEach(key => {
         let propertyPath = key;
         if (!matchTypes[key]) {
-          matchErrorMessage = "A match type is required";
-        }
-        switch (matchTypes[key]) {
-        case "exact":
-        case "zip":
-        {
-          let matchRule: MatchRule = {
-            entityPropertyPath: propertyPath,
-            matchType: matchTypes[key],
-            options: {}
-          };
-          matchRules.push(matchRule);
-          break;
-        }
-        case "synonym":
-        {
-          if (thesaurusValues[key] === "" || thesaurusValues[key] === undefined) {
-            thesaurusErrorMessage = "A thesaurus URI is required";
+          matchErrorMessageObj[key] = "A match type is required";
+        } else {
+          switch (matchTypes[key]) {
+          case "exact":
+          case "zip":
+          {
+            let matchRule: MatchRule = {
+              entityPropertyPath: propertyPath,
+              matchType: matchTypes[key],
+              options: {}
+            };
+            matchRules.push(matchRule);
+            break;
           }
-
-          let synonymMatchRule: MatchRule = {
-            entityPropertyPath: propertyPath,
-            matchType: matchTypes[key],
-            options: {
-              thesaurusURI: thesaurusValues[key],
-              filter: filterValues[key]
+          case "synonym":
+          {
+            if (thesaurusValues[key] === "" || thesaurusValues[key] === undefined) {
+              thesaurusErrorMessageObj[key] = "A thesaurus URI is required";
             }
-          };
 
-          if (thesaurusErrorMessage === "") {
-            matchRules.push(synonymMatchRule);
-          }
-          setThesaurusErrorMessages({...thesaurusErrorMessages, [key]: thesaurusErrorMessage});
-          break;
-        }
-        case "doubleMetaphone":
-        {
-          if (dictionaryValues[key] === "" || dictionaryValues[key] === undefined) {
-            dictionaryUriErrorMessage = "A dictionary URI is required";
-          }
+            let synonymMatchRule: MatchRule = {
+              entityPropertyPath: propertyPath,
+              matchType: matchTypes[key],
+              options: {
+                thesaurusURI: thesaurusValues[key],
+                filter: filterValues[key]
+              }
+            };
 
-          if (distanceThresholdValues[key] === "" || distanceThresholdValues[key] === undefined) {
-            distanceThresholdErrorMessage = "A distance threshold is required";
-          }
-
-          let doubleMetaphoneMatchRule: MatchRule = {
-            entityPropertyPath: propertyPath,
-            matchType: matchTypes[key],
-            options: {
-              dictionaryURI: dictionaryValues[key],
-              distanceThreshold: distanceThresholdValues[key]
+            if (!thesaurusErrorMessageObj[key]) {
+              matchRules.push(synonymMatchRule);
             }
-          };
-
-          if (dictionaryUriErrorMessage === "" && distanceThresholdErrorMessage === "") {
-            matchRules.push(doubleMetaphoneMatchRule);
+            break;
           }
-          setDictionaryErrorMessages({...dictionaryErrorMessages, [key]: dictionaryUriErrorMessage});
-          setDistanceThresholdErrorMessages({...distanceThresholdErrorMessages, [key]: distanceThresholdErrorMessage});
-          break;
+          case "doubleMetaphone":
+          {
+            if (dictionaryValues[key] === "" || dictionaryValues[key] === undefined) {
+              dictionaryUriErrorMessageObj[key] = "A dictionary URI is required";
+            }
+
+            if (distanceThresholdValues[key] === "" || distanceThresholdValues[key] === undefined) {
+              distanceThresholdErrorMessageObj[key] = "A distance threshold is required";
+            }
+
+            let doubleMetaphoneMatchRule: MatchRule = {
+              entityPropertyPath: propertyPath,
+              matchType: matchTypes[key],
+              options: {
+                dictionaryURI: dictionaryValues[key],
+                distanceThreshold: distanceThresholdValues[key]
+              }
+            };
+
+            if (!dictionaryUriErrorMessageObj[key] && !distanceThresholdErrorMessageObj[key]) {
+              matchRules.push(doubleMetaphoneMatchRule);
+            }
+            break;
+          }
+          case "custom":
+          {
+            if (uriValues[key] === "" || uriValues[key] === undefined) {
+              uriErrorMessageObj[key] = "A URI is required";
+            }
+
+            if (functionValues[key] === "" || functionValues[key] === undefined) {
+              functionErrorMessageObj[key] = "A function is required";
+            }
+
+            let customMatchRule: MatchRule = {
+              entityPropertyPath: propertyPath,
+              matchType: matchTypes[key],
+              algorithmModulePath: uriValues[key],
+              algorithmFunction: functionValues[key],
+              algorithmModuleNamespace: namespaceValues[key],
+              options: {}
+            };
+
+            if (!uriErrorMessageObj[key] && !functionErrorMessageObj[key]) {
+              matchRules.push(customMatchRule);
+            }
+            break;
+          }
+          default:
+            break;
+          }
         }
-        case "custom":
-        {
-          if (uriValues[key] === "" || uriValues[key] === undefined) {
-            uriErrorMessage = "A URI is required";
-          }
-
-          if (functionValues[key] === "" || functionValues[key] === undefined) {
-            functionErrorMessage = "A function is required";
-          }
-
-          let customMatchRule: MatchRule = {
-            entityPropertyPath: propertyPath,
-            matchType: matchTypes[key],
-            algorithmModulePath: uriValues[key],
-            algorithmFunction: functionValues[key],
-            algorithmModuleNamespace: namespaceValues[key],
-            options: {}
-          };
-
-          if (uriErrorMessage === "" && functionErrorMessage === "") {
-            matchRules.push(customMatchRule);
-          }
-          setUriErrorMessages({...uriErrorMessages, [key]: uriErrorMessage});
-          setFunctionErrorMessages({...functionErrorMessages, [key]: functionErrorMessage});
-          break;
-        }
-
-        default:
-          break;
-        }
-        setMatchTypeErrorMessages({...matchTypeErrorMessages, [key]: matchErrorMessage});
       });
     }
 
-    let matchRuleset: MatchRuleset = {
-      name: rulesetName,
-      weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
-      ...({reduce: reduceValue}),
-      matchRules: matchRules,
-      rulesetType: "multiple"
-    };
-
     if (rulesetNameErrorMessage === "") {
-      if (propertyErrorMessage  === "" && matchErrorMessage === "" && thesaurusErrorMessage === "" && dictionaryUriErrorMessage === ""
-         && distanceThresholdErrorMessage === "" && uriErrorMessage === "" && functionErrorMessage === "") {
-        updateStepArtifact(matchRuleset);
-        props.toggleModal(false);
-        resetModal();
+      if (propertyErrorMessage === "") {
+        let errorInMatchType = Object.keys(matchErrorMessageObj).length > 0;
+        let errorInThesaurusUri = Object.keys(thesaurusErrorMessageObj).length > 0;
+        let errorInDictionaryUri = Object.keys(dictionaryUriErrorMessageObj).length > 0;
+        let errorInDistThreshold = Object.keys(distanceThresholdErrorMessageObj).length > 0;
+        let errorInUri = Object.keys(uriErrorMessageObj).length > 0;
+        let errorInFunction = Object.keys(functionErrorMessageObj).length > 0;
+
+        if (errorInMatchType) {
+          setMatchTypeErrorMessages({...matchErrorMessageObj});
+        }
+        if (errorInThesaurusUri) {
+          setThesaurusErrorMessages({...thesaurusErrorMessageObj});
+        }
+        if (errorInDictionaryUri) {
+          setDictionaryErrorMessages({...dictionaryUriErrorMessageObj});
+        }
+        if (errorInDistThreshold) {
+          setDistanceThresholdErrorMessages({...distanceThresholdErrorMessageObj});
+        }
+        if (errorInUri) {
+          setUriErrorMessages({...uriErrorMessageObj});
+        }
+        if (errorInFunction) {
+          setFunctionErrorMessages({...functionErrorMessageObj});
+        }
+        if (!errorInMatchType && !errorInThesaurusUri
+          && !errorInDictionaryUri && !errorInDistThreshold
+          && !errorInUri && !errorInFunction) {
+          let matchRuleset: MatchRuleset = {
+            name: rulesetName,
+            weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+            ...({reduce: reduceValue}),
+            matchRules: matchRules,
+            rulesetType: "multiple"
+          };
+          updateStepArtifact(matchRuleset);
+          props.toggleModal(false);
+          resetModal();
+        }
       }
     }
   };
@@ -521,48 +548,57 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const hasFormChanged = () => {
-    for (let key in matchTypes) {
-      if (matchTypes[key] ===  "custom") {
-        let checkCustomValues = hasCustomFormValuesChanged();
-        if (!isRulesetNameTouched
-        && !isPropertyTypeTouched
-        && !isMatchTypeTouched
-        && !checkCustomValues
-        ) {
-          return false;
-        } else {
+    if (isRulesetNameTouched) {
+      return true;
+    } else {
+      for (const key of selectedRowKeys) {
+        if (!matchTypes[key]) {
           return true;
-        }
-      } else if (matchTypes[key] === "synonym") {
-        let checkSynonymValues = hasSynonymFormValuesChanged();
-        if (!isRulesetNameTouched
-        && !isPropertyTypeTouched
-        && !isMatchTypeTouched
-        && !checkSynonymValues
-        ) {
-          return false;
         } else {
-          return true;
-        }
-      } else if (matchTypes[key] === "doubleMetaphone") {
-        let checkDoubleMetaphoneValues = hasDoubleMetaphoneFormValuesChanged();
-        if (!isRulesetNameTouched
-        && !isPropertyTypeTouched
-        && !isMatchTypeTouched
-        && !checkDoubleMetaphoneValues
-        ) {
-          return false;
-        } else {
-          return true;
-        }
-      } else {
-        if (!isRulesetNameTouched && !isPropertyTypeTouched && !isMatchTypeTouched) {
-          return false;
-        } else {
-          return true;
+          if (matchTypes[key] ===  "custom") {
+            let checkCustomValues = hasCustomFormValuesChanged();
+            if (!isRulesetNameTouched
+            && !isPropertyTypeTouched
+            && !isMatchTypeTouched
+            && !checkCustomValues
+            ) {
+              return false;
+            } else {
+              return true;
+            }
+          } else if (matchTypes[key] === "synonym") {
+            let checkSynonymValues = hasSynonymFormValuesChanged();
+            if (!isRulesetNameTouched
+            && !isPropertyTypeTouched
+            && !isMatchTypeTouched
+            && !checkSynonymValues
+            ) {
+              return false;
+            } else {
+              return true;
+            }
+          } else if (matchTypes[key] === "doubleMetaphone") {
+            let checkDoubleMetaphoneValues = hasDoubleMetaphoneFormValuesChanged();
+            if (!isRulesetNameTouched
+            && !isPropertyTypeTouched
+            && !isMatchTypeTouched
+            && !checkDoubleMetaphoneValues
+            ) {
+              return false;
+            } else {
+              return true;
+            }
+          } else {
+            if (!isRulesetNameTouched && !isPropertyTypeTouched && !isMatchTypeTouched) {
+              return false;
+            } else {
+              return true;
+            }
+          }
         }
       }
     }
+
   };
 
   const hasCustomFormValuesChanged = () => {
@@ -641,6 +677,15 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return inputFieldStyle;
   };
 
+  const matchTypeCSS = (propertyPath) => {
+    const matchTypeStyle: CSSProperties = {
+      width: "160px",
+      border: checkFieldInErrors(propertyPath, "match-type-input") ? "0.6px solid red" : "",
+      borderRadius: "5px"
+    };
+    return matchTypeStyle;
+  };
+
   const validationErrorStyle = (fieldType) => {
     const validationErrStyle: CSSProperties = {
       width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "22vw" : (fieldType === "distance-threshold-input" ? "25vw" : "13vw"),
@@ -666,12 +711,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </span>
   );
 
-  const renderSynonymOptions = (propertyKey, propertyPath) => {
+  const renderSynonymOptions = (propertyPath) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
           <Input
-            id="thesaurus-uri-input"
+            id={`${propertyPath}-thesaurus-uri-input`}
             aria-label={`${propertyPath}-thesaurus-uri-input`}
             placeholder="Enter thesaurus URI"
             style={inputUriStyle(propertyPath, "thesaurus-uri-input")}
@@ -685,7 +730,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       </span>
       <span>
         <Input
-          id="filter-input"
+          id={`${propertyPath}-filter-input`}
           aria-label={`${propertyPath}-filter-input`}
           placeholder="Enter a node in the thesaurus to use as a filter"
           className={styles.filterInput}
@@ -700,12 +745,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </div>;
   };
 
-  const renderDoubleMetaphoneOptions = (propertyKey, propertyPath) => {
+  const renderDoubleMetaphoneOptions = (propertyPath) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
           <Input
-            id="dictionary-uri-input"
+            id={`${propertyPath}-dictionary-uri-input`}
             aria-label={`${propertyPath}-dictionary-uri-input`}
             placeholder="Enter dictionary URI"
             style={inputUriStyle(propertyPath, "dictionary-uri-input")}
@@ -720,7 +765,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       <span>
         <span className={styles.mandatoryFieldContainer}>
           <Input
-            id="distance-threshold-input"
+            id={`${propertyPath}-distance-threshold-input`}
             aria-label={`${propertyPath}-distance-threshold-input`}
             placeholder="Enter distance threshold"
             style={inputUriStyle(propertyPath, "distance-threshold-input")}
@@ -735,12 +780,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </div>;
   };
 
-  const renderCustomOptions = (propertyKey, propertyPath) => {
+  const renderCustomOptions = (propertyPath) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
           <Input
-            id="uri-input"
+            id={`${propertyPath}-uri-input`}
             aria-label={`${propertyPath}-uri-input`}
             placeholder="Enter URI"
             style={inputUriStyle(propertyPath, "uri-input")}
@@ -755,7 +800,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       <span>
         <span className={styles.mandatoryFieldContainer}>
           <Input
-            id="function-input"
+            id={`${propertyPath}-function-input`}
             aria-label={`${propertyPath}-function-input`}
             placeholder="Enter a function"
             style={inputUriStyle(propertyPath, "function-input")}
@@ -769,7 +814,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       </span>
       <span>
         <Input
-          id="namespace-input"
+          id={`${propertyPath}-namespace-input`}
           aria-label={`${propertyPath}-namespace-input`}
           placeholder="Enter a namespace"
           className={styles.functionInput}
@@ -833,7 +878,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
           <MLSelect
             aria-label={`${row.propertyPath}-match-type-dropdown`}
-            className={styles.matchTypeSelect}
+            style={matchTypeCSS(row.propertyPath)}
             size="default"
             placeholder="Select match type"
             onSelect={(e) => onMatchTypeSelect(row.propertyPath, e)}
@@ -850,9 +895,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       width: "68%",
       render: (text, row) => {
         switch (matchTypes[row.propertyPath]) {
-        case "synonym": return renderSynonymOptions(row.key, row.propertyPath);
-        case "doubleMetaphone": return renderDoubleMetaphoneOptions(row.key, row.propertyPath);
-        case "custom": return renderCustomOptions(row.key, row.propertyPath);
+        case "synonym": return renderSynonymOptions(row.propertyPath);
+        case "doubleMetaphone": return renderDoubleMetaphoneOptions(row.propertyPath);
+        case "custom": return renderCustomOptions(row.propertyPath);
         default:
           break;
         }
@@ -1010,13 +1055,35 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const toggleRowExpanded = (expanded, record) => {
+    let newExpandedRows =  [...expandedRowKeys];
     if (expanded) {
-      setCheckTableUpdates(record.key);
+      setCheckTableUpdates(record.propertyPath);
+      if (newExpandedRows.indexOf(record.propertyPath) === -1) {
+        newExpandedRows.push(record.propertyPath);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== record.propertyPath);
     }
+    setExpandedRowKeys(newExpandedRows);
   };
 
-  const handleExpandCollapse = () => {
-    //Logic to be added during dedicated story for expand collapse icons
+  const generateExpandRowKeys = (dataArr, allKeysToExpand:any = []) => {
+    dataArr.forEach(obj => {
+      if (obj.hasOwnProperty("children")) {
+        allKeysToExpand.push(obj["propertyPath"]);
+        generateExpandRowKeys(obj["children"], allKeysToExpand);
+      }
+    });
+    return allKeysToExpand;
+  };
+
+  const handleExpandCollapse = (option) => {
+    if (option === "collapse") {
+      setExpandedRowKeys([]);
+    } else {
+      let keysToExpand:any = generateExpandRowKeys(multipleRulesetsData);
+      setExpandedRowKeys([...keysToExpand]);
+    }
   };
 
   const onAlertClose = () => {
@@ -1032,6 +1099,26 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     onClose={onAlertClose}
     icon={<Icon type="exclamation-circle" className={styles.exclamationCircle} theme="filled" />} /></span>;
 
+  const paginationOptions = {
+    defaultCurrent: 1,
+    defaultPageSize: 20,
+    showSizeChanger: true,
+    pageSizeOptions: ["10", "20", "40", "60"]
+  };
+
+  const customExpandIcon = (props) => {
+    if (props.expandable) {
+      if (props.expanded) {
+        return <a className={styles.expandIcon} onClick={e => {
+          props.onExpand(props.record, e);
+        }}><Icon type="down" /> </a>;
+      } else {
+        return <a  className={styles.expandIcon} onClick={e => {
+          props.onExpand(props.record, e);
+        }}><Icon type="right" data-testid="expandedIcon"/> </a>;
+      }
+    }
+  };
 
   return (
     <Modal
@@ -1091,14 +1178,17 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
           <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
           <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
-          <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={handleExpandCollapse} currentSelection={""} /></div>
+          <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
         </div>
 
         <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
-          <MLTable
-            pagination={false}
+          <Table
+            pagination={paginationOptions}
             className={styles.entityTable}
+            expandIcon={(props) => customExpandIcon(props)}
             onExpand={(expanded, record) => toggleRowExpanded(expanded, record)}
+            expandedRowKeys={expandedRowKeys}
+            rowClassName={() => styles.entityTableRows}
             rowSelection={{...rowSelection}}
             indentSize={18}
             columns={multipleRulesetsTableColumns}

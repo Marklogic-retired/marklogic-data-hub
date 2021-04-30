@@ -6,10 +6,11 @@ import RulesetMultipleModal from "./ruleset-multiple-modal";
 
 import {CurationContext} from "../../../../util/curation-context";
 import {updateMatchingArtifact} from "../../../../api/matching";
-import {customerMatchingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {customerMatchingStep, customerMatchStepWithLargePropCount} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {waitFor, within} from "@testing-library/dom";
 
 jest.mock("../../../../api/matching");
+jest.setTimeout(30000);
 
 const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
 
@@ -110,9 +111,8 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValue({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByTestId;
     await act(async () => {
-      const renderResults = render(
+      render(
         <CurationContext.Provider value={customerMatchingStep}>
           <RulesetMultipleModal
             isVisible={true}
@@ -121,7 +121,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
           />
         </CurationContext.Provider>
       );
-      getByTestId = renderResults.getByTestId;
     });
 
     //Check if the select all checkbox works
@@ -136,8 +135,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(customerId).not.toBeChecked();
     expect(name).not.toBeChecked();
     expect(nicknames).not.toBeChecked();
-    expect(document.querySelector(`[name="shipping.street"]`)).not.toBeInTheDocument();
-    expect(document.querySelector(`[name="billing.street"]`)).not.toBeInTheDocument();
 
     //Checkboxes for ParentProperties are not available to check
     expect(shipping).not.toBeVisible();
@@ -152,33 +149,21 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(name).toBeChecked();
     expect(nicknames).toBeChecked();
 
-    //Expand shipping hierarchy and see that they are checked
-    userEvent.click(within(getByTestId("mltable-expand-shipping")).getByRole("img"));
     expect(document.querySelector(`[name="shipping.street"]`)).toBeChecked(); //ShippingStreet
     expect(document.querySelector(`[name="shipping.city"]`)).toBeChecked(); //ShippingCity
     expect(document.querySelector(`[name="shipping.state"]`)).toBeChecked(); // ShippingState
 
-    let zip:any = document.querySelector(`[data-row-key="shipping.zip.zip"]`);
     let shippingZipCheckbox = document.querySelector(`[data-row-key="shipping.zip.zip"] .ant-checkbox`);
     expect(shippingZipCheckbox).not.toBeVisible(); //Zip Checkbox is not available to check
-    let zipDropdown = within(zip).getByTestId("mltable-expand-zip");
-    userEvent.click(within(zipDropdown).getByRole("img"));
 
     expect(document.querySelector(`[name="shipping.zip.fiveDigit"]`)).toBeChecked(); //Shipping > Zip > fiveDigit
     expect(document.querySelector(`[name="shipping.zip.plusFour"]`)).toBeChecked(); //Shipping > Zip > plusFour
 
-    //Expand Billing hierarchy and see that they are checked
-    userEvent.click(within(getByTestId("mltable-expand-billing")).getByRole("img"));
     expect(document.querySelector(`[name="billing.street"]`)).toBeChecked(); //BillingStreet
     expect(document.querySelector(`[name="billing.city"]`)).toBeChecked(); //BillingCity
     expect(document.querySelector(`[name="billing.state"]`)).toBeChecked(); // BillingState
-
-    let billingZip:any = document.querySelector(`[data-row-key="billing.zip.zip"]`);
     let billingZipCheckbox = document.querySelector(`[data-row-key="billing.zip.zip"] .ant-checkbox`);
     expect(billingZipCheckbox).not.toBeVisible(); //Zip Checkbox is not available to check
-
-    let billingZipDropdown = within(billingZip).getByTestId("mltable-expand-zip");
-    userEvent.click(within(billingZipDropdown).getByRole("img"));
 
     expect(document.querySelector(`[name="billing.zip.fiveDigit"]`)).toBeChecked(); //Billing > Zip > fiveDigit
     expect(document.querySelector(`[name="billing.zip.plusFour"]`)).toBeChecked(); //Billing > Zip > plusFour
@@ -260,7 +245,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    let getByLabelText, queryByTitle, queryByLabelText, getByTestId;
+    let getByLabelText, queryByTitle, queryByLabelText;
     await act(async () => {
       const renderResults = render(
         <CurationContext.Provider value={customerMatchingStep}>
@@ -274,7 +259,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
       getByLabelText = renderResults.getByLabelText;
       queryByTitle = renderResults.queryByTitle;
       queryByLabelText = renderResults.queryByLabelText;
-      getByTestId = renderResults.getByTestId;
     });
 
     let customerId:any = document.querySelector(`[name="customerId"]`);
@@ -296,16 +280,10 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
     userEvent.type(getByLabelText("customerId-filter-input"), "filterInputText");
 
-    //Expand shipping hierarchy and select street
-    userEvent.click(within(getByTestId("mltable-expand-shipping")).getByRole("img"));
     let shippingStreet:any = document.querySelector(`[name="shipping.street"]`);
     userEvent.click(shippingStreet);
     validateMatchOnTag("shipping.street-matchOn-tag");
 
-    //Expand Zip hierarchy and select fiveDigit
-    let zip:any = document.querySelector(`[data-row-key="shipping.zip.zip"]`);
-    let zipDropdown = within(zip).getByTestId("mltable-expand-zip");
-    userEvent.click(within(zipDropdown).getByRole("img"));
     let shippingZipFiveDigit:any = document.querySelector(`[name="shipping.zip.fiveDigit"]`);
     userEvent.click(shippingZipFiveDigit);
 
@@ -521,15 +499,22 @@ describe("Matching Multiple Rulesets Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {getByTestId, getByText, getByLabelText, queryByTestId} = render(
-      <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={{}}
-        />
-      </CurationContext.Provider>
-    );
+    let getByTestId, getByText, getByLabelText, queryByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <CurationContext.Provider value={customerMatchingStep}>
+          <RulesetMultipleModal
+            isVisible={true}
+            toggleModal={toggleModalMock}
+            editRuleset={{}}
+          />
+        </CurationContext.Provider>
+      );
+      getByTestId = renderResults.getByTestId;
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+      queryByTestId = renderResults.queryByTestId;
+    });
 
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
@@ -663,5 +648,155 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(within(customerIdRow).getByTitle("Synonym")).toBeInTheDocument();
     expect(getByLabelText("customerId-thesaurus-uri-input")).toHaveValue("/thesaurus/uri/input.json");
     expect(getByLabelText("customerId-filter-input")).toHaveValue("");
+  });
+
+  it("can expand all/collapse all entity structured properties using the expand all/collase all buttons", async () => {
+    mockMatchingUpdate.mockResolvedValue({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+
+    let getByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <CurationContext.Provider value={customerMatchingStep}>
+          <RulesetMultipleModal
+            isVisible={true}
+            toggleModal={toggleModalMock}
+            editRuleset={{}}
+          />
+        </CurationContext.Provider>
+      );
+      getByTestId = renderResults.getByTestId;
+    });
+
+    let collapseAllButton = getByTestId("collapseBtn");
+    let expandAllButton = getByTestId("expandBtn");
+
+    let shippingStreet = document.querySelector(`[data-row-key="shipping.street"]`);
+    let shippingCity = document.querySelector(`[data-row-key="shipping.city"]`);
+    let shippingState = document.querySelector(`[data-row-key="shipping.state"]`);
+    let shippingZipFiveDigit = document.querySelector(`[data-row-key="shipping.zip.fiveDigit"]`);
+    let shippingZipPlusFour = document.querySelector(`[data-row-key="shipping.zip.plusFour"]`);
+    let billingStreet = document.querySelector(`[data-row-key="billing.street"]`);
+    let billingCity = document.querySelector(`[data-row-key="billing.city"]`);
+    let billingState = document.querySelector(`[data-row-key="billing.state"]`);
+    let billingZipFiveDigit = document.querySelector(`[data-row-key="billing.zip.fiveDigit"]`);
+    let billingZipPlusFour = document.querySelector(`[data-row-key="billing.zip.plusFour"]`);
+
+
+    //The structured properties should be visible by default
+    expect(shippingStreet).toBeVisible();
+    expect(shippingCity).toBeVisible();
+    expect(shippingState).toBeVisible();
+    expect(shippingZipFiveDigit).toBeVisible();
+    expect(shippingZipPlusFour).toBeVisible();
+    expect(billingStreet).toBeVisible();
+    expect(billingCity).toBeVisible();
+    expect(billingState).toBeVisible();
+    expect(billingZipFiveDigit).toBeVisible();
+    expect(billingZipPlusFour).toBeVisible();
+
+    //Collapse all structured properties and see if the nested rows are not visible
+    userEvent.click(collapseAllButton);
+    expect(shippingStreet).not.toBeVisible();
+    expect(shippingCity).not.toBeVisible();
+    expect(shippingState).not.toBeVisible();
+    expect(shippingZipFiveDigit).not.toBeVisible();
+    expect(shippingZipPlusFour).not.toBeVisible();
+    expect(billingStreet).not.toBeVisible();
+    expect(billingCity).not.toBeVisible();
+    expect(billingState).not.toBeVisible();
+    expect(billingZipFiveDigit).not.toBeVisible();
+    expect(billingZipPlusFour).not.toBeVisible();
+
+
+    //Expand All structured properties and see if the nested rows are visible
+    userEvent.click(expandAllButton);
+    expect(shippingStreet).toBeVisible();
+    expect(shippingCity).toBeVisible();
+    expect(shippingState).toBeVisible();
+    expect(shippingZipFiveDigit).toBeVisible();
+    expect(shippingZipPlusFour).toBeVisible();
+    expect(billingStreet).toBeVisible();
+    expect(billingCity).toBeVisible();
+    expect(billingState).toBeVisible();
+    expect(billingZipFiveDigit).toBeVisible();
+    expect(billingZipPlusFour).toBeVisible();
+  });
+
+  it("can verify that pagination works properly", async () => {
+    mockMatchingUpdate.mockResolvedValue({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+
+    let getByTitle, getByRole;
+    await act(async () => {
+      const renderResults = render(
+        <CurationContext.Provider value={customerMatchStepWithLargePropCount}>
+          <RulesetMultipleModal
+            isVisible={true}
+            toggleModal={toggleModalMock}
+            editRuleset={{}}
+          />
+        </CurationContext.Provider>
+      );
+      getByTitle = renderResults.getByTitle;
+      getByRole = renderResults.getByRole;
+    });
+
+    let previousPageLink = getByTitle("Previous Page");
+    let page1_Option = getByTitle("1");
+    let page2_Option = getByTitle("2");
+    let rowsPerPageOptionsDropdown: any = document.querySelector(".ant-pagination-options .ant-select-arrow");
+
+    let customerId = document.querySelector(`[data-row-key="customerId"]`);
+    let name = document.querySelector(`[data-row-key="name"]`);
+    let nicknames = document.querySelector(`[data-row-key="nicknames"]`);
+    let testProp28 = document.querySelector(`[data-row-key="testProp28"]`);
+    let testProp29 = document.querySelector(`[data-row-key="testProp29"]`);
+    let testProp30 = document.querySelector(`[data-row-key="testProp30"]`);
+
+    //default rows
+    expect(customerId).toBeInTheDocument();
+    expect(name).toBeInTheDocument();
+    expect(nicknames).toBeInTheDocument();
+    expect(testProp28).not.toBeInTheDocument();
+    expect(testProp29).not.toBeInTheDocument();
+    expect(testProp30).not.toBeInTheDocument();
+    expect(previousPageLink).toHaveAttribute("aria-disabled", "true");
+
+    //Navigating to page 2
+    userEvent.click(page2_Option);
+    expect(customerId).not.toBeInTheDocument();
+    expect(name).not.toBeInTheDocument();
+    expect(nicknames).not.toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="testProp28"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="testProp29"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="testProp30"]`)).toBeInTheDocument();
+    expect(previousPageLink).toHaveAttribute("aria-disabled", "false");
+
+    //Navigating back to page 1
+    userEvent.click(previousPageLink);
+    expect(document.querySelector(`[data-row-key="customerId"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="name"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="nicknames"]`)).toBeInTheDocument();
+    expect(testProp28).not.toBeInTheDocument();
+    expect(testProp29).not.toBeInTheDocument();
+    expect(testProp30).not.toBeInTheDocument();
+
+
+    //Change the page size and verify that all rows should be abailable now in one page.
+    userEvent.click(rowsPerPageOptionsDropdown);
+
+    let rowsPerPageOptions:any = getByRole("listbox");
+    userEvent.click(within(rowsPerPageOptions).getByText("40 / page"));
+
+    expect(page1_Option).toBeInTheDocument();
+    expect(page2_Option).not.toBeInTheDocument();
+
+    expect(document.querySelector(`[data-row-key="customerId"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="name"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="nicknames"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="testProp28"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="testProp29"]`)).toBeInTheDocument();
+    expect(document.querySelector(`[data-row-key="testProp30"]`)).toBeInTheDocument();
   });
 });
