@@ -28,6 +28,6 @@
     "cypress-plugin-tab": "^1.0.5",
     "cypress-wait-until": "^1.7.1",
     "mochawesome": "^4.1.0",
-    "mochawesome-merge": "^2.0.1"
+    "mochawesome-merge": "^4.0.0"
   }
 }
