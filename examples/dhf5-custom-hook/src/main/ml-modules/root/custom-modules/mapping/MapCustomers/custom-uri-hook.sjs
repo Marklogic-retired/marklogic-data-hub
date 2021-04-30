@@ -11,8 +11,13 @@ var flowName; // the name of the flow being processed
 var stepNumber; // the index of the step within the flow being processed; the first step has a step number of 1
 var step; // the step definition object
 
-content.forEach(c => {
+for (var c of content) {
+  // As noted in the archive-hook.sjs module, "value" will be a document node in every scenario except for
+  // when an ingestion step is run via the mlRunIngest REST transform (this includes running an ingestion step via 
+  // Gradle, the client JAR, QuickStart, and Hub Central). To modify the document or access its properties, we must 
+  // first call "toObject()" to gain a mutable object.
   let value = c.value.toObject();
+
   // Validate the ID property is in the instance
   if (value.envelope &&
     value.envelope.instance &&
@@ -23,7 +28,7 @@ content.forEach(c => {
     let id = value.envelope.instance.Customer.id;
     let newUri = '/customers/' + sem.uuidString() + '/' + id + '.json';
 
-    // Set the contents new URI
+    console.log("Setting new URI via custom hook: " + newUri);
     c.uri = newUri;
   }
-})
+}

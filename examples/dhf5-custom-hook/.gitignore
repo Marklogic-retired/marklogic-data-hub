@@ -1,4 +1,5 @@
 src/main/ml-config/*
+src/main/ml-config/security/query-rolesets
 !src/main/ml-config/security/
 gradle*.properties
 src/main/entity-config
