@@ -17,6 +17,9 @@ var step;         // The step object.
 var archiveCollection;
 
 for (const contentObject of content) {
+  // When an ingestion step is run with a hook on it, "value" will already be an object due to how REST transforms work.
+  // For any other step, "value" will be a document node. If you wish to modify it or access its properties, you'll first need
+  // to call "toObject()" on it - e.g. const order = contentObject.value.toObject() . 
   const order = contentObject.value;
 
   /**
@@ -42,6 +45,7 @@ for (const contentObject of content) {
     const duplicateUri = xdmp.nodeUri(duplicateOrder);
     // Generate a random URI so that previously archived documents are never overwritten
     const archiveUri = "/archive/" + sem.uuidString() + duplicateUri;
+    console.log("Inserting document via custom hook: " + archiveUri);
     xdmp.documentInsert(archiveUri, duplicateOrder, xdmp.documentGetPermissions(duplicateUri), archiveCollection);
     xdmp.documentDelete(duplicateUri);
   }
