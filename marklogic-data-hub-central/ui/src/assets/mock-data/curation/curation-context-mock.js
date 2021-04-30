@@ -1,11 +1,12 @@
 import {matchingStep} from "./matching.data";
-import {customerEntityDef, personNestedEntityDef} from "./entity-definitions-mock";
+import {customerEntityDef, customerEntityDefWithLargePropCount, personNestedEntityDef} from "./entity-definitions-mock";
 import {definitionsParser} from "../../../util/data-conversion";
 import {mergingStep} from "./merging.data";
 import {mappingStep} from "./mapping.data";
 import curateData from "./flows.data";
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef[0]["entityModel"].definitions);
+const customerEntityDefsArrWithLargePropCount = definitionsParser(customerEntityDefWithLargePropCount[0]["entityModel"].definitions);
 const personNestedEntityDefArray = definitionsParser(personNestedEntityDef[0]["entityModel"].definitions);
 
 export const customerMatchingStep = {
@@ -257,4 +258,18 @@ export const personMappingStepWithRelatedEntityData = {
   setOpenStep: jest.fn(),
   setIsEditing: jest.fn(),
   setStepOpenOptions: jest.fn()
+};
+
+export const customerMatchStepWithLargePropCount = {
+  curationOptions: {
+    entityDefinitionsArray: customerEntityDefsArrWithLargePropCount,
+    activeStep: {
+      stepArtifact: matchingStep.artifacts[0],
+      entityName: matchingStep.entityType,
+      isModified: false,
+      hasWarnings: []
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn()
 };

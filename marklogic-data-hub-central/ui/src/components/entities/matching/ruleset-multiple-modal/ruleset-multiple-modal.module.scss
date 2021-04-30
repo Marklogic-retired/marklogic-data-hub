@@ -96,12 +96,27 @@
   }
 }
 
+.entityTable{
+  & thead > tr > th {
+    line-height: 17px;
+  };
+  & tbody > tr > td {
+    line-height: 25px;
+}
+
+margin-bottom: 40px;
+}
+
+.entityTableRows{
+  line-height: 1px;
+}
+
 .entityTable {
   margin-bottom: 40px;
 }
 
 .nameColumnStyle {
-  margin-left: 3px;
+  margin-left: 1px;
 }
 
 .matchTypeDetailsContainer{
@@ -134,4 +149,13 @@
     margin-left: 15px;
     margin-right: 5px;
   }
+}
+
+.expandIcon{
+  margin-left: -18px;
+  vertical-align:middle;
+  color:  black;
+  text-align: left;
+  font-size: 13px;
+  position: absolute;
 }
