@@ -166,7 +166,13 @@ class StepExecutionContext {
   }
 
   setCompletedItems(items) {
-    this.completedItems = items;
+    // When a step is run with acceptsBatch=true, the step module may have captured step errors for one or more items.
+    // So we need to deduplicate this with failedItems
+    items.forEach(item => {
+      if (!this.failedItems.includes(item)) {
+        this.completedItems.push(item);
+      }
+    });
   }
 
   setFailedItems(items) {
@@ -241,11 +247,10 @@ class StepExecutionContext {
     return stepError;
   }
 
-  getStepBeforeMainFunction() {
-    const modulePath = this.stepDefinition.modulePath;
-    return new StepDefinition().makeFunction(null, "beforeMain", modulePath);
+  isStopOnError() {
+    return this.combinedOptions.stopOnError === true;
   }
-
+  
   getStepMainFunction() {
     const modulePath = this.stepDefinition.modulePath;
     const stepMainFunction = new StepDefinition().makeFunction(null, "main", modulePath);

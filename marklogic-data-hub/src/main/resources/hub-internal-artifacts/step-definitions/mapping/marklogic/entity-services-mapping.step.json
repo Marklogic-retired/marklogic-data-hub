@@ -8,6 +8,7 @@
   "batchSize" : 100,
   "threadCount" : 4,
   "options": {
+    "acceptsBatch": true,
     "sourceDatabase": "data-hub-STAGING",
     "targetDatabase": "data-hub-FINAL",
     "sourceQuery": "cts.collectionQuery('default-ingestion')",

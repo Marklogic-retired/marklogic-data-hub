@@ -1,5 +1,3 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
 const consts = require('/data-hub/5/impl/consts.sjs');
 const defaultLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
@@ -13,33 +11,21 @@ var mappings = {};
 let entityModelMap = {};
 const traceEvent = consts.TRACE_MAPPING_DEBUG;
 
-function beforeMain(contentSequence, stepExecutionContext) {
-  const path = stepExecutionContext.flowStep.options.mappingParametersModulePath;
-  if (path) {
-    const values = require(path)["getParameterValues"](contentSequence, stepExecutionContext);
-    stepExecutionContext.userMappingParameterMap = values;
-  }
-}
+function main(contentSequence, options, stepExecutionContext) {
+  // The flow framework will pass a sequence, but a number of tests still pass a single object, as this step used to be
+  // acceptsBatch=false prior to 5.5.
+  contentSequence = hubUtils.normalizeToSequence(contentSequence);
 
-function main(content, options, stepExecutionContext) {
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : consts.DEFAULT_FORMAT;
   if (outputFormat !== consts.JSON && outputFormat !== consts.XML) {
-    datahub.debug.log({
-      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + consts.XML + ' or ' + consts.JSON + '.',
-      type: 'error'
-    });
     throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + consts.XML + ' or ' + consts.JSON + '.');
   }
 
-  let doc = content.value;
-
-  //then we grab our mapping
   let mappingKey = options.mapping ? `${options.mapping.name}:${options.mapping.version}` : null;
   let mapping = mappings[mappingKey];
   if (!mapping && options.mapping && options.mapping.name && options.mapping.version) {
     let version = parseInt(options.mapping.version);
     if(isNaN(version)){
-      datahub.debug.log({message: 'Mapping version ('+options.mapping.version+') is invalid.', type: 'error'});
       throw Error('Mapping version ('+options.mapping.version+') is invalid.');
     }
     mapping = defaultLib.getMappingWithVersion(options.mapping.name, version);
@@ -48,7 +34,6 @@ function main(content, options, stepExecutionContext) {
     mapping = defaultLib.getMapping(options.mapping.name);
     mappings[mappingKey] = mapping;
   } else if (!mapping) {
-    datahub.debug.log({message: 'You must specify a mapping name.', type: 'error'});
     throw Error('You must specify a mapping name.');
   }
 
@@ -57,71 +42,105 @@ function main(content, options, stepExecutionContext) {
     if (options.mapping.version) {
       mapError += ' with version #' + options.mapping.version;
     }
-    datahub.debug.log({message: mapError, type: 'error'});
     throw Error(mapError);
   }
   let mappingURIforXML = fn.replace(xdmp.nodeUri(mapping), 'json$','xml');
   let targetEntityType = fn.string(mapping.root.targetEntityType);
   if (targetEntityType === '') {
     let errMsg = `Could not find targetEntityType in mapping: ${xdmp.nodeUri(mapping)}.`;
-    datahub.debug.log({message: errMsg, type: 'error'});
     throw Error(errMsg);
   }
   let targetEntityName = lib.getEntityName(targetEntityType);
 
-  let instance = lib.extractInstance(doc);
-
-  // userMappingParameterMap is set via the beforeMain function
-  const userParams = stepExecutionContext ? stepExecutionContext.userMappingParameterMap || {} : {};
-  const mappingParams = Object.assign({}, {"URI":content.uri}, userParams);
-
-  let arrayOfInstanceArrays;
-  try {
-    arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});
-  } catch (e) {
-    datahub.debug.log({message: e, type: 'error'});
-    throw Error(e);
-  }
-
   const mappingStep = fn.head(mapping).toObject();
-  hubUtils.hubTrace(traceEvent, `Entity instances with mapping ${mappingStep.name} and source document ${content.uri}: ${arrayOfInstanceArrays}`);
-
   buildEntityModelMap(mappingStep);
 
-  let counter = 0;
-  let contentResponse = [];
+  const userMappingParameterMap = getUserMappingParameterMap(stepExecutionContext, contentSequence);
 
-  for(const instanceArray of xdmp.arrayValues(arrayOfInstanceArrays)){
-    /* The first instance in the array is the target entity instance. 'permissions' and 'collections' for target instance
-    are applied outside of main.sjs */
-    let entityName ;
-    let entityContext = {};
+  let outputContentArray = [];
+  let currentContentUri;
 
-    if(counter == 0){
-      entityName = targetEntityName;
-      entityContext = content.context;
-    }
-    else {
-      let currentRelatedMapping = mappingStep.relatedEntityMappings[counter-1];
-      entityName = lib.getEntityName(fn.string(currentRelatedMapping.targetEntityType));
-      entityContext = createContextForRelatedEntityInstance(currentRelatedMapping);
-    }
-    const entityModel = entityModelMap[entityName];
-
-    for(const entityInstance of xdmp.arrayValues(instanceArray)){
-      let entityContent = {};
-      if(entityName == targetEntityName){
-        entityContent = Object.assign(entityContent, content);
+  for (const content of contentSequence) {
+    currentContentUri = content.uri;
+    try {
+      if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG)) {
+        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Mapping: ${currentContentUri}`);
       }
-      entityContent["value"] = entityInstance.value;
-      entityContent["uri"] = flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
-      entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options);
-      hubUtils.hubTrace(traceEvent, `Entity instance envelope created with mapping ${mappingStep.name} and source document ${content.uri}: ${entityContent.value}`);
-      contentResponse.push(entityContent);
+
+      let doc = content.value;
+      let instance = lib.extractInstance(doc);
+    
+      const mappingParams = Object.assign({}, {"URI":currentContentUri}, userMappingParameterMap);
+
+      // For not-yet-known reasons, catching this error and then simply rethrowing it causes the MappingTest JUnit class
+      // to pass due to the "message" part of the JSON in the stepOutput containing the expected output when this is done.
+      let arrayOfInstanceArrays;
+      try {
+        arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});    
+      } catch (e) {
+        throw Error(e);
+      }
+      
+      hubUtils.hubTrace(traceEvent, `Entity instances with mapping ${mappingStep.name} and source document ${currentContentUri}: ${arrayOfInstanceArrays}`);
+    
+      let counter = 0;
+      let contentResponse = [];
+    
+      for(const instanceArray of xdmp.arrayValues(arrayOfInstanceArrays)){
+        /* The first instance in the array is the target entity instance. 'permissions' and 'collections' for target instance
+        are applied outside of main.sjs */
+        let entityName ;
+        let entityContext = {};
+    
+        if(counter == 0){
+          entityName = targetEntityName;
+          entityContext = content.context;
+        }
+        else {
+          let currentRelatedMapping = mappingStep.relatedEntityMappings[counter-1];
+          entityName = lib.getEntityName(fn.string(currentRelatedMapping.targetEntityType));
+          entityContext = createContextForRelatedEntityInstance(currentRelatedMapping);
+        }
+        const entityModel = entityModelMap[entityName];
+    
+        for(const entityInstance of xdmp.arrayValues(instanceArray)){
+          let entityContent = {};
+          if(entityName == targetEntityName){
+            entityContent = Object.assign(entityContent, content);
+          }
+          entityContent["value"] = entityInstance.value;
+          entityContent["uri"] = flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
+          entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options);
+          hubUtils.hubTrace(traceEvent, `Entity instance envelope created with mapping ${mappingStep.name} and source document ${currentContentUri}: ${entityContent.value}`);
+          contentResponse.push(entityContent);
+        }
+        counter++;
+      }
+      
+      outputContentArray = outputContentArray.concat(contentResponse);  
+    } catch (error) {
+      if (stepExecutionContext.isStopOnError()) {
+        stepExecutionContext.stopWithError(error, currentContentUri);
+        hubUtils.hubTrace(INFO_EVENT, `Stopping execution of ${stepExecutionContext.describe()}`);
+        return [];
+      }
+      stepExecutionContext.addStepError(error, currentContentUri);
+      if (stepExecutionContext.stepErrorShouldBeThrown()) {
+        throw error;
+      }
     }
-    counter++;
   }
-  return contentResponse.length == 1 ? contentResponse[0] : contentResponse;
+
+  // A number of DHF tests expect a single object returned, while the flow framework is fine with one or an array.
+  return outputContentArray.length == 1 ? outputContentArray[0] : outputContentArray;
+}
+
+function getUserMappingParameterMap(stepExecutionContext, contentSequence) {
+  if (stepExecutionContext != null) {
+    const path = stepExecutionContext.flowStep.options.mappingParametersModulePath;
+    return path ? require(path)["getParameterValues"](contentSequence, stepExecutionContext) : {};
+  }
+  return {};
 }
 
 function validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options){
@@ -267,7 +286,6 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
 }
 
 module.exports = {
-  beforeMain,
   buildEnvelope,
   main
 };

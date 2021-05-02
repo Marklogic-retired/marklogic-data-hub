@@ -16,9 +16,7 @@ const message = "Unexpected response: " + xdmp.toJsonString(response);
 const assertions = [
   test.assertEqual("failed", response.jobStatus, message),
   test.assertEqual(1, response.stepResponses["2"].stepOutput.length, "Expected a single error; " + message),
-  test.assertEqual("Unable to invoke beforeMain on step 2 in flow 'simpleMappingFlow'; " +
-    "cause: Throwing error on purpose", response.stepResponses["2"].stepOutput[0],
-    "The error should explain that beforeMain failed, along with the error thrown from beforeMain; " + message)
+  test.assertEqual("Throwing error on purpose", response.stepResponses["2"].stepOutput[0])
 ];
 
 // Test that validation fails when the values function throws an error

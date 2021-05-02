@@ -124,16 +124,12 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
     hookRunner.runHook();
   }
 
-  invokeBeforeMain(stepExecutionContext, contentArray);
+  const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ? 
+    runStepOnBatch(contentArray, stepExecutionContext) : 
+    runStepOnEachItem(contentArray, stepExecutionContext);
 
-  let outputContentArray;
-  if (stepExecutionContext.stepModuleAcceptsBatch()) {
-    outputContentArray = runStepOnBatch(contentArray, stepExecutionContext);
-  } else {
-    outputContentArray = runStepOnEachItem(contentArray, stepExecutionContext);
-    if (!stepExecutionContext.wasCompleted()) {
-      return [];
-    }
+  if (!stepExecutionContext.wasCompleted()) {
+    return [];
   }
 
   applyTargetCollectionsAdditivity(stepExecutionContext, contentArray);
@@ -156,28 +152,6 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
   return outputContentArray;
 }
 
-/**
- * Invokes the "beforeMain" function if a step module defines it. If an error is thrown, it is caught and rethrown
- * with a more helpful message. 
- * 
- * @param stepExecutionContext 
- * @param contentArray 
- */
-function invokeBeforeMain(stepExecutionContext, contentArray) {
-  // If the step module cannot be found, a friendly error will be thrown, which is why this is not included in the
-  // try/catch block below
-  const stepBeforeMainFunction = stepExecutionContext.getStepBeforeMainFunction();
-  if (stepBeforeMainFunction) {
-    try {
-      hubUtils.hubTrace(INFO_EVENT, `Invoking beforeMain on step ${stepExecutionContext.describe()}`);
-      const contentSequence = hubUtils.normalizeToSequence(contentArray);
-      stepBeforeMainFunction(contentSequence, stepExecutionContext);
-    } catch (error) {
-      throw Error(`Unable to invoke beforeMain on ${stepExecutionContext.describe()}; cause: ${error.message}`);
-    }
-  }
-}
-
 function applyTargetCollectionsAdditivity(stepExecutionContext, contentArray) {
   if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
     contentArray.forEach(content => {
@@ -194,8 +168,8 @@ function applyTargetCollectionsAdditivity(stepExecutionContext, contentArray) {
  * passed to it.
  *  
  * If an error occurs within the step module, it is associated with the entire batch. That makes it equivalent to an 
- * error thrown when running any part of the step execution, such as an interceptor or custom hook or the beforeMain 
- * function. So the error is not caught here; it is expected to be caught by the client that runs a step. 
+ * error thrown when running any part of the step execution, such as an interceptor or custom hook. So the error is 
+ * not caught here; it is expected to be caught by the client that runs a step. 
  * 
  * @param contentArray
  * @param stepExecutionContext
