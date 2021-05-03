@@ -25,7 +25,7 @@ function runJSONMapping(){
     test.assertEqual(0, results.errorCount),
     test.assertEqual(1, results.completedItems.length),
     test.assertEqual(1, customerUris.length),
-    test.assertEqual("/content/customerInfo.json", customerUris[0]),
+    test.assertEqual("/mapped/content/customerInfo.json", customerUris[0]),
     test.assertEqualJson(["/Order/2002.json", "/Order/2012.json"], orderUris),
     test.assertEqualJson(["/Product/10.json", "/Product/30.json", "/Product/40.json"], productUris),
     /* Not checking for permissions of the main entity instance since we have tests for it and also permissions passed through options
