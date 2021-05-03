@@ -4,19 +4,19 @@ import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {dateConverter} from "../../util/date-conversion";
 import {ClockCircleFilled, CheckCircleFilled, CloseCircleFilled} from "@ant-design/icons";
 import {parse} from "iso8601-duration";
-import {SearchContext} from "../../util/search-context";
 import {Menu, Popover} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import {MLCheckbox, MLButton, MLDivider} from "@marklogic/design-system";
 import "./job-results-table-view.scss";
+import {MonitorContext} from "../../util/monitor-context";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
 
   const {
     setMonitorSortOrder
-  } = useContext(SearchContext);
+  } = useContext(MonitorContext);
   let sorting = true;
   const columnOptionsLabel = {
     user: "User",

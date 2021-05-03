@@ -42,15 +42,12 @@ const defaultSearchOptions = {
 };
 
 
-
 interface ISearchContextInterface {
   searchOptions: SearchContextInterface;
   setSearchFromUserPref: (username: string) => void;
   setQuery: (searchString: string) => void;
   setPage: (pageNumber: number, totalDocuments: number) => void;
-    setMonitorPage: (pageNumber: number, totalDocuments: number) => void;
   setPageLength: (current: number, pageSize: number) => void;
-    setMonitorPageLength: (current: number, pageSize: number) => void;
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
   setNextEntity: (option: string) => void;
@@ -65,7 +62,6 @@ interface ISearchContextInterface {
   resetSearchOptions: () => void;
   setAllSearchFacets: (facets: any) => void;
   greyedOptions: SearchContextInterface;
-  monitorOptions: SearchContextInterface;
   setAllGreyedOptions: (facets: any) => void;
   clearGreyFacet: (constraint: string, val: string) => void;
   clearConstraint: (constraint: string) => void;
@@ -78,7 +74,6 @@ interface ISearchContextInterface {
   setView: (tileId:string, viewId: JSX.Element| null, zeroState?:boolean) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
-  setMonitorSortOrder:(propertyName: string, sortOrder: any) => void;
   setPageQueryOptions: (query: any) => void;
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
@@ -91,7 +86,6 @@ interface ISearchContextInterface {
 export const SearchContext = React.createContext<ISearchContextInterface>({
   searchOptions: defaultSearchOptions,
   greyedOptions: defaultSearchOptions,
-  monitorOptions: defaultSearchOptions,
   savedQueries: [],
   setSavedQueries: () => { },
   entityDefinitionsArray: [],
@@ -99,9 +93,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
-  setMonitorPage: () => { },
   setPageLength: () => { },
-  setMonitorPageLength: () => { },
   setSearchFacets: () => { },
   setEntity: () => { },
   setNextEntity: () => { },
@@ -127,7 +119,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setView: () => { },
   setPageWithEntity: () => { },
   setSortOrder: () => { },
-  setMonitorSortOrder: () => { },
   setPageQueryOptions: () => { },
   setDatabase: () => { },
   setLatestDatabase: () => { },
@@ -137,7 +128,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
-  const [monitorOptions, setMonitorOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
   const {user} = useContext(UserContext);
@@ -185,17 +175,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setMonitorPage = (pageNumber: number, totalDocuments: number) => {
-    let pageLength = monitorOptions.pageSize;
-    let start = pageNumber ;
-    setMonitorOptions({
-      ...monitorOptions,
-      start,
-      pageLength,
-      pageNumber
-    });
-  };
-
 
   const setPageLength = (current: number, pageSize: number) => {
     setSearchOptions({
@@ -207,17 +186,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-
-
-  const setMonitorPageLength = (current: number, pageSize: number) => {
-    setMonitorOptions({
-      ...monitorOptions,
-      start: current,
-      pageNumber: current,
-      pageLength: pageSize,
-      pageSize,
-    });
-  };
 
   const setSearchFacets = (constraint: string, vals: string[]) => {
     let facets = {};
@@ -340,6 +308,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) { clearGreyFacet(constraint, val); }
   };
 
+
   const clearAllFacets = () => {
     setSearchOptions({
       ...searchOptions,
@@ -414,6 +383,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+
+
+
   const clearGreyDateFacet = () => {
     let facets = greyedOptions.selectedFacets;
     if (facets.hasOwnProperty("createdOnRange")) {
@@ -459,6 +431,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     }
   };
 
+
   const clearGreyFacet = (constraint: string, val: string) => {
     let facets = greyedOptions.selectedFacets;
     let valueKey = "";
@@ -473,6 +446,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setGreyedOptions({...greyedOptions, selectedFacets: facets});
   };
 
+
+
   const clearAllGreyFacets = () => {
     setGreyedOptions({
       ...greyedOptions,
@@ -482,6 +457,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       pageLength: greyedOptions.pageSize
     });
   };
+
 
 
   const resetGreyedOptions = () => {
@@ -497,6 +473,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       pageLength: greyedOptions.pageSize
     });
   };
+
+
 
   const applySaveQuery = (query: QueryOptions) => {
     setSearchOptions({
@@ -589,32 +567,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setMonitorSortOrder = (propertyName: string, sortOrder: any) => {
-    let sortingOrder: any = [];
-    switch (sortOrder) {
-    case "ascend":
-      sortingOrder = [{
-        propertyName: propertyName,
-        sortDirection: "ascending"
-      }];
-      break;
-    case "descend":
-      sortingOrder = [{
-        propertyName: propertyName,
-        sortDirection: "descending"
-      }];
-      break;
-    default:
-      sortingOrder = [];
-      break;
-    }
-    setMonitorOptions({
-      ...monitorOptions,
-      sortOrder: sortingOrder
-    });
-  };
-
-
   const setPageQueryOptions = (query: any) => {
     setSearchOptions({
       ...searchOptions,
@@ -657,9 +609,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     <SearchContext.Provider value={{
       searchOptions,
       greyedOptions,
-      monitorOptions,
-      setMonitorPage,
-      setMonitorPageLength,
       savedQueries,
       setSavedQueries,
       entityDefinitionsArray,
@@ -693,7 +642,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setView,
       setPageWithEntity,
       setSortOrder,
-      setMonitorSortOrder,
       setPageQueryOptions,
       setDatabase,
       setLatestDatabase

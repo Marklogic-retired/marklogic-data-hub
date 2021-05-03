@@ -2,6 +2,7 @@ import React, {useContext, useState, useEffect} from "react";
 import {Pagination} from "antd";
 import {SearchContext} from "../../util/search-context";
 import styles from "./search-pagination.module.scss";
+import {MonitorContext} from "../../util/monitor-context";
 
 interface Props {
   total: number;
@@ -12,7 +13,8 @@ interface Props {
 }
 
 const SearchPagination: React.FC<Props> = (props) => {
-  const {searchOptions, setPage, setPageLength, setMonitorPage, setMonitorPageLength} = useContext(SearchContext);
+  const {searchOptions, setPage, setPageLength} = useContext(SearchContext);
+  const {setMonitorPage, setMonitorPageLength} = useContext(MonitorContext);
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
@@ -41,7 +43,7 @@ const SearchPagination: React.FC<Props> = (props) => {
   };
 
   const onPageSizeChange = (current, pageSize) => {
-    searchOptions.tileId === "explore" ?  setPageLength(current, pageSize):setMonitorPageLength(current, pageSize);
+    searchOptions.tileId === "explore" ? setPageLength(current, pageSize):setMonitorPageLength(current, pageSize);
   };
 
   return (
