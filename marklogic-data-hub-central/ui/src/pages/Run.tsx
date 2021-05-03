@@ -10,6 +10,7 @@ import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
 import {MLButton} from "@marklogic/design-system";
+import {getMappingArtifactByStepName} from "../api/mapping";
 
 const {Panel} = Collapse;
 
@@ -203,16 +204,17 @@ const Run = (props) => {
   //     return stepType[0].toUpperCase() + stepType.substr(1);
   // }
 
-  const goToExplorer = (entityName, targetDatabase, jobId, stepType) => {
+  const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
     if (stepType === "ingestion") {
       history.push({
         pathname: "/tiles/explore",
         state: {targetDatabase: targetDatabase, jobId: jobId}
       });
     } else if (stepType === "mapping") {
+      let mapArtifacts = await getMappingArtifactByStepName(stepName);
       history.push(
         {pathname: "/tiles/explore",
-          state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId}
+          state: {entityName: mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName, targetDatabase: targetDatabase, jobId: jobId}
         });
     } else if (stepType === "merging") {
       history.push({
@@ -257,13 +259,13 @@ const Run = (props) => {
       width: 650,
       content: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ?
         <div className={styles.exploreDataContainer}>
-          <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
+          <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
             <span className={styles.exploreIcon}></span>
             <span className={styles.exploreText}>Explore Curated Data</span>
           </MLButton>
         </div> : stepType.toLowerCase() === "ingestion" ?
           <div className={styles.exploreDataContainer}>
-            <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+            <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
               <span className={styles.exploreIcon}></span>
               <span className={styles.exploreText}>Explore Loaded Data</span>
             </MLButton>
@@ -307,12 +309,12 @@ const Run = (props) => {
         <div id="error-list">
           {((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName) ?
             <div className={styles.exploreDataContainer}>
-              <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
+              <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
                 <span className={styles.exploreIcon}></span>
                 <span className={styles.exploreText}>Explore Curated Data</span>
               </MLButton></div> : stepType.toLowerCase() === "ingestion" ?
               <div className={styles.exploreDataContainer}>
-                <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+                <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
                   <span className={styles.exploreIcon}></span>
                   <span className={styles.exploreText}>Explore Loaded Data</span>
                 </MLButton></div> : ""}

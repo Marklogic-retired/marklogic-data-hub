@@ -73,7 +73,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.getTotalDocuments().should("be.equal", 10);
+    browsePage.getTotalDocuments().should("be.equal", 11);
     browsePage.selectEntity("All Data");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();

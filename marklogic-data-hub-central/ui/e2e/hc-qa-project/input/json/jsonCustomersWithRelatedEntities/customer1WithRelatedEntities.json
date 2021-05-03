@@ -1,0 +1,79 @@
+{
+  "CustomerID": 301,
+  "Name": {
+    "FirstName": "Cynthia",
+    "LastName": "Waters"
+  },
+  "nicknames": [
+    "Cindy", "Cyn"
+  ],
+  "Address": [
+    {
+      "Shipping": {
+        "Street": "Abbey Court",
+        "Street2": "More info",
+        "City": "Columbus",
+        "State": "Ohio",
+        "Postal": "43210-0241"
+      }
+    },
+    {
+      "Billing": {
+        "Street": "Keys Crescent Ln",
+        "City": "Cincinnati",
+        "State": "Ohio",
+        "Postal": "45206-6783"
+      }
+    }
+  ],
+  "Orders": [
+    {
+      "OrderId": "2002",
+      "DateAndTime":"2020/08/14-07:45:22",
+      "SendToID": "303",
+      "Products": [
+        {
+          "Quantity": "1",
+          "ProductId": "10",
+          "Name": "New Balance FuelCell Echo V1 Sneaker"
+        },
+        {
+          "Quantity": "3",
+          "ProductId": "20",
+          "Name": "Air Jordan 6 DMP Retro VI Black Metallic Gold"
+        }
+      ]
+    },
+    {
+      "OrderId": "2012",
+      "DateAndTime": "2021/02/14-09:39:15",
+      "SendToID": "404",
+      "Products": [
+        {
+          "Quantity": "1",
+          "ProductId": "30",
+          "Name": "Crock-Pot 8 Quart Manual Slow Cooker with 16 Oz Little Dipper Food Warmer, Stainless"
+        },
+        {
+          "Quantity": "2",
+          "ProductId": "40",
+          "Name": "Cuisinart 8-Cup Stainless Steel Electric Kettle with Automatic Shut-off"
+        }
+      ]
+    }
+  ],
+  "BabyRegistry": {
+    "BabyRegistryId": "3039",
+    "Arrival_Date": "2021-06-07",
+    "Products": [
+      {
+        "ProductId": "50",
+        "Name": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls"
+      },
+      {
+        "ProductId": "60",
+        "Name": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)"
+      }
+    ]
+  }
+}
