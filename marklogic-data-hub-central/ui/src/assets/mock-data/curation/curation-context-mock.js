@@ -236,3 +236,25 @@ export const personMappingStepWithData = {
   setIsEditing: jest.fn(),
   setStepOpenOptions: jest.fn()
 };
+
+export const personMappingStepWithRelatedEntityData = {
+  curationOptions: {
+    entityDefinitionsArray: personNestedEntityDefArray,
+    activeStep: {
+      stepArtifact: mappingStep.artifacts[1],
+      entityName: mappingStep.entityType,
+      isModified: false
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn(),
+  mappingOptions: {
+    openStepSettings: false,
+    openStep: {},
+    isEditing: false
+  },
+  setOpenStepSettings: jest.fn(),
+  setOpenStep: jest.fn(),
+  setIsEditing: jest.fn(),
+  setStepOpenOptions: jest.fn()
+};

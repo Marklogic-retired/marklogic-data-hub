@@ -6,7 +6,7 @@ import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
 import {validateMappingTableRow, onClosestTableRow} from "../../../../util/test-utils";
 import {CurationContext} from "../../../../util/curation-context";
-import {personMappingStepEmpty, personMappingStepWithData} from "../../../../assets/mock-data/curation/curation-context-mock";
+import {personMappingStepEmpty, personMappingStepWithData, personMappingStepWithRelatedEntityData} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {updateMappingArtifact, getMappingArtifactByMapName, getMappingFunctions} from "../../../../api/mapping";
 import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curation/mapping.data";
 import {getUris, getDoc} from "../../../../util/search-service";
@@ -722,14 +722,14 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify view related entities with selection/deselection in filters", async () => {
-    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[1]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
     let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText, getByPlaceholderText,  container;
     await act(async () => {
-      const renderResults = defaultRender(personMappingStepWithData);
+      const renderResults = defaultRender(personMappingStepWithRelatedEntityData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
       getByText = renderResults.getByText;
@@ -753,10 +753,27 @@ describe("RTL Source-to-entity map tests", () => {
     expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
     // Verify related entity filter in the first row
-    expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
+    expect(getAllByText("Map related entities:")[0].closest("tr")).toBe(entTableTopRow);
 
     //Verify entity settings icon also exist in the first row
-    expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
+    expect(getAllByLabelText("entitySettings")[0].closest("tr")).toBe(entTableTopRow);
+
+    //All mapped entity tables should be present on the screen by default
+    expect(getByLabelText("Person-title")).toBeInTheDocument();
+    await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument());
+
+    //Clear all the entity tables via clear all button in target entity table filter
+    fireEvent.click(getAllByLabelText("icon: close-circle")[0]);
+
+    //only target entity table (Person) should remain
+    expect(getByLabelText("Person-title")).toBeInTheDocument();
+    await wait(() => expect(queryByLabelText("Order (orderedBy Person)-title")).not.toBeInTheDocument());
+    await wait(() => expect(queryByLabelText("Product (Order hasProduct)-title")).not.toBeInTheDocument());
+    await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
+    await wait(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
 
     let entitiesFilter = getByText(
       (_content, element) =>
