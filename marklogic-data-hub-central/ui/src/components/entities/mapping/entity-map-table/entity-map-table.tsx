@@ -91,8 +91,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [sourceValue, setSourceValue] = useState("");
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
   const [entityProperties, setEntityProperties] = useState<any[]>(props.entityTypeProperties);
+  const [selectedOptions, setSelectedOptions] = useState<any[]>(["default"]);
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
 
@@ -145,6 +145,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
       setUpdateContextFlag(false);
     }
   }, [updateContextFlag]);
+
+  useEffect(() => {
+    //when component finishes rendering, set selected options with default entities for filter, necessary to track updates to the filter
+    if (selectedOptions[0] === "default" && props.relatedEntityTypeProperties.length > 0) {
+      setSelectedOptions(getDefaultEntities());
+    }
+  }, [props.relatedEntityTypeProperties]);
 
   const getEntityDataType = (prop) => {
     return prop.startsWith("parent-") ? prop.slice(prop.indexOf("-") + 1) : prop;
@@ -716,16 +723,26 @@ const EntityMapTable: React.FC<Props> = (props) => {
     />
   );
 
+  const getDefaultEntities = () => {
+    let defaultSelected : any = [];
+    let entityTitle = props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle;
+    props.relatedEntitiesSelected.map(entity => {
+      if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) { defaultSelected.push(entity.entityLabel); }
+    });
+    return defaultSelected;
+  };
+
   const relatedEntitiesFilter = (
     <Select
       mode="multiple"
       allowClear
       style={{width: "98%"}}
       placeholder="Select"
+      key={props.relatedEntityTypeProperties.length  > 0 ? "loaded" : "notloaded"}
       id={`${props.entityTypeTitle}-entities-filter`}
       data-testid={`${props.entityTypeTitle}-entities-filter`}
       onChange={value => handleOptionSelect(value)}
-      value={selectedOptions}
+      defaultValue={getDefaultEntities()}
       dropdownClassName={props.isRelatedEntity ? styles.relatedEntityFilterDropdown : styles.entityFilterDropdown}
     >
 

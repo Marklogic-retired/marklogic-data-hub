@@ -501,6 +501,17 @@ const MappingStepDetail: React.FC = () => {
           }
         });
       }
+      //set related entities selected to appear by default if their mappings exist
+      let existingRelatedMappings = curationOptions.activeStep.stepArtifact.relatedEntityMappings;
+      let defaultEntitiesToDisplay : any = [];
+      if (existingRelatedMappings) {
+        relatedEntities.map(entity => {
+          if (existingRelatedMappings.findIndex(existingEntity => existingEntity.relatedEntityMappingId === entity.entityMappingId) !== -1) {
+            defaultEntitiesToDisplay.push(entity);
+          }
+        });
+      }
+      setRelatedEntitiesSelected(defaultEntitiesToDisplay);
       setRelatedEntityTypeProperties(relatedEntities);
       setTgtEntityReferences({...tgtRefs});
     }

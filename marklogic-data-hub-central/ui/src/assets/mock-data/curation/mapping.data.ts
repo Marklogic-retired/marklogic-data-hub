@@ -40,6 +40,91 @@ export const mappingStep = {
       },
     },
     {
+      "name": "mapPersonWithRelated",
+      ...mappingArtifactCommonProps,
+      "stepId": "mapPersonWithRelated-mapping",
+      "properties": {
+        propId: {sourcedFrom: "id"},
+        propName: {sourcedFrom: "testNameInExp"},
+        propAttribute: {sourcedFrom: "placeholderAttribute"},
+        items: {
+          sourcedFrom: "",
+          properties: {
+            itemTypes: {sourcedFrom: ""}
+          },
+          targetEntityType: "#/definitions/ItemType"
+        }
+      },
+      relatedEntityMappings: [
+        {
+          relatedEntityMappingId: "Order:Person.items",
+          collections: ["mapPersonWithRelated", "Order"],
+          expressionContext: "/Orders",
+          uriExpression: "concat('/Order/', OrderId)",
+          permissions: "data-hub-common,read,data-hub-common,update",
+          properties: {
+            propId: {sourcedFrom: "id"},
+            propName: {sourcedFrom: "testNameInExp"},
+            propAttribute: {sourcedFrom: "placeholderAttribute"},
+            items: {
+              sourcedFrom: "",
+              properties: {
+                itemTypes: {sourcedFrom: ""}
+              },
+              targetEntityType: "#/definitions/ItemType"
+            }
+          },
+          targetEntityType: "http://example.org/Order-0.0.1/Order"
+        },
+        {
+          relatedEntityMappingId: "BabyRegistry:Person.items",
+          collections: ["mapPersonWithRelated", "BabyRegistry"],
+          permissions: "data-hub-common,read,data-hub-common,update",
+          expressionContext: "BabyRegistry",
+          uriExpression: "concat('/BabyRegistry/', BabyRegistryId)",
+          properties: {
+            propId: {sourcedFrom: "id"},
+            propName: {sourcedFrom: "testNameInExp"},
+            propAttribute: {sourcedFrom: "placeholderAttribute"},
+            items: {
+              sourcedFrom: "",
+              properties: {
+                itemTypes: {sourcedFrom: ""}
+              },
+              targetEntityType: "#/definitions/ItemType"
+            }
+          },
+          targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
+        },
+        {
+          relatedEntityMappingId: "Product:Order.lineItem.orderIncludes",
+          collections: ["mapPersonWithRelated", "Product"],
+          permissions: "data-hub-common,read,data-hub-common,update",
+          expressionContext: "/Orders/Products",
+          uriExpression: "concat('/Product/', ProductId)",
+          properties: {
+            propId: {sourcedFrom: "id"},
+            propName: {sourcedFrom: "testNameInExp"},
+            propAttribute: {sourcedFrom: "placeholderAttribute"}
+          },
+          targetEntityType: "http://example.org/Product-0.0.1/Product"
+        },
+        {
+          relatedEntityMappingId: "Product:BabyRegistry.hasProduct",
+          collections: ["mapPersonWithRelated", "Product"],
+          permissions: "data-hub-common,read,data-hub-common,update",
+          expressionContext: "/Orders/Products",
+          uriExpression: "concat('/Product/', ProductId)",
+          properties: {
+            propId: {sourcedFrom: "id"},
+            propName: {sourcedFrom: "testNameInExp"},
+            propAttribute: {sourcedFrom: "placeholderAttribute"}
+          },
+          targetEntityType: "http://example.org/Product-0.0.1/Product"
+        }
+      ]
+    },
+    {
       "name": "mapCustomersEmpty",
       "stepId": "mapCustomersEmpty-mapping",
       ...mappingArtifactCommonProps,
