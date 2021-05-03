@@ -7,7 +7,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const infoEvent = datahub.consts.TRACE_MAPPING;
 const infoEnabled = xdmp.traceEnabled(infoEvent);
 const debugEvent = datahub.consts.TRACE_MAPPING_DEBUG;
@@ -61,6 +61,7 @@ function buildMappingXML(mappingStepDocument, userParameterNames) {
   allEntityMap.push(targetEntityMapping);
   if(mappingStep["relatedEntityMappings"] && mappingStep["relatedEntityMappings"].length > 0){
     mappingStep["relatedEntityMappings"].forEach(entityMap => {
+      entityMap.expressionContext = entityMap.expressionContext ? entityMap.expressionContext : "/";
       entityMap.uriExpression = entityMap.uriExpression ? entityMap.uriExpression : "hubURI('" + getEntityName(entityMap.targetEntityType) + "')";
       allEntityMap.push(entityMap)
     });
@@ -397,25 +398,36 @@ function validateAndTestMapping(mapping, uri) {
 
   const parameterMap = Object.assign({}, {"URI":uri}, userParameterMap);
   const sourceInstance = extractInstance(sourceDocument);
-  const validatedMappingsArray = validateMappings(mapping, userParameterNames);
-  return testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
+  const mappingsArray = createMappingsArray(mapping);
+  const validatedMappingsArray = validateMappings(mappingsArray, userParameterNames);
+  let validatedAndTestedMapping =  testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
+  return validateAndTestUriExpressions(validatedAndTestedMapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
 }
 
-function validateMappings(mapping, userParameterNames){
-  const mappingCount = 1 + (mapping.relatedEntityMappings ? mapping.relatedEntityMappings.length : 0);
-  let validatedMappingsArray = [];
-  validatedMappingsArray.push(mapping);
-
-  if(mapping.relatedEntityMappings) {
-    for(let i=0; i < mappingCount-1 ; i++){
-      mapping.relatedEntityMappings[i].namespaces = mapping.namespaces;
-      validatedMappingsArray.push(mapping.relatedEntityMappings[i]);
-    }
-  }
-  validatedMappingsArray = validatedMappingsArray.map(mappingToTest => {
+function validateMappings(mappingsArray, userParameterNames){
+  const validatedMappingsArray = mappingsArray.map(mappingToTest => {
     return validateMapping(mappingToTest, userParameterNames);
   });
   return validatedMappingsArray;
+}
+
+function createMappingsArray(mapping){
+  const mappingCount = 1 + (mapping.relatedEntityMappings ? mapping.relatedEntityMappings.length : 0);
+  let mappingsArray = [];
+  mapping.uriExpression = mapping.uriExpression ? mapping.uriExpression : "$URI";
+  mapping.expressionContext = mapping.expressionContext ? mapping.expressionContext : "/";
+  mappingsArray.push(mapping);
+
+  if(mapping.relatedEntityMappings) {
+    for(let i=0; i < mappingCount-1 ; i++){
+      const relatedEntityMapping = mapping.relatedEntityMappings[i];
+      relatedEntityMapping.namespaces = mapping.namespaces;
+      relatedEntityMapping.uriExpression = relatedEntityMapping.uriExpression ? relatedEntityMapping.uriExpression : "hubURI('" + getEntityName(relatedEntityMapping.targetEntityType) + "')";
+      relatedEntityMapping.expressionContext = relatedEntityMapping.expressionContext ? relatedEntityMapping.expressionContext : "/";
+      mappingsArray.push(relatedEntityMapping);
+    }
+  }
+  return mappingsArray;
 }
 
 function testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap){
@@ -428,6 +440,70 @@ function testMappings(mapping, validatedMappingsArray, sourceInstance, userParam
       mapping.relatedEntityMappings[i-1] = response;
     }
   }
+  return mapping;
+}
+
+function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap){
+  const namespaces = fetchNamespacesFromMappingStep(mapping);
+  const functionImports = retrieveFunctionImports();
+  const mappingParameters = makeParameterElements(mapping, userParameterNames);
+  validatedMappingsArray.forEach((entityMapping, mappingIndex) =>{
+    const xmlMapping = xdmp.unquote(`
+    <m:mapping xmlns:m="http://marklogic.com/entity-services/mapping" xmlns:instance="http://marklogic.com/datahub/entityInstance" xmlns:map="http://marklogic.com/xdmp/map" ${namespaces.join(' ')}>
+      ${functionImports}
+      ${mappingParameters}
+        <m:entity name="uriMapping">
+          <uri>
+            <m:val>${entityMapping.uriExpression}</m:val>
+          </uri>
+        </m:entity>
+        <m:output>
+          <uris>
+            <m:for-each>
+                <m:select>${entityMapping.expressionContext}</m:select>
+                <m:call-template name="uriMapping"/>
+            </m:for-each>
+          </uris>
+        </m:output>
+    </m:mapping>`);
+    let response;
+    let errorEvaluatingExpression = false;
+    try {
+      validateXmlMapping(xmlMapping);
+    } catch (e) {
+      response = hubUtils.getErrorMessage(e);
+      errorEvaluatingExpression = true;
+    }
+    try {
+      if(!response){
+        const uriString = String(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('*:uris/*:uri[1]/text()'));
+        response = flowUtils.properExtensionURI(uriString, mapping.targetFormat);
+      }
+    }
+    catch(e){
+      response = hubUtils.getErrorMessage(e);
+      errorEvaluatingExpression = true;
+    }
+
+    if(mappingIndex == 0){
+      mapping.uriExpression = {};
+      if (!errorEvaluatingExpression){
+        mapping.uriExpression.output = response;
+      }
+      else{
+        mapping.uriExpression.errorMessage = response;
+      }
+    }
+    else{
+      mapping.relatedEntityMappings[mappingIndex - 1].uriExpression = {};
+      if(!errorEvaluatingExpression){
+        mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.output = response;
+      }
+      else{
+        mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.errorMessage = response;
+      }
+    }
+  });
   return mapping;
 }
 
@@ -491,7 +567,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
   let mapping = {
     "namespaces": fullMapping.namespaces,
     "targetEntityType": fullMapping.targetEntityType,
-    "expressionContext": fullMapping.expressionContext ? fullMapping.expressionContext : "/",
+    "expressionContext": fullMapping.expressionContext,
     "properties": {}
   };
 
@@ -505,11 +581,15 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
     // As of trunk 10.0-20190916, mappings are being validated against entity schemas in the schema database.
     // This doesn't seem expected, as the validation will almost always fail.
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
-    let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
-    xdmp.xsltEval(stylesheet, [], {staticCheck: true});
+    validateXmlMapping(xmlMapping);
   } catch (e) {
     return hubUtils.getErrorMessage(e);
   }
+}
+
+function validateXmlMapping(xmlMapping){
+  let stylesheet = fn.head(xdmp.xsltInvoke("/MarkLogic/entity-services/mapping-compile.xsl", xmlMapping));
+  xdmp.xsltEval(stylesheet, [], {staticCheck: true});
 }
 
 /**
@@ -526,7 +606,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
  * @returns
  */
 function testMapping(mapping, sourceInstance, userParameterNames, parameterMap,
-  propMapping={"targetEntityType":mapping.targetEntityType, "expressionContext": mapping.expressionContext ? mapping.expressionContext : "/", "namespaces": mapping.namespaces,"properties": {}}, paths=['properties'])
+  propMapping={"targetEntityType":mapping.targetEntityType, "expressionContext": mapping.expressionContext, "namespaces": mapping.namespaces,"properties": {}}, paths=['properties'])
 {
   Object.keys(mapping.properties || {}).forEach(propertyName => {
     let mappedProperty = mapping.properties[propertyName];
@@ -577,26 +657,23 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
   let resp = {};
   const mappingDocument = fn.head(xdmp.unquote(xdmp.quote(mapping)));
   const xmlMapping = buildMappingXML(mappingDocument, userParameterNames);
-  let mappingXslt = xdmp.invokeFunction(function () {
-      const es = require('/MarkLogic/entity-services/entity-services');
-      return es.mappingCompile(xmlMapping);
-     }, {database: xdmp.modulesDatabase()});
 
   try {
-    let inputDoc = sourceInstance;
-    if (!(inputDoc instanceof Document)) {
-      inputDoc = fn.head(xdmp.unquote(String(sourceInstance)));
-    }
-
     /*
     Running the xslt will return an xml doc which looks like
-    <instance:entityInstance0><entityName>
+    <instance:mapping0Instances>
+    <instance:entityInstance>
+    <value>
+    <entityName>
     ....
-    </entityName></instance:entityInstance0>. The xpath extracts only the first instance, will be modified in later when UI supports
+    </entityName>
+    </value>
+    </instance:entityInstance>
+    </instance:mapping0Instances>. The xpath extracts only the first instance, will be modified in later when UI supports
     multiple instances
      */
 
-    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(xdmp.xsltEval(mappingXslt, inputDoc, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance[1]/*:value/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
+    let outputDoc = inst.canonicalJson(xdmp.unquote(xdmp.quote(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('/instance:mapping0Instances/instance:entityInstance[1]/*:value/node()', {"instance":"http://marklogic.com/datahub/entityInstance"}))));
     let output = outputDoc.xpath("//" + propertyName);
     let arr = output.toArray();
     if(arr.length <= 1) {
@@ -610,6 +687,19 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
     resp.errorMessage = hubUtils.getErrorMessage(e);
   }
   return resp;
+}
+
+function testXmlMapping(xmlMapping, sourceInstance, parameterMap) {
+  let mappingXslt = xdmp.invokeFunction(function () {
+    const es = require('/MarkLogic/entity-services/entity-services');
+    return es.mappingCompile(xmlMapping);
+  }, {database: xdmp.modulesDatabase()});
+
+  let inputDoc = sourceInstance;
+  if (!(inputDoc instanceof Document)) {
+    inputDoc = fn.head(xdmp.unquote(String(sourceInstance)));
+  }
+  return xdmp.xsltEval(mappingXslt, inputDoc, parameterMap);
 }
 
 function addNode(obj, paths, mappedProperty, isNested ) {
