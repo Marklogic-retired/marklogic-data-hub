@@ -202,7 +202,7 @@ const MappingStepDetail: React.FC = () => {
   const fetchSrcDocFromUri = async (stepName, uri) => {
     try {
       let srcDocResp = await getDoc(stepName, uri);
-      if (srcDocResp && srcDocResp.status === 200) {
+      if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
         let parsedDoc: any;
         if (typeof(srcDocResp.data) === "string") {
           parsedDoc = getParsedXMLDoc(srcDocResp);

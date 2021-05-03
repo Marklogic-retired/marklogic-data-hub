@@ -1,0 +1,101 @@
+
+{
+  "collections": ["mapCustomersWithRelatedEntitiesJSON", "Customer"],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "JSON",
+  "name": "mapCustomersWithRelatedEntitiesJSON",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadCustomersWithRelatedEntitiesJSON'])",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersWithRelatedEntitiesJSON-mapping",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "concat(Name/FirstName, ' ', Name/LastName)"
+    },
+    "nicknames": {
+      "sourcedFrom": "nicknames"
+    },
+    "shipping": {
+      "sourcedFrom": "/Address/Shipping",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "billing": {
+      "sourcedFrom": "/Address/Billing",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    }
+  },
+  "relatedEntityMappings": [
+    {
+      "relatedEntityMappingId": "BabyRegistry:Customer.customerId",
+      "collections": ["mapCustomersWithRelatedEntitiesJSON", "BabyRegistry"],
+      "expressionContext": "BabyRegistry",
+      "uriExpression": "concat('/BabyRegistry/', BabyRegistryId)",
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "properties": {
+        "babyRegistryId": {
+          "sourcedFrom": "BabyRegistryId"
+        },
+        "arrivalDate": {
+          "sourcedFrom": "parseDate(Arrival_Date, 'YYYY-MM-DD')"
+        },
+        "ownedBy": {
+          "sourcedFrom": "/CustomerID"
+        }
+      },
+      "targetEntityType": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry"
+    }
+  ]
+}

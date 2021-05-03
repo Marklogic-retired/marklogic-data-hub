@@ -1,0 +1,26 @@
+{
+  "info": {
+    "title": "BabyRegistry",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "BabyRegistry": {
+      "primaryKey": "babyRegistryId",
+      "properties": {
+        "babyRegistryId": {
+          "datatype": "integer"
+        },
+        "arrivalDate": {
+          "datatype": "date"
+        },
+        "ownedBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+          "joinPropertyName": "customerId"
+        }
+      }
+    }
+  }
+}
+

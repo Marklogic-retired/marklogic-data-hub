@@ -76,3 +76,16 @@ export const getMappingFunctions = async () => {
     console.error("Error while fetching the functions!", message);
   }
 };
+
+export const getMappingArtifactByStepName = async (stepName) => {
+  try {
+    let response = await getStep(stepName, "mapping");
+    if (response.status === 200) {
+      let mapArtifacts = response.data;
+      return mapArtifacts;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error getting mapping", message);
+  }
+};

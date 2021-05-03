@@ -10,7 +10,7 @@ describe("Run Tile tests", () => {
   beforeEach(() => {
     cy.visit("/");
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
     LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
@@ -85,6 +85,28 @@ describe("Run Tile tests", () => {
     cy.contains("URI: /com.marklogic.smart-mastering/merged/").should("be.visible");
     cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
     cy.contains("123 Wilson Rd").should("be.visible");
+  });
+
+  it("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
+    //expand flow
+    runPage.expandFlow("CurateCustomerWithRelatedEntitiesJSON");
+
+    //run mapping step
+    runPage.runStep("mapCustomersWithRelatedEntitiesJSON");
+
+    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
+    cy.verifyStepRunResult("success", "Mapping", "mapCustomersWithRelatedEntitiesJSON");
+    cy.waitForAsyncRequest();
+
+    //navigate to explorer tile using the explorer link
+    runPage.explorerLink().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.waitForTableToLoad();
+
+    browsePage.getSelectedEntity().should("contain", "All Entities");
+    browsePage.getTotalDocuments().should("eq", 2);
+    browsePage.getSelectedFacet("createdByJob").should("exist");
   });
 
 });
