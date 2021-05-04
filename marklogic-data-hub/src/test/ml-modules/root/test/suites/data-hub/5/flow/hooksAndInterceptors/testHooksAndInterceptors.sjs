@@ -37,8 +37,9 @@ assertions.push(
 
 const afterHookDoc = hubTest.getRecord("/afterHook/customer1.json", config.FINALDATABASE);
 assertions.push(
-  test.assertEqual("Jane", afterHookDoc.document.envelope.instance.Customer.name, "Verifying that the hook ran; " + 
-    "it should have run against the mapped customer and thus inserted a copy of it")
+  test.assertEqual("world", afterHookDoc.document.envelope.headers.interceptorHeader, 
+    "Starting in 5.5, an 'after' hook receives the output content array from a step instead of the input " + 
+    "content array. So the hook should see the data added by the interceptor.")
 );
 
 assertions;
