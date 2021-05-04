@@ -1,7 +1,47 @@
 .tabular{
-    padding: 20px;
+    padding: 40px;
+    margin-top: 40px;
 }
 
 .events{
     margin-left: 10px;
+}
+
+.columnSelector {
+    float: right;
+    margin-right: 50px;
+    margin-top: 10px;
+    height: 15px;
+}
+
+.fixedPopup {
+    margin-top: 2px;
+    margin-bottom: 3px;
+}
+
+.columnIcon {
+    cursor: pointer;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
+.DropdownMenuItem {
+    display: flex;
+    vertical-align: middle;
+    max-height: 4vh;
+    &:hover{
+        background-color: #E9F7FE;
+    }
+}
+
+.divider {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+    height: 20px;
 }
