@@ -107,3 +107,96 @@ describe("Job results Table view component", () => {
 
   });
 });
+
+describe("Column Selector in Job results Table view component", () => {
+  test("Verify default values are checked", async () => {
+    const {getByText, getByTestId} = render(
+        <Router>
+          <JobResultsTableView
+              data={jobResults.results}
+          />
+        </Router>
+    );
+
+    expect(getByTestId("column-selector-icon")).toBeInTheDocument();
+    fireEvent.mouseOver(getByTestId("column-selector-icon"));
+    await (waitForElement(() => (getByText("Select the columns to display."))));
+    await fireEvent.click(getByTestId("column-selector-icon"));
+    expect(getByTestId("columnOptionsCheckBox-user")).toBeInTheDocument();
+    expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeInTheDocument();
+    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-flowName")).toBeInTheDocument();
+    expect(getByTestId("columnOptionsCheckBox-flowName")).toBeChecked();
+  });
+
+  test("Verify Cancel button", async () => {
+    const {getByText, getByTestId} = render(
+        <Router>
+          <JobResultsTableView
+              data={jobResults.results}
+          />
+        </Router>
+    );
+
+    expect(getByTestId("column-selector-icon")).toBeInTheDocument();
+    await fireEvent.click(getByTestId("column-selector-icon"));
+    expect(getByTestId("columnOptionsCheckBox-user")).toBeInTheDocument();
+    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeInTheDocument();
+    expect(getByTestId("columnOptionsCheckBox-flowName")).toBeInTheDocument();
+    fireEvent.click(getByTestId("columnOptionsCheckBox-user"));
+    fireEvent.click(getByTestId("columnOptionsCheckBox-jobId"));
+    expect(getByTestId("columnOptionsCheckBox-jobId")).not.toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-user")).not.toBeChecked();
+
+    const cancelButton = getByText("Cancel");
+    expect(cancelButton).toBeInTheDocument();
+    fireEvent.click(cancelButton);
+
+    expect(getByTestId("column-selector-icon")).toBeInTheDocument();
+    await fireEvent.click(getByTestId("column-selector-icon"));
+    expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-flowName")).toBeChecked();
+  });
+
+  test("Verify Apply button", async () => {
+    const {getByText, getByTestId, queryByText} = render(
+        <Router>
+          <JobResultsTableView
+              data={jobResults.results}
+          />
+        </Router>
+    );
+
+    // Check table Configurable column headers are rendered
+    expect(getByText("User")).toBeInTheDocument();
+    expect(getByText("Job ID")).toBeInTheDocument();
+    expect(getByText("Flow Name")).toBeInTheDocument();
+
+    //check table data is rendered correctly
+    expect(getByText("pari")).toBeInTheDocument();
+    expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument();
+    expect(getByText("convertedFlow")).toBeInTheDocument();
+
+    expect(getByTestId("column-selector-icon")).toBeInTheDocument();
+    await fireEvent.click(getByTestId("column-selector-icon"));
+    expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeChecked();
+    expect(getByTestId("columnOptionsCheckBox-flowName")).toBeChecked();
+
+    fireEvent.click(getByTestId("columnOptionsCheckBox-user"));
+    expect(getByTestId("columnOptionsCheckBox-user")).not.toBeChecked();
+    fireEvent.click(getByTestId("columnOptionsCheckBox-flowName"));
+    expect(getByTestId("columnOptionsCheckBox-flowName")).not.toBeChecked();
+
+    const applyButton = getByText("Apply");
+    expect(applyButton).toBeInTheDocument();
+    await fireEvent.click(applyButton);
+
+    //check table data is rendered correctly
+    expect(queryByText("pari")).not.toBeInTheDocument();
+    expect(getByText("61040854-2894-44b9-8fbd-fc6e71357692")).toBeInTheDocument();
+    expect(queryByText("convertedFlow")).not.toBeInTheDocument();
+  });
+});
