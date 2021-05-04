@@ -923,7 +923,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
 
         final int existingStagingCount = getStagingDocCount();
         final int existingFinalCount = getFinalDocCount();
-        final int existingJobsCount = getJobsDocCount();
+        final int existingJobsCount = getLegacyJobDocCount();
 
         String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "mlSjsInputFlow" : "mlInputFlow";
         ServerTransform serverTransform = new ServerTransform(transform);
@@ -961,7 +961,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
 
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
-        int jobsCount = getJobsDocCount();
+        int jobsCount = getLegacyJobDocCount();
 
         assertEquals(finalCounts.stagingCount, stagingCount - existingStagingCount);
         assertEquals(finalCounts.finalCount, finalCount - existingFinalCount);
@@ -1003,7 +1003,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
         final int existingStagingCount = getStagingDocCount();
         final int existingFinalCount = getFinalDocCount();
-        final int existingJobsCount = getJobsDocCount();
+        final int existingJobsCount = getLegacyJobDocCount();
 
         String transform = codeFormat.equals(CodeFormat.JAVASCRIPT) ? "mlSjsInputFlow" : "mlInputFlow";
 		ServerTransform serverTransform = new ServerTransform(transform);
@@ -1039,7 +1039,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
 
         int stagingCount = getStagingDocCount();
         int finalCount = getFinalDocCount();
-        int jobsCount = getJobsDocCount();
+        int jobsCount = getLegacyJobDocCount();
 
         assertEquals(finalCounts.stagingCount, stagingCount - existingStagingCount);
         assertEquals(finalCounts.finalCount, finalCount - existingFinalCount);
