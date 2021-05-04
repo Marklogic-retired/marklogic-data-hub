@@ -190,24 +190,28 @@ class Flow {
 
     const batchItems = contentArray.map(contentObject => contentObject.uri);
 
-    if (stepExecutionContext.sourceDatabaseIsCurrentDatabase() && !combinedOptions.stepUpdate) {
-      this.runStep(stepExecutionContext, contentArray);
-    } else {
-      const flowInstance = this;
-      xdmp.invoke(
-        '/data-hub/5/impl/invoke-step.sjs',
-        {flowInstance, stepExecutionContext, contentArray},
-        {
-          database: xdmp.database(stepExecutionContext.getSourceDatabase()),
-          update: combinedOptions.stepUpdate ? 'true': 'false',
-          commit: 'auto',
-          ignoreAmps: true
-        }
-      );
+    try {
+      if (stepExecutionContext.sourceDatabaseIsCurrentDatabase() && !combinedOptions.stepUpdate) {
+        this.runStep(stepExecutionContext, contentArray);
+      } else {
+        const flowInstance = this;
+        xdmp.invoke(
+          '/data-hub/5/impl/invoke-step.sjs',
+          {flowInstance, stepExecutionContext, contentArray},
+          {
+            database: xdmp.database(stepExecutionContext.getSourceDatabase()),
+            update: combinedOptions.stepUpdate ? 'true': 'false',
+            commit: 'auto',
+            ignoreAmps: true
+          }
+        );
+      }  
+    } catch (error) {
+      this.writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, {});
+      throw error;
     }
 
     let writeTransactionInfo = {};
-    //let's update our jobdoc now
     if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {
         const configCollections = [
@@ -233,18 +237,7 @@ class Flow {
       flowProvenance.writeProvenanceData(stepExecutionContext, outputContentArray);
     }
 
-    if (stepExecutionContext.batchOutputIsEnabled()) {
-      if (jobDoc != null) {
-        const batch = new Batch(jobId, flowName);
-        batch.addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo);
-        batch.persist();
-      } else {
-        hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER,
-          "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
-      }
-    } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW_RUNNER)) {
-      hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER, `Batch document insertion is disabled`);
-    }
+    this.writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, writeTransactionInfo);
 
     // This maps to the Java ResponseHolder class
     const responseHolder = {
@@ -278,6 +271,29 @@ class Flow {
     outputContentArray.forEach(contentObject => {
       this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);
     });
+  }
+
+  /**
+   * If batch output is enabled, a Batch document will be written to the jobs database. 
+   * 
+   * @param stepExecutionContext 
+   * @param jobDoc {object} the job document for this step execution; can be null, in which case a Batch doc is not written
+   * @param batchItems {array} the set of items being processed in this batch
+   * @param writeTransactionInfo {object} info about the transaction(s) that wrote content to a database
+   */
+  writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, writeTransactionInfo) {
+    if (stepExecutionContext.batchOutputIsEnabled()) {
+      if (jobDoc != null) {
+        const batch = new Batch(stepExecutionContext.jobId, stepExecutionContext.flow.name);
+        batch.addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo);
+        batch.persist();
+      } else {
+        hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER,
+          "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
+      }
+    } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW_RUNNER)) {
+      hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER, `Batch document insertion is disabled`);
+    }
   }
 
   cloneInstance(instance) {

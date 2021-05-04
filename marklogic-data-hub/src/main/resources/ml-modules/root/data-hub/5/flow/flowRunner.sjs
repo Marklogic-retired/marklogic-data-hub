@@ -121,7 +121,7 @@ function normalizeContentArray(contentArray) {
 function processContentWithStep(stepExecutionContext, contentArray, writeQueue) {
   const hookRunner = stepExecutionContext.makeCustomHookRunner(contentArray);
   if (hookRunner && hookRunner.runBefore) {
-    hookRunner.runHook();
+    hookRunner.runHook(contentArray);
   }
 
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ? 
@@ -136,7 +136,7 @@ function processContentWithStep(stepExecutionContext, contentArray, writeQueue) 
   applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext);
 
   if (hookRunner && !hookRunner.runBefore) {
-    hookRunner.runHook();
+    hookRunner.runHook(outputContentArray);
   }
 
   if (!stepExecutionContext.stepOutputShouldBeWritten()) {

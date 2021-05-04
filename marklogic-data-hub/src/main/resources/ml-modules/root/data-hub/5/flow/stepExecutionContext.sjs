@@ -316,14 +316,22 @@ class StepExecutionContext {
     return false !== this.combinedOptions.writeStepOutput;
   }
 
-  makeCustomHookRunner(contentArray) {
+  /**
+   * If custom hook config is found, returns a function that accepts an array of content objects. This is a change from DHF <= 5.4.x, where
+   * the hook always received the input content array, even if it was an "after" hook. That actually worked for the most likely use case of 
+   * attaching an after hook to a mapping step. That's because the mapping step returned the same content object it received. Now in 5.5, it 
+   * returns new content objects, and potentially multiple ones due to related entity mappings. It seems far more intuitive that an after hook
+   * should receive the output content array from a step, and could easily be considered a bug that it wasn't. 
+   * 
+   * @param {array} inputContentArray array of content objects being processed by this step; needed so that the set of items
+   * being processed can be passed to the custom hook
+   * @returns a function for executing the custom hook on an array of content objects
+   */
+  makeCustomHookRunner(inputContentArray) {
     const hookConfig = this.flowStep.customHook || this.stepDefinition.customHook;
     if (hookConfig && hookConfig.module) {
-      const items = contentArray.map(content => content.uri);
-      // DHF 5.0 established that a custom hook will receive content as a sequence
       const parameters = Object.assign({
-        uris: items, 
-        content: hubUtils.normalizeToSequence(contentArray),
+        uris: inputContentArray.map(content => content.uri), 
         options: this.combinedOptions,
         flowName: this.flow.name,
         stepNumber: this.stepNumber,
@@ -334,7 +342,8 @@ class StepExecutionContext {
       const options = flowUtils.buildInvokeOptionsForCustomHook(user, database);
       return {
         runBefore: hookConfig.runBefore,
-        runHook: function() {
+        runHook: function(contentArray) {
+          parameters.content = contentArray;
           const event = consts.TRACE_FLOW_RUNNER;
           if (xdmp.traceEnabled(event)) {
             if (hookConfig.runBefore) {

@@ -9,7 +9,10 @@ const firstMappingStep = {
   "customHook": {
     "module": "/test/suites/data-hub/5/flow/hooksAndInterceptors/test-data/beforeHook.sjs",
     "runBefore": true
-  },
+  }
+};
+
+const secondMappingStep = {
   "interceptors": [
     {
       "path": "/test/suites/data-hub/5/flow/hooksAndInterceptors/test-data/addHeaders.sjs",
@@ -18,10 +21,7 @@ const firstMappingStep = {
         "headerValueToAdd": "world"
       }
     }
-  ]
-};
-
-const secondMappingStep = {
+  ],
   "customHook": {
     "module": "/test/suites/data-hub/5/flow/hooksAndInterceptors/test-data/afterHook.sjs",
     "runBefore": false
