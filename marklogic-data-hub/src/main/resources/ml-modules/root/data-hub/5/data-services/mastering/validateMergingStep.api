@@ -5,6 +5,11 @@
     {
       "name": "stepName",
       "datatype": "string"
+    },
+    {
+      "name": "view",
+      "desc": "Designates the view the messages are for. Valid values are 'settings' or 'rules'",
+      "datatype": "string"
     }
   ],
   "return": {
