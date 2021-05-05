@@ -5,6 +5,7 @@ const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs'
 const entityValidationLib = require('entity-validation-lib.sjs');
 const xqueryLib = require('xquery-lib.xqy')
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
@@ -69,29 +70,29 @@ function main(contentSequence, options, stepExecutionContext) {
 
       let doc = content.value;
       let instance = lib.extractInstance(doc);
-    
+
       const mappingParams = Object.assign({}, {"URI":currentContentUri}, userMappingParameterMap);
 
       // For not-yet-known reasons, catching this error and then simply rethrowing it causes the MappingTest JUnit class
       // to pass due to the "message" part of the JSON in the stepOutput containing the expected output when this is done.
       let arrayOfInstanceArrays;
       try {
-        arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});    
+        arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});
       } catch (e) {
         throw Error(e);
       }
-      
+
       hubUtils.hubTrace(traceEvent, `Entity instances with mapping ${mappingStep.name} and source document ${currentContentUri}: ${arrayOfInstanceArrays}`);
-    
+
       let counter = 0;
       let contentResponse = [];
-    
+
       for(const instanceArray of xdmp.arrayValues(arrayOfInstanceArrays)){
         /* The first instance in the array is the target entity instance. 'permissions' and 'collections' for target instance
         are applied outside of main.sjs */
         let entityName ;
         let entityContext = {};
-    
+
         if(counter == 0){
           entityName = targetEntityName;
           entityContext = content.context;
@@ -102,22 +103,22 @@ function main(contentSequence, options, stepExecutionContext) {
           entityContext = createContextForRelatedEntityInstance(currentRelatedMapping);
         }
         const entityModel = entityModelMap[entityName];
-    
+
         for(const entityInstance of xdmp.arrayValues(instanceArray)){
           let entityContent = {};
           if(entityName == targetEntityName){
             entityContent = Object.assign(entityContent, content);
           }
           entityContent["value"] = entityInstance.value;
-          entityContent["uri"] = flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
+          entityContent["uri"] = buildUri(entityInstance, entityName, outputFormat);
           entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options);
           hubUtils.hubTrace(traceEvent, `Entity instance envelope created with mapping ${mappingStep.name} and source document ${currentContentUri}: ${entityContent.value}`);
           contentResponse.push(entityContent);
         }
         counter++;
       }
-      
-      outputContentArray = outputContentArray.concat(contentResponse);  
+
+      outputContentArray = outputContentArray.concat(contentResponse);
     } catch (error) {
       if (stepExecutionContext.isStopOnError()) {
         stepExecutionContext.stopWithError(error, currentContentUri);
@@ -133,6 +134,15 @@ function main(contentSequence, options, stepExecutionContext) {
 
   // A number of DHF tests expect a single object returned, while the flow framework is fine with one or an array.
   return outputContentArray.length == 1 ? outputContentArray[0] : outputContentArray;
+}
+
+function buildUri(entityInstance, entityName, outputFormat){
+  if (String(entityInstance.uri)){
+    return flowUtils.properExtensionURI(String(entityInstance.uri), outputFormat);
+  }
+  else{
+    httpUtils.throwBadRequest(`Unable to write mapped instance for entity model '${entityName}'; cause: The URI xpath expression for the mapping evaluates to null`);
+  }
 }
 
 function getUserMappingParameterMap(stepExecutionContext, contentSequence) {

@@ -6,6 +6,9 @@
     },
     "2" : {
       "stepId" : "mapCustomersXML-mapping"
+    },
+    "3" : {
+      "stepId" : "mapWithUriExpressionEvaluatesToNull-mapping"
     }
   }
 }
