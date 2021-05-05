@@ -11,7 +11,7 @@ function describe(item) {
 }
 
 function mapsJSONasExpected() {
-  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = esMapping.main({uri: '/customer1.json', "value": cts.doc("/customer1.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -26,7 +26,7 @@ function mapsJSONasExpected() {
 }
 
 function esMapsJSONasExpected() {
-  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = esMapping.main({uri: '/customer1.json', "value": cts.doc("/customer1.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -53,7 +53,7 @@ function esMapsJSONasExpected() {
 }
 
 function mapsJSONtoXMLasExpected() {
-  const mappedInstance = fn.head(esMapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = fn.head(esMapping.main({uri: '/customer1.json', "value": cts.doc("/customer1.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -70,7 +70,7 @@ function mapsJSONtoXMLasExpected() {
 }
 
 function mapsXMLasExpected() {
-  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.xml")}, {
+  const mappedInstance = esMapping.main({uri: '/customer1.xml', "value": cts.doc("/customer1.xml")}, {
     "mapping" : {
       "name" : "CustomerXML-CustomerXMLMapping",
       "version" : 0
