@@ -617,6 +617,61 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
 
 }
 
+void mergePR(){
+    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+        script{
+            props = readProperties file:'data-hub/pipeline.properties';
+            JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+            def response = sh (returnStdout: true, script:'''curl -u $Credentials  --header "application/vnd.github.merge-info-preview+json" "'''+githubAPIUrl+'''/pulls/$CHANGE_ID" | grep '"mergeable_state":' | cut -d ':' -f2 | cut -d ',' -f1 | tr -d '"' ''')
+            response=response.trim();
+            println(response)
+            if(response.equals("clean")){
+                println("merging can be done")
+                sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
+                def mergeResult = readFile('mergeResult.txt').trim()
+                if(mergeResult=="200"){
+                    println("Merge successful")
+                }else{
+                    println("Merge Failed")
+                    sh 'exit 123'
+                }
+            }else if(response.equals("blocked")){
+                println("retry blocked");
+                withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+                    def  reviewersList = sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
+                   ''')
+                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
+                    def emailList="";
+                    for(def user:slurper.users){
+                        email=getEmailFromGITUser user.login;
+                        emailList+=email+',';
+                    }
+                    sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
+
+                }
+                sleep time: 30, unit: 'MINUTES'
+                throw new Exception("Waiting for all the status checks to pass");
+            }else if(response.equals("unstable")){
+                println("retry unstable")
+                sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
+                def mergeResult = readFile('mergeResult.txt').trim()
+                if(mergeResult=="200"){
+                    println("Merge successful")
+                }else{
+                    println("Merge Failed")
+                    sh 'exit 123'
+                }
+                println("Result is"+ mergeResult)
+            }else{
+                println("merging not possible")
+                currentBuild.result = "FAILURE"
+                sh 'exit 1';
+            }
+        }
+    }
+}
+
 pipeline{
 	agent none;
 	options {
@@ -794,6 +849,7 @@ pipeline{
                          if(!params.regressions) error("Pre merge tests Failed");
                      }}
                   }}
+
 		stage('code-review'){
             when {
                 expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
@@ -811,63 +867,8 @@ pipeline{
   			beforeAgent true
 		}
 		agent {label 'dhmaster'};
-			steps{
-			retry(5){
-				withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-				script{
-				    props = readProperties file:'data-hub/pipeline.properties';
-					JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-    				def response = sh (returnStdout: true, script:'''curl -u $Credentials  --header "application/vnd.github.merge-info-preview+json" "'''+githubAPIUrl+'''/pulls/$CHANGE_ID" | grep '"mergeable_state":' | cut -d ':' -f2 | cut -d ',' -f1 | tr -d '"' ''')
-    				response=response.trim();
-    				println(response)
-    				if(response.equals("clean")){
-    					println("merging can be done")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
-    					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult=="200"){
-    						println("Merge successful")
-    					}else{
-    						println("Merge Failed")
-                            sh 'exit 123'
-    					}
-    				}else if(response.equals("blocked")){
-    					println("retry blocked");
-    					withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-                  def  reviewersList = sh (returnStdout: true, script:'''
-                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
-                   ''')
-                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
-                    def emailList="";
-                    for(def user:slurper.users){
-                        email=getEmailFromGITUser user.login;
-                        emailList+=email+',';
-                    }
-                      sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
-
-                 }
-    					sleep time: 30, unit: 'MINUTES'
-    					throw new Exception("Waiting for all the status checks to pass");
-    				}else if(response.equals("unstable")){
-    					println("retry unstable")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
-    					def mergeResult = readFile('mergeResult.txt').trim()
-              if(mergeResult=="200"){
-                println("Merge successful")
-              }else{
-                println("Merge Failed")
-                sh 'exit 123'
-              }
-    					println("Result is"+ mergeResult)
-    				}else{
-    					println("merging not possible")
-    					currentBuild.result = "FAILURE"
-    					sh 'exit 1';
-    				}
-				}
-				}
-				}
-			}
-			post{
+		steps{retry(5){mergePR()}}
+		post{
                   success {
                     println("Merge Successful")
                     script{
@@ -884,8 +885,7 @@ pipeline{
                     sendMail email,'<h3>Could not rebase and merge the <a href=${CHANGE_URL}>$BRANCH_NAME</a></h3><h3>Please check if there are any conflicts due to rebase and merge and resolve them</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Merging Failed on $BRANCH_NAME'
                       }
                   }
-                  }
-		}
+        }}
 
         stage('publishing'){
          when {
@@ -913,17 +913,24 @@ pipeline{
             }
         }
 
-        stage('rh7-singlenode-9.0-11'){
+        stage('rh7-singlenode'){
+        when { expression {return params.regressions} }
+        parallel {
+            stage('rh7-singlenode-9.0-11') {
             when { expression {return params.regressions} }
             agent { label 'dhfLinuxAgent'}
-            steps{
-                timeout(time: 3,  unit: 'HOURS'){
+            environment{
+                    JAVA_HOME="$JAVA_HOME_DIR"
+                    PATH="$JAVA_HOME:$PATH"
+            }
+            steps{timeout(time: 3,  unit: 'HOURS'){
                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
                      script{
+                        cleanWs()
                         props = readProperties file:'data-hub/pipeline.properties';
                         copyRPM 'Release','9.0-11'
                         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-                        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+                        sh 'cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean;set +e;./gradlew -g ./cache-build marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
                         junit '**/TEST-*.xml'
                         def output=readFile 'data-hub/console.log'
                         def result=false;
@@ -936,22 +943,45 @@ pipeline{
                     }}}
             }
 			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
+             success {
                     println("End-End Tests Completed")
                     sendMail Email,'<h3>Tests Passed on Released 9.0 ML Server Single Node </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Passed'
 
-                   }
-                   unstable {
+             }
+             unstable {
                       println("End-End Tests Failed")
                       sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
                       archiveArtifacts artifacts: 'MLLogs/**/*'
                       sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Failed'
-                  }
-                  }
+             }}
         }
+        stage('fullCycle-rh7-singlenode-9.0-11') {
+        agent { label 'dhfLinuxAgent' }
+        environment{
+                    JAVA_HOME="$JAVA_HOME_DIR"
+                    PATH="$JAVA_HOME:$PATH"
+                }
+        steps {timeout(time: 3, unit: 'HOURS') {
+                  catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
+                            cleanWs()
+                            copyRPM 'Release', '9.0-11'
+                            setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+                            sh 'cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean ml-data-hub:testFullCycle -i --stacktrace'
+                            junit '**/TEST-*.xml'
+                  }
+        }}
+        post {
+         success {
+             println("End-End Tests Completed")
+             sendMail Email, '<h3>Tests Passed on Released 9.0 ML Server Single Node </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>', false, '$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Passed'
+         }
+        unstable {
+            println("End-End Tests Failed")
+            sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+            archiveArtifacts artifacts: 'MLLogs/**/*'
+            sendMail Email, '<h3>Some Tests Failed on Released 9.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>', false, '$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Failed'
+        }}}
+       }}
 
        stage('Linux Core Parallel Execution'){
          when { expression {return params.regressions} }
