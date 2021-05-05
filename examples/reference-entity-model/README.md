@@ -89,3 +89,34 @@ mapCustomersJSON step uses this function and the ZIP_POINTS parameter in the fol
 
 The above expression first selects the first 5 characters of the "Postal" property in a source document, and then uses that string to find an associated value 
 in the ZIP_POINTS parameter, which is a map of zip codes to geospatial points. 
+
+## Testing support
+
+This project demonstrates how developers can test their DHF applications via [JUnit5](https://junit.org/junit5/), 
+[marklogic-unit-test](https://github.com/marklogic-community/marklogic-unit-test), and the new marklogic-data-hub-junit5
+library available in the DHF 5.5.0 release. This support is enabled via the following configuration in this project's 
+build.gradle file:
+
+- The "java" plugin is applied so that Gradle's support for compiling and running JUnit5 tests can be used
+- In the "repositories" block, mavenCentral() and jcenter() are both included to satisfy the dependencies for test support
+- In the "dependencies" block, marklogic-unit-test-modules is included so that the modules associated with this library will be 
+loaded into the modules database, and marklogic-data-hub-junit5 is included to support JUnit5 testing
+- The "test" block includes "useJUnitPlatform()" to tell Gradle to use the platform support in JUnit5
+
+The following tests are then included to demonstrate the support for JUnit 5 and marklogic-unit-test; these are all found in the 
+src/test/java directory:
+
+- org/example/RunCustomerFlowTest shows how to run a flow and verify the results by extending a base class provided by marklogic-data-hub-junit5
+- org/example/CustomRunCustomerFlowTest shows how to run a flow and verify the results without extending the base class 
+provided by marklogic-data-hub-junit5
+- org/example/RunMarkLogicUnitTestsTest shows how to run each marklogic-unit-test module as a separate JUnit test 
+
+After this project is deployed, the above tests can be run by Gradle via the following command:
+
+    ./gradlew test 
+
+The "test" task should succeed and write a report to the build/reports/test/index.html file, which you can view in a web
+browser to see the results of the tests (the report generation is controlled by the Gradle Java plugin). 
+
+You can also run just the marklogic-unit-test modules by accessing http://localhost:8011/test/default.xqy , which will display
+the marklogic-unit-tet GUI for running tests. 

@@ -92,8 +92,6 @@ class WriteQueue {
   }
 
   /**
-   * TODO Add error handling in DHFPROD-6720. Each step may have succeeded, but the batch fails.
-   * 
    * @return {array} an array of objects about each transaction; each object consists of properties "databaseName", "transactionId", and "transactionDateTime"
    */
   persist() {

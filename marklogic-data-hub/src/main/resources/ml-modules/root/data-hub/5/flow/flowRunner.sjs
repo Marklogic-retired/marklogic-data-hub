@@ -56,20 +56,9 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
     const batchItems = currentContentArray.map(content => content.uri);
 
     try {
-      prepareContentBeforeStepIsRun(currentContentArray, stepExecutionContext);
-
-      currentContentArray = stepExecutionContext.sourceDatabaseIsCurrentDatabase() ? 
-        runStepOnContent(stepExecutionContext, currentContentArray, writeQueue) : 
-        fn.head(xdmp.invokeFunction(function() {
-          return runStepOnContent(stepExecutionContext, currentContentArray, writeQueue);
-        }, {
-          // Uses the same options as flow.sjs
-          database: xdmp.database(stepExecutionContext.getSourceDatabase()),
-          update: stepExecutionContext.combinedOptions.stepUpdate ? 'true': 'false',
-          ignoreAmps: true
-        }));
-      
-      const stepResponse = stepExecutionContext.buildStepResponse(jobId);
+      prepareContentBeforeStepIsRun(stepExecutionContext, currentContentArray);
+      currentContentArray = runStepAgainstSourceDatabase(stepExecutionContext, currentContentArray, writeQueue);
+      const stepResponse = stepExecutionContext.buildStepResponse();
 
       if (!stepExecutionContext.wasCompleted()) {
         flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);
@@ -94,7 +83,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
       }
-      const stepResponse = stepExecutionContext.buildStepResponse(jobId);
+      const stepResponse = stepExecutionContext.buildStepResponse();
       flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems);
       break;
     }
@@ -112,27 +101,57 @@ function normalizeContentArray(contentArray) {
 }
 
 /**
+ * Runs the step defined by stepExecutionContext against the appropriate source database. 
  * 
  * @param stepExecutionContext {array} defines the step to execute and context for executing the step
  * @param contentArray {array} array of content objects to process
  * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
  * by the executed step is added to it
+ * @returns {array} array of content objects that are returned by the step
  */
-function runStepOnContent(stepExecutionContext, contentArray, writeQueue) {
+function runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue) {
+  return stepExecutionContext.sourceDatabaseIsCurrentDatabase() ?
+    runStep(stepExecutionContext, contentArray, writeQueue) :
+    fn.head(
+      xdmp.invokeFunction(function () {
+        return runStep(stepExecutionContext, contentArray, writeQueue);
+      }, {
+        // These are the same options that were originally specified in flow.sjs
+        database: xdmp.database(stepExecutionContext.getSourceDatabase()),
+        update: stepExecutionContext.combinedOptions.stepUpdate ? 'true' : 'false',
+        commit: 'auto',
+        ignoreAmps: true
+      })
+    );
+}
+
+/**
+ * Runs the step defined by the stepExecutionContext. It is assumed that this is being run against the proper source
+ * database, and thus has most likely been invoked by runStepAgainstSourceDatabase.
+ * 
+ * @param stepExecutionContext {array} defines the step to execute and context for executing the step
+ * @param contentArray {array} array of content objects to process
+ * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
+ * by the executed step is added to it
+ * @returns {array} array of content objects that are returned by the step
+ */
+function runStep(stepExecutionContext, contentArray, writeQueue) {
   const hookRunner = stepExecutionContext.makeCustomHookRunner(contentArray);
   if (hookRunner && hookRunner.runBefore) {
     hookRunner.runHook(contentArray);
   }
 
-  const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ? 
-    runStepOnBatch(contentArray, stepExecutionContext) : 
+  const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
+    runStepOnBatch(contentArray, stepExecutionContext) :
     runStepOnEachItem(contentArray, stepExecutionContext);
-
+  
+  // If the step did not complete for any reason, then one or more errors were captured, and no output should be returned
   if (!stepExecutionContext.wasCompleted()) {
     return [];
   }
 
-  applyTargetCollectionsAdditivity(stepExecutionContext, contentArray);
+  stepExecutionContext.finalizeCollectionsAndPermissions(outputContentArray);
+
   applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext);
 
   if (hookRunner && !hookRunner.runBefore) {
@@ -141,26 +160,11 @@ function runStepOnContent(stepExecutionContext, contentArray, writeQueue) {
 
   if (!stepExecutionContext.stepOutputShouldBeWritten()) {
     hubUtils.hubTrace(INFO_EVENT, `Not writing step output for ${stepExecutionContext.describe()}`);
-  }
-  else if (writeQueue != null) {
-    // Since DHF 5.0, collections from options have been added after step processing as opposed to before step processing.
-    // The reason for this is not known.
-    stepExecutionContext.addCollectionsFromOptionsToContentObjects(outputContentArray);
+  } else if (writeQueue != null) {
     addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, writeQueue);
   }
 
   return outputContentArray;
-}
-
-function applyTargetCollectionsAdditivity(stepExecutionContext, contentArray) {
-  if (String(stepExecutionContext.combinedOptions.targetCollectionsAdditivity) == "true") {
-    contentArray.forEach(content => {
-      if (content.context.originalCollections) {
-        let collections = content.context.collections || [];
-        content.context.collections = collections.concat(content.context.originalCollections);
-      }
-    });
-  }
 }
 
 /**
@@ -248,10 +252,13 @@ function runStepOnEachItem(contentArray, stepExecutionContext) {
 
 /**
  * Step modules and custom hooks expect content values to be document nodes.
+ * This also applies the configured permissions for each content object, as well as populating 
+ * originalCollections for each one too.
  *
+ * @param stepExecutionContext
  * @param contentArray
  */
-function prepareContentBeforeStepIsRun(contentArray, stepExecutionContext) {
+function prepareContentBeforeStepIsRun(stepExecutionContext, contentArray) {
   const options = stepExecutionContext.combinedOptions;
   const permissions = options.permissions ? hubUtils.parsePermissions(options.permissions) : null;
   contentArray.forEach(content => {
@@ -379,6 +386,7 @@ function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionCont
 }
 
 /**
+ * If fullOutput is true, then add the content objects in the outputContentArray to the stepResponse. 
  * 
  * @param stepExecutionContext 
  * @param outputContentArray 
@@ -435,7 +443,8 @@ function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
 
 module.exports = {
   copyContentObject,
+  prepareContentBeforeStepIsRun,
   runFlowOnContent,
-  runStepOnContent
+  runStepAgainstSourceDatabase
 }
 
