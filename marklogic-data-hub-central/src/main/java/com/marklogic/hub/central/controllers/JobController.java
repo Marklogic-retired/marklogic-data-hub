@@ -48,8 +48,9 @@ public class JobController extends BaseController {
     public JsonNode getJob(@PathVariable String jobId) {
         JsonNode jobsJson = JobService.on(getHubClient().getJobsClient()).getJob(jobId);
         if (jobsJson == null) {
-            throw new RuntimeException("Unable to get job document");
+            return null;
         }
+
         return flattenJobsJson(jobsJson);
     }
 
