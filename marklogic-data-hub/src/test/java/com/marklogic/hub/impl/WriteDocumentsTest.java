@@ -92,9 +92,9 @@ public class WriteDocumentsTest extends AbstractHubCoreTest {
             "let emptySequence = Sequence.from([]);\n" +
             "\n" +
             "let temporalCollection = 'TESTtemporalCollection';\n" +
-            "let temporalDoc = {uri: \"/TESTtemporal.json\", value: { TESTsystemStart: null, TESTsystemEnd: null, TESTvalidStart: fn.currentDateTime(), TESTvalidEnd: fn.currentDateTime().add(xs.yearMonthDuration('P1Y')) }};\n" +
+            "let temporalDoc = {uri: \"/TESTtemporal.json\", context: {collections: [temporalCollection]}, value: { TESTsystemStart: null, TESTsystemEnd: null, TESTvalidStart: fn.currentDateTime(), TESTvalidEnd: fn.currentDateTime().add(xs.yearMonthDuration('P1Y')) }};\n" +
             "\n" +
-            "flowUtils.writeContentArray([temporalDoc], null, [temporalCollection]);\n" +
+            "flowUtils.writeContentArray([temporalDoc]);\n" +
             "\n" +
             "let readTemporalDoc = fn.head(xdmp.eval(`\n" +
             " cts.doc('${temporalDoc.uri}');\n" +

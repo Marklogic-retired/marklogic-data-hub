@@ -83,14 +83,14 @@ class StepExecutionContext {
 
     this.combinedOptions = flowUtils.makeCombinedOptions(flow, stepDefinition, stepNumber, runtimeOptions);
 
-    // Copies what flow.sjs does for combining collections from options
+    // This was moved here from flow.sjs; it's the original code for combining collections
     this.collectionsFromOptions = [
       runtimeOptions.collections,
       ((this.flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
       (flow.options || {}).collections
     ]
-    .reduce((previousValue, currentValue) => (previousValue || []).concat(currentValue || []))
-    .filter(col => !!col); // filter out any null/empty collections that may exist
+      .reduce((previousValue, currentValue) => (previousValue || []).concat(currentValue || []))
+      .filter(col => !!col); // filter out any null/empty collections that may exist
 
     this.completedItems = [];
     this.failedItems = [];
@@ -119,10 +119,10 @@ class StepExecutionContext {
     return this.combinedOptions.targetDatabase || config.FINALDATABASE;
   }
 
-  buildStepResponse(jobId) {
+  buildStepResponse() {
     const hasFailures = this.failedItems.length > 0;
     return {
-      jobId,
+      jobId: this.jobId,
       flowName: this.flow.name,
       stepName: this.flowStep.name,
       stepDefinitionName: this.stepDefinition.name,
@@ -150,21 +150,52 @@ class StepExecutionContext {
   }
 
   /**
-   * "collections from options" refers to the array of collections built when this class was constructed.
+   * Adjusts the collections and permissions on each content object in the given array based on the combined options
+   * and the user's default collections and permissions.
+   * 
+   * Since DHF 5.0, collections from options have been added after step processing as opposed to before 
+   * step processing. This is contrary to permissions, which are set on content objects passed into a step. 
+   * The history of this appears to be due to mastering steps, which create new content objects and thus 
+   * want collections added to them, not to the content objects passed into a step. Thus, permissions are only 
+   * adjusted based on the user's default permissions. This behavior may be changed in a future release of DHF 5.x, 
+   * once we're able to determine what the "right" consistent behavior is.
    *
    * @param contentArray
    */
-  addCollectionsFromOptionsToContentObjects(contentArray) {
-    contentArray.forEach(contentObject => {
+  finalizeCollectionsAndPermissions(contentArray) {
+    this.applyTargetCollectionsAdditivity(contentArray);
+
+    for (var contentObject of contentArray) {
       if (contentObject) {
-        if (!contentObject.context) {
-          contentObject.context = {};
+        const context = contentObject.context || {};
+
+        // Added in 5.5 to support mapping steps that can return many objects
+        if (!context.useContextCollectionsOnly) {
+          context.collections = this.collectionsFromOptions.concat(context.collections || []);
         }
-        contentObject.context.collections = this.collectionsFromOptions.concat(contentObject.context.collections || []);
+
+        if (!context.collections || context.collections.length == 0) {
+          context.collections = xdmp.defaultCollections().toArray();
+        }
+
+        if (!context.permissions || context.permissions.length == 0) {
+          context.permissions = xdmp.defaultPermissions();
+        }
       }
-    })
+    }
   }
 
+  applyTargetCollectionsAdditivity(contentArray) {
+    if (String(this.combinedOptions.targetCollectionsAdditivity) == "true") {
+      contentArray.forEach(content => {
+        if (content.context.originalCollections) {
+          let collections = content.context.collections || [];
+          content.context.collections = collections.concat(content.context.originalCollections);
+        }
+      });
+    }
+  }  
+  
   setCompletedItems(items) {
     // When a step is run with acceptsBatch=true, the step module may have captured step errors for one or more items.
     // So we need to deduplicate this with failedItems

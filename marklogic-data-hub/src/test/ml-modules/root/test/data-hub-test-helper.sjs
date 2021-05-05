@@ -118,18 +118,16 @@ function getRecordInCollection(collection, databaseName) {
 }
 
 function getUriInCollection(collection, databaseName) {
-  const uris = xdmp.eval(
-    'cts.uris(null, null, cts.collectionQuery("' + collection + '"))', {},
-    { database: xdmp.database(databaseName) }
-  ).toArray();
+  const uris = getUrisInCollection(collection, databaseName);
   if (uris.length != 1) {
     throw Error("Expected single document to be in collection: " + collection);
   }
   return uris[0];
 }
 
-function getUrisInCollection(collection){
-  return fn.head(xdmp.eval('cts.uris(null, null, cts.collectionQuery("'+ collection+ '")).toArray()'));
+function getUrisInCollection(collection, databaseName) {
+  const options = databaseName ? {database: xdmp.database(databaseName)} : {};
+  return fn.head(xdmp.eval(`cts.uris(null, null, cts.collectionQuery("${collection}")).toArray()`, {}, options));
 }
 
 function stagingDocumentExists(uri) {

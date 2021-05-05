@@ -38,7 +38,7 @@ class FlowExecutionContext {
    */
   constructor(flow, jobId, runtimeOptions, stepNumbers) {
     this.flow = flow;
-    this.jobId = jobId;
+    this.jobId = jobId || sem.uuidString();
     this.runtimeOptions = runtimeOptions || {};
     this.combinedFlowOptions = Object.assign({}, flow.options, this.runtimeOptions);
     this.stepNumbers = stepNumbers != null && stepNumbers.length > 0 ? stepNumbers : Object.keys(this.flow.steps);

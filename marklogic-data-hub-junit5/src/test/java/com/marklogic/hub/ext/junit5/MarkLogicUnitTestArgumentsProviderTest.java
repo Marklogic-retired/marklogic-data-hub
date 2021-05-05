@@ -40,5 +40,10 @@ public class MarkLogicUnitTestArgumentsProviderTest extends AbstractDataHubTest 
     void test(TestModule testModule) {
         logger.info("Found test module: " + testModule);
         testModuleCount++;
+
+        // Run one module so we get test coverage of TestModuleRunner
+        if ("copyJsonNodeValue.sjs".equals(testModule.getTest())) {
+            new TestModuleRunner(getHubClient().getFinalClient()).runTestModule(testModule);
+        }
     }
 }

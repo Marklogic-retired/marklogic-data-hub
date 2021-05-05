@@ -20,9 +20,6 @@ declareUpdate();
 // The array of content objects to write
 var contentArray;
 
-// The collections to add to each content object, based on step definition / flow / step / runtime config
-var configCollections;
-
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const temporal = require("/MarkLogic/temporal.xqy");
@@ -49,25 +46,6 @@ function deleteContent(content, temporalCollection) {
   }
 }
 
-/**
- * 
- * @param content 
- * @returns array of collections that the content object should be written to
- */
-function determineTargetCollections(content) {
-  const context = (content.context || {});
-  const contextCollections = context.collections || [];
-
-  let targetCollections;
-  if (context.useContextCollectionsOnly) {
-    targetCollections = fn.distinctValues(Sequence.from(contextCollections)).toArray();
-  } else {
-    targetCollections = fn.distinctValues(Sequence.from(configCollections.concat(contextCollections))).toArray();
-  }
-
-  return targetCollections.length > 0 ? targetCollections : xdmp.defaultCollections().toArray();
-}
-
 // Create a map of all temporal collections for quick checks on whether or not a collection is a temporal one
 const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().reduce((collectionMap, collectionName) => {
   collectionMap[collectionName] = true;
@@ -75,14 +53,11 @@ const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().red
 }, {});
 
 for (let content of contentArray) {
-  let context = (content.context || {});
-
-  const permissions = context.permissions || xdmp.defaultPermissions();
-
-  const targetCollections = determineTargetCollections(content);
-
-  const existingCollections = xdmp.documentGetCollections(content.uri);
-  const temporalCollection = targetCollections.concat(existingCollections).find((col) => temporalCollectionMap[col]);
+  const context = (content.context || {});
+  const permissions = context.permissions;
+  const targetCollections = context.collections || [];
+  const temporalCollection = targetCollections.concat(xdmp.documentGetCollections(content.uri))
+    .find(collection => temporalCollectionMap[collection]);
 
   if (!!content['$delete']) {
     deleteContent(content, temporalCollection);

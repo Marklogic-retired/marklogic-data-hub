@@ -182,30 +182,19 @@ class Flow {
     const stepExecutionContext = new StepExecutionContext(theFlow, stepNumber, stepDefinition, jobId, options);
     const combinedOptions = stepExecutionContext.combinedOptions;
 
-    if (this.datahub.flow) {
-      //clone and remove flow to avoid circular references
-      this.datahub = this.cloneInstance(this.datahub);
-      delete this.datahub.flow;
-    }
-
     const batchItems = contentArray.map(contentObject => contentObject.uri);
 
+    let outputContentArray;
+
     try {
-      if (stepExecutionContext.sourceDatabaseIsCurrentDatabase() && !combinedOptions.stepUpdate) {
-        this.runStep(stepExecutionContext, contentArray);
-      } else {
-        const flowInstance = this;
-        xdmp.invoke(
-          '/data-hub/5/impl/invoke-step.sjs',
-          {flowInstance, stepExecutionContext, contentArray},
-          {
-            database: xdmp.database(stepExecutionContext.getSourceDatabase()),
-            update: combinedOptions.stepUpdate ? 'true': 'false',
-            commit: 'auto',
-            ignoreAmps: true
-          }
-        );
-      }  
+      // No writeQueue is passed in because if we pass in our own, nothing will be added to it if step output is disabled.
+      // But this module currently needs everything in the write queue, and then chooses whether or not to persist it later.
+      outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, null);
+      outputContentArray.forEach(contentObject => {
+        this.writeQueue.addContent(stepExecutionContext.getTargetDatabase(), contentObject, flowName, stepNumber);
+      });
+      // Set this based on what's in the writeQueue, which deduplicates URIs to avoid conflicting update errors
+      outputContentArray = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
     } catch (error) {
       this.writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, {});
       throw error;
@@ -214,25 +203,12 @@ class Flow {
     let writeTransactionInfo = {};
     if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {
-        const configCollections = [
-          options.collections,
-          ((flowStep.options || {}).collections || (stepDefinition.options || {}).collections),
-          (theFlow.options || {}).collections
-        ].reduce((previousValue, currentValue) => (previousValue || []).concat((currentValue || [])))
-          // filter out any null/empty collections that may exist
-          .filter((col) => !!col);
-
-        const targetDatabase = stepExecutionContext.getTargetDatabase();
-        writeTransactionInfo = this.flowUtils.writeContentArray(
-          this.writeQueue.getContentArray(targetDatabase), targetDatabase, configCollections
-        );
+        writeTransactionInfo = this.flowUtils.writeContentArray(outputContentArray, stepExecutionContext.getTargetDatabase());
       } catch (e) {
         this.handleWriteError(this, stepExecutionContext, e);
       }
     }
 
-    const outputContentArray = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
-    
     if (stepExecutionContext.provenanceIsEnabled()) {
       flowProvenance.writeProvenanceData(stepExecutionContext, outputContentArray);
     }
@@ -260,19 +236,6 @@ class Flow {
     return responseHolder;
   }
 
-  runStep(stepExecutionContext, content) {
-    const stepNumber = stepExecutionContext.stepNumber;
-    const flowName = stepExecutionContext.flow.name;
-
-    // No writeQueue is passed in because if we pass in our own, nothing will be added to it if step output is disabled.
-    // But this module currently needs everything in the write queue, and then chooses whether or not to persist it later.
-    const outputContentArray = flowRunner.runStepOnContent(stepExecutionContext, content, null);
-    const databaseName = stepExecutionContext.getTargetDatabase();
-    outputContentArray.forEach(contentObject => {
-      this.writeQueue.addContent(databaseName, contentObject, flowName, stepNumber);
-    });
-  }
-
   /**
    * If batch output is enabled, a Batch document will be written to the jobs database. 
    * 
@@ -294,16 +257,6 @@ class Flow {
     } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW_RUNNER)) {
       hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER, `Batch document insertion is disabled`);
     }
-  }
-
-  cloneInstance(instance) {
-    let prototype = Object.getPrototypeOf(instance);
-    let keys = Object.getOwnPropertyNames(instance).concat(Object.getOwnPropertyNames(prototype));
-    let newInstance = {};
-    for (let key of keys) {
-      newInstance[key] = instance[key];
-    }
-    return newInstance;
   }
 
   handleWriteError(flowInstance, stepExecutionContext, error) {
