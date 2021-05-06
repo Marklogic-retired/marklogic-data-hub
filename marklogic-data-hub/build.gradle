@@ -102,7 +102,7 @@ dependencies {
     }
 
     // Provides support for invoking marklogic-unit-test tests via JUnit
-    testCompile ("com.marklogic:marklogic-junit:1.0.beta"){
+    testCompile ("com.marklogic:marklogic-junit5:1.0.0"){
         // prefer the version declared above
         exclude group: 'com.marklogic', module: 'marklogic-client-api'
     }
