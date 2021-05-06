@@ -54,7 +54,7 @@ class Job {
 
   startStep(stepNumber) {
     const stepStatus = "running step " + stepNumber;
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Starting step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Starting step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
     this.data.job.lastAttemptedStep = stepNumber;
     this.data.job.jobStatus = stepStatus;
     this.data.job.stepResponses[stepNumber] = {
@@ -75,7 +75,7 @@ class Job {
   finishStep(stepNumber, stepResponse, stepStatus, outputContentArray) {
     stepStatus = stepStatus || stepResponse.status;
 
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Finishing step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Finishing step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
 
     this.data.job.jobStatus = stepStatus;
 
@@ -105,7 +105,7 @@ class Job {
    * @returns 
    */
   finishJob(jobStatus, timeEnded, flowErrors) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Setting status of job '${this.data.job.jobId}' to '${jobStatus}'`);
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Setting status of job '${this.data.job.jobId}' to '${jobStatus}'`);
     this.data.job.jobStatus = jobStatus;
     this.data.job.timeEnded = timeEnded;
 

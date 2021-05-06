@@ -17,7 +17,6 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const consts = require("/data-hub/5/impl/consts.sjs");
 const flowApi = require("/data-hub/public/flow/flow-api.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
@@ -64,8 +63,6 @@ function transform(content, context = {}) {
       context.collections.push('default-ingestion');
     }
 
-    // Don't need getFullFlow, as we don't need any step config
-    const theFlow = Artifacts.getArtifact("flow", flowName);
     const jobId = params["job-id"] || `mlcp-${xdmp.transaction()}`;
 
     const options = optionsString ? parseOptionsString(optionsString, contentUri) : {};
@@ -74,12 +71,20 @@ function transform(content, context = {}) {
 
     const contentArray = buildContentArray(context);
 
-    if (runStepsInMemory(theFlow, options)) {
-      // Let errors propagate to MLCP
-      options.throwStepError = true;
-      flowApi.runFlowOnContent(flowName, contentArray, jobId, options);
+    // Have to tokenize on ";" since the transform param value already tokenizes on ","
+    const stepNumbers = params.steps ? params.steps.split(";") : null;
+
+    if (stepNumbers) {
+      options.throwStepError = true; // Let errors propagate to MLCP
+      flowApi.runFlowOnContent(flowName, contentArray, jobId, options, stepNumbers);
       return Sequence.from([]);
-    } else {
+    } 
+    
+    // It would be possible to always use the above approach, thus removing all of the code below. The only issue 
+    // is that instead of getting a useless Job document that is 'started' with no step responses, we instead get a
+    // finished Job document, but it only represents one batch. It's hard to say that's an improvement, so leaving the 
+    // below code in place for now. 
+    else {
       const step = params['step'] ? xdmp.urlDecode(params['step']) : null;
       options.writeStepOutput = false;
       options.fullOutput = true;
@@ -132,20 +137,11 @@ function parseOptionsString(optionsString, contentUri) {
   }
   try {
     const options = JSON.parse(optionsString.split("=")[1]);
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Parsed options into JSON object: ${xdmp.toJsonString(options)}`);
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Parsed options into JSON object: ${xdmp.toJsonString(options)}`);
     return options;
   } catch (e) {
     httpUtils.throwBadRequestWithArray([`Could not parse JSON options; cause: ${e.message}`, contentUri]);
   }
-}
-
-function runStepsInMemory(theFlow, options) {
-  const mode = "in-memory";
-  if (theFlow.stepConnectionMode == mode || options.stepConnectionMode == mode) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, "Will runs steps with in-memory connection mode");
-    return true;
-  }
-  return false;
 }
 
 exports.transform = transform;

@@ -73,5 +73,13 @@ public class HubFlowRunnerResource extends ResourceManager {
             rootNode.put("jobId", jobId);
             return this;
         }
+
+        public Input withSteps(String... stepNumbers) {
+            ArrayNode array = rootNode.putArray("steps");
+            for (String s : stepNumbers) {
+                array.add(s);
+            }
+            return this;
+        }
     }
 }

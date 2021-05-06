@@ -88,7 +88,7 @@ class Flow {
         const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
         const filteredItems = this.filterItemsAlreadyProcessedByStep(uris, flowName, stepId);
         if (filteredItems.length != uris.length) {
-          xdmp.trace(datahub.consts.TRACE_FLOW_RUNNER, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
+          xdmp.trace(datahub.consts.TRACE_FLOW, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
         }
         uris = filteredItems;
       }
@@ -251,11 +251,11 @@ class Flow {
         batch.addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo);
         batch.persist();
       } else {
-        hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER,
+        hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW,
           "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
       }
-    } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW_RUNNER)) {
-      hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW_RUNNER, `Batch document insertion is disabled`);
+    } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW)) {
+      hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW, `Batch document insertion is disabled`);
     }
   }
 

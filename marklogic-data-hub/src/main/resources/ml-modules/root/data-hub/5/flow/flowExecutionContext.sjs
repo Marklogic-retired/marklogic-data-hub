@@ -21,7 +21,7 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const Job = require("job.sjs");
 const StepExecutionContext = require("stepExecutionContext.sjs");
 
-const INFO_EVENT = consts.TRACE_FLOW_RUNNER;
+const INFO_EVENT = consts.TRACE_FLOW;
 
 /**
  * Captures state associated with the execution of a flow. Provides methods for updating the flowResponse and, if job 
@@ -141,7 +141,7 @@ class FlowExecutionContext {
     this.flowResponse.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
     this.flowResponse.jobStatus = this.determineJobStatus();
 
-    if (this.job) {
+    if (this.job && this.jobOutputIsEnabled()) {
       this.job.finishJob(
         this.flowResponse.jobStatus, this.flowResponse.timeEnded, this.flowResponse.flowErrors
       ).create();

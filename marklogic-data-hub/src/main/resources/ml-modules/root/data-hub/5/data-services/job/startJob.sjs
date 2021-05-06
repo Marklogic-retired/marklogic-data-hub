@@ -29,7 +29,7 @@ var flowName;
 // The updateJob function must be used in that scenario so that the amp associated with that function can be
 // used to let the user overwrite the document.
 if (jobs.getJob(jobId)) {
-  hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Overwriting job '${jobId}' for flow '${flowName}'`);
+  hubUtils.hubTrace(consts.TRACE_FLOW, `Overwriting job '${jobId}' for flow '${flowName}'`);
   Job.newJob(flowName, jobId).update();
 }
 else {

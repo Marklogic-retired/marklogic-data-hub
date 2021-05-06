@@ -7,6 +7,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.DocumentMetadataHelper;
+import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.rest.util.Fragment;
@@ -83,6 +84,43 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
     }
 
     @Test
+    void jsonSelectSteps() {
+        installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
+
+        // Add a 3rd step so we can choose 2 out of 3
+        FlowService.on(getHubClient().getFinalClient()).addStepToFlow("ingestAndMap", "mapCustomer", "mapping");
+        HubFlowRunnerResource.Input input = new HubFlowRunnerResource.Input("ingestAndMap").withSteps("1", "3");
+        input.addContent("/customer1.json").put("customerId", "1");
+        RunFlowResponse response = newResource().runFlow(input);
+
+        assertEquals("3", response.getLastCompletedStep());
+        assertEquals("3", response.getLastAttemptedStep());
+        assertEquals(2, response.getStepResponses().size());
+        assertEquals("completed step 1", response.getStepResponses().get("1").getStatus());
+        assertEquals("completed step 3", response.getStepResponses().get("3").getStatus());
+    }
+
+    @Test
+    void xmlSelectSteps() {
+        installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
+
+        // Add a 3rd step so we can choose 2 out of 3
+        FlowService.on(getHubClient().getFinalClient()).addStepToFlow("ingestAndMap", "mapCustomer", "mapping");
+
+        String input = format("<input><flowName>ingestAndMap</flowName>");
+        input += "<content><uri>/customer1.xml</uri><value><customerId>1</customerId></value></content>";
+        input += "<steps>1,3</steps>";
+        input += "</input>";
+
+        RunFlowResponse response = newResource().runFlowWithXmlInput(input);
+        assertEquals("3", response.getLastCompletedStep());
+        assertEquals("3", response.getLastAttemptedStep());
+        assertEquals(2, response.getStepResponses().size());
+        assertEquals("completed step 1", response.getStepResponses().get("1").getStatus());
+        assertEquals("completed step 3", response.getStepResponses().get("3").getStatus());
+    }
+
+    @Test
     void jsonNoContent() {
         installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
 
@@ -103,11 +141,12 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
 
     @Test
     void missingFlowName() {
-        final String expectedNotFoundText = "flow with name '' not found";
+        String expectedNotFoundText = "flow with name 'null' not found";
         ResourceNotFoundException notFoundError = assertThrows(ResourceNotFoundException.class,
             () -> newResource().runFlowWithXmlInput("<input><noFlowName/></input>"));
         assertTrue(notFoundError.getMessage().contains(expectedNotFoundText), "Unexpected message: " + notFoundError.getMessage());
 
+        expectedNotFoundText = "flow with name '' not found";
         notFoundError = assertThrows(ResourceNotFoundException.class,
             () -> newResource().runFlow(new HubFlowRunnerResource.Input("")));
         assertTrue(notFoundError.getMessage().contains(expectedNotFoundText), "Unexpected message: " + notFoundError.getMessage());

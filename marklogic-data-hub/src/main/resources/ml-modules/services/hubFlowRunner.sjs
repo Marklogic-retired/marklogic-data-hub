@@ -34,15 +34,25 @@ function isXmlInput(context) {
 function processJsonInput(input) {
   input = input.toObject();
   const jobId = input.jobId || sem.uuidString();
-  return flowApi.runFlowOnContent(input.flowName, input.content, jobId, input.options);
+  
+  let stepNumbers = input.steps || [];
+  if (stepNumbers && !Array.isArray(stepNumbers)) {
+    stepNumbers = [stepNumbers];
+  }
+
+  return flowApi.runFlowOnContent(input.flowName, input.content, jobId, input.options, stepNumbers);
 }
 
 function processXmlInput(input) {
   const jobId = fn.head(input.xpath("/input/jobId/text()")) || sem.uuidString();
-  const flowName = input.xpath("/input/flowName/text()");
+  const flowName = fn.head(input.xpath("/input/flowName/text()"));
   const options = parseJsonOptions(input);
   const contentArray = buildContentArray(input);
-  return flowApi.runFlowOnContent(flowName, contentArray, jobId, options);
+
+  let stepNumbers = fn.head(input.xpath("/input/steps/text()"));
+  stepNumbers = stepNumbers ? stepNumbers.toString().split(",") : null;
+
+  return flowApi.runFlowOnContent(flowName, contentArray, jobId, options, stepNumbers);
 }
 
 function parseJsonOptions(input) {

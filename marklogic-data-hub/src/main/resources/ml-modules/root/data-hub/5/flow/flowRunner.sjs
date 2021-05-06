@@ -24,8 +24,8 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const prov = require("/data-hub/5/impl/prov.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
-const INFO_EVENT = consts.TRACE_FLOW_RUNNER;
-const DEBUG_EVENT = consts.TRACE_FLOW_RUNNER_DEBUG;
+const INFO_EVENT = consts.TRACE_FLOW;
+const DEBUG_EVENT = consts.TRACE_FLOW_DEBUG;
 const DEBUG_ENABLED = xdmp.traceEnabled(DEBUG_EVENT);
 
 /**

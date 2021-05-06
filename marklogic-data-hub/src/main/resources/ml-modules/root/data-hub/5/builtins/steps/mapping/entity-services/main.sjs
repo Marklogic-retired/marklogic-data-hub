@@ -64,8 +64,8 @@ function main(contentSequence, options, stepExecutionContext) {
   for (const content of contentSequence) {
     currentContentUri = content.uri;
     try {
-      if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG)) {
-        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Mapping: ${currentContentUri}`);
+      if (xdmp.traceEnabled(consts.TRACE_FLOW_DEBUG)) {
+        hubUtils.hubTrace(consts.TRACE_FLOW_DEBUG, `Mapping: ${currentContentUri}`);
       }
 
       let doc = content.value;

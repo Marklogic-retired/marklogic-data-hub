@@ -50,8 +50,8 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
   const stepDefinition = stepExecutionContext.stepDefinition;
   const flowStep = stepExecutionContext.flowStep;
 
-  if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Generating provenance records for ${stepExecutionContext.describe()}`);
+  if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Generating provenance records for ${stepExecutionContext.describe()}`);
   }
   
   const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase() : stepDefinition.type;
@@ -71,7 +71,7 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
       const isMappingStep = flowStep.stepDefinitionName === "entity-services-mapping";
 
       if (isFineGranularity && isMappingStep) {
-        hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
+        hubUtils.hubTrace(consts.TRACE_FLOW, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
       }
 
       const provResult = isFineGranularity && !isMappingStep && content.provenance ?

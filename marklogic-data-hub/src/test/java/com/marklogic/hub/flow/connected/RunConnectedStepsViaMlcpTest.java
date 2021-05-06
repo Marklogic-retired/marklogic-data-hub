@@ -29,7 +29,7 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
 
         installProject();
         writeTestDocumentsToProjectDirectory(recordCount);
-        runFlowWithTransformParam("flow-name=" + FLOW_NAME + ",options={\"permissions\":\"data-hub-operator,read,data-hub-developer,update\"}");
+        runFlowWithTransformParam("flow-name=" + FLOW_NAME + ",steps=1;2,options={\"permissions\":\"data-hub-operator,read,data-hub-developer,update\",\"provenanceGranularityLevel\":\"off\"}");
 
         verifyMlcpOutputShowsSuccess(recordCount);
         verifyIngestedDataInStaging(recordCount);
@@ -42,7 +42,7 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
 
         installProject();
         writeTestDocumentsToProjectDirectory(recordCount);
-        runFlowWithTransformParam("flow-name=ingestAndErrorStep");
+        runFlowWithTransformParam("flow-name=ingestAndErrorStep,steps=1;2");
 
         verifyMlcpOutputShowsFailure(recordCount);
         assertEquals(0, getStagingDocCount(INGESTION_STEP_NAME));
