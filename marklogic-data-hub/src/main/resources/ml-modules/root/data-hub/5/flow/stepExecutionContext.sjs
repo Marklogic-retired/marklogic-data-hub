@@ -375,7 +375,7 @@ class StepExecutionContext {
         runBefore: hookConfig.runBefore,
         runHook: function(contentArray) {
           parameters.content = contentArray;
-          const event = consts.TRACE_FLOW_RUNNER;
+          const event = consts.TRACE_FLOW;
           if (xdmp.traceEnabled(event)) {
             if (hookConfig.runBefore) {
               hubUtils.hubTrace(event, `Running 'before' custom hook, module: ${hookConfig.module}`);

@@ -57,8 +57,8 @@ class Batch {
     }
 
     const batchUri = "/jobs/batches/" + this.data.batch.batchId + ".json";
-    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting batch document with URI '${batchUri}'`);
+    if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW, `Inserting batch document with URI '${batchUri}'`);
     }
     hubUtils.writeDocument(batchUri, this.data, jobs.buildJobPermissions(), ['Jobs','Batch'], config.JOBDATABASE);
   }

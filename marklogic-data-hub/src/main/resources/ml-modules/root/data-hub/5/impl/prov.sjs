@@ -188,8 +188,8 @@ class Provenance {
    * @param {Object} metadata - provenance record metadata
    */
   _queueForCommit(id, options, metadata) {
-    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER_DEBUG)) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER_DEBUG, `Queueing provenance record with ID: ${id}`);
+    if (xdmp.traceEnabled(consts.TRACE_FLOW_DEBUG)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW_DEBUG, `Queueing provenance record with ID: ${id}`);
     }
     let existingForId = this.commitQueue.find((recordDetails) => recordDetails.id === id);
     if (existingForId) {
@@ -656,11 +656,11 @@ class Provenance {
 
   commit() {
     if (this.commitQueue.length > 0) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Committing provenance records, count: ${this.commitQueue.length}`);
+      hubUtils.hubTrace(consts.TRACE_FLOW, `Committing provenance records, count: ${this.commitQueue.length}`);
       this._createRecords(this.commitQueue);
       this.commitQueue = [];
     } else {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `No provenance records were queued, so not committing any to the jobs database`);
+      hubUtils.hubTrace(consts.TRACE_FLOW, `No provenance records were queued, so not committing any to the jobs database`);
     }
   }
 }

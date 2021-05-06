@@ -42,8 +42,8 @@ function createJob(flowName, jobId = null ) {
  */
 function saveNewJob(job) {
   const jobUri = "/jobs/" + job.job.jobId + ".json";
-  if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-    hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Creating job with URI '${jobUri}' for flow '${job.job.flow}'`);
+  if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
+    hubUtils.hubTrace(consts.TRACE_FLOW, `Inserting job document with URI '${jobUri}' for flow '${job.job.flow}'`);
   }
   hubUtils.writeDocument(jobUri, job, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
 }
@@ -243,7 +243,7 @@ function saveNewJob(job) {
         ));
         if (jobReport) {
           const reportUri = `/jobs/reports/${stepResponse.flowName}/${stepNumber}/${jobId}.json`;
-          hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Inserting job report with URI: ${reportUri}`);
+          hubUtils.hubTrace(consts.TRACE_FLOW, `Inserting job report with URI: ${reportUri}`);
           hubUtils.writeDocument(
             reportUri, jobReport,
             buildJobPermissions(), ['Jobs', 'JobReport'], config.JOBDATABASE
@@ -280,8 +280,8 @@ module.exports.updateJob = module.amp(
   function updateJob(jobDoc) {
     const jobId = jobDoc.job.jobId;
     const jobUri = "/jobs/" + jobId + ".json";
-    if (xdmp.traceEnabled(consts.TRACE_FLOW_RUNNER)) {
-      hubUtils.hubTrace(consts.TRACE_FLOW_RUNNER, `Updating job document with URI '${jobUri}`);
+    if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
+      hubUtils.hubTrace(consts.TRACE_FLOW, `Updating job document with URI '${jobUri}`);
     }
     hubUtils.writeDocument(jobUri, jobDoc, buildJobPermissions(), ['Jobs', 'Job'], config.JOBDATABASE);
     return null;

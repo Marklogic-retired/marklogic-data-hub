@@ -1,6 +1,5 @@
 {
   "name": "ingestAndMap",
-  "stepConnectionMode": "in-memory",
   "steps": {
     "1": {
       "stepId": "ingestCustomer-ingestion"

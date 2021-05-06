@@ -49,7 +49,7 @@ class WriteQueue {
       this.databaseToContentMap[databaseName] = contentMap;
     }
 
-    const traceEvent = consts.TRACE_FLOW_RUNNER;
+    const traceEvent = consts.TRACE_FLOW;
     const traceEnabled = xdmp.traceEnabled(traceEvent);
 
     const uri = contentObject.uri;

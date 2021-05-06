@@ -25,7 +25,7 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const temporal = require("/MarkLogic/temporal.xqy");
 const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
 
-const traceEvent = consts.TRACE_FLOW_RUNNER_DEBUG;
+const traceEvent = consts.TRACE_FLOW_DEBUG;
 const traceEnabled = xdmp.traceEnabled(traceEvent);
 const databaseName = xdmp.databaseName(xdmp.database());
 
@@ -47,6 +47,8 @@ function deleteContent(content, temporalCollection) {
 }
 
 // Create a map of all temporal collections for quick checks on whether or not a collection is a temporal one
+// Note that if this logic were to move elsewhere, we need to be careful to run it against the 
+// correct target database.
 const temporalCollectionMap = temporalLib.getTemporalCollections().toArray().reduce((collectionMap, collectionName) => {
   collectionMap[collectionName] = true;
   return collectionMap;
