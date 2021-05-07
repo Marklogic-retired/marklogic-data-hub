@@ -90,15 +90,24 @@ function computeFacets(whereClause) {
 
   Object.keys(queries).forEach(column => {
     const query = queries[column];
-    const results = xdmp.sql(query, ["map", "optimize=0"]).toObject();
-    facets[column] = results.map(result => result[column]);
+    let results = xdmp.sql(query, ["map", "optimize=0"]).toObject();
+    results = results.map(result => {
+      return {
+        "name": result[column] ? result[column] : undefined,
+        "value": result[column] ? result[column] : undefined
+      }
+    });
+    facets[column] = {
+      "type": "xs:string",
+      "facetValues": results
+    };
   });
   return facets;
 }
 
 function buildFacetQueries(whereClause) {
   const tableName = "Job.StepResponse";
-  const facetableColumns = ["Job.StepResponse.stepDefinitionType", "Job.StepResponse.jobStatus", "Job.StepResponse.entityName",
+  const facetableColumns = ["Job.StepResponse.stepDefinitionType", "Job.StepResponse.jobStatus",
     "Job.StepResponse.stepName", "Job.StepResponse.flowName"];
   const queries = {};
 
