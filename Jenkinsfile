@@ -220,9 +220,7 @@ pipeline{
 		}
 		stage('code-review'){
 		when {
-  			 allOf {
-    changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
-  }
+  			allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
   			beforeAgent true
 		}
 		agent {label 'dhmaster'};
@@ -342,14 +340,14 @@ pipeline{
 		}
 		stage('rh7-singlenode'){
 		when {
-	            expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	           }
-			agent { label 'dhfLinuxAgent'}
-			steps{
+	      expression{
+	         props = readProperties file:'data-hub/pipeline.properties'
+             return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
+          }
+          beforeAgent true
+        }
+		agent { label 'dhfLinuxAgent'}
+		steps{timeout(time: 3,  unit: 'HOURS'){catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
 				copyRPM 'Release','9.0-11'
@@ -365,7 +363,7 @@ pipeline{
 				commitMessage=null;
 				//jiraAddComment comment: 'Jenkins rh7-singlenode Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
-			}
+			}}}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -385,20 +383,18 @@ pipeline{
 		}
 		stage('Linux Core Parallel Execution'){
 		when {
-	            expression{
-	             node('dhmaster'){
+	        expression{
 	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
+	                return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
+	        }
+            beforeAgent true
 		}
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
-			steps{
-			dhflinuxTests("10.0","Latest")
-			}
+			steps{timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0","Latest")}
+            }}
 			post{
 				 always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -501,18 +497,17 @@ pipeline{
 		}
 		stage('example projects parallel'){
 		when {
-	            expression{
-	            node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-              }
-            parallel{
+	      expression{
+	        props = readProperties file:'data-hub/pipeline.properties'
+            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
+          }
+          beforeAgent true
+        }
+        parallel{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
-                steps{
+                steps{timeout(time: 3,  unit: 'HOURS'){
+                   catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
                      sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-4.4'
                      script{
@@ -534,7 +529,7 @@ pipeline{
                             "
                         '''
                         }
-                 }
+                 }}}
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
@@ -664,20 +659,18 @@ pipeline{
 		}
 		stage('quick start linux parallel'){
 		when {
-	            expression{
-	             node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-        		}
+	      expression{
+	                props = readProperties file:'data-hub/pipeline.properties'
+     	            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
+	      }
+          beforeAgent true
+        }
 		parallel{
 		stage('qs_rh7_90-nightly'){
 			agent { label 'lnx-dhf-jenkins-slave-2'}
-			steps{
-			    dhfqsLinuxTests("9.0","Latest")
-			}
+			steps{timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("9.0","Latest")}
+            }}
 			post{
 
                   success {
@@ -691,11 +684,11 @@ pipeline{
                   }
 		}
 		stage('qs_rh7_10-nightly'){
-        			agent { label 'lnx-dhf-jenkins-slave-2'}
-        			steps{
-        			 dhfqsLinuxTests("10.0","Latest")
-        			}
-        			post{
+        agent { label 'lnx-dhf-jenkins-slave-2'}
+        steps{timeout(time: 3,  unit: 'HOURS'){
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("10.0","Latest")}
+        }}
+         post{
 
                           success {
                             println("qs_rh7_10-nightly Tests Completed")
@@ -705,16 +698,14 @@ pipeline{
                               println("qs_rh7_10-nightly Tests Failed")
                               sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 10-nightly tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_10-nightly Tests for $BRANCH_NAME Failed'
                           }
-                          }
-        		}
+         }}
         stage('qs_rh7_90-release'){
         			agent { label 'lnx-dhf-jenkins-slave-2'}
-        			steps{
-                     dhfqsLinuxTests("9.0-11","Release")
-        			}
+        			steps{timeout(time: 3,  unit: 'HOURS'){
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("9.0-11","Release")}
+                    }}
         			post{
-
-                          success {
+                         success {
                             println("qs_rh7_90-release Tests Completed")
                             sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 90-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_90-release Tests for $BRANCH_NAME Passed'
                            }
@@ -723,13 +714,13 @@ pipeline{
                               sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 90-nightly tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_90-release Tests for $BRANCH_NAME Failed'
                           }
                           }
-        		}
-        		stage('qs_rh7_10-release'){
-                			agent { label 'lnx-dhf-jenkins-slave-2'}
-                			steps{
-                                 dhfqsLinuxTests("10.0-4.4","Release")
-                			}
-                			post{
+        }
+        stage('qs_rh7_10-release'){
+        agent { label 'lnx-dhf-jenkins-slave-2'}
+        steps{timeout(time: 3,  unit: 'HOURS'){
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("10.0-4.4","Release")}
+        }}
+        post{
 
                                   success {
                                     println("qs_rh7_10-release Tests Completed")
@@ -739,26 +730,22 @@ pipeline{
                                       println("qs_rh7_10-release Tests Failed")
                                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End  quick start 10-release tests of the branch $BRANCH_NAME on rh7 failed. Please fix the tests and create a PR or create a bug for the failures.',false,'qs_rh7_10-release Tests for $BRANCH_NAME Failed'
                                   }
-                                  }
-                		}
-		}
-		}
+          }}
+		}}
 		stage('Windows Core Parallel'){
 		when {
-	            expression{
-	             node('dhmaster'){
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
-	            }
-        		}
-		    parallel{
+	      expression{
+	                props = readProperties file:'data-hub/pipeline.properties'
+    	            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
+	      }
+          beforeAgent true
+        }
+		parallel{
 		stage('w12_SN_9.0-Nightly'){
 			agent { label 'dhfWinagent'}
-			steps{
-			    dhfWinTests("9.0","Latest")
-			}
+			steps{timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0","Latest")}
+            }}
 			post{
 				always{
 				  	 bat 'RMDIR /S/Q xdmp'
@@ -774,11 +761,11 @@ pipeline{
                   }
 		}
         stage('w12_SN_10.0-Nightly'){
-			agent { label 'dhfWinagent'}
-			steps{
-			    dhfWinTests("10.0","Latest")
-			}
-			post{
+		agent { label 'dhfWinagent'}
+		steps{timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10.0","Latest")}
+        }}
+		post{
 				always{
 				  	 bat 'RMDIR /S/Q xdmp'
 				  }
@@ -794,9 +781,9 @@ pipeline{
 		}
 		stage('w12_SN_9.0-11'){
 			agent { label 'dhfWinagent'}
-			steps{
-                dhfWinTests("9.0-11","Release")
-			}
+			steps{timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0-11","Release")}
+            }}
 			post{
 				always{
                        bat 'RMDIR /S/Q xdmp'
@@ -812,38 +799,39 @@ pipeline{
                   }
 		}
 		stage('w12_cluster_10.0-4'){
-			agent { label 'dhfWinCluster'}
-			steps{
-                    script{
-                        copyMSI "Release","10.0-4.4";
-                        def pkgOutput=bat(returnStdout:true , script: '''
+		agent { label 'dhfWinCluster'}
+		steps{timeout(time: 3,  unit: 'HOURS'){
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                script{
+                    copyMSI "Release","10.0-4.4";
+                    def pkgOutput=bat(returnStdout:true , script: '''
                 	                    cd xdmp/src
                 	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
                 	                    echo %name%
                 	                    ''').trim().split();
-                	    def pkgLoc=pkgOutput[pkgOutput.size()-1]
-                	    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
-                	    def bldOutput=bat(returnStdout:true , script: '''
+                    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+                    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+                    def bldOutput=bat(returnStdout:true , script: '''
                         	           cd ml-builds/scripts/lib/
                         	           CD
                         	        ''').trim().split();
-                        def bldPath=bldOutput[bldOutput.size()-1]
-                        setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
-                        bat 'cd data-hub & gradlew.bat clean'
-                        bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
-                        bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-                        bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
-                        junit '**/TEST-*.xml'
-                        commitMessage = sh (returnStdout: true, script:'''
+                    def bldPath=bldOutput[bldOutput.size()-1]
+                    setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
+                    bat 'cd data-hub & gradlew.bat clean'
+                    bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+                    bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                    bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
+                    junit '**/TEST-*.xml'
+                    commitMessage = sh (returnStdout: true, script:'''
                                             curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-                        def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-                        def commit=slurper.message.toString().trim();
-                        JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-                        JIRA_ID=JIRA_ID.split(" ")[0];
-                        commitMessage=null;
-                         //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-                    }
-			}
+                    def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+                    def commit=slurper.message.toString().trim();
+                    JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+                    JIRA_ID=JIRA_ID.split(" ")[0];
+                    commitMessage=null;
+                    //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+                }
+            }}}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -858,16 +846,14 @@ pipeline{
                   }
                   }
 		}
-
-		    }
-		}
+		}}
 		stage('Merge PR to Release Branch'){
 		when {
-	            expression{
+	      expression{
 	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-	            }
+    	            return (env.BRANCH_NAME==props['ExecutionBranch'] && !params.regressions)
+	      }
+          beforeAgent true
 		}
 		agent {label 'dhmaster'}
 		steps{
@@ -910,15 +896,16 @@ pipeline{
                   }
 		}
 		stage('Sanity Tests'){
-			when {
-	            expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
-                    println(props['ExecutionBranch'])
-	            return (env.BRANCH_NAME==props['ReleaseBranch'])
-	            }
+		when {
+            expression{
+                props = readProperties file:'data-hub/pipeline.properties';
+	            return (env.BRANCH_NAME==props['ReleaseBranch'] || params.regressions)
+            }
+            beforeAgent true
 		}
-			agent { label 'dhfLinuxAgent'}
-			steps{
+		agent { label 'dhfLinuxAgent'}
+		steps{timeout(time: 3,  unit: 'HOURS'){
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
 				copyRPM 'Release','10.0-4.4'
@@ -934,7 +921,7 @@ pipeline{
 				commitMessage=null;
 				//jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 				}
-			}
+			}}}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
