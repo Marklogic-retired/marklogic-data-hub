@@ -150,29 +150,28 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     // Test the mappings
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
     mappingStepDetail.testMap().click();
-    cy.waitUntil(() => mappingStepDetail.expandEntity()).click();
-    mappingStepDetail.validateMapValues("orderId", "10259");
-    mappingStepDetail.validateMapValues("address", "");
-    mappingStepDetail.validateMapValues("city", "Houston");
-    mappingStepDetail.validateMapValues("state", "100 Main Street");
-    mappingStepDetail.validateMapValues("orderDetails", "");
-    mappingStepDetail.validateMapValues("productID", "77");
-    mappingStepDetail.validateMapValues("unitPrice", "70.4");
-    mappingStepDetail.validateMapValues("quantity", "72");
-    mappingStepDetail.validateMapValues("discount", "0");
-    mappingStepDetail.validateMapValues("shipRegion", "region1\nregion4\n");
-    mappingStepDetail.validateMapValues("shippedDate", "1996-07-17T00:28:30");
+    mappingStepDetail.validateMapValues("Order", "orderId", "10259");
+    mappingStepDetail.validateMapValues("Order", "address", "");
+    mappingStepDetail.validateMapValues("Order", "city", "Houston");
+    mappingStepDetail.validateMapValues("Order", "state", "100 Main Street");
+    mappingStepDetail.validateMapValues("Order", "orderDetails", "");
+    mappingStepDetail.validateMapValues("Order", "productID", "77");
+    mappingStepDetail.validateMapValues("Order", "unitPrice", "70.4");
+    mappingStepDetail.validateMapValues("Order", "quantity", "72");
+    mappingStepDetail.validateMapValues("Order", "discount", "0");
+    mappingStepDetail.validateMapValues("Order", "shipRegion", "region1\nregion4\n");
+    mappingStepDetail.validateMapValues("Order", "shippedDate", "1996-07-17T00:28:30");
   });
   it("Verify mapping step filtering for Entity table", () => {
     mappingStepDetail.toggleEntityFilterMenu();
     mappingStepDetail.setEntitySearch("city");
-    mappingStepDetail.validateMapValues("city", "Houston");
+    mappingStepDetail.validateMapValues("Order", "city", "Houston");
     mappingStepDetail.submitEntitySearch().click();
     cy.waitUntil(() => mappingStepDetail.moreLink()).should("be.visible");
     mappingStepDetail.moreLink().click();
     cy.waitUntil(() => mappingStepDetail.lessLink()).should("be.visible");
-    mappingStepDetail.validateMapValues("city", "Houston");
-    mappingStepDetail.validateMapValues("state", "100 Main Street");
+    mappingStepDetail.validateMapValues("Order", "city", "Houston");
+    mappingStepDetail.validateMapValues("Order", "state", "100 Main Street");
     mappingStepDetail.lessLink().click();
     mappingStepDetail.toggleEntityFilterMenu();
     mappingStepDetail.resetEntitySearch().click();
@@ -185,7 +184,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     curatePage.openStepDetails(mapStep);
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     mappingStepDetail.testMap().click();
-    mappingStepDetail.validateMapValues("orderId", "10259");
+    mappingStepDetail.validateMapValues("Order", "orderId", "10259");
     mappingStepDetail.stepSettingsLink().click();
     curatePage.switchEditAdvanced().click();
     //interceptor should already be set during creation

@@ -24,9 +24,7 @@ interface Props {
   saveMapping: any;
   mapExpTouched: any;
   setMapExpTouched: any;
-  getDataForValueField: any;
-  getTextForTooltip: any;
-  getTextForValueField: any;
+  getInitialChars: any;
   canReadWrite: any;
   entityTypeTitle: any;
   entityModel: any;
@@ -158,12 +156,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   }, [props.relatedEntityTypeProperties]);
 
-  const mapExpressionStyle = (propName) => {
+  const mapExpressionStyle = (propName, isProperty) => {
     const mapStyle: CSSProperties = {
       width: "22vw",
       verticalAlign: "top",
       justifyContent: "top",
-      borderColor: checkFieldInErrors(propName) ? "red" : ""
+      borderColor: checkFieldInErrors(propName, isProperty) ? "red" : ""
     };
     return mapStyle;
   };
@@ -260,36 +258,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     });
   };
 
-  const checkFieldInErrors = (field) => {
-    const finalProp = field.replace(/\//g, ".properties.");
-    let record = props.mapResp["properties"];
-    let prop = getValue(record, finalProp);
-    if (props.mapResp && props.mapResp["properties"]) {
-      if (prop && prop["errorMessage"]) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  };
 
   const handleClickInTextArea = async (e) => {
     await setCaretPosition(e.target.selectionStart);
-  };
-
-  const displayResp = (propName) => {
-    const finalProp = propName.replace(/\//g, ".properties.");
-    if (props.mapResp && props.mapResp["properties"]) {
-      let field = props.mapResp["properties"];
-      let prop = getValue(field, finalProp);
-      if (prop && prop["errorMessage"]) {
-        return prop["errorMessage"];
-      } else if (prop && prop["output"]) {
-        return prop["output"];
-      }
-    }
   };
 
   const customExpandIcon = (props) => {
@@ -712,6 +683,123 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setUriExpression(event.target.value);
   };
 
+  const checkFieldInErrors = (field, isProperty) => {
+    const finalProp = field.replace(/\//g, ".properties.");
+    if (!props.isRelatedEntity) {
+      if (field === "URI" && !isProperty && props.mapResp && props.mapResp["uriExpression"]) {
+        let prop = props.mapResp["uriExpression"];
+        if (prop && prop["errorMessage"]) {
+          return true;
+        } else {
+          return false;
+        }
+      } else if (props.mapResp && props.mapResp["properties"]) {
+        let record = props.mapResp["properties"];
+        let prop = getValue(record, finalProp);
+        if (prop && prop["errorMessage"]) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      let index = props.savedMappingArt.relatedEntityMappings?.findIndex(entity => entity["relatedEntityMappingId"] === props.entityMappingId);
+      if (props.mapResp && props.mapResp.relatedEntityMappings && field === "URI" && !isProperty && props.mapResp.relatedEntityMappings[index] && props.mapResp.relatedEntityMappings[index].uriExpression) {
+        let prop = props.mapResp.relatedEntityMappings[index].uriExpression;
+        if (prop && prop["errorMessage"]) {
+          return true;
+        } else if (prop && prop["output"]) {
+          return false;
+        }
+      } else if (index > -1 && props.mapResp && props.mapResp.relatedEntityMappings && props.mapResp.relatedEntityMappings[index].properties) {
+        let field = props.mapResp.relatedEntityMappings[index].properties;
+        let prop = getValue(field, finalProp);
+        if (prop && prop["errorMessage"]) {
+          return true;
+        } else if (prop && prop["output"]) {
+          return false;
+        }
+      }
+    }
+  };
+
+  const displayResp = (propName, isProperty) => {
+    const finalProp = propName.replace(/\//g, ".properties.");
+    if (!props.isRelatedEntity) {
+      if (props.mapResp && props.mapResp["uriExpression"] && propName === "URI" && !isProperty) { //if value is from the URI and not an actual property
+        let prop = props.mapResp["uriExpression"];
+        if (prop && prop["errorMessage"]) {
+          return prop["errorMessage"];
+        } else if (prop["output"]) {
+          return prop["output"];
+        }
+      } else if (props.mapResp && props.mapResp["properties"]) {
+        let field = props.mapResp["properties"];
+        let prop = getValue(field, finalProp);
+        if (prop && prop["errorMessage"]) {
+          return prop["errorMessage"];
+        } else if (prop && prop["output"]) {
+          return prop["output"];
+        }
+      }
+    } else {
+      let index = props.savedMappingArt.relatedEntityMappings?.findIndex(entity => entity["relatedEntityMappingId"] === props.entityMappingId);
+      if (props.mapResp && props.mapResp.relatedEntityMappings && propName === "URI" && !isProperty && props.mapResp.relatedEntityMappings[index] && props.mapResp.relatedEntityMappings[index].uriExpression) {
+        let prop = props.mapResp.relatedEntityMappings[index].uriExpression;
+        if (prop && prop["errorMessage"]) {
+          return prop["errorMessage"];
+        } else if (prop && prop["output"]) {
+          return prop["output"];
+        }
+      } else if (index > -1 && props.mapResp && props.mapResp.relatedEntityMappings && props.mapResp.relatedEntityMappings[index].properties) {
+        let field = props.mapResp.relatedEntityMappings[index].properties;
+        let prop = getValue(field, finalProp);
+        if (prop && prop["errorMessage"]) {
+          return prop["errorMessage"];
+        } else if (prop && prop["output"]) {
+          return prop["output"];
+        }
+      }
+    }
+  };
+
+  const getDataForValueField = (name, isProperty) => {
+    return !checkFieldInErrors(name, isProperty) ? displayResp(name, isProperty) : "";
+  };
+
+  const getTextForTooltip = (name, isProperty) => {
+    if (!checkFieldInErrors(name, isProperty)) {
+      let item = displayResp(name, isProperty);
+      if (Array.isArray(item)) {
+        return item.join(", ");
+      } else {
+        return item;
+      }
+    }
+  };
+
+  //Response from server already is an array for multiple values, string for single value
+  //truncation in case array values
+  const getTextForValueField = (row, isProperty) => {
+    let respFromServer = getDataForValueField(row.name, isProperty);
+    //if array of values and more than 2 values
+    if (respFromServer && Array.isArray(respFromServer) && respFromServer.length >= 2) {
+      let xMore = <span className="moreVal">{"(" + (respFromServer.length - 2) + " more)"}</span>;
+      let itemOne = respFromServer[0].length > 23 ? props.getInitialChars(respFromServer[0], 23, "...\n") : respFromServer[0] + "\n";
+      let itemTwo = respFromServer[1].length > 23 ? props.getInitialChars(respFromServer[1], 23, "...\n") : respFromServer[1] + "\n";
+      let fullItem = itemOne.concat(itemTwo);
+      if (respFromServer.length === 2) {
+        return <p>{fullItem}</p>;
+      } else {
+        return <p>{fullItem}{xMore}</p>;
+      }
+    } else {
+      return props.getInitialChars(respFromServer, 23, "...");
+    }
+  };
+
   //simulate a click event to destroy both dropdown and select on option select
   const simulateMouseClick = (element) => {
     if (element) {
@@ -958,7 +1046,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
               <TextArea
                 id={"mapexpression"+row.name.split("/").pop()}
                 data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
-                style={mapExpressionStyle(row.name)}
+                style={mapExpressionStyle(row.name, false)}
                 onClick={handleClickInTextArea}
                 value={expressionContext}
                 onChange={(e) => handleExpressionContext(row, e)}
@@ -971,13 +1059,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 </Dropdown>
               </span>
             </div>
-            {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}};
+            {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
           } else if (row.name === "URI" && !row.isProperty) {
             return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
               <TextArea
                 id={"mapexpression"+row.name.split("/").pop()}
                 data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
-                style={mapExpressionStyle(row.name)}
+                style={mapExpressionStyle(row.name, false)}
                 onClick={handleClickInTextArea}
                 value={uriExpression}
                 onChange={(e) => handleUri(row, e)}
@@ -992,13 +1080,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 &nbsp;&nbsp;
               <span><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span>
             </div>
-            {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}};
+            {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
           } else {
             return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
               <TextArea
                 id={"mapexpression"+row.name.split("/").pop()}
                 data-testid={row.name.split("/").pop()+"-mapexpression"}
-                style={mapExpressionStyle(row.name)}
+                style={mapExpressionStyle(row.name, true)}
                 onClick={handleClickInTextArea}
                 value={mapExp[row.name]}
                 onChange={(e) => handleMapExp(row, e)}
@@ -1012,7 +1100,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
               </span>
                       &nbsp;&nbsp;
               <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
-            {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name)}</div> : ""}</div>, props: {colSpan: 1}
+            {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>, props: {colSpan: 1}
             };
           }
         } else if (row.name !== "more" && row.name !== "less") {
@@ -1030,8 +1118,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
           return {
             children:
-              <div data-testid={row.name.split("/").pop() + "-value"} className={styles.mapValue}>
-                <MLTooltip title={props.getTextForTooltip(row.name)}>{props.getTextForValueField(row)}</MLTooltip>
+              <div data-testid={`${props.entityTypeTitle}-`+ row.name.split("/").pop() + "-value"} className={styles.mapValue}>
+                <MLTooltip title={getTextForTooltip(row.name, row.isProperty)}>{getTextForValueField(row, row.isProperty)}</MLTooltip>
               </div>,
             props: {colSpan: 1}
           };

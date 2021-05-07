@@ -19,9 +19,9 @@ const JobResultsTableView = (props) => {
   } = useContext(SearchContext);
   let sorting = true;
   const columnOptionsLabel = {
-      user: "User",
-      jobId: "Job ID",
-      flowName: "Flow Name",
+    user: "User",
+    jobId: "Job ID",
+    flowName: "Flow Name",
   };
 
   const MANDATORY_HEADERS = [
@@ -151,17 +151,17 @@ const JobResultsTableView = (props) => {
 
   const DEFAULT_JOB_RESULTS_HEADER = [...MANDATORY_HEADERS, ...CONFIGURABLE_HEADERS];
   const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item => (item.sortable ?{...item, sorter: (a, b, sortOrder) => {
-      if (sorting === true) {
-        setMonitorSortOrder(item.dataIndex, sortOrder);
-        sorting = false;
-      }
-    }}: {...item}));
+    if (sorting === true) {
+      setMonitorSortOrder(item.dataIndex, sortOrder);
+      sorting = false;
+    }
+  }}: {...item}));
 
   const [currentColumnHeaders, setCurrentColumnHeaders] = useState(allColumnHeaders);
   const [checkedAttributes, setCheckedAttributes] = useState({
-      "user": true,
-      "jobId": true,
-      "flowName": true
+    "user": true,
+    "jobId": true,
+    "flowName": true
   });
   const [previousCheckedAttributes, setPreviousCheckedAttributes] = useState({
     "user": true,
@@ -190,33 +190,33 @@ const JobResultsTableView = (props) => {
   };
 
   const content = (
-      <div data-testid="column-selector-popover" className={styles.popover}>
-        <div className={styles.content}>
-            <Menu>
-                {Object.keys(checkedAttributes).map(attribute => (
-                    <Menu.Item key={attribute} className={styles.DropdownMenuItem}><MLCheckbox
-                        data-testid={`columnOptionsCheckBox-${attribute}`}
-                        key={attribute}
-                        value={attribute}
-                        onChange={handleColOptionsChecked}
-                        defaultChecked={true}
-                        className={styles.checkBoxItem}
-                        checked={checkedAttributes[attribute]}
-                    >{columnOptionsLabel[attribute]}</MLCheckbox></Menu.Item>
-                ))}
-            </Menu>
-        </div>
-        <footer>
-          <MLDivider className={styles.divider} />
-          <div className={styles.footer}>
-            <div>
-              <MLButton size="small" onClick={onCancel} >Cancel</MLButton>
-              <span>  </span>
-              <MLButton type="primary" size="small" onClick={onApply} disabled={false} >Apply</MLButton>
-            </div>
-          </div>
-        </footer>
+    <div data-testid="column-selector-popover" className={styles.popover}>
+      <div className={styles.content}>
+        <Menu>
+          {Object.keys(checkedAttributes).map(attribute => (
+            <Menu.Item key={attribute} className={styles.DropdownMenuItem}><MLCheckbox
+              data-testid={`columnOptionsCheckBox-${attribute}`}
+              key={attribute}
+              value={attribute}
+              onChange={handleColOptionsChecked}
+              defaultChecked={true}
+              className={styles.checkBoxItem}
+              checked={checkedAttributes[attribute]}
+            >{columnOptionsLabel[attribute]}</MLCheckbox></Menu.Item>
+          ))}
+        </Menu>
       </div>
+      <footer>
+        <MLDivider className={styles.divider} />
+        <div className={styles.footer}>
+          <div>
+            <MLButton size="small" onClick={onCancel} >Cancel</MLButton>
+            <span>  </span>
+            <MLButton type="primary" size="small" onClick={onApply} disabled={false} >Apply</MLButton>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 
 
@@ -226,18 +226,18 @@ const JobResultsTableView = (props) => {
         <div className={styles.fixedPopup}>
           <MLTooltip title="Select the columns to display." placement="topRight">
             <Popover placement="leftTop" content={content} trigger="click" visible={popoverVisibility} className={styles.fixedPopup}>
-              <FontAwesomeIcon onClick={() => {setPopoverVisibility(true)}} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
+              <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
             </Popover>
           </MLTooltip>
         </div>
       </div>
       <div className={styles.tabular}>
         <MLTable bordered
-                 data-testid="job-result-table"
-                 rowKey="startTime"
-                 dataSource={props.data}
-                 pagination={false}
-                 columns={currentColumnHeaders}
+          data-testid="job-result-table"
+          rowKey="startTime"
+          dataSource={props.data}
+          pagination={false}
+          columns={currentColumnHeaders}
         />
       </div>
     </>

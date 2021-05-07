@@ -60,10 +60,10 @@ export const mappingStep = {
           relatedEntityMappingId: "Order:Person.items",
           collections: ["mapPersonWithRelated", "Order"],
           expressionContext: "/Orders",
-          uriExpression: "concat('/Order/', OrderId)",
+          uriExpression: "",
           permissions: "data-hub-common,read,data-hub-common,update",
           properties: {
-            propId: {sourcedFrom: "id"},
+            orderId: {sourcedFrom: "id"},
             propName: {sourcedFrom: "testNameInExp"},
             propAttribute: {sourcedFrom: "placeholderAttribute"},
             items: {
@@ -80,12 +80,11 @@ export const mappingStep = {
           relatedEntityMappingId: "BabyRegistry:Person.items",
           collections: ["mapPersonWithRelated", "BabyRegistry"],
           permissions: "data-hub-common,read,data-hub-common,update",
-          expressionContext: "BabyRegistry",
-          uriExpression: "concat('/BabyRegistry/', BabyRegistryId)",
+          expressionContext: "/",
+          uriExpression: "",
           properties: {
-            propId: {sourcedFrom: "id"},
-            propName: {sourcedFrom: "testNameInExp"},
-            propAttribute: {sourcedFrom: "placeholderAttribute"},
+            babyRegistryId: {sourcedFrom: ""},
+            arrivalDate: {sourcedFrom: ""},
             items: {
               sourcedFrom: "",
               properties: {
@@ -101,11 +100,10 @@ export const mappingStep = {
           collections: ["mapPersonWithRelated", "Product"],
           permissions: "data-hub-common,read,data-hub-common,update",
           expressionContext: "/Orders/Products",
-          uriExpression: "concat('/Product/', ProductId)",
+          uriExpression: "",
           properties: {
-            propId: {sourcedFrom: "id"},
-            propName: {sourcedFrom: "testNameInExp"},
-            propAttribute: {sourcedFrom: "placeholderAttribute"}
+            productId: {sourcedFrom: ""},
+            productName: {sourcedFrom: ""},
           },
           targetEntityType: "http://example.org/Product-0.0.1/Product"
         },
@@ -114,11 +112,10 @@ export const mappingStep = {
           collections: ["mapPersonWithRelated", "Product"],
           permissions: "data-hub-common,read,data-hub-common,update",
           expressionContext: "/Orders/Products",
-          uriExpression: "concat('/Product/', ProductId)",
+          uriExpression: "",
           properties: {
-            propId: {sourcedFrom: "id"},
-            propName: {sourcedFrom: "testNameInExp"},
-            propAttribute: {sourcedFrom: "placeholderAttribute"}
+            productId: {sourcedFrom: ""},
+            productName: {sourcedFrom: ""},
           },
           targetEntityType: "http://example.org/Product-0.0.1/Product"
         }
@@ -191,6 +188,81 @@ export const mappingStepPerson = {
       "name": "mapXMLPersonResponse",
       ...mappingArtifactCommonProps,
       "properties": {},
+      "targetEntityType": "http://example.org/Person-0.0.1/Person",
+      "sourceQuery": "cts.collectionQuery(['Person'])"
+    },
+    {
+      "name": "testPersonJSONResponseWithRelatedEntities",
+      ...mappingArtifactCommonProps,
+      "uriExpression": {output: "/Person/personWithRelatedEntities.json"},
+      "properties": {
+        "propName": {output: "123EAC", sourcedFrom: "proteinId"},
+        "propAttribute": {output: "home", sourcedFrom: "proteinType"},
+      },
+      "relatedEntityMappings": [{
+        relatedEntityMappingId: "Order:Person.items",
+        collections: ["mapPersonWithRelated", "Order"],
+        expressionContext: "/Orders",
+        uriExpression: {output: "/Order/301.json"},
+        permissions: "data-hub-common,read,data-hub-common,update",
+        properties: {
+          orderId: {sourcedFrom: "id"},
+          propName: {sourcedFrom: "testNameInExp"},
+          propAttribute: {sourcedFrom: "placeholderAttribute"},
+          items: {
+            sourcedFrom: "",
+            properties: {
+              itemTypes: {sourcedFrom: ""}
+            },
+            targetEntityType: "#/definitions/ItemType"
+          }
+        },
+        targetEntityType: "http://example.org/Order-0.0.1/Order"
+      },
+      {
+        relatedEntityMappingId: "BabyRegistry:Person.items",
+        collections: ["mapPersonWithRelated", "BabyRegistry"],
+        permissions: "data-hub-common,read,data-hub-common,update",
+        expressionContext: "/",
+        uriExpression: {errorMessage: "Invalid XPath expression: ###"},
+        properties: {
+          babyRegistryId: {output: "3039", sourcedFrom: "BabyRegistryId"},
+          arrivalDate: {output: "2021-01-07-07:00", sourcedFrom: "Arrival_Date"},
+          items: {
+            sourcedFrom: "",
+            properties: {
+              itemTypes: {sourcedFrom: ""}
+            },
+            targetEntityType: "#/definitions/ItemType"
+          }
+        },
+        targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
+      },
+      {
+        relatedEntityMappingId: "Product:Order.lineItem.orderIncludes",
+        collections: ["mapPersonWithRelated", "Product"],
+        permissions: "data-hub-common,read,data-hub-common,update",
+        expressionContext: "/Orders/Products",
+        uriExpression: {output: "/Product/6322.json"},
+        properties: {
+          productId: {sourcedFrom: ""},
+          productName: {sourcedFrom: ""}
+        },
+        targetEntityType: "http://example.org/Product-0.0.1/Product"
+      },
+      {
+        relatedEntityMappingId: "Product:BabyRegistry.hasProduct",
+        collections: ["mapPersonWithRelated", "Product"],
+        permissions: "data-hub-common,read,data-hub-common,update",
+        expressionContext: "/Orders/Products",
+        uriExpression: {output: "/Product/6455.json"},
+        properties: {
+          productId: {sourcedFrom: ""},
+          productName: {sourcedFrom: ""}
+        },
+        targetEntityType: "http://example.org/Product-0.0.1/Product"
+      }
+      ],
       "targetEntityType": "http://example.org/Person-0.0.1/Person",
       "sourceQuery": "cts.collectionQuery(['Person'])"
     },

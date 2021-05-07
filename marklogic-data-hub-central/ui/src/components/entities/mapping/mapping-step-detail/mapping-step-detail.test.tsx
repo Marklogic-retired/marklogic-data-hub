@@ -82,7 +82,11 @@ const renderWithRouterNoAuthorities = (curationContextValue) => {
 };
 
 describe("RTL Source-to-entity map tests", () => {
-  afterEach(cleanup);
+
+  afterEach(() => {
+    cleanup();
+    jest.clearAllMocks();
+  });
 
   beforeEach(() => jest.setTimeout(20000));
 
@@ -815,35 +819,24 @@ describe("RTL Source-to-entity map tests", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMapping", "writeMapping"]);
 
-    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[1]);
     mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataRelated});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValue({status: 200, data: mappingStepPerson.artifacts[5]});
 
-    let getByTestId, getByLabelText, getByText, queryByTestId, getAllByRole, getAllByTestId;
+    let getByTestId, getByLabelText, getAllByText, getByText, queryByTestId, getAllByRole, getAllByTestId;
     await act(async () => {
-      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      const renderResults = renderWithRouter(personMappingStepWithRelatedEntityData, authorityService);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
+      getAllByText = renderResults.getAllByText;
       getByText = renderResults.getByText;
       queryByTestId = renderResults.queryByTestId;
       getAllByRole = renderResults.getAllByRole;
       getAllByTestId = renderResults.getAllByTestId;
     });
-
-    //expand nested levels first
-    fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
-
-    let entitiesFilter = getByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-search__field"
-    );
-
-    //open BabyRegistry related table
-    fireEvent.click(entitiesFilter);
-    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
 
     //BabyRegistry table should be present on the screen
     expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
@@ -870,17 +863,14 @@ describe("RTL Source-to-entity map tests", () => {
     //Set 'Context' for BabyRegistry related entity to 'BabyRegistry'
 
     fireEvent.click(getByTestId("BabyRegistry-option"));
-    // await wait(() => expect(findByTestId("successMessage")));
 
     //Right Xpath is populated
     expect(mapExp).toHaveTextContent("BabyRegistry");
 
-    //Verify Xpath for properties is correct when source context parent is set
+    // Verify Xpath for properties is correct when source context parent is set
     sourceSelector = getByTestId("babyRegistryId-listIcon");
 
     fireEvent.click(sourceSelector);
-
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 600}));
 
     fireEvent.click(getAllByTestId("BabyRegistryId-option")[1]);
 
@@ -901,26 +891,66 @@ describe("RTL Source-to-entity map tests", () => {
     expect(mapExp).toHaveTextContent("");
 
     fireEvent.click(sourceSelector);
-
     fireEvent.click(getAllByTestId("BabyRegistryId-option")[1]);
 
     mapExp = getByTestId("babyRegistryId-mapexpression");
 
     //Right Xpath is populated (BabyRegistry/BabyRegistryId) since sourceContext is empty)
     expect(mapExp).toHaveTextContent("BabyRegistry/BabyRegistryId");
+    //Set map expression for BabyRegistry's arrivalDate property as well
+    mapExp = getByTestId("arrivalDate-mapexpression");
+    fireEvent.change(mapExp, {target: {value: "Arrival_Date"}});
 
+    //Set map expressions for target Person entity
+    let propNameExpression = getAllByText("testNameInExp")[0];
+    let propAttributeExpression = getAllByText("placeholderAttribute")[0];
+
+    fireEvent.change(propNameExpression, {target: {value: "proteinId"}});
+    fireEvent.blur(propNameExpression);
+    fireEvent.change(propAttributeExpression, {target: {value: "proteinType"}});
+    fireEvent.blur(propAttributeExpression);
+    // Test button should be disabled before mapping expression is saved
+    expect(document.querySelector("#Test-btn")).toBeDisabled();
+
+    // waiting for success message before clicking on Test button
+    await (waitForElement(() => (getByTestId("successMessage"))));
+    // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
+    if (queryByTestId("successMessage")) {
+      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
+    }
+
+    // Test button should be enabled after mapping expression is saved
+    expect(document.querySelector("#Test-btn")).toBeEnabled();
+
+    //Verify Test button click
+    fireEvent.click(getByText("Test"));
+
+    await (waitForElement(() => getByTestId("Person-propName-value")));
+
+    //Target entity table should show evaluated expressions
+    expect(getByTestId("Person-propName-value")).toHaveTextContent("123EAC");
+    expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home");
+
+    //BabyRegistry Related Entity should also show evaluated expressions
+    await (waitForElement(() => getByTestId("BabyRegistry (ownedBy Person)-babyRegistryId-value")));
+    expect(getByTestId("BabyRegistry (ownedBy Person)-babyRegistryId-value")).toHaveTextContent("3039");
+    expect(getByTestId("BabyRegistry (ownedBy Person)-arrivalDate-value")).toHaveTextContent("2021-01-07-07:00");
   });
 
   test("Verify URI fields for primary and related entity tables.", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMapping", "writeMapping"]);
 
-    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: data.mapProps.docUris});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataRelated});
+    mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[1]);
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValue({status: 200, data: mappingStepPerson.artifacts[5]});
 
     let getByTestId, getByText, queryByTestId;
     await act(async () => {
-      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      const renderResults = renderWithRouter(personMappingStepWithRelatedEntityData, authorityService);
       getByTestId = renderResults.getByTestId;
       getByText = renderResults.getByText;
       queryByTestId = renderResults.queryByTestId;
@@ -930,29 +960,40 @@ describe("RTL Source-to-entity map tests", () => {
     let primaryUriExp = getByTestId("Person-URI-mapexpression");
     expect(primaryUriExp).toHaveTextContent(StepsConfig.defaultPrimaryUri);
 
-    // URI field should NOT exist for unopened related entity table
-    expect(queryByTestId("BabyRegistry (ownedBy Person)-URI-mapexpression")).not.toBeInTheDocument();
-
-    // Primary entity URI field can be edited
-    userEvent.type(primaryUriExp, "editedPrimaryUri");
-    expect(primaryUriExp).toHaveTextContent("editedPrimaryUri");
-
-    // Open related entity table
-    let entitiesFilter = getByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-search__field"
-    );
-    fireEvent.click(entitiesFilter);
-    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
-
     // URI field should exist for related entity table and have default value
     let relatedUriExp = getByTestId("BabyRegistry (ownedBy Person)-URI-mapexpression");
     expect(relatedUriExp).toHaveTextContent(StepsConfig.defaultRelatedUri("BabyRegistry"));
 
     // Related entity URI field can be edited
-    userEvent.type(relatedUriExp, "editedRelatedUri");
-    expect(relatedUriExp).toHaveTextContent("editedRelatedUri");
+    userEvent.type(relatedUriExp, "{selectall}{backspace}");
+    userEvent.type(relatedUriExp, "###");
+    expect(relatedUriExp).toHaveTextContent("###");
+    fireEvent.blur(relatedUriExp);
+
+    // Test button should be disabled before mapping expression is saved
+    expect(document.querySelector("#Test-btn")).toBeDisabled();
+
+    // waiting for success message before clicking on Test button
+    await (waitForElement(() => (getByTestId("successMessage"))));
+    // checking successMessage is still there before waitForElementToBeRemoved as this would occasionally fail under load
+    if (queryByTestId("successMessage")) {
+      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
+    }
+
+    // Test button should be enabled after mapping expression is saved
+    expect(document.querySelector("#Test-btn")).toBeEnabled();
+
+    //Clicking 'Test' should display evaluated URI expression values in target and related entity tables
+    fireEvent.click(getByText("Test"));
+    await (waitForElement(() => getByTestId("Person-URI-value")));
+    expect(getByTestId("Person-URI-value")).toHaveTextContent("/Person/personWithRelat...");
+    //Verify tooltip shows full value when hovering truncated URI value
+    fireEvent.mouseOver(getByText("/Person/personWithRelat..."));
+    await waitForElement(() => getByText("/Person/personWithRelatedEntities.json"));
+
+    //Verify error message in evaluated URI expression for related entity table
+    expect(getByTestId("BabyRegistry (ownedBy Person)-URI-value")).toHaveTextContent("");
+    await waitForElement(() => getByText("Invalid XPath expression: ###"));
 
   });
 
@@ -1002,14 +1043,14 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("propName-value")));
-    expect(getByTestId("propName-value")).toHaveTextContent("123EAC");
-    expect(getByTestId("propAttribute-value")).toHaveTextContent("home");
+    await (waitForElement(() => getByTestId("Person-propName-value")));
+    expect(getByTestId("Person-propName-value")).toHaveTextContent("123EAC");
+    expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home");
 
     //Verify Clear button click
     fireEvent.click(getByText("Clear"));
-    expect(getByTestId("propName-value")).not.toHaveTextContent("123EAC");
-    expect(getByTestId("propAttribute-value")).not.toHaveTextContent("home");
+    expect(getByTestId("Person-propName-value")).not.toHaveTextContent("123EAC");
+    expect(getByTestId("Person-propAttribute-value")).not.toHaveTextContent("home");
     // DEBUG
     // debug(onClosestTableRow(getByTestId('propName-value')))
     // debug(onClosestTableRow(getByTestId('propAttribute-value')))
@@ -1066,9 +1107,9 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify Test button click and truncated text in Entity table
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("propName-value")));
-    expect(getByTestId("propName-value")).toHaveTextContent("extremelylongusername@m...");
-    expect(getByTestId("propAttribute-value")).toHaveTextContent("s@ml.com (7 more)");
+    await (waitForElement(() => getByTestId("Person-propName-value")));
+    expect(getByTestId("Person-propName-value")).toHaveTextContent("extremelylongusername@m...");
+    expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("s@ml.com (7 more)");
 
     // Verify tooltip shows full value when hovering Test values
     fireEvent.mouseOver(getByText("extremelylongusername@m..."));
@@ -1112,12 +1153,12 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify Test button click
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("propAttribute-value")));
-    expect(getByTestId("propAttribute-value")).toHaveTextContent("home");
+    await (waitForElement(() => getByTestId("Person-propAttribute-value")));
+    expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home");
 
     //Verify Clear button click
     fireEvent.click(getByText("Clear"));
-    expect(getByTestId("propAttribute-value")).not.toHaveTextContent("home");
+    expect(getByTestId("Person-propAttribute-value")).not.toHaveTextContent("home");
 
     //Verify that fx/source-data list is disabled for mapping reader user
     expect(getByTestId("propId-102-functionIcon")).toBeDisabled();
@@ -1158,7 +1199,7 @@ describe("RTL Source-to-entity map tests", () => {
     //debug(onClosestTableRow(getByTestId('propId-value')))
     let errorMessage = mappingStepPerson.artifacts[3].properties.propId ? mappingStepPerson.artifacts[3].properties.propId.errorMessage : "";
     expect(getByTestId("propId-expErr")).toHaveTextContent(errorMessage);
-    expect(getByTestId("propId-value")).toHaveTextContent("");
+    expect(getByTestId("Person-propId-value")).toHaveTextContent("");
 
     //SCROLL TEST FOR BUG DHFPROD-4743
     //let element = document.querySelector('#entityContainer .ant-table-body')
@@ -1221,7 +1262,7 @@ describe("RTL Source-to-entity map tests", () => {
     //debug(onClosestTableRow(getByTestId('propId-value')))
     let errorMessage = mappingStepPerson.artifacts[3].properties.propId ? mappingStepPerson.artifacts[3].properties.propId.errorMessage : "";
     expect(getByTestId("propId-expErr")).toHaveTextContent(errorMessage);
-    expect(getByTestId("propId-value")).toHaveTextContent("");
+    expect(getByTestId("Person-propId-value")).toHaveTextContent("");
 
     //Verify Clear button click
     fireEvent.click(getByText("Clear"));
@@ -1457,8 +1498,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify if value appears in the Value column after clicking on Test button
     fireEvent.click(getByText("Test"));
-    await (waitForElement(() => getByTestId("propAttribute-value")));
-    expect(getByTestId("propAttribute-value")).toHaveTextContent("home-NEW"); // home should be mapped as home-New
+    await (waitForElement(() => getByTestId("Person-propAttribute-value")));
+    expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home-NEW"); // home should be mapped as home-New
   });
 
   test("URI nav index resets on close of mapping", async () => {

@@ -120,6 +120,7 @@ const MappingStepDetail: React.FC = () => {
   let tgtRefs:any = {};
   const [relatedEntityTypeProperties, setRelatedEntityTypeProperties] = useState<any[]>([]);
   const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
+  const previousSelected : any = usePrevious(relatedEntitiesSelected);
   const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
   const [removedEntities, setRemovedEntities] = useState<any[]>([]);
 
@@ -159,6 +160,14 @@ const MappingStepDetail: React.FC = () => {
     key: "XPath Expression",
     value: "Value"
   };
+
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
 
   const handleEditIconClick = () => {
     setEditingUri(true);
@@ -670,8 +679,10 @@ const MappingStepDetail: React.FC = () => {
   }, [sourceData]);
 
   useEffect(() => {
-    relatedEntityTypeProperties.length && setRelatedEntityObject();
-  }, [relatedEntityTypeProperties]);
+    if (previousSelected && previousSelected.length < relatedEntitiesSelected.length) {
+      setRelatedEntityObject();
+    }
+  }, [relatedEntitiesSelected]);
 
   useEffect(() => {
     let allEntitiesToRemove : any = [];
@@ -774,21 +785,6 @@ const MappingStepDetail: React.FC = () => {
         }
       }
     });
-  };
-
-  const getDataForValueField = (name) => {
-    return !checkFieldInErrors(name) ? displayResp(name) : "";
-  };
-
-  const getTextForTooltip = (name) => {
-    if (!checkFieldInErrors(name)) {
-      let item = displayResp(name);
-      if (Array.isArray(item)) {
-        return item.join(", ");
-      } else {
-        return item;
-      }
-    }
   };
 
   //For filter search in source table
@@ -975,27 +971,6 @@ const MappingStepDetail: React.FC = () => {
     return requiresToolTip ?  <MLTooltip placement="bottom" title={text}>{response}</MLTooltip> : response;
   };
 
-  //Response from server already is an array for multiple values, string for single value
-  //truncation in case array values
-  const getTextForValueField = (row) => {
-    let respFromServer = getDataForValueField(row.name);
-    //if array of values and more than 2 values
-    if (respFromServer && Array.isArray(respFromServer) && respFromServer.length >= 2) {
-      let xMore = <span className="moreVal">{"(" + (respFromServer.length - 2) + " more)"}</span>;
-      let itemOne = respFromServer[0].length > 23 ? getInitialChars(respFromServer[0], 23, "...\n") : respFromServer[0] + "\n";
-      let itemTwo = respFromServer[1].length > 23 ? getInitialChars(respFromServer[1], 23, "...\n") : respFromServer[1] + "\n";
-      let fullItem = itemOne.concat(itemTwo);
-      if (respFromServer.length === 2) {
-        return <p>{fullItem}</p>;
-      } else {
-        return <p>{fullItem}{xMore}</p>;
-      }
-    } else {
-      return getInitialChars(respFromServer, 23, "...");
-    }
-  };
-
-
   const customExpandIcon = (props) => {
     if (props.expandable) {
       if (props.expanded) {
@@ -1035,36 +1010,6 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const emptyData = (JSON.stringify(sourceData) === JSON.stringify([]) && !docNotFound);
-
-  const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
-
-  const displayResp = (propName) => {
-    const finalProp = propName.replace(/\//g, ".properties.");
-    if (mapResp && mapResp["properties"]) {
-      let field = mapResp["properties"];
-      let prop = getValue(field, finalProp);
-      if (prop && prop["errorMessage"]) {
-        return prop["errorMessage"];
-      } else if (prop && prop["output"]) {
-        return prop["output"];
-      }
-    }
-  };
-
-  const checkFieldInErrors = (field) => {
-    const finalProp = field.replace(/\//g, ".properties.");
-    let record = mapResp["properties"];
-    let prop = getValue(record, finalProp);
-    if (mapResp && mapResp["properties"]) {
-      if (prop && prop["errorMessage"]) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  };
 
   //Logic for Test and Clear buttons
   const getMapValidationResp = async (uri) => {
@@ -1126,10 +1071,12 @@ const MappingStepDetail: React.FC = () => {
     }
     relatedEntityTypeProperties?.length && relatedEntityTypeProperties.forEach(entity => {
       if (relatedEntities.length === 0 || relatedEntities.findIndex(el => el.relatedEntityMappingId === entity.entityMappingId) === -1) {
-        let tgtEntityType = entity.entityModel.info.baseUri + entity.entityModel.info.title + "-" + entity.entityModel.info.version + "/" + entity.entityModel.info.title;
-        let relatedEntityCollections = [curationOptions.activeStep.stepArtifact.name, entity.entityModel.info.title];
-        let relatedEntity = {relatedEntityMappingId: entity.entityMappingId, expressionContext: "", properties: {}, targetEntityType: tgtEntityType, collections: relatedEntityCollections, permissions: curationOptions.activeStep.stepArtifact.permissions};
-        relatedEntities.push(relatedEntity);
+        if (relatedEntitiesSelected.includes(entity)) {
+          let tgtEntityType = entity.entityModel.info.baseUri + entity.entityModel.info.title + "-" + entity.entityModel.info.version + "/" + entity.entityModel.info.title;
+          let relatedEntityCollections = [curationOptions.activeStep.stepArtifact.name, entity.entityModel.info.title];
+          let relatedEntity = {relatedEntityMappingId: entity.entityMappingId, expressionContext: "", properties: {}, targetEntityType: tgtEntityType, collections: relatedEntityCollections, permissions: curationOptions.activeStep.stepArtifact.permissions};
+          relatedEntities.push(relatedEntity);
+        }
       }
     });
     let {...dataPayload} = savedMappingArt;
@@ -1450,9 +1397,7 @@ const MappingStepDetail: React.FC = () => {
                 flatArray={flatArray}
                 saveMapping={saveMapping}
                 dummyNode={dummyNode}
-                getDataForValueField={getDataForValueField}
-                getTextForTooltip={getTextForTooltip}
-                getTextForValueField={getTextForValueField}
+                getInitialChars={getInitialChars}
                 canReadWrite={canReadWrite}
                 entityTypeTitle={curationOptions.activeStep.entityName}
                 entityModel={""}
@@ -1491,9 +1436,7 @@ const MappingStepDetail: React.FC = () => {
                   flatArray={flatArray}
                   saveMapping={saveMapping}
                   dummyNode={dummyNode}
-                  getDataForValueField={getDataForValueField}
-                  getTextForTooltip={getTextForTooltip}
-                  getTextForValueField={getTextForValueField}
+                  getInitialChars={getInitialChars}
                   canReadWrite={canReadWrite}
                   entityTypeTitle={entity["entityLabel"]}
                   entityModel={entity["entityModel"]}
