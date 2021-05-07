@@ -59,7 +59,7 @@ class StepExecutionContext {
       httpUtils.throwBadRequest(message);
     }
 
-    const context = new StepExecutionContext(flow, stepNumber, stepDef, flowExecutionContext.jobId, flowExecutionContext.runtimeOptions);
+    const context = new StepExecutionContext(flow, stepNumber, stepDef, flowExecutionContext.jobId, flowExecutionContext.getRuntimeOptions());
     context.flowExecutionContext = flowExecutionContext;
     return context;
   }

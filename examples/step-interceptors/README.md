@@ -32,21 +32,28 @@ The step interceptors are configured in the ./flows/orderFlow.flow.json file. A 
 Each interceptor refers to a module to be invoked via [xdmp.invoke](http://docs.marklogic.com/xdmp.invoke) in the same
 transaction as the content being processed. 
 
-The mapping step in "orderFlow" has the following two interceptors configured:
+The mapping step in "orderFlow" has the following interceptors configured:
 
 ```
 "interceptors": [
-    {
-      "path": "/custom-modules/step-interceptors/addHeaders.sjs",
-      "when": "beforeContentPersisted",
-      "vars": {
-        "exampleVariable": "testValue"
-      }
-    },
-    {
-      "path": "/org.example/addPermissions.sjs",
-      "when": "beforeContentPersisted"
+  {
+    "path": "/custom-modules/step-interceptors/filterOrders.sjs",
+    "when": "beforeMain",
+    "vars": {
+      "orderIdToRemove": "10250"
     }
+  },
+  {
+    "path": "/custom-modules/step-interceptors/addHeaders.sjs",
+    "when": "beforeContentPersisted",
+    "vars": {
+      "exampleVariable": "testValue"
+    }
+  },
+  {
+    "path": "/org.example/addPermissions.sjs",
+    "when": "beforeContentPersisted"
+  }
 ]
 ```
 
@@ -57,21 +64,26 @@ The properties of an interceptor are as follows:
 - vars = optional; an object whose key/value pairs will be passed to the interceptor module. This mirrors the "vars" 
 argument in [xdmp.invoke](http://docs.marklogic.com/xdmp.invoke)
 
-As of 5.4.0, only "beforeContentPersisted" is supported for "when", but this still must be specified. This value of 
+Prior to 5.4.0, only "beforeContentPersisted" is supported for "when". This value of 
 "when" allows you to modify each content object before it is persisted, and thus after Data Hub has determined what 
 its URI, collections, permissions, and metadata should be.
+
+Starting in 5.5.0, "beforeMain" is also supported as a value of "when". An interceptor with that value of "when" is 
+thus able to modify the content array before it is processed by the step's "main" function. This includes removing 
+objects from the array, which is demonstrated by the "filterOrders.sjs" interceptor. Note that if such an interceptor 
+modifies the "value" part of a content object, it is expected to wrap the value in a document node. This is because the
+"main" function of a step expects the "value" part of each content object to be a document node.
 
 In addition to any variables defined via "vars", Data Hub will pass the following variables to the interceptor module:
 
 - contentArray = an array of content objects that are about to be persisted
 - options = the combined step configuration options that are derived from the flow, the step, and any options defined at runtime
 
-Each object in the "contentArray" has the following keys:
-
-- uri = the URI at which the document will be persisted
-- value = the document to be persisted. Depending on the step being executed, this may be a node such that you must first
-call toObject() on it to manipulate it. See the addHeaders.sjs interceptor module for more information.
-- context = an object containing document metadata, including "collections", "permissions", and "metadata"
+Each object in the "contentArray" is defined by the ContentObject.schema.json file found in the ./specs/models 
+directory of the DHF github repository. An important note is that depending on the type of step being executed and 
+the value of "when", content.value may be a document node. In the case of a JSON object wrapped in a document node, 
+you must first invoke "toObject()" on it if you wish to manipulate its values. See the addHeaders.sjs interceptor
+module for more information. 
 
 ### A note about ingestion steps
 
@@ -107,3 +119,5 @@ could of course contain as much custom logic as needed to determine the correct 
 example also shows a permission being added to the existing array of permissions, but the interceptor could instead 
 replace that array with its own array of permissions.
   
+The "filterOrders.sjs" interceptor was added in 5.5 to demonstrate how content objects can be removed from the content 
+array before a step's main function is run on the content array.

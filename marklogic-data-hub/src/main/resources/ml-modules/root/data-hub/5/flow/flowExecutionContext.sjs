@@ -57,6 +57,10 @@ class FlowExecutionContext {
     }
   }
 
+  getRuntimeOptions() {
+    return this.runtimeOptions;
+  }
+  
   describe() {
     return `flow '${this.flow.name}' and jobId '${this.jobId}'`;
   }
