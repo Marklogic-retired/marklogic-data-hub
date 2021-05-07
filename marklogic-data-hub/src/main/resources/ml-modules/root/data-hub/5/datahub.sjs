@@ -36,7 +36,7 @@ class DataHub {
 
     this.debug = new Debug(config);
     this.performance = new Perf(config, this);
-    this.flow = new Flow(config, this);
+    this.flow = new Flow(config);
     this.debug = new Debug(config, this);
     if (this.performance.performanceMetricsOn()) {
       this.performance.instrumentDataHub(this);

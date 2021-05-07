@@ -21,13 +21,9 @@ const cachedModules = {};
 
 class StepDefinition {
 
-  constructor(config = null, datahub = null) {
-    if (!datahub) {
-      const Perf = require("/data-hub/5/impl/perf.sjs");
-      this.performance = new Perf(config);
-    } else {
-      this.performance = datahub.performance;
-    }
+  constructor(config = null) {
+    const Perf = require("/data-hub/5/impl/perf.sjs");
+    this.performance = new Perf(config);
   }
 
   getStepDefinitionByNameAndType(name, type = 'custom') {

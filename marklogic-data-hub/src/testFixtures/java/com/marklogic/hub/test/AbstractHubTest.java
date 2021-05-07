@@ -547,6 +547,14 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     }
 
     /**
+     * @return the first Batch document, which is often sufficient when you know your test should have only generated
+     * a single Batch doc
+     */
+    protected JsonNode getFirstBatchDoc() {
+        return readJsonObject(getHubClient().getJobsClient().newServerEval().xquery("collection('Batch')[1]").evalAs(String.class));
+    }
+
+    /**
      * @param collection
      * @return the number of documents in the given collection in the Jobs database
      */

@@ -1,5 +1,6 @@
 package com.marklogic.hub.flow;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.job.JobStatus;
@@ -82,6 +83,20 @@ public class RunStepWithCustomHookTest extends AbstractHubCoreTest {
         assertTrue(stepResponse.getStepOutput().get(0).contains("Throwing error on purpose for step number"),
             "Unexpected step error: " + stepResponse.getStepOutput().get(0));
         assertFalse(stepResponse.isSuccess());
+
+        JsonNode job = getJobDoc(response.getJobId()).get("job");
+        assertEquals("stop-on-error", job.get("jobStatus").asText());
+        assertEquals("1", job.get("lastAttemptedStep").asText());
+        assertEquals("0", job.get("lastCompletedStep").asText());
+
+        JsonNode batch = getFirstBatchDoc().get("batch");
+        assertEquals("failed", batch.get("batchStatus").asText());
+        assertEquals(2, batch.get("uris").size());
+        assertEquals("/customer1.json", batch.get("uris").get(0).asText());
+        assertEquals("/customer2.json", batch.get("uris").get(1).asText());
+        assertEquals("Error: Throwing error on purpose for step number: 1",
+            batch.get("completeError").get("data").get(0).asText(),
+            "The actual error message is expected to be in the 'data' array");
     }
 
     @Test
