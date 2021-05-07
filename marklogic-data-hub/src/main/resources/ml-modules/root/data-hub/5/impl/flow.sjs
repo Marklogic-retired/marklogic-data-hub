@@ -31,10 +31,9 @@ const cachedFlows = {};
 
 class Flow {
 
-  constructor(config, datahub) {
+  constructor(config) {
     this.config = config;
-    this.datahub = datahub;
-    this.stepDefinition = new StepDefinition(config, datahub);
+    this.stepDefinition = new StepDefinition(config);
 
     // Starting in 5.5, this is needed for backwards compatibility so that scaffolded modules can still
     // refer to datahub.flow.flowUtils .
@@ -87,7 +86,7 @@ class Flow {
         const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
         const filteredItems = this.filterItemsAlreadyProcessedByStep(uris, flowName, stepId);
         if (filteredItems.length != uris.length) {
-          xdmp.trace(datahub.consts.TRACE_FLOW, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
+          xdmp.trace(this.consts.TRACE_FLOW, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
         }
         uris = filteredItems;
       }
@@ -150,7 +149,8 @@ class Flow {
    *  class that ideally would be the same as what's produced by flowUtils.makeCombinedOptions, but it's not yet
    * @param stepNumber The number of the step within the given flow to run
    */
-  runFlow(flowName, jobId, contentArray = [], options, stepNumber) {
+  runFlow(flowName, jobId, contentArray, options, stepNumber) {
+    contentArray = contentArray || [];
     const theFlow = this.getFlow(flowName);
     if(!theFlow) {
       throw Error('The flow with the name '+flowName+' could not be found.')
@@ -173,7 +173,6 @@ class Flow {
 
     const flowStep = theFlow.steps[stepNumber];
     if(!flowStep) {
-      this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
@@ -186,9 +185,12 @@ class Flow {
     let outputContentArray;
     const writeQueue = new WriteQueue();
 
+    hubUtils.hubTrace(this.consts.TRACE_FLOW, `Running ${stepExecutionContext.describe()}; content array length: ${batchItems.length}`);
+
     try {
       outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue);
     } catch (error) {
+      stepExecutionContext.addStepErrorForEntireBatch(error, batchItems);
       this.writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, {});
       throw error;
     }
@@ -222,9 +224,6 @@ class Flow {
     if (combinedOptions.fullOutput) {
       responseHolder.documents = outputContentArray;
     }
-    if (this.datahub.performance.performanceMetricsOn()) {
-      responseHolder.performanceMetrics = this.datahub.performance.stepMetrics;
-    }
 
     return responseHolder;
   }
@@ -244,11 +243,11 @@ class Flow {
         batch.addSingleStepResult(stepExecutionContext, batchItems, writeTransactionInfo);
         batch.persist();
       } else {
-        hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW,
+        hubUtils.hubTrace(this.consts.TRACE_FLOW,
           "Batch document insertion is enabled, but job document is null, so unable to insert a batch document");
       }
-    } else if (xdmp.traceEnabled(this.datahub.consts.TRACE_FLOW)) {
-      hubUtils.hubTrace(this.datahub.consts.TRACE_FLOW, `Batch document insertion is disabled`);
+    } else if (xdmp.traceEnabled(this.consts.TRACE_FLOW)) {
+      hubUtils.hubTrace(this.consts.TRACE_FLOW, `Batch document insertion is disabled`);
     }
   }
 
