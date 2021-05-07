@@ -159,6 +159,10 @@ class LoadPage {
     return cy.findByLabelText(option);
   }
 
+  confirmationOptionsAll(option: string) {
+    return cy.findAllByLabelText(option);
+  }
+
   saveButton() {
     return cy.findByLabelText("Save");
   }

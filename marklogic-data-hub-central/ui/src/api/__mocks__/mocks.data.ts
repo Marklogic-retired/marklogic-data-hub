@@ -160,6 +160,10 @@ const runCrudAPI = (axiosMock) => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve({status: 201, data: {}});
+    case `/api/flows/${curateData.flows.data[0].name}/steps`:
+      return Promise.resolve({status: 200, data: {}});
+    case `/api/flows/${curateData.flows.data[0].name}/steps/2`:
+      return Promise.resolve({status: 200, data: {}});
     default:
       return Promise.reject(new Error("not found"));
     }

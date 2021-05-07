@@ -114,26 +114,27 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to new flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
-    curatePage.runStepInCardView(matchStep).click();
-    curatePage.runInNewFlow(matchStep).click();
-    cy.waitForAsyncRequest();
-    cy.findByText("New Flow").should("be.visible");
+  // NOTE Moved testing of a adding step to a new flow and running the step to RTL unit tests
+  // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
+  it("Add the Match step to new flow", {defaultCommandTimeout: 120000}, () => {
+    // create new flow
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.createFlowButton().click();
+    runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
     cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    // add step to that new flow
+    runPage.addStep(flowName2);
+    runPage.addStepToFlow(matchStep);
+    runPage.verifyStepInFlow("Match", matchStep);
     cy.wait(500);
-    cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
-    cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
-    cy.verifyStepRunResult("success", "Matching", matchStep);
-    tiles.closeRunMessage();
-    cy.verifyStepAddedToFlow("Match", matchStep, flowName2);
   });
   it("Delete the match step and Navigate back to match tab", () => {
     runPage.deleteStep(matchStep).click();
-    loadPage.confirmationOptions("Yes").click();
+    //loadPage.confirmationOptions("Yes").click(); // multiple "Yes" options appearing
+    loadPage.confirmationOptionsAll("Yes").last().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
