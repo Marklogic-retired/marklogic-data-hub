@@ -135,6 +135,7 @@ declare function pma:preview-matching-activity(
   $options as object-node(),
   $source-query as cts:query,
   $uris as xs:string*,
+  $restrict-to-uris as xs:boolean,
   $sample-size as xs:integer?)
   as object-node()
 {
@@ -150,7 +151,7 @@ declare function pma:preview-matching-activity(
     )
   let $previous-count := fn:count($results-within-uris)
   let $results-against-source-query-docs :=
-    if ($previous-count >= $PMA-MAX-RESULTS) then
+    if ($restrict-to-uris or $previous-count >= $PMA-MAX-RESULTS) then
       ()
     else
       pma:consolidate-preview-results(

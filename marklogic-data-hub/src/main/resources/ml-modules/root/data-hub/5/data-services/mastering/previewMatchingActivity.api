@@ -14,6 +14,10 @@
   {
     "name": "stepName",
     "datatype": "string"
+  },
+  {
+    "name": "restrictToUris",
+    "datatype": "boolean"
   }],
   "return":
   {
