@@ -658,6 +658,22 @@ const customSteps = {"data": {"stepsWithEntity": [{
 "status": 200
 };
 
+const newStepToFlowOptions = {
+  routeToFlow: true,
+  addingStepToFlow: true,
+  startRunStep: true,
+  flowName: null,
+  newStepName: "Mapping1", // consistent with flows above for testing purposes
+  stepDefinitionType: "mapping",
+  viewMode: "card",
+  pageSize: 10,
+  page: 1,
+  sortOrderInfo: null,
+  targetEntityType: "Person",
+  existingFlow: false, // Opens New Flow dialog
+  flowsDefaultKey: ["-1"]
+};
+
 const flowProps = {
   flows: flows.data,
   deleteFlow: jest.fn(),
@@ -695,8 +711,8 @@ const data = {
   loadsXML: loadsXML,
   loadSettings: loadSettings,
   mappingSettings: mappingSettings,
-  customSteps
-
+  customSteps,
+  newStepToFlowOptions
 };
 
 export default data;

@@ -191,15 +191,16 @@ const Flows: React.FC<Props> = (props) => {
       }
       //run step after step is added to a new flow
       if (props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow && startRun && addedFlowName) {
-        let index = props.flows.findIndex(i => i.name === addedFlowName);
-        if (props.flows[index].steps[0]) {
-          if (props.flows[index].steps[0].stepDefinitionType === "ingestion") {
+        let indexFlow = props.flows.findIndex(i => i.name === addedFlowName);
+        if (props.flows[indexFlow].steps.length > 0) {
+          let indexStep = props.flows[indexFlow].steps.findIndex(s => s.stepName === props.newStepToFlowOptions.newStepName);
+          if (props.flows[indexFlow].steps[indexStep].stepDefinitionType === "ingestion") {
             setShowUploadError(false);
-            setRunningStep(props.flows[index].steps[0]);
+            setRunningStep(props.flows[indexFlow].steps[indexStep]);
             setRunningFlow(addedFlowName);
             openFilePicker();
           } else {
-            props.runStep(addedFlowName, props.flows[index].steps[0]);
+            props.runStep(addedFlowName, props.flows[indexFlow].steps[indexStep]);
             setAddedFlowName("");
             setStartRun(false);
           }

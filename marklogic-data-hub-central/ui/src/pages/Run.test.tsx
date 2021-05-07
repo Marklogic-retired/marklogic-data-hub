@@ -17,6 +17,7 @@ import {RunToolTips} from "../config/tooltips.config";
 import {act} from "react-dom/test-utils";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
+import {createMemoryHistory} from "history";
 
 jest.mock("axios");
 jest.setTimeout(30000);
@@ -568,6 +569,60 @@ describe("Verify Run CRUD operations", () => {
     expect(queryByText("Save")).toBeDisabled();
     fireEvent.click(getByText("Cancel"));
 
+  });
+
+  test("Verify a user with writeFlow authority can CREATE a new flow, ADD a step to the new flow, and RUN the step, all via a step card", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readFlow", "writeFlow"]);
+    // Create flow and add/run step settings passed as newStepToFlowOptions
+    const {getByText, getByLabelText, getByPlaceholderText} = await render(<MemoryRouter>
+      <AuthoritiesContext.Provider value={ authorityService }>
+        <Run newStepToFlowOptions={data.newStepToFlowOptions}/>
+      </AuthoritiesContext.Provider>
+    </MemoryRouter>);
+    expect(getByText("New Flow")).toBeInTheDocument();
+    const newFlowValues = {name: "testFlow", description: "testFlow description"};
+    fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
+    fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
+    fireEvent.click(getByLabelText("Save"));
+    // Create new flow
+    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
+    const newStepValues = {stepDefinitionType: data.newStepToFlowOptions.stepDefinitionType, stepName: data.newStepToFlowOptions.newStepName};
+    // Add step to new flow
+    await wait(() => {
+      expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${newFlowValues.name}/steps`, newStepValues);
+    });
+    // Run step
+    await wait(() => {
+      expect(axiosMock.post).toHaveBeenNthCalledWith(3, `/api/flows/${newFlowValues.name}/steps/2`);
+    });
+  });
+
+  test("Verify a user with writeFlow authority can CANCEL a new flow via a step card", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readFlow", "writeFlow"]);
+    const history = createMemoryHistory();
+    history.push("/tiles/run/add-run"); // initial state
+    const {getByText, getByLabelText} = await render(<MemoryRouter>
+      <AuthoritiesContext.Provider value={ authorityService }>
+        <Run newStepToFlowOptions={data.newStepToFlowOptions}/>
+      </AuthoritiesContext.Provider>
+    </MemoryRouter>);
+    expect(getByText("New Flow")).toBeInTheDocument();
+    // Clicking Cancel returns to Curate tile
+    fireEvent.click(getByLabelText("Cancel"));
+    await wait(() => {
+      expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/curate",
+        "state": {
+          "pageSize": data.newStepToFlowOptions.pageSize,
+          "page": data.newStepToFlowOptions.page,
+          "sortOrderInfo": data.newStepToFlowOptions.sortOrderInfo,
+          "stepDefinitionType": data.newStepToFlowOptions.stepDefinitionType,
+          "targetEntityType": data.newStepToFlowOptions.targetEntityType,
+          "viewMode": data.newStepToFlowOptions.viewMode
+        }
+      });
+    });
   });
 });
 

@@ -234,6 +234,7 @@ const LoadList: React.FC<Props> = (props) => {
       cancelText="Cancel"
       okButtonProps={{style: {display: "none"}}}
       onCancel={() => onCancel()}
+      cancelButtonProps={{"aria-label": "Cancel"}}
       width={650}
       maskClosable={false}
     >

@@ -85,9 +85,9 @@ const NewFlowDialog = (props) => {
     } else {
       await props.createFlow(dataPayload);
       if (props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
+        props.setAddedFlowName(flowName);
         await props.addStepToFlow(props.newStepToFlowOptions.newStepName, flowName, props.newStepToFlowOptions.stepDefinitionType);
         props.setOpenNewFlow(false);
-        props.setAddedFlowName(flowName);
       }
     }
     props.setNewFlow(false);
