@@ -131,8 +131,8 @@ class MappingStepDetail {
     cy.findByTestId(`${propertyName}-mapexpression`).type(value);
   }
 
-  validateMapValues(propertyName: string, value:string) {
-    cy.findByTestId(`${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
+  validateMapValues(entityName: string, propertyName: string, value:string) {
+    cy.findByTestId(`${entityName}-${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
   }
 
   goBackToCurateHomePage() {

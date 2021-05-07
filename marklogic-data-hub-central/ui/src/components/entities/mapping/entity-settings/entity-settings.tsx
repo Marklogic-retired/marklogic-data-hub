@@ -49,15 +49,20 @@ const EntitySettings: React.FC<Props> = (props) => {
 
   const getSettings = async () => {
     if (props.stepData?.relatedEntityMappings && props.entityMappingId?.length) {
-      let relatedEntity = props.stepData.relatedEntityMappings.filter(entity => { return entity.relatedEntityMappingId === props.entityMappingId; })[0];
-      if (relatedEntity.collections) {
-        setDefaultCollections(relatedEntity.collections);
-      }
-      if (relatedEntity.additionalCollections) {
-        setAdditionalCollections([...relatedEntity.additionalCollections]);
-      }
-      if (relatedEntity.permissions) {
-        setTargetPermissions(relatedEntity.permissions);
+      let relatedEntity = props.stepData.relatedEntityMappings.filter(entity => {
+        return entity.relatedEntityMappingId === props.entityMappingId;
+      })[0];
+
+      if (relatedEntity) {
+        if (relatedEntity.collections) {
+          setDefaultCollections(relatedEntity.collections);
+        }
+        if (relatedEntity.additionalCollections) {
+          setAdditionalCollections([...relatedEntity.additionalCollections]);
+        }
+        if (relatedEntity.permissions) {
+          setTargetPermissions(relatedEntity.permissions);
+        }
       }
     } else {
       if (props.stepData.collections) {

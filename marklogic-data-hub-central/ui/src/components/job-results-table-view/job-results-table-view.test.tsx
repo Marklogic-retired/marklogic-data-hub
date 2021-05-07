@@ -111,11 +111,11 @@ describe("Job results Table view component", () => {
 describe("Column Selector in Job results Table view component", () => {
   test("Verify default values are checked", async () => {
     const {getByText, getByTestId} = render(
-        <Router>
-          <JobResultsTableView
-              data={jobResults.results}
-          />
-        </Router>
+      <Router>
+        <JobResultsTableView
+          data={jobResults.results}
+        />
+      </Router>
     );
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
@@ -132,11 +132,11 @@ describe("Column Selector in Job results Table view component", () => {
 
   test("Verify Cancel button", async () => {
     const {getByText, getByTestId} = render(
-        <Router>
-          <JobResultsTableView
-              data={jobResults.results}
-          />
-        </Router>
+      <Router>
+        <JobResultsTableView
+          data={jobResults.results}
+        />
+      </Router>
     );
 
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
@@ -162,11 +162,11 @@ describe("Column Selector in Job results Table view component", () => {
 
   test("Verify Apply button", async () => {
     const {getByText, getByTestId, queryByText} = render(
-        <Router>
-          <JobResultsTableView
-              data={jobResults.results}
-          />
-        </Router>
+      <Router>
+        <JobResultsTableView
+          data={jobResults.results}
+        />
+      </Router>
     );
 
     // Check table Configurable column headers are rendered
