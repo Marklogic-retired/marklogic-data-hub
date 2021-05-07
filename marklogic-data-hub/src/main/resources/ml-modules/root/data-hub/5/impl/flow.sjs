@@ -41,7 +41,6 @@ class Flow {
     this.flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 
     this.consts = require("/data-hub/5/impl/consts.sjs");
-    this.writeQueue = new WriteQueue();
   }
 
   getFlow(name) {
@@ -185,16 +184,10 @@ class Flow {
     const batchItems = contentArray.map(contentObject => contentObject.uri);
 
     let outputContentArray;
+    const writeQueue = new WriteQueue();
 
     try {
-      // No writeQueue is passed in because if we pass in our own, nothing will be added to it if step output is disabled.
-      // But this module currently needs everything in the write queue, and then chooses whether or not to persist it later.
-      outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, null);
-      outputContentArray.forEach(contentObject => {
-        this.writeQueue.addContent(stepExecutionContext.getTargetDatabase(), contentObject, flowName, stepNumber);
-      });
-      // Set this based on what's in the writeQueue, which deduplicates URIs to avoid conflicting update errors
-      outputContentArray = this.writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
+      outputContentArray = flowRunner.runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQueue);
     } catch (error) {
       this.writeBatchDocumentIfEnabled(stepExecutionContext, jobDoc, batchItems, {});
       throw error;
@@ -203,7 +196,8 @@ class Flow {
     let writeTransactionInfo = {};
     if (stepExecutionContext.stepOutputShouldBeWritten()) {
       try {
-        writeTransactionInfo = this.flowUtils.writeContentArray(outputContentArray, stepExecutionContext.getTargetDatabase());
+        const contentToWrite = writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
+        writeTransactionInfo = this.flowUtils.writeContentArray(contentToWrite, stepExecutionContext.getTargetDatabase());
       } catch (e) {
         this.handleWriteError(this, stepExecutionContext, e);
       }
@@ -232,7 +226,6 @@ class Flow {
       responseHolder.performanceMetrics = this.datahub.performance.stepMetrics;
     }
 
-    this.writeQueue = new WriteQueue();
     return responseHolder;
   }
 

@@ -141,9 +141,11 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
     hookRunner.runHook(contentArray);
   }
 
+  invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
+
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
-    runStepOnBatch(contentArray, stepExecutionContext) :
-    runStepOnEachItem(contentArray, stepExecutionContext);
+    runStepMainOnBatch(contentArray, stepExecutionContext) :
+    runStepMainOnEachItem(contentArray, stepExecutionContext);
   
   // If the step did not complete for any reason, then one or more errors were captured, and no output should be returned
   if (!stepExecutionContext.wasCompleted()) {
@@ -152,7 +154,7 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
 
   stepExecutionContext.finalizeCollectionsAndPermissions(outputContentArray);
 
-  applyInterceptorsBeforeContentPersisted(outputContentArray, stepExecutionContext);
+  invokeInterceptors(stepExecutionContext, outputContentArray, "beforeContentPersisted");
 
   if (hookRunner && !hookRunner.runBefore) {
     hookRunner.runHook(outputContentArray);
@@ -180,7 +182,7 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
  * @return if an error occurs while processing the batch, in the step execution context and rethrown; else, 
  * the content array returned by the step is returned
  */
-function runStepOnBatch(contentArray, stepExecutionContext) {
+function runStepMainOnBatch(contentArray, stepExecutionContext) {
   const contentSequence = hubUtils.normalizeToSequence(contentArray);
 
   if (DEBUG_ENABLED) {
@@ -213,7 +215,7 @@ function runStepOnBatch(contentArray, stepExecutionContext) {
  * @return if an error occurs while processing an item, it is captured in the step execution context; 
  *  the content array returned by the step is returned
  */
-function runStepOnEachItem(contentArray, stepExecutionContext) {
+function runStepMainOnEachItem(contentArray, stepExecutionContext) {
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
 
@@ -355,31 +357,34 @@ function copyContentObject(contentObject) {
 }
 
 /**
- * Applies interceptors to the given content array. Interceptors can make any changes they wish to the items in the
+ * Invokes interceptors on the given content array. Interceptors can make any changes they wish to the items in the
  * content array, including adding and removing items, but the array itself cannot be changed - i.e. an interceptor may
  * not return a new instance of an array.
  * 
- * @param contentArray 
- * @param stepExecutionContext 
- * @returns if an error occurred, the error is returned
+ * @param {object} stepExecutionContext 
+ * @param {array} contentArray 
+ * @param {string} whenValue only interceptors with a "when" value of this will be run
  */
-function applyInterceptorsBeforeContentPersisted(contentArray, stepExecutionContext) {
+function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
   const flowStep = stepExecutionContext.flowStep;
   if (flowStep.interceptors) {
     let currentInterceptor = null;
     try {
-      flowStep.interceptors.filter((interceptor => "beforeContentPersisted" == interceptor.when)).forEach(interceptor => {
+      flowStep.interceptors.filter((interceptor => whenValue == interceptor.when)).forEach(interceptor => {
         currentInterceptor = interceptor;
+
         const vars = Object.assign({}, interceptor.vars);
         vars.contentArray = contentArray;
         vars.options = stepExecutionContext.combinedOptions;
-        hubUtils.hubTrace(INFO_EVENT, `Invoking interceptor at path: ${interceptor.path}`);
+        // This is being included in 5.5, but not yet documented since stepExecutionContext is not yet 
+        // part of the public DHF API
+        vars.stepExecutionContext = stepExecutionContext;
+
+        hubUtils.hubTrace(INFO_EVENT, `Invoking interceptor on ${stepExecutionContext.describe()} at path: ${interceptor.path}`);
         xdmp.invoke(interceptor.path, vars);
       });  
     } catch (error) {
-      // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
-      // all items failed; this is analogous to the behavior of acceptsBatch=true
-      hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor at path: ${currentInterceptor.path}; error: ${error.message}`);
+      hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor on ${stepExecutionContext.describe()}; path: ${currentInterceptor.path}; error: ${error.message}`);
       throw error;
     }
   }
