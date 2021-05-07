@@ -88,6 +88,23 @@ def dhfWinTests(String mlVersion, String type){
          //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
     }
 }
+
+void sanityTests(String type,String mlVersion){
+    props = readProperties file:'data-hub/pipeline.properties';
+    copyRPM type,mlVersion
+    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+    sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;'
+    junit '**/TEST-*.xml'
+    commitMessage = sh (returnStdout: true, script:'''
+			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+    def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+    def commit=slurper.message.toString().trim();
+    JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+    JIRA_ID=JIRA_ID.split(" ")[0];
+    commitMessage=null;
+    //jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+}
+
 pipeline{
 	agent none;
 	options {
@@ -905,24 +922,9 @@ pipeline{
 		}
 		agent { label 'dhfLinuxAgent'}
 		steps{timeout(time: 3,  unit: 'HOURS'){
-            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
-			script{
-			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','10.0-4.4'
-				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;'
-				junit '**/TEST-*.xml'
-				 commitMessage = sh (returnStdout: true, script:'''
-			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-				def commit=slurper.message.toString().trim();
-				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-				JIRA_ID=JIRA_ID.split(" ")[0];
-				commitMessage=null;
-				//jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
-			}}}
-			post{
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){sanityTests('Release','10.0-4.4')}
+		}}
+		post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
