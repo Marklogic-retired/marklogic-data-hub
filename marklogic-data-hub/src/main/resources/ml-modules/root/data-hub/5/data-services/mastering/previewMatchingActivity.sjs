@@ -21,6 +21,7 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 var stepName;
 var uris;
 var sampleSize;
+var restrictToUris;
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
@@ -28,7 +29,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge",
 const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("matching", stepName);
 const sourceQuery = hubUtils.evalInDatabase(step.sourceQuery, step.sourceDatabase);
 
-let resultFunction = function() { return previewMatchingActivityLib.previewMatchingActivity(step, sourceQuery, uris, sampleSize); }
+let resultFunction = function() { return previewMatchingActivityLib.previewMatchingActivity(step, sourceQuery, uris, restrictToUris, sampleSize); }
 
 if (!step.sourceDatabase || xdmp.database() === xdmp.database(step.sourceDatabase)) {
     resultFunction();

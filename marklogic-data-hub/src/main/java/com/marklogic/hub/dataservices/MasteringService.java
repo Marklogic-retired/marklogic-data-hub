@@ -155,18 +155,19 @@ public interface MasteringService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName) {
+            public com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris) {
                 return previewMatchingActivity(
-                    this.req_previewMatchingActivity.on(this.dbClient), sampleSize, uris, stepName
+                    this.req_previewMatchingActivity.on(this.dbClient), sampleSize, uris, stepName, restrictToUris
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(BaseProxy.DBFunctionRequest request, Integer sampleSize, Stream<String> uris, String stepName) {
+            private com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(BaseProxy.DBFunctionRequest request, Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("sampleSize", false, BaseProxy.IntegerType.fromInteger(sampleSize)),
                           BaseProxy.atomicParam("uris", true, BaseProxy.StringType.fromString(uris)),
-                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
+                          BaseProxy.atomicParam("restrictToUris", false, BaseProxy.BooleanType.fromBoolean(restrictToUris))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -252,9 +253,10 @@ public interface MasteringService {
    * @param sampleSize	provides input
    * @param uris	provides input
    * @param stepName	provides input
+   * @param restrictToUris	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName);
+    com.fasterxml.jackson.databind.JsonNode previewMatchingActivity(Integer sampleSize, Stream<String> uris, String stepName, Boolean restrictToUris);
 
   /**
    * Invokes the getDefaultCollections operation on the database server
