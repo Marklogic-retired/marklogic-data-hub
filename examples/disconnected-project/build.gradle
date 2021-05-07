@@ -13,7 +13,7 @@ buildscript {
         }
         dependencies {
             classpath "net.saliman:gradle-properties-plugin:1.5.1"
-            classpath "com.marklogic:ml-data-hub:5.4.0"
+            classpath "com.marklogic:ml-data-hub:5.5.0"
         }
     }
 }
@@ -45,7 +45,7 @@ else {
 
     dependencies {
         gradlePlugins "net.saliman:gradle-properties-plugin:1.5.1"
-        gradlePlugins "com.marklogic:ml-data-hub:5.4.0"
+        gradlePlugins "com.marklogic:ml-data-hub:5.5.0"
     }
 
     // Customize this as needed to select the project files that you want to be included in the
