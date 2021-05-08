@@ -351,11 +351,9 @@ pipeline{
                   }
 		}
 		stage('rh7-singlenode'){
-		when {
-	      expression{
-	         props = readProperties file:'data-hub/pipeline.properties'
-             return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
-          }
+        when {
+           expression {return params.regressions}
+           beforeAgent true
         }
 		agent { label 'dhfLinuxAgent'}
 		steps{timeout(time: 3,  unit: 'HOURS'){
@@ -392,12 +390,10 @@ pipeline{
                   }
 		}
 		stage('Linux Core Parallel Execution'){
-		when {
-	        expression{
-	                props = readProperties file:'data-hub/pipeline.properties'
-	                return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
-	        }
-		}
+        when {
+            expression {return params.regressions}
+            beforeAgent true
+        }
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
@@ -496,12 +492,11 @@ pipeline{
 			}
 		}
 		}
+
 		stage('example projects parallel'){
-		when {
-	      expression{
-	        props = readProperties file:'data-hub/pipeline.properties'
-            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
-          }
+        when {
+            expression {return params.regressions}
+            beforeAgent true
         }
         parallel{
             stage('dh5-example'){
@@ -650,11 +645,9 @@ pipeline{
 
 		}
 		stage('quick start linux parallel'){
-		when {
-	      expression{
-	                props = readProperties file:'data-hub/pipeline.properties'
-     	            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
-	      }
+        when {
+           expression {return params.regressions}
+           beforeAgent true
         }
 		parallel{
 		stage('qs_rh7_90-nightly'){
@@ -729,11 +722,9 @@ pipeline{
           }}
 		}}
 		stage('Windows Core Parallel'){
-		when {
-	      expression{
-	                props = readProperties file:'data-hub/pipeline.properties'
-    	            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
-	      }
+        when {
+           expression {return params.regressions}
+           beforeAgent true
         }
 		parallel{
 		stage('w12_SN_9.0-Nightly'){
@@ -890,7 +881,7 @@ pipeline{
 		when {
             expression{
                 props = readProperties file:'data-hub/pipeline.properties';
-	            return (env.BRANCH_NAME==props['ReleaseBranch'] || params.regressions)
+	            return (env.BRANCH_NAME==props['ReleaseBranch'] && !params.regressions)
             }
 		}
 		agent { label 'dhfLinuxAgent'}
