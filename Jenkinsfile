@@ -361,7 +361,8 @@ pipeline{
 		agent { label 'dhfLinuxAgent'}
 		steps{timeout(time: 3,  unit: 'HOURS'){
             catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
-                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+              cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+              script{
                 props = readProperties file:'data-hub/pipeline.properties'
 				copyRPM 'Release','9.0-11'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
@@ -369,9 +370,7 @@ pipeline{
 				junit '**/TEST-*.xml'
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-
-            script{
-			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+			    def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
 				def commit=slurper.message.toString().trim();
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
 				JIRA_ID=JIRA_ID.split(" ")[0];
