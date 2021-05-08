@@ -16,27 +16,24 @@ def loadProperties() {
     }
 }
 def dhflinuxTests(String mlVersion,String type){
-    	script{
-    		props = readProperties file:'data-hub/pipeline.properties';
-    		copyRPM type,mlVersion
-    		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
-    		junit '**/TEST-*.xml'
-    		commitMessage = sh (returnStdout: true, script:'''
-    		curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-    		def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-    		def commit=slurper.message.toString().trim();
-    		JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-    		JIRA_ID=JIRA_ID.split(" ")[0];
-    		commitMessage=null;
+    props = readProperties file:'data-hub/pipeline.properties';
+    copyRPM type,mlVersion
+    def dockerhost=setupMLDockerCluster 3
+    sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;"'
+    junit '**/TEST-*.xml'
+    commitMessage = sh (returnStdout: true, script:'''
+            curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+    def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+    def commit=slurper.message.toString().trim();
+    JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+    JIRA_ID=JIRA_ID.split(" ")[0];
+    commitMessage=null;
     		//jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-    	}
 }
 def dhfqsLinuxTests(String mlVersion,String type){
-	script{
-         copyRPM type,mlVersion
-         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-         sh(script:'''#!/bin/bash
+     copyRPM type,mlVersion
+     setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+     sh(script:'''#!/bin/bash
             export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
             export M2_HOME=$MAVEN_HOME/bin;
@@ -51,42 +48,41 @@ def dhfqsLinuxTests(String mlVersion,String type){
             sleep 120s;
             cd web;
             ./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
-         ''')
-         junit '**/web/e2e/reports/*.xml'
-         archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
-	     commitMessage = sh (returnStdout: true, script:'''
-	     curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
-		 def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
-		 def commit=slurper.message.toString().trim();
-		 JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
-		 JIRA_ID=JIRA_ID.split(" ")[0];
-		 commitMessage=null;
+     ''')
+     junit '**/web/e2e/reports/*.xml'
+     archiveArtifacts artifacts: 'data-hub/web/e2e/reports/*.html, data-hub/web/e2e/reports/*.xml, data-hub/web/e2e/reports/screenshots/*.png, data-hub/web/e2e/screenshoter-plugin/**/*, nohup.out'
+	 commitMessage = sh (returnStdout: true, script:'''
+	     curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}"
+     ''')
+	 def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
+	 def commit=slurper.message.toString().trim();
+	 JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
+	 JIRA_ID=JIRA_ID.split(" ")[0];
+	 commitMessage=null;
 		 //jiraAddComment comment: 'Jenkins qs_rh7_90-nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-	}
 }
+
 def dhfWinTests(String mlVersion, String type){
-    script{
-        copyMSI type,mlVersion;
-        def pkgOutput=bat(returnStdout:true , script: '''
+    copyMSI type,mlVersion;
+    def pkgOutput=bat(returnStdout:true , script: '''
 	                    cd xdmp/src
 	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
 	                    echo %name%
 	                    ''').trim().split();
-	    def pkgLoc=pkgOutput[pkgOutput.size()-1]
-	    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
-	    def bldOutput=bat(returnStdout:true , script: '''
+	def pkgLoc=pkgOutput[pkgOutput.size()-1]
+	gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+	def bldOutput=bat(returnStdout:true , script: '''
         	           cd ml-builds/scripts/lib/
         	           CD
         	        ''').trim().split();
-        def bldPath=bldOutput[bldOutput.size()-1]
-        setupMLWinCluster bldPath,pkgLoc
-        bat 'cd data-hub & gradlew.bat clean'
-        bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
-        bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-        bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
-        junit '**/TEST-*.xml'
+    def bldPath=bldOutput[bldOutput.size()-1]
+    setupMLWinCluster bldPath,pkgLoc
+    bat 'cd data-hub & gradlew.bat clean'
+    bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+    bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+    bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
+    junit '**/TEST-*.xml'
          //jiraAddComment comment: 'Jenkins rh7_cluster_9.0-Nightly Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-    }
 }
 
 void sanityTests(String type,String mlVersion){
@@ -130,6 +126,7 @@ pipeline{
         }
 	    agent { label 'dhfLinuxAgent'}
 	    steps{
+        cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
 	    script{
 	        if(!env.CHANGE_TITLE.startsWith("DHFPROD-")){
 	            sh 'exit 1'
@@ -158,7 +155,8 @@ pipeline{
 		stage('Build-datahub'){
 		agent { label 'dhfLinuxAgent'}
 			steps{
-				script{
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                script{
         props = readProperties file:'data-hub/pipeline.properties';
 				if(env.CHANGE_TITLE){
 				JIRA_ID=env.CHANGE_TITLE.split(':')[0];
@@ -188,6 +186,7 @@ pipeline{
 		stage('Unit-Tests'){
 		agent { label 'dhfLinuxAgent'}
 			steps{
+            cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
 			script{
 			 props = readProperties file:'data-hub/pipeline.properties';
 				 copyRPM 'Release','10.0-4.4'
@@ -202,9 +201,6 @@ pipeline{
 				}
 			}
 			post{
-				  always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("Unit Tests Completed")
                     script{
@@ -240,10 +236,10 @@ pipeline{
   			allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
   			beforeAgent true
 		}
-		agent {label 'dhmaster'};
+		agent {label 'dhmaster'}
 		steps{
 		script{
-		    props = readProperties file:'data-hub/pipeline.properties';
+		    props = readProperties file:'data-hub/pipeline.properties'
 			if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
 				println("Automated PR")
 				sh 'exit 0'
@@ -361,18 +357,20 @@ pipeline{
 	         props = readProperties file:'data-hub/pipeline.properties'
              return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
           }
-          beforeAgent true
         }
 		agent { label 'dhfLinuxAgent'}
-		steps{timeout(time: 3,  unit: 'HOURS'){catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
-			 script{
-                props = readProperties file:'data-hub/pipeline.properties';
+		steps{timeout(time: 3,  unit: 'HOURS'){
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                props = readProperties file:'data-hub/pipeline.properties'
 				copyRPM 'Release','9.0-11'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;'
 				junit '**/TEST-*.xml'
 				 commitMessage = sh (returnStdout: true, script:'''
 			curl -u $Credentials -X GET "'''+githubAPIUrl+'''/git/commits/${GIT_COMMIT}" ''')
+
+            script{
 			def slurper = new JsonSlurperClassic().parseText(commitMessage.toString().trim())
 				def commit=slurper.message.toString().trim();
 				JIRA_ID=commit.split(("\\n"))[0].split(':')[0].trim();
@@ -382,9 +380,6 @@ pipeline{
 				}
 			}}}
 			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("End-End Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests of the branch $BRANCH_NAME passed and the next stage is to run all the end-end tests on multiple platforms in parallel',false,'rh7-singlenode Tests for $BRANCH_NAME Passed'
@@ -401,21 +396,20 @@ pipeline{
 		stage('Linux Core Parallel Execution'){
 		when {
 	        expression{
-	                props = readProperties file:'data-hub/pipeline.properties';
+	                props = readProperties file:'data-hub/pipeline.properties'
 	                return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
 	        }
-            beforeAgent true
 		}
 		parallel{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{timeout(time: 3,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0","Latest")}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                    dhflinuxTests("10.0","Latest")
+                }
             }}
 			post{
-				 always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("rh7_cluster_10.0-Nightly Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-Nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-Nightly Tests $BRANCH_NAME Passed'
@@ -430,12 +424,10 @@ pipeline{
 		stage('rh7_cluster_9.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-	        dhflinuxTests("9.0","Latest")
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                dhflinuxTests("9.0","Latest")
 			}
 			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("rh7_cluster_9.0-Nightly Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-Nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-Nightly Tests for $BRANCH_NAME Passed'
@@ -449,12 +441,10 @@ pipeline{
 		stage('rh7_cluster_9.0-11'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-		    dhflinuxTests("9.0-11","Release")
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                dhflinuxTests("9.0-11","Release")
 			}
 			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("rh7_cluster_9.0-11 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-11 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-11 Tests for $BRANCH_NAME Passed'
@@ -468,12 +458,10 @@ pipeline{
         stage('rh7_cluster_9.0-13'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-		    dhflinuxTests("9.0-13","Release")
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                dhflinuxTests("9.0-13","Release")
 			}
 			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("rh7_cluster_9.0-13 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-12 Tests for $BRANCH_NAME Passed'
@@ -487,12 +475,10 @@ pipeline{
          stage('rh7_cluster_10.0-4'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                    dhflinuxTests("10.0-4.4","Release");
+                   cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                   dhflinuxTests("10.0-4.4","Release");
                }
                post{
-                 always{
-                     sh 'rm -rf $WORKSPACE/xdmp'
-                   }
                            success {
                              println("rh7_cluster_10.0-4 Tests Completed")
                              sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-3 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-3 Tests for $BRANCH_NAME Passed'
@@ -518,13 +504,13 @@ pipeline{
 	        props = readProperties file:'data-hub/pipeline.properties'
             return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
           }
-          beforeAgent true
         }
         parallel{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
                 steps{timeout(time: 3,  unit: 'HOURS'){
                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                     cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
                      sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-4.4'
                      script{
@@ -548,9 +534,6 @@ pipeline{
                         }
                  }}}
                  post{
-                 always{
-                    sh 'rm -rf $WORKSPACE/xdmp';
-                 }
                  success{
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  dh5example ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,' dh5-example for $BRANCH_NAME Passed'
                  }
@@ -562,9 +545,10 @@ pipeline{
             stage('dhf-customhook'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
-                      sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-4.4'
-                     script{
+                    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                    sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                    copyRPM 'Release','10.0-4.4'
+                    script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
                         sh '''
@@ -584,9 +568,6 @@ pipeline{
                         }
                      }
                  post{
-                 always{
-                    sh 'rm -rf $WORKSPACE/xdmp';
-                 }
                  success{
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  dh5-customhook ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,' dh5-customhook for $BRANCH_NAME Passed'
                  }
@@ -598,8 +579,9 @@ pipeline{
 
             }
             stage('mapping-example'){
-                 agent { label 'dhfLinuxAgent'}
+                agent { label 'dhfLinuxAgent'}
                 steps{
+                     cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
                      sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-4.4'
                      script{
@@ -624,9 +606,6 @@ pipeline{
                         }
                  }
                  post{
-                 always{
-                    sh 'rm -rf $WORKSPACE/xdmp';
-                 }
                  success{
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  mapping-example ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,' mapping-example for $BRANCH_NAME Passed'
                  }
@@ -636,8 +615,9 @@ pipeline{
                  }
             }
             stage('smart-mastering-complete'){
-                 agent { label 'dhfLinuxAgent'}
+                agent { label 'dhfLinuxAgent'}
                 steps{
+                     cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
                      sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-4.4'
                      script{
@@ -659,9 +639,6 @@ pipeline{
                         }
                  }
                  post{
-                 always{
-                    sh 'rm -rf $WORKSPACE/xdmp';
-                 }
                  success{
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n  smart-mastering-complete ran successfully on the  branch $BRANCH_NAME  next stage is to merge it to run quickstart tests',false,'smart-mastering-complete for $BRANCH_NAME Passed'
                  }
@@ -680,16 +657,16 @@ pipeline{
 	                props = readProperties file:'data-hub/pipeline.properties'
      	            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
 	      }
-          beforeAgent true
         }
 		parallel{
 		stage('qs_rh7_90-nightly'){
 			agent { label 'lnx-dhf-jenkins-slave-2'}
 			steps{timeout(time: 3,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("9.0","Latest")}
-            }}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                    dhfqsLinuxTests("9.0","Latest")
+            }}}
 			post{
-
                   success {
                     println("qs_rh7_90-nightly Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 90-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_90-nightly Tests for $BRANCH_NAME Passed'
@@ -703,10 +680,11 @@ pipeline{
 		stage('qs_rh7_10-nightly'){
         agent { label 'lnx-dhf-jenkins-slave-2'}
         steps{timeout(time: 3,  unit: 'HOURS'){
-            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("10.0","Latest")}
-        }}
-         post{
-
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                dhfqsLinuxTests("10.0","Latest")
+        }}}
+        post{
                           success {
                             println("qs_rh7_10-nightly Tests Completed")
                             sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 10-nightly of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_10-nightly Tests for $BRANCH_NAME Passed'
@@ -719,8 +697,10 @@ pipeline{
         stage('qs_rh7_90-release'){
         			agent { label 'lnx-dhf-jenkins-slave-2'}
         			steps{timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("9.0-11","Release")}
-                    }}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                            cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                            dhfqsLinuxTests("9.0-11","Release")
+                    }}}
         			post{
                          success {
                             println("qs_rh7_90-release Tests Completed")
@@ -735,10 +715,11 @@ pipeline{
         stage('qs_rh7_10-release'){
         agent { label 'lnx-dhf-jenkins-slave-2'}
         steps{timeout(time: 3,  unit: 'HOURS'){
-            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfqsLinuxTests("10.0-4.4","Release")}
-        }}
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                dhfqsLinuxTests("10.0-4.4","Release")
+        }}}
         post{
-
                                   success {
                                     println("qs_rh7_10-release Tests Completed")
                                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End quick start tests on Rh7 10-release of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'qs_rh7_10-release Tests for $BRANCH_NAME Passed'
@@ -755,18 +736,16 @@ pipeline{
 	                props = readProperties file:'data-hub/pipeline.properties'
     	            return (env.BRANCH_NAME==props['ExecutionBranch'] || params.regressions)
 	      }
-          beforeAgent true
         }
 		parallel{
 		stage('w12_SN_9.0-Nightly'){
 			agent { label 'dhfWinagent'}
 			steps{timeout(time: 3,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0","Latest")}
-            }}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                    dhfWinTests("9.0","Latest")
+            }}}
 			post{
-				always{
-				  	 bat 'RMDIR /S/Q xdmp'
-				  }
                   success {
                     println("w12_SN_9.0-nightly Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on Windows SN on latest 90 nightly server build of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_90_nightly on latest server build Tests for $BRANCH_NAME Passed'
@@ -780,12 +759,12 @@ pipeline{
         stage('w12_SN_10.0-Nightly'){
 		agent { label 'dhfWinagent'}
 		steps{timeout(time: 3,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10.0","Latest")}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                    dhfWinTests("10.0","Latest")
+                }
         }}
 		post{
-				always{
-				  	 bat 'RMDIR /S/Q xdmp'
-				  }
                   success {
                     println("w12_SN_10.0-nightly Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on Windows SN on latest 10 nightly server build of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_10_nightly on latest server build Tests for $BRANCH_NAME Passed'
@@ -799,13 +778,13 @@ pipeline{
 		stage('w12_SN_9.0-11'){
 			agent { label 'dhfWinagent'}
 			steps{timeout(time: 3,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0-11","Release")}
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                    dhfWinTests("9.0-11","Release")
+                }
             }}
 			post{
-				always{
-                       bat 'RMDIR /S/Q xdmp'
-				  }
-                  success {
+                 success {
                     println("w12_SN_9.0-11 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 SN 9.0-12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_9.0-12 Tests for $BRANCH_NAME Passed'
                    }
@@ -819,8 +798,9 @@ pipeline{
 		agent { label 'dhfWinCluster'}
 		steps{timeout(time: 3,  unit: 'HOURS'){
             catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                copyMSI "Release","10.0-4.4";
                 script{
-                    copyMSI "Release","10.0-4.4";
                     def pkgOutput=bat(returnStdout:true , script: '''
                 	                    cd xdmp/src
                 	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
@@ -850,9 +830,6 @@ pipeline{
                 }
             }}}
 			post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("w12_cluster_10.0-4 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 10.0-3 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_10.0-3 Tests for $BRANCH_NAME Passed'
@@ -870,7 +847,6 @@ pipeline{
 	                props = readProperties file:'data-hub/pipeline.properties';
     	            return (env.BRANCH_NAME==props['ExecutionBranch'] && !params.regressions)
 	      }
-          beforeAgent true
 		}
 		agent {label 'dhmaster'}
 		steps{
@@ -918,16 +894,15 @@ pipeline{
                 props = readProperties file:'data-hub/pipeline.properties';
 	            return (env.BRANCH_NAME==props['ReleaseBranch'] || params.regressions)
             }
-            beforeAgent true
 		}
 		agent { label 'dhfLinuxAgent'}
 		steps{timeout(time: 3,  unit: 'HOURS'){
-            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){sanityTests('Release','10.0-4.4')}
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){
+                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                sanityTests('Release','10.0-4.4')
+            }
 		}}
 		post{
-				always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("Sanity Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the sanity tests of the branch $BRANCH_NAME passed and next stage is to release',false,'Sanity Tests for $BRANCH_NAME Passed'
