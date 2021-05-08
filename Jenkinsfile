@@ -101,6 +101,58 @@ void sanityTests(String type,String mlVersion){
     //jiraAddComment comment: 'Jenkins Sanity Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
 }
 
+void PR_merge(){
+withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+        props = readProperties file:'data-hub/pipeline.properties';
+        JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+        def response = sh (returnStdout: true, script:'''curl -u $Credentials  --header "application/vnd.github.merge-info-preview+json" "'''+githubAPIUrl+'''/pulls/$CHANGE_ID" | grep '"mergeable_state":' | cut -d ':' -f2 | cut -d ',' -f1 | tr -d '"' ''')
+        response=response.trim();
+        println(response)
+        if(response.equals("clean")){
+            println("merging can be done")
+            sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
+            def mergeResult = readFile('mergeResult.txt').trim()
+            if(mergeResult=="200"){
+                println("Merge successful")
+            }else{
+                println("Merge Failed")
+                sh 'exit 1'
+            }
+        }else if(response.equals("blocked")){
+            println("retry blocked");
+            withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+                def  reviewersList = sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
+                   ''')
+                def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
+                def emailList="";
+                for(def user:slurper.users){
+                    email=getEmailFromGITUser user.login;
+                    emailList+=email+',';
+                }
+                sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
+
+            }
+            sleep time: 30, unit: 'MINUTES'
+            throw new Exception("Waiting for all the status checks to pass");
+        }else if(response.equals("unstable")){
+            println("retry unstable")
+            sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
+            def mergeResult = readFile('mergeResult.txt').trim()
+            if(mergeResult=="200"){
+                println("Merge successful")
+            }else{
+                println("Merge Failed")
+                sh 'exit 1'
+            }
+            println("Result is"+ mergeResult)
+        }else{
+            println("merging not possible")
+            currentBuild.result = "FAILURE"
+            sh 'exit 1';
+        }
+}}
+
 pipeline{
 	agent none;
 	options {
@@ -277,60 +329,7 @@ pipeline{
 		}
 		agent {label 'dhmaster'};
 			steps{
-			retry(5){
-				withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-				script{
-				    props = readProperties file:'data-hub/pipeline.properties';
-					JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-    				def response = sh (returnStdout: true, script:'''curl -u $Credentials  --header "application/vnd.github.merge-info-preview+json" "'''+githubAPIUrl+'''/pulls/$CHANGE_ID" | grep '"mergeable_state":' | cut -d ':' -f2 | cut -d ',' -f1 | tr -d '"' ''')
-    				response=response.trim();
-    				println(response)
-    				if(response.equals("clean")){
-    					println("merging can be done")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials "+ githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
-    					def mergeResult = readFile('mergeResult.txt').trim()
-    					if(mergeResult=="200"){
-    						println("Merge successful")
-    					}else{
-    						println("Merge Failed")
-                sh 'exit 1'
-    					}
-    				}else if(response.equals("blocked")){
-    					println("retry blocked");
-    					withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
-                  def  reviewersList = sh (returnStdout: true, script:'''
-                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID/requested_reviewers
-                   ''')
-                    def slurper = new JsonSlurperClassic().parseText(reviewersList.toString().trim())
-                    def emailList="";
-                    for(def user:slurper.users){
-                        email=getEmailFromGITUser user.login;
-                        emailList+=email+',';
-                    }
-                      sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
-
-                 }
-    					sleep time: 30, unit: 'MINUTES'
-    					throw new Exception("Waiting for all the status checks to pass");
-    				}else if(response.equals("unstable")){
-    					println("retry unstable")
-    					sh "curl -o - -s -w \"\n%{http_code}\n\" -X PUT -d '{\"commit_title\": \"$JIRA_ID: merging PR\", \"merge_method\": \"rebase\"}' -u $Credentials  "+githubAPIUrl+"/pulls/$CHANGE_ID/merge | tail -2 > mergeResult.txt"
-    					def mergeResult = readFile('mergeResult.txt').trim()
-              if(mergeResult=="200"){
-                println("Merge successful")
-              }else{
-                println("Merge Failed")
-                sh 'exit 1'
-              }
-    					println("Result is"+ mergeResult)
-    				}else{
-    					println("merging not possible")
-    					currentBuild.result = "FAILURE"
-    					sh 'exit 1';
-    				}
-				}
-				}
-				}
+			retry(5){PR_merge()}
 			}
 			post{
                   success {
