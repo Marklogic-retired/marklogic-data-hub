@@ -919,18 +919,14 @@ pipeline{
             stage('rh7-singlenode-9.0-11') {
             when { expression {return params.regressions} }
             agent { label 'dhfLinuxAgent'}
-            environment{
-                    JAVA_HOME="$JAVA_HOME_DIR"
-                    PATH="$JAVA_HOME:$PATH"
-            }
             steps{timeout(time: 3,  unit: 'HOURS'){
                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
                      script{
-                        cleanWs()
+                        cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
                         props = readProperties file:'data-hub/pipeline.properties';
                         copyRPM 'Release','9.0-11'
                         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-                        sh 'cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean;set +e;./gradlew -g ./cache-build marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+                        sh 'export JAVA_HOME="JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean;set +e;./gradlew -g ./cache-build marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
                         junit '**/TEST-*.xml'
                         def output=readFile 'data-hub/console.log'
                         def result=false;
@@ -957,17 +953,13 @@ pipeline{
         }
         stage('fullCycle-rh7-singlenode-9.0-11') {
         agent { label 'dhfLinuxAgent' }
-        environment{
-                    JAVA_HOME="$JAVA_HOME_DIR"
-                    PATH="$JAVA_HOME:$PATH"
-                }
         steps {timeout(time: 3, unit: 'HOURS') {
                   catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
-                            cleanWs()
-                            copyRPM 'Release', '9.0-11'
-                            setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-                            sh 'cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean ml-data-hub:testFullCycle -i --stacktrace'
-                            junit '**/TEST-*.xml'
+                      cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+                      copyRPM 'Release', '9.0-11'
+                      setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+                      sh 'export JAVA_HOME="JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean ml-data-hub:testFullCycle -i --stacktrace'
+                      junit '**/TEST-*.xml'
                   }
         }}
         post {
@@ -1325,7 +1317,6 @@ pipeline{
                         JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
                         M2_LOCAL_REPO="$WORKSPACE/repository"
                         NODE_JS="C:\\Program Files\\nodejs"
-                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
                     }
                     steps{
                         timeout(time: 3,  unit: 'HOURS'){
