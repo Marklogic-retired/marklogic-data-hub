@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Modal, Row, Col, Card, Menu, Dropdown, Collapse} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import arrayIcon from "../../../../assets/icon_array.png";
-import {faLayerGroup, faPlusSquare} from "@fortawesome/free-solid-svg-icons";
+import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
 import {MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
@@ -151,7 +150,9 @@ const MatchingStepDetail: React.FC = () => {
         localData.score = score;
         localData.actionPreviewData = actionPreviewList;
         allRulesetNames.push(ruleset);
-        if (localData.actionPreviewData.length > 0) { rulesetDataList.push(localData); }
+        if (localData.actionPreviewData.length > 0) {
+          rulesetDataList.push(localData);
+        }
       }
       rulesetDataList.shift();
     };
@@ -171,6 +172,7 @@ const MatchingStepDetail: React.FC = () => {
     });
     return allKeys;
   };
+
   const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
     const rulesetCategory = i.rulesetType && i.rulesetType === "multiple" ? i.rulesetType : "single";
     const firstMatchRule = i.matchRules[0];
@@ -622,8 +624,6 @@ const MatchingStepDetail: React.FC = () => {
         {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" && uriTestMatchClicked ?
           <div className={styles.UriMatchedDataTable}>
             <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-              <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
-              <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
               <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={"collapse"} aria-label="expandCollapseIcon"/></div>
             </div>
             <Collapse activeKey={activeMatchedRuleset} onChange={handleRulesetCollapseChange}>
@@ -641,7 +641,7 @@ const MatchingStepDetail: React.FC = () => {
                           <span aria-label="matchedUrisPanel"><div className={styles.uri1Position}>{actionPreviewData.uris[0]}<span className={styles.scoreDisplay}>  (Score: {actionPreviewData.score})</span></div>
                             <div className={styles.uri2Position}>{actionPreviewData.uris[1]}</div></span>
                         }>
-                          <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets}/></span>
+                          <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep}/></span>
                         </Panel>))}
                     </Collapse>
                   </div>
