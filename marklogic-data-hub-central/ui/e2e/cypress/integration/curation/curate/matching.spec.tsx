@@ -15,12 +15,12 @@ const matchStep = "matchCustomerTest";
 const uriMatchedResults  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "6"},
   {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "5"}];
 
-const ruleset  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "7"},
-  {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "6"},
-  {ruleName: "Slight Match - custom", threshold: "4", matchedPairs: "1"}];
+const ruleset  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "5"},
+  {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "2"}];
 
-const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 0", score: "score 10"},
-  {ruleset: "fname - Double Metaphone", matchType: "Double Metaphone 1", score: "score 10"}];
+const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 1", score: "score 10"},
+  {ruleset: "fname - Double Metaphone", matchType: "Double Metaphone 2", score: "score 10"},
+  {ruleset: "testMultipleProperty", matchType: "", score: "score 20"}];
 
 const urisMerged = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json"];
 const uris = ["/json/persons/first-name-double-metaphone1.json", "/json/persons/first-name-double-metaphone2.json", "/json/persons/last-name-plus-zip-boost1.json", "/json/persons/last-name-plus-zip-boost2.json", "/json/persons/last-name-dob-custom1.json", "/json/persons/last-name-dob-custom2.json", "/json/persons/first-name-synonym1.json", "/json/persons/first-name-synonym2.json"];
@@ -254,6 +254,21 @@ describe("Matching", () => {
     cy.findByText("Match").click();
     curatePage.openStepDetails("match-person");
 
+    //adding new multiple property
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getMultiPropertyOption();
+    rulesetMultipleModal.setRulesetName("testMultipleProperty");
+    rulesetMultipleModal.selectPropertyToMatch("lname");
+    rulesetMultipleModal.selectMatchTypeDropdown("lname", "exact");
+    rulesetMultipleModal.selectPropertyToMatch("ZipCode");
+    rulesetMultipleModal.selectMatchTypeDropdown("ZipCode", "zip");
+    rulesetMultipleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+
+    multiSlider.getHandleName("testMultipleProperty").trigger("mousedown", {force: true});
+    cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
+    multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
+
     //To test when user enters uris and click on test button
     for (let i in uris) {
       cy.waitUntil(() => matchingStepDetail.getUriInputField().type(uris[i]));
@@ -277,6 +292,13 @@ describe("Matching", () => {
       cy.waitUntil(() => cy.findAllByText(urisMerged[k]).should("have.length.gt", 0));
     }
     cy.findByText("/json/persons/first-name-double-metaphone1.json").first().click();
+    cy.findByLabelText("right").first().click();
+
+    //To verify content of multiple properties
+    cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findAllByText("ZipCode").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
 
     //To test expanded uri table content
     for (let i in allDataMatchedResults) {
@@ -284,7 +306,12 @@ describe("Matching", () => {
       cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
       cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
     }
-    cy.findByText("Total Score: 20").should("be.visible");
+    cy.findByText("Total Score: 40").should("have.length.gt", 0);
+
+    multiSlider.deleteOption("testMultipleProperty");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
+    matchingStepDetail.confirmSliderOptionDeleteButton().click();
+    cy.waitForAsyncRequest();
 
     // To test when user click on expand all icon
     cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {

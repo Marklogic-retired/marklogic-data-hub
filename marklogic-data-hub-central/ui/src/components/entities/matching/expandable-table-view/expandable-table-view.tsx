@@ -8,6 +8,7 @@ import {MLTable} from "@marklogic/design-system";
 interface Props {
     rowData: any;
     allRuleset: any;
+    entityData: any
 }
 
 let counter = 0;
@@ -29,7 +30,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " exact",
     width: "6%",
     render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType === "Exact") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+      return (rulesetType && rulesetType.toLowerCase() === "exact") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType} />
       </span>;
     }))
@@ -40,7 +41,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " synonym",
     width: "8%",
     render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType === "Synonym") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+      return (rulesetType && rulesetType.toLowerCase() === "synonym") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
@@ -51,7 +52,7 @@ const testMatchedUriTableColumns = [
     width: "10%",
     key: "matchedRulesetType " + (counter++) + " metaphone",
     render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType === "Double Metaphone") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+      return (rulesetType && rulesetType.toLowerCase() === "double metaphone") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
@@ -62,7 +63,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " zip",
     width: "6%",
     render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType === "Zip") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+      return (rulesetType && rulesetType.toLowerCase() === "zip") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
@@ -73,7 +74,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " reduce",
     width: "7%",
     render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType === "Reduce") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+      return (rulesetType && rulesetType.toLowerCase() === "reduce") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
@@ -84,7 +85,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " custom",
     width: "8%",
     render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
-      return (rulesetType === "Custom") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
+      return (rulesetType && rulesetType.toLowerCase() === "custom") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
@@ -95,21 +96,59 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " score",
     width: "15%",
     render: (scores, key) =>  <span key={key}  aria-label={"score " + scores.scores[0]}>
-      <Progress percent={scores.scores[0]} strokeWidth={20} strokeColor={scores.matchedRule[0] !== "Reduce" ? "#00b300" : "#ff0000"} format={scores.matchedRule[0] !== "Reduce" ? percent => `${percent}` : percent => `-${percent}`} strokeLinecap={"square"}/>
+      {scores.scores[0]>0 && <Progress percent={scores.scores[0]} strokeWidth={20} strokeColor={scores.matchedRule[0] !== "Reduce" ? "#00b300" : "#ff0000"} format={scores.matchedRule[0] !== "Reduce" ? percent => `${percent}` : percent => `-${percent}`} strokeLinecap={"square"}/>}
     </span>
   }
 ];
 
 const ExpandableTableView: React.FC<Props> = (props) => {
   let allRuleset = props.allRuleset;
+  let multipleRuleset=[{}];
+  let data = props.entityData.stepArtifact.matchRulesets;
+  for (let i=0; i<data.length;i++) {
+    let ruleset = data[i];
+    if (!ruleset.name.includes(" - ")) {
+      multipleRuleset.push(ruleset);
+    }
+  }
+  let localData=[{}];
   let actionPreviewData = props.rowData.matchRulesets.map(matchRulseset => {
+    localData=[{ruleName: [""], matchedRulesetType: [""], scores: {scores: [0], matchedRule: [""]}}];
     let matchedRulesetProperty: string[] = [];
     let matchedRulesetType: string[] = [];
     let scores: string[] = [];
     let ruleName: string[] = [];
     let key= counter++;
+    matchRulseset =  matchRulseset.replace(/([.])/g, " > ");
     ruleName.push(matchRulseset);
     let ruleset = matchRulseset.split(" - ");
+    if (ruleset.length <2) {
+      for (let i=0;i<props.entityData.stepArtifact.matchRulesets.length;i++) {
+        let name = props.entityData.stepArtifact.matchRulesets[i].name;
+        if (name === ruleset[0]) {
+          for (let j=0;j<props.entityData.stepArtifact.matchRulesets[i].matchRules.length;j++) {
+            let ruleset=props.entityData.stepArtifact.matchRulesets[i].matchRules[j];
+            let entityPropertyPath=[""];
+            let matchedRuleset=[""];
+            let score=[0];
+            score.push(0);
+            entityPropertyPath.push(ruleset.entityPropertyPath.replace(/([.])/g, " > "));
+            matchedRuleset.push(ruleset.matchType);
+            entityPropertyPath.shift();
+            matchedRuleset.shift();
+            score.shift();
+            let data2 = {
+              ruleName: entityPropertyPath,
+              matchedRulesetType: matchedRuleset,
+              key: ruleName + " "+counter++,
+              scores: {scores: score, matchedRule: matchedRuleset}
+            };
+            localData.push(data2);
+          }
+        }
+      }
+    }
+    localData.shift();
     matchedRulesetProperty.push(ruleset[0]);
     matchedRulesetType.push(ruleset[1]);
     for (let i=0;i<allRuleset.length;i++) {
@@ -117,14 +156,27 @@ const ExpandableTableView: React.FC<Props> = (props) => {
         scores.push(allRuleset[i].weight);
       }
     }
-    let data = {
-      matchedRulesetProperty: matchedRulesetProperty,
-      matchedRulesetType: matchedRulesetType,
-      ruleName: ruleName,
-      scores: {scores: scores, matchedRule: matchedRulesetType},
-      key: key,
-    };
-    return data;
+    if (localData.length > 0) {
+      let data = {
+        matchedRulesetProperty: matchedRulesetProperty,
+        matchedRulesetType: matchedRulesetType,
+        children: localData,
+        ruleName: ruleName,
+        scores: {scores: scores, matchedRule: matchedRulesetType},
+        key: key,
+      };
+      return data;
+    } else {
+      let data = {
+        matchedRulesetProperty: matchedRulesetProperty,
+        matchedRulesetType: matchedRulesetType,
+        ruleName: ruleName,
+        scores: {scores: scores, matchedRule: matchedRulesetType},
+        key: key,
+      };
+      return data;
+    }
+
   });
   return <div className={styles.expandedTableView}><MLTable
     columns={testMatchedUriTableColumns}
