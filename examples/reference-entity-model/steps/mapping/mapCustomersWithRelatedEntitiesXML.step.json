@@ -88,7 +88,7 @@
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Order"],
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order",
       "permissions": "data-hub-common,read,data-hub-common,update",
-      "uriExpression": "concat('/Order/', customerInfo:OrderID)",
+      "uriExpression": "hubURI('Order')",
       "properties": {
         "orderId": {
           "sourcedFrom": "customerInfo:OrderID"
