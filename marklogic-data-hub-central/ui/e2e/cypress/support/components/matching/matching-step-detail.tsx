@@ -75,6 +75,14 @@ class MatchingStepDetail {
   getAllDataRadio() {
     return cy.findByLabelText("allDataRadio");
   }
+
+  getUriOnlyInputField() {
+    return cy.findByLabelText("UriOnlyInput");
+  }
+
+  getAddUriOnlyIcon() {
+    return cy.findByLabelText("addUriOnlyIcon");
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();

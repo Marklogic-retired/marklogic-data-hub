@@ -29,7 +29,7 @@ export const calculateMatchingActivity = async (matchStepName) => {
 
 export const previewMatchingActivity = async (testMatchData) => {
   try {
-    let response = await axios.post(`/api/steps/matching/${testMatchData.stepName}/previewMatchingActivity?sampleSize=${testMatchData.sampleSize}&uris=${testMatchData.uris}`);
+    let response = await axios.post(`/api/steps/matching/${testMatchData.stepName}/previewMatchingActivity?sampleSize=${testMatchData.sampleSize}&uris=${testMatchData.uris}&restrictToUris=${testMatchData.restrictToUris}`);
     if (response.status === 200) {
       return response.data;
     }
