@@ -79,7 +79,7 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
         provInstance.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
 
       if (provResult instanceof Error) {
-        console.warn({ message: provResult.message, type: 'error' });
+        hubUtils.error(provResult.message);
       }
     }
   }

@@ -35,7 +35,9 @@ const assertions = [
   test.assertEqual(1, secondStepResponse.stepOutput.length),
   test.assertEqual("Error running JavaScript request", secondStepResponse.stepOutput[0],
     "This is the generic MarkLogic error message from calling xdmp.invoke. While it is not helpful by itself, " +
-    "it is expected that a user will look at the console.warn logging or the Batch document for full details"),
+    "it is expected that a user will look at the console.error logging or the Batch document for full details. " + 
+    "It is also not yet known how to improve this; i.e. if a new error is thrown with the data[0] value from the " + 
+    "original error, the original stacktrace is lost."),
   test.assertEqual(2, secondStepResponse.totalEvents, "Both items are considered to have been processed"),
   test.assertEqual(2, secondStepResponse.failedEvents, "Both items are considered to have failed due to the hook failure"),
   test.assertEqual(0, secondStepResponse.successfulEvents),

@@ -261,7 +261,7 @@ class StepExecutionContext {
 
     // A user may either have job/batch data disabled and/or not see the flow response, so log the error
     // to ensure it is visible somewhere
-    console.warn(`Caught error while executing ${this.describe()}`, stepError);
+    hubUtils.error(`Caught error while executing ${this.describe()}`, stepError);
 
     if (itemThatFailed != null) {
       this.failedItems.push(itemThatFailed);
