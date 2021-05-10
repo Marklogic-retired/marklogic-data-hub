@@ -421,14 +421,14 @@ function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
     try {
       writeInfos = writeQueue.persist();
     } catch (error) {
-      console.warn(`Unable to persist content for ${flowExecutionContext.describe()}`, error);
+      hubUtils.error(`Unable to persist content for ${flowExecutionContext.describe()}`, error);
       flowExecutionContext.addFlowError(error);
     }
 
     try {
       provInstance.commit();
     } catch (error) {
-      console.warn(`Unable to persist provenance for ${flowExecutionContext.describe()}`, error);
+      hubUtils.error(`Unable to persist provenance for ${flowExecutionContext.describe()}`, error);
       flowExecutionContext.addFlowError(error);
     }
   }
@@ -436,7 +436,7 @@ function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
   try {
     flowExecutionContext.finishAndSaveJob(writeInfos);
   } catch (error) {
-    console.warn(`Unable to finish job for ${flowExecutionContext.describe()}`, error);
+    hubUtils.error(`Unable to finish job for ${flowExecutionContext.describe()}`, error);
     flowExecutionContext.addFlowError(error);
   }
 }

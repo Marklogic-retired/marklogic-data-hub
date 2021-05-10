@@ -46,10 +46,17 @@ function hubTraceJson(event, json) {
 }
 
 /**
- * @param message string;
+ * @param message {string}
  */
 function warn(message) {
   console.warn(`[Request:${xdmp.request()}] ${message}`);
+}
+
+/**
+ * @param message {string}
+ */
+ function error(message, theError) {
+  console.error(`[Request:${xdmp.request()}] ${message}`, theError);
 }
 
 function invokeFunction(queryFunction, database) {
@@ -180,17 +187,18 @@ function getErrorMessage(e) {
 module.exports = {
   capitalize,
   deleteDocument,
+  error,
+  evalInDatabase: module.amp(evalInDatabase),
   getErrorMessage,
+  getObjectValues,
   hubTrace,
   hubTraceJson,
-  warn,
   invokeFunction,
   normalizeToArray,
   normalizeToSequence,
   parsePermissions,
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
-  writeDocument,
-  getObjectValues,
-  evalInDatabase: module.amp(evalInDatabase)
+  warn,
+  writeDocument
 };
