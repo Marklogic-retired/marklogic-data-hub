@@ -3,6 +3,7 @@ const hubTest = require("/test/data-hub-test-helper.sjs");
 const test = require("/test/test-helper.xqy");
 
 const flowName = "myFlow";
+const stepNumbersExceptCustomStep = ["1", "2", "3"];
 
 const response = flowApi.runFlowOnContent(flowName,
   [{
@@ -36,7 +37,7 @@ const response = flowApi.runFlowOnContent(flowName,
       }
     }
   }],
-  sem.uuidString(), {}
+  sem.uuidString(), {}, stepNumbersExceptCustomStep
 );
 
 const assertions = [

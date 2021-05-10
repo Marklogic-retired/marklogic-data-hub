@@ -70,9 +70,10 @@ class Job {
    * @param stepResponse 
    * @param stepStatus {string} optional; if specified, the status in stepResponse will be ignored
    * @param outputContentArray {array} optional; will be passed along to the jobReport function for the step if one exists
+   * @param writeQueue {object} optional; will be passed along to the jobReport function for the step if one exists
    * @returns 
    */
-  finishStep(stepNumber, stepResponse, stepStatus, outputContentArray) {
+  finishStep(stepNumber, stepResponse, stepStatus, outputContentArray, writeQueue) {
     stepStatus = stepStatus || stepResponse.status;
 
     hubUtils.hubTrace(consts.TRACE_FLOW, `Finishing step '${stepNumber}' of job '${this.data.job.jobId}'; setting job status to '${stepStatus}'`);
@@ -91,7 +92,7 @@ class Job {
       stepResponse.stepEndTime = fn.currentDateTime();
     }
 
-    jobs.createJobReport(this.data.job.jobId, stepNumber, stepResponse, outputContentArray);
+    jobs.createJobReport(this.data.job.jobId, stepNumber, stepResponse, outputContentArray, writeQueue);
 
     this.data.job.stepResponses[stepNumber] = stepResponse;
     return this;

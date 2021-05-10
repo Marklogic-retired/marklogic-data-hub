@@ -79,14 +79,22 @@ class FlowExecutionContext {
     return stepExecutionContext;
   }
 
-  finishStep(stepExecutionContext, stepResponse, batchItems, outputContentArray) {
+  /**
+   * 
+   * @param stepExecutionContext 
+   * @param stepResponse 
+   * @param batchItems 
+   * @param outputContentArray 
+   * @param writeQueue {object} included so that if a step wants to create a job report, it can be added to this instead of being written right away
+   */
+  finishStep(stepExecutionContext, stepResponse, batchItems, outputContentArray, writeQueue) {
     const stepNumber = stepExecutionContext.stepNumber;
     if (stepExecutionContext.wasCompleted()) {
       this.flowResponse.lastCompletedStep = stepNumber;
     }
     this.flowResponse.stepResponses[stepNumber] = stepResponse;
     if (this.jobOutputIsEnabled()) {
-      this.job.finishStep(stepNumber, stepResponse, null, outputContentArray);
+      this.job.finishStep(stepNumber, stepResponse, null, outputContentArray, writeQueue);
       if (stepExecutionContext.batchOutputIsEnabled()) {
         if (this.batch == null) {
           this.batch = new Batch(this.flowResponse.jobId, this.flow.name);

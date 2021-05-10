@@ -214,8 +214,10 @@ function saveNewJob(job) {
    * @param stepNumber
    * @param {object} stepResponse
    * @param {array} outputContentArray optional; will be passed to jobReport function
+   * @param {object} writeQueue optional; if not null, the job report is added to this; otherwise, the job report is 
+   * written to the jobs database by this function
    */
-  function createJobReport(jobId, stepNumber, stepResponse, outputContentArray) {
+  function createJobReport(jobId, stepNumber, stepResponse, outputContentArray, writeQueue) {
     if (stepResponse.stepDefinitionName && stepResponse.stepDefinitionType) {
       const stepDefinition = fn.head(hubUtils.invokeFunction(function () {
           return new StepDefinition().getStepDefinitionByNameAndType(stepResponse.stepDefinitionName, stepResponse.stepDefinitionType);
@@ -241,13 +243,19 @@ function saveNewJob(job) {
           },
           options.targetDatabase || config.FINALDATABASE
         ));
+
         if (jobReport) {
           const reportUri = `/jobs/reports/${stepResponse.flowName}/${stepNumber}/${jobId}.json`;
-          hubUtils.hubTrace(consts.TRACE_FLOW, `Inserting job report with URI: ${reportUri}`);
-          hubUtils.writeDocument(
-            reportUri, jobReport,
-            buildJobPermissions(), ['Jobs', 'JobReport'], config.JOBDATABASE
-          );
+          const collections = ['Jobs', 'JobReport'];
+          const permissions = buildJobPermissions();
+          if (writeQueue) {
+            hubUtils.hubTrace(consts.TRACE_FLOW, `Adding job report to write queue, URI: ${reportUri}`);
+            const content = {uri: reportUri, value: jobReport, context: {collections, permissions}};
+            writeQueue.addContent(config.JOBDATABASE, content, stepResponse.flowName, stepNumber);
+          } else {
+            hubUtils.hubTrace(consts.TRACE_FLOW, `Inserting job report with URI: ${reportUri}`);
+            hubUtils.writeDocument(reportUri, jobReport, permissions, collections, config.JOBDATABASE);
+          }  
         }
       }
     }
