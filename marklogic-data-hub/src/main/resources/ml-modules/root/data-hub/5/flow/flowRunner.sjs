@@ -61,7 +61,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
       const stepResponse = stepExecutionContext.buildStepResponse();
 
       if (!stepExecutionContext.wasCompleted()) {
-        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);
+        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);
         break;
       }
       else {
@@ -71,7 +71,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
         } else {
           hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
         }
-        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray);  
+        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);  
       }
     } catch (error) {
       // Catches any error thrown by a step, except for an error when an individual item is processed
@@ -84,7 +84,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
         throw error;
       }
       const stepResponse = stepExecutionContext.buildStepResponse();
-      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems);
+      flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, writeQueue);
       break;
     }
   }

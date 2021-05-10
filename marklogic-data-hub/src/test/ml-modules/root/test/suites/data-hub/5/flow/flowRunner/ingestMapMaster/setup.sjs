@@ -63,4 +63,15 @@ const mergingStep = {
   }
 };
 
-hubTest.createSimpleProject("myFlow", [mappingStep, matchingStep, mergingStep]);
+const customStepThatThrowsError = {
+  "stepDefinitionName": "errorThrowingStep",
+  "stepDefinitionType": "custom",
+  "testStepModulePath": "/custom-modules/errorThrowingStepModule.sjs",
+  "collections": ["customStepCollection"],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "sourceQuery": "cts.collectionQuery('doesnt-matter')",
+  "throwErrorOnPurpose": true
+};
+
+hubTest.createSimpleProject("myFlow", [mappingStep, matchingStep, mergingStep, customStepThatThrowsError]);

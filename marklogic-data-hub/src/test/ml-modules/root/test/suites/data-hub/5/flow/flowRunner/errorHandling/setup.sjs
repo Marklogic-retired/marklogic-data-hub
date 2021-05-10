@@ -10,6 +10,7 @@ hubTestX.loadArtifacts(test.__CALLER_FILE__);
 const customStepOne = {
   "stepDefinitionName": "errorThrowingStep",
   "stepDefinitionType": "custom",
+  "testStepModulePath": "/custom-modules/errorThrowingStepModule.sjs",
   "collections": ["customStepOne"],
   "sourceDatabase": "data-hub-FINAL",
   "targetDatabase": "data-hub-FINAL",
@@ -23,6 +24,7 @@ const customStepOne = {
 const customStepTwo = {
   "stepDefinitionName": "errorThrowingStep",
   "stepDefinitionType": "custom",
+  "testStepModulePath": "/custom-modules/errorThrowingStepModule.sjs",
   "collections": ["customStepTwo"],
   "sourceDatabase": "data-hub-FINAL",
   "targetDatabase": "data-hub-FINAL",

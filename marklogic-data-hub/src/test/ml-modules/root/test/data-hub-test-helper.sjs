@@ -180,33 +180,38 @@ function buildPermissionsMap(permissions) {
  * @param arrayOfStepProperties 
  */
 function createSimpleProject(flowName, arrayOfStepProperties) {
+  const customerModel = {
+    "info": {
+      "title": "Customer",
+      "version": "0.0.1",
+      "baseUri": "http://example.org/"
+    },
+    "definitions": {
+      "Customer": {
+        "properties": {
+          "customerId": {"datatype": "integer"},
+          "name": {"datatype": "string"},
+          "nicknames":{"datatype": "array", "items":{"datatype": "string"}},
+          "status": {"datatype": "string"},
+          "integers":{"datatype": "array", "items":{"datatype": "integer"}}
+        }
+      }
+    }
+  };
+
   // Must invoke this in a separate transaction so that steps can see the model
   xdmp.invokeFunction(function() {
     declareUpdate();
-    entityLib.writeModel("Customer", {
-      "info": {
-        "title": "Customer",
-        "version": "0.0.1",
-        "baseUri": "http://example.org/"
-      },
-      "definitions": {
-        "Customer": {
-          "properties": {
-            "customerId": {"datatype": "integer"},
-            "name": {"datatype": "string"},
-            "nicknames":{"datatype": "array", "items":{"datatype": "string"}},
-            "status": {"datatype": "string"},
-            "integers":{"datatype": "array", "items":{"datatype": "integer"}}
-          }
-        }
-      }
-    });
+    entityLib.writeModel("Customer", customerModel);
   });
 
   const flow = {
     "name": flowName,
     "steps": {}
   };
+
+  // Keep track of step definitions that are generated so we don't try to save them twice, which results in a deadlock
+  const generatedStepDefinitionNames = [];
 
   let index = 1;
   arrayOfStepProperties.forEach(stepProps => {
@@ -217,6 +222,21 @@ function createSimpleProject(flowName, arrayOfStepProperties) {
     if (!stepProps.stepId) {
       stepProps.stepId = stepProps.name.toLowerCase() + "-" + stepType;
     }
+
+    // Create a new step definition for custom steps so test projects don't have to
+    if (stepProps.testStepModulePath && !generatedStepDefinitionNames.includes(stepProps.stepDefinitionName)) {
+      const stepDef = {
+        "name" : stepProps.stepDefinitionName,
+        "type" : "custom", "lang" : "zxx",
+        "modulePath" : stepProps.testStepModulePath
+      }
+      xdmp.invokeFunction(function() {
+        declareUpdate();
+        Artifacts.setArtifact("stepDefinition", stepDef.name, stepDef);
+      });
+      generatedStepDefinitionNames.push(stepDef.name);
+    }
+
     Artifacts.setArtifact(stepType, stepProps.name, stepProps);
     flow.steps["" + index] = {"stepId": stepProps.stepId};
     index++;

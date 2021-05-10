@@ -1,6 +1,0 @@
-{
-  "name" : "errorThrowingStep",
-  "type" : "custom",
-  "lang" : "zxx",
-  "modulePath" : "/custom-modules/errorThrowingStepModule.sjs"
-}
