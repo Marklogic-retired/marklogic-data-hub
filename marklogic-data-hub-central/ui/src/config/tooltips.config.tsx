@@ -52,8 +52,8 @@ const ModelingTooltips = {
    foreignKey: function (relatedEntityName, joinPropertyName, type) {
     return (
       <span>
-        This property establishes a foreign key relationship with the <b>{relatedEntityName}</b> entity through the 
-        <b> {joinPropertyName}</b> property ({type}). The value of this property and the 
+        This property establishes a foreign key relationship with the <b>{relatedEntityName}</b> entity through the
+        <b> {joinPropertyName}</b> property ({type}). The value of this property and the
         <b> {joinPropertyName}</b> property in <b>{relatedEntityName}</b> should be identical.
       </span>
     )
@@ -259,7 +259,10 @@ const MatchingStepTooltips = {
   distanceThreshold: 'The threshold below which the phonetic difference (distance) between two strings is considered insignificant; i.e., the strings are similar to each other.',
   dictionaryUri: 'The location of the phonetic dictionary that is stored in a database and used when comparing words phonetically.',
   thesaurusUri: 'The location of the thesaurus that is stored in a MarkLogic Server database and used to determine synonyms.',
-  provGranularity: 'The level of detail logged for provenance. Choose *fine* for more detailed logging, *coarse* for the default level, or *off* for no provenance logging.'
+  provGranularity: 'The level of detail logged for provenance. Choose *fine* for more detailed logging, *coarse* for the default level, or *off* for no provenance logging.',
+  testUris: 'Tests the configuration on entered URIs with each other (requires at least two URIs)',
+  testUrisAllData: 'Tests the configuration on entered URIs with all the data in your source query (a subset of Test All Data)',
+  testAllData: 'Tests the configuration on all the URIs in your source query with each other'
 };
 
 const MatchingStepPlaceholders = {

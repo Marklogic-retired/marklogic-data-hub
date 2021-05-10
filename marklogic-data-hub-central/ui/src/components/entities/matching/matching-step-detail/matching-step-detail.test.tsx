@@ -20,7 +20,7 @@ describe("Matching Step Detail view component", () => {
 
   it("can render matching step with no rulesets or thresholds and click less/more text", () => {
 
-    const {getByLabelText, queryByLabelText, getByTestId, getByPlaceholderText, getByText} =  render(
+    const {getByLabelText, queryByLabelText, getByTestId, getAllByPlaceholderText, getByText} =  render(
       <CurationContext.Provider value={customerMatchingStepEmpty}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
@@ -45,21 +45,28 @@ describe("Matching Step Detail view component", () => {
     expect(getByLabelText("noMatchedCombinations")).toBeInTheDocument();
 
     expect(getByLabelText("testMatch")).toBeInTheDocument();
+    // To test inputUriOnlyRadio is selected by default
+    userEvent.click(getByLabelText("inputUriOnlyRadio"));
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeEnabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeDisabled();
+
     userEvent.click(getByLabelText("inputUriRadio"));
-    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeEnabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeEnabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeDisabled();
     expect(getByLabelText("UriInput")).toBeInTheDocument();
     expect(getByLabelText("addUriIcon")).toBeInTheDocument();
     expect(getByText("Test")).toBeInTheDocument();
 
     userEvent.click(getByLabelText("allDataRadio"));
     expect(getByLabelText("allDataContent")).toBeInTheDocument();
-    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeDisabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeDisabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeDisabled();
     // expect(getByLabelText("testMatchTab")).toBeInTheDocument();
   });
 
   it("can render matching step with rulesets and thresholds and click add single ruleset", async() => {
 
-    const {getByLabelText, getByText, queryByLabelText, getByPlaceholderText} =  render(
+    const {getByLabelText, getByText, queryByLabelText, getAllByPlaceholderText} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
@@ -94,8 +101,12 @@ describe("Matching Step Detail view component", () => {
 
     //Verify test match related fields are rendered properly
     expect(getByLabelText("testMatch")).toBeInTheDocument();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeEnabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeDisabled();
+
     userEvent.click(getByLabelText("inputUriRadio"));
-    expect(getByPlaceholderText("Enter URI or Paste URIs")).toBeInTheDocument();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[1]).toBeEnabled();
+    expect(getAllByPlaceholderText("Enter URI or Paste URIs")[0]).toBeDisabled();
     expect(getByLabelText("UriInput")).toBeInTheDocument();
     expect(getByText("Test")).toBeInTheDocument();
 

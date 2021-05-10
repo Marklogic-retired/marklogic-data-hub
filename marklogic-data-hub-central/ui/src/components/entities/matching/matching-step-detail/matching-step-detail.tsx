@@ -1,12 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown, Collapse} from "antd";
+import {Modal, Row, Col, Card, Menu, Dropdown, Collapse, Icon} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
-import {MLButton, MLTable, MLInput, MLRadio} from "@marklogic/design-system";
+import {MLButton, MLTable, MLInput, MLRadio, MLTooltip} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
 import "./matching-step-detail.scss";
+import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import CustomPageHeader from "../../page-header/page-header";
 
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
@@ -73,13 +74,20 @@ const MatchingStepDetail: React.FC = () => {
 
   const [value, setValue] = React.useState(1);
   const [UriTableData, setUriTableData] = useState<any[]>([]);
+  const [UriTableData2, setUriTableData2] = useState<any[]>([]);
   const [uriContent, setUriContent] = useState("");
+  const [uriContent2, setUriContent2] = useState("");
   const [inputUriDisabled, setInputUriDisabled] = useState(false);
+  const [inputUriDisabled2, setInputUriDisabled2] = useState(true);
   const [testMatchTab] = useState("matched");
   const [duplicateUriWarning, setDuplicateUriWarning] = useState(false);
+  const [duplicateUriWarning2, setDuplicateUriWarning2] = useState(false);
   const [singleUriWarning, setSingleUriWarning] = useState(false);
+  const [singleUriWarning2, setSingleUriWarning2] = useState(false);
   const [uriTestMatchClicked, setUriTestMatchClicked] = useState(false);
   const [allDataSelected, setAllDataSelected] = useState(false);
+  const [testUrisOnlySelected, setTestUrisOnlySelected] = useState(true);
+  const [testUrisAllDataSelected, setTestUrisAllDataSelected] = useState(false);
   const [testMatchedData, setTestMatchedData] = useState<any>({stepName: "", sampleSize: 100, uris: []});
   const [previewMatchedActivity, setPreviewMatchedActivity]   = useState<any>({sampleSize: 100, uris: [], actionPreview: []});
   const [showRulesetMultipleModal, toggleShowRulesetMultipleModal] = useState(false);
@@ -336,6 +344,10 @@ const MatchingStepDetail: React.FC = () => {
     setUriContent(event.target.value);
   };
 
+  const handleUriInputChange2 = (event) => {
+    setUriContent2(event.target.value);
+  };
+
   const handleClickAddUri = (event) => {
     let flag=false;
     let setDuplicateWarning = () => { setDuplicateUriWarning(true); setSingleUriWarning(false); };
@@ -358,10 +370,39 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
+  const handleClickAddUri2 = (event) => {
+    let flag=false;
+    let setDuplicateWarning = () => { setDuplicateUriWarning2(true); setSingleUriWarning2(false); };
+    if (UriTableData2.length > 0) {
+      for (let i=0; i<UriTableData2.length;i++) {
+        if (UriTableData2[i].uriContent2 === uriContent2) {
+          flag=true;
+          setDuplicateWarning();
+          break;
+        }
+      }
+    }
+    if (uriContent2.length > 0 && !flag) {
+      let data = [...UriTableData2];
+      data.push({uriContent2});
+      setUriTableData2(data);
+      setUriContent2("");
+      setDuplicateUriWarning2(false);
+      setSingleUriWarning2(false);
+    }
+  };
+
   const renderUriTableData = UriTableData.map((uriData) => {
     return {
       key: uriData.uriContent,
       uriValue: uriData.uriContent,
+    };
+  });
+
+  const renderUriTableData2 = UriTableData2.map((uriData) => {
+    return {
+      key: uriData.uriContent2,
+      uriValue: uriData.uriContent2,
     };
   });
 
@@ -372,6 +413,17 @@ const MatchingStepDetail: React.FC = () => {
     render: (text, key) => (
       <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
         <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg"/></i>
+      </span>
+    ),
+  }];
+
+  const UriColumns2 = [{
+    key: "uriValue",
+    title: "uriValues",
+    dataIndex: "uriValue",
+    render: (text, key) => (
+      <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
+        <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri2(key)} size="lg"/></i>
       </span>
     ),
   }];
@@ -391,14 +443,34 @@ const MatchingStepDetail: React.FC = () => {
     setUriTestMatchClicked(false);
   };
 
+  const handleDeleteUri2 = (event) => {
+    let uriValue = event.uriValue;
+    let data = [...UriTableData2];
+    for (let i =0; i < data.length; i++) {
+      if (data[i].uriContent2 === uriValue) {
+        data.splice(i, 1);
+        break;
+      }
+    }
+    setUriTableData2(data);
+    setDuplicateUriWarning2(false);
+    setSingleUriWarning2(false);
+    setUriTestMatchClicked(false);
+  };
+
   const handleAllDataRadioClick = (event) => {
     testMatchedData.uris=[];
     setAllDataSelected(true);
     setUriTableData([]);
+    setUriTableData2([]);
     setUriContent("");
+    setUriContent2("");
     setInputUriDisabled(true);
+    setInputUriDisabled2(true);
     setDuplicateUriWarning(false);
+    setDuplicateUriWarning2(false);
     setSingleUriWarning(false);
+    setSingleUriWarning2(false);
     setUriTestMatchClicked(false);
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
   };
@@ -408,17 +480,36 @@ const MatchingStepDetail: React.FC = () => {
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
     setActiveMatchedUri([]);
     setActiveMatchedRuleset([]);
-    if (UriTableData.length === 0 && !allDataSelected) {
+    if (UriTableData.length < 2 && !allDataSelected && !testUrisAllDataSelected) {
       setDuplicateUriWarning(false);
       setSingleUriWarning(true);
     }
-    if (UriTableData.length >= 1 || allDataSelected) {
+    if (UriTableData2.length === 0 && !allDataSelected && !testUrisOnlySelected) {
+      setDuplicateUriWarning2(false);
+      setSingleUriWarning2(true);
+    }
+    if (UriTableData.length >= 2 || allDataSelected) {
       if (!duplicateUriWarning && !singleUriWarning) {
         setUriTestMatchClicked(true);
         for (let i=0;i<UriTableData.length;i++) {
           testMatchedData.uris.push(UriTableData[i].uriContent);
         }
         testMatchedData.stepName=matchingStep.name;
+        if (!allDataSelected) testMatchedData.restrictToUris=true;
+        else testMatchedData.restrictToUris=false;
+        setTestMatchedData(testMatchedData);
+        await handlePreviewMatchingActivity(testMatchedData);
+      }
+    }
+
+    if (UriTableData2.length >= 1) {
+      if (!duplicateUriWarning2 && !singleUriWarning2) {
+        setUriTestMatchClicked(true);
+        for (let i=0;i<UriTableData2.length;i++) {
+          testMatchedData.uris.push(UriTableData2[i].uriContent2);
+        }
+        testMatchedData.stepName=matchingStep.name;
+        testMatchedData.restrictToUris=false;
         setTestMatchedData(testMatchedData);
         await handlePreviewMatchingActivity(testMatchedData);
       }
@@ -431,6 +522,27 @@ const MatchingStepDetail: React.FC = () => {
 
   const handleUriInputSelected = (event) => {
     setInputUriDisabled(false);
+    setTestUrisOnlySelected(true);
+    setTestUrisAllDataSelected(false);
+    setInputUriDisabled2(true);
+    setAllDataSelected(false);
+    setUriTableData2([]);
+    setUriContent2("");
+    setUriTestMatchClicked(false);
+    setSingleUriWarning2(false);
+    setDuplicateUriWarning2(false);
+    setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
+  };
+
+  const handleUriInputSelected2 = (event) => {
+    setInputUriDisabled2(false);
+    setInputUriDisabled(true);
+    setTestUrisOnlySelected(false);
+    setTestUrisAllDataSelected(true);
+    setDuplicateUriWarning(false);
+    setSingleUriWarning(false);
+    setUriTableData([]);
+    setUriContent("");
     setAllDataSelected(false);
     setUriTestMatchClicked(false);
     setRulesetDataList([{rulesetName: "", actionPreviewData: [{name: "", action: "", uris: ["", ""]}], score: 0}]);
@@ -581,42 +693,78 @@ const MatchingStepDetail: React.FC = () => {
           <NumberIcon value={3} />
           <div className={styles.stepText}>Test and review matched entities</div>
         </div>
-
         <div className={styles.testMatch} aria-label="testMatch">
-          <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}  id="addDataRadio">
-            <MLRadio value={1} aria-label="inputUriRadio" onClick={handleUriInputSelected} validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}>
+          <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}  id="addDataRadio" className={styles.testMatchedRadioGroup}>
+            <span className={styles.borders}>
+              <MLRadio className={styles.urisData} value={1} aria-label="inputUriOnlyRadio" onClick={handleUriInputSelected} validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}>
+                <span className={styles.radioTitle}>Test URIs</span>
+                <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
+                  <MLTooltip title={MatchingStepTooltips.testUris} placement={"right"}>
+                    <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+                  </MLTooltip><br />
+                </span>
+                <MLInput
+                  placeholder="Enter URI or Paste URIs"
+                  className={styles.uriInput}
+                  value={uriContent}
+                  onChange={handleUriInputChange}
+                  aria-label="UriOnlyInput"
+                  disabled={inputUriDisabled}
+                />
+                <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon"/>
+                {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
+                {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
+                <div className={styles.UriTable}>
+                  {UriTableData.length > 0 ? <MLTable
+                    columns={UriColumns}
+                    className={styles.tableContent}
+                    dataSource={renderUriTableData}
+                    rowKey="key"
+                    id="uriData"
+                    pagination={false}
+                  />:""}
+                </div>
+              </MLRadio></span>
+            <MLRadio value={2} className={styles.allDataUris} aria-label="inputUriRadio" onClick={handleUriInputSelected2} validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}>
+              <span className={styles.radioTitle}>Test URIs with All Data</span>
+              <span aria-label="testUriTooltip"><MLTooltip title={MatchingStepTooltips.testUrisAllData} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </MLTooltip></span><br />
               <MLInput
                 placeholder="Enter URI or Paste URIs"
-                className={duplicateUriWarning ? styles.duplicateUriInput : styles.uriInput}
-                value={uriContent}
-                onChange={handleUriInputChange}
+                className={styles.uriInput}
+                value={uriContent2}
+                onChange={handleUriInputChange2}
                 aria-label="UriInput"
-                disabled={inputUriDisabled}
+                disabled={inputUriDisabled2}
               />
-              <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriIcon"/>
-              {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
-              {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
+              <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon"/>
+              {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
+              {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
               <div className={styles.UriTable}>
-                {UriTableData.length > 0 ? <MLTable
-                  columns={UriColumns}
+                {UriTableData2.length > 0 ? <MLTable
+                  columns={UriColumns2}
                   className={styles.tableContent}
-                  dataSource={renderUriTableData}
+                  dataSource={renderUriTableData2}
                   rowKey="key"
                   id="uriData"
                   pagination={false}
                 />:""}
               </div>
-              <div className={UriTableData.length > 0 ? styles.testButton:""}>
-                <MLButton type="primary" htmlType="submit" size="default" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</MLButton>
-              </div>
             </MLRadio>
-            <MLRadio value={2} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
-              <span>All Data</span>
+            <MLRadio value={3} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
+              <span>Test All Data</span>
+              <span aria-label={"allDataTooltip"}><MLTooltip title={MatchingStepTooltips.testAllData} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </MLTooltip></span>
               <div aria-label="allDataContent"><br />
-                  Select All data in order to preview matching activity against all Uris upto maximum count of 100.
+                  Select All Data in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
               </div>
             </MLRadio>
           </MLRadio.MLGroup>
+          <div className={styles.testButton}>
+            <MLButton type="primary" htmlType="submit" size="default" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</MLButton>
+          </div>
         </div>
         {/*<div className={styles.matchedTab}>*/}
         {/*  <Menu onClick={handleTestMatchTab} selectedKeys={[testMatchTab]} mode="horizontal" aria-label="testMatchTab">*/}

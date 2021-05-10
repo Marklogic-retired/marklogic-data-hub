@@ -155,29 +155,44 @@
 }
 
 .testMatch {
-    padding-left: 44px;
+    padding-left: 34px;
     padding-top: 10px;
+    display: inline-table;
 }
 
 .uriInput {
-    width: 29vw;
+    width: 24vw;
     height: 4vh;
+    margin-left: 1.5vw;
+    margin-top: 1vh;
 }
 
+.testMatchedRadioGroup {
+    display: inline-table;
+}
 .duplicateUriInput {
     width: 29vw;
     height: 4vh;
 }
 
 .testButton {
-    padding-top: 23px;
+   margin-top: 2vh;
+}
+
+.questionCircle {
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 3px;
+    margin-left: 5px;
+    color: #7F86B5;
 }
 
 .UriTable {
     padding-top: 20px;
-    width: 32.5vw;
+    overflow-x: hidden;
+    width: 26.5vw;
     overflow-y: auto;
-    max-height: 30vh;
+    max-height: 26vh;
     margin-left: 1vw;
 }
 
@@ -195,7 +210,7 @@
 
 .tableRow {
     display: flex;
-    height: 1em;
+    word-break: break-all;
 }
 
 .deleteIcon {
@@ -210,17 +225,42 @@
 
 .positionDeleteIcon {
     float: right;
-    padding-right: 1vw;
     padding-left: 1vw;
     line-break: auto;
     margin-left: auto;
 }
 
+.allDataUris {
+    display: inline-table;
+    margin-left: 2vw;
+    border: 1px solid lightgrey;
+    min-width: 29vw;
+    height: 40vh;
+    padding: 1em;
+}
+
+.radioTitle {
+ margin-top: 1vh;
+}
+
+.borders {
+    border: #999999;
+}
+.urisData {
+    display: inline-table;
+    border: 1px solid lightgrey;
+    min-width: 29vw;
+    height: 40vh;
+    padding: 1em;
+}
 .allDataRadio {
     float: right;
-    margin-left: 5vw;
-    max-width: 55%;
+    margin-left: 2vw;
     position: absolute;
+    border: 1px solid lightgrey;
+    max-width: 26vw;
+    height: 40vh;
+    padding: 1em;
 }
 
 .matchedTab {

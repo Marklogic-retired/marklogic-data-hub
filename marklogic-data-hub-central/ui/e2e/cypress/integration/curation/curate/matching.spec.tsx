@@ -81,12 +81,13 @@ describe("Matching", () => {
   it("Open matching step details", () => {
     curatePage.openStepDetails(matchStep);
     cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
-    matchingStepDetail.showThresholdTextMore().should("not.exist");
-    matchingStepDetail.showThresholdTextLess().should("be.visible");
+    matchingStepDetail.showThresholdTextMore().should("have.length.lt", 1);
+    matchingStepDetail.showThresholdTextLess().should("have.length.gt", 0);
     multiSlider.getRulesetSliderOptions().trigger("mouseover");
-    matchingStepDetail.showRulesetTextMore().should("not.exist");
-    matchingStepDetail.showRulesetTextLess().should("be.visible");
+    matchingStepDetail.showRulesetTextMore().should("have.length.lt", 1);
+    matchingStepDetail.showRulesetTextLess().should("have.length.gt", 0);
   });
+
   it("Add threshold", () => {
     matchingStepDetail.addThresholdButton().click();
     thresholdModal.setThresholdName("test");
@@ -250,8 +251,36 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0));
     multiSlider.getHandleName("customerId").should("not.exist");
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
+    cy.waitUntil(() => cy.visit("/tiles"));
   });
   it("Edit test match URIs", () => {
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.toggleEntityTypeId("Person");
+    cy.findByText("Match").click();
+    curatePage.openStepDetails("match-person");
+
+    // to verify tooltips are present
+    cy.findByLabelText("testUriOnlyTooltip").should("have.length.gt", 0);
+    cy.findByLabelText("testUriTooltip").should("have.length.gt", 0);
+    cy.findByLabelText("allDataTooltip").should("have.length.gt", 0);
+
+    // to test validation checks when user selects test among URIs only radio
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("At least Two URIs are required.").should("be.visible");
+    matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriOnlyIcon().click();
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByText("At least Two URIs are required.").should("be.visible");
+    matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
+    matchingStepDetail.getAddUriOnlyIcon().click();
+    cy.findByText("This URI has already been added.").should("be.visible");
+    matchingStepDetail.getUriOnlyInputField().type("/test/Uri2");
+    matchingStepDetail.getAddUriOnlyIcon().click();
+    cy.findByText("At least Two URIs are required.").should("not.exist");
+    cy.findByText("This URI has already been added.").should("not.exist");
+
+    // to test validation checks when user selects test with all URIs entered radio
+    cy.findByLabelText("inputUriRadio").click();
     matchingStepDetail.getUriDeleteIcon().should("not.exist");
     matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
@@ -259,7 +288,6 @@ describe("Matching", () => {
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
 
-    //to test validation check
     matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton().click();
     cy.findByText("At least one URI is required.").should("be.visible");
@@ -275,11 +303,13 @@ describe("Matching", () => {
     cy.waitUntil(() => cy.visit("/tiles"));
   });
 
+
   it("Show matched results for test match", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Person");
     cy.findByText("Match").click();
     curatePage.openStepDetails("match-person");
+    cy.findByLabelText("inputUriRadio").click();
 
     //adding new multiple property
     matchingStepDetail.addNewRuleset();
@@ -363,3 +393,4 @@ describe("Matching", () => {
     cy.findAllByLabelText("expandedTableView").should("not.visible");
   });
 });
+
