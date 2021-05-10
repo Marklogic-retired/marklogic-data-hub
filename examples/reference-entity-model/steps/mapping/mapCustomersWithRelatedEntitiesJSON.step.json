@@ -82,7 +82,7 @@
       "relatedEntityMappingId": "Order:Customer.customerId",
       "collections": ["mapCustomersWithRelatedEntitiesJSON", "Order"],
       "expressionContext": "/Orders",
-      "uriExpression": "concat('/Order/', OrderId)",
+      "uriExpression": "hubURI('Order')",
       "permissions": "data-hub-common,read,data-hub-common,update",
       "properties": {
         "orderId": {
