@@ -93,6 +93,8 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
     const isStructuredProperty = property.datatype != "array" && property["$ref"];
     const isStructuredArrayProperty = property.datatype == "array" && (property["items"] && property["items"]["$ref"]);
 
+    const isPrimaryKey = propertyName === entityType.primaryKey;
+
     const propertyMetadata = {};
     const propertyMetadataObject = {};
 
@@ -132,7 +134,12 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
       granularPropertyMetadata = Object.assign({},granularPropertyMetadata, metaData["granularPropertyMetadata"]);
     }
     granularPropertyMetadata[propertyMetadataObject["propertyPath"]] = propertyMetadataObject;
-    allPropertiesMetadata.push(propertyMetadata);
+    // Ensure the primary key property goes first in the array so it is selected by default
+    if (isPrimaryKey) {
+      allPropertiesMetadata.unshift(propertyMetadata);
+    } else {
+      allPropertiesMetadata.push(propertyMetadata);
+    }
   }
 
   const allMetadata = {};
