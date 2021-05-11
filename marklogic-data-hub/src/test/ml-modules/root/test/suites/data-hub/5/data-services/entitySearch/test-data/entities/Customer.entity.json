@@ -11,9 +11,6 @@
       ],
       "primaryKey": "customerId",
       "properties": {
-        "customerId": {
-          "datatype": "integer"
-        },
         "name": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
@@ -41,6 +38,10 @@
         },
         "customerSince": {
           "datatype": "date"
+        },
+        "customerId": {
+          "datatype": "integer",
+          "description": "This is supposed to be last to test that the primary key is always included"
         }
       }
     },
