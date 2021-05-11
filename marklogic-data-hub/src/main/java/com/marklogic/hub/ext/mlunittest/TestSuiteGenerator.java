@@ -36,7 +36,7 @@ public class TestSuiteGenerator extends LoggingObject {
             "// Uncomment the three lines below to prepare the databases once before all test modules are run.\n" +
                 "// If you instead want to prepare the databases before each test module is run, modify setup.sjs .\n\n" +
                 "// declareUpdate();\n" +
-                "// const dhmut = require('/data-hub/ext/marklogic-unit-test/hub-test-helper.xqy');\n" +
+                "// const dhmut = require('/data-hub/public/marklogic-unit-test/hub-test-helper.xqy');\n" +
                 "// dhmut.prepareDatabases();", generatedFiles
         );
 
@@ -45,7 +45,7 @@ public class TestSuiteGenerator extends LoggingObject {
                 "// If you need this functionality instead at the suite level, just remove the code below and modify the generated suiteSetup.sjs file.\n" +
                 "// If you do not need this functionality, it is safe to delete the code below and/or this module.\n\n" +
                 "declareUpdate();\n" +
-                "const dhmut = require('/data-hub/ext/marklogic-unit-test/hub-test-helper.xqy');\n" +
+                "const dhmut = require('/data-hub/public/marklogic-unit-test/hub-test-helper.xqy');\n" +
                 "dhmut.prepareDatabases();", generatedFiles);
 
         writeFile(new File(suiteDir, testModuleName + ".sjs"),

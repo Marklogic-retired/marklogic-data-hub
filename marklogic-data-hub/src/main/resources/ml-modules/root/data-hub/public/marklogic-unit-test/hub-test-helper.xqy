@@ -37,6 +37,11 @@ declare function prepare-databases() as empty-sequence()
 
 (:
 Prepare the given database for a test run by deleting all data other than user-defined and OOTB DHF artifacts.
+This function uses a simple approach for deleting documents, which is to delete each document matching a query. 
+While this approach is not likely to scale for large amounts of documents (roughly, tens of thousands of 
+documents or more), it is not expected that a test case would ever write that many documents. That is - tests are 
+expected to write a small enough number of documents such that this approach for deleting documents should perform
+well in nearly all cases. 
 :)
 declare function prepare-database($database-name as xs:string) as empty-sequence()
 {
@@ -60,8 +65,8 @@ in case the jobs database has other data that should remain in between test suit
 Provenance data is not deleted by this due to the protected collection restriction on
 provenance documents. That restriction requires either an admin user or a user with the
 ps-internal role, neither of which is recommended for running tests. User tests may instead
-install their own amp to allow for the provenance collection to be deleted, assuming that is
-necessary to prepare the jobs database.
+install their own amp to allow for the provenance collection to be deleted, assuming that 
+doing so is necessary to prepare the jobs database.
 :)
 declare function prepare-jobs-database() as empty-sequence()
 {
