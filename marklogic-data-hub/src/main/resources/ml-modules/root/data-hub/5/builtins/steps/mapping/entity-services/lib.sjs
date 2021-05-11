@@ -477,30 +477,34 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
     try {
       if(!response){
         const uriString = String(fn.head(testXmlMapping(xmlMapping, sourceInstance, parameterMap)).xpath('*:uris/*:uri[1]/text()'));
-        response = flowUtils.properExtensionURI(uriString, mapping.targetFormat);
+        response = flowUtils.properExtensionURI(uriString, fn.lowerCase(mapping.targetFormat));
       }
     }
     catch(e){
       response = hubUtils.getErrorMessage(e);
       errorEvaluatingExpression = true;
     }
+    if(!errorEvaluatingExpression && !response){
+      errorEvaluatingExpression = true;
+      response = "The URI XPath expression for the mapping evaluates to null";
+    }
 
     if(mappingIndex == 0){
       mapping.uriExpression = {};
-      if (!errorEvaluatingExpression){
-        mapping.uriExpression.output = response;
+      if (errorEvaluatingExpression){
+        mapping.uriExpression.errorMessage = response;
       }
       else{
-        mapping.uriExpression.errorMessage = response;
+        mapping.uriExpression.output = response;
       }
     }
     else{
       mapping.relatedEntityMappings[mappingIndex - 1].uriExpression = {};
-      if(!errorEvaluatingExpression){
-        mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.output = response;
+      if(errorEvaluatingExpression){
+        mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.errorMessage = response;
       }
       else{
-        mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.errorMessage = response;
+        mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.output = response;
       }
     }
   });

@@ -45,6 +45,7 @@ function testValidMapping(){
 function testMappingWithInvalidProperties(){
   let mapping = fn.head(cts.doc('/steps/mapping/mapCustomersWithInvalidExpressions.step.json')).toObject();
   let result = esMappingLib.validateAndTestMapping(mapping, "/content/customerInfo.json");
+  const orderUriRegex = new RegExp('^\/Order\/[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}.json$');
   assertions = assertions.concat([
     test.assertEqual("Undefined variable: $URIS", fn.string(mapping.uriExpression.errorMessage)),
     test.assertEqual("202", result.properties.customerId.output),
@@ -52,7 +53,7 @@ function testMappingWithInvalidProperties(){
   ]);
 
   assertions = assertions.concat([
-    test.assertEqual("/Order/2002.json", fn.string(result.relatedEntityMappings[0].uriExpression.output)),
+    test.assertTrue(orderUriRegex.test(fn.string(result.relatedEntityMappings[0].uriExpression.output)), "The uri is " + fn.string(result.relatedEntityMappings[0].uriExpression.output)),
     test.assertEqual("Undefined function: remove-dashes()", result.relatedEntityMappings[0].properties.orderId.errorMessage)
 
   ]);
