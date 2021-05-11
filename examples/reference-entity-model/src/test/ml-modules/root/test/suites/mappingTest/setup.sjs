@@ -3,5 +3,5 @@
 // If you do not need this functionality, it is safe to delete the code below and/or this module.
 
 declareUpdate();
-const dhmut = require('/data-hub/ext/marklogic-unit-test/hub-test-helper.xqy');
+const dhmut = require('/data-hub/public/marklogic-unit-test/hub-test-helper.xqy');
 dhmut.prepareDatabases();
