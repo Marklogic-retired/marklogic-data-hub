@@ -23,7 +23,7 @@
       "relatedEntityMappingId": "Order:Customer.customerId",
       "collections": ["mapCustomersJSON", "Order"],
       "expressionContext": "/Orders",
-      "uriExpression": "concat('/Order/', OrderId)",
+      "uriExpression": "",
       "permissions": "data-hub-common,read,data-hub-common,update",
       "properties": {
         "orderId": {

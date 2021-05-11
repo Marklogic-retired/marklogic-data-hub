@@ -2,7 +2,7 @@
 {
   "collections": ["mapCustomersJSON", "Customer"],
   "permissions": "data-hub-common,read,data-hub-common,update",
-  "targetFormat": "json",
+  "targetFormat": "JSON",
   "name": "mapCustomersJSON",
   "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
   "selectedSource": "collection",
