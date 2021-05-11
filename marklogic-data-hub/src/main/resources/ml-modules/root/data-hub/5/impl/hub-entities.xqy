@@ -389,6 +389,38 @@ declare private function fix-path-index($path-index as element(search:path-index
   }
 };
 
+declare function hent:find-entity-identifiers(
+    $all-uris as xs:string*,
+    $entity-type as xs:string
+) as map:map {
+  let $entity-type-iri := sem:iri($entity-type)
+  let $primary-key-defined := xdmp:exists(cts:search(fn:doc(), cts:triple-range-query($entity-type-iri, sem:iri('http://marklogic.com/entity-services#primaryKey'), ())))
+  let $primary-keys := if ($primary-key-defined) then
+    let $results := sem:sparql('
+      SELECT * WHERE {
+        ?instanceIRI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?entityTypeIRI;
+           <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> ?URI.
+      }', map:entry("entityTypeIRI", $entity-type-iri), (), cts:document-query($all-uris))
+    return map:new(
+        let $entity-type-prefix := $entity-type || "/"
+        for $result in $results
+        let $uri := fn:string(map:get($result, "URI"))
+        let $primary-key := fn:substring-after(fn:string(map:get($result, "instanceIRI")), $entity-type-prefix)
+        return map:entry(
+            $uri,
+            if (fn:normalize-space($primary-key) eq "") then
+              $uri
+            else
+              $primary-key
+        )
+    )
+  else
+    map:new(
+        $all-uris ! map:entry(., .)
+    )
+  return $primary-keys
+};
+
 (:
 Fixes the path expression used by es:database-properties-generate and es:search-options-generate. Both are known to
 return a path starting with "//es:instance/" but not including namespace prefixes/wildcards for the entity and property
@@ -514,8 +546,27 @@ declare function hent:dump-tde($entities as json:array)
     )
   let $entity-model-contexts := map:keys($uber-definitions) ! ("./" || .)
   let $entity-name := map:get(map:get($uber-model, "info"), "title")
+  let $entity-name :=
+    if (($uber-model => map:get("definitions") => map:contains($entity-name))) then
+      $entity-name
+    else
+      (: if the title doesn't match a definition, make our best guess at what the root entity definition is :)
+      hent:get-primary-entity-type-title($uber-model => map:get("definitions"))
   let $es-template := es:extraction-template-generate($uber-model)
   return hent:fix-tde($es-template, $entity-model-contexts, $uber-model, $entity-name)
+};
+
+declare function hent:get-primary-entity-type-title($entity-definition as item()) {
+  let $entity-definition-node :=
+    if ($entity-definition instance of node()) then
+      $entity-definition
+    else
+      xdmp:to-json($entity-definition)/object-node()
+  let $references-for-local-definitions := $entity-definition-node/object-node() ! ("#/definitions/"||fn:string(fn:node-name(.)))
+  let $local-references-made := fn:distinct-values($entity-definition-node//text("$ref"))[fn:starts-with(., "#/definitions/")]
+  let $unreferenced-definitions := $references-for-local-definitions[fn:not(. = $local-references-made)]
+  let $primary-definition := fn:head($unreferenced-definitions)
+  return $primary-definition ! fn:substring-after(., "#/definitions/")
 };
 
 declare variable $default-nullable as element(tde:nullable) := element tde:nullable {fn:true()};
@@ -559,9 +610,9 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     else
                       fn:string($n) || "/" || $primary-key
                 else
-                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-model)
+                  hent:fix-tde($n/node(), $entity-model-contexts, $uber-model, ())
             else
-              hent:fix-tde($n/node(), $entity-model-contexts, $uber-model)
+              hent:fix-tde($n/node(), $entity-model-contexts, $uber-model, ())
         }
 
       case element(tde:context) return
@@ -571,14 +622,14 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          hent:fix-tde($n/* except $n/(tde:nullable|tde:invalid-values), $entity-model-contexts, $uber-model),
+          hent:fix-tde($n/* except $n/(tde:nullable|tde:invalid-values), $entity-model-contexts, $uber-model, ()),
           $default-nullable,
           $default-invalid-values
         }
       case element(tde:subject)|element(tde:predicate)|element(tde:object) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-tde($n/* except $n/tde:invalid-values, $entity-model-contexts, $uber-model),
+          hent:fix-tde($n/* except $n/tde:invalid-values, $entity-model-contexts, $uber-model, ()),
           $default-invalid-values
         }
       case element(tde:template) return
@@ -591,7 +642,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
           let $rows := $n/tde:rows/tde:row
           return
             if ($is-join-template) then (
-              hent:fix-tde($n/tde:context, $entity-model-contexts, $uber-model),
+              hent:fix-tde($n/tde:context, $entity-model-contexts, $uber-model, ()),
               element tde:rows {
                 element tde:row {
                   $rows/(tde:schema-name|tde:view-name|tde:view-layout),
@@ -601,7 +652,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     return
                       element tde:column {
                         $column/@*,
-                        hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-model),
+                        hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-model, ()),
                         if (fn:starts-with($column/tde:name, $join-prefix)) then (
                           let $tde-val := fn:string($column/tde:val)
                           let $uber-definitions := $uber-model => map:get("definitions")
@@ -614,10 +665,10 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                                 $tde-val || "/" || $primary-key
                             }
                         ) else
-                          hent:fix-tde($column/tde:val, $entity-model-contexts, $uber-model),
+                          hent:fix-tde($column/tde:val, $entity-model-contexts, $uber-model, ()),
                         $default-nullable,
                         $default-invalid-values,
-                        hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-model)
+                        hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-model, ())
                       }
                   }
                 }
@@ -628,7 +679,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
-          hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-model)
+          hent:fix-tde(($n/@*, $n/node()), $entity-model-contexts, $uber-model, ())
         }
       case text() return
         fn:replace(

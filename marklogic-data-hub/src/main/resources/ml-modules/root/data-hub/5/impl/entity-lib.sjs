@@ -384,11 +384,16 @@ function validateModelDefinitions(definitions) {
   });
 }
 
+function findEntityIdentifiers(uris, entityType) {
+  return fn.head(hent.findEntityIdentifiers(hubUtils.normalizeToSequence(uris), entityType));
+}
+
 module.exports = {
   deleteModel,
   findModelReferencesInSteps,
   findModelReferencesInOtherModels,
   deleteModelReferencesInOtherModels,
+  findEntityIdentifiers,
   findEntityType,
   findEntityTypeByEntityName,
   findEntityTypeIds,

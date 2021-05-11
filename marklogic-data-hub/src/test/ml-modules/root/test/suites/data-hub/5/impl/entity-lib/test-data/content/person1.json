@@ -1,0 +1,13 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "PersonModel",
+        "version": "0.0.1"
+      },
+      "Person": {
+        "ssn": "123-45-6789"
+      }
+    }
+  }
+}
