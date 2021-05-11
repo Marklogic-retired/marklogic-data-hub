@@ -2,8 +2,10 @@ xquery version "1.0-ml";
 
 module namespace pma = "http://marklogic.com/smart-mastering/preview-matching-activity-lib";
 
+import module namespace hent = "http://marklogic.com/data-hub/hub-entities"
+  at "/data-hub/5/impl/hub-entities.xqy";
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
-  at "/com.marklogic.smart-mastering/matcher.xqy";
+at "/com.marklogic.smart-mastering/matcher.xqy";
 
 declare variable $PMA-MAX-RESULTS := 100;
 declare variable $DEFAULT-URI-SAMPLE-SIZE := 20;
@@ -115,10 +117,8 @@ declare function pma:get-uri-sample($source-query as cts:query, $sample-size as 
     else
       $DEFAULT-URI-SAMPLE-SIZE
   return
-    (
-      for $doc in cts:search(doc(), $source-query, ("unfiltered", "score-random"))
-      return xdmp:node-uri($doc)
-    )[1 to $sample-size]
+    for $doc in cts:search(doc(), $source-query, ("unfiltered", "score-random"))[1 to $sample-size]
+    return xdmp:node-uri($doc)
 };
 
 (:
@@ -158,9 +158,13 @@ declare function pma:preview-matching-activity(
         pma:match-against-source-query-docs($uris, $options, $source-query, $previous-count)
       )
   let $all-results := fn:subsequence(($results-within-uris, $results-against-source-query-docs), 1, $PMA-MAX-RESULTS)
+  let $all-uris := fn:distinct-values(($all-results ! ( json:array-values(map:get(., "uris")))))
+  let $entity-type := $options/targetEntityType
+  let $primary-keys := hent:find-entity-identifiers($all-uris, $entity-type)
   let $_ :=
   (
     map:put($obj, "sampleSize", $sample-size),
+    map:put($obj, "primaryKeys", $primary-keys),
     map:put($obj, "uris", json:to-array($uris)),
     map:put($obj, "actionPreview", json:to-array($all-results))
   )

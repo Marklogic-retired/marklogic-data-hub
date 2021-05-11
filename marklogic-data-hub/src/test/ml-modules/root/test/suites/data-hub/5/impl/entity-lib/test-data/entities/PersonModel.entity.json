@@ -11,6 +11,7 @@
       "elementRangeIndex" : [ ],
       "rangeIndex" : [ ],
       "wordLexicon" : [ ],
+      "primaryKey": "ssn",
       "properties" : {
         "ssn" : {
           "datatype" : "string",
