@@ -20,6 +20,8 @@ xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/export
 const op = require('/MarkLogic/optic');
 const search = require('/MarkLogic/appservices/search/search');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const hubUtils = new HubUtils();
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
@@ -88,7 +90,8 @@ queryOptions = fn.head(xdmp.unquote(queryOptions)).root;
  * Also replacing hyphen with underscore for column names (entity property names), schema names and view names since TDE's do the same.
  */
 const simplePropertySet = filterObjectAndArrayTypeProperties(schemaName);
-columns = columns.toArray().filter(column => simplePropertySet.has(column)).map(column => replaceHyphenWithUnderscore(column));
+// Using Sequence.from
+columns = hubUtils.normalizeToArray(columns).filter(column => simplePropertySet.has(column)).map(column => replaceHyphenWithUnderscore(column));
 viewName = replaceHyphenWithUnderscore(viewName);
 schemaName = replaceHyphenWithUnderscore(schemaName);
 
