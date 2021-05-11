@@ -262,9 +262,7 @@ public class HubConfigImplTest {
         assertEquals("forests", config.getCustomForestPath());
 
         assertEquals("flow-operator-role", config.getFlowOperatorRoleName());
-        assertEquals("flow-operator", config.getFlowOperatorUserName());
         assertEquals("flow-developer-role", config.getFlowDeveloperRoleName());
-        assertEquals("flow-developer", config.getFlowDeveloperUserName());
 
         assertEquals("default", config.getHubLogLevel());
 

@@ -183,6 +183,18 @@ class InstallerThread extends LoggingObject implements Runnable {
 
         final API api = new API(hubConfig.getManageClient());
 
+        User testFlowDeveloper = new User(api, "test-flow-developer");
+        testFlowDeveloper.setPassword("password");
+        testFlowDeveloper.addRole("flow-developer-role");
+        testFlowDeveloper.setDescription("Supports older DHF tests that depend on the deprecated roles");
+        testFlowDeveloper.save();
+
+        User testFlowOperator = new User(api, "test-flow-operator");
+        testFlowOperator.setPassword("password");
+        testFlowOperator.addRole("flow-operator-role");
+        testFlowOperator.setDescription("Supports older DHF tests that depend on the deprecated roles");
+        testFlowOperator.save();
+
         User dataHubDeveloper = new User(api, "test-data-hub-developer");
         dataHubDeveloper.setPassword("password");
         dataHubDeveloper.addRole("data-hub-developer");

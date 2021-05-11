@@ -310,7 +310,6 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             writeResources(resolver, "classpath:hub-internal-config/security/amps/*.json", getHubSecurityDir().resolve("amps"));
             writeResources(resolver, "classpath:hub-internal-config/security/privileges/*.json", getHubSecurityDir().resolve("privileges"));
             writeResources(resolver, "classpath:hub-internal-config/security/roles/*.json", getHubSecurityDir().resolve("roles"));
-            writeResources(resolver, "classpath:hub-internal-config/security/users/*.json", getHubSecurityDir().resolve("users"));
             writeResources(resolver, "classpath:hub-internal-config/triggers/*.json", getHubTriggersDir());
         } catch (IOException e) {
             throw new RuntimeException("Unable to write project resources to project filesystem; cause: " + e.getMessage(), e);

@@ -21,13 +21,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
-import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
@@ -50,8 +48,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         if (isVersionCompatibleWith520Roles()) {
             runAsDataHubDeveloper();
         } else {
-            logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
-            runAsUser("flow-developer", "password");
+            runAsDeprecatedFlowDeveloper();
         }
         applyDatabasePropertiesForTests(getHubConfig());
     }
@@ -94,13 +91,13 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         StringHandle results = new EntitySearchManager(getHubClient()).search(searchQuery);
         ObjectNode node = readJsonObject(results.get());
         assertEquals(0, node.get("total").asInt(), "Expected 0 total documents; an empty search should result in a count equal " +
-                "to all the docs that the user can read in the database excluding hub artifacts as setHideHubArtifacts is true");
+            "to all the docs that the user can read in the database excluding hub artifacts as setHideHubArtifacts is true");
 
         searchQuery.getQuery().setHideHubArtifacts(false);
         results = new EntitySearchManager(getHubClient()).search(searchQuery);
         node = readJsonObject(results.get());
         assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
-                "to all the docs that the user can read in the database", count));
+            "to all the docs that the user can read in the database", count));
 
         searchQuery.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
         assertNull(new EntitySearchManager(getHubClient()).search(searchQuery), "Entity Model with name Some-entityType doesn't exist ");
@@ -166,8 +163,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         installProjectInFolder("customer-entity-with-indexes", true);
 
         if (!isVersionCompatibleWith520Roles()) {
-            logger.warn("ML version is not compatible with 5.2.0 roles, so will deploy indexes as flow-developer instead of data-hub-developer");
-            runAsUser("flow-developer", "password");
+            runAsDeprecatedFlowDeveloper();
         }
 
         new EntityManagerImpl(getHubConfig()).saveDbIndexes();
@@ -298,11 +294,11 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(query);
         ObjectNode node = readJsonObject(results.get());
         assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
-                "columns to display");
+            "columns to display");
         assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
-                "to /api/models to get the property names and also traverse the entity definition itself");
+            "to /api/models to get the property names and also traverse the entity definition itself");
         assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
-                "entityProperties so that the UI knows what structured values to show for each entity instance");
+            "entityProperties so that the UI knows what structured values to show for each entity instance");
         assertTrue(node.get("results").get(1).has("entityProperties"));
 
         // Adding propertiesToDisplay to search query which are user selected columns
@@ -311,12 +307,12 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         results = new EntitySearchManager(getHubClient(), databaseType).search(query);
         node = readJsonObject(results.get());
         assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
-                "columns to display");
+            "columns to display");
         assertEquals(2, node.get("selectedPropertyDefinitions").size());
         assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
-                "to /api/models to get the property names and also traverse the entity definition itself");
+            "to /api/models to get the property names and also traverse the entity definition itself");
         assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
-                "entityProperties so that the UI knows what structured values to show for each entity instance");
+            "entityProperties so that the UI knows what structured values to show for each entity instance");
         assertTrue(node.get("results").get(1).has("entityProperties"));
     }
 
@@ -338,12 +334,17 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(searchQuery);
         ObjectNode node = readJsonObject(results.get());
         assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
-                "to all the docs that the user can read in the database", count));
+            "to all the docs that the user can read in the database", count));
 
         searchQuery.getQuery().setHideHubArtifacts(true);
         results = new EntitySearchManager(getHubClient(), databaseType).search(searchQuery);
         node = readJsonObject(results.get());
         assertEquals(2, node.get("total").asInt(), "Expected 2 total documents; an empty search should result in a count equal " +
-                "to all the docs that the user can read in the database excluding hub artifacts as setHideHubArtifacts is true");
+            "to all the docs that the user can read in the database excluding hub artifacts as setHideHubArtifacts is true");
+    }
+
+    private void runAsDeprecatedFlowDeveloper() {
+        logger.warn("ML version is not compatible with 5.2.0 roles, so will run as test-flow-developer instead of data-hub-developer");
+        runAsUser("test-flow-developer", "password");
     }
 }

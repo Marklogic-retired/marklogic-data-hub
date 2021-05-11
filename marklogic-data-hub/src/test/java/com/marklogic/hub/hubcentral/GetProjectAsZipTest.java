@@ -190,7 +190,6 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
         assertTrue(zipProjectEntries.contains("src/main/hub-internal-config/security/amps/findProvenance.json"));
         assertTrue(zipProjectEntries.contains("src/main/hub-internal-config/security/privileges/data-hub-create-custom-privilege.json"));
         assertTrue(zipProjectEntries.contains("src/main/hub-internal-config/security/roles/data-hub-developer.json"));
-        assertTrue(zipProjectEntries.contains("src/main/hub-internal-config/security/users/flow-developer-user.json"));
         assertTrue(zipProjectEntries.contains("src/main/hub-internal-config/triggers/ml-dh-entity-create.json"));
         assertTrue(zipProjectEntries.contains("src/main/hub-internal-config/servers/staging-server.json"));
         assertTrue(zipProjectEntries.contains("src/main/ml-config/servers/final-server.json"));
