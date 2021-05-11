@@ -39,12 +39,9 @@ import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.mgmt.admin.DefaultAdminConfigFactory;
 import com.marklogic.mgmt.util.SimplePropertySource;
-import org.apache.commons.text.CharacterPredicate;
-import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -86,10 +83,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     protected Integer finalSchemasForestsPerHost;
 
     private String flowOperatorRoleName;
-    private String flowOperatorUserName;
-
     private String flowDeveloperRoleName;
-    private String flowDeveloperUserName;
 
     private String hubLogLevel;
 
@@ -113,16 +107,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
     // By default, DHF uses gradle-local.properties for your local environment.
     private String envString = "local";
-
-    /**
-     * These are set when calling loadConfigurationFromProperties, if their corresponding properties exist. They are then
-     * used when calling addDhfPropertiesToCustomTokens so that their values can be used instead of randomly-generated
-     * passwords.
-     */
-    @JsonIgnore
-    private String flowOperatorPasswordFromProperties;
-    @JsonIgnore
-    private String flowDeveloperPasswordFromProperties;
 
     /**
      * Constructs a HubConfigImpl with a default set of property values.
@@ -822,25 +806,11 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         this.flowOperatorRoleName = flowOperatorRoleName;
     }
 
-    @Override public String getFlowOperatorUserName() {
-        return flowOperatorUserName;
-    }
-    @Override  public void setFlowOperatorUserName(String flowOperatorUserName) {
-        this.flowOperatorUserName = flowOperatorUserName;
-    }
-
     @Override public String getFlowDeveloperRoleName() {
         return flowDeveloperRoleName;
     }
     @Override public void setFlowDeveloperRoleName(String flowDeveloperRoleName) {
         this.flowDeveloperRoleName = flowDeveloperRoleName;
-    }
-
-    @Override public String getFlowDeveloperUserName() {
-        return flowDeveloperUserName;
-    }
-    @Override  public void setFlowDeveloperUserName(String flowDeveloperUserName) {
-        this.flowDeveloperUserName = flowDeveloperUserName;
     }
 
     @JsonIgnore
@@ -1214,22 +1184,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         customTokens.put("%%mlFinalSchemasForestsPerHost%%", finalSchemasForestsPerHost.toString());
 
         customTokens.put("%%mlFlowOperatorRole%%", flowOperatorRoleName);
-        customTokens.put("%%mlFlowOperatorUserName%%", flowOperatorUserName);
-
         customTokens.put("%%mlFlowDeveloperRole%%", flowDeveloperRoleName);
-        customTokens.put("%%mlFlowDeveloperUserName%%", flowDeveloperUserName);
-
-        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder().withinRange(33, 126).filteredBy((CharacterPredicate) codePoint -> (codePoint != 92 && codePoint != 34)).build();
-        if (StringUtils.hasText(flowOperatorPasswordFromProperties)) {
-            customTokens.put("%%mlFlowOperatorPassword%%", flowOperatorPasswordFromProperties);
-        } else {
-            customTokens.put("%%mlFlowOperatorPassword%%", randomStringGenerator.generate(20));
-        }
-        if (StringUtils.hasText(flowDeveloperPasswordFromProperties)) {
-            customTokens.put("%%mlFlowDeveloperPassword%%", flowDeveloperPasswordFromProperties);
-        } else {
-            customTokens.put("%%mlFlowDeveloperPassword%%", randomStringGenerator.generate(20));
-        }
 
         customTokens.put("%%mlJobPermissions%%", jobPermissions);
         customTokens.put("%%mlFlowPermissions%%", flowPermissions);
@@ -1468,9 +1423,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         finalSchemasForestsPerHost = 1;
 
         flowOperatorRoleName = "flow-operator-role";
-        flowOperatorUserName = "flow-operator";
         flowDeveloperRoleName = "flow-developer-role";
-        flowDeveloperUserName = "flow-developer";
 
         customForestPath = "forests";
 
@@ -1518,11 +1471,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         getPropertyConsumerMap().put("mlCustomForestPath", prop -> customForestPath = prop);
 
         getPropertyConsumerMap().put("mlFlowOperatorRole", prop -> flowOperatorRoleName = prop);
-        getPropertyConsumerMap().put("mlFlowOperatorUserName", prop -> flowOperatorUserName = prop);
-        getPropertyConsumerMap().put("mlFlowOperatorPassword", prop -> flowOperatorPasswordFromProperties = prop);
         getPropertyConsumerMap().put("mlFlowDeveloperRole", prop -> flowDeveloperRoleName = prop);
-        getPropertyConsumerMap().put("mlFlowDeveloperUserName", prop -> flowDeveloperUserName = prop);
-        getPropertyConsumerMap().put("mlFlowDeveloperPassword", prop -> flowDeveloperPasswordFromProperties = prop);
 
         getPropertyConsumerMap().put("mlHubLogLevel", prop -> hubLogLevel = prop);
 

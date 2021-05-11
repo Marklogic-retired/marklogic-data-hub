@@ -60,7 +60,6 @@ dependencies {
     implementation 'com.marklogic:marklogic-data-movement-components:2.2.1'
 
     implementation 'commons-io:commons-io:2.4'
-    implementation 'org.apache.commons:commons-text:1.1'
 
     testFixturesApi(testImplementation(project(":marklogic-data-hub-test")))
     testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.1"

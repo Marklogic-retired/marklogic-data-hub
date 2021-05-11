@@ -41,7 +41,6 @@ public class HubProjectTest extends AbstractHubCoreTest {
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
 
         config.setFlowOperatorRoleName("myrole");
-        config.setFlowOperatorUserName("myuser");
 
         deleteTestProjectDirectory();
         config.initHubProject();
@@ -142,7 +141,6 @@ public class HubProjectTest extends AbstractHubCoreTest {
         assertEquals(config.getForestsPerHost(DatabaseKind.STAGING_SCHEMAS).toString(), props.getProperty("mlStagingSchemasForestsPerHost"));
 
         assertEquals(config.getFlowOperatorRoleName(), props.getProperty("mlFlowOperatorRole"));
-        assertEquals(config.getFlowOperatorUserName(), props.getProperty("mlFlowOperatorUserName"));
 
         //per DHFPROD-3617,DHFPROD-3618 following properties shouldn't be there in gradle.properties after hubInit is run. Users can adjust these if needed
         assertNull(props.getProperty("mlEntityPermissions"));
