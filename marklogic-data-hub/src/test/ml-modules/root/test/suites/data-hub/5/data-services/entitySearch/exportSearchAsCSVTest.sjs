@@ -102,13 +102,32 @@ function testPlanWithBadSortOrder() {
     ];
 }
 
+function testPlanWithSingleColumn() {
+    const structuredQuery = xdmp.quote(search.parse(''));
+    let err = null;
+    try {
+        const plan = invokeExportSearchService(
+            'EntitySearchEntity',
+            'EntitySearchEntity', 10,
+            structuredQuery, '',
+            [],
+            'searchEntityProp1');
+    } catch (e) {
+        err = e;
+    }
+    return [
+        test.assertTrue(err === null, `Exception should not be thrown for single column. ${xdmp.describe(err, Sequence.from([]), Sequence.from([]))}`)
+    ];
+}
+
 let assertions = [];
 // Test with hub-central-entity-exporter
 hubTest.runWithRolesAndPrivileges(['hub-central-entity-exporter'], [], function() {
     assertions = []
         .concat(testValidAscendingPlan())
         .concat(testValidDescendingPlan())
-        .concat(testPlanWithBadSortOrder());
+        .concat(testPlanWithBadSortOrder())
+        .concat(testPlanWithSingleColumn());
 });
 
 assertions;
