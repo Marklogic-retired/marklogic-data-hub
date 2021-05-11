@@ -103,7 +103,36 @@ build.gradle file:
 loaded into the modules database, and marklogic-data-hub-junit5 is included to support JUnit5 testing
 - The "test" block includes "useJUnitPlatform()" to tell Gradle to use the platform support in JUnit5
 
-The following tests are then included to demonstrate the support for JUnit 5 and marklogic-unit-test; these are all found in the 
+### marklogic-unit-test examples
+
+Examples of marklogic-unit-test test modules can be found in the src/test/ml-modules directory. This directory is 
+included in the list of directories from which to load modules via the mlModulePaths property in gradle.properties:
+
+    mlModulePaths=src/main/ml-modules,src/test/ml-modules
+
+This property can then be overridden in an environment where it is not desirable for test modules to be loaded. 
+
+The mapping-test suite in the src/test/ml-modules provides an example of how to run a step in a test without depending 
+on persisted data and without persisting the results of the step. This is often a useful technique for quickly verifying the 
+configuration of a step and the content that it produces. 
+
+The DHF hubGenerateTestSuite Gradle task can be used to quickly generate new test suites as well:
+
+    ./gradlew hubGenerateTestSuite -PsuiteName=myNewSuite
+
+This task will create new files for the test suite and print the location to which each file was written. 
+
+Before running the above task, you may want to first run the Gradle task mlWatch in a separate window so that as soon as your 
+files are created or modified, they will be immediately loaded into your modules database:
+
+    ./gradlew -i mlWatch
+
+You can also access the marklogic-unit-test web-based test runner by going to e.g. http://localhost:8011/test/default.xqy, 
+replacing "localhost" with the correct hostname of your MarkLogic server.
+
+### JUnit examples
+
+The following JUnit tests are then included to demonstrate the support for JUnit 5 and marklogic-unit-test; these are all found in the 
 src/test/java directory:
 
 - org/example/RunCustomerFlowTest shows how to run a flow and verify the results by extending a base class provided by marklogic-data-hub-junit5
