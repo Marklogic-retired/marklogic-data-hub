@@ -263,6 +263,15 @@ function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   return [...affectedModels];
 }
 
+function findForeignKeyReferencesInOtherModels(entityModel){
+  const entityTypeId = getEntityTypeId(entityModel, entityModel.info.title);
+  const entityModelsWithForeignKeyReferences = cts.search(cts.andQuery([cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION),
+    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive")])).toArray().map(entityModel =>{
+    return entityModel.toObject().info.title;
+  });
+  return entityModelsWithForeignKeyReferences;
+}
+
 /**
  * Finds and deletes the properties in all models that refers to the supplied entityTypeId.
  *
@@ -386,6 +395,7 @@ function validateModelDefinitions(definitions) {
 
 module.exports = {
   deleteModel,
+  findForeignKeyReferencesInOtherModels,
   findModelReferencesInSteps,
   findModelReferencesInOtherModels,
   deleteModelReferencesInOtherModels,

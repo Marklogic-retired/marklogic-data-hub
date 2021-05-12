@@ -110,6 +110,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         if (response["data"]["stepNames"].length > 0) {
           newConfirmType = ConfirmationType.DeleteEntityStepWarn;
           setArrayValues(response["data"]["stepNames"]);
+        } else if (response["data"]["entityNamesWithForeignKeyReferences"].length > 0) {
+          newConfirmType = ConfirmationType.DeleteEntityWithForeignKeyReferences;
+          setArrayValues(response["data"]["entityNamesWithForeignKeyReferences"]);
         } else if (response["data"]["entityNames"].length > 0) {
           if (modelingOptions.isModified) {
             newConfirmType = ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn;

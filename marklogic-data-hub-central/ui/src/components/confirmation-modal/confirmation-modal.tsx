@@ -16,11 +16,13 @@ type Props = {
 
 const ConfirmationModal: React.FC<Props> = (props) => {
   const [showSteps, toggleSteps] = useState(false);
+  const [showEntities, toggleEntities] = useState(false);
   const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
     if (props.isVisible) {
       toggleSteps(false);
+      toggleEntities(false);
       toggleLoading(false);
     }
   }, [props.isVisible]);
@@ -74,7 +76,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       className={styles.confirmModal}
       onCancel={closeModal}
       maskClosable={false}
-      footer={props.type === ConfirmationType.DeleteEntityStepWarn ? modalFooterClose : modalFooter}
+      footer={(props.type === ConfirmationType.DeleteEntityStepWarn || props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences) ? modalFooterClose : modalFooter}
     >
       <div className={styles.modalBody}>
         {props.type === ConfirmationType.Identifer && (
@@ -162,6 +164,29 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
             {showSteps && (
               <ul className={styles.stepList}>
+                {renderArrayValues}
+              </ul>
+            )}
+          </>
+        )}
+        {props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences && (
+          <>
+            <MLAlert
+              className={styles.alert}
+              closable={false}
+              description={"Entity type appears in foreign key relationship in 1 or more other entity types."}
+              showIcon
+              type="warning"
+            />
+            <p aria-label="delete-entity-foreign-key-text">Edit the foreign key relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.</p>
+            <p
+              aria-label="toggle-entities"
+              className={styles.toggleSteps}
+              onClick={() => toggleEntities(!showEntities)}
+            >{showEntities ? "Hide Entities in foreign key relationship..." : "Show Entities in foreign key relationship..."}</p>
+
+            {showEntities && (
+              <ul className={styles.stepList} data-testid="entitiesWithForeignKey">
                 {renderArrayValues}
               </ul>
             )}

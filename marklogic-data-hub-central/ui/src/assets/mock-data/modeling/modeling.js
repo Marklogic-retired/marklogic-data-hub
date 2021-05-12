@@ -869,20 +869,30 @@ export const entityDefinitionsArray = [
 
 export const referencePayloadEmpty = {
   "stepNames": [],
-  "entityNames": []
+  "entityNames": [],
+  "entityNamesWithForeignKeyReferences" : []
 };
 
 export const referencePayloadSteps = {
   "stepNames": ["Order-Load", "Order-Map"],
-  "entityNames": []
+  "entityNames": [],
+  "entityNamesWithForeignKeyReferences": []
+};
+
+export const referencePayloadForeignKey = {
+  "stepNames": [],
+  "entityNames": [],
+  "entityNamesWithForeignKeyReferences": ["Protein", "Order"]
 };
 
 export const referencePayloadRelationships = {
   "stepNames": [],
-  "entityNames": ["Protein"]
+  "entityNames": ["Protein"],
+  "entityNamesWithForeignKeyReferences": []
 };
 
 export const referencePayloadStepRelationships = {
   "stepNames": ["Order-Load", "Order-Map"],
-  "entityNames": ["Protein"]
+  "entityNames": ["Protein"],
+  "entityNamesWithForeignKeyReferences": ["Protein", "Order"]
 };

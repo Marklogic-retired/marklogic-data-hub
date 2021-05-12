@@ -15,6 +15,7 @@ import {
 import {
   getEntityTypes,
   referencePayloadEmpty,
+  referencePayloadForeignKey,
   referencePayloadRelationships,
   referencePayloadSteps
 } from "../../../assets/mock-data/modeling/modeling";
@@ -266,6 +267,56 @@ describe("EntityTypeModal Component", () => {
     );
     expect(screen.getByText("Entity type is used in one or more steps.")).toBeInTheDocument();
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityStepWarn}-close`));
+    expect(mockDeleteEntity).toBeCalledTimes(0);
+  });
+
+  test("Prevent deleting entity with foreign key relationship", async () => {
+    mockEntityReferences.mockResolvedValueOnce({status: 200, data: referencePayloadForeignKey});
+    mockDeleteEntity.mockResolvedValueOnce({status: 200});
+
+    const updateMock = jest.fn();
+
+    const {getByTestId, getByLabelText, getByText, queryByText} =  render(
+      <Router>
+        <EntityTypeTable
+          allEntityTypesData={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          autoExpand=""
+          editEntityTypeDescription={jest.fn()}
+          updateEntities={updateMock}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          updateSavedEntity={jest.fn()}
+        />
+      </Router>);
+
+    userEvent.click(getByTestId("Product-trash-icon"));
+    expect(mockEntityReferences).toBeCalledWith("Product");
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    await wait(() =>
+      expect(screen.getByLabelText("delete-entity-foreign-key-text")).toBeInTheDocument()
+    );
+    expect(screen.getByText("Entity type appears in foreign key relationship in 1 or more other entity types.")).toBeInTheDocument();
+
+
+    expect(getByText("Show Entities in foreign key relationship...")).toBeInTheDocument();
+    expect(queryByText("Hide Entities in foreign key relationship...")).toBeNull();
+    userEvent.click(getByLabelText("toggle-entities"));
+
+    expect(getByText("Hide Entities in foreign key relationship...")).toBeInTheDocument();
+    expect(queryByText("Show Entities in foreign key relationship...")).toBeNull();
+
+    expect(screen.getByTestId("entitiesWithForeignKey")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[0]);
+    expect(screen.getByTestId("entitiesWithForeignKey")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[1]);
+
+    userEvent.click(getByLabelText("toggle-entities"));
+    expect(getByText("Show Entities in foreign key relationship...")).toBeInTheDocument();
+    expect(queryByText("Hide Entities in foreign key relationship...")).toBeNull();
+
+
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityWithForeignKeyReferences}-close`));
     expect(mockDeleteEntity).toBeCalledTimes(0);
   });
 

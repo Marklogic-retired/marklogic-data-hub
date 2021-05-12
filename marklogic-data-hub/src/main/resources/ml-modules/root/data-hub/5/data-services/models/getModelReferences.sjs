@@ -36,6 +36,7 @@ const entityModelUri = entityLib.getModelUri(entityName);
 
 const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
 const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUri, entityTypeId);
-const result = {stepNames, entityNames};
+const entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel);
+const result = {stepNames, entityNames, entityNamesWithForeignKeyReferences};
 
 result;
