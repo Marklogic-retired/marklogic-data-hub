@@ -131,14 +131,6 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
         );
     }
 
-    protected void verifyJobServer(String groupName) {
-        final String version = getServerMajorVersion();
-        verifyRewriterAndErrorHandler(new ServerManager(hubConfig.getManageClient(), groupName).getPropertiesAsXml("data-hub-JOBS"),
-            format("/data-hub/5/tracing/%s-tracing-rewriter.xml", version),
-            "/MarkLogic/rest-api/error-handler.xqy"
-        );
-    }
-
     protected void verifyRewriterAndErrorHandler(Fragment server, String rewriter, String errorHandler) {
         final String serverName = server.getElementValue("/node()/m:server-name");
         verify(

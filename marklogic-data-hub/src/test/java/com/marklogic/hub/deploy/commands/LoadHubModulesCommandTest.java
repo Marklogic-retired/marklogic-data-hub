@@ -18,6 +18,8 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.impl.Versions;
+import com.marklogic.rest.util.Fragment;
+import org.jdom2.Namespace;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,5 +47,16 @@ public class LoadHubModulesCommandTest extends AbstractHubCoreTest {
             "Hub modules need to be loaded before all other modules so that the DHF-specific REST " +
                 "rewriter is guaranteed to be loaded before any calls are made to /v1/config/* for " +
                 "loading REST extensions");
+    }
+
+    @Test
+    void dataHubDeveloperCanGenerateCustomRewriters() {
+        runAsDataHubDeveloper();
+        new LoadHubModulesCommand(getHubConfig()).generateCustomRewriters();
+
+        Fragment rewriter = new Fragment(getModulesFile("/data-hub/5/rest-api/jobs-rewriter.xml"),
+            Namespace.getNamespace("rw", "http://marklogic.com/xdmp/rewriter"));
+        assertTrue(rewriter.elementExists("/rw:rewriter/rw:match-path/rw:dispatch[. = '/trace-ui/index.html']"),
+            "Verifying that the route for the DHF 4 trace-ui app was added when modules were installed");
     }
 }

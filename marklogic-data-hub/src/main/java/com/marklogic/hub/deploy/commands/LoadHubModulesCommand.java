@@ -25,6 +25,8 @@ import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.dataservices.SystemService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +48,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
     public LoadHubModulesCommand() {
         /**
          * Hub modules should be loaded before any other modules - including those depended on via
-         * ml-gradle's mlRestApi dependency - to ensure that the DHF REST rewriter is available before any REST
+         * ml-gradle's mlBundle dependency - to ensure that the DHF REST rewriter is available before any REST
          * extensions are loaded via a /v1/config/* endpoint.
          */
         setExecuteSortOrder(SortOrderConstants.LOAD_MODULES - 1);
@@ -81,20 +83,32 @@ public class LoadHubModulesCommand extends AbstractCommand {
         modulesLoader.setModulesManager(null);
 
         if (caughtException == null) {
+            logger.info("Loading non-REST modules");
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
+
+            generateCustomRewriters();
+
+            logger.info("Loading REST options for staging server");
             modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
         }
-        if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), hubConfig.newJobDbClient());
-        }
-        if (caughtException == null) {
-            modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), hubConfig.newJobDbClient());
-        }
 
+        if (caughtException == null) {
+            logger.info("Loading REST options for jobs server");
+            DatabaseClient jobsClient = hubConfig.newJobDbClient();
+            modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), jobsClient);
+            if (caughtException == null) {
+                modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), jobsClient);
+            }
+        }
 
         if (caughtException != null) {
             throw new RuntimeException(caughtException);
         }
+    }
+
+    protected void generateCustomRewriters() {
+        logger.info("Creating custom rewriters for staging and job app servers");
+        SystemService.on(hubConfig.newFinalClient(null)).createCustomRewriters();
     }
 
     protected void prepareAssetFileLoader(AssetFileLoader loader, CommandContext context) {

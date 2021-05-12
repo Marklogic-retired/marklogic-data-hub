@@ -1,0 +1,11 @@
+{
+  "role-name": "data-hub-module-loader",
+  "description": "Permits loading DHF modules, which as of 5.5 depends on accessing the default ML REST rewriter; this role is expected to be granted only via an amp",
+  "privilege": [
+    {
+      "privilege-name": "xdmp:document-get",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-document-get",
+      "kind": "execute"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
@@ -232,15 +233,8 @@ public class HubTestBase extends AbstractHubTest {
     }
 
     protected String getModulesFile(String uri) {
-        try {
-            String contents = getHubClient().getModulesClient().newDocumentManager().read(uri).next().getContent(new StringHandle()).get();
-            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
-        } catch (IllegalStateException e) {
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
+        return mgr.exists(uri) != null ? mgr.readAs(uri, String.class).replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "") : null;
     }
 
     protected Document getXmlFromResource(String resourceName) {

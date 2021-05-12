@@ -1,0 +1,4 @@
+{
+    "functionName": "createCustomRewriters",
+    "desc": "Creates custom rewriter modules for the staging and job app servers"
+}
