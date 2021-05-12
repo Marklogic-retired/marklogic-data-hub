@@ -36,11 +36,14 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     return property.multiple ? <span aria-label={`${property.name}-option`}>{property.name} <img className={styles.arrayImage} src={arrayIcon} alt=""/></span> : <span aria-label={`${property.name}-option`}>{property.name}</span>;
   };
 
-  const renderStrucuturedPropertyOption = (property: Property, entityPropertyName: string) => {
+  const renderStrucuturedPropertyOption = (property: Property, entityPropertyName: string, parentKeys: any) => {
     if (property.ref !== "") {
       let parsedRef = property.ref.split("/");
       let structuredType = parsedRef[parsedRef.length-1];
       let structuredTypeDefinition: Definition = props.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === structuredType) || DEFAULT_ENTITY_DEFINITION;
+      if (!parentKeys.includes(property.name)) {
+        parentKeys.push(property.name);
+      }
 
       let structuredTitle = (
         <span>
@@ -53,27 +56,32 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
 
       let structuredProperties =  structuredTypeDefinition.properties.map((structProperty, index) => {
         if (structProperty.datatype === "structured") {
-          return renderStrucuturedPropertyOption(structProperty, entityPropertyName);
+          return renderStrucuturedPropertyOption(structProperty, entityPropertyName, parentKeys);
         } else {
-          // TODO remove disabled to support selecting structured properties
-          // TODO handle nested structured property's display value when selected
+          let keys = parentKeys.join(" > ");
           return (
             <MLTreeNode
-              disabled
               key={`${entityPropertyName}-${property.name}-${structProperty.name}-${index}`}
-              value={`${entityPropertyName} > ${structProperty.name}`}
+              value={`${keys} > ${structProperty.name}`}
               title={renderBasicPropertyTitle(structProperty)}
+              aria-label={`${keys} > ${structProperty.name}-option`}
             />
           );
         }
       });
-
+      let label = "";
+      if (entityPropertyName === property.name) {
+        label = `${property.name}-option`;
+      } else {
+        label = `${entityPropertyName} > ${property.name}-option`;
+      }
       return (
         <MLTreeNode
           disabled
           key={`${entityPropertyName}-${property.name}-parent`}
           value={`${entityPropertyName} > ${property.name}`}
           title={structuredTitle}
+          aria-label={label}
         >
           {structuredProperties}
         </MLTreeNode>
@@ -83,13 +91,19 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
 
   const renderPropertyOptions = props.propertyDropdownOptions.map((property, index) => {
     if (property.datatype === "structured") {
-      return renderStrucuturedPropertyOption(property, property.name);
+      return renderStrucuturedPropertyOption(property, property.name, []);
     } else if (curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && newMergeRuleOptions.indexOf(property.name)!==-1) {
       return <MLTreeNode key={index} value={property.name} disabled title={renderBasicPropertyTitle(property)}/>;
     } else {
       return <MLTreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)}/>;
     }
   });
+
+  const dropdownStyle = {
+    zIndex: "1000",
+    maxHeight: "350px",
+    overflow: "auto"
+  };
 
   return (
     <MLTreeSelect
@@ -100,7 +114,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       onChange={onChange}
       value={props.value}
       treeNodeLabelProp={props.value}
-      dropdownStyle={{zIndex: "1000"}}
+      dropdownStyle={dropdownStyle}
     >
       {renderPropertyOptions}
     </MLTreeSelect>

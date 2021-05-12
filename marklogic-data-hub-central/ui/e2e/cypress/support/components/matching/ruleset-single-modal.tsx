@@ -8,6 +8,21 @@ class RulesetSingleModal {
     cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
   }
 
+  selectStructuredPropertyToMatch(parent: string, property: string) {
+    cy.get("span.ml-tree-select").trigger("mouseover").click();
+    cy.findByLabelText(`${parent}-option`).within(() => {
+      cy.findByLabelText("icon: caret-down").then($option => {
+        $option[0].click();
+      });
+      cy.findByLabelText(`${property}-option`).within(() => {
+        cy.findByLabelText(`${property.split(" > ").pop()}-option`).then($option => {
+          $option[0].click();
+        });
+      });
+    });
+    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
+  }
+
   selectMatchTypeDropdown(matchType: string) {
     cy.findByLabelText("match-type-dropdown").should("be.visible", {timeout: 10000}).click({force: true});
     cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should("have.length.gt", 0)).click({force: true});

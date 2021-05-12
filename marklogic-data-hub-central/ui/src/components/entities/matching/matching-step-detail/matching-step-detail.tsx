@@ -157,9 +157,12 @@ const MatchingStepDetail: React.FC = () => {
       rulesetDataList.shift();
     };
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
-    await test();
-    setPreviewMatchedActivity(previewMatchActivity);
-    setRulesetDataList(rulesetDataList);
+    if (previewMatchActivity) {
+      await test();
+      setPreviewMatchedActivity(previewMatchActivity);
+      setRulesetDataList(rulesetDataList);
+    }
+
   };
 
   const getKeysToExpandFromTable = async () => {
@@ -318,9 +321,9 @@ const MatchingStepDetail: React.FC = () => {
 
   const getRulesetName = (rulesetComb) => {
     let matchRules = rulesetComb.matchRules;
-    let rulesetName = rulesetComb.rulesetName;
+    let rulesetName = rulesetComb.rulesetName.split(".").join(" > ");
     if (!rulesetComb.rulesetName && Array.isArray(matchRules) && matchRules.length) {
-      rulesetName = matchRules[0].entityPropertyPath + " - " + matchRules[0].matchAlgorithm;
+      rulesetName = matchRules[0].entityPropertyPath.split(".").join(" > ") + " - " + matchRules[0].matchAlgorithm;
     }
     return rulesetName;
   };
