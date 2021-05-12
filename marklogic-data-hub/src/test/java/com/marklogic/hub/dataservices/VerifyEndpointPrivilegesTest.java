@@ -26,7 +26,12 @@ public class VerifyEndpointPrivilegesTest extends AbstractHubCoreTest {
         final GenericDocumentManager mgr = modulesClient.newDocumentManager();
         final Map<String, List<String>> results = new TreeMap<>();
         EvalResultIterator iter = modulesClient.newServerEval()
-            .xquery("for $uri in cts:uri-match('/data-hub/5/data-services/**.api') return fn:replace($uri, '.api', '.sjs')").eval();
+            .xquery("" +
+                "for $uri in cts:uri-match('/data-hub/5/data-services/**.api') " +
+                "let $sjs-uri := fn:replace($uri, '.api', '.sjs') " +
+                "let $xquery-uri := fn:replace($uri, '.api', '.xqy') " +
+                "return if (fn:doc-available($sjs-uri)) then $sjs-uri else $xquery-uri"
+            ).eval();
 
         try {
             iter.forEachRemaining(uri -> {
@@ -63,12 +68,15 @@ public class VerifyEndpointPrivilegesTest extends AbstractHubCoreTest {
         List<String> privileges = new ArrayList<>();
 
         final String assertion = "xdmp.securityAssert(";
+        final String xqueryAssertion = "xdmp:security-assert(";
         final String noPrivilegeRequired = "// No privilege required: ";
 
         for (String line : moduleContent.split("\n")) {
             line = line.trim();
-            if (line.startsWith(assertion)) {
-                line = line.substring(assertion.length() + 1);
+            if (line.startsWith(assertion) || line.startsWith(xqueryAssertion)) {
+                line = line.startsWith(assertion) ?
+                    line.substring(assertion.length() + 1) :
+                    line.substring(xqueryAssertion.length() + 1);
                 line = line.replace("\", \"execute\");", "");
 
                 int lastSlash = line.lastIndexOf("/");

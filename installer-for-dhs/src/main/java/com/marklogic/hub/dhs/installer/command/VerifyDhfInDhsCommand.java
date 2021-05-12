@@ -43,7 +43,6 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
 
         verifyStagingServers();
         verifyFinalServers();
-        verifyJobServers();
 
         verifyModules();
         verifyArtifacts();
@@ -79,11 +78,6 @@ public class VerifyDhfInDhsCommand extends AbstractVerifyCommand {
     private void verifyFinalServers() {
         verifyFinalServer(CURATOR);
         verifyFinalServer(EVALUATOR);
-    }
-
-    private void verifyJobServers() {
-        verifyJobServer(CURATOR);
-        verifyJobServer(EVALUATOR);
     }
 
     private void verifyModules() {

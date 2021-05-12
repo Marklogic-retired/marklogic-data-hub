@@ -48,6 +48,7 @@ public interface SystemService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_getVersions;
+            private BaseProxy.DBFunctionRequest req_createCustomRewriters;
             private BaseProxy.DBFunctionRequest req_finishHubDeployment;
 
             private SystemServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -56,6 +57,8 @@ public interface SystemService {
 
                 this.req_getVersions = this.baseProxy.request(
                     "getVersions.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_createCustomRewriters = this.baseProxy.request(
+                    "createCustomRewriters.xqy", BaseProxy.ParameterValuesKind.NONE);
                 this.req_finishHubDeployment = this.baseProxy.request(
                     "finishHubDeployment.sjs", BaseProxy.ParameterValuesKind.NONE);
             }
@@ -70,6 +73,16 @@ public interface SystemService {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request.responseSingle(false, Format.JSON)
                 );
+            }
+
+            @Override
+            public void createCustomRewriters() {
+                createCustomRewriters(
+                    this.req_createCustomRewriters.on(this.dbClient)
+                    );
+            }
+            private void createCustomRewriters(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
             }
 
             @Override
@@ -93,6 +106,14 @@ public interface SystemService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getVersions();
+
+  /**
+   * Creates custom rewriter modules for the staging and job app servers
+   *
+   * 
+   * 
+   */
+    void createCustomRewriters();
 
   /**
    * Invokes the finishHubDeployment operation on the database server
