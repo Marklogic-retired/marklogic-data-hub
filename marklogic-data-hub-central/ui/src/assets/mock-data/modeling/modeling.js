@@ -870,7 +870,7 @@ export const entityDefinitionsArray = [
 export const referencePayloadEmpty = {
   "stepNames": [],
   "entityNames": [],
-  "entityNamesWithForeignKeyReferences" : []
+  "entityNamesWithForeignKeyReferences": []
 };
 
 export const referencePayloadSteps = {

@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, wait} from "@testing-library/react";
+import {render, screen, wait, within} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import RulesetSingleModal from "./ruleset-single-modal";
@@ -327,6 +327,42 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(screen.getByText("Exact"));
     userEvent.click(screen.getByText("Save"));
 
+    await wait(() => {
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it("can select structured property and click save", async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+
+    const {queryByText, getByText, getByLabelText} =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
+    userEvent.click(screen.getByText("Select property"));
+    userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down"));
+    userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
+
+    userEvent.click(screen.getByText("Select match type"));
+    userEvent.click(screen.getByText("Synonym"));
+    userEvent.type(getByLabelText("thesaurus-uri-input"), "/Users/jsmith/Documents/sample-data/4feec983");
+    userEvent.type(getByLabelText("filter-input"), "<thsr:qualifier>birds</thsr:qualifier>");
+
+
+    userEvent.click(getByText("Save"));
     await wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);

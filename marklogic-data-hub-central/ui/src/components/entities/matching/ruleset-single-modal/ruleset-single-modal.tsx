@@ -91,7 +91,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
     if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
       let editRuleset = props.editRuleset;
-      setSelectedProperty(editRuleset.name.split(" ")[0]);
+      setSelectedProperty(editRuleset.name.split(" ")[0].split(".").join(" > "));
       let matchType = editRuleset["matchRules"][0]["matchType"];
       if (editRuleset.reduce) {
         setReduceValue(true);
@@ -230,12 +230,16 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setReduceValue(false);
   };
 
+  const getSelectedPropertyValue = (selectedProperty) => {
+    return selectedProperty ? selectedProperty.split(" > ").join(".") : "";
+  };
+
   const onSubmit = (event) => {
     event.preventDefault();
     let propertyErrorMessage = "";
     let matchErrorMessage = "";
     let rulesetName = "";
-    let propertyName = selectedProperty || "";
+    let propertyName = getSelectedPropertyValue(selectedProperty) || "";
 
     if (selectedProperty === "" || selectedProperty === undefined) {
       propertyErrorMessage = "A property to match is required";
@@ -278,8 +282,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         thesaurusErrorMessage = "A thesaurus URI is required";
       }
 
-      let propertyName = selectedProperty || "";
-
       let synonymMatchRule: MatchRule = {
         entityPropertyPath: propertyName,
         matchType: matchType,
@@ -317,7 +319,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         distanceThresholdErrorMessage = "A distance threshold is required";
       }
 
-      let propertyName = selectedProperty || "";
       rulesetName = `${propertyName} - Double Metaphone`;
 
       let doubleMetaphoneMatchRule: MatchRule = {
@@ -357,8 +358,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       if (functionValue === "") {
         functionErrorMessage = "A function is required";
       }
-
-      let propertyName = selectedProperty || "";
 
       let customMatchRule: MatchRule = {
         entityPropertyPath: propertyName,

@@ -156,6 +156,24 @@ describe("Matching", () => {
     //Verify the possible match combinations
     matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email - Exact").trigger("mousemove").should("be.visible");
   });
+  it("Add a ruleset with single structured property", () => {
+    matchingStepDetail.addNewRuleset();
+    matchingStepDetail.getSinglePropertyOption();
+    rulesetSingleModal.selectStructuredPropertyToMatch("shipping", "shipping > street");
+    rulesetSingleModal.selectMatchTypeDropdown("exact");
+    rulesetSingleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findByLabelText("shipping.street-exact").should("have.length.gt", 0));
+    multiSlider.getHandleNameAndType("shipping.street", "exact").should("be.visible");
+    multiSlider.getHandleName("shipping.street").should("be.visible");
+  });
+  it("When we work on the spike story to update multi-slider componenens using cypress", () => {
+    multiSlider.getHandleName("shipping.street").trigger("mousedown", {force: true});
+    cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 30.303%;"]`).trigger("mousemove", {force: true});
+    multiSlider.getHandleName("shipping.street").trigger("mouseup", {force: true});
+    //Verify the possible match combinations
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "shipping.street - Exact").trigger("mousemove").should("be.visible");
+  });
   it("Add a ruleset with multiple properties", () => {
     matchingStepDetail.addNewRuleset();
     matchingStepDetail.getMultiPropertyOption();
@@ -178,6 +196,15 @@ describe("Matching", () => {
     rulesetMultipleModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findByLabelText("customerMultiplePropertyRuleset").should("have.length.gt", 0));
+  });
+  it("Delete a ruleset", () => {
+    multiSlider.deleteOption("shipping.street");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
+    matchingStepDetail.confirmSliderOptionDeleteButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findByLabelText("rulesetName-testing-shipping.street").should("have.length", 0));
+    multiSlider.getHandleName("shipping.street").should("not.exist");
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "shipping.street").should("not.exist");
   });
   it("Delete a ruleset", () => {
     multiSlider.deleteOption("email");
