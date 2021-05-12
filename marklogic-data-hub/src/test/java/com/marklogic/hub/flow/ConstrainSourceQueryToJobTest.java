@@ -1,6 +1,8 @@
 package com.marklogic.hub.flow;
 
+import com.marklogic.client.ext.datamovement.job.DeleteCollectionsJob;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.Test;
 
@@ -37,5 +39,25 @@ public class ConstrainSourceQueryToJobTest extends AbstractHubCoreTest {
         stepResponse = flowResponse.getStepResponses().get(mapXmlStep);
         assertEquals(1, stepResponse.getSuccessfulBatches(), "Since the sourceQuery was constrained to job1, and the " +
             "ingestion step was executed before with that jobId, then the ingested XML document should have been processed");
+
+        verifyJobsCanBeDeletedViaDMSDK();
+    }
+
+    private void verifyJobsCanBeDeletedViaDMSDK() {
+        final String collection = "Jobs";
+
+        // Use a user that has permission to delete these docs
+        runAsAdmin();
+
+        assertEquals(3, getDocCount(HubConfig.DEFAULT_JOB_NAME, collection),
+            "Expecting 2 Job docs and 1 Batch doc");
+
+        new DeleteCollectionsJob(collection).setConsistentSnapshot(true).run(getHubClient().getJobsClient());
+
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_JOB_NAME, collection),
+            "DeleteCollectionsJob uses DMSDK under the hood to find documents to delete; prior to " +
+                "DHFPROD-7256, the custom jobs rewriter that DHF used did not support this due to " +
+                "some errors in the rewriter. This is then a simple test to verify that the custom " +
+                "rewriter is correct, or at least not exhibiting the bug shown in 7256");
     }
 }

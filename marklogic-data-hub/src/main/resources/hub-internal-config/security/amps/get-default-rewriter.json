@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/data-hub/system",
+  "local-name" : "get-default-rewriter",
+  "document-uri" : "/data-hub/5/system/system-lib.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-module-loader" ]
+}

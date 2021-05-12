@@ -232,15 +232,8 @@ public class HubTestBase extends AbstractHubTest {
     }
 
     protected String getModulesFile(String uri) {
-        try {
-            String contents = getHubClient().getModulesClient().newDocumentManager().read(uri).next().getContent(new StringHandle()).get();
-            return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
-        } catch (IllegalStateException e) {
-            return null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        String contents = getHubClient().getModulesClient().newDocumentManager().read(uri).next().getContent(new StringHandle()).get();
+        return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
     }
 
     protected Document getXmlFromResource(String resourceName) {
