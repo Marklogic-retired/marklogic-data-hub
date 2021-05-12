@@ -145,7 +145,7 @@ function valuesExist(values) {
   return (values && values.length !== 0);
 }
 
-function buildJobDocumentQuery({jobId, jobStatus, startTimeBegin, startTimeEnd, endTimeBegin, endTimeEnd, user}) {
+function buildJobDocumentQuery({jobId, jobStatus, flowName, stepName, stepDefinitionType, startTimeBegin, startTimeEnd, endTimeBegin, endTimeEnd, user}) {
   const queries = [cts.collectionQuery('Job')];
   // TODO investigate more scalable cts queries using the triple index
   if (valuesExist(jobId)) {
@@ -153,6 +153,15 @@ function buildJobDocumentQuery({jobId, jobStatus, startTimeBegin, startTimeEnd, 
   }
   if (valuesExist(jobStatus)) {
     queries.push(cts.jsonPropertyValueQuery('jobStatus', jobStatus));
+  }
+  if (valuesExist(flowName)) {
+    queries.push(cts.jsonPropertyValueQuery('flow', flowName));
+  }
+  if (valuesExist(stepName)) {
+    queries.push(cts.jsonPropertyValueQuery('stepName', stepName));
+  }
+  if (valuesExist(stepDefinitionType)) {
+    queries.push(cts.jsonPropertyValueQuery('stepDefinitionType', stepDefinitionType));
   }
   if (valuesExist(startTimeBegin)) {
     queries.push(cts.rangeQuery(cts.elementReference(xs.QName("timeStarted"), ["type=dateTime"]), '>=', xs.dateTime(startTimeBegin)));
