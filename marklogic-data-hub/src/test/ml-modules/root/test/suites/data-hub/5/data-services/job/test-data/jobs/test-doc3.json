@@ -1,7 +1,7 @@
 {
   "job": {
     "jobId": "test-job3",
-    "flow": "ingestion_mapping_mastering-flow",
+    "flow": "mapping_ingestion_mastering-flow",
     "user": "admin",
     "lastAttemptedStep": "3",
     "lastCompletedStep": "3",

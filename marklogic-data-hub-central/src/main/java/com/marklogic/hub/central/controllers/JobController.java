@@ -63,6 +63,15 @@ public class JobController extends BaseController {
         return new ResponseEntity<>(stepResponses, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/stepResponses/facetValues", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiOperation(value = "Get an array of strings that match the pattern for a given property")
+    @Secured("ROLE_jobMonitor")
+    public ResponseEntity<JsonNode> getFacetValues(@RequestBody JsonNode fsQuery) {
+        JsonNode facetValues = JobService.on(getHubClient().getJobsClient()).getMatchingPropertyValues(fsQuery);
+        return new ResponseEntity<>(facetValues, HttpStatus.OK);
+    }
+
     private JsonNode flattenJobsJson(JsonNode jobJSON) {
         if (jobJSON.isArray()) {
             ArrayNode array = new ObjectMapper().createArrayNode();

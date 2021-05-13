@@ -141,6 +141,26 @@ function buildFacetQueries(whereClause) {
   return queries;
 }
 
+function getMatchingPropertyValues(facetValuesSearchQuery) {
+  const facetName = facetValuesSearchQuery.facetName;
+  const searchTerm = facetValuesSearchQuery.searchTerm;
+  const limit = facetValuesSearchQuery.limit ? facetValuesSearchQuery.limit : 10 ;
+  let updatedSearchTerm = searchTerm.replace(/%/g, "|%").concat('%');
+  updatedSearchTerm = sanitizeSqlValue(updatedSearchTerm);
+  let matchingPropertiesQuery = 'select DISTINCT(Job.StepResponse.' + facetName + ') AS ' + facetName +
+      ' FROM Job.StepResponse WHERE ' + 'Job.StepResponse.' + facetName + ' like ' + updatedSearchTerm + ' LIMIT ' + limit;
+  let results = xdmp.sql(matchingPropertiesQuery, ["map", "optimize=0"]).toObject();
+  const deficit = limit - results.length;
+  if(deficit) {
+    updatedSearchTerm = '_%'.concat(searchTerm.replace(/%/g, "|%")).concat('%');
+    updatedSearchTerm = sanitizeSqlValue(updatedSearchTerm);
+    matchingPropertiesQuery = 'select DISTINCT(Job.StepResponse.' + facetName + ') AS ' + facetName +
+        ' FROM Job.StepResponse WHERE ' + 'Job.StepResponse.' + facetName + ' like ' + updatedSearchTerm + ' LIMIT ' + limit;
+    results = results.concat(xdmp.sql(matchingPropertiesQuery, ["map", "optimize=0"]).toObject());
+  }
+  return results.map(result => result[facetName]);
+}
+
 function valuesExist(values) {
   return (values && values.length !== 0);
 }
@@ -357,7 +377,8 @@ function insertDocument(uri, content, permissions, collections, targetDatabase) 
 }
 
 module.exports = {
-  findStepResponses,
   findJobs,
+  findStepResponses,
+  getMatchingPropertyValues,
   installJobTemplates
 };

@@ -44,7 +44,7 @@ function verifyStepResponse() {
         test.assertEqual(5, response.results[0].successfulItemCount),
         test.assertEqual(0, response.results[0].failedItemCount),
         test.assertEqual("admin", response.results[0].user),
-        test.assertEqual("ingestion_mapping_mastering-flow", response.results[0].flowName)
+        test.assertEqual("mapping_ingestion_mastering-flow", response.results[0].flowName)
     ];
 }
 
@@ -292,17 +292,17 @@ function verifyFacetsInStepResponseInDataWithSingleQuotes() {
             }
         ],
         "facets": {
-            "stepName": ["ingest-ste'p-jso'n"]
+            "stepName": ["ingest-ste'p-ing%est-jso'n"]
         }
     };
     const response = jobQueryService.findStepResponses(query);
     const facets = response.facets;
     return [
         test.assertEqual("test-job1", response.results[0]["jobId"]),
-        test.assertEqual("ingest-ste'p-jso'n", response.results[0].stepName),
+        test.assertEqual("ingest-ste'p-ing%est-jso'n", response.results[0].stepName),
         test.assertEqual(4, Object.keys(facets).length),
         test.assertEqual(1, facets["stepName"]["facetValues"].length),
-        test.assertEqual("ingest-ste'p-jso'n", facets["stepName"]["facetValues"][0]["name"])
+        test.assertEqual("ingest-ste'p-ing%est-jso'n", facets["stepName"]["facetValues"][0]["name"])
     ];
 }
 
