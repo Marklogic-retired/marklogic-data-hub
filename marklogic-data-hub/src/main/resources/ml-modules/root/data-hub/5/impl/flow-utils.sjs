@@ -728,8 +728,38 @@ function writeContentArray(contentArray, databaseName) {
   if (databaseName) {
     options.database = xdmp.database(databaseName);
   }
+  try {
+    return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs', vars, options));
+  } catch (e) {
+    handleWriteErrors(e, contentArray);
+  }
+}
 
-  return fn.head(xdmp.invoke('/data-hub/5/impl/hub-utils/invoke-queue-write.sjs', vars, options));
+function handleWriteErrors(error, contentArray) {
+  switch (error.name) {
+    case 'XDMP-CONFLICTINGUPDATES':
+      let data = error.data[0];
+      let parseUriRegex = /^xdmp\.documentInsert\("([^"]+)".*$/
+      let uri = parseUriRegex.test(data) ? data.replace(parseUriRegex, '$1'): null;
+      throw new Error(`Attempted to write to the same URI multiple times in the same transaction. ${ uri ? 'URI: ' + uri : ''}`);
+    case 'TDE-INDEX':
+      let isFailOnSubjectIRI = error.data.includes('$subject-iri');
+      if (isFailOnSubjectIRI) {
+        let failedContentObject = contentArray.find((contentObj) => error.data.includes(contentObj.uri));
+        if (failedContentObject) {
+          let contentValue = failedContentObject.value;
+          let entityTitle;
+          if (contentValue instanceof Node) {
+            entityTitle = fn.string(contentValue.xpath('/*:envelope/*:instance/*:info/*:title'));
+          } else {
+            entityTitle = contentValue.envelope.instance.info.title;
+          }
+          throw new Error(`Cannot write ${entityTitle} instance with multiple values for identifier property. URI: ${failedContentObject.uri}`);
+        }
+      }
+    default:
+      throw error;
+  }
 }
 
 /**
