@@ -41,7 +41,6 @@ const Curate: React.FC = () => {
     const storedCurateModel = storage?.curate?.modelDefinition;
     const storedCurateType = storage?.curate?.entityType;
 
-
     if (storedCurateArtifact !== undefined && storedCurateModel !== undefined && storedCurateType !== undefined) {
 
       const stepDefinitionType = storedCurateArtifact["stepDefinitionType"];
