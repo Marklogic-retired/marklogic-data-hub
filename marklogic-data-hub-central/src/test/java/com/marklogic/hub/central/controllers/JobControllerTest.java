@@ -17,6 +17,7 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.AbstractMvcTest;
@@ -33,6 +34,7 @@ public class JobControllerTest extends AbstractMvcTest {
     JobController jobController;
 
     private final static String STEP_RESPONSES_PATH = "/api/jobs/stepResponses";
+    private final static String GET_MATCHING_VALUES_PATH = "/api/jobs/stepResponses/facetValues";
 
     @Test
     public void testProcessedTargetDatabase() throws JsonProcessingException {
@@ -64,11 +66,11 @@ public class JobControllerTest extends AbstractMvcTest {
                 "  \"start\": 1,\n" +
                 "  \"pageLength\": 10\n" +
                 "}";
-        runAsAdmin();
+        runAsDataHubDeveloper();
         installReferenceModelProject(true);
 
         loginAsTestUserWithRoles("hub-central-operator");
-        runFlow(new FlowInputs("simpleMapping"));
+        runSuccessfulFlow(new FlowInputs("simpleMapping"));
 
         postJson(STEP_RESPONSES_PATH, json)
             .andExpect(status().isOk())
@@ -84,5 +86,29 @@ public class JobControllerTest extends AbstractMvcTest {
 
         loginAsTestUserWithRoles("hub-central-user");
         verifyRequestIsForbidden(buildJsonPost(STEP_RESPONSES_PATH, json));
+    }
+
+    @Test
+    public void testGetMatchingPropertyValues() throws Exception {
+        String json = "{\n" +
+                "  \"facetName\": \"flowName\",\n" +
+                "  \"searchTerm\": \"simple\"\n" +
+                "}";
+        runAsDataHubDeveloper();
+        installReferenceModelProject(true);
+
+        loginAsTestUserWithRoles("hub-central-operator");
+        runSuccessfulFlow(new FlowInputs("simpleMapping"));
+
+        postJson(GET_MATCHING_VALUES_PATH, json)
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    ArrayNode response = readJsonArray(result.getResponse().getContentAsString());
+                    assertNotNull(response);
+                    assertEquals(1, response.size());
+                });
+
+        loginAsTestUserWithRoles("hub-central-user");
+        verifyRequestIsForbidden(buildJsonPost(GET_MATCHING_VALUES_PATH, json));
     }
 }

@@ -1,0 +1,15 @@
+{
+  "functionName": "getMatchingPropertyValues",
+  "params": [
+    {
+      "name": "facetValuesSearchQuery",
+      "datatype": "jsonDocument",
+      "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+    "description": "Returns array of matching values for a specific facet"
+  }
+}

@@ -11,7 +11,7 @@
     "stepResponses": {
       "1": {
         "flowName": "ingestion_mapping-flow",
-        "stepName": "ingest-ste'p-jso'n",
+        "stepName": "ingest-ste'p-ing%est-jso'n",
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
         "stepOutput": null,
@@ -46,7 +46,7 @@
       },
       "3": {
         "flowName": "ingestion_mapping-flow",
-        "stepName": "ingest-step-xml",
+        "stepName": "step-ingest-xml",
         "stepDefinitionName": "default-ingestion",
         "stepDefinitionType": "ingestion",
         "stepOutput": null,

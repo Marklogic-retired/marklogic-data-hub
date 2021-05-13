@@ -51,6 +51,7 @@ public interface JobService {
             private BaseProxy.DBFunctionRequest req_finishStep;
             private BaseProxy.DBFunctionRequest req_getJob;
             private BaseProxy.DBFunctionRequest req_startJob;
+            private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
             private BaseProxy.DBFunctionRequest req_finishJob;
             private BaseProxy.DBFunctionRequest req_findStepResponses;
 
@@ -66,6 +67,8 @@ public interface JobService {
                     "getJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_startJob = this.baseProxy.request(
                     "startJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_getMatchingPropertyValues = this.baseProxy.request(
+                    "getMatchingPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_finishJob = this.baseProxy.request(
                     "finishJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_findStepResponses = this.baseProxy.request(
@@ -131,6 +134,21 @@ public interface JobService {
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
                           BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getMatchingPropertyValues(com.fasterxml.jackson.databind.JsonNode facetValuesSearchQuery) {
+                return getMatchingPropertyValues(
+                    this.req_getMatchingPropertyValues.on(this.dbClient), facetValuesSearchQuery
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getMatchingPropertyValues(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode facetValuesSearchQuery) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("facetValuesSearchQuery", false, BaseProxy.JsonDocumentType.fromJsonNode(facetValuesSearchQuery))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -204,6 +222,14 @@ public interface JobService {
    * @return	The created Job document
    */
     com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName);
+
+  /**
+   * Invokes the getMatchingPropertyValues operation on the database server
+   *
+   * @param facetValuesSearchQuery	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getMatchingPropertyValues(com.fasterxml.jackson.databind.JsonNode facetValuesSearchQuery);
 
   /**
    * Updated the Job document associated with jobId with the given jobStatus
