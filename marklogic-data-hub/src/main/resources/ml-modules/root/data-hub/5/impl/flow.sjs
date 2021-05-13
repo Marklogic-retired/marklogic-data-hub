@@ -482,6 +482,8 @@ class Flow {
     // see if we can determine a uri based off the operation in the stackFrames
     if (operation) {
       uri = flowInstance.globalContext.failedItems.find((uri) => operation.includes(`"${uri}"`));
+    } else if (error.message) {
+      uri = flowInstance.globalContext.failedItems.find((uri) => error.message.includes(`URI: ${uri}`));
     }
     flowInstance.addBatchError(flowInstance, error, uri);
   }
