@@ -343,6 +343,19 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
 
+    //Selecting a property without providing the ruleset name
+    let customerIdSelectionCheckbox: any =  document.querySelector(`[name="customerId"]`);
+    userEvent.click(customerIdSelectionCheckbox);
+    userEvent.click(getByLabelText("customerId-match-type-dropdown"));
+    userEvent.click(getByLabelText("exact-option"));
+
+    userEvent.click(getByText("Save"));
+
+    expect(getByText("A ruleset name is required")).toBeInTheDocument();
+    expect(toggleModalMock).toHaveBeenCalledTimes(0);
+    expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
+
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
     userEvent.click(getByText("Save"));

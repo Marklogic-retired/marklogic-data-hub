@@ -204,6 +204,24 @@ describe("Merging", () => {
     cy.waitUntil(() => cy.findAllByText("orderId").should("have.length", 0));
     cy.findByText("orderId").should("not.exist");
   });
+  it("add merge rule on structured property", () => {
+    mergingStepDetail.addMergeRuleButton().click();
+    cy.contains("Add Merge Rule");
+    mergeRuleModal.selectStructuredPropertyToMerge("address", "address > city");
+    mergeRuleModal.selectMergeTypeDropdown("Strategy");
+    mergeRuleModal.selectStrategyName("myFavouriteStrategy");
+    mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("address > city").should("have.length.gt", 0));
+    cy.findByText("address > city").should("exist");
+  });
+  it("Delete merge rule on structured property", () => {
+    mergingStepDetail.getDeleteMergeRuleButton("address.city").click();
+    mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("address > city").should("have.length", 0));
+    cy.findByText("address > city").should("not.exist");
+  });
   it("add merge rule of type property-specific ", () => {
     mergingStepDetail.addMergeRuleButton().click();
     cy.contains("Add Merge Rule");
