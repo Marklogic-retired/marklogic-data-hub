@@ -384,6 +384,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const onSubmit = (event) => {
     event.preventDefault();
     setSaveClicked(true);
+    let rulesetNameErrorMsg = "";
     let propertyErrorMessage = "";
     let matchErrorMessageObj = {};
     let thesaurusErrorMessageObj = {};
@@ -393,7 +394,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     let functionErrorMessageObj = {};
 
     if (rulesetName === "" || rulesetName === undefined) {
-      setRulesetNameErrorMessage("A ruleset name is required");
+      rulesetNameErrorMsg = "A ruleset name is required";
     }
 
     let matchRules: any = [];
@@ -492,7 +493,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       });
     }
 
-    if (rulesetNameErrorMessage === "") {
+    if (rulesetNameErrorMsg === "") {
       if (propertyErrorMessage === "") {
         let errorInMatchType = Object.keys(matchErrorMessageObj).length > 0;
         let errorInThesaurusUri = Object.keys(thesaurusErrorMessageObj).length > 0;
@@ -534,6 +535,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           resetModal();
         }
       }
+    } else {
+      setRulesetNameErrorMessage(rulesetNameErrorMsg);
     }
   };
 

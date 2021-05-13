@@ -170,10 +170,11 @@ const MergingStepDetail: React.FC = () => {
       width: 200,
       sortDirections: ["ascend", "descend", "ascend"],
       render: text => {
+        let mergeRuleLabel = text?.split(" > ").join(".");
         return (
           <span className={styles.link}
             id={"property-name-link"}
-            onClick={ () => editMergeRule(text)}>
+            onClick={ () => editMergeRule(mergeRuleLabel)}>
             {text}</span>
         );
       }
@@ -244,7 +245,7 @@ const MergingStepDetail: React.FC = () => {
   mergingStep && mergingStep.mergeRules.length > 0 && mergingStep.mergeRules.forEach((i) => {
     mergeRulesData.push(
       {
-        property: i["entityPropertyPath"],
+        property: i["entityPropertyPath"]?.split(".").join(" > "),
         mergeType: i["mergeType"],
         strategy: i["mergeStrategyName"],
         delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg"  data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/>

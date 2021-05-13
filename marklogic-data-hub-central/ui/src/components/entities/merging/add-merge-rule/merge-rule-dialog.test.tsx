@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, fireEvent, screen, waitForElement} from "@testing-library/react";
+import {render, cleanup, fireEvent, screen, waitForElement, within} from "@testing-library/react";
 import MergeRuleDialog from "./merge-rule-dialog";
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from "../../../../util/curation-context";
@@ -255,6 +255,46 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(saveButton);
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
 
+  });
+
+  it("can select structured property and click save", async () => {
+    mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+
+    const {queryByText, getByText, getByLabelText, getByTestId} =  render(
+      <CurationContext.Provider value={customerMergingStep}>
+        <MergeRuleDialog
+          {...data.mergeRuleDataProps}
+          isEditRule={false}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText("Add Merge Rule")).toBeInTheDocument();
+    fireEvent.click(getByText("Select property"));
+    userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down"));
+    userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
+    //Checking if strategy name select is available now, because strategy merge type is not selected yet.
+    expect(queryByText("Select strategy name")).not.toBeInTheDocument();
+
+    //Selecting the merge type to strategy
+    fireEvent.click(getByLabelText("mergeType-select"));
+    fireEvent.click(getByTestId("mergeTypeOptions-Strategy"));
+
+    expect(queryByText("Select strategy name")).toBeInTheDocument();
+
+    //verify if the below error message is not displayed yet
+    expect(queryByText("Strategy Name is required")).not.toBeInTheDocument();
+
+    let strategyName = getByLabelText("strategy-name-select");
+    let saveButton = getByText("Save");
+
+    //Enter the values for strategy name to see save button gets enabled.
+    fireEvent.click(strategyName);
+    fireEvent.click(getByTestId("strategyNameOptions-customMergeStrategy"));
+
+    fireEvent.click(saveButton); //Modal will close now
+    expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
+    expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
 
 

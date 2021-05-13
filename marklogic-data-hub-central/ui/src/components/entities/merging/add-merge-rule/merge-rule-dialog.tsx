@@ -86,7 +86,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       resetModal();
     }
     if (props.isEditRule && props.propertyName.length) {
-      setProperty(props.propertyName);
+      setProperty(props.propertyName.split(" ")[0].split(".").join(" > "));
       setFormDetails(curationOptions.activeStep.stepArtifact);
     }
   }, [props.isEditRule, props.sourceNames, props.propertyName]);
@@ -372,6 +372,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     let propertyErrorMessage = "";
     let mergeTypeErrorMessage = "";
     let strategyNameErrorMessage = "";
+    let selectedProperty = property ? property.split(" > ").join(".") : "";
     if (property === "" || property === undefined) {
       propertyErrorMessage = "Property is required";
     }
@@ -388,7 +389,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
           props.setOpenMergeRuleDialog(false);
           newMergeRules =
                         {
-                          "entityPropertyPath": property,
+                          "entityPropertyPath": selectedProperty,
                           "mergeType": "custom",
                           "mergeModulePath": uri,
                           "mergeModuleNamespace": namespace,
@@ -403,7 +404,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       } else if (mergeType === "Strategy") {
         if (strategyValue && property && mergeType) {
           newMergeRules = {
-            "entityPropertyPath": property,
+            "entityPropertyPath": selectedProperty,
             "mergeType": "strategy",
             "mergeStrategyName": strategyValue
           };
@@ -415,7 +416,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       } else {
         if ((radioSourcesOptionClicked || radioValuesOptionClicked) && property && mergeType) {
           newMergeRules = {
-            "entityPropertyPath": property,
+            "entityPropertyPath": selectedProperty,
             "mergeType": "property-specific",
             "maxSources": maxSourcesRuleInput ? maxSourcesRuleInput : "All",
             "maxValues": maxValueRuleInput ? maxValueRuleInput : "All",

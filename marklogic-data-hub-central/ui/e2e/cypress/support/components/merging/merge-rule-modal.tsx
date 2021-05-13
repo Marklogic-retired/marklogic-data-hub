@@ -8,6 +8,21 @@ class MergeRuleModal {
     cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
   }
 
+  selectStructuredPropertyToMerge(parent: string, property: string) {
+    cy.get("span.ml-tree-select").trigger("mouseover").click();
+    cy.findByLabelText(`${parent}-option`).within(() => {
+      cy.findByLabelText("icon: caret-down").then($option => {
+        $option[0].click();
+      });
+      cy.findByLabelText(`${property}-option`).within(() => {
+        cy.findByLabelText(`${property.split(" > ").pop()}-option`).then($option => {
+          $option[0].click();
+        });
+      });
+    });
+    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
+  }
+
   selectMergeTypeDropdown(mergeType: string) {
     cy.findByLabelText("mergeType-select").should("be.visible").click();
     cy.waitUntil(() => cy.findByTestId(`mergeTypeOptions-${mergeType}`).should("be.visible")).click({force: true});
