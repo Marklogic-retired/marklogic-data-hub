@@ -633,9 +633,16 @@ const MappingStepDetail: React.FC = () => {
       <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/></span></div>}
   </div> : "";
 
+  // Run when mapping details is opened or returned to
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
-      const mappingStepArtifact: MappingStep = curationOptions.activeStep.stepArtifact;
+      let mappingStepArtifact: MappingStep;
+      // Use session storage mapping artifact if present, else use artifact from context
+      if (storage.curate?.stepArtifact) {
+        mappingStepArtifact = storage.curate.stepArtifact;
+      } else {
+        mappingStepArtifact = curationOptions.activeStep.stepArtifact;
+      }
       setMappingFunctions();
       setMapData(mappingStepArtifact);
       setSavedMappingArt(mappingStepArtifact);
@@ -1118,9 +1125,19 @@ const MappingStepDetail: React.FC = () => {
     } else {
       setErrorInSaving("error");
     }
-    let mapArt = await getMappingArtifactByMapName(dataPayload.targetEntityType, curationOptions.activeStep.stepArtifact.name);
+    let mapArt: MappingStep = await getMappingArtifactByMapName(dataPayload.targetEntityType, curationOptions.activeStep.stepArtifact.name);
     if (mapArt) {
       await setSavedMappingArt({...mapArt});
+      // On success and if session storage mapping data exists, update it
+      if (storage.curate?.modelDefinition && storage.curate?.entityType) {
+        setViewSettings({...storage,
+          curate: {
+            stepArtifact: mapArt,
+            modelDefinition: {...storage.curate?.modelDefinition},
+            entityType: storage.curate?.entityType
+          }
+        });
+      }
     }
     setMapSaved(mapSavedResult);
   };
