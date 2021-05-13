@@ -100,7 +100,7 @@ function main(contentSequence, options, stepExecutionContext) {
         else {
           let currentRelatedMapping = mappingStep.relatedEntityMappings[counter-1];
           entityName = lib.getEntityName(fn.string(currentRelatedMapping.targetEntityType));
-          entityContext = createContextForRelatedEntityInstance(currentRelatedMapping);
+          entityContext = createContextForRelatedEntityInstance(currentRelatedMapping, content);
         }
         const entityModel = entityModelMap[entityName];
 
@@ -111,7 +111,8 @@ function main(contentSequence, options, stepExecutionContext) {
           }
           entityContent["value"] = entityInstance.value;
           entityContent["uri"] = buildUri(entityInstance, entityName, outputFormat);
-          entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContext, entityModel, outputFormat, options);
+          const entityInstanceContext = Object.assign({}, entityContext);
+          entityContent = validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityInstanceContext, entityModel, outputFormat, options);
           hubUtils.hubTrace(traceEvent, `Entity instance envelope created with mapping ${mappingStep.name} and source document ${currentContentUri}: ${entityContent.value}`);
           contentResponse.push(entityContent);
         }
@@ -165,12 +166,15 @@ function validateEntityInstanceAndBuildEnvelope(doc, entityContent, entityContex
   return entityContent;
 }
 
-function createContextForRelatedEntityInstance(relatedEntityMapping){
+function createContextForRelatedEntityInstance(relatedEntityMapping, content){
   let entityContext = {};
   let relatedEntityPermissions = fn.string(relatedEntityMapping.permissions);
   let relatedEntityCollections = relatedEntityMapping.collections;
   entityContext["permissions"] = hubUtils.parsePermissions(relatedEntityPermissions);
   entityContext["collections"] = relatedEntityCollections;
+  if(content.context && content.context.originalCollections){
+    entityContext.originalCollections = content.context.originalCollections;
+  }
   entityContext["useContextCollectionsOnly"] = true;
   return entityContext;
 
