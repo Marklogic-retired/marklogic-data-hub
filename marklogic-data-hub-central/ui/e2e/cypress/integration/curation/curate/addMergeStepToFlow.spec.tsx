@@ -53,6 +53,7 @@ describe("Add Merge step to a flow", () => {
     createEditStepDialog.setTimestampInput().type("/envelop/headers/createdOn", {timeout: 2000});
     createEditStepDialog.saveButton("merging").click();
     cy.waitForAsyncRequest();
+    createEditStepDialog.cancelButton("merging").click();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
   it("Create merge step with duplicate name and verify duplicate name modal is displayed", () => {

@@ -24,7 +24,7 @@ function propertiesWarning(mergeStep) {
     let nonCompliantRules = mergeRulesInfo.filter((ruleInfo) => {
         let allowsMultipleValues = ruleInfo.allowsMultipleValues;
         let ruleObject = ruleInfo.mergeRule ? ruleInfo.mergeRule.toObject() : null;
-        let valuesLimitedToOne = ruleObject && (ruleObject.maxValues === 1 || ruleObject.maxSources === 1);
+        let valuesLimitedToOne = ruleObject && (ruleObject.maxValues === "1" || ruleObject.maxSources === "1");
         return !(allowsMultipleValues || valuesLimitedToOne);
     });
     let nonCompliantRuleProperties = nonCompliantRules.map((ruleInfo) => {
@@ -35,7 +35,7 @@ function propertiesWarning(mergeStep) {
         let warningPropertiesStr = nonCompliantRuleProperties.join(", ");
         return common.warningObject("warn", `Warning: The current merge settings might produce merged documents that are inconsistent with the entity type
 In the entity type ${entityTypeTitle}, the property or properties ${warningPropertiesStr} allows only a single value.
-In every merge rule for the property ${warningPropertiesStr}, set Max Values or Max Sources to 1.`);
+In every merge rule for the property ${warningPropertiesStr} set Max Values or Max Sources to 1.`);
     }
 }
 

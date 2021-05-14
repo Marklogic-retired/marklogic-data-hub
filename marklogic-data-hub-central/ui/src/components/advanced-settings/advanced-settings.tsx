@@ -327,8 +327,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       props.updateStep(getPayload());
     }
     (stepType === "matching" || stepType === "merging") ? setIsSubmit(true) : setIsSubmit(false);
-    /* adding stepType !== merging will show the warnings, should be added as a part of DHFPROD-6995*/
-    if (stepType !== "matching") {
+    if (stepType !== "matching" && stepType !== "merging") {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
@@ -552,6 +551,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             description = "Please remove target entity type from target collections";
           } else if (warning["message"].includes("source collection")) {
             description= "Please remove source collection from target collections";
+          } else if (warning["message"].includes("temporal collection")) {
+            description= "Please remove temporal collection from target collections";
           } else {
             description = "";
           }
