@@ -101,11 +101,15 @@ public class Versions extends LoggingObject {
             String serverMessage = fre.getServerMessage();
             if (serverMessage != null && serverMessage.contains("Extension mlHubversion")) {
                 logger.warn("Could not find mlHubversion REST endpoint; will try ml:hubversion REST endpoint to determine installed DHF version");
-                return new LegacyHubVersionManager(stagingClient).getHubVersion();
+                return getVersionFromViaLegacyRestExtension(stagingClient);
             } else {
                 throw fre;
             }
         }
+    }
+
+    protected String getVersionFromViaLegacyRestExtension(DatabaseClient stagingClient) {
+        return new LegacyHubVersionManager(stagingClient).getHubVersion();
     }
 
     public String getLocalProjectVersion() {

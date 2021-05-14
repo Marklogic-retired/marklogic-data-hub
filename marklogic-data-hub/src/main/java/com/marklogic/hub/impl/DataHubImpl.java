@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandMapBuilder;
-import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.appdeployer.command.appservers.UpdateRestApiServersCommand;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.forests.DeployCustomForestsCommand;
@@ -712,15 +711,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             if (c instanceof UpdateRestApiServersCommand) {
                 continue;
             }
-            /**
-             * Replace ml-gradle's DeployOtherServersCommand with a subclass that has DHF-specific functionality
-             */
-            if (c instanceof DeployOtherServersCommand) {
-                newCommands.add(new DeployHubOtherServersCommand(hubConfig));
-            }
-            else {
-                newCommands.add(c);
-            }
+            newCommands.add(c);
         }
         commandMap.put(key, newCommands);
     }
