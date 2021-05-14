@@ -45,7 +45,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     private Flow flow;
     private int batchSize;
     private int threadCount;
-    private Map<String, Object> options;
+    private Map<String, Object> combinedOptions;
     private int previousPercentComplete;
     private boolean stopOnFailure = false;
     private String jobId;
@@ -109,11 +109,11 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
 
     @Override
     @SuppressWarnings("unchecked")
-    public StepRunner withOptions(Map<String, Object> runtimeOptions) {
+    public StepRunner withRuntimeOptions(Map<String, Object> runtimeOptions) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
         }
-        this.options = StepRunnerUtil.makeCombinedOptions(this.flow, this.stepDef, this.step, runtimeOptions);
+        this.combinedOptions = StepRunnerUtil.makeCombinedOptions(this.flow, this.stepDef, this.step, runtimeOptions);
         return this;
     }
 
@@ -170,8 +170,8 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     }
 
     private boolean jobOutputIsEnabled() {
-        if (options != null && options.containsKey("disableJobOutput")) {
-            return !Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        if (combinedOptions != null && combinedOptions.containsKey("disableJobOutput")) {
+            return !Boolean.parseBoolean(combinedOptions.get("disableJobOutput").toString());
         }
         return true;
     }
@@ -189,18 +189,18 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
             this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
         }
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        if (options == null) {
-            options = new HashMap<>();
+        if (combinedOptions == null) {
+            combinedOptions = new HashMap<>();
         } else {
-            if (options.get("fullOutput") != null) {
-                isFullOutput = Boolean.parseBoolean(options.get("fullOutput").toString());
+            if (combinedOptions.get("fullOutput") != null) {
+                isFullOutput = Boolean.parseBoolean(combinedOptions.get("fullOutput").toString());
             }
         }
 
-        options.put("flow", this.flow.getName());
+        combinedOptions.put("flow", this.flow.getName());
 
         // Needed to support constrainSourceQueryToJob
-        options.put("jobId", jobId);
+        combinedOptions.put("jobId", jobId);
 
         if (jobOutputIsEnabled()) {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
@@ -208,8 +208,8 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
 
         DiskQueue<String> uris;
         try {
-            final String sourceDatabase = options.get("sourceDatabase") != null ?
-                StepRunnerUtil.objectToString(options.get("sourceDatabase")) :
+            final String sourceDatabase = combinedOptions.get("sourceDatabase") != null ?
+                StepRunnerUtil.objectToString(combinedOptions.get("sourceDatabase")) :
                 hubClient.getDbName(DatabaseKind.STAGING);
 
             logger.info(String.format("Collecting items for step '%s' in flow '%s'", this.step, this.flow.getName()));
@@ -263,7 +263,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");
         });
 
-        return !isStopped.get() ? collector.run(this.flow.getName(), step, options) : null;
+        return !isStopped.get() ? collector.run(this.flow.getName(), step, combinedOptions) : null;
     }
 
     private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection<String> uris) {
@@ -333,7 +333,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                     inputs.put("jobId", runStepResponse.getJobId());
 
                     // Make a copy of the calculated options and then add the items from this batch
-                    Map<String, Object> batchOptions = new HashMap<>(options);
+                    Map<String, Object> batchOptions = new HashMap<>(combinedOptions);
                     batchOptions.put("uris", batch.getItems());
                     inputs.set("options", objectMapper.valueToTree(batchOptions));
                     logger.debug(String.format("Processing %d items in batch %d of %d", batch.getItems().length, batch.getJobBatchNumber(),(int) batchCount));

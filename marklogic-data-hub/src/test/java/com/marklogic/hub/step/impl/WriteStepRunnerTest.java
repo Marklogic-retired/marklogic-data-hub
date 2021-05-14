@@ -41,7 +41,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("3");
         StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
-        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("3").withBatchSize(1).withOptions(new HashMap<String, Object>())
+        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("3").withBatchSize(1).withRuntimeOptions(new HashMap<String, Object>())
             .withJobId(UUID.randomUUID().toString());
         wsr.loadStepRunnerParameters();
         Collection<String> files = Arrays.asList("firstFile", "secondFile", "thirdFile","fourthFile", "fifthFile");
@@ -69,7 +69,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
         csvTask.run();
 
         //test xml 'inputFileType'
-        wsr.withStep("1").withOptions(new HashMap<String, Object>());
+        wsr.withStep("1").withRuntimeOptions(new HashMap<String, Object>());
         wsr.loadStepRunnerParameters();
 
         Runnable xmlTask = ()->{
@@ -93,7 +93,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("1");
         StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
-        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withBatchSize(1).withOptions(new HashMap<String, Object>())
+        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withBatchSize(1).withRuntimeOptions(new HashMap<String, Object>())
             .withJobId(UUID.randomUUID().toString());
         wsr.loadStepRunnerParameters();
         Assertions.assertEquals("csv", wsr.inputFileType, "Input file type should be 'csv'");
@@ -137,7 +137,7 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("1");
         StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
-        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withOptions(new HashMap<String, Object>());
+        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("1").withRuntimeOptions(new HashMap<String, Object>());
 
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String, Object> fileLocations = new HashMap<>();

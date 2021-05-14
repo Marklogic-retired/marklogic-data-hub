@@ -20,14 +20,6 @@ public class EnableBatchOutputTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void jobOutputDisabled() {
-        runSuccessfulFlow(new FlowInputs("simpleCustomStepFlow").withOption("disableJobOutput", "true"));
-
-        assertEquals(0, getJobDocCount());
-        assertEquals(0, getBatchDocCount());
-    }
-
-    @Test
     void neverWithFailure() {
         RunFlowResponse response = runFlow(new FlowInputs("simpleCustomStepFlow")
             .withOption("throwErrorOnPurpose", true)

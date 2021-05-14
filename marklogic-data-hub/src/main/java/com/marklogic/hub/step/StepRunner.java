@@ -71,7 +71,7 @@ public interface StepRunner {
      * @param options - the object map of options as string/object pair
      * @return the step runner object
      */
-    StepRunner withOptions(Map<String, Object> options);
+    StepRunner withRuntimeOptions(Map<String, Object> options);
 
 
     /**
