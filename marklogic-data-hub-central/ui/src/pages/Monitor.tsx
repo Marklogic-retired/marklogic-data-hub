@@ -103,7 +103,7 @@ const Monitor: React.FC = () => {
               <p>{MissingPagePermission}</p>
             </div>
           }
-          <div id="top-search-pagination-bar">
+          <div id="top-search-pagination-bar" style={{"marginRight": "32px"}}>
             <SearchPagination
               total={totalDocuments}
               pageNumber={monitorOptions.pageNumber}

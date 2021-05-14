@@ -66,7 +66,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
       data-testid="selected-facet-block"
       data-cy="selected-facet-block"
       className={styles.clearContainer}
-      style={ (Object.entries(monitorOptions.selectedFacets).length === 0 && Object.entries(monitorGreyedOptions.selectedFacets).length === 0) ? {"visibility": "hidden"} : {"visibility": "visible"}}
+      style={ (Object.entries(monitorOptions.selectedFacets).length === 0 && Object.entries(monitorGreyedOptions.selectedFacets).length === 0) ? {"visibility": "hidden", "marginLeft": "40px"} : {"visibility": "visible", "marginLeft": "40px"}}
     >
       { props.selectedFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;

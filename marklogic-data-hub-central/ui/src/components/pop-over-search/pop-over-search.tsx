@@ -46,6 +46,24 @@ const PopOverSearch: React.FC<Props> = (props) => {
     }
   };
 
+  const getMonitorFacetValues = async (e) => {
+    if (e.target.value.length >= 2 && e.target.value.toLowerCase()) {
+      try {
+        let data = {
+          "facetName": props.facetName,
+          "searchTerm": e.target.value
+        };
+        const response = await axios.post(`/api/jobs/stepResponses/facetValues`, data);
+        setOptions(response.data);
+      } catch (error) {
+        console.error(error);
+        handleError(error);
+      }
+    } else {
+      setOptions([]);
+    }
+  };
+
   const onSelectCheckboxes = (e) => {
     let index = checkedValues.indexOf(e.target.value);
     if (index === -1) {
@@ -89,7 +107,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const content = (
     <div className={styles.popover}>
-      <Input placeholder="Search" allowClear={true} onChange={getFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
+      <Input placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
       <div className={styles.scrollOptions}>
         {renderCheckBoxGroup}
       </div>

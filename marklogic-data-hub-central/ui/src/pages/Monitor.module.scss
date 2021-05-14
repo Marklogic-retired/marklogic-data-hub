@@ -4,14 +4,13 @@
     justify-content: flex-start;
     width: 100%;
     margin: 0;
-    padding: 20px;
+    padding: 20px 20px 0px 20px;
+    margin-left:20px;
     .intro {
         display: flex;
         justify-content: space-between;
         width: 100%;
-        p {
-            padding: 10px 0 15px 0;
-        }
+        font-size: 24px;
         .switchViewContainer {
             display: flex;
             flex-direction: row-reverse;
@@ -33,11 +32,13 @@
     background: #fff;
     padding: 20px 24px 34px 36px;
     width: 100%;
-    max-height: 100vh;
+    max-height: 200vh;
+    height:200vh;
 }
 
 .sideBarFacets {
     background-color: #f1f2f5;
     margin-top: 25px;
-    height: 100%;
+    max-height: 200vh;
+    height:200vh;
 }

@@ -22,7 +22,6 @@ class MonitorPage {
     return cy.findByText(pageSizeOption);
   }
 
-
 }
 
 const monitorPage = new MonitorPage();
