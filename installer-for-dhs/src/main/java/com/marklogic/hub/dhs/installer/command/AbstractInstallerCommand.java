@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.dhs.installer.InstallerCommand;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.springframework.context.ApplicationContext;
@@ -72,17 +72,6 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
                 "correspond to a valid MarkLogic user that access the REST Management API.");
         } catch (IOException ie) {
             throw new RuntimeException("Unable to read JSON response from MarkLogic to verify that user can authenticate: " + ie.getMessage());
-        }
-    }
-
-    // TODO Some duplication between this and the logic in DeployHubOtherServersCommand
-    protected String getServerMajorVersion() {
-        try {
-            return serverVersion != null ? serverVersion.replaceAll("([^.]+)\\..*", "$1") : "9";
-        } catch (Exception ex) {
-            logger.warn("Unable to determine the server version; cause: " + ex.getMessage());
-            logger.warn("Will use 9 as a fallback");
-            return "9";
         }
     }
 

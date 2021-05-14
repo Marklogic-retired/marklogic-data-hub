@@ -86,7 +86,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
             logger.info("Loading non-REST modules");
             modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
 
-            generateCustomRewriters();
+            createCustomRewriters();
 
             logger.info("Loading REST options for staging server");
             modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
@@ -106,7 +106,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         }
     }
 
-    protected void generateCustomRewriters() {
+    protected void createCustomRewriters() {
         logger.info("Creating custom rewriters for staging and job app servers");
         SystemService.on(hubConfig.newFinalClient(null)).createCustomRewriters();
     }

@@ -44,8 +44,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
             // Update the servers in the Curator group
             groupName = "Curator";
             modifyHubConfigForDhs(groupName);
-            DhsDeployServersCommand dhsDeployServersCommand = new DhsDeployServersCommand(hubConfig);
-            dhsDeployServersCommand.setServerVersion(serverVersion);
+            DhsDeployServersCommand dhsDeployServersCommand = new DhsDeployServersCommand();
             deployer.setCommands(Arrays.asList(dhsDeployServersCommand));
             deployer.deploy(hubConfig.getAppConfig());
         }
@@ -80,9 +79,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         commands.add(new DeployAmpsCommand());
         commands.add(dbCommand);
 
-        DhsDeployServersCommand ddsc = new DhsDeployServersCommand(hubConfig);
-        ddsc.setServerVersion(serverVersion);
-        commands.add(ddsc);
+        commands.add(new DhsDeployServersCommand());
 
         commands.add(new DeployDatabaseFieldCommand());
 

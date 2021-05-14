@@ -9,13 +9,10 @@ import com.marklogic.mgmt.api.database.ElementIndex;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.Fragment;
 import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.FileCopyUtils;
-import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +20,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -113,7 +109,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-step-definition-writer.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-entity-model-reader.json").toFile().exists());
         assertTrue(hubProject.getHubSecurityDir().resolve("roles").resolve("data-hub-entity-model-writer.json").toFile().exists());
-        assertTrue(hubProject.getHubSecurityDir().resolve("amps").resolve("amps-dhf-update-job.json").toFile().exists());
+        assertTrue(hubProject.getHubSecurityDir().resolve("amps").resolve("updateJob.json").toFile().exists());
 
         ObjectMapper mapper = new ObjectMapper();
         File flowOpRole = hubProject.getHubSecurityDir().resolve("roles").resolve("flow-operator-role.json").toFile();

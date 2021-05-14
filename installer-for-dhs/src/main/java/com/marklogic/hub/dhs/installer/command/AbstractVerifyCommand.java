@@ -117,9 +117,8 @@ public abstract class AbstractVerifyCommand extends AbstractInstallerCommand {
     }
 
     protected void verifyStagingServer(String groupName) {
-        final String version = getServerMajorVersion();
         verifyRewriterAndErrorHandler(new ServerManager(hubConfig.getManageClient(), groupName).getPropertiesAsXml("data-hub-STAGING"),
-            format("/data-hub/5/rest-api/rewriter/%s-rewriter.xml", version),
+            "/data-hub/5/rest-api/staging-rewriter.xml",
             "/MarkLogic/rest-api/error-handler.xqy"
         );
     }

@@ -50,9 +50,9 @@ public class LoadHubModulesCommandTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void dataHubDeveloperCanGenerateCustomRewriters() {
+    void dataHubDeveloperCanCreateCustomRewriters() {
         runAsDataHubDeveloper();
-        new LoadHubModulesCommand(getHubConfig()).generateCustomRewriters();
+        new LoadHubModulesCommand(getHubConfig()).createCustomRewriters();
 
         Fragment rewriter = new Fragment(getModulesFile("/data-hub/5/rest-api/jobs-rewriter.xml"),
             Namespace.getNamespace("rw", "http://marklogic.com/xdmp/rewriter"));

@@ -15,11 +15,18 @@
  */
 package com.marklogic.hub.legacy.flow;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.extensions.ResourceManager;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MappingManager;
@@ -158,6 +165,11 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
 
         assertNull(jsonEnvelope.get("envelope").get("instance").get("Person").get("$attachments"));
         assertNotNull(jsonEnvelope.get("envelope").get("attachments"));
+
+        RunFlowResponse response = new TestLegacyFlowResource(getHubClient().getStagingClient(), "ml:sjsFlow")
+            .runFlow(harmonizeFlow.getName(), harmonizeFlow.getEntityName(), "data-hub-FINAL", "1.json");
+        assertEquals(1, response.totalCount, "Verifying that ml:sjsFlow still works");
+        assertEquals(1, response.completedItems.size());
     }
 
     @Test
@@ -189,6 +201,11 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
 
         assertNull(jsonEnvelope.get("envelope").get("instance").get("Person").get("$attachments"));
         assertNotNull(jsonEnvelope.get("envelope").get("attachments"));
+
+        RunFlowResponse response = new TestLegacyFlowResource(getHubClient().getStagingClient(), "ml:flow")
+            .runFlow(harmonizeFlow.getName(), harmonizeFlow.getEntityName(), "data-hub-FINAL", "2.json");
+        assertEquals(1, response.totalCount, "Verifying that ml:flow still works");
+        assertEquals(1, response.completedItems.size());
     }
 
     // bug DHFPROD-500, attachments showing up in two places
@@ -309,5 +326,31 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
 
     private void copyFile(String srcDir, Path dstDir) {
         FileUtil.copy(getResourceStream(srcDir), dstDir.toFile());
+    }
+
+    /**
+     * Used to verify that ml:flow and ml:sjsFlow are still supported in DHF 5.5+, which removes the fork of the
+     * REST API that is used to convert those into mlFlow and mlSjsFlow. Starting in 5.5, the staging rewriter is
+     * expected to have explicit routes for these endpoints.
+     */
+    class TestLegacyFlowResource extends ResourceManager {
+        public TestLegacyFlowResource(DatabaseClient client, String extensionName) {
+            client.init(extensionName, this);
+        }
+        public RunFlowResponse runFlow(String flowName, String entityName, String targetDatabase, String... items) {
+            RunFlowResponse resp = null;
+            ObjectMapper objectMapper = new ObjectMapper();
+            RequestParameters params = new RequestParameters();
+            params.add("entity-name", entityName);
+            params.add("flow-name", flowName);
+            params.put("identifiers", items);
+            params.put("target-database", targetDatabase);
+            String content = getServices().post(params, new StringHandle("{}").withFormat(Format.JSON), new StringHandle()).get();
+            try {
+                return objectMapper.readValue(content, RunFlowResponse.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }
