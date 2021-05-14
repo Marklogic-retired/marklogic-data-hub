@@ -415,15 +415,15 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
     public void testDisableJobOutput(){
         runAsDataHubOperator();
 
-        Map<String,Object> opts = new HashMap<>();
+        Map<String,Object> runtimeOptions = new HashMap<>();
         List<String> coll = new ArrayList<>();
         coll.add("test-collection");
-        opts.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
-        opts.put("collections", coll);
-        opts.put("sourceQuery", "cts.collectionQuery('test-collection')");
-        opts.put("disableJobOutput", Boolean.TRUE);
+        runtimeOptions.put("targetDatabase", HubConfig.DEFAULT_FINAL_NAME);
+        runtimeOptions.put("collections", coll);
+        runtimeOptions.put("sourceQuery", "cts.collectionQuery('test-collection')");
+        runtimeOptions.put("disableJobOutput", Boolean.TRUE);
 
-        RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), opts, null);
+        RunFlowResponse resp = runFlow("testFlow", "1,2", UUID.randomUUID().toString(), runtimeOptions, null);
         flowRunner.awaitCompletion();
 
         verifyJobFinished(resp);

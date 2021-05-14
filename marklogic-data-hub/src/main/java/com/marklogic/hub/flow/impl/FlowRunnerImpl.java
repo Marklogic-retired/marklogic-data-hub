@@ -72,9 +72,6 @@ public class FlowRunnerImpl implements FlowRunner {
 
     private ThreadPoolExecutor threadPool;
 
-    private JobService jobService;
-    private boolean disableJobOutput = false;
-
     public FlowRunnerImpl() {
     }
 
@@ -149,22 +146,22 @@ public class FlowRunnerImpl implements FlowRunner {
     }
 
     @Deprecated
-    public RunFlowResponse runFlow(String flowName, String jobId, Map<String, Object> options) {
-        return runFlow(flowName, null, jobId, options, new HashMap<>());
+    public RunFlowResponse runFlow(String flowName, String jobId, Map<String, Object> runtimeOptions) {
+        return runFlow(flowName, null, jobId, runtimeOptions, new HashMap<>());
     }
 
     @Deprecated
-    public RunFlowResponse runFlow(String flowName, List<String> stepNums,  String jobId, Map<String, Object> options) {
-        return runFlow(flowName, stepNums, jobId, options, new HashMap<>());
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums,  String jobId, Map<String, Object> runtimeOptions) {
+        return runFlow(flowName, stepNums, jobId, runtimeOptions, new HashMap<>());
     }
 
     @Deprecated
-    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
+    public RunFlowResponse runFlow(String flowName, List<String> stepNums, String jobId, Map<String, Object> runtimeOptions, Map<String, Object> stepConfig) {
         Flow flow = flowManager.getFullFlow(flowName);
         if (flow == null) {
             throw new RuntimeException("Flow " + flowName + " not found");
         }
-        return runFlow(flow, stepNums, jobId, options, stepConfig);
+        return runFlow(flow, stepNums, jobId, runtimeOptions, stepConfig);
     }
 
     /**
@@ -184,28 +181,25 @@ public class FlowRunnerImpl implements FlowRunner {
         return runFlow(flow, flowInputs.getSteps(), flowInputs.getJobId(), flowInputs.getOptions(), flowInputs.getStepConfig());
     }
 
-    protected RunFlowResponse runFlow(Flow flow, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
-        FlowContext flowContext = new FlowContext();
-        if (options != null && options.containsKey("disableJobOutput")) {
-            flowContext.jobOutputIsEnabled = !Boolean.parseBoolean(options.get("disableJobOutput").toString());
-        }
+    protected RunFlowResponse runFlow(Flow flow, List<String> stepNumbers, String jobId, Map<String, Object> runtimeOptions, Map<String, Object> stepConfig) {
+        FlowContext flowContext = new FlowContext(flow, runtimeOptions);
         if (flowContext.jobOutputIsEnabled) {
             flowContext.jobService = JobService.on(hubClient != null ? hubClient.getJobsClient() : hubConfig.newJobDbClient());
         }
 
-        configureStopOnError(flow, options);
+        configureStopOnError(flow, runtimeOptions);
 
-        if(stepNums == null) {
-            stepNums = new ArrayList<>(flow.getSteps().keySet());
+        if(stepNumbers == null) {
+            stepNumbers = new ArrayList<>(flow.getSteps().keySet());
         }
 
         if(stepConfig != null && !stepConfig.isEmpty()) {
             flow.setOverrideStepConfig(stepConfig);
         }
 
-        flow.setOverrideOptions(options);
+        flow.setOverrideOptions(runtimeOptions);
 
-        Iterator<String> stepItr = stepNums.iterator();
+        Iterator<String> stepItr = stepNumbers.iterator();
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
         while(stepItr.hasNext()) {
             String stepNum = stepItr.next();
@@ -352,7 +346,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 try {
                     stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
-                        .withOptions(optsMap)
+                        .withRuntimeOptions(optsMap)
                         .onItemComplete((jobID, itemID) -> {
                             successCount.incrementAndGet();
                         })
@@ -602,5 +596,21 @@ public class FlowRunnerImpl implements FlowRunner {
     class FlowContext {
         boolean jobOutputIsEnabled = true;
         JobService jobService;
+
+        FlowContext(Flow flow, Map<String, Object> runtimeOptions) {
+            calculateJobOutputIsEnabled(flow, runtimeOptions);
+        }
+
+        private void calculateJobOutputIsEnabled(Flow flow, Map<String, Object> runtimeOptions) {
+            final String optionName = "disableJobOutput";
+            if (runtimeOptions != null && runtimeOptions.containsKey(optionName)) {
+                this.jobOutputIsEnabled = !Boolean.parseBoolean(runtimeOptions.get(optionName).toString());
+            } else {
+                JsonNode flowOptions = flow.getOptions();
+                if (flowOptions != null && flowOptions.has(optionName)) {
+                    this.jobOutputIsEnabled = !flowOptions.get(optionName).asBoolean();
+                }
+            }
+        }
     }
 }

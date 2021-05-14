@@ -91,7 +91,7 @@ public class WriteStepRunner implements StepRunner {
     private int previousPercentComplete;
     protected long csvFilesProcessed;
     private String currentCsvFile;
-    private Map<String, Object> options;
+    private Map<String, Object> combinedOptions;
     private boolean stopOnFailure = false;
     private String jobId;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -173,11 +173,11 @@ public class WriteStepRunner implements StepRunner {
 
     @Override
     @SuppressWarnings("unchecked")
-    public StepRunner withOptions(Map<String, Object> runtimeOptions) {
+    public StepRunner withRuntimeOptions(Map<String, Object> runtimeOptions) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
         }
-        this.options = StepRunnerUtil.makeCombinedOptions(this.flow, this.stepDef, this.step, runtimeOptions);
+        this.combinedOptions = StepRunnerUtil.makeCombinedOptions(this.flow, this.stepDef, this.step, runtimeOptions);
         return this;
     }
 
@@ -239,25 +239,25 @@ public class WriteStepRunner implements StepRunner {
     }
 
     private boolean jobOutputIsEnabled() {
-        if (options != null && options.containsKey("disableJobOutput")) {
-            return !Boolean.parseBoolean(options.get("disableJobOutput").toString());
+        if (combinedOptions != null && combinedOptions.containsKey("disableJobOutput")) {
+            return !Boolean.parseBoolean(combinedOptions.get("disableJobOutput").toString());
         }
         return true;
     }
 
     @Override
     public RunStepResponse run() {
-        if (options == null) {
-            options = new HashMap<>();
+        if (combinedOptions == null) {
+            combinedOptions = new HashMap<>();
         }
 
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         loadStepRunnerParameters();
         if("csv".equalsIgnoreCase(inputFileType)){
-            options.put("inputFileType", "csv");
+            combinedOptions.put("inputFileType", "csv");
         }
-        options.put("flow", this.flow.getName());
+        combinedOptions.put("flow", this.flow.getName());
 
         if (jobOutputIsEnabled()) {
             JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
@@ -308,7 +308,7 @@ public class WriteStepRunner implements StepRunner {
     protected void loadStepRunnerParameters(){
         JsonNode comboOptions = null;
         try {
-            comboOptions = JSONObject.readInput(JSONObject.writeValueAsString(options));
+            comboOptions = JSONObject.readInput(JSONObject.writeValueAsString(combinedOptions));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -468,7 +468,7 @@ public class WriteStepRunner implements StepRunner {
         serverTransform.addParameter("job-id", jobId);
         serverTransform.addParameter("step", step);
         serverTransform.addParameter("flow-name", flow.getName());
-        String optionString = jsonToString(options);
+        String optionString = jsonToString(combinedOptions);
         serverTransform.addParameter("options", optionString);
 
         writeBatcher = dataMovementManager.newWriteBatcher()
