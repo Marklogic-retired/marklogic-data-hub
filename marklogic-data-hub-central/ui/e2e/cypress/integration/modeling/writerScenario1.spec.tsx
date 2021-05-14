@@ -55,7 +55,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("id").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
@@ -100,7 +100,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("customerId").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("multiple").click();
@@ -172,7 +172,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
     cy.location("pathname").should("eq", "/");
   });
-  it("Adding property to Order entity", () => {
+  it("Add new property to Order entity", () => {
     LoginPage.postLogin();
     toolbar.getModelToolbarIcon().click();
     entityTypeTable.waitForTableToLoad();
@@ -182,16 +182,26 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("string").should("be.visible").click();
     propertyModal.getNoRadio("identifier").click();
-    propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
     modelPage.getEntityModifiedAlert().should("exist");
-    propertyTable.getMultipleIcon("orderID").should("exist");
     propertyTable.getPiiIcon("orderID").should("exist");
     //propertyTable.getWildcardIcon('orderID').should('exist');
   });
-  it("Revert property chanages", () => {
+  it("Add related property to Buyer, check Join Property menu, cancel the addition", () => {
+    entityTypeTable.getExpandEntityIcon("Buyer").click();
+    propertyTable.getAddPropertyButton("Buyer").click();
+    propertyModal.newPropertyName("relProp");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Related Entity").click();
+    propertyModal.getCascadedTypeFromDropdown("Order").click();
+    propertyModal.toggleJoinPropertyDropdown();
+    propertyModal.checkJoinPropertyDropdownLength(6); // Check for saved (5) and unsaved (1) Order properties
+    propertyModal.toggleJoinPropertyDropdown();
+    propertyModal.getCancelButton().click();
+  });
+  it("Revert new Order property changes", () => {
     entityTypeTable.getRevertEntityIcon("Order").should("exist");
     entityTypeTable.getRevertEntityIcon("Order").click();
     confirmationModal.getYesButton(ConfirmationType.RevertEntity).click();
