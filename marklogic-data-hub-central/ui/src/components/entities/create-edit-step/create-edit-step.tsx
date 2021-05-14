@@ -229,8 +229,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       props.updateStepArtifact(getPayload());
     }
     ((props.stepType === StepType.Matching) || (props.stepType === StepType.Merging))? setIsSubmit(true):setIsSubmit(false);
-    /* adding props.stepType !== StepType.Merging below will show the warnings, should be added as a part of DHFPROD-6995*/
-    if (props.stepType !== StepType.Matching) {
+    if (props.stepType !== StepType.Matching && props.stepType !== StepType.Merging) {
       props.setOpenStepSettings(false);
       props.resetTabs();
     }
