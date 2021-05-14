@@ -14,3 +14,18 @@ export const updateMergingArtifact = async (merging) => {
     return false;
   }
 };
+
+export const getMergingRulesWarnings = async (merging) => {
+  try {
+    let warningResponse = await axios.get(`/api/steps/merging/${merging.name}/validate?view=rules`);
+    if (warningResponse.status === 200) {
+      return warningResponse;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error while updating the merge rule!", message);
+    return message;
+  }
+};

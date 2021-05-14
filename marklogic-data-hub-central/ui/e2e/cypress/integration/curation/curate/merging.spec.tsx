@@ -50,6 +50,7 @@ describe("Merging", () => {
     createEditStepDialog.setTimestampInput().type("/envelop/headers/createdOn", {timeout: 2000});
     createEditStepDialog.saveButton("merging").click();
     cy.waitForAsyncRequest();
+    createEditStepDialog.cancelButton("merging").click();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
   it("Validate step name is disabled, description, timestamp path and validate discard confirmation modal is displayed on click of cancel  ", () => {
@@ -148,6 +149,9 @@ describe("Merging", () => {
     mergeRuleModal.setFunctionText("customMergeFunctionEdited");
     mergeRuleModal.saveButton().click();
     cy.waitForAsyncRequest();
+    mergeRuleModal.cancelButton().click();
+    cy.waitForAsyncRequest();
+    cy.findByLabelText("Yes").click();
   });
   it("Cancel merge rule deletion ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("orderId").click();
@@ -187,6 +191,7 @@ describe("Merging", () => {
     mergeRuleModal.selectPropertyToMerge("orderId");
     mergeRuleModal.saveButton().click();
     cy.waitForAsyncRequest();
+    mergeRuleModal.cancelButton().click();
     cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
     cy.findByText("orderId").should("exist");
   });
@@ -238,6 +243,8 @@ describe("Merging", () => {
     cy.findByText("shippedDate").click();
     mergeRuleModal.selectPropertyToMerge("shipRegion");
     mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    mergeRuleModal.cancelButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");

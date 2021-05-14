@@ -5,7 +5,7 @@ import {
 } from "antd";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
-import {MLButton, MLTooltip, MLInput, MLSelect} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLInput, MLSelect, MLAlert} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
@@ -15,7 +15,7 @@ import arrayIcon from "../../../../assets/icon_array.png";
 import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
-import {updateMergingArtifact} from "../../../../api/merging";
+import {updateMergingArtifact, getMergingRulesWarnings} from "../../../../api/merging";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 
@@ -65,6 +65,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [radioSourcesOptionClicked, setRadioSourcesOptionClicked] = useState(1);
   const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
+  const [validationWarnings, setValidationWarnings] = useState<string[]>([]);
+  const [handleSave, setHandleSave] = useState(false);
 
   const titleLegend = <div className={styles.titleLegend}>
     <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
@@ -90,6 +92,12 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       setFormDetails(curationOptions.activeStep.stepArtifact);
     }
   }, [props.isEditRule, props.sourceNames, props.propertyName]);
+
+  useEffect(() => {
+    if (validationWarnings.length === 0 && handleSave && !discardChangesVisible) {
+      props.setOpenMergeRuleDialog(false);
+    }
+  }, [validationWarnings]);
 
 
   const setFormDetails = (data) => {
@@ -188,13 +196,14 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const onCancel = () => {
-    if (hasFormChanged()) {
+    if (hasFormChanged() && validationWarnings.length === 0) {
       setDiscardChangesVisible(true);
     } else {
       props.toggleEditRule(false);
       resetModal();
       props.setOpenMergeRuleDialog(false);
     }
+    setValidationWarnings([]);
   };
 
   const hasFormChanged = () => {
@@ -386,7 +395,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       let newMergeRules = {};
       if (mergeType === "Custom") {
         if (uri && functionValue && property && mergeType) {
-          props.setOpenMergeRuleDialog(false);
+          setHandleSave(true);
           newMergeRules =
                         {
                           "entityPropertyPath": selectedProperty,
@@ -409,7 +418,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
             "mergeStrategyName": strategyValue
           };
           onSave(newMergeRules);
-          props.setOpenMergeRuleDialog(false);
+          setHandleSave(true);
         } else {
           setStrategyValueTouched(true);
         }
@@ -423,7 +432,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
             "priorityOrder": parsePriorityOrder(priorityOrderOptions)
           };
           onSave(newMergeRules);
-          props.setOpenMergeRuleDialog(false);
+          setHandleSave(true);
         } else {
           setMaxSourcesRuleInputTouched(true);
           setMaxValueRuleInputTouched(true);
@@ -454,11 +463,14 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       newStepArtifact.mergeRules.push(newMergeRules);
       await updateMergingArtifact(newStepArtifact);
       updateActiveStepArtifact(newStepArtifact);
+      props.setOpenMergeRuleDialog(false);
     } else {
       // Edit Rule
       newStepArtifact.mergeRules[index] = newMergeRules;
       await updateMergingArtifact(newStepArtifact);
       updateActiveStepArtifact(newStepArtifact);
+      let warnings= await getMergingRulesWarnings(newStepArtifact);
+      if (warnings !== undefined) { setValidationWarnings(warnings.data); }
     }
   };
 
@@ -505,6 +517,22 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       maskClosable={false}
       destroyOnClose={true}
     >
+      {validationWarnings.length > 0 ? (
+        validationWarnings.map((warning, index) => {
+          let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
+          return (
+            <MLAlert
+              id="step-warn"
+              className={styles.alert}
+              type="warning"
+              showIcon
+              key={warning["level"] + index}
+              message={<div className={styles.alertMessage}>{warning["message"]}</div>}
+              description={description}
+            />
+          );
+        })
+      ) : null}
       <p>Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.</p>
       {titleLegend}
       <br />

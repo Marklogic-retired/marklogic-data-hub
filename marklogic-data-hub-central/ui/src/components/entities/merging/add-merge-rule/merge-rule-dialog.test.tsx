@@ -52,6 +52,7 @@ describe("Merge Rule Dialog component", () => {
     let uri = getByLabelText("uri-input");
     let functionValue = getByLabelText("function-input");
     let saveButton = getByText("Save");
+    let cancelButton = getByText("Cancel");
 
     //Checking if URI, function and namespace fields are available now, since merge type is Custom.
     expect(uri).toBeInTheDocument();
@@ -68,7 +69,9 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.change(uri, {target: {value: "Customer/Cust1.json"}});
     fireEvent.change(functionValue, {target: {value: "Compare"}});
 
-    fireEvent.click(saveButton); //Modal will close now
+    fireEvent.click(saveButton);
+    fireEvent.click(cancelButton); //Modal will close now
+    fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
 
@@ -99,6 +102,7 @@ describe("Merge Rule Dialog component", () => {
     expect(queryByLabelText("add-slider-button")).not.toBeInTheDocument();
 
     let saveButton = getByText("Save");
+    let cancelButton= getByText("Cancel");
 
     //Selecting the merge type to Property-Specific
     fireEvent.click(getByLabelText("mergeType-select"));
@@ -122,7 +126,9 @@ describe("Merge Rule Dialog component", () => {
 
     expect(getByLabelText("add-slider-button")).toBeInTheDocument();
 
-    fireEvent.click(saveButton); //Modal will close now
+    fireEvent.click(saveButton);
+    fireEvent.click(cancelButton); //Modal will close now
+    fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
@@ -159,6 +165,7 @@ describe("Merge Rule Dialog component", () => {
 
     let strategyName = getByLabelText("strategy-name-select");
     let saveButton = getByText("Save");
+    let cancelButton= getByText("Cancel");
 
     //Checking if strategy name is available now, since merge type is strategy.
     expect(strategyName).toBeInTheDocument();
@@ -171,7 +178,9 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(strategyName);
     fireEvent.click(getByTestId("strategyNameOptions-customMergeStrategy"));
 
-    fireEvent.click(saveButton); //Modal will close now
+    fireEvent.click(saveButton);
+    fireEvent.click(cancelButton); //Modal will close now
+    fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
@@ -251,10 +260,11 @@ describe("Merge Rule Dialog component", () => {
     expect(getByText("Edit Merge Rule")).toBeInTheDocument();
     expect(getByText("customerId")).toBeInTheDocument();
     let saveButton = getByText("Save");
-    //Modal will close now
+    let cancelButton = getByText("Cancel");
     fireEvent.click(saveButton);
-    expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
-
+    //Modal will close now
+    fireEvent.click(cancelButton);
+    expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(2);
   });
 
   it("can select structured property and click save", async () => {
@@ -287,12 +297,15 @@ describe("Merge Rule Dialog component", () => {
 
     let strategyName = getByLabelText("strategy-name-select");
     let saveButton = getByText("Save");
+    let cancelButton = getByText("Cancel");
 
     //Enter the values for strategy name to see save button gets enabled.
     fireEvent.click(strategyName);
     fireEvent.click(getByTestId("strategyNameOptions-customMergeStrategy"));
 
-    fireEvent.click(saveButton); //Modal will close now
+    fireEvent.click(saveButton);
+    fireEvent.click(cancelButton); //Modal will close now
+    fireEvent.click(getByText("Yes"));
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
