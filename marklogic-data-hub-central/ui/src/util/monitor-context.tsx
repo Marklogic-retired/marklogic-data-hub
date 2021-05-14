@@ -106,7 +106,7 @@ const MonitorProvider: React.FC<{ children: any }> = ({children}) => {
 
   const clearMonitorFacet = (constraint: string, val: string) => {
     let facets = monitorOptions.selectedFacets;
-    if (constraint !== 'startTime' && facets[constraint].length > 1) {
+    if (facets.hasOwnProperty[constraint] && constraint !== 'startTime' && facets[constraint].length > 1) {
       facets[constraint] = facets[constraint].filter(option => option !== val);
     } else {
       delete facets[constraint];

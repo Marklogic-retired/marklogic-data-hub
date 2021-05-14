@@ -6,6 +6,8 @@ import {MLTooltip, MLCheckbox} from "@marklogic/design-system";
 import {MonitorContext} from "../../util/monitor-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import PopOverSearch from "../pop-over-search/pop-over-search";
+
 
 
 interface Props {
@@ -19,7 +21,7 @@ interface Props {
 
 const MonitorFacet: React.FC<Props> = (props) => {
   const SHOW_MINIMUM = 3;
-  //const SEARCH_MINIMUM = 20;
+  const SEARCH_MINIMUM = 20;
 
   const {monitorOptions, monitorGreyedOptions} = useContext(MonitorContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
@@ -52,14 +54,14 @@ const MonitorFacet: React.FC<Props> = (props) => {
     }
   };
 
-  /*const checkFacetValues = (checkedValues) => {
+  const checkFacetValues = (checkedValues) => {
     let updatedChecked = [...checked];
     for (let value of checkedValues) {
       if (updatedChecked.indexOf(value) === -1) { updatedChecked.push(value); }
     }
     setChecked(updatedChecked);
     props.addFacetValues(props.name, updatedChecked);
-  };*/
+  };
 
   const handleClick = (e) => {
     let index = checked.indexOf(e.target.value);
@@ -120,7 +122,9 @@ const MonitorFacet: React.FC<Props> = (props) => {
           onChange={(e) => handleClick(e)}
           checked={checked.includes(facet.value)}
           className={styles.value}
-          //data-testid={`${stringConverter(facet.name)}-${facet.value}-checkbox`}
+          index={index}
+          key={index}
+          data-testid={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
         >
           <MLTooltip title={facet.value} >{facet.value}</MLTooltip>
         </MLCheckbox>
@@ -149,12 +153,13 @@ const MonitorFacet: React.FC<Props> = (props) => {
         <div className={styles.summary}>
           {checked.length > 0 ?
             <div className={styles.selected}
-              //data-cy={stringConverter(props.name) + "-selected-count"}
+              data-cy={stringConverter(props.displayName) + "-selected-count"}
             >{checked.length} selected</div> : ""}
           <div
             className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)}
             onClick={() => handleClear()}
             data-testid={stringConverter(props.displayName) + "-clear"}
+            data-cy={stringConverter(props.displayName) + "-clear"}
           >Clear
           </div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)}
@@ -173,18 +178,18 @@ const MonitorFacet: React.FC<Props> = (props) => {
           data-testid={`show-more-${stringConverter(props.displayName)}`}
         >{(more) ? "<< less" : "more >>"}</div>
       </div>
-      {/* {(checkedFacets.length >= SEARCH_MINIMUM) &&
+      {(checkedFacets.length >= SEARCH_MINIMUM) &&
         <div className={styles.searchValues}>
-            <PopOverSearch
-                referenceType={''}
-                entityTypeId={''}
-                propertyPath={''}
-                checkFacetValues={checkFacetValues}
-                popOvercheckedValues={checked}
-                facetValues={checkedFacets}
-                facetName={props.name}
-            />
-        </div>}*/}
+          <PopOverSearch
+            referenceType={""}
+            entityTypeId={""}
+            propertyPath={""}
+            checkFacetValues={checkFacetValues}
+            popOvercheckedValues={checked}
+            facetValues={checkedFacets}
+            facetName={props.name}
+          />
+        </div>}
     </div>
   );
 
