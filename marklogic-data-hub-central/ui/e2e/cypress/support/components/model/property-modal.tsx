@@ -60,13 +60,14 @@ class PropertyModal {
   getJoinPropertyDropdown() {
     return  cy.findByPlaceholderText("Select a join property");
   }
-
-  openJoinPropertyDropdown() {
+  toggleJoinPropertyDropdown() {
     cy.findByLabelText("joinProperty-select").trigger("mouseover").click();
   }
-
   getJoinProperty(propertyName: string) {
     return cy.waitUntil(() => cy.findByLabelText(`${propertyName}-option`));
+  }
+  checkJoinPropertyDropdownLength(len: number) {
+    return cy.get('.ant-select-dropdown-menu').find('li').should('have.length', len);
   }
 }
 

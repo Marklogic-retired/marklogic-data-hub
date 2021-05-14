@@ -606,53 +606,72 @@ const PropertyModal: React.FC<Props> = (props) => {
     };
   };
 
-  // TODO entityModel arg lets us (eventually) support Cascader nesting by recursion
-  const getJoinMenuProps = (entityName, entityModel, response) => {
-    const entity = response.data.find(ent => ent.entityName === entityName);
-    const model = entity.model.definitions[entityModel];
-    // Check each property and build menu item
-    const result = Object.keys(model.properties).map(key => {
-      // Structured property case
-      if (model.properties[key].hasOwnProperty("$ref")) {
-        return {
-          value: key,
-          label: key,
-          type: "", // TODO
-          disabled: true,
-          // TODO for supporting structure properties
-          // children: getJoinProps(
-          //   entityName,
-          //   model.properties[key]["$ref"].split("#/definitions/")[1],
-          //   response
-          // )
-        };
-      } else if (model.properties[key]["datatype"] === "array") {
-        // Array property case
-        return {
-          value: key,
-          label: key,
-          type: "", // TODO
-          disabled: true
-        };
-      } else {
-        // Default case
-        return {
-          value: key,
-          label: key,
-          type: model.properties[key].datatype
-        };
-      }
-    });
+  const getJoinMenuProps = (model, modelUpdated) => {
+    let alreadyAdded: string[] = [], result;
+    // Check each property from saved model and build menu items
+    if (model) {
+      result = Object.keys(model.properties).map(key => {
+        alreadyAdded.push(key);
+        // Structured property case
+        if (model.properties[key].hasOwnProperty("$ref")) {
+          return {
+            value: key,
+            label: key,
+            type: "", // TODO
+            disabled: true,
+            // TODO Support structure properties
+            // children: getJoinProps(...)
+          };
+        } else if (model.properties[key]["datatype"] === "array") {
+          // Array property case
+          return {
+            value: key,
+            label: key,
+            type: "", // TODO
+            disabled: true
+          };
+        } else {
+          // Default case
+          return {
+            value: key,
+            label: key,
+            type: model.properties[key].datatype
+          };
+        }
+      });
+    }
+    // Include any new properties from updated model object
+    if (modelUpdated) {
+      Object.keys(modelUpdated?.properties).map(key => {
+        if (!alreadyAdded.includes(key)) {
+          result.push({
+            value: key,
+            label: key,
+            type: modelUpdated.properties[key].datatype,
+            disabled: true
+          })
+        }
+      });
+    }
     return result;
   };
 
   const createJoinMenu = async (entityName, entityProp) => {
+    let entity, model, entityUpdated, modelUpdated, menuProps;
     try {
       const response = await primaryEntityTypes();
+      // Saved model data
       if (response) {
-        const menuProps = getJoinMenuProps(entityName, entityName, response);
-        setJoinProperties(menuProps);
+        entity = response.data.find(ent => ent.entityName === entityName);
+        model = entity.model.definitions[entityName];
       }
+      entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === entityName);
+      // Modified model data (if present)
+      if (entityUpdated) {
+        modelUpdated = entityUpdated.modelDefinition[entityName];
+      }
+      menuProps = getJoinMenuProps(model, modelUpdated);
+      setJoinProperties(menuProps);
     } catch (error) {
       handleError(error);
     }

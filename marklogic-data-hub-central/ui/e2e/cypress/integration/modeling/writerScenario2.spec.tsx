@@ -100,7 +100,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("nicknames").should("not.be.enabled");
     propertyModal.getJoinProperty("customerId").click();
     propertyModal.getSubmitButton().click();
@@ -167,7 +167,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("Address").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
@@ -196,7 +196,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("nicknames").should("not.be.enabled");
     propertyModal.getJoinProperty("customerId").click();
     propertyModal.getSubmitButton().click();
@@ -284,7 +284,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Order").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("orderId").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
@@ -324,7 +324,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.openJoinPropertyDropdown();
+    propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("id").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("personType").should("exist");

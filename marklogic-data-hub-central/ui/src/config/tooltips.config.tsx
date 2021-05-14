@@ -46,7 +46,7 @@ const ModelingTooltips = {
   namespace: 'Use of entity type namespaces is optional. If you choose to use a namespace, you must specify both a namespace URI and a prefix in your entity type definition.',
 
   /* Form fields */
-  joinProperty: 'Structured type properties and arrays cannot be used as join properties.',
+  joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',
 
    /* Foreign key relationship */
    foreignKey: function (relatedEntityName, joinPropertyName, type) {
