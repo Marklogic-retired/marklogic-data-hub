@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Icon, Table, Popover, Input, Select, Dropdown} from "antd";
+import {Icon, Table, Popover, Input, Select, Dropdown, Modal} from "antd";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
@@ -42,7 +42,6 @@ interface Props {
   relatedEntityTypeProperties: any;
   relatedEntitiesSelected: any;
   setRelatedEntitiesSelected: any;
-  setRemovedEntities: any;
   isRelatedEntity: boolean;
   tableColor: any;
   firstRowTableKeyIndex: any;
@@ -52,6 +51,8 @@ interface Props {
   setAllRelatedEntitiesKeys: any;
   mapFunctions : any;
   savedMappingArt : any;
+  deleteRelatedEntity: any;
+  labelRemoved: any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
@@ -97,6 +98,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [displaySourceList, setDisplaySourceList] = useState(false);
   const [entityProperties, setEntityProperties] = useState<any[]>(props.entityTypeProperties);
   const [selectedOptions, setSelectedOptions] = useState<any[]>(["default"]);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [removedEntity, setRemovedEntity] = useState<any>([]);
+  const [entitiesReferencing, setEntitiesReferencing] = useState<any>([]);
+  const [pendingOptions, setPendingOptions] = useState<any>([]);
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
@@ -113,6 +118,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
+
+  const getDefaultEntities = () => {
+    let defaultSelected : any = [];
+    let entityTitle = props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle;
+    props.relatedEntitiesSelected.map(entity => {
+      if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) { defaultSelected.push(entity.entityLabel); }
+    });
+    return defaultSelected;
+  };
+  const [filterValues, setFilterValues] = useState<any[]>(getDefaultEntities());
 
   useEffect(() => {
     if (props.entityMappingId || !props.isRelatedEntity) {
@@ -153,8 +168,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
     //when component finishes rendering, set selected options with default entities for filter, necessary to track updates to the filter
     if (selectedOptions[0] === "default" && props.relatedEntityTypeProperties.length > 0) {
       setSelectedOptions(getDefaultEntities());
+      setFilterValues(getDefaultEntities());
     }
   }, [props.relatedEntityTypeProperties]);
+
+  useEffect(() => {
+    if (filterValues.includes(props.labelRemoved)) {
+      filterValues.splice(filterValues.indexOf(props.labelRemoved), 1);
+    }
+  }, [props.labelRemoved]);
 
   const mapExpressionStyle = (propName, isProperty) => {
     const mapStyle: CSSProperties = {
@@ -845,29 +867,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
     />
   );
 
-  const getDefaultEntities = () => {
-    let defaultSelected : any = [];
-    let entityTitle = props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle;
-    props.relatedEntitiesSelected.map(entity => {
-      if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) { defaultSelected.push(entity.entityLabel); }
-    });
-    return defaultSelected;
-  };
-
   const relatedEntitiesFilter = (
     <Select
       mode="multiple"
-      allowClear
       style={{width: "98%"}}
       placeholder="Select"
       key={props.relatedEntityTypeProperties.length  > 0 ? "loaded" : "notloaded"}
       id={`${props.entityTypeTitle}-entities-filter`}
       data-testid={`${props.entityTypeTitle}-entities-filter`}
       onChange={value => handleOptionSelect(value)}
+      value={filterValues}
       defaultValue={getDefaultEntities()}
       dropdownClassName={props.isRelatedEntity ? styles.relatedEntityFilterDropdown : styles.entityFilterDropdown}
     >
-
       {props.relatedEntityTypeProperties?.map((entity, i) => {
         let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
         if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) {
@@ -888,6 +900,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
         <div className={styles.entitySettingsLink}>
           <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId}/>
         </div>
+        {props.isRelatedEntity ?
+          <div className={styles.deleteEntityLink}>
+            <Icon className={styles.deleteTableIcon} type="close" data-testid={props.entityTypeTitle + "-delete"} onClick={(e) => onDelete(props.relatedEntityTypeProperties[props.relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === props.entityMappingId)])}/>
+          </div> : ""
+        }
       </div>
       { props.relatedMappings && props.relatedMappings.length > 0 ?
         <div className={styles.entityFilterContainer}>
@@ -908,7 +925,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
     let selectedArray: any = [];
     let entityArray = props.relatedEntityTypeProperties;
 
-    if (newlySelectedValues.length !== 0) {
+    //check for removed values
+    if (newlySelectedValues.length < selectedOptions.length) {
+      let removedItem = selectedOptions.filter(options => newlySelectedValues.indexOf(options) < 0);
+      let index = entityArray.findIndex(object => object.entityLabel === removedItem[0]);
+      let entityToRemove = entityArray[index];
+      setRemovedEntity(entityToRemove);
+      findReferringEntities(entityToRemove.relatedEntityMappings);
+      setPendingOptions(newlySelectedValues);
+      setDeleteDialogVisible(true);
+    } else if (newlySelectedValues.length !== 0) {
       //in the properties array, push the object that has the key which matches the value of the entity name selected
       newlySelectedValues.forEach(val => {
         let index = entityArray.findIndex(object => object.entityLabel === val);
@@ -917,20 +943,66 @@ const EntityMapTable: React.FC<Props> = (props) => {
         }
       });
       props.setRelatedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
+      setSelectedOptions(newlySelectedValues);
+      setFilterValues(newlySelectedValues);
     }
-    //check for removed values
-    if (newlySelectedValues.length < selectedOptions.length) {
-      //filter for which value(s) were removed
-      let removedOptions = selectedOptions.filter(options => newlySelectedValues.indexOf(options) < 0);
-      let removedEntitiesArray : any = [];
-      removedOptions.forEach(val => {
-        let index = entityArray.findIndex(object => object.entityLabel === val);
-        removedEntitiesArray.push(entityArray[index]);
-      });
-      props.setRemovedEntities(removedEntitiesArray);
-    }
-    setSelectedOptions(newlySelectedValues);
   };
+
+  const findReferringEntities = (relatedMappings) => {
+    let referringEntities:any = [];
+    if (relatedMappings) {
+      //find any related mappings to the removed entity that are currently also being mapped/displayed
+      props.relatedEntitiesSelected.forEach(entity => {
+        relatedMappings.forEach(ent => {
+          if (ent["entityMappingId"].substring(0, ent["entityMappingId"].indexOf(".")) === entity["entityMappingId"].substring(0, entity["entityMappingId"].indexOf("."))) {
+            if (!referringEntities.includes(entity)) {
+              referringEntities.push(entity);
+            }
+          }
+        });
+      });
+      setEntitiesReferencing(referringEntities);
+    } else {
+      setEntitiesReferencing([]);
+    }
+  };
+
+  const onOk = () => {
+    props.deleteRelatedEntity(removedEntity);
+    let updateSelectedEntities : any = props.relatedEntitiesSelected.filter(entity => entity["entityMappingId"] !== removedEntity["entityMappingId"]);
+    props.setRelatedEntitiesSelected(updateSelectedEntities);
+    setFilterValues(pendingOptions);
+    setSelectedOptions(pendingOptions);
+    setDeleteDialogVisible(false);
+  };
+
+  const onCancel = () => {
+    setDeleteDialogVisible(false);
+  };
+
+  const onDelete = (deletedEntity) => {
+    setRemovedEntity(deletedEntity);
+    findReferringEntities(deletedEntity.relatedEntityMappings);
+    setDeleteDialogVisible(true);
+  };
+
+  const deleteConfirmation = <Modal
+    visible={deleteDialogVisible}
+    okText={entitiesReferencing.length > 0 ? "OK" : "Yes" }
+    cancelText= "No"
+    onOk={() => { entitiesReferencing.length > 0 ? onCancel() : onOk(); }}
+    cancelButtonProps= {entitiesReferencing.length > 0 ? {style: {display: "none"}} : {}}
+    onCancel={() => onCancel()}
+    bodyStyle={{paddingTop: "40px"}}
+    width={550}
+    maskClosable={false}
+  >
+    {entitiesReferencing.length > 0 ?
+      <span aria-label={"entity-being-referenced-msg"} style={{fontSize: "16px"}}>The <strong>{removedEntity?.entityLabel}</strong> mapping is referenced by the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping. Please delete the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping first.</span>
+      :
+      <span aria-label={"confirm-deletion-msg"}style={{fontSize: "16px"}}>Are you sure you want to delete any mapping expressions associated with the <strong>{removedEntity?.entityLabel}</strong> entity?</span>
+    }
+  </Modal>;
 
   const entityColumns = [
     {
@@ -1167,7 +1239,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
       getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
       showHeader={!props.isRelatedEntity}
       rowClassName={(record, index) => getRowClassName(record, index)}
-    /></div>)
+    />
+    {deleteConfirmation}
+  </div>)
     :
     null;
 };

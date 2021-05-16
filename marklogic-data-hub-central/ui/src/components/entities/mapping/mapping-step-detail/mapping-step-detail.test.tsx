@@ -659,7 +659,7 @@ describe("RTL Source-to-entity map tests", () => {
   });
 
   test("Verify view related entities with selection/deselection in filters", async () => {
-    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[1]});
+    mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[1]);
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
@@ -702,41 +702,87 @@ describe("RTL Source-to-entity map tests", () => {
     await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument());
 
-    //Clear all the entity tables via clear all button in target entity table filter
-    fireEvent.click(getAllByLabelText("icon: close-circle")[0]);
+    //Verify deletion of related entity tables and different confirmation messages
 
-    //only target entity table (Person) should remain
-    expect(getByLabelText("Person-title")).toBeInTheDocument();
-    await wait(() => expect(queryByLabelText("Order (orderedBy Person)-title")).not.toBeInTheDocument());
-    await wait(() => expect(queryByLabelText("Product (Order hasProduct)-title")).not.toBeInTheDocument());
-    await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
+    //Try deleting the BabyRegistry table via X button
+    fireEvent.click(getByTestId("BabyRegistry (ownedBy Person)-delete"));
+
+    expect(await(waitForElement(() => getByLabelText("entity-being-referenced-msg")))).toBeInTheDocument();
+
+    //Close the confirmation modal
+    fireEvent.click(getByText("OK"));
+
+    //Delete Product table via X button
+    fireEvent.click(getByTestId("Product (BabyRegistry hasProduct)-delete"));
+
+    //Confirmation modal to confirm deletion of the entity should appear
+    expect(await(waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
+
+    //Confirm deletion of Product (BabyRegistry hasProduct) table
+    fireEvent.click(getByText("Yes"));
+
+    //Product (BabyRegistry hasProduct) table should no longer be shown
     await wait(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
 
-    let entitiesFilter = getByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-search__field"
-    );
-
-    fireEvent.click(entitiesFilter); // focus on the search box
-
-    //Related entity options should appear
-    expect(getByText("Order (orderedBy Person)")).toBeInTheDocument();
-    expect(getByText("BabyRegistry (ownedBy Person)")).toBeInTheDocument();
-
-    //Select both Order and BabyRegistry related entities to display
-    fireEvent.click(getByText("Order (orderedBy Person)"));
-    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
+    //Test deletion of BabyRegistry related entity through the X button on the filter label of its parent table (Person) now
 
     let entityFilterValue = getAllByText(
       (_content, element) =>
         element.className !== null &&
-                element.className === "ant-select-selection__choice__content"
+                element.className === "ant-select-selection__choice"
     );
 
-    //Both selected values should appear in primary table filter
-    expect(entityFilterValue[0]).toHaveTextContent("Order (orderedBy Person)");
+    //Verify BabyRegistry label exists in the Person table's filter
     expect(entityFilterValue[1]).toHaveTextContent("BabyRegistry (ownedBy Person)");
+
+    //Click X button on the BabyRegistry label
+    fireEvent.click(getAllByLabelText("icon: close")[1]);
+
+    //Should display confirmation message now, instead of the entity being referenced message because Product child table has been deleted
+    expect(await(waitForElement(() => getByLabelText("confirm-deletion-msg")))).toBeInTheDocument();
+
+    //Confirm deletion of BabyRegistry table
+    fireEvent.click(getByText("Yes"));
+
+    entityFilterValue = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-selection__choice"
+    );
+
+    //BabyRegistry (ownedBy Person) table should no longer be shown
+    await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
+
+    //BabyRegistry label should no longer exist in Person's entity filter
+    expect(entityFilterValue[1]).not.toEqual("BabyRegistry (ownedBy Person)");
+
+    //only target entity table (Person) and Order and its related entity table Product should remain
+    expect(getByLabelText("Person-title")).toBeInTheDocument();
+    await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
+    await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
+    await wait(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
+
+    let targetEntityFilter = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-search__field"
+    )[0];
+
+    fireEvent.click(targetEntityFilter); // focus on the search box
+
+    //Related entity options should appear
+    expect(getByLabelText("Order (orderedBy Person)-option")).toBeInTheDocument();
+    expect(getByLabelText("BabyRegistry (ownedBy Person)-option")).toBeInTheDocument();
+
+    //Select BabyRegistry related entity to display
+    fireEvent.click(getByLabelText("BabyRegistry (ownedBy Person)-option"));
+
+    entityFilterValue = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+                element.className === "ant-select-selection__choice"
+    );
 
     //Order and BabyRegistry tables should be present on the screen
     expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument();
@@ -752,8 +798,6 @@ describe("RTL Source-to-entity map tests", () => {
     expect(entityFilters).toHaveLength(3);
 
     //Verify related entities can be opened from a related entity table
-    fireEvent.click(getByTestId("Order (orderedBy Person)-entities-filter"));
-    fireEvent.click(getByText("Product (Order hasProduct)"));
 
     fireEvent.click(getByTestId("BabyRegistry (ownedBy Person)-entities-filter"));
     fireEvent.click(getByText("Product (BabyRegistry hasProduct)"));
@@ -763,8 +807,6 @@ describe("RTL Source-to-entity map tests", () => {
         element.className !== null &&
         element.className === "ant-select-selection__choice__content"
     );
-    //Selected value should appear in Order table filter
-    expect(relatedEntityFilterValue[2]).toHaveTextContent("Product (Order hasProduct)");
 
     //Selected value should appear in BabyRegistry table filter
     expect(relatedEntityFilterValue[3]).toHaveTextContent("Product (BabyRegistry hasProduct)");
@@ -802,17 +844,6 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
     expect(getByTestId("validationError")).toHaveTextContent("");
 
-
-    //Deselect Order from entity filter in primary entity table
-    fireEvent.click(getAllByLabelText("icon: close")[0]);
-
-    //Both the Order table and Order's related entity table for Product should disappear
-    expect(queryByLabelText("Order (orderedBy Person)-title")).not.toBeInTheDocument();
-    expect(queryByLabelText("BabyRegistry (Order hasProduct)-title")).not.toBeInTheDocument();
-
-    //BabyRegistry table and BabyRegistry's related entity table for Product should remain
-    expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
-    expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument();
   });
 
   test("Verify right XPATH with source context selection and testing in related entity tables", async () => {

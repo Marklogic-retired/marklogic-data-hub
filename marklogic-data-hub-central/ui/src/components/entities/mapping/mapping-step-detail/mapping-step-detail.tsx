@@ -122,8 +122,7 @@ const MappingStepDetail: React.FC = () => {
   const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
   const previousSelected : any = usePrevious(relatedEntitiesSelected);
   const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
-  const [removedEntities, setRemovedEntities] = useState<any[]>([]);
-
+  const [labelRemoved, setLabelRemoved] = useState("");
   //For Entity table filtering
   const [filterStr, setFilterStr] = useState("");
 
@@ -684,32 +683,6 @@ const MappingStepDetail: React.FC = () => {
     }
   }, [relatedEntitiesSelected]);
 
-  useEffect(() => {
-    let allEntitiesToRemove : any = [];
-    removedEntities.forEach(entityRemoved => {
-      let entitiesToRemove: any = checkRemoveEntityDependencies(entityRemoved, []);
-      allEntitiesToRemove = allEntitiesToRemove.concat(entitiesToRemove);
-    });
-    let updateSelectedEntities : any = relatedEntitiesSelected.filter(entity => !allEntitiesToRemove.includes(entity));
-    setRelatedEntitiesSelected(updateSelectedEntities);
-  }, [removedEntities]);
-
-  const checkRemoveEntityDependencies = (removedEntity, arrayOfRemoved) => {
-    if (arrayOfRemoved.length < 1) {
-      arrayOfRemoved.push(removedEntity);
-    }
-    if (!removedEntity.relatedEntityMappings) {
-      return arrayOfRemoved;
-    } else {
-      removedEntity.relatedEntityMappings.forEach(relatedMapping => {
-        let index = relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === relatedMapping["entityMappingId"]);
-        arrayOfRemoved.push(relatedEntityTypeProperties[index]);
-        return checkRemoveEntityDependencies(arrayOfRemoved[arrayOfRemoved.length - 1], arrayOfRemoved);
-      });
-    }
-    return arrayOfRemoved;
-  };
-
   //Set the collapse/Expand options for Source table, when mapping opens up.
   const initializeSourceExpandKeys = () => {
     let initialKeysToExpand:any = [];
@@ -1084,6 +1057,28 @@ const MappingStepDetail: React.FC = () => {
     setSavedMappingArt(dataPayload);
   };
 
+  const deleteRelatedEntity = async (entityToDelete) => {
+    let dataPayload = savedMappingArt;
+    let updateRelatedMappings : any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings));
+    let indexToRemove = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityToDelete.entityMappingId);
+    if (indexToRemove > -1) {
+      updateRelatedMappings.splice(indexToRemove, 1);
+    }
+    setLabelRemoved(entityToDelete.entityLabel);
+    dataPayload = {...dataPayload, relatedEntityMappings: updateRelatedMappings};
+    let mapSavedResult = await updateMappingArtifact(dataPayload);
+    if (mapSavedResult) {
+      setErrorInSaving("noError");
+    } else {
+      setErrorInSaving("error");
+    }
+    let mapArt = await getMappingArtifactByMapName(dataPayload.targetEntityType, curationOptions.activeStep.stepArtifact.name);
+    if (mapArt) {
+      await setSavedMappingArt({...mapArt});
+    }
+    setMapSaved(mapSavedResult);
+  };
+
   const saveMapping =  async (mapObject, entityMappingId, updatedContext, updatedUri, relatedEntityModel) => {
     let obj = {};
     Object.keys(mapObject).forEach(key => {
@@ -1415,7 +1410,6 @@ const MappingStepDetail: React.FC = () => {
                 relatedEntityTypeProperties={relatedEntityTypeProperties}
                 relatedEntitiesSelected={relatedEntitiesSelected}
                 setRelatedEntitiesSelected={setRelatedEntitiesSelected}
-                setRemovedEntities={setRemovedEntities}
                 isRelatedEntity={false}
                 tableColor="#EAE9EE"
                 firstRowTableKeyIndex={firstRowTableKeyIndex++}
@@ -1425,6 +1419,8 @@ const MappingStepDetail: React.FC = () => {
                 setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                 mapFunctions = {mapFunctions}
                 savedMappingArt = {savedMappingArt}
+                deleteRelatedEntity = {deleteRelatedEntity}
+                labelRemoved = {labelRemoved}
               />
               {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
                 <EntityMapTable
@@ -1454,7 +1450,6 @@ const MappingStepDetail: React.FC = () => {
                   relatedEntityTypeProperties={relatedEntityTypeProperties}
                   relatedEntitiesSelected = {relatedEntitiesSelected}
                   setRelatedEntitiesSelected={setRelatedEntitiesSelected}
-                  setRemovedEntities={setRemovedEntities}
                   isRelatedEntity={true}
                   tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
                   firstRowTableKeyIndex={firstRowTableKeyIndex++}
@@ -1464,6 +1459,8 @@ const MappingStepDetail: React.FC = () => {
                   setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                   mapFunctions = {mapFunctions}
                   savedMappingArt = {savedMappingArt}
+                  deleteRelatedEntity = {deleteRelatedEntity}
+                  labelRemoved = {labelRemoved}
                 /> : "")}
             </div>
           </SplitPane>
