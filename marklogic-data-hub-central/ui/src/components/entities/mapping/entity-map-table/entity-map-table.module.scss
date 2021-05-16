@@ -24,13 +24,28 @@
 
 .entitySettingsLink {
   display: inline-block;
-  padding-right: 20px;
+  padding-right: 17px;
   font-size: 20px !important;
   color: #44499C;
   cursor: pointer;
   &:hover{
       color: var(--hoverColor);
   }
+}
+
+.deleteEntityLink {
+  display: inline-block;
+  margin-left: -10px;
+  font-size: 20px !important;
+  color: #44499C;
+  cursor: pointer;
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+
+.deleteTableIcon {
+  padding-right: 10px;
 }
 
 .mapRelatedEntitiesText {
