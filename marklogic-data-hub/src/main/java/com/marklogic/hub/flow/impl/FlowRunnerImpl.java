@@ -197,7 +197,7 @@ public class FlowRunnerImpl implements FlowRunner {
             flow.setOverrideStepConfig(stepConfig);
         }
 
-        flow.setOverrideOptions(runtimeOptions);
+        flow.setRuntimeOptions(runtimeOptions);
 
         Iterator<String> stepItr = stepNumbers.iterator();
         Queue<String> stepsQueue = new ConcurrentLinkedQueue<>();
@@ -331,13 +331,8 @@ public class FlowRunnerImpl implements FlowRunner {
             while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
-                Map<String, Object> optsMap ;
-                if(flow.getOverrideOptions() != null) {
-                    optsMap = new HashMap<>(flow.getOverrideOptions());
-                }
-                else {
-                    optsMap = new HashMap<>();
-                }
+                Map<String, Object> runtimeOptions = flow.getRuntimeOptions() != null ?
+                    new HashMap<>(flow.getRuntimeOptions()) : new HashMap<>();
 
                 AtomicLong errorCount = new AtomicLong();
                 AtomicLong successCount = new AtomicLong();
@@ -346,7 +341,7 @@ public class FlowRunnerImpl implements FlowRunner {
                 try {
                     stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
-                        .withRuntimeOptions(optsMap)
+                        .withRuntimeOptions(runtimeOptions)
                         .onItemComplete((jobID, itemID) -> {
                             successCount.incrementAndGet();
                         })

@@ -42,7 +42,7 @@ public class FlowImpl implements Flow {
     private Map<String, Step> steps = new LinkedHashMap<>();
 
     @JsonIgnore
-    private Map<String, Object> overrideOptions;
+    private Map<String, Object> runtimeOptions;
     @JsonIgnore
     private Map<String, Object> overrideStepConfig;
 
@@ -56,12 +56,12 @@ public class FlowImpl implements Flow {
     }
 
 
-    public void setOverrideOptions(Map<String, Object> overrideOptions) {
-        this.overrideOptions = overrideOptions;
+    public void setRuntimeOptions(Map<String, Object> runtimeOptions) {
+        this.runtimeOptions = runtimeOptions;
     }
-    
-    public Map<String, Object> getOverrideOptions() {
-        return this.overrideOptions;
+
+    public Map<String, Object> getRuntimeOptions() {
+        return this.runtimeOptions;
     }
 
 

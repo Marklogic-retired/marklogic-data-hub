@@ -28,12 +28,12 @@ const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 class StepExecutionContext {
 
   /**
-   * Factory method for the normal approach of creating a step execution context, which uses data from the given 
+   * Factory method for the normal approach of creating a step execution context, which uses data from the given
    * flow execution context. For testing purposes, it is often easier to use the constructor directly.
-   * 
+   *
    * @param flowExecutionContext
-   * @param stepNumber 
-   * @returns 
+   * @param stepNumber
+   * @returns
    */
   static newContext(flowExecutionContext, stepNumber) {
     const flow = flowExecutionContext.flow;
@@ -65,7 +65,7 @@ class StepExecutionContext {
   }
 
   /**
-   * 
+   *
    * @param flow required; this must be a flow with inline steps
    * @param stepNumber required; the number of the step in the flow that is being executed
    * @param stepDefinition required; the step definition associated with the step being executed
@@ -92,6 +92,10 @@ class StepExecutionContext {
       .reduce((previousValue, currentValue) => (previousValue || []).concat(currentValue || []))
       .filter(col => !!col); // filter out any null/empty collections that may exist
 
+    // Remove duplicates from the collections; this can occur when the runtimeOptions argument is actually already
+    // a set of combined options, which is the case when this is invoked from flow.sjs
+    this.collectionsFromOptions = [...new Set(this.collectionsFromOptions)];
+
     this.completedItems = [];
     this.failedItems = [];
     this.stepErrors = [];
@@ -107,7 +111,7 @@ class StepExecutionContext {
   }
 
   /**
-   * 
+   *
    * @returns {boolean} true if the sourceDatabase for this execution is the same as this transaction's database
    */
   sourceDatabaseIsCurrentDatabase() {
@@ -152,12 +156,12 @@ class StepExecutionContext {
   /**
    * Adjusts the collections and permissions on each content object in the given array based on the combined options
    * and the user's default collections and permissions.
-   * 
-   * Since DHF 5.0, collections from options have been added after step processing as opposed to before 
-   * step processing. This is contrary to permissions, which are set on content objects passed into a step. 
-   * The history of this appears to be due to mastering steps, which create new content objects and thus 
-   * want collections added to them, not to the content objects passed into a step. Thus, permissions are only 
-   * adjusted based on the user's default permissions. This behavior may be changed in a future release of DHF 5.x, 
+   *
+   * Since DHF 5.0, collections from options have been added after step processing as opposed to before
+   * step processing. This is contrary to permissions, which are set on content objects passed into a step.
+   * The history of this appears to be due to mastering steps, which create new content objects and thus
+   * want collections added to them, not to the content objects passed into a step. Thus, permissions are only
+   * adjusted based on the user's default permissions. This behavior may be changed in a future release of DHF 5.x,
    * once we're able to determine what the "right" consistent behavior is.
    *
    * @param contentArray
@@ -194,8 +198,8 @@ class StepExecutionContext {
         }
       });
     }
-  }  
-  
+  }
+
   setCompletedItems(items) {
     // When a step is run with acceptsBatch=true, the step module may have captured step errors for one or more items.
     // So we need to deduplicate this with failedItems
@@ -215,9 +219,9 @@ class StepExecutionContext {
   }
 
   /**
-   * 
-   * @param error 
-   * @param batchItems 
+   *
+   * @param error
+   * @param batchItems
    * @returns the constructed error object
    */
   addStepErrorForEntireBatch(error, batchItems) {
@@ -232,7 +236,7 @@ class StepExecutionContext {
   }
 
   /**
-   * 
+   *
    * @returns {boolean} true if all the items were processed by the step, even if one or more failed
    */
   wasCompleted() {
@@ -240,9 +244,9 @@ class StepExecutionContext {
   }
 
   /**
-   * 
-   * @param error 
-   * @param itemThatFailed {string} optional; used for when a step that processes each item individually has 
+   *
+   * @param error
+   * @param itemThatFailed {string} optional; used for when a step that processes each item individually has
    * a failure for a particular item
    * @returns the constructed error object
    */
@@ -281,7 +285,7 @@ class StepExecutionContext {
   isStopOnError() {
     return this.combinedOptions.stopOnError === true;
   }
-  
+
   getStepMainFunction() {
     const modulePath = this.stepDefinition.modulePath;
     const stepMainFunction = new StepDefinition().makeFunction(null, "main", modulePath);
@@ -315,11 +319,11 @@ class StepExecutionContext {
     const val = String(this.combinedOptions.provenanceGranularityLevel);
     return val === consts.PROVENANCE_COARSE || val === consts.PROVENANCE_FINE;
   }
-  
+
   fineProvenanceIsEnabled() {
     return String(this.combinedOptions.provenanceGranularityLevel) === consts.PROVENANCE_FINE;
   }
-  
+
   batchOutputIsEnabled() {
     if (!this.jobOutputIsEnabled()) {
       return false;
@@ -336,7 +340,7 @@ class StepExecutionContext {
 
   /**
    * @returns {boolean} true if throwStopError=true in the combined options. The default DHF approach for handling errors
-   * is to capture them in the RunFlowResponse (and optionally Batch documents). But in a scenario where that response cannot be 
+   * is to capture them in the RunFlowResponse (and optionally Batch documents). But in a scenario where that response cannot be
    * accessed - such as when running a step via MLCP - it is typically preferable for an error generated by a step to be thrown.
    */
   stepErrorShouldBeThrown() {
@@ -349,11 +353,11 @@ class StepExecutionContext {
 
   /**
    * If custom hook config is found, returns a function that accepts an array of content objects. This is a change from DHF <= 5.4.x, where
-   * the hook always received the input content array, even if it was an "after" hook. That actually worked for the most likely use case of 
-   * attaching an after hook to a mapping step. That's because the mapping step returned the same content object it received. Now in 5.5, it 
+   * the hook always received the input content array, even if it was an "after" hook. That actually worked for the most likely use case of
+   * attaching an after hook to a mapping step. That's because the mapping step returned the same content object it received. Now in 5.5, it
    * returns new content objects, and potentially multiple ones due to related entity mappings. It seems far more intuitive that an after hook
-   * should receive the output content array from a step, and could easily be considered a bug that it wasn't. 
-   * 
+   * should receive the output content array from a step, and could easily be considered a bug that it wasn't.
+   *
    * @param {array} inputContentArray array of content objects being processed by this step; needed so that the set of items
    * being processed can be passed to the custom hook
    * @returns a function for executing the custom hook on an array of content objects
@@ -362,7 +366,7 @@ class StepExecutionContext {
     const hookConfig = this.flowStep.customHook || this.stepDefinition.customHook;
     if (hookConfig && hookConfig.module) {
       const parameters = Object.assign({
-        uris: inputContentArray.map(content => content.uri), 
+        uris: inputContentArray.map(content => content.uri),
         options: this.combinedOptions,
         flowName: this.flow.name,
         stepNumber: this.stepNumber,
