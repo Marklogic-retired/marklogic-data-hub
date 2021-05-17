@@ -636,7 +636,16 @@ public class WriteStepRunner implements StepRunner {
         ObjectMapper mapper = jacksonHandle.getMapper();
         JsonNode originalContent = jacksonHandle.get();
         ObjectNode node = mapper.createObjectNode();
-        node.set("content",originalContent);
+
+        // Per DHFPROD-6665, this custom file ingester now does the same thing MLCP does when constructing XML from
+        // a delimited file, which is to include a no-namespaced "root" element around the elements that were built
+        // from a particular row
+        if (this.outputFormat != null && this.outputFormat.equalsIgnoreCase("xml")) {
+            node.putObject("content").set("root", originalContent);
+        } else {
+            node.set("content",originalContent);
+        }
+
         node.put("file", file.getAbsolutePath());
         jacksonHandle.set(node);
         try {

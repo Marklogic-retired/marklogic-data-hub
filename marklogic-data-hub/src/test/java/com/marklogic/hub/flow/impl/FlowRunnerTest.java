@@ -36,6 +36,7 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
+import com.marklogic.rest.util.Fragment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -86,12 +87,15 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         assertNotNull(stepResp.getStepEndTime());
 
         EvalResultIterator itr = runInDatabase("fn:collection(\"csv-coll\")[1]/envelope/headers/createdUsingFile", HubConfig.DEFAULT_STAGING_NAME);
-        EvalResult res = itr.next();
-        StringHandle sh = new StringHandle();
-        res.get(sh);
-        String file = sh.get();
+        String file = itr.next().getAs(String.class);
         assertNotNull(file);
         assertTrue(file.contains("ingest.csv"), "Unexpected filename: " + file);
+
+        ObjectNode doc = readJsonObject(getHubClient().getStagingClient().newServerEval().xquery("collection('csv-coll')[1]").evalAs(String.class));
+        assertFalse(doc.get("envelope").get("instance").has("root"),
+            "The 'root' element that is added to XML documents per DHFPROD-6665 (in DHF 5.5) should not be added to JSON documents, " +
+                "since MLCP does not do so either");
+        assertTrue(doc.get("envelope").get("instance").has("id"));
     }
 
     @Test
@@ -224,6 +228,13 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         assertEquals(25, Integer.parseInt(count));
         count = getHubClient().getJobsClient().newServerEval().xquery("xdmp:estimate(fn:collection('http://marklogic.com/provenance-services/record'))").evalAs(String.class);
         assertEquals(25, Integer.parseInt(count));
+
+        String xml = getHubClient().getStagingClient().newServerEval().xquery("collection('csv-coll')[1]").evalAs(String.class);
+        Fragment doc = new Fragment(xml);
+        assertTrue(doc.elementExists("/es:envelope/es:instance/root[id and customer]"),
+            "Per DHFPROD-6665, the DHF file ingester now includes a no-namespaced 'root' element around each of the elements constructed from a " +
+                "row in the delimited file. This matches what MLCP does, thereby avoiding confusion from a user getting different results from DHF " +
+                "and from MLCP.");
      }
 
     @SuppressWarnings("deprecation")
