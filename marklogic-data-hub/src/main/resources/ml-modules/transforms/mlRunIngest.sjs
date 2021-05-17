@@ -28,7 +28,9 @@ function transform(context, params, content) {
   if(options.inputFileType && options.inputFileType.toLowerCase() === "csv") {
     content = JSON.parse(content);
     options.file = content.file;
-    content = content.content;
+    // Wrap the JSON parsed from the CSV as a document node, as a step's main function expects content.value
+    // to be a node, not an object
+    content = xdmp.toJSON(content.content);
   }
 
   options.writeStepOutput = false;
