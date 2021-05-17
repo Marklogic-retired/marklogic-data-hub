@@ -5,8 +5,10 @@ import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Needs manage-user for RMA access plus granular privileges for clearing the staging and final databases.
@@ -84,6 +86,18 @@ public class DataHubAdminTest extends AbstractSecurityTest {
         } catch (Exception ex) {
             logger.info("Caught expected exception: " + ex.getMessage());
         }
+    }
+
+    @Test
+    void requestPrivileges() {
+        List<String> privilegeNames = roleBeingTested.getPrivilege().stream()
+            .map(rolePrivilege -> rolePrivilege.getPrivilegeName())
+            .collect(Collectors.toList());
+
+        assertTrue(privilegeNames.contains("cancel-any-request"),
+            "Starting in 5.5, a data-hub-admin is permitted to cancel any request");
+        assertTrue(privilegeNames.contains("set-any-time-limit"),
+            "Starting in 5.5, a data-hub-admin is permitted to set a time limit on any request");
     }
 
     /**

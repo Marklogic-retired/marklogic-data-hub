@@ -1,10 +1,20 @@
 {
   "role-name": "data-hub-admin",
-  "description": "5.5-SNAPSHOT: Permits developing and operating a Data Hub application, along with clearing databases",
+  "description": "5.5-SNAPSHOT: Permits actions pertaining to administering a Data Hub application",
   "role": [
     "data-hub-developer"
   ],
   "privilege": [
+    {
+      "privilege-name": "cancel-any-request",
+      "action": "http://marklogic.com/xdmp/privileges/cancel-any-request",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "set-any-time-limit",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-set-request-time-limit-any",
+      "kind": "execute"
+    },
     {
       "privilege-name": "temporal:document-wipe",
       "action": "http://marklogic.com/xdmp/privileges/temporal-document-wipe",

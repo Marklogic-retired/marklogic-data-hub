@@ -259,21 +259,6 @@ class InstallerThread extends LoggingObject implements Runnable {
         describeTestUser.addCollection("test-shared-collection");
         describeTestUser.save();
 
-        addStatusPrivilegeToDataHubDeveloper(hubConfig);
-
         logger.info("Finished creating test users");
     }
-
-    /**
-     * This allows for any user that inherits data-hub-developer to invoke the "waitForTasksToFinish" method.
-     */
-    private void addStatusPrivilegeToDataHubDeveloper(HubConfig hubConfig) {
-        ManageClient client = hubConfig.getManageClient();
-        PrivilegeManager mgr = new PrivilegeManager(client);
-        String json = mgr.getAsJson("status-builtins", "kind", "execute");
-        Privilege p = new DefaultResourceMapper(new API(client)).readResource(json, Privilege.class);
-        p.addRole("data-hub-developer");
-        mgr.save(p.getJson());
-    }
-
 }

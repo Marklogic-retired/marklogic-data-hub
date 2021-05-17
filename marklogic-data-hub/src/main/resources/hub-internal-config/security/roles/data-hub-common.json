@@ -8,6 +8,11 @@
   ],
   "privilege": [
     {
+      "privilege-name": "cancel-my-requests",
+      "action": "http://marklogic.com/xdmp/privileges/cancel-my-requests",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "debug-any-requests",
       "action": "http://marklogic.com/xdmp/privileges/debug-any-requests",
       "kind": "execute"
@@ -33,8 +38,18 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "set-my-time-limit",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-set-request-time-limit-my",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "set-my-transaction-name",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-set-transaction-name-my",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "status-builtins",
+      "action": "http://marklogic.com/xdmp/privileges/status",
       "kind": "execute"
     },
     {
