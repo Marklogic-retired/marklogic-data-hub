@@ -2,11 +2,6 @@
 // Order of object properties determines order in sidebar.
 const monitorPropertiesConfig = [
   {
-    facetName: "startTime",
-    displayName: "Start Time",
-    tooltip: "Start time for a step that has run.",
-  },
-  {
     facetName: "stepDefinitionType",
     displayName: "Step Type",
     tooltip: "",
