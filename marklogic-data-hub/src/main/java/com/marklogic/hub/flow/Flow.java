@@ -116,13 +116,13 @@ public interface Flow {
      * Gets the overridden options that were set at java runtime
      * @return returns a map object containing the json object submitted at runtime for commands
      */
-    Map<String, Object> getOverrideOptions();
+    Map<String, Object> getRuntimeOptions();
 
     /**
      * Sets the overridden options for the flow to use at java runtime
-     * @param overrideOptions a map object that represents the json flow options that are to be used at runtime
+     * @param runtimeOptions a map object that represents the json flow options that are to be used at runtime
      */
-    void setOverrideOptions(Map<String, Object> overrideOptions);
+    void setRuntimeOptions(Map<String, Object> runtimeOptions);
 
     /**
      * Gets the overridden options that were set at java runtime
@@ -135,7 +135,7 @@ public interface Flow {
      * @param overrideStepConfig a map object that represents the json step runner config that are to be used at runtime
      */
     void setOverrideStepConfig(Map<String, Object> overrideStepConfig);
-    
+
     /**
      * If set stops the flow on error
      * @param stopOnError boolean flag to stop on error

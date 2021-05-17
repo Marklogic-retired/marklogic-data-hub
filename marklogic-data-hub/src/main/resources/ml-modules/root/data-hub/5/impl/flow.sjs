@@ -145,8 +145,8 @@ class Flow {
    * @param contentArray Array of content "descriptors", where each descriptor is expected to at least have a "uri" property.
    * The value of the "uri" property is not necessarily a URI; if sourceQueryIsScript is true for the step, then
    * the value of the "uri" property can be any string.
-   * @param options Similar to findMatchingContent, this is the combination of options provided by the Java QueryStepRunner
-   *  class that ideally would be the same as what's produced by flowUtils.makeCombinedOptions, but it's not yet
+   * @param options Unfortunately this is not consistently defined; depending on the client, it's either the runtime
+   * options provided by the user, or it's the already-combined options
    * @param stepNumber The number of the step within the given flow to run
    */
   runFlow(flowName, jobId, contentArray, options, stepNumber) {
@@ -229,9 +229,9 @@ class Flow {
   }
 
   /**
-   * If batch output is enabled, a Batch document will be written to the jobs database. 
-   * 
-   * @param stepExecutionContext 
+   * If batch output is enabled, a Batch document will be written to the jobs database.
+   *
+   * @param stepExecutionContext
    * @param jobDoc {object} the job document for this step execution; can be null, in which case a Batch doc is not written
    * @param batchItems {array} the set of items being processed in this batch
    * @param writeTransactionInfo {object} info about the transaction(s) that wrote content to a database
