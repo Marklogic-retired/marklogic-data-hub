@@ -29,8 +29,12 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
     let facets = {...monitorGreyedOptions.selectedFacets};
     for (let constraint in monitorOptions.selectedFacets) {
       if (facets.hasOwnProperty(constraint)) {
-        for (let sValue of monitorOptions.selectedFacets[constraint]) {
-          if (facets[constraint].indexOf(sValue) === -1) { facets[constraint].push(sValue); }
+        if(constraint !== 'startTime') {
+          for (let sValue of monitorOptions.selectedFacets[constraint]) {
+            if (facets[constraint].indexOf(sValue) === -1) {
+              facets[constraint].push(sValue);
+            }
+          }
         }
       } else {
         facets[constraint] = monitorOptions.selectedFacets[constraint];
@@ -66,6 +70,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
     >
       { props.selectedFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
+        let displayName = item.constraint !== 'startTime' ? facetName + ": " + item.facet : item.facet;
         return (
           <MLButton
             size="small"
@@ -75,13 +80,14 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
             data-cy={`clear-${item.facet}`}
             data-testid={`clear-${item.facet}`}
           >
-            {facetName + ": " + item.facet}
+            {displayName}
             <Icon type="close"/>
           </MLButton>
         );
       })}
       {props.greyFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
+        let displayName = item.constraint !== 'startTime' ? facetName + ": " + item.facet : item.facet;
         return (
           (unCheckRest(item.constraint, item.facet)) &&
           <MLTooltip
@@ -96,7 +102,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
               data-cy={`clear-grey-${item.facet}`}
               data-testid={`clear-grey-${item.facet}`}
             >
-              {facetName + ": " + item.facet}
+              {displayName}
               <Icon type="close"/>
             </MLButton>
           </MLTooltip>
