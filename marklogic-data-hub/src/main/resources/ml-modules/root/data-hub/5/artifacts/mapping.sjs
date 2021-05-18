@@ -89,7 +89,8 @@ function defaultArtifact(artifactName, entityTypeId) {
     permissions: defaultPermissions,
     batchSize: 100,
     validateEntity: defaultValidateEntity,
-    targetFormat: "json"
+    targetFormat: "json",
+    attachSourceDocument: false
   };
 }
 

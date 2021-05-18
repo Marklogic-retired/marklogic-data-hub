@@ -9,6 +9,7 @@
   "threadCount" : 4,
   "options": {
     "acceptsBatch": true,
+    "attachSourceDocument": true,
     "sourceDatabase": "data-hub-STAGING",
     "targetDatabase": "data-hub-FINAL",
     "sourceQuery": "cts.collectionQuery('default-ingestion')",

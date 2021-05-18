@@ -169,6 +169,10 @@ public class CreateStepTest extends AbstractHubCoreTest {
         assertTrue(step.has("stepDefinitionName"), message);
         assertTrue(step.has("stepDefinitionType"), message);
         assertTrue(step.has("stepId"), message);
+        if ("mapping".equalsIgnoreCase(stepType)){
+            assertTrue(step.has("attachSourceDocument"), message);
+            assertEquals(false, step.get("attachSourceDocument").asBoolean());
+        }
         if ("ingestion".equalsIgnoreCase(stepType)){
             assertEquals("json", step.get("sourceFormat").asText());
             assertEquals("json", step.get("targetFormat").asText());

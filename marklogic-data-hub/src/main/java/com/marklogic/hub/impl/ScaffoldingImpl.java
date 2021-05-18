@@ -124,6 +124,9 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 if(entityType != null){
                     stepPayLoad.put("entityType", entityType);
                 }
+                if("mapping".equalsIgnoreCase(stepType)){
+                    stepPayLoad.put("attachSourceDocument", false);
+                }
             }
         }
 

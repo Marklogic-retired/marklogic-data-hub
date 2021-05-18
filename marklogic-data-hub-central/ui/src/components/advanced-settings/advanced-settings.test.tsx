@@ -101,7 +101,7 @@ describe("Advanced step settings", () => {
   });
 
   test("Verify edit advanced settings for Mapping", async () => {
-    const {getByText, getAllByText} = render(
+    const {getByText, getAllByText, getByLabelText} = render(
       <AdvancedSettings {...data.advancedMapping} />
     );
 
@@ -124,6 +124,13 @@ describe("Advanced step settings", () => {
 
     expect(getByText("Entity Validation")).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
+
+    expect(getByText("Attach Source Document")).toBeInTheDocument();
+    const radio = getByLabelText("No");
+
+    expect(radio["value"]).toBe("false");
+    fireEvent.change(radio, {target: {value: "true"}});
+    expect(radio["value"]).toBe("true");
 
     expect(getByText("Header Content")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
