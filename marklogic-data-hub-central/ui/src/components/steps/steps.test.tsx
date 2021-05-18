@@ -131,17 +131,22 @@ describe("Steps settings component", () => {
     await wait(() => {
       fireEvent.click(getByLabelText("Close"));
     });
-
+    const yesButton =  screen.getByRole("button", {
+      name: /Yes/i
+    });
+    const noButton =  screen.getByRole("button", {
+      name: /No/i
+    });
     expect(getByText("Discard changes?")).toBeInTheDocument();
-    expect(getByText("Yes")).toBeInTheDocument();
-    expect(getByText("No")).toBeInTheDocument();
+    expect(yesButton).toBeInTheDocument();
+    expect(noButton).toBeInTheDocument();
 
-    const noButton = getByText("No");
+
     noButton.onclick = jest.fn();
     fireEvent.click(noButton);
     expect(noButton.onclick).toHaveBeenCalledTimes(1);
 
-    const yesButton = getByText("Yes");
+
     yesButton.onclick = jest.fn();
     fireEvent.click(yesButton);
     expect(yesButton.onclick).toHaveBeenCalledTimes(1);

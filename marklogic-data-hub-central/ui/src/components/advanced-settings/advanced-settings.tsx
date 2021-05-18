@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Form, Input, Icon, Select} from "antd";
+import {Form, Input, Icon, Select, Radio} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
@@ -84,6 +84,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [validateEntity, setValidateEntity] = useState(defaultValidateEntity);
   const [validateEntityTouched, setValidateEntityTouched] = useState(false);
 
+  const [attachSourceDocument, setAttachSourceDocument] = useState(false);
+  const [attachSourceDocumentTouched, setAttachSourceDocumentTouched] = useState(false);
+
   const defaultBatchSize = StepsConfig.defaultBatchSize;
   const [batchSize, setBatchSize] = useState(defaultBatchSize);
   const [batchSizeTouched, setBatchSizeTouched] = useState(false);
@@ -121,6 +124,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setTargetFormatTouched(false);
     setProvGranularityTouched(false);
     setValidateEntityTouched(false);
+    setAttachSourceDocumentTouched(false);
     setBatchSizeTouched(false);
     setHeadersTouched(false);
     setInterceptorsTouched(false);
@@ -201,6 +205,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (props.stepData.validateEntity) {
         setValidateEntity(props.stepData.validateEntity);
       }
+      if (props.stepData.attachSourceDocument) {
+        setAttachSourceDocument(props.stepData.attachSourceDocument);
+      }
       if (props.stepData.batchSize) {
         setBatchSize(props.stepData.batchSize);
       }
@@ -246,7 +253,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       props.setHasChanged(hasFormChanged());
     }
     props.setPayload(getPayload());
-  }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections]);
+  }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections, attachSourceDocumentTouched]);
 
   // On change of default collections in parent, update default collections if not empty
   useEffect(() => {
@@ -266,6 +273,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         && !targetFormatTouched
         && !provGranularityTouched
         && !validateEntityTouched
+        && !attachSourceDocumentTouched
         && !batchSizeTouched
         && !interceptorsTouched
         && !customHookTouched
@@ -300,6 +308,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
     if (stepType === "mapping") {
       payload["validateEntity"] = validateEntity;
+      payload["attachSourceDocument"] = attachSourceDocument;
     }
     if (usesAdvancedTargetCollections) {
       payload["targetCollections"] = targetCollections;
@@ -410,6 +419,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (!additionalSettingsValid && isValidJSON(event.target.value)) {
         setAdditionalSettingsValid(true);
       }
+    }
+
+    if (event.target.name === "attachSourceDocument") {
+      setAttachSourceDocumentTouched(true);
+      setAttachSourceDocument(event.target.value);
     }
 
     if (event.target.id === "batchSize") {
@@ -749,6 +763,19 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             </MLTooltip>
           </div>
         </Form.Item> : ""}
+        {   stepType === "mapping" ? <Form.Item
+          label={<span>Attach Source Document</span>}
+          labelAlign="left"
+          className={styles.formItem}
+        >
+          <Radio.Group  onChange={handleChange} name="attachSourceDocument" value={attachSourceDocument}>
+            <Radio value={true}>Yes</Radio>
+            <Radio value={false}>No</Radio>
+          </Radio.Group>
+          <MLTooltip title={tooltips.attachSourceDocument} placement={"right"}>
+            <Icon type="question-circle" className={styles.centerCircle} theme="filled" />
+          </MLTooltip>
+        </Form.Item>: ""}
         <Form.Item
           label={<span>Batch Size</span>}
           labelAlign="left"

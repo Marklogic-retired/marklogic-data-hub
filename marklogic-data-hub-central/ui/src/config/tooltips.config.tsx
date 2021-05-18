@@ -475,6 +475,7 @@ const AdvancedSettingsTooltips = {
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
+  attachSourceDocument: 'Specifies whether the source document should be copied into the mapped entity instance',
   interceptors: 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   sourceDatabase: 'The database where the input data is read from.',

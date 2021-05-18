@@ -226,7 +226,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
         instance: Object.assign({
           info: entityInfo
         }, instance.toObject()),
-        attachments: attachments
+        attachments: options.attachSourceDocument ? attachments : undefined
       }
     });
   } else {
@@ -274,7 +274,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
       }
       nb.endElement();
     }
-    if (attachments) {
+    if (attachments && options.attachSourceDocument) {
       nb.startElement("attachments", "http://marklogic.com/entity-services");
       if (attachments instanceof Document && attachments.documentFormat === 'JSON') {
         nb.addText(xdmp.quote(attachments));
@@ -288,9 +288,6 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
           nb.addNode(attachments);
         }
       }
-      nb.endElement();
-    } else {
-      nb.startElement("attachments", "http://marklogic.com/entity-services");
       nb.endElement();
     }
     nb.endElement();

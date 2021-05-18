@@ -209,6 +209,10 @@ describe("Mapping Card component", () => {
       expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
       expect(getByText("Entity Validation")).toBeInTheDocument();
       expect(getByText("Please select Entity Validation")).toBeInTheDocument();
+      expect(getByText("Attach Source Document")).toBeInTheDocument();
+      const radio = getByLabelText("No");
+      expect(radio["value"]).toBe("false");
+      expect(getByText("Please select Entity Validation")).toBeInTheDocument();
       expect(getByText("Header Content")).toBeInTheDocument();
       expect(getByText("Interceptors")).toBeInTheDocument();
       expect(getByText("Custom Hook")).toBeInTheDocument();
