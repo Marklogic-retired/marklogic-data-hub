@@ -76,7 +76,6 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
@@ -99,7 +98,6 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(matchStep);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
@@ -146,7 +144,6 @@ describe("Add Matching step to a flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -163,7 +160,6 @@ describe("Add Matching step to a flow", () => {
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
@@ -195,7 +191,6 @@ describe("Add Matching step to a flow", () => {
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);

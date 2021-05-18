@@ -80,7 +80,6 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -102,7 +101,6 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
     runPage.runStep(mergeStep);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
@@ -125,7 +123,6 @@ describe("Add Merge step to a flow", () => {
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
     loadPage.confirmationOptions("Save").click();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
@@ -146,7 +143,6 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
@@ -163,7 +159,6 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
@@ -194,7 +189,6 @@ describe("Add Merge step to a flow", () => {
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName1);
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();

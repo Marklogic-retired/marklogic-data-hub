@@ -5,6 +5,7 @@
     "viewportHeight": 1050,
     "numTestsKeptInMemory": 1,
     "defaultCommandTimeout": 10000,
+    "ignoreTestFiles": "**/curation/load/defaultIngestionCardView.spec.tsx",
     "reporter": "junit",
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",

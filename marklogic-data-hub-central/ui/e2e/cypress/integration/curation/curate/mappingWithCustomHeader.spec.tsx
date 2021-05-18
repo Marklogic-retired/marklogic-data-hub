@@ -74,7 +74,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.runStep(loadStep);
     cy.uploadFile("input/10260.json");
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -134,7 +133,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.confirmAddStepToFlow(mapStep, flowName);
     cy.waitForAsyncRequest();
     runPage.runStep(mapStep);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
     runPage.deleteStep(mapStep).click();
@@ -149,7 +147,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     //Step should automatically run
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });
@@ -172,7 +169,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     //Step should automatically run
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });
@@ -184,7 +180,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
     curatePage.confirmContinueRun();
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
@@ -212,7 +207,6 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
     cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);

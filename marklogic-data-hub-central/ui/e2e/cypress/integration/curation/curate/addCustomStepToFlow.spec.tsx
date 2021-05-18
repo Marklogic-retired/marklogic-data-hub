@@ -61,7 +61,6 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.runStep(stepName);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });
@@ -93,7 +92,6 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.runStep(stepName);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });

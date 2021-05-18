@@ -97,7 +97,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep);
     cy.uploadFile("input/10259.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
   });
@@ -265,7 +264,6 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     runPage.runStep(mapStep);
     cy.waitForAsyncRequest();
-    cy.wait('@getJobs',{timeout:120000}).its('response.statusCode').should('eq', 200);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     runPage.explorerLink().click();
     browsePage.getTableViewSourceIcon().click();
