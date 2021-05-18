@@ -135,7 +135,6 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("failed", "Ingestion", stepName)
       .should("contain.text", "Document is not JSON");
     tiles.closeRunMessage();
@@ -143,7 +142,6 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
   it("Run the flow with JSON input", {defaultCommandTimeout: 120000}, () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
     runPage.deleteStep(stepName).click();
@@ -171,7 +169,6 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     //Upload file to start running
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
@@ -186,7 +183,6 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -210,7 +206,6 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName1);
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -237,7 +232,6 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     //Run the flow with TEXT input
     runPage.runLastStepInAFlow(stepName);
     cy.uploadFile("input/test-1.txt");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });

@@ -152,7 +152,6 @@ describe("Validate CRUD functionality from list view", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -196,7 +195,6 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -220,7 +218,6 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
     cy.uploadFile("input/test-1.json");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });

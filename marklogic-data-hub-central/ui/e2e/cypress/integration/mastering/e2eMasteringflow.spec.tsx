@@ -84,7 +84,6 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => cy.get("input[type=\"file\"]"));
     cy.get("input[type=\"file\"]").attachFile(["patients/first-name-double-metaphone1.json", "patients/first-name-double-metaphone2.json", "patients/first-name-synonym1.json", "patients/first-name-synonym2.json", "patients/last-name-address-reduce1.json", "patients/last-name-address-reduce2.json", "patients/last-name-dob-custom1.json", "patients/last-name-dob-custom2.json", "patients/last-name-plus-zip-boost1.json", "patients/last-name-plus-zip-boost2.json", "patients/last-name-slight-match1.json", "patients/last-name-slight-match2.json", "patients/ssn-match1.json", "patients/ssn-match2.json"], {force: true});
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", loadStepName);
     //Verify step name appears as a collection facet in explorer
     runPage.explorerLink().click();
@@ -176,7 +175,6 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.runStepInCardView(mapStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     //Explore Mapped data
     runPage.explorerLink().click();
@@ -305,7 +303,6 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
@@ -363,7 +360,6 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runStepSelectFlowConfirmation().should("be.visible");
     curatePage.selectFlowToRunIn(flowName);
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     //Verify merged Data
     runPage.explorerLink().click();

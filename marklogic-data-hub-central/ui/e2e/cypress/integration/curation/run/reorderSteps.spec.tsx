@@ -60,17 +60,14 @@ describe("Run Tile tests", () => {
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
     runPage.runStep("match-xml-person");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Matching", "match-xml-person");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
     runPage.runStep("merge-xml-person");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
 
     //Navigate to explorer tile using the explorer link

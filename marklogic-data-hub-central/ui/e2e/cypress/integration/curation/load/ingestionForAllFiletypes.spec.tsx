@@ -55,7 +55,6 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.csv");
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -84,7 +83,6 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -115,7 +113,6 @@ describe("Verify ingestion for all filetypes", () => {
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.xml");
     cy.waitForAsyncRequest();
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     //Verify step name appears as a collection facet in explorer
     runPage.explorerLink().click();

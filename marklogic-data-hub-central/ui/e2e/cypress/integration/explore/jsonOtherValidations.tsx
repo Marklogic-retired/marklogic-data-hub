@@ -109,7 +109,6 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
     runPage.runStep("mapPersonJSON");
-    cy.wait("@getJobs").its("response.statusCode").should("eq", 200);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
