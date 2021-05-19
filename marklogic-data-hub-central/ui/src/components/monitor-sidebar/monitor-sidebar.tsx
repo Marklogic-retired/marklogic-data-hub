@@ -65,14 +65,14 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     let updateFacets = {...allSelectedFacets};
 
     let startDate, endDate;
-    if(option === "Today") {
-      startDate = moment().startOf('day').format(timeFormat).toString();
-    } else if(option === "This Week") {
+    if (option === "Today") {
+      startDate = moment().startOf("day").format(timeFormat).toString();
+    } else if (option === "This Week") {
       startDate = moment().startOf("week").format(timeFormat).toString();
-    } else if(option === "This Month") {
+    } else if (option === "This Month") {
       startDate = moment().startOf("month").format(timeFormat).toString();
     }
-    endDate = moment().endOf('day').format(timeFormat).toString();
+    endDate = moment().endOf("day").format(timeFormat).toString();
 
     updateFacets = {
       ...updateFacets, startTime: [startDate, endDate, option]
@@ -110,10 +110,10 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
         let selectedFacets: any[] = [];
         for (let constraint in monitorOptions.selectedFacets) {
           let displayName = "";
-          if(constraint === 'startTime' && monitorOptions.selectedFacets["startTime"] && monitorOptions.selectedFacets["startTime"].length > 0) {
-            if(dateRangeValue === 'Custom') {
+          if (constraint === "startTime" && monitorOptions.selectedFacets["startTime"] && monitorOptions.selectedFacets["startTime"].length > 0) {
+            if (dateRangeValue === "Custom") {
               let facetValue = "Custom";
-              if(datePickerValue[0] && datePickerValue[1]) {
+              if (datePickerValue[0] && datePickerValue[1]) {
                 facetValue = moment(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(moment(datePickerValue[1]).format(dateFormat));
               }
               selectedFacets.push({constraint, "facet": facetValue, displayName});
@@ -122,7 +122,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             }
           }
           monitorOptions.selectedFacets[constraint].map(facet => {
-            if(constraint !== "startTime") {
+            if (constraint !== "startTime") {
               selectedFacets.push({constraint, facet, displayName});
             }
           });
@@ -141,10 +141,10 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
       let checkedFacets: any[] = [];
       for (let constraint in monitorGreyedOptions.selectedFacets) {
         let displayName = "";
-        if(constraint === 'startTime' && monitorGreyedOptions.selectedFacets["startTime"] && monitorGreyedOptions.selectedFacets["startTime"].length) {
-          if(dateRangeValue === 'Custom') {
+        if (constraint === "startTime" && monitorGreyedOptions.selectedFacets["startTime"] && monitorGreyedOptions.selectedFacets["startTime"].length) {
+          if (dateRangeValue === "Custom") {
             let facetValue = "Custom";
-            if(datePickerValue[0] && datePickerValue[1]) {
+            if (datePickerValue[0] && datePickerValue[1]) {
               facetValue = moment(datePickerValue[0]).format(dateFormat).concat(" ~ ").concat(moment(datePickerValue[1]).format(dateFormat));
             }
             checkedFacets.push({constraint, "facet": facetValue, displayName});
@@ -153,7 +153,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
           }
         }
         monitorGreyedOptions.selectedFacets[constraint].map(facet => {
-          if(constraint !== "startTime") {
+          if (constraint !== "startTime") {
             checkedFacets.push({constraint, facet, displayName});
           }
         });
@@ -255,27 +255,27 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
         </div>
         <div>
           <Select
-              style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}
-              placeholder="Select time"
-              id="date-select"
-              value={dateRangeValue}
-              onChange={value => handleOptionSelect(value)}
-              getPopupContainer={() => document.getElementById("date-select") || document.body}
+            style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}
+            placeholder="Select time"
+            id="date-select"
+            value={dateRangeValue}
+            onChange={value => handleOptionSelect(value)}
+            getPopupContainer={() => document.getElementById("date-select") || document.body}
           >{dateRangeOptions.map((timeBucket, index) => {
-            return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
-              {timeBucket}
-            </Option>;
-          })
-          }</Select>
+              return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
+                {timeBucket}
+              </Option>;
+            })
+            }</Select>
         </div>
         <div className={styles.dateTimeWindow}>
           {timeWindow(dateRangeValue)}
         </div>
         {dateRangeValue === "Custom" && <RangePicker
-            id="range-picker"
-            className={styles.datePicker}
-            onChange={onDateChange}
-            value={datePickerValue}
+          id="range-picker"
+          className={styles.datePicker}
+          onChange={onDateChange}
+          value={datePickerValue}
         />}
       </div>
       {facetsList.map(facet => {
