@@ -1,6 +1,7 @@
 package com.marklogic.hub.flow.connected;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -126,6 +127,28 @@ public class IngestAndMapWithConnectedStepsTest extends AbstractHubCoreTest {
 
         HubFlowRunnerResource.Input input = new HubFlowRunnerResource.Input("ingestAndMap");
         verifyNoContentResults(newResource().runFlow(input));
+    }
+
+    @Test
+    void jsonInvalidContent() {
+        installProjectFromUnitTestFolder("data-hub/5/flow/ingestAndMapConnected");
+
+        ObjectNode input = objectMapper.createObjectNode();
+        input.put("flowName", "ingestAndMap");
+        input.putArray("content").addObject().put("customerId", "1");
+        RunFlowResponse response = newResource().runFlow(input);
+
+        assertEquals("failed", response.getJobStatus());
+
+        RunStepResponse stepResponse = response.getStepResponses().get("1");
+        assertEquals("failed step 1", stepResponse.getStatus());
+        assertEquals(1, stepResponse.getStepOutput().size());
+        assertEquals("Content object does not have a 'value' property; unable to ingest; content identifier: undefined",
+            stepResponse.getStepOutput().get(0),
+            "Verifies that the ingestion step fails with a helpful error");
+        assertEquals(1, stepResponse.getTotalEvents());
+        assertEquals(1, stepResponse.getFailedEvents());
+        assertEquals(1, stepResponse.getFailedBatches());
     }
 
     @Test
