@@ -898,7 +898,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           </strong>
         </div>
         <div className={styles.entitySettingsLink}>
-          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId}/>
+          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle}/>
         </div>
         {props.isRelatedEntity ?
           <div className={styles.deleteEntityLink}>
