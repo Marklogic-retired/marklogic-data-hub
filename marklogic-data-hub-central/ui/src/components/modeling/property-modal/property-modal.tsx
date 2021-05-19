@@ -649,7 +649,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             label: key,
             type: modelUpdated.properties[key].datatype,
             disabled: true
-          })
+          });
         }
       });
     }

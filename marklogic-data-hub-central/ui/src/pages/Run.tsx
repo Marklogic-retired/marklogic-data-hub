@@ -90,7 +90,7 @@ const Run = (props) => {
       }
     } catch (error) {
       console.error("Error getting flows", error.response);
-      if (error.response.data && error.response.data.message) {
+      if (error.response && error.response.data && error.response.data.message) {
         Modal.error({
           content: error.response.data.message
         });

@@ -6,9 +6,9 @@ import MonitorSidebar from "./monitor-sidebar";
 
 test("Verify Start Time dropdown is rendered", () => {
   const {getByText} = render(<MonitorSidebar
-      facets={{}}
-      facetRender = {jest.fn()}
-      checkFacetRender = {jest.fn()}
+    facets={{}}
+    facetRender = {jest.fn()}
+    checkFacetRender = {jest.fn()}
   />);
   expect(getByText("Start Time")).toBeInTheDocument();
   expect(getByText("Select time")).toBeInTheDocument();
@@ -16,10 +16,10 @@ test("Verify Start Time dropdown is rendered", () => {
 
 test("Verify Custom date picker is rendered", () => {
   const {getByText, getByPlaceholderText} = render(<MonitorSidebar
-          facets={{}}
-          facetRender = {jest.fn()}
-          checkFacetRender = {jest.fn()}
-      />
+    facets={{}}
+    facetRender = {jest.fn()}
+    checkFacetRender = {jest.fn()}
+  />
   );
 
   expect(getByText("select time")).toBeInTheDocument();
