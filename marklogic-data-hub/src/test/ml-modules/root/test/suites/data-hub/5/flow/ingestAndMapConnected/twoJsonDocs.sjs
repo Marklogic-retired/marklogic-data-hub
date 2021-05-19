@@ -42,7 +42,7 @@ function verifyMapResponse(mapResponse) {
 }
 
 /**
- * This test focuses on the details of the response object, while the one JSON doc test 
+ * This test focuses on the details of the response object, while the one JSON doc test
  * focuses on the details of the documents that are persisted.
  */
 const flowName = "ingestAndMap";
@@ -74,7 +74,11 @@ const assertions = [
   test.assertNotEqual(null, response.timeStarted),
   test.assertNotEqual(null, response.timeEnded),
   test.assertTrue(new Date(response.timeStarted) < new Date(response.timeEnded)),
-  test.assertEqual(2, Object.keys(response.stepResponses).length)
+  test.assertEqual(2, Object.keys(response.stepResponses).length),
+  test.assertTrue(new Date(response.stepResponses["1"].stepStartTime) > new Date(response.timeStarted),
+    "The first step should start after the flow starts"),
+  test.assertTrue(new Date(response.stepResponses["2"].stepStartTime) > new Date(response.stepResponses["1"].stepEndTime),
+    "The second step should start after the first step ends")
 ];
 
 verifyIngestResponse(response.stepResponses["1"]);
@@ -118,7 +122,7 @@ assertions.push(
   test.assertEqual(xdmp.hostName(), batch.hostName),
   test.assertTrue(batch.reqTimeStamp != null),
   test.assertTrue(batch.reqTrnxID != null),
-  test.assertEqual(2, batch.writeTransactions.length, "Because connected steps can result in writes to multiple databases, " + 
+  test.assertEqual(2, batch.writeTransactions.length, "Because connected steps can result in writes to multiple databases, " +
     "we need to capture info about multiple transactions, and hence we need an array"),
   test.assertEqual("data-hub-STAGING", batch.writeTransactions[0].databaseName),
   test.assertTrue(batch.writeTransactions[0].transactionId != null),
@@ -159,7 +163,7 @@ assertions.push(
 );
 
 assertions.push(
-  test.assertEqual(4, hubTest.getProvenanceCount(), 
+  test.assertEqual(4, hubTest.getProvenanceCount(),
     "Expected 2 prov docs for the ingestion step, and 2 for the mapping step, as both have prov enabled")
 );
 

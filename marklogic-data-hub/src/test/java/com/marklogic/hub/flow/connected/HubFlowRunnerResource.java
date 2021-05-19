@@ -24,7 +24,11 @@ public class HubFlowRunnerResource extends ResourceManager {
     }
 
     public RunFlowResponse runFlow(Input input) {
-        JsonNode json = getServices().post(new RequestParameters(), new JacksonHandle(input.getRootNode()), new JacksonHandle()).get();
+        return runFlow(input.getRootNode());
+    }
+
+    public RunFlowResponse runFlow(ObjectNode input) {
+        JsonNode json = getServices().post(new RequestParameters(), new JacksonHandle(input), new JacksonHandle()).get();
         try {
             return new ObjectMapper().readerFor(RunFlowResponse.class).readValue(json);
         } catch (IOException e) {

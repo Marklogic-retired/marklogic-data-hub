@@ -212,14 +212,16 @@ function runStepMainOnBatch(contentArray, stepExecutionContext) {
  *
  * @param contentArray
  * @param stepExecutionContext
- * @return if an error occurs while processing an item, it is captured in the step execution context; 
+ * @return if an error occurs while processing an item, it is captured in the step execution context;
  *  the content array returned by the step is returned
  */
 function runStepMainOnEachItem(contentArray, stepExecutionContext) {
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
 
+  let contentCounter = 0;
   for (var contentObject of contentArray) {
+    contentCounter++;
     const thisItem = contentObject.uri;
     if (DEBUG_ENABLED) {
       hubUtils.hubTrace(DEBUG_EVENT, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
@@ -235,26 +237,32 @@ function runStepMainOnEachItem(contentArray, stepExecutionContext) {
             hubUtils.hubTrace(DEBUG_EVENT, `Returning content: ${xdmp.toJsonString(outputContent)}`);
           }
           outputContentArray.push(outputContent);
-        }  
+        }
       }
     } catch (error) {
+      // It is possible that an error occurs for a content item that does not have a "uri" to identify it.
+      // In that scenario, we need some identifier, or otherwise we don't have anything to add to the list of
+      // failed items in the stepExecutionContext. In the absence of anything else, the contentCounter is used
+      // to produce a unique identifier.
+      const itemIdentifier = thisItem || "generatedIdentifier-" + contentCounter;
       if (stepExecutionContext.combinedOptions.stopOnError === true) {
-        stepExecutionContext.stopWithError(error, thisItem);
+        stepExecutionContext.stopWithError(error, itemIdentifier);
         hubUtils.hubTrace(INFO_EVENT, `Stopping execution of ${stepExecutionContext.describe()}`);
         return [];
       }
-      stepExecutionContext.addStepError(error, thisItem);
+      stepExecutionContext.addStepError(error, itemIdentifier);
       if (stepExecutionContext.stepErrorShouldBeThrown()) {
         throw error;
       }
     }
   }
+
   return outputContentArray;
 }
 
 /**
  * Step modules and custom hooks expect content values to be document nodes.
- * This also applies the configured permissions for each content object, as well as populating 
+ * This also applies the configured permissions for each content object, as well as populating
  * originalCollections for each one too.
  *
  * @param stepExecutionContext

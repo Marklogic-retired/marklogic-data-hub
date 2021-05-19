@@ -58,20 +58,20 @@ class Job {
     this.data.job.lastAttemptedStep = stepNumber;
     this.data.job.jobStatus = stepStatus;
     this.data.job.stepResponses[stepNumber] = {
-      stepStartTime: fn.currentDateTime(),
+      stepStartTime: fn.currentDateTime().add(xdmp.elapsedTime()),
       status: stepStatus
     };
     return this;
   }
-  
+
   /**
-   * 
-   * @param stepNumber 
-   * @param stepResponse 
+   *
+   * @param stepNumber
+   * @param stepResponse
    * @param stepStatus {string} optional; if specified, the status in stepResponse will be ignored
    * @param outputContentArray {array} optional; will be passed along to the jobReport function for the step if one exists
    * @param writeQueue {object} optional; will be passed along to the jobReport function for the step if one exists
-   * @returns 
+   * @returns
    */
   finishStep(stepNumber, stepResponse, stepStatus, outputContentArray, writeQueue) {
     stepStatus = stepStatus || stepResponse.status;

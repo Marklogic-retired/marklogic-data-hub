@@ -5,7 +5,7 @@
   "sourceQuery" : "cts.collectionQuery('matched-customers')",
   "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
   "sourceDatabase" : "data-hub-FINAL",
-  "collections" : [ "merged-customer", "merge-customers" ],
+  "collections" : [ "merge-customers" ],
   "targetFormat" : "json",
   "stepId" : "merge-customers-merging",
   "mergeStrategies" : [ ],
