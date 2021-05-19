@@ -16,14 +16,13 @@ type Props = {
   updateStep: any
   stepData: any
   entityMappingId: any;
+  entityTitle: any;
 }
 
 const EntitySettings: React.FC<Props> = (props) => {
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const canReadWrite = props.canReadWrite;
   const validCapabilities = StepsConfig.validCapabilities;
-  const targetEntityType = String(props.stepData.targetEntityType || props.stepData.targetEntity);
-  const targetEntityTitle = targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
   const defaultTargetPermissions = StepsConfig.defaultTargetPerms;
   const [popoverVisibility, setPopoverVisibilty] = useState(false);
   const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
@@ -164,7 +163,7 @@ const EntitySettings: React.FC<Props> = (props) => {
 
   const content = (
     <div id="entity-settings-popover" data-testid="entity-settings-popover" className={styles.entitySettings}>
-      <h2 className={styles.title}>Advanced Settings: {targetEntityTitle}</h2>
+      <h2 data-testid={`${props.entityTitle}-settings-title`} className={styles.title}>Advanced Settings: {props.entityTitle}</h2>
       <div className={styles.text}>
         <p>Specify additional collections and modify the default permissions for entity instances associated with this entity.</p>
       </div>
@@ -245,7 +244,7 @@ const EntitySettings: React.FC<Props> = (props) => {
   return (
     <div id="entitySettings">
       <div><div className={styles.entitySettingsLink}>
-        <FontAwesomeIcon data-testid="entity-settings" icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"} onClick={() => togglePopover()} /></div>
+        <FontAwesomeIcon data-testid={`${props.entityTitle}-entity-settings`} icon={faCog} type="edit" role="entity-settings button" aria-label={"entitySettings"} onClick={() => togglePopover()} /></div>
       </div>
       <Popover placement="topLeft" visible={popoverVisibility} content={content} trigger="click" className={styles.entitySettingsPopup} />
     </div>

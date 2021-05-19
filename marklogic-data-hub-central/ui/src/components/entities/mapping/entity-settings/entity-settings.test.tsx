@@ -6,9 +6,9 @@ import steps from "../../../../assets/mock-data/curation/steps.data";
 describe("Entity settings component tests", () => {
 
   test("Verify cancel button onclick is called", () => {
-    const {getByText, getByTestId} = render(<EntitySettings canReadWrite={true} tooltipsData={{}} updateStep={jest.fn()} stepData={steps.stepMapping} />);
+    const {getByText, getByTestId} = render(<EntitySettings canReadWrite={true} tooltipsData={{}} updateStep={jest.fn()} stepData={steps.stepMapping} entityMappingId={""} entityTitle={"Person"}/>);
 
-    fireEvent.click(getByTestId("entity-settings"));
+    fireEvent.click(getByTestId("Person-entity-settings"));
     const cancelButton = getByText("Cancel");
     cancelButton.onclick = jest.fn();
     fireEvent.click(cancelButton);
@@ -17,9 +17,9 @@ describe("Entity settings component tests", () => {
 
   test("Verify save button onclick is called", () => {
     const updateStepMock = jest.fn();
-    const {getByText, getByTestId} = render(<EntitySettings canReadWrite={true} tooltipsData={{}} updateStep={updateStepMock} stepData={steps.stepMapping} />);
+    const {getByText, getByTestId} = render(<EntitySettings canReadWrite={true} tooltipsData={{}} updateStep={updateStepMock} stepData={steps.stepMapping} entityMappingId={""} entityTitle={"Person"}/>);
 
-    fireEvent.click(getByTestId("entity-settings"));
+    fireEvent.click(getByTestId("Person-entity-settings"));
     const saveButton = getByText("Save");
     saveButton.onclick = jest.fn();
     fireEvent.click(saveButton);
@@ -28,9 +28,9 @@ describe("Entity settings component tests", () => {
   });
 
   test("Verify entity settings for Mapping", async () => {
-    const {getByText, getByTestId, getByPlaceholderText} = render(<EntitySettings canReadWrite={true} tooltipsData={{}} updateStep={jest.fn()} stepData={steps.stepMapping} />);
+    const {getByText, getByTestId, getByPlaceholderText} = render(<EntitySettings canReadWrite={true} tooltipsData={{}} updateStep={jest.fn()} stepData={steps.stepMapping} entityMappingId={""} entityTitle={"Person"}/>);
 
-    fireEvent.click(getByTestId("entity-settings"));
+    fireEvent.click(getByTestId("Person-entity-settings"));
 
     //verify Target Collections, not able to send input to additional collections
     expect(getByText("Target Collections")).toBeInTheDocument();

@@ -664,7 +664,7 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText, getByPlaceholderText,  container;
+    let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText, getByPlaceholderText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithRelatedEntityData);
       getByTestId = renderResults.getByTestId;
@@ -674,7 +674,6 @@ describe("RTL Source-to-entity map tests", () => {
       queryByTestId = renderResults.queryByTestId;
       getAllByLabelText = renderResults.getAllByLabelText;
       queryByLabelText = renderResults.queryByLabelText;
-      container = renderResults.container;
       getByPlaceholderText = renderResults.getByPlaceholderText;
     });
 
@@ -821,7 +820,10 @@ describe("RTL Source-to-entity map tests", () => {
 
     //verify advanced settings of related entity
     //click on the related entity table order settings
-    fireEvent.click(container.querySelector("[data-testid=order-table] [data-testid=entity-settings]"));
+
+    //verify the proper related entity settings title shows up when popover is clicked (Order)
+    fireEvent.click(getByTestId("Order-entity-settings"));
+    expect(getByTestId("Order-settings-title")).toBeInTheDocument();
 
     //verify Target Collections
     expect(getByText("Target Collections")).toBeInTheDocument();
@@ -844,6 +846,9 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
     expect(getByTestId("validationError")).toHaveTextContent("");
 
+    //verify proper target entity settings title shows up when popover is clicked (Person)
+    fireEvent.click(getByTestId("Person-entity-settings"));
+    expect(getByTestId("Person-settings-title")).toBeInTheDocument();
   });
 
   test("Verify right XPATH with source context selection and testing in related entity tables", async () => {
