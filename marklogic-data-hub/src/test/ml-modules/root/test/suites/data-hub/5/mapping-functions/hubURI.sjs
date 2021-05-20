@@ -19,7 +19,7 @@ assertions.push(
   test.assertEqual("Unable to generate uri: 'entityType' should be of type 'string'", callHubUri().data[1]),
   test.assertEqual("Unable to generate uri: 'entityType' should be of type 'string'", callHubUri((1,2)).data[1]),
   test.assertEqual("Unable to generate uri: 'entityType' should not be an empty or whitespace string", callHubUri("").data[1]),
-  test.assertEqual("Unable to generate uri: 'entityType' should not be an empty or whitespace string", callHubUri("  ").data[1]),
+  test.assertEqual("Unable to generate uri: 'entityType' should not be an empty or whitespace string", callHubUri("  ").data[1])
 );
 
 assertions
