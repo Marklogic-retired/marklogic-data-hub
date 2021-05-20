@@ -17,7 +17,7 @@ function verifyIngestResponse(ingestResponse) {
     test.assertEqual(1, ingestResponse.successfulBatches),
     test.assertEqual(0, ingestResponse.failedBatches),
     test.assertEqual(true, ingestResponse.success),
-    test.assertTrue(new Date(ingestResponse.stepStartTime) < new Date(ingestResponse.stepEndTime)),
+    test.assertTrue(new Date(ingestResponse.stepStartTime) < new Date(ingestResponse.stepEndTime))
   );
 }
 
