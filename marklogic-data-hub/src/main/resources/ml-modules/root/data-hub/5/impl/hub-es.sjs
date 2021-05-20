@@ -26,6 +26,9 @@ const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
  * of the path and namespaces without depending on a path range index existing.
  */
 function buildPathReferenceParts(entityIRI, propertyPath) {
+  // In case of structured properties the range path is already built and is separated by "."
+  const pathAlreadyBuilt = propertyPath.includes(".");
+  propertyPath = pathAlreadyBuilt ? propertyPath.replace(/\./g, "/") : propertyPath;
   let properties = propertyPath.split("/");
   let finalPath = "";
 
@@ -33,7 +36,9 @@ function buildPathReferenceParts(entityIRI, propertyPath) {
     "es": "http://marklogic.com/entity-services"
   };
 
-  for (let property of properties) {
+  for (let i = 0; i < properties.length; i++) {
+    // In case of structured properties we skip the structured property name and only use the property inside the structured property
+    let property = i !== 0 && pathAlreadyBuilt ? properties[++i] : properties[i];
     let model = getEntityDefinitionFromIRI(entityIRI);
     let entityInfo = getEntityInfoFromIRI(entityIRI);
     let entityDef = model.definitions[entityInfo.entityName];
