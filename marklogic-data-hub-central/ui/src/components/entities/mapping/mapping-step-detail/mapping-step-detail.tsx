@@ -19,7 +19,7 @@ import {xmlParserForMapping} from "../../../../util/record-parser";
 import {CurationContext} from "../../../../util/curation-context";
 import {AuthoritiesContext} from "../../../../util/authorities";
 import {MappingStep, StepType} from "../../../../types/curation-types";
-import {getMappingArtifactByMapName, updateMappingArtifact, getMappingFunctions} from "../../../../api/mapping";
+import {getMappingArtifactByMapName, updateMappingArtifact, getMappingFunctions, getMappingRefs} from "../../../../api/mapping";
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips} from "../../../../config/tooltips.config";
 import arrayIcon from "../../../../assets/icon_array.png";
@@ -86,21 +86,24 @@ const MappingStepDetail: React.FC = () => {
   const [mapSaved, setMapSaved] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [errorInSaving, setErrorInSaving] = useState("");
 
-  //For storing  mapping functions
+  // For storing mapping functions
   const [mapFunctions, setMapFunctions] = useState<any>([]);
 
-  //For source dropdown search menu
+  // For reference dropdown search menu
+  const [mapRefs, setMapRefs] = useState<any>([]);
+
+  // For source dropdown search menu
   const [flatArray, setFlatArray]   = useState<any[]>([]);
 
-  //For TEST and Clear buttons
+  // For Test and Clear buttons
   const [mapResp, setMapResp] = useState({});
   const [isTestClicked, setIsTestClicked] = useState(false);
   const [savedMappingArt, setSavedMappingArt] = useState<any>(DEFAULT_MAPPING_STEP);
 
-  //Navigate URI buttons
+  // Navigate URI buttons
   const [uriIndex, setUriIndex] = useState(0);
 
-  //For Collapse all-Expand All buttons
+  // For Collapse all-Expand All buttons
   const [entityExpandedKeys, setEntityExpandedKeys] = useState<any[]>([]);
   const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
   const [expandedEntityFlag, setExpandedEntityFlag] = useState(false);
@@ -111,7 +114,7 @@ const MappingStepDetail: React.FC = () => {
   const [allEntityKeys, setAllEntityKeys] = useState<any []>([]);
   const [allRelatedEntitiesKeys, setAllRelatedEntitiesKeys] = useState<any[]>([]);
 
-  //For Entity table
+  // For Entity table
   const [tgtEntityReferences, setTgtEntityReferences] = useState({});
   let EntityTableKeyIndex = 100;
   let sourceTableKeyIndex = 0;
@@ -123,13 +126,13 @@ const MappingStepDetail: React.FC = () => {
   const previousSelected : any = usePrevious(relatedEntitiesSelected);
   const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
   const [labelRemoved, setLabelRemoved] = useState("");
-  //For Entity table filtering
+  // For Entity table filtering
   const [filterStr, setFilterStr] = useState("");
 
-  //For storing docURIs
+  // For storing docURIs
   const [docUris, setDocUris] = useState<any[]>([]);
 
-  //For storing namespaces
+  // For storing namespaces
   const [namespaces, setNamespaces] = useState({});
   let nmspaces: any = {};
   let namespaceString = "";
@@ -143,7 +146,7 @@ const MappingStepDetail: React.FC = () => {
 
   const tableColors = ["#e4f1f4", "#f0f9f5", "#fae9d3", "#f6e2e9", "#edecf5", "#f0e8ed", "#e0e1ea", "#e6eff6", "#f0f6d9", "#fff5d7", "#ecfaf7", "#ecfae2", "#dcebf3", "#f3dbd8", "#f1eef5", "#dee2ed", "#effadd", "#fae3df", "#f6f7f8"];
 
-  //For Column Option dropdown checkboxes
+  // For Column Option dropdown checkboxes
   const [checkedEntityColumns, setCheckedEntityColumns] = useState({
     "name": true,
     "type": true,
@@ -263,6 +266,13 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
+  const setMappingRefs = async (stepName) => {
+    let mappingRefsResponse = await getMappingRefs(stepName);
+    if (mappingRefsResponse) {
+      setMapRefs(mappingRefsResponse.data);
+    }
+  };
+
   const updateMappingWithNamespaces = async (mapDataLocal) => {
     let {lastUpdated, ...dataPayload} = mapDataLocal;
     dataPayload["namespaces"] = nmspaces;
@@ -275,7 +285,7 @@ const MappingStepDetail: React.FC = () => {
     return namespace.slice(ind);
   };
 
-  //Generate namespaces for source properties
+  // Generate namespaces for source properties
   const getNamespace = (key, val, parentNamespacePrefix, defaultNamespace = "") => {
     let objWithNmspace = "";
     let keyParts = key.split(":");
@@ -340,7 +350,7 @@ const MappingStepDetail: React.FC = () => {
     };
   };
 
-  //Generate property object to push into deeply nested source data
+  // Generate property object to push into deeply nested source data
   const getPropertyObject = (key, obj) => {
     let propty: any;
     if (obj.hasOwnProperty("#text")) {
@@ -644,6 +654,7 @@ const MappingStepDetail: React.FC = () => {
         mappingStepArtifact = curationOptions.activeStep.stepArtifact;
       }
       setMappingFunctions();
+      setMappingRefs(mappingStepArtifact.name);
       setMapData(mappingStepArtifact);
       setSavedMappingArt(mappingStepArtifact);
       setMappingStepDetailPageData(mappingStepArtifact);
@@ -1435,6 +1446,7 @@ const MappingStepDetail: React.FC = () => {
                 allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                 setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                 mapFunctions = {mapFunctions}
+                mapRefs = {mapRefs}
                 savedMappingArt = {savedMappingArt}
                 deleteRelatedEntity = {deleteRelatedEntity}
                 labelRemoved = {labelRemoved}
@@ -1475,6 +1487,7 @@ const MappingStepDetail: React.FC = () => {
                   allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                   setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
                   mapFunctions = {mapFunctions}
+                  mapRefs = {mapRefs}
                   savedMappingArt = {savedMappingArt}
                   deleteRelatedEntity = {deleteRelatedEntity}
                   labelRemoved = {labelRemoved}

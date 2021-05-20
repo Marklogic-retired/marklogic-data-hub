@@ -6,7 +6,7 @@ import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
-import {faList, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faList, faTerminal, faSearch} from "@fortawesome/free-solid-svg-icons";
 import EntitySettings from "../entity-settings/entity-settings";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
@@ -49,8 +49,9 @@ interface Props {
   setFilterStr: any;
   allRelatedEntitiesKeys: any;
   setAllRelatedEntitiesKeys: any;
-  mapFunctions : any;
-  savedMappingArt : any;
+  mapFunctions: any;
+  mapRefs: any;
+  savedMappingArt: any;
   deleteRelatedEntity: any;
   labelRemoved: any;
 }
@@ -83,16 +84,20 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   //For Dropdown menu
   const [propName, setPropName] = useState("");
-  const [propListForDropDown, setPropListForDropDown] = useState<any>([]);
-  const [displayFuncMenu, setDisplayFuncMenu] = useState(false);
-  const [displaySelectList, setDisplaySelectList] = useState(false);
   const [functionValue, setFunctionValue] = useState("");
+  const [refValue, setRefValue] = useState("");
+  const [propListForDropDown, setPropListForDropDown] = useState<any>([]);
+  const [displaySelectList, setDisplaySelectList] = useState(false);
+  const [displayRefList, setDisplayRefList] = useState(false);
+  const [displayFuncMenu, setDisplayFuncMenu] = useState(false);
+  const [displayRefMenu, setDisplayRefMenu] = useState(false);
   const [caretPosition, setCaretPosition] = useState(0);
+  const [sourcePropListForDropDown, setSourcePropListForDropDown] = useState<any>([]);
+  const [sourceIndentForDropDown, setSourceIndentForDropDown] = useState<any>([]);
+  const [refPropListForDropDown, setRefPropListForDropDown] = useState<any>([]);
 
   const [selectedRow, setSelectedRow] = useState<any>([]); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [sourcePropName, setSourcePropName] = useState("");
-  const [sourcePropListForDropDown, setSourcePropListForDropDown] = useState<any>([]);
-  const [sourceIndentForDropDown, setSourceIndentForDropDown] = useState<any>([]);
   const [sourceValue, setSourceValue] = useState("");
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [displaySourceList, setDisplaySourceList] = useState(false);
@@ -540,7 +545,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         textToHighlight={textToSearchInto}
       />;
     } else {
-      return <div data-testId={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{valueToDisplay}</div>;
+      return <div data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{valueToDisplay}</div>;
     }
   };
 
@@ -554,13 +559,36 @@ const EntityMapTable: React.FC<Props> = (props) => {
     setPropListForDropDown(funcArr);
 
     setPropName(name);
-    if (!displaySelectList && !displayFuncMenu) {
+    if (!displaySelectList && !displayFuncMenu && !displayRefMenu) {
       setFunctionValue("");
       await setDisplaySelectList(true);
       await setDisplayFuncMenu(true);
+      await setDisplayRefMenu(true);
     } else {
       await setDisplaySelectList(false);
       await setDisplayFuncMenu(false);
+      await setDisplayRefMenu(false);
+    }
+  };
+
+  /* Insert reference in map expressions */
+  const handleRefList = async (name) => {
+    let refArr: any[] = [];
+    props.mapRefs.forEach(element => {
+      refArr.push({"key": element.name, "value": element.name});
+    });
+    setRefPropListForDropDown(refArr);
+
+    setPropName(name);
+    if (!displaySelectList && !displayFuncMenu && !displayRefMenu) {
+      setRefValue("");
+      await setDisplaySelectList(true);
+      await setDisplayFuncMenu(true);
+      await setDisplayRefMenu(true);
+    } else {
+      await setDisplaySelectList(false);
+      await setDisplayFuncMenu(false);
+      await setDisplayRefMenu(false);
     }
   };
 
@@ -568,7 +596,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
     return props.mapFunctions.find(func => {
       return func.functionName === functionName;
     }).signature;
-
   };
 
   const onFunctionSelect = (e) => {
@@ -576,22 +603,34 @@ const EntityMapTable: React.FC<Props> = (props) => {
     insertContent(functionsDef(e), propName);
   };
 
+  const onRefSelect = (e) => {
+    setRefValue(e);
+    insertContent(e, propName);
+  };
+
   const insertContent = async (content, propName) => {
+    let insertedContext, insertedUri;
     if (!mapExp[propName]) {
       mapExp[propName] = "";
     }
     if (propName === "URI" && !selectedRow.isProperty) {
-      let insertedContext = uriExpression.substr(0, caretPosition) + content + uriExpression.substr(caretPosition, uriExpression.length);
+      insertedContext = uriExpression.substr(0, caretPosition) + content +
+        uriExpression.substr(caretPosition, uriExpression.length);
       setUriExpression(insertedContext);
       await setMapExp({...mapExp});
+      tempMapExp = Object.assign({}, mapExp);
     } else {
       let newExp = mapExp[propName].substr(0, caretPosition) + content +
-      mapExp[propName].substr(caretPosition, mapExp[propName].length);
+        mapExp[propName].substr(caretPosition, mapExp[propName].length);
       await setMapExp({...mapExp, [propName]: newExp});
+      tempMapExp = Object.assign({}, mapExp);
     }
 
+    await props.saveMapping(tempMapExp, props.entityMappingId, insertedContext, insertedUri, props.entityModel);
     setDisplaySelectList(prev => false);
     setDisplayFuncMenu(prev => false);
+    setDisplayRefMenu(prev => false);
+
     //simulate a click event to handle simultaneous event propagation of dropdown and select
     simulateMouseClick(dummyNode.current);
   };
@@ -839,7 +878,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   };
 
-  const sourceSearchMenu = (
+  const sourceMenu = (
     <DropDownWithSearch
       displayMenu={displaySourceMenu}
       setDisplayMenu={setDisplaySourceMenu}
@@ -853,7 +892,42 @@ const EntityMapTable: React.FC<Props> = (props) => {
       indentList={sourceIndentForDropDown} />
   );
 
-  const menu = (
+  const sourceDropdown = (row) => {
+    if (!row.isProperty) {
+      // Context and URI version
+      return (
+        <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+          <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
+            <FontAwesomeIcon
+              icon={faList}
+              size="lg"
+              data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon`}
+              className={styles.listIcon}
+              onClick={(e) => handleSourceList(row)}
+            />
+          </i>
+        </Dropdown>
+      );
+    } else {
+      // Property version (different testid)
+      // TODO refactor tests to allow consistent testid values across source menus
+      return (
+        <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+          <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
+            <FontAwesomeIcon
+              icon={faList}
+              size="lg"
+              data-testid={`${row.name.split("/").pop()}-listIcon`}
+              className={styles.listIcon}
+              onClick={(e) => handleSourceList(row)}
+            />
+          </i>
+        </Dropdown>
+      );
+    }
+  };
+
+  const functionMenu = (
     <DropDownWithSearch
       displayMenu={displayFuncMenu}
       setDisplayMenu={setDisplayFuncMenu}
@@ -866,6 +940,50 @@ const EntityMapTable: React.FC<Props> = (props) => {
       handleDropdownMenu={handleFunctionsList}
     />
   );
+
+  const functionDropdown = (row) => {
+    return (
+      <Dropdown overlay={functionMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+        <MLButton
+          id="functionIcon"
+          data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
+          className={styles.functionIcon}
+          size="small"
+          onClick={(e) => handleFunctionsList(row.name)}
+        >fx</MLButton>
+      </Dropdown>
+    );
+  };
+
+  const refMenu = (
+    <DropDownWithSearch
+      displayMenu={displayFuncMenu}
+      setDisplayMenu={setDisplayRefMenu}
+      setDisplaySelectList={setDisplayRefList}
+      displaySelectList={displayRefList}
+      itemValue={refValue}
+      onItemSelect={onRefSelect}
+      srcData={refPropListForDropDown}
+      propName={propName}
+      handleDropdownMenu={handleRefList}
+    />
+  );
+
+  const refDropdown = (row) => {
+    return (
+      <Dropdown overlay={refMenu} trigger={["click"]} disabled={!props.canReadWrite}>
+        <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
+          <FontAwesomeIcon
+            icon={faTerminal}
+            size="lg"
+            data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon`}
+            className={styles.refIcon}
+            onClick={(e) => handleRefList(row.name)}
+          />
+        </i>
+      </Dropdown>
+    );
+  };
 
   const relatedEntitiesFilter = (
     <Select
@@ -1032,7 +1150,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
           renderText =
-            <span><span data-testId={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
+            <span><span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
                   <MLTooltip title={"Multiple"}>
@@ -1124,12 +1242,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 onChange={(e) => handleExpressionContext(row, e)}
                 onBlur={handleExpSubmit}
                 autoSize={{minRows: 1}}
-                disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-              <span>
-                <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-                  <i  id="listIcon" data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
-                </Dropdown>
-              </span>
+                disabled={!props.canReadWrite}></TextArea>
+              <span>{sourceDropdown(row)}</span>
             </div>
             {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
           } else if (row.name === "URI" && !row.isProperty) {
@@ -1143,14 +1257,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 onChange={(e) => handleUri(row, e)}
                 onBlur={handleExpSubmit}
                 autoSize={{minRows: 1}}
-                disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-              <span>
-                <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-                  <i  id="listIcon" data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
-                </Dropdown>
-              </span>
-                &nbsp;&nbsp;
-              <span><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span>
+                disabled={!props.canReadWrite}></TextArea>
+              <span>{sourceDropdown(row)}</span>
+              <span>{functionDropdown(row)}</span>
+              <span>{refDropdown(row)}</span>
             </div>
             {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
           } else {
@@ -1164,14 +1274,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 onChange={(e) => handleMapExp(row, e)}
                 onBlur={handleExpSubmit}
                 autoSize={{minRows: 1}}
-                disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
-              <span>
-                <Dropdown overlay={sourceSearchMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-                  <i  id="listIcon" data-testid={row.name.split("/").pop()+"-listIcon1"}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split("/").pop()+"-listIcon"}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
-                </Dropdown>
-              </span>
-                      &nbsp;&nbsp;
-              <span ><Dropdown overlay={menu} trigger={["click"]} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
+                disabled={!props.canReadWrite}></TextArea>
+              <span>{sourceDropdown(row)}</span>
+              <span>{functionDropdown(row)}</span>
+              <span>{refDropdown(row)}</span>
+            </div>
             {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>, props: {colSpan: 1}
             };
           }

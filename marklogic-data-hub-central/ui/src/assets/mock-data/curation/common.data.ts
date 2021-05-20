@@ -350,6 +350,14 @@ const mapFunctions = [
   {"functionName": "concat", "category": "xpath", "signature": "concat(xs:anyAtomicType?)"}
 ];
 
+const mapReferences = [{
+  name: "$URI",
+  description: "The URI of the source document"
+}, {
+  name: "$ZIP_POINTS",
+  description: "Maps zip codes to points"
+}];
+
 const mapProps = {
   sourceData: jsonSourceData,
   entityTypeProperties: entityTypeProperties,
@@ -634,6 +642,7 @@ const data = {
   flows: flows,
   flowsAdd: flowsAdd,
   loadData: loadData,
+  mapReferences: mapReferences,
   mapProps: mapProps,
   newMap: newMap,
   editMap: editMap,

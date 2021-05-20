@@ -7,7 +7,7 @@ import {shallow} from "enzyme";
 import {validateMappingTableRow, onClosestTableRow} from "../../../../util/test-utils";
 import {CurationContext} from "../../../../util/curation-context";
 import {personMappingStepEmpty, personMappingStepWithData, personMappingStepWithRelatedEntityData} from "../../../../assets/mock-data/curation/curation-context-mock";
-import {updateMappingArtifact, getMappingArtifactByMapName, getMappingFunctions} from "../../../../api/mapping";
+import {updateMappingArtifact, getMappingArtifactByMapName, getMappingFunctions, getMappingRefs} from "../../../../api/mapping";
 import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curation/mapping.data";
 import {getUris, getDoc} from "../../../../util/search-service";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
@@ -30,7 +30,7 @@ const mockGetUris = getUris as jest.Mock;
 const mockGetNestedEntities = getNestedEntities as jest.Mock;
 const mockGetMappingValidationResp = getMappingValidationResp as jest.Mock;
 const mockGetMappingFunctions = getMappingFunctions as jest.Mock;
-
+const mockGetMappingRefs = getMappingRefs as jest.Mock;
 
 const mockHistoryPush = jest.fn();
 
@@ -700,6 +700,16 @@ describe("RTL Source-to-entity map tests", () => {
     await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument());
+
+    // Verify related Context row has expected menus (property but NO function or reference)
+    expect(getByTestId("Order (orderedBy Person)-Context-listIcon")).toBeInTheDocument();
+    expect(queryByTestId("Context-112-functionIcon")).not.toBeInTheDocument();
+    expect(queryByTestId("Order (orderedBy Person)-Context-refIcon")).not.toBeInTheDocument();
+
+    // Verify related URI row has expected menus (property, function and reference)
+    expect(getByTestId("Order (orderedBy Person)-URI-listIcon")).toBeInTheDocument();
+    expect(getByTestId("URI-112-functionIcon")).toBeInTheDocument();
+    expect(getByTestId("Order (orderedBy Person)-URI-refIcon")).toBeInTheDocument();
 
     //Verify deletion of related entity tables and different confirmation messages
 
@@ -1498,7 +1508,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     fireEvent.click(inputBox); // focus on the search box
 
-    // Filter out the funcitons list to get to concat function
+    // Filter out the functions list to get to concat function
     fireEvent.change(inputBox, {target: {value: "conc"}});
     expect(getByText("concat")).toBeInTheDocument();
     expect(queryByText("documentLookup")).not.toBeInTheDocument();
@@ -1508,17 +1518,14 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Map Expression is populated with function signature
     expect(propAttributeExpression).toHaveTextContent("concat(xs:anyAtomicType?)");
-    fireEvent.change(propAttributeExpression, {target: {value: "concat(proteinType,'-NEW')"}});
-    fireEvent.blur(propAttributeExpression);
 
+    // Verify auto-save on population of function signature
     await (waitForElement(() => (getByTestId("successMessage"))));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
 
-    expect(propAttributeExpression).toHaveTextContent("concat(proteinType,'-NEW')");
-
-    //Click again on the same function button to verify if it opens up again with the list of functions
+    // Click the same function button again to verify it opens up with the same list of functions
     fireEvent.click(functionSelector);
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     fireEvent.click(inputBox);
@@ -1536,6 +1543,66 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.click(getByText("Test"));
     await (waitForElement(() => getByTestId("Person-propAttribute-value")));
     expect(getByTestId("Person-propAttribute-value")).toHaveTextContent("home-NEW"); // home should be mapped as home-New
+  });
+
+  test("Reference selector dropdown in entity table", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataDefault});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+    mockGetMappingRefs.mockResolvedValue({status: 200, data: data.mapReferences});
+    mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
+    mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[2]});
+
+    let getAllByText, getByTestId, getAllByRole, queryByTestId;
+    await act(async () => {
+      const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
+      getAllByText = renderResults.getAllByText;
+      getByTestId = renderResults.getByTestId;
+      getAllByRole = renderResults.getAllByRole;
+      queryByTestId = renderResults.queryByTestId;
+    });
+
+    // Prepare the map expression field for reference input
+    let propAttributeExpression = getByTestId("propAttribute-mapexpression");
+    fireEvent.change(propAttributeExpression, {target: {value: ""}});
+    fireEvent.blur(propAttributeExpression);
+
+    // Open reference menu and verify options
+    let referenceSelector = getByTestId("Person-propAttribute-refIcon");
+    fireEvent.click(referenceSelector);
+    let inputBox = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+        element.className === "ant-select-search__field"
+    )[0];
+    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    expect(getByTestId("$URI-option")).toBeInTheDocument();
+    expect(getByTestId("$ZIP_POINTS-option")).toBeInTheDocument();
+
+    fireEvent.click(inputBox); // Focus on the search box
+
+    // Filter reference options for a reference
+    fireEvent.change(inputBox, {target: {value: "ZIP"}});
+    expect(getByTestId("$ZIP_POINTS-option")).toBeInTheDocument();
+    expect(queryByTestId("$URI-option")).not.toBeInTheDocument();
+
+    // Select the filtered reference
+    fireEvent.keyDown(inputBox, {key: "Enter", code: "Enter", keyCode: 13, charCode: 13});
+
+    // Verify map expression is populated with selected reference
+    expect(propAttributeExpression).toHaveTextContent("$ZIP_POINTS");
+    fireEvent.blur(propAttributeExpression);
+
+    // Verify auto-save on population of reference
+    await (waitForElement(() => (getByTestId("successMessage"))));
+    if (queryByTestId("successMessage")) {
+      await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
+    }
+
   });
 
   test("URI nav index resets on close of mapping", async () => {
