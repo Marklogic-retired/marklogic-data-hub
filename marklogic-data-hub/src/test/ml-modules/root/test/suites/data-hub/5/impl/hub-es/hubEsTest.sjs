@@ -21,7 +21,10 @@ result = result
     "numEntProp/intProp",
     "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/numEntProp/NumericEntity/intProp"))
   .concat(verifyPropertyPathReference("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
-    "intProp", "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/intProp"));
+    "intProp", "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/intProp"))
+  .concat(verifyPropertyPathReference("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
+    "numStrEntityProp.NumericStringEntity.numEntProp.NumericEntity.decimalProp",
+      "/(es:envelope|envelope)/(es:instance|instance)/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/numEntProp/NumericEntity/decimalProp"));
 
 
 // Verify a namespaced entity
@@ -82,7 +85,7 @@ function testGetEntityServiceTitle(entityIRI, expected) {
 }
 
 result
-// Exisiting IRI
+// Existing IRI
 .concat(testGetEntityDefinitionFromIRI("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "EntitiesSearchEntity"))
 // fetching nested objectType from IRI
