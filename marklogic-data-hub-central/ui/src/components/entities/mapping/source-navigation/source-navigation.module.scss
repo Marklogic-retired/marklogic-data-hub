@@ -1,5 +1,5 @@
 .navigate_source_uris{
-  width: 115px;
+  width: 110px;
   display: flex;
   align-content: center ;
   vertical-align: bottom;
@@ -10,10 +10,12 @@
   white-space: nowrap;
 }
 
-.navigate_uris_left {
+.navigate_uris_left,
+.navigate_uris_right {
   user-select: none;
   cursor: pointer;
-  width: 2vw;
+  width: 32px;
+  height: 32px;
   text-align: center;
   align-content: center ;
   justify-content: center;
@@ -21,9 +23,11 @@
   outline: none !important;
   > .navigateIcon {
       display: block;
-      margin-left: -6px;
+      margin-left: -1px;
+      margin-top: 1px;
   }
 }
+
 .URI_Index{
   > p {
   border: 1px solid #7F86B5;
@@ -33,24 +37,6 @@
   width: 32px;
   height: 32px;
   padding-top: 4px;
-
   font-size: 15px;
-
-  }
-}
-
-.navigate_uris_right {
-  user-select: none;
-  cursor: pointer;
-  width: 2vw;
-  background:none;
-  outline: none !important;
-  text-align: center;
-  outline: none;
-  align-content: center ;
-  justify-content: center;
-  > .navigateIcon {
-      display: block;
-      margin-left: -6px;
   }
 }

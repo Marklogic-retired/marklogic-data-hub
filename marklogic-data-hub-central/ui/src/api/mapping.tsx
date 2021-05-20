@@ -73,7 +73,19 @@ export const getMappingFunctions = async () => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error while fetching the functions!", message);
+    console.error("Error getting functions", message);
+  }
+};
+
+export const getMappingRefs = async (stepName) => {
+  try {
+    let response = await axios.get(`/api/steps/mapping/${stepName}/references`);
+    if (response && response.status === 200) {
+      return response;
+    }
+  } catch (error) {
+    let message = error;
+    console.error("Error getting references", message);
   }
 };
 

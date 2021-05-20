@@ -100,56 +100,24 @@
       margin-bottom:-14px;
       > .typeContext {
           color: #777777;
-          font-size: 12px
+          font-size: 12px;
       }
 
-      >.typeText{
-          margin-top: 10px
+      > .typeText{
+          margin-top: 10px;
       }
-  }
-}
-.listIcon {
-  background: transparent;
-  border: none;
-  color: #394494;
-  display: inline-block;
-  vertical-align: top;
-  margin-top: 4px;
-  font-size: 20px;
-  cursor: pointer;
-  &:hover{
-      color: var(--hoverColor);
   }
 }
 
-.functionIcon {
-  color: #394494;
-  font-size: 14px;
-  width: 22px;
-  height: 18px;
-  border: 1px solid #394494;
-  border-radius: 2px;
-  padding: 0px 0px 0px 0px;
-  cursor: pointer;
-  display: inline-block;
-  vertical-align: top;
-  text-align: center;
-  align-items: center;
-  margin-top: 5px;
-  &:hover{
-      color: var(--hoverColor);
-  }
-}
 .questionCircle {
   font-size: 12px;
   color: #7F86B5;
 }
+
 .mapExpParentContainer {
-  //display: inline;
   margin-top: -12px;
   margin-bottom: -12px;
-
-  >.validationErrors {
+  > .validationErrors {
       width: 23vw;
       line-height: normal;
       padding-top: 6px;
@@ -157,7 +125,6 @@
       padding-bottom: 4px;
       color: #DB4f59;
       word-break: break-all;
-
   }
 }
 
@@ -166,6 +133,53 @@
   display: inline-flex;
   vertical-align: top;
   align-items: flex-start;
+}
+
+.mapExpressionContainer > span > i, 
+.mapExpressionContainer > span > button {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.listIcon {
+  color: #394494;
+  background: transparent;
+  border: none;
+  margin-top: 5px;
+  font-size: 20px;
+  &:hover{
+    color: var(--hoverColor);
+  }
+}
+
+.functionIcon {
+  color: #394494;
+  font-size: 14px;
+  width: 22px;
+  height: 20px;
+  border: 1px solid #394494;
+  border-radius: 2px;
+  padding: 0;
+  text-align: center;
+  margin-top: 5px;
+  &:hover{
+    color: var(--hoverColor);
+  }
+}
+
+.refIcon {
+  color: #e2e0e6;
+  background: #394494;
+  width: 21px !important;
+  height: 20px;
+  border: 1px solid #394494;
+  border-radius: 2px;
+  padding: 5px 1px 3px 1px;
+  margin-top: 5px;
+  &:hover{
+    color: var(--hoverColor);
+  }
 }
 
 .mapValue {
