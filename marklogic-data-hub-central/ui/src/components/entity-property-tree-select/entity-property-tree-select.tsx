@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {MLTreeSelect} from "@marklogic/design-system";
@@ -27,6 +27,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   const {curationOptions} = useContext(CurationContext);
   let mergeRulesData = curationOptions.activeStep.stepArtifact.mergeRules;
   let newMergeRuleOptions:any[] = curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && mergeRulesData.map(i => i.entityPropertyPath);
+  const [expandedKeys, setExpandedKeys] = useState<any []>([]);
 
   const onChange = (value) => {
     props.onValueSelected(value);
@@ -36,7 +37,16 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     return property.multiple ? <span aria-label={`${property.name}-option`}>{property.name} <img className={styles.arrayImage} src={arrayIcon} alt=""/></span> : <span aria-label={`${property.name}-option`}>{property.name}</span>;
   };
 
-  const renderStrucuturedPropertyOption = (property: Property, entityPropertyName: string, parentKeys: any) => {
+  const updateExpandedKeys = (nodeKey) => {
+    if (!expandedKeys.includes(nodeKey)) {
+      setExpandedKeys([...expandedKeys, nodeKey]);
+    } else {
+      let keys = expandedKeys.filter(key => key !== nodeKey);
+      setExpandedKeys([...keys]);
+    }
+  };
+
+  const renderStructuredPropertyOption = (property: Property, entityPropertyName: string, parentKeys: any) => {
     if (property.ref !== "") {
       let parsedRef = property.ref.split("/");
       let structuredType = parsedRef[parsedRef.length-1];
@@ -45,18 +55,19 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
         parentKeys.push(property.name);
       }
 
-      let structuredTitle = (
-        <span>
+      let getStructuredTitle = (nodeKey) => {
+        let title = <span onClick={(e) => updateExpandedKeys(nodeKey)}>
           {property.name}
-          &nbsp;
+        &nbsp;
           <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/>
           {property.multiple && <img className={styles.arrayImage} src={arrayIcon} alt=""/>}
-        </span>
-      );
+        </span>;
+        return title;
+      };
 
       let structuredProperties =  structuredTypeDefinition.properties.map((structProperty, index) => {
         if (structProperty.datatype === "structured") {
-          return renderStrucuturedPropertyOption(structProperty, entityPropertyName, parentKeys);
+          return renderStructuredPropertyOption(structProperty, entityPropertyName, parentKeys);
         } else {
           let keys = parentKeys.join(" > ");
           return (
@@ -77,10 +88,10 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       }
       return (
         <MLTreeNode
-          disabled
+          selectable={false}
           key={`${entityPropertyName}-${property.name}-parent`}
           value={`${entityPropertyName} > ${property.name}`}
-          title={structuredTitle}
+          title={getStructuredTitle(`${entityPropertyName}-${property.name}-parent`)}
           aria-label={label}
         >
           {structuredProperties}
@@ -91,7 +102,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
 
   const renderPropertyOptions = props.propertyDropdownOptions.map((property, index) => {
     if (property.datatype === "structured") {
-      return renderStrucuturedPropertyOption(property, property.name, []);
+      return renderStructuredPropertyOption(property, property.name, []);
     } else if (curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && newMergeRuleOptions.indexOf(property.name)!==-1) {
       return <MLTreeNode key={index} value={property.name} disabled title={renderBasicPropertyTitle(property)}/>;
     } else {
@@ -105,6 +116,10 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     overflow: "auto"
   };
 
+  const onTreeNodeExpand = (keys) => {
+    setExpandedKeys(keys);
+  };
+
   return (
     <MLTreeSelect
       aria-label="property-to-match-dropdown"
@@ -112,6 +127,8 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       placeholder="Select property"
       size="default"
       onChange={onChange}
+      treeExpandedKeys={expandedKeys}
+      onTreeExpand={onTreeNodeExpand}
       value={props.value}
       treeNodeLabelProp={props.value}
       dropdownStyle={dropdownStyle}

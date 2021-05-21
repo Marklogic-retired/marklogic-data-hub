@@ -9,7 +9,7 @@ import arrayIcon from "../../../../assets/icon_array.png";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import {CurationContext} from "../../../../util/curation-context";
 import {Definition} from "../../../../types/modeling-types";
-import {NewMatchTooltips} from "../../../../config/tooltips.config";
+import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {updateMatchingArtifact} from "../../../../api/matching";
@@ -707,7 +707,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     <span>
       <div className={styles.asterisk}>*</div>
       <div>
-        <MLTooltip title={title} placement={title === NewMatchTooltips.distanceThreshold ? "bottomLeft" : "top"}>
+        <MLTooltip title={title} placement={title === MatchingStepTooltips.distanceThreshold ? "bottomLeft" : "top"}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
       </div>
@@ -727,7 +727,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
-          {helpIconWithAsterisk(NewMatchTooltips.thesaurusUri)}
+          {helpIconWithAsterisk(MatchingStepTooltips.thesaurusUri)}
         </span>
         {checkFieldInErrors(propertyPath, "thesaurus-uri-input") ? <div id="errorInThesaurusUri" data-testid={propertyPath + "-thesaurus-uri-err"} style={validationErrorStyle("thesaurus-uri-input")}>{!thesaurusValues[propertyPath] ? "A thesaurus URI is required" : ""}</div> : ""}
       </span>
@@ -741,7 +741,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <MLTooltip title={NewMatchTooltips.filter} placement="bottomLeft">
+        <MLTooltip title={MatchingStepTooltips.filter} placement="bottomLeft">
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
       </span>
@@ -761,7 +761,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
-          {helpIconWithAsterisk(NewMatchTooltips.dictionaryUri)}
+          {helpIconWithAsterisk(MatchingStepTooltips.dictionaryUri)}
         </span>
         {checkFieldInErrors(propertyPath, "dictionary-uri-input") ? <div id="errorInDictionaryUri" data-testid={propertyPath + "-dictionary-uri-err"} style={validationErrorStyle("dictionary-uri-input")}>{!dictionaryValues[propertyPath] ? "A dictionary URI is required" : ""}</div> : ""}
       </span>
@@ -776,7 +776,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
-          {helpIconWithAsterisk(NewMatchTooltips.distanceThreshold)}
+          {helpIconWithAsterisk(MatchingStepTooltips.distanceThreshold)}
         </span>
         {checkFieldInErrors(propertyPath, "distance-threshold-input") ? <div id="errorInDistanceThreshold" data-testid={propertyPath + "-distance-threshold-err"} style={validationErrorStyle("distance-threshold-input")}>{!distanceThresholdValues[propertyPath] ? "A distance threshold is required" : ""}</div> : ""}
       </span>
@@ -796,7 +796,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
-          {helpIconWithAsterisk(NewMatchTooltips.uri)}
+          {helpIconWithAsterisk(MatchingStepTooltips.uri)}
         </span>
         {checkFieldInErrors(propertyPath, "uri-input") ? <div id="errorInURI" data-testid={propertyPath + "-uri-err"} style={validationErrorStyle("uri-input")}>{!uriValues[propertyPath] ? "A URI is required" : ""}</div> : ""}
       </span>
@@ -811,7 +811,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             onChange={(e) => handleInputChange(e, propertyPath)}
             onBlur={(e) => handleInputChange(e, propertyPath)}
           />
-          {helpIconWithAsterisk(NewMatchTooltips.function)}
+          {helpIconWithAsterisk(MatchingStepTooltips.function)}
         </span>
         {checkFieldInErrors(propertyPath, "function-input") ? <div id="errorInFunction" data-testid={propertyPath + "-function-err"} style={validationErrorStyle("function-input")}>{!functionValues[propertyPath] ? "A function is required" : ""}</div> : ""}
       </span>
@@ -825,7 +825,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <MLTooltip title={NewMatchTooltips.namespace}>
+        <MLTooltip title={MatchingStepTooltips.namespace}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
       </span>
@@ -1166,8 +1166,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         <Form.Item>
           <span className={styles.reduceWeightText}>Reduce Weight</span>
           <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
-          {/*tooltip content yet to be finalized*/}
-          <MLTooltip>
+          <MLTooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
         </Form.Item>

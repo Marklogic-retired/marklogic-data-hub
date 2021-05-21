@@ -19,7 +19,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     jest.clearAllMocks();
   });
 
-  it("can view multiple rulesets modal properties, select match type and click cancel", () => {
+  it("can view multiple rulesets modal properties, select match type and click cancel", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
@@ -50,6 +50,10 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(getByLabelText("rulesetName-input")).toBeInTheDocument();
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
+    let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
+    userEvent.hover(reduceInfoCircleIcon);
+    await waitFor(() => expect(screen.getByLabelText("reduce-tooltip-text")));
 
     expect(getByText("Match on:")).toBeInTheDocument();
     expect(getByLabelText("modalTitleLegend")).toBeInTheDocument();

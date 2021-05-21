@@ -1,5 +1,6 @@
 import React from "react";
 import {render, screen, wait, within} from "@testing-library/react";
+import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import RulesetSingleModal from "./ruleset-single-modal";
@@ -232,6 +233,10 @@ describe("Matching Ruleset Single Modal component", () => {
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
     expect(getByText("Reduce Weight")).toBeInTheDocument();
+    let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
+    userEvent.hover(reduceInfoCircleIcon);
+    await waitFor(() => expect(screen.getByLabelText("reduce-tooltip-text")));
+
     userEvent.click(screen.getByLabelText("reduceToggle"));
 
     userEvent.click(screen.getByText("Select property"));
@@ -368,5 +373,46 @@ describe("Matching Ruleset Single Modal component", () => {
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it("can expand/collapse structured property by simply clicking on its label", async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+
+    const {queryByText, getByText, getByLabelText, queryByLabelText} =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    userEvent.click(screen.getByText("Select property"));
+
+    userEvent.click(screen.getByText("shipping"));
+    expect(getByLabelText("shipping > street-option")).toBeInTheDocument();
+    expect(getByLabelText("shipping > city-option")).toBeInTheDocument();
+    expect(getByLabelText("shipping > state-option")).toBeInTheDocument();
+    userEvent.click(screen.getByText("zip"));
+    expect(getByLabelText("shipping > zip > fiveDigit-option")).toBeInTheDocument();
+    expect(getByLabelText("shipping > zip > plusFour-option")).toBeInTheDocument();
+    userEvent.click(screen.getByText("zip"));
+    expect(queryByLabelText("shipping > zip > fiveDigit-option")).not.toBeInTheDocument();
+    expect(queryByLabelText("shipping > zip > plusFour-option")).not.toBeInTheDocument();
+
+    userEvent.click(screen.getByText("shipping"));
+    expect(queryByLabelText("shipping > street-option")).not.toBeInTheDocument();
+    expect(queryByLabelText("shipping > city-option")).not.toBeInTheDocument();
+    expect(queryByLabelText("shipping > state-option")).not.toBeInTheDocument();
+
+    userEvent.click(screen.getByText("shipping"));
+    userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
+
+    userEvent.click(screen.getByText("Select match type"));
+    userEvent.click(screen.getByText("Exact"));
+    userEvent.click(getByText("Save"));
   });
 });

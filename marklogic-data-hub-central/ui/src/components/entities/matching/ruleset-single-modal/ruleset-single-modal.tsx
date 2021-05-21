@@ -4,6 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
 import styles from "./ruleset-single-modal.module.scss";
+import "./ruleset-single-modal.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
 
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
@@ -12,7 +13,7 @@ import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {Definition} from "../../../../types/modeling-types";
-import {NewMatchTooltips} from "../../../../config/tooltips.config";
+import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact} from "../../../../api/matching";
 
 type Props = {
@@ -534,7 +535,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.thesaurusUri}>
+        <MLTooltip title={MatchingStepTooltips.thesaurusUri}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -553,7 +554,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.filter}>
+        <MLTooltip title={MatchingStepTooltips.filter}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -582,7 +583,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.dictionaryUri}>
+        <MLTooltip title={MatchingStepTooltips.dictionaryUri}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -606,7 +607,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.distanceThreshold}>
+        <MLTooltip title={MatchingStepTooltips.distanceThreshold}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -635,7 +636,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.uri}>
+        <MLTooltip title={MatchingStepTooltips.uri}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -659,7 +660,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.function}>
+        <MLTooltip title={MatchingStepTooltips.function}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -678,7 +679,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.namespace}>
+        <MLTooltip title={MatchingStepTooltips.namespace}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
@@ -737,8 +738,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         <Form.Item>
           <span className={styles.reduceWeightText}>Reduce Weight</span>
           <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
-          {/*tooltip content yet to be finalized*/}
-          <MLTooltip>
+          <MLTooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
         </Form.Item>
