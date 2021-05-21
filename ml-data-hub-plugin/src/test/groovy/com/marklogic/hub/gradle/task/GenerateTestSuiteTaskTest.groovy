@@ -21,10 +21,11 @@ class GenerateTestSuiteTaskTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubGenerateTestSuite").outcome == SUCCESS
-        result.output.contains("Generated the following files:")
-        result.output.contains("src/main/ml-modules/root/test/suites/mySuite/suiteSetup.sjs")
-        result.output.contains("src/main/ml-modules/root/test/suites/mySuite/setup.sjs")
-        result.output.contains("src/main/ml-modules/root/test/suites/mySuite/test.sjs")
+        def output = result.output.replace("\\", "/")
+        output.contains("Generated the following files:")
+        output.contains("src/main/ml-modules/root/test/suites/mySuite/suiteSetup.sjs")
+        output.contains("src/main/ml-modules/root/test/suites/mySuite/setup.sjs")
+        output.contains("src/main/ml-modules/root/test/suites/mySuite/test.sjs")
     }
 
     def "custom test name"() {
@@ -34,10 +35,11 @@ class GenerateTestSuiteTaskTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubGenerateTestSuite").outcome == SUCCESS
-        result.output.contains("Generated the following files:")
-        result.output.contains("src/main/ml-modules/root/test/suites/mySuite/suiteSetup.sjs")
-        result.output.contains("src/main/ml-modules/root/test/suites/mySuite/setup.sjs")
-        result.output.contains("src/main/ml-modules/root/test/suites/mySuite/myCustomTest.sjs")
+        def output = result.output.replace("\\", "/")
+        output.contains("Generated the following files:")
+        output.contains("src/main/ml-modules/root/test/suites/mySuite/suiteSetup.sjs")
+        output.contains("src/main/ml-modules/root/test/suites/mySuite/setup.sjs")
+        output.contains("src/main/ml-modules/root/test/suites/mySuite/myCustomTest.sjs")
     }
 
     def "custom source path"() {
@@ -47,10 +49,11 @@ class GenerateTestSuiteTaskTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubGenerateTestSuite").outcome == SUCCESS
-        result.output.contains("Generated the following files:")
-        result.output.contains("build/test-hubGenerateTestSuite/root/test/suites/mySuite/suiteSetup.sjs")
-        result.output.contains("build/test-hubGenerateTestSuite/root/test/suites/mySuite/setup.sjs")
-        result.output.contains("build/test-hubGenerateTestSuite/root/test/suites/mySuite/test.sjs")
+        def output = result.output.replace("\\", "/")
+        output.contains("Generated the following files:")
+        output.contains("build/test-hubGenerateTestSuite/root/test/suites/mySuite/suiteSetup.sjs")
+        output.contains("build/test-hubGenerateTestSuite/root/test/suites/mySuite/setup.sjs")
+        output.contains("build/test-hubGenerateTestSuite/root/test/suites/mySuite/test.sjs")
     }
 
     def "no suiteName specified"() {
