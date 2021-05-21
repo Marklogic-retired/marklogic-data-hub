@@ -32,7 +32,6 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonDatabindHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
@@ -117,9 +116,9 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
         // Get the job(s) document(s)
         StructuredQueryBuilder sqb = qm.newStructuredQueryBuilder();
         DataMovementManager dmm = jobClient.newDataMovementManager();
-        QueryBatcher batcher = jobIds == null ?
-            newEmptyQueryBatcher(dmm, jobClient) :
-            dmm.newQueryBatcher(sqb.value(sqb.jsonProperty("jobId"), jobIds));
+
+        StructuredQueryDefinition query = jobIds == null ? null : sqb.value(sqb.jsonProperty("jobId"), jobIds);
+        QueryBatcher batcher = newQueryBatcher(dmm, jobClient, query);
         batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
 
         JobTicket jobTicket = dmm.startJob(batcher);
@@ -135,11 +134,10 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
 
             // Get the traces that go with the job(s)
             dmm = this.jobClient.newDataMovementManager();
-            batcher = jobIds == null ?
-                newEmptyQueryBatcher(dmm, this.jobClient) :
-                dmm.newQueryBatcher(sqb.value(sqb.element(new QName("jobId")), jobIds));
-            batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
 
+            query = jobIds == null ? null : sqb.value(sqb.element(new QName("jobId")), jobIds);
+            batcher = newQueryBatcher(dmm, jobClient, query);
+            batcher.onUrisReady(new ExportListener().onDocumentReady(zipConsumer));
             jobTicket = dmm.startJob(batcher);
             batcher.awaitCompletion();
             dmm.stopJob(batcher);
@@ -164,14 +162,26 @@ public class LegacyJobManagerImpl implements LegacyJobManager {
      * Workaround for this Java Client bug:
      * https://github.com/marklogic/java-client-api/issues/1290
      *
+     * If batchSize and threadCount are not set, Java Client 5.4 will try to call an ML server function that only exists
+     * in ML 10.0-5 and higher; because this feature must work on ML 9.x, batchSize and threadCount are given sensible
+     * default values to avoid the Java Client trying to call a server function that may not exist
+     *
      * @param dmm
      * @param client
+     * @param query
      * @return
      */
-    private QueryBatcher newEmptyQueryBatcher(DataMovementManager dmm, DatabaseClient client) {
-        return dmm.newQueryBatcher(client.newQueryManager()
-            .newRawCtsQueryDefinition(new StringHandle("<cts:true-query xmlns:cts=\"http://marklogic.com/cts\"/>")
-                .withFormat(Format.XML)));
+    private QueryBatcher newQueryBatcher(DataMovementManager dmm, DatabaseClient client, StructuredQueryDefinition query) {
+        QueryBatcher queryBatcher = null;
+        if(query == null) {
+            queryBatcher = dmm.newQueryBatcher(client.newQueryManager()
+                    .newRawCtsQueryDefinition(new StringHandle("<cts:true-query xmlns:cts=\"http://marklogic.com/cts\"/>")
+                            .withFormat(Format.XML)));
+        } else {
+            queryBatcher = dmm.newQueryBatcher(query);
+        }
+        queryBatcher.withConsistentSnapshot().withBatchSize(100).withThreadCount(16);
+        return queryBatcher;
     }
 
     @Override public void importJobs(Path importFilePath) throws IOException {
