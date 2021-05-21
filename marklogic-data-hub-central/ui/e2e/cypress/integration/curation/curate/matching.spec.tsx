@@ -328,12 +328,20 @@ describe("Matching", () => {
     cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
 
+    //To test when users click on test button and no data is returned
+    cy.waitUntil(() => matchingStepDetail.getUriInputField().type("/json/noDataUri"));
+    matchingStepDetail.getAddUriIcon().click();
+    matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
+    matchingStepDetail.getUriDeleteIcon().click();
+
     //To test when user enters uris and click on test button
     for (let i in uris) {
       cy.waitUntil(() => matchingStepDetail.getUriInputField().type(uris[i]));
       matchingStepDetail.getAddUriIcon().click();
     }
     matchingStepDetail.getTestMatchUriButton().click();
+    cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
     for (let j in uriMatchedResults) {
       cy.findByText(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
       cy.findByText("(Threshold: "+uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
