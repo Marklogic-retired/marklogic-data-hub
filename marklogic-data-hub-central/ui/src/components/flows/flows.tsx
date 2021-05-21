@@ -188,29 +188,34 @@ const Flows: React.FC<Props> = (props) => {
             }
           }
         }
-        //run step after step is added to a new flow
-        if (props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow && startRun && addedFlowName) {
-          let indexFlow = props.flows.findIndex(i => i.name === addedFlowName);
-          if (indexFlow > -1 && props.flows[indexFlow].steps.length > 0) {
-            let indexStep = props.flows[indexFlow].steps.findIndex(s => s.stepName === props.newStepToFlowOptions.newStepName);
-            if (props.flows[indexFlow].steps[indexStep].stepDefinitionType === "ingestion") {
-              setShowUploadError(false);
-              setRunningStep(props.flows[indexFlow].steps[indexStep]);
-              setRunningFlow(addedFlowName);
-              openFilePicker();
-            } else {
-              props.runStep(addedFlowName, props.flows[indexFlow].steps[indexStep]);
-              setAddedFlowName("");
-              setStartRun(false);
-            }
-          }
-        }
-      }
-      if (activeKeys === undefined) {
-        setActiveKeys([]);
       }
     }
+    if (activeKeys === undefined) {
+      setActiveKeys([]);
+    }
   }, [props.flows]);
+
+
+  useEffect(() => {
+    //run step after step is added to a new flow
+    if (props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow && startRun && addedFlowName) {
+      let indexFlow = props.flows?.findIndex(i => i.name === addedFlowName);
+      if (props.flows[indexFlow]?.steps.length > 0) {
+        let indexStep = props.flows[indexFlow].steps.findIndex(s => s.stepName === props.newStepToFlowOptions.newStepName);
+        if (props.flows[indexFlow].steps[indexStep].stepDefinitionType === "ingestion") {
+          setShowUploadError(false);
+          setRunningStep(props.flows[indexFlow].steps[indexStep]);
+          setRunningFlow(addedFlowName);
+          openFilePicker();
+        } else {
+          props.runStep(addedFlowName, props.flows[indexFlow].steps[indexStep]);
+          setAddedFlowName("");
+          setStartRun(false);
+        }
+      }
+    }
+  }, [props.steps]);
+
 
   // Get the latest job info after a step (in a flow) run
   useEffect(() => {
