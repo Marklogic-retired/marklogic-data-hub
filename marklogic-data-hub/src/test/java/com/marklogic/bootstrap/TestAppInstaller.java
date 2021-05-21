@@ -185,13 +185,13 @@ class InstallerThread extends LoggingObject implements Runnable {
 
         User testFlowDeveloper = new User(api, "test-flow-developer");
         testFlowDeveloper.setPassword("password");
-        testFlowDeveloper.addRole("flow-developer-role");
+        testFlowDeveloper.addRole(hubConfig.getFlowDeveloperRoleName());
         testFlowDeveloper.setDescription("Supports older DHF tests that depend on the deprecated roles");
         testFlowDeveloper.save();
 
         User testFlowOperator = new User(api, "test-flow-operator");
         testFlowOperator.setPassword("password");
-        testFlowOperator.addRole("flow-operator-role");
+        testFlowOperator.addRole(hubConfig.getFlowOperatorRoleName());
         testFlowOperator.setDescription("Supports older DHF tests that depend on the deprecated roles");
         testFlowOperator.save();
 
