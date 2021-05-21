@@ -201,7 +201,8 @@
     width: 90.7vw;
     overflow-y: auto;
     max-height: 60vh;
-    margin-left: 1vw;
+    margin-left: 2.2%;
+    padding-right: 1.1vw;
 }
 
 .tableContent {
@@ -239,6 +240,21 @@
     padding: 1em;
 }
 
+.noMatchedDataView {
+    border: 1px solid lightgrey;
+    padding: 1em;
+    margin-left: 2.3%;
+    margin-top: 4vh;
+}
+
+.noMatchedDataContent {
+    margin-top: 1vh;
+    :before {
+        content:"•";
+        color: #333;
+        padding-right: 5px;
+    }
+}
 .radioTitle {
  margin-top: 1vh;
 }

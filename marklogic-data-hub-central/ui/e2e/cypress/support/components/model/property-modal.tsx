@@ -67,7 +67,7 @@ class PropertyModal {
     return cy.waitUntil(() => cy.findByLabelText(`${propertyName}-option`));
   }
   checkJoinPropertyDropdownLength(len: number) {
-    return cy.get('.ant-select-dropdown-menu').find('li').should('have.length', len);
+    return cy.get(".ant-select-dropdown-menu").find("li").should("have.length", len);
   }
 }
 
