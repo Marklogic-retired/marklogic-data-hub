@@ -103,6 +103,7 @@ const MatchingStepDetail: React.FC = () => {
   const [entityProperties, setEntityProperties] = useState<any>();
   const [urisCompared, setUrisCompared] = useState<string[]>([]);
   const [uris, setUris] = useState<string[]>([]);
+  const [previewMatchedData, setPreviewMatchedData] = useState(-1);
 
   const menu = (
     <Menu>
@@ -172,6 +173,7 @@ const MatchingStepDetail: React.FC = () => {
       rulesetDataList.shift();
     };
     let previewMatchActivity = await previewMatchingActivity(testMatchData);
+    setPreviewMatchedData(previewMatchActivity.actionPreview.length);
     if (previewMatchActivity) {
       await test();
       setPreviewMatchedActivity(previewMatchActivity);
@@ -345,6 +347,7 @@ const MatchingStepDetail: React.FC = () => {
 
   const onTestMatchRadioChange = event => {
     setValue(event.target.value);
+    setPreviewMatchedData(-1);
   };
 
   const handleUriInputChange = (event) => {
@@ -794,6 +797,13 @@ const MatchingStepDetail: React.FC = () => {
         {/*    <Menu.Item key="notMatched">Not Matched</Menu.Item>*/}
         {/*  </Menu>*/}
         {/*</div>*/}
+        {previewMatchedData === 0 && <div className={styles.noMatchedDataView} aria-label="noMatchedDataView"><span>No matches found. You can try: </span><br/>
+          <div className={styles.noMatchedDataContent}>
+            <span> Selecting a different test case</span><br/>
+            <span> Changing or adding more URIs</span><br/>
+            <span> Changing your match configuration. Preview matches in the Possible Combinations box</span>
+          </div>
+        </div>}
         {previewMatchedActivity.actionPreview.length > 0 && testMatchTab === "matched" && uriTestMatchClicked ?
           <div className={styles.UriMatchedDataTable}>
             <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
