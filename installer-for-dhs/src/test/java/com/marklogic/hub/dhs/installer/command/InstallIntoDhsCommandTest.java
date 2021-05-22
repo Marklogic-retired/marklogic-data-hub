@@ -92,9 +92,9 @@ public class InstallIntoDhsCommandTest extends AbstractSimpleHubTest {
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
         assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
         assertTrue(commands.get(index++) instanceof DhsDeployServersCommand);
+        assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
         assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
         assertTrue(commands.get(index++) instanceof UpdateDhsModulesPermissionsCommand);
-        assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
         assertTrue(commands.get(index++) instanceof DeployQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
