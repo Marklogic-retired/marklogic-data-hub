@@ -27,6 +27,7 @@ class BasicAuthTest extends BaseTest {
     def setupSpec() {
         createGradleFiles()
         runTask("hubInit")
+        runTask("hubDeploySecurity")
         println(BaseTest.testProjectDir.getRoot().getAbsolutePath());
         createProperties()
     }

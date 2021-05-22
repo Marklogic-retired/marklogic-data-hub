@@ -76,7 +76,9 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         );
         commands.add(deployRolesCommand);
 
-        commands.add(new DeployAmpsCommand());
+        DeployAmpsCommand deployAmpsCommand = new DeployAmpsCommand();
+        deployAmpsCommand.setExecuteSortOrder(390);
+        commands.add(deployAmpsCommand);
         commands.add(dbCommand);
 
         commands.add(new DhsDeployServersCommand());

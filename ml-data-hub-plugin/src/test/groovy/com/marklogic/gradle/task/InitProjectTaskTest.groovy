@@ -18,6 +18,9 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.HubConfig
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.FileFilterUtils
+import org.apache.commons.io.filefilter.TrueFileFilter
 import org.gradle.testkit.runner.UnexpectedBuildFailure
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -35,7 +38,11 @@ class InitProjectTaskTest extends BaseTest {
             File userConfigDir = new File(testProjectDir.root, HubConfig.USER_CONFIG_DIR)
         then:
             hubConfigDir.isDirectory() == false
-            userConfigDir.isDirectory() == false
+
+            // We only expect the test-flow-developer user to be present and nothing else since we have not yet run hubInit
+            FileUtils.listFiles(userConfigDir,
+                    FileFilterUtils.notFileFilter(FileFilterUtils.nameFileFilter(TEST_USER_FILENAME)),
+                    TrueFileFilter.INSTANCE).size() == 0
 
         when:
         def result
@@ -50,7 +57,8 @@ class InitProjectTaskTest extends BaseTest {
             notThrown(UnexpectedBuildFailure)
             result.task(":hubInit").outcome == SUCCESS
             hubConfigDir.isDirectory() == true
-            userConfigDir.isDirectory() == true
-
+            FileUtils.listFiles(userConfigDir,
+                FileFilterUtils.notFileFilter(FileFilterUtils.nameFileFilter(TEST_USER_FILENAME)),
+                TrueFileFilter.INSTANCE).size() != 0
     }
 }

@@ -653,6 +653,8 @@ public class DataHubImpl implements DataHub, InitializingBean {
     public Map<String, List<Command>> buildCommandMap() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
+        updateSecurityCommandList(commandMap);
+
         updateDatabaseCommandList(commandMap);
 
         updateServerCommandList(commandMap);
@@ -678,6 +680,20 @@ public class DataHubImpl implements DataHub, InitializingBean {
         commandMap.put("finishHubDeploymentCommands", finishHubDeploymentCommands);
 
         return commandMap;
+    }
+
+    /**
+     * DeployAmpsCommand should run before we run LoadHubModulesCommand as we require the amp for getting the default
+     * rewriter to be present so that it can be used to generate the custom rewriter.
+     *
+     * @param commandMap
+     */
+    private void updateSecurityCommandList(Map<String, List<Command>> commandMap) {
+        for (Command c : commandMap.get("mlSecurityCommands")) {
+            if (c instanceof DeployAmpsCommand) {
+                ((DeployAmpsCommand) c).setExecuteSortOrder(390);
+            }
+        }
     }
 
     /**

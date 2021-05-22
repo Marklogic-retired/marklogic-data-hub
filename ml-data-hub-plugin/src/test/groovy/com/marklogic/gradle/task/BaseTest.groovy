@@ -51,6 +51,7 @@ import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
@@ -66,6 +67,7 @@ class BaseTest extends Specification {
     static final TemporaryFolder testProjectDir = new TemporaryFolder()
     static File buildFile
     static File propertiesFile
+    static String TEST_USER_FILENAME = "test-flow-developer.json"
 
     private ManageClient _manageClient;
     private DatabaseManager _databaseManager;
@@ -256,6 +258,23 @@ class BaseTest extends Specification {
         }
     }
 
+    // Instead of depending on running bootstrap task before each test we just create the required user to save time
+    static void createTestUser() {
+        Path userFilePath = testProjectDir.root.toPath().resolve(Paths.get("src/main/ml-config/security/users/" + TEST_USER_FILENAME))
+        Files.createDirectories(userFilePath.getParent())
+        File userFile = Files.createFile(userFilePath).toFile()
+        userFile << """
+                {
+                  "user-name": "test-flow-developer",
+                  "description": "Supports older DHF tests that depend on the deprecated roles",
+                  "password": "password",
+                  "role": [
+                    "flow-developer-role"
+                  ]
+                }
+            """
+    }
+
     static void createGradleFiles() {
         createBuildFile()
         createFullPropertiesFile()
@@ -303,6 +322,7 @@ class BaseTest extends Specification {
         _hubConfig = ctx.getBean(HubConfigImpl.class)
         createFullPropertiesFile()
         _hubConfig.createProject(testProjectDir.root.getAbsolutePath())
+        createTestUser()
         _hubConfig.refreshProject()
     }
 }

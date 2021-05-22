@@ -18,6 +18,15 @@ import java.io.File;
  */
 public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
+    /**
+     * DeployHubAmpsCommand should run before we run LoadHubModulesCommand as we require the amp for getting the default
+     * rewriter to be present so that it can be used to generate the custom rewriter.
+     */
+   public DeployHubAmpsCommand() {
+       super();
+       setExecuteSortOrder(390);
+   }
+
     @Override
     public boolean cmaShouldBeUsed(CommandContext context) {
         return false;
