@@ -44,7 +44,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
   let currentContentArray = normalizeContentArray(contentArray);
   runtimeOptions = runtimeOptions || {};
   jobId = jobId || sem.uuidString();
-  
+
   hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${currentContentArray.length}`);
 
   const writeQueue = new WriteQueue();
@@ -71,18 +71,15 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
         } else {
           hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
         }
-        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);  
+        flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, currentContentArray, writeQueue);
       }
     } catch (error) {
       // Catches any error thrown by a step, except for an error when an individual item is processed
-      // Note that stopOnError is not intended to have any impact here; it only affects the execution of 
+      // Note that stopOnError is not intended to have any impact here; it only affects the execution of
       // steps that are not acceptsBatch=true, where it may be valid to continue as long as the step successfully
       // processed at least one item. That's because we don't have an output content array in this scenario, and
       // thus there's nothing to pass onto the next step.
       stepExecutionContext.addStepErrorForEntireBatch(error, batchItems);
-      if (stepExecutionContext.stepErrorShouldBeThrown()) {
-        throw error;
-      }
       const stepResponse = stepExecutionContext.buildStepResponse();
       flowExecutionContext.finishStep(stepExecutionContext, stepResponse, batchItems, writeQueue);
       break;
@@ -128,7 +125,7 @@ function runStepAgainstSourceDatabase(stepExecutionContext, contentArray, writeQ
 /**
  * Runs the step defined by the stepExecutionContext. It is assumed that this is being run against the proper source
  * database, and thus has most likely been invoked by runStepAgainstSourceDatabase.
- * 
+ *
  * @param stepExecutionContext {array} defines the step to execute and context for executing the step
  * @param contentArray {array} array of content objects to process
  * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
@@ -146,7 +143,7 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
   const outputContentArray = stepExecutionContext.stepModuleAcceptsBatch() ?
     runStepMainOnBatch(contentArray, stepExecutionContext) :
     runStepMainOnEachItem(contentArray, stepExecutionContext);
-  
+
   // If the step did not complete for any reason, then one or more errors were captured, and no output should be returned
   if (!stepExecutionContext.wasCompleted()) {
     return [];
@@ -172,14 +169,14 @@ function runStep(stepExecutionContext, contentArray, writeQueue) {
 /**
  * When a step has acceptsBatch=true, then the step module will be invoked once with the entire content array
  * passed to it.
- *  
- * If an error occurs within the step module, it is associated with the entire batch. That makes it equivalent to an 
- * error thrown when running any part of the step execution, such as an interceptor or custom hook. So the error is 
- * not caught here; it is expected to be caught by the client that runs a step. 
- * 
+ *
+ * If an error occurs within the step module, it is associated with the entire batch. That makes it equivalent to an
+ * error thrown when running any part of the step execution, such as an interceptor or custom hook. So the error is
+ * not caught here; it is expected to be caught by the client that runs a step.
+ *
  * @param contentArray
  * @param stepExecutionContext
- * @return if an error occurs while processing the batch, in the step execution context and rethrown; else, 
+ * @return if an error occurs while processing the batch, in the step execution context and rethrown; else,
  * the content array returned by the step is returned
  */
 function runStepMainOnBatch(contentArray, stepExecutionContext) {
@@ -219,9 +216,7 @@ function runStepMainOnEachItem(contentArray, stepExecutionContext) {
   const stepMainFunction = stepExecutionContext.getStepMainFunction();
   const outputContentArray = [];
 
-  let contentCounter = 0;
   for (var contentObject of contentArray) {
-    contentCounter++;
     const thisItem = contentObject.uri;
     if (DEBUG_ENABLED) {
       hubUtils.hubTrace(DEBUG_EVENT, `Running step on content: ${xdmp.toJsonString(contentObject)}`);
@@ -240,20 +235,11 @@ function runStepMainOnEachItem(contentArray, stepExecutionContext) {
         }
       }
     } catch (error) {
-      // It is possible that an error occurs for a content item that does not have a "uri" to identify it.
-      // In that scenario, we need some identifier, or otherwise we don't have anything to add to the list of
-      // failed items in the stepExecutionContext. In the absence of anything else, the contentCounter is used
-      // to produce a unique identifier.
-      const itemIdentifier = thisItem || "generatedIdentifier-" + contentCounter;
-      if (stepExecutionContext.combinedOptions.stopOnError === true) {
-        stepExecutionContext.stopWithError(error, itemIdentifier);
-        hubUtils.hubTrace(INFO_EVENT, `Stopping execution of ${stepExecutionContext.describe()}`);
+      if (stepExecutionContext.isStopOnError()) {
+        stepExecutionContext.stopWithError(error, thisItem);
         return [];
       }
-      stepExecutionContext.addStepError(error, itemIdentifier);
-      if (stepExecutionContext.stepErrorShouldBeThrown()) {
-        throw error;
-      }
+      stepExecutionContext.addStepErrorForItem(error, thisItem);
     }
   }
 
@@ -315,14 +301,14 @@ function addOutputContentToWriteQueue(stepExecutionContext, outputContentArray, 
 /**
  * Effectively a copy constructor for a content object, with one exception - a shallow copy is used for content.value. This is based
  * on an assumption that the content.value will not be modified until another step tries to modify it, and by that point, the content.value
- * has been converted into a node (because that's what a step module expects). 
- * 
- * A shallow copy of content.value is also used because a reliable solution hasn't yet been found for a deep copy. JSON.parse/xdmp/quote was 
- * initially used; that works for JSON, not for an XML document. JSON.parse/JSON.stringify does not work when content.value is a node, which 
- * it can be. So until a reliable solution is found for a deep copy of content.value that works for JSON objects/nodes and for XML nodes, 
- * a shallow copy will be used. 
- * 
- * @param contentObject 
+ * has been converted into a node (because that's what a step module expects).
+ *
+ * A shallow copy of content.value is also used because a reliable solution hasn't yet been found for a deep copy. JSON.parse/xdmp/quote was
+ * initially used; that works for JSON, not for an XML document. JSON.parse/JSON.stringify does not work when content.value is a node, which
+ * it can be. So until a reliable solution is found for a deep copy of content.value that works for JSON objects/nodes and for XML nodes,
+ * a shallow copy will be used.
+ *
+ * @param contentObject
  */
 function copyContentObject(contentObject) {
   const copy = {
@@ -354,7 +340,7 @@ function copyContentObject(contentObject) {
         }
       }
       else {
-        // For anything DHF does not know about it, just do a simple copy, as it's not know for certain if 
+        // For anything DHF does not know about it, just do a simple copy, as it's not know for certain if
         // JSON.parse/xdmp.quote can be used
         copy.context[key] = originalContext[key];
       }
@@ -368,9 +354,9 @@ function copyContentObject(contentObject) {
  * Invokes interceptors on the given content array. Interceptors can make any changes they wish to the items in the
  * content array, including adding and removing items, but the array itself cannot be changed - i.e. an interceptor may
  * not return a new instance of an array.
- * 
- * @param {object} stepExecutionContext 
- * @param {array} contentArray 
+ *
+ * @param {object} stepExecutionContext
+ * @param {array} contentArray
  * @param {string} whenValue only interceptors with a "when" value of this will be run
  */
 function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
@@ -384,13 +370,13 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
         const vars = Object.assign({}, interceptor.vars);
         vars.contentArray = contentArray;
         vars.options = stepExecutionContext.combinedOptions;
-        // This is being included in 5.5, but not yet documented since stepExecutionContext is not yet 
+        // This is being included in 5.5, but not yet documented since stepExecutionContext is not yet
         // part of the public DHF API
         vars.stepExecutionContext = stepExecutionContext;
 
         hubUtils.hubTrace(INFO_EVENT, `Invoking interceptor on ${stepExecutionContext.describe()} at path: ${interceptor.path}`);
         xdmp.invoke(interceptor.path, vars);
-      });  
+      });
     } catch (error) {
       hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor on ${stepExecutionContext.describe()}; path: ${currentInterceptor.path}; error: ${error.message}`);
       throw error;
@@ -399,10 +385,10 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
 }
 
 /**
- * If fullOutput is true, then add the content objects in the outputContentArray to the stepResponse. 
- * 
- * @param stepExecutionContext 
- * @param outputContentArray 
+ * If fullOutput is true, then add the content objects in the outputContentArray to the stepResponse.
+ *
+ * @param stepExecutionContext
+ * @param outputContentArray
  * @param stepResponse the step response associated with the stepNumber in stepExecutionContext
  */
 function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, stepResponse) {
@@ -413,19 +399,19 @@ function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, step
       // copyContentObject, which performs a shallow copy of content.value, is assumed to be safe here because if
       // content.value were to be modified, it would be done by a subsequent step. And it is assumed that content.value
       // will first be converted into a node before that step runs, since the step module functions require content.value
-      // to be a node. 
+      // to be a node.
       stepResponse.fullOutput[contentObject.uri] = copyContentObject(contentObject);
     });
-  }  
+  }
 }
 
 /**
- * "Finish" = write all data produced by executing the flow, including provenance data. Then write the job/batch 
+ * "Finish" = write all data produced by executing the flow, including provenance data. Then write the job/batch
  * data if those are enabled. The flowResponse in the flowExecutionContext is updated as part of this process.
- * 
- * @param flowExecutionContext 
- * @param writeQueue 
- * @param provInstance 
+ *
+ * @param flowExecutionContext
+ * @param writeQueue
+ * @param provInstance
  */
 function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
   // Any error in here is logged since the user may not see the flowResponse or have job data enabled
@@ -445,7 +431,7 @@ function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
       flowExecutionContext.addFlowError(error);
     }
   }
-  
+
   try {
     flowExecutionContext.finishAndSaveJob(writeInfos);
   } catch (error) {
