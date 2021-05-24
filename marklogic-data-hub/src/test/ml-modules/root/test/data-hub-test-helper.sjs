@@ -144,7 +144,7 @@ function documentExists(uri, databaseName) {
 
 /**
  * For many scenarios, it'll be sufficient to just verify the count of provenance docs - i.e. was the expected number
- * created, or were no docs created. 
+ * created, or were no docs created.
  */
 function getProvenanceCount() {
   return fn.head(xdmp.invokeFunction(function() {
@@ -174,30 +174,34 @@ function buildPermissionsMap(permissions) {
 }
 
 /**
- * Convenience function for setting up a project with a simple Customer entity model and a flow consisting of the 
+ * Convenience function for setting up a project with a simple Customer entity model and a flow consisting of the
  * given steps.
- * 
- * @param arrayOfStepProperties 
+ *
+ * @param flowName
+ * @param arrayOfStepProperties
+ * @param customerModel {object} optional; if not specified, then a default Customer model is used
  */
-function createSimpleProject(flowName, arrayOfStepProperties) {
-  const customerModel = {
-    "info": {
-      "title": "Customer",
-      "version": "0.0.1",
-      "baseUri": "http://example.org/"
-    },
-    "definitions": {
-      "Customer": {
-        "properties": {
-          "customerId": {"datatype": "integer"},
-          "name": {"datatype": "string"},
-          "nicknames":{"datatype": "array", "items":{"datatype": "string"}},
-          "status": {"datatype": "string"},
-          "integers":{"datatype": "array", "items":{"datatype": "integer"}}
+function createSimpleProject(flowName, arrayOfStepProperties, customerModel) {
+  if (!customerModel) {
+    customerModel = {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "definitions": {
+        "Customer": {
+          "properties": {
+            "customerId": {"datatype": "integer"},
+            "name": {"datatype": "string"},
+            "nicknames":{"datatype": "array", "items":{"datatype": "string"}},
+            "status": {"datatype": "string"},
+            "integers":{"datatype": "array", "items":{"datatype": "integer"}}
+          }
         }
       }
-    }
-  };
+    };
+  }
 
   // Must invoke this in a separate transaction so that steps can see the model
   xdmp.invokeFunction(function() {
