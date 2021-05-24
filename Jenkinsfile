@@ -245,6 +245,8 @@ void PreBuildCheck() {
        sh 'exit 1'
   }
 
+  if(isChangeInUI()){env.NO_UI_TESTS=false}
+
  }
  def obj=new abortPrevBuilds();
  obj.abortPrevBuilds();
@@ -596,6 +598,12 @@ void mergePR(){
     }
 }
 
+def isChangeInUI(){
+    sh(returnStdout: true, script: '''
+           curl -u $Credentials  -X GET  https://patch-diff.githubusercontent.com/raw/marklogic/marklogic-data-hub/pull/$CHANGE_ID.diff | grep -c '^diff.*/ui' || true
+       ''') as Integer != 0
+}
+
 pipeline{
 	agent none;
 	options {
@@ -730,10 +738,12 @@ pipeline{
                   }
 		}
 		stage('cypresse2e'){
+        when {
+            expression {return !env.NO_UI_TESTS}
+            beforeAgent true
+        }
 		agent { label 'dhfLinuxAgent'}
-		steps{
-		    runCypressE2e()
-		}
+		steps{runCypressE2e()}
         post{
 				  always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
