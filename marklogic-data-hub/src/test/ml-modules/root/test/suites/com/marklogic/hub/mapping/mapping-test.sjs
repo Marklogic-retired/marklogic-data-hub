@@ -1,7 +1,5 @@
 const test = require("/test/test-helper.xqy");
-const mapping = require("/data-hub/5/builtins/steps/mapping/default/main.sjs");
 const esMapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
-const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 const emptySequence = Sequence.from([]);
 const serverTimezone = sem.timezoneString(fn.currentDateTime());
 let expectedDateTime = `2014-01-06T18:13:50${serverTimezone}`;
@@ -11,7 +9,7 @@ function describe(item) {
 }
 
 function mapsJSONasExpected() {
-  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = esMapping.main({"value": cts.doc("/content/customer.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -26,7 +24,7 @@ function mapsJSONasExpected() {
 }
 
 function esMapsJSONasExpected() {
-  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = esMapping.main({"value": cts.doc("/content/customer.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -53,7 +51,7 @@ function esMapsJSONasExpected() {
 }
 
 function mapsJSONtoXMLasExpected() {
-  const mappedInstance = fn.head(esMapping.main({"value": cts.doc("/customer1.json")}, {
+  const mappedInstance = fn.head(esMapping.main({"value": cts.doc("/content/customer.json")}, {
     "mapping" : {
       "name" : "CustomerJSON-CustomerJSONMapping",
       "version" : 0
@@ -70,7 +68,7 @@ function mapsJSONtoXMLasExpected() {
 }
 
 function mapsXMLasExpected() {
-  const mappedInstance = esMapping.main({"value": cts.doc("/customer1.xml")}, {
+  const mappedInstance = esMapping.main({"value": cts.doc("/content/customer.xml")}, {
     "mapping" : {
       "name" : "CustomerXML-CustomerXMLMapping",
       "version" : 0
@@ -85,10 +83,8 @@ function mapsXMLasExpected() {
 }
 
 
-let assertions = [];
-assertions = assertions
+[]
   .concat(mapsJSONasExpected())
   .concat(esMapsJSONasExpected())
   .concat(mapsJSONtoXMLasExpected())
   .concat(mapsXMLasExpected());
-assertions;
