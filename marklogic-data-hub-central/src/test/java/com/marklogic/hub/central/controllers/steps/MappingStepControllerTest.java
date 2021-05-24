@@ -163,6 +163,32 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
             });
     }
 
+    @Test
+    void getMappingStepReferences() throws Exception {
+        installOnlyReferenceModelEntities();
+        loginAsTestUserWithRoles("hub-central-mapping-writer");
+
+        postJson(PATH, newDefaultMappingStep("firstStep")).andExpect(status().isOk());
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
+
+        mockMvc.perform(get(PATH + "/{stepName}/references", "firstStep")
+            .session(mockHttpSession))
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(MediaType.APPLICATION_JSON, response.getContentType());
+                assertEquals(HttpStatus.OK.value(), response.getStatus());
+                JsonNode referencesJson = parseJsonResponse(result);
+
+                assertEquals(1, referencesJson.size(), "There are no other references other than $URI");
+                assertEquals("$URI", referencesJson.get(0).get("name").asText());
+                assertEquals("The URI of the source document", referencesJson.get(0).get("description").asText());
+            });
+
+        loginAsTestUserWithRoles("hub-central-user");
+        mockMvc.perform(get(PATH + "/{stepName}/references", "firstStep").session(mockHttpSession))
+            .andDo(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+    }
+
     private void verifyOrderMappings(JsonNode node) {
         assertEquals("Order", node.get("entityType").asText());
         assertEquals("http://marklogic.com/example/Order-0.0.1/Order", node.get("entityTypeId").asText());
