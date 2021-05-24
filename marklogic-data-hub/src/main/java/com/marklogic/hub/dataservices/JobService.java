@@ -51,6 +51,7 @@ public interface JobService {
             private BaseProxy.DBFunctionRequest req_finishStep;
             private BaseProxy.DBFunctionRequest req_getJob;
             private BaseProxy.DBFunctionRequest req_startJob;
+            private BaseProxy.DBFunctionRequest req_getJobWithDetails;
             private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
             private BaseProxy.DBFunctionRequest req_finishJob;
             private BaseProxy.DBFunctionRequest req_findStepResponses;
@@ -67,6 +68,8 @@ public interface JobService {
                     "getJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_startJob = this.baseProxy.request(
                     "startJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_getJobWithDetails = this.baseProxy.request(
+                    "getJobWithDetails.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
                     "getMatchingPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_finishJob = this.baseProxy.request(
@@ -134,6 +137,21 @@ public interface JobService {
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
                           BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getJobWithDetails(String jobId) {
+                return getJobWithDetails(
+                    this.req_getJobWithDetails.on(this.dbClient), jobId
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getJobWithDetails(BaseProxy.DBFunctionRequest request, String jobId) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -222,6 +240,14 @@ public interface JobService {
    * @return	The created Job document
    */
     com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName);
+
+  /**
+   * Get the Job document associated with the given job ID and additional metadata
+   *
+   * @param jobId	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getJobWithDetails(String jobId);
 
   /**
    * Invokes the getMatchingPropertyValues operation on the database server

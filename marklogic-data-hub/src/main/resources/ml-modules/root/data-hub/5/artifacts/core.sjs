@@ -302,7 +302,7 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   // Copy all known non-options properties over
   [
     "name", "description", "stepDefinitionName", "stepDefinitionType", "stepId",
-    "customHook", "interceptors", "batchSize", "threadCount"
+    "customHook", "interceptors", "batchSize", "threadCount", "lastUpdated"
   ].forEach(key => {
     if (referencedStep[key] === "" || referencedStep[key]) {
       newFlowStep[key] = referencedStep[key];
@@ -325,7 +325,7 @@ function convertStepReferenceToInlineStep(stepId, flowNameForError) {
   if (collections.length > 0) {
     referencedStep.collections = collections;
   }
-  const propsNotToBeCopiedToOptions = ["lastUpdated", "selectedSource"]
+  const propsNotToBeCopiedToOptions = ["selectedSource"]
   // Copy all remaining properties on the referenced step that are not in 'propsNotToBeCopiedToOptions' as options
   newFlowStep.options = {};
   Object.keys(referencedStep).forEach(key => {

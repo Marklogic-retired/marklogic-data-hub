@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import styles from "./Monitor.module.scss";
 import {AuthoritiesContext} from "../util/authorities";
 import tiles from "../config/tiles.config";
@@ -35,7 +35,7 @@ const Monitor: React.FC = () => {
   const {
     monitorOptions
   } = useContext(MonitorContext);
-
+  const mountedRef = useRef(true);
 
   const getJobResults = async () => {
     try {
@@ -50,21 +50,28 @@ const Monitor: React.FC = () => {
           facets: monitorOptions.selectedFacets
         }
       });
-      if (response.data) {
+      if (response.data && mountedRef.current) {
         setData(response.data.results);
         setTotalDocuments(response.data.total);
         setFacets(response.data.facets);
+      } else {
+        return null;
       }
     } catch (error) {
       console.error("error", error);
       handleError(error);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) {
+        setIsLoading(false);
+      }
     }
   };
 
   useEffect(() => {
     getJobResults();
+    return () => {
+      mountedRef.current = false;
+    };
   }, [monitorOptions]);
 
   const updateSelectedFacets = (facets) => {

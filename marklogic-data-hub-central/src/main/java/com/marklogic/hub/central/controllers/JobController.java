@@ -46,7 +46,7 @@ public class JobController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Get the Job document associated with the given ID", response = Job.class)
     public JsonNode getJob(@PathVariable String jobId) {
-        JsonNode jobsJson = JobService.on(getHubClient().getJobsClient()).getJob(jobId);
+        JsonNode jobsJson = JobService.on(getHubClient().getJobsClient()).getJobWithDetails(jobId);
         if (jobsJson == null) {
             return null;
         }

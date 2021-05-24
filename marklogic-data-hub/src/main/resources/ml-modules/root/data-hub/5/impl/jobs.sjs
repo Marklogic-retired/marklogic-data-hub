@@ -19,6 +19,8 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 
+const XS_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
+
 /**
  * 
  * @param flowName 
@@ -79,6 +81,46 @@ function saveNewJob(job) {
     return getJobDocWithId(jobId, false);
   }
 
+  /**
+   * A job with a given jobId is returned and additional metadata is added.
+   *
+   * @param jobId
+   * @returns
+   */
+  function getJobWithDetails(jobId) {
+    let job = getJobDocWithId(jobId, false);
+    if (job) {
+      if (xdmp.castableAs(XS_NAMESPACE, "dateTime", job.job.timeStarted)) {
+        const timeStarted = xs.dateTime(job.job.timeStarted);
+        // Determine if related flow or have been updated
+        job.job.flowOrStepsUpdatedSinceRun = flowHasBeenUpdatedSince(job.job.flow, timeStarted);
+        if (xdmp.castableAs(XS_NAMESPACE, "dateTime", job.job.timeEnded)) {
+          // Calculate the duration
+          job.job.duration = xs.dateTime(job.job.timeEnded).subtract(timeStarted);
+        }
+      }
+    }
+    return job;
+  }
+
+
+  function flowHasBeenUpdatedSince(flowName, dateTime) {
+    try {
+      const fullFlow = fn.head(hubUtils.invokeFunction(function () {
+            return Artifacts.getFullFlow(flowName);
+          }, config.FINALDATABASE
+      ));
+      const allArtifacts = [fullFlow].concat(Object.values(fullFlow.steps));
+      return allArtifacts.some((artifact) => {
+        if (xdmp.castableAs(XS_NAMESPACE, "dateTime", artifact.lastUpdated)) {
+          return xs.dateTime(artifact.lastUpdated).gt(dateTime);
+        }
+      });
+    } catch (e) {
+      // the flow no longer exists
+      return true;
+    }
+  }
   /**
    * An error is thrown if a Job with the given jobId does not exist.
    *
@@ -267,6 +309,7 @@ module.exports = {
   createJob,
   createJobReport,
   getJob,
+  getJobWithDetails,
   getJobDocs,
   getJobDocsByFlow,
   getJobDocsForFlows,

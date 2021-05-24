@@ -124,8 +124,6 @@ describe("Column Selector in Job results Table view component", () => {
     await fireEvent.click(getByTestId("column-selector-icon"));
     expect(getByTestId("columnOptionsCheckBox-user")).toBeInTheDocument();
     expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
-    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeInTheDocument();
-    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeChecked();
     expect(getByTestId("columnOptionsCheckBox-flowName")).toBeInTheDocument();
     expect(getByTestId("columnOptionsCheckBox-flowName")).toBeChecked();
   });
@@ -142,11 +140,8 @@ describe("Column Selector in Job results Table view component", () => {
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     await fireEvent.click(getByTestId("column-selector-icon"));
     expect(getByTestId("columnOptionsCheckBox-user")).toBeInTheDocument();
-    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeInTheDocument();
     expect(getByTestId("columnOptionsCheckBox-flowName")).toBeInTheDocument();
     fireEvent.click(getByTestId("columnOptionsCheckBox-user"));
-    fireEvent.click(getByTestId("columnOptionsCheckBox-jobId"));
-    expect(getByTestId("columnOptionsCheckBox-jobId")).not.toBeChecked();
     expect(getByTestId("columnOptionsCheckBox-user")).not.toBeChecked();
 
     const cancelButton = getByText("Cancel");
@@ -156,7 +151,6 @@ describe("Column Selector in Job results Table view component", () => {
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     await fireEvent.click(getByTestId("column-selector-icon"));
     expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
-    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeChecked();
     expect(getByTestId("columnOptionsCheckBox-flowName")).toBeChecked();
   });
 
@@ -182,7 +176,6 @@ describe("Column Selector in Job results Table view component", () => {
     expect(getByTestId("column-selector-icon")).toBeInTheDocument();
     await fireEvent.click(getByTestId("column-selector-icon"));
     expect(getByTestId("columnOptionsCheckBox-user")).toBeChecked();
-    expect(getByTestId("columnOptionsCheckBox-jobId")).toBeChecked();
     expect(getByTestId("columnOptionsCheckBox-flowName")).toBeChecked();
 
     fireEvent.click(getByTestId("columnOptionsCheckBox-user"));

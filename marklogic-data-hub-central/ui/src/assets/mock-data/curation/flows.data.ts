@@ -15,6 +15,7 @@ const jobRespFailedWithError = {
     "lastCompletedStep": "1",
     "timeStarted": "2020-04-04T01:17:44.918282-07:00",
     "timeEnded": "2020-04-04T01:17:45.012137-07:00",
+    "duration": "PT0.702S",
     "stepResponses": {
       "1": {
         "flowName": "testFlow",
@@ -533,6 +534,7 @@ const jobRespSuccess = {
     "lastCompletedStep": "2",
     "timeStarted": "2020-04-24T14:05:00.31817-07:00",
     "timeEnded": "2020-04-24T14:05:01.019819-07:00",
+    "duration": "PT0.702S",
     "stepResponses": {
       "2": {
         "flowName": "testFlow",

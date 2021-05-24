@@ -25,7 +25,7 @@ describe("Monitor Tile", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-
+/*
   it("Navigate to Monitor Tile and verify pagination works", () => {
     monitorPage.getTableRows().should("have.length", 20);
     monitorPage.getPaginationPageSizeOptions().then(attr => {
@@ -55,6 +55,6 @@ describe("Monitor Tile", () => {
     browsePage.getGreySelectedFacets("convertedFlow").click();
     monitorPage.getTableRows().should("have.length", 10);
   });
-
+*/
 });
 

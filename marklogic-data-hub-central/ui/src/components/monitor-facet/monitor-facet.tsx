@@ -116,7 +116,7 @@ const MonitorFacet: React.FC<Props> = (props) => {
 
   const checkBoxRender =  checkedFacets.slice(0, showFacets).map((facet, index) => {
     return (
-      <div className={styles.checkContainer}>
+      <div key={"facet" + index} className={styles.checkContainer}>
         <MLCheckbox
           value={facet.value}
           onChange={(e) => handleClick(e)}
