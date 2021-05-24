@@ -273,14 +273,18 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         task.setTaskRoot("Modules/");
         task.setTaskPeriod(1);
         task.setTaskType("minutely");
-        task.setTaskUser("nobody");
+
+        // Per DHFPROD-7355, a change in ML nightly has resulted in a user without the "security" role from being able
+        // to assign "nobody" as a user, so the user itself is being used
+        task.setTaskUser(userWithRoleBeingTested.getUserName());
 
         try {
-            task.save();
-            //Modify the task
+            assertDoesNotThrow(() -> task.save(),
+                "A granular privilege on scheduled tasks should allow a data-hub-developer to create tasks");
+
             task.setTaskRoot("newModules/");
             task.setTaskPeriod(2);
-            task.save();
+            assertDoesNotThrow(() -> task.save(), "A data-hub-developer should be able to update tasks");
         } finally {
             new TaskManager(adminUserClient).delete(task.getJson());
         }
