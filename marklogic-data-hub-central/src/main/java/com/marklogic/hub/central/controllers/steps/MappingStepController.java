@@ -67,6 +67,13 @@ public class MappingStepController extends BaseController {
         return emptyOk();
     }
 
+    @RequestMapping(value = "/{stepName}/references",method = RequestMethod.GET)
+    @ApiOperation(value = "Get mapping references associated with the step")
+    @Secured("ROLE_readMapping")
+    public ResponseEntity<JsonNode> getReferences(@PathVariable String stepName) {
+        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getReferences(stepName));
+    }
+
     @RequestMapping(value = "/{stepName}/uris",method = RequestMethod.GET)
     @ApiOperation(value = "Get uris associated with source query of the step; uris count is determined by 'limit'", response = ArrayList.class)
     @Secured("ROLE_readMapping")

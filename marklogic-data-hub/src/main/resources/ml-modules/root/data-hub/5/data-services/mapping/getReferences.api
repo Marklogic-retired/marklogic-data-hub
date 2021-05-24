@@ -1,0 +1,15 @@
+{
+    "functionName": "getReferences",
+    "desc": "Gets the references  associated with given mapping step name.",
+    "params": [
+        {
+           "name": "stepName",
+           "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+        "desc": "An array of objects, where each object has a reference name and an optional description"
+    }
+}

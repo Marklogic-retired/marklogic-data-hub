@@ -47,6 +47,7 @@ public interface MappingService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_getReferences;
             private BaseProxy.DBFunctionRequest req_getEntitiesForMapping;
             private BaseProxy.DBFunctionRequest req_testMapping;
             private BaseProxy.DBFunctionRequest req_getDocument;
@@ -59,6 +60,8 @@ public interface MappingService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/mapping/", servDecl);
 
+                this.req_getReferences = this.baseProxy.request(
+                    "getReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getEntitiesForMapping = this.baseProxy.request(
                     "getEntitiesForMapping.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_testMapping = this.baseProxy.request(
@@ -73,6 +76,21 @@ public interface MappingService {
                     "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getReferences(String stepName) {
+                return getReferences(
+                    this.req_getReferences.on(this.dbClient), stepName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getReferences(BaseProxy.DBFunctionRequest request, String stepName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -180,6 +198,14 @@ public interface MappingService {
 
         return new MappingServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Gets the references  associated with given mapping step name.
+   *
+   * @param stepName	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getReferences(String stepName);
 
   /**
    * Gets the specified entity model and all its related entity models
