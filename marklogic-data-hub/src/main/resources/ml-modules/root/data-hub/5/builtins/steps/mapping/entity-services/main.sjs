@@ -123,13 +123,9 @@ function main(contentSequence, options, stepExecutionContext) {
     } catch (error) {
       if (stepExecutionContext.isStopOnError()) {
         stepExecutionContext.stopWithError(error, currentContentUri);
-        hubUtils.hubTrace(INFO_EVENT, `Stopping execution of ${stepExecutionContext.describe()}`);
         return [];
       }
-      stepExecutionContext.addStepError(error, currentContentUri);
-      if (stepExecutionContext.stepErrorShouldBeThrown()) {
-        throw error;
-      }
+      stepExecutionContext.addStepErrorForItem(error, currentContentUri);
     }
   }
 

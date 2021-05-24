@@ -139,6 +139,14 @@
     },
     "name": {
       "type": "string"
+    },
+    "targetCollectionsAdditivity": {
+      "type": "boolean",
+      "description": "Added in 5.5.0; defaults to false; if true, then any collections on an input content object are retained on the content object"
+    },
+    "enableBatchOutput": {
+      "type": "string",
+      "description": "Added in 5.5.0; if 'never', a Batch doc is never created; if 'onFailure', then only if the Batch has an error; else a Batch doc is created"
     }
   }
 }
