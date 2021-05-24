@@ -1,0 +1,14 @@
+{
+    "functionName": "getJobWithDetails",
+    "desc": "Get the Job document associated with the given job ID and additional metadata",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

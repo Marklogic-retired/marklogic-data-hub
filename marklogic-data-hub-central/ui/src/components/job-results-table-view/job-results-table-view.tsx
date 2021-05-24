@@ -1,18 +1,30 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {MLTable, MLTooltip} from "@marklogic/design-system";
-import {dateConverter} from "../../util/date-conversion";
+import {dateConverter, renderDuration} from "../../util/date-conversion";
 import {ClockCircleFilled, CheckCircleFilled, CloseCircleFilled} from "@ant-design/icons";
-import {parse} from "iso8601-duration";
 import {Menu, Popover} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import {MLCheckbox, MLButton, MLDivider} from "@marklogic/design-system";
 import "./job-results-table-view.scss";
 import {MonitorContext} from "../../util/monitor-context";
+import JobResponse from "../job-response/job-response";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
+  const [jobId, setJobId] = useState<string>("");
+  const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
+
+  const handleOpenJobResponse = (jobId) => {
+    setJobId(jobId);
+    setOpenJobResponse(true);
+  };
+
+  const handleCloseJobResponse = (jobId) => {
+    setOpenJobResponse(false);
+    setJobId("");
+  };
 
   const {
     setMonitorSortOrder
@@ -20,11 +32,20 @@ const JobResultsTableView = (props) => {
   let sorting = true;
   const columnOptionsLabel = {
     user: "User",
-    jobId: "Job ID",
     flowName: "Flow Name",
   };
 
   const MANDATORY_HEADERS = [
+    {
+      title: "Job ID",
+      dataIndex: "jobId",
+      visible: true,
+      width: 150,
+      sortable: false,
+      render: (jobId) => {
+        return <><a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a></>;
+      }
+    },
     {
       title: "Step Name",
       dataIndex: "stepName",
@@ -47,7 +68,7 @@ const JobResultsTableView = (props) => {
       sortable: false,
       align: "center",
       render: (status) => {
-        if (status === "running") {
+        if (status === "running" || /^running/.test(status)) {
           return <>
             <MLTooltip title={"Running"} placement={"bottom"}>
               <ClockCircleFilled data-testid= "progress" style={{color: "#5B69AF"}}/>
@@ -90,15 +111,7 @@ const JobResultsTableView = (props) => {
       visible: true,
       sortable: false,
       width: 150,
-      render: (duration) => {
-        let durationObj = parse(duration);
-        let days = durationObj.days && durationObj.days > 0 ? durationObj.days + "d" : " ";
-        let hours = durationObj.hours && durationObj.hours > 0 ? durationObj.hours + "h" : " ";
-        let min = durationObj.minutes && durationObj.minutes > 0 ? durationObj.minutes + "m" : " ";
-        let seconds = durationObj.seconds && durationObj.seconds > 0 ? durationObj.seconds + "s" : " ";
-        let finalDuration = days+" "+hours+" "+min+" "+seconds;
-        return <span>{finalDuration}</span>;
-      }
+      render: ((duration:string) => renderDuration(duration))
     },
     {
       title: "Records Processed",
@@ -134,13 +147,6 @@ const JobResultsTableView = (props) => {
       sortable: false
     },
     {
-      title: "Job ID",
-      dataIndex: "jobId",
-      visible: true,
-      width: 150,
-      sortable: false
-    },
-    {
       title: "Flow Name",
       dataIndex: "flowName",
       visible: true,
@@ -160,12 +166,10 @@ const JobResultsTableView = (props) => {
   const [currentColumnHeaders, setCurrentColumnHeaders] = useState(allColumnHeaders);
   const [checkedAttributes, setCheckedAttributes] = useState({
     "user": true,
-    "jobId": true,
     "flowName": true
   });
   const [previousCheckedAttributes, setPreviousCheckedAttributes] = useState({
     "user": true,
-    "jobId": true,
     "flowName": true
   });
 
@@ -240,6 +244,7 @@ const JobResultsTableView = (props) => {
           columns={currentColumnHeaders}
         />
       </div>
+      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse}/>
     </>
   );
 };
