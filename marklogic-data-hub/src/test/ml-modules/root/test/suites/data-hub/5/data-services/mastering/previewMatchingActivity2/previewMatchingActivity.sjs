@@ -13,5 +13,5 @@ const sourceQuery = xdmp.eval(options.sourceQuery);
 let results = pma.previewMatchingActivity(options, sourceQuery, uris, false, 0);
 
 [
-  test.assertEqual(19, results.actionPreview.length, "There should be 19 matching pairs")
+  test.assertEqual(20, results.actionPreview.length, "There should be 20 matching pairs")
 ]

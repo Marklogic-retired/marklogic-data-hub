@@ -2,14 +2,10 @@ xquery version "1.0-ml";
 
 module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms";
 
-import module namespace const = "http://marklogic.com/smart-mastering/constants"
-at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
 at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace thsr = "http://marklogic.com/xdmp/thesaurus"
 at "/MarkLogic/thesaurus.xqy";
-
-declare namespace match = "http://marklogic.com/smart-mastering/matcher";
 
 declare option xdmp:mapping "false";
 
@@ -28,18 +24,22 @@ declare function algorithms:thesaurus(
   $options as node()
 )
 {
-  let $property-name := helper-impl:get-property-name($expand)
   let $expand-options := fn:head(($expand/options, $expand))
   let $thesaurus := $expand-options/(*:thesaurus|thesaurusURI)
-  where fn:exists($thesaurus)
+  let $original-values := $expand-values ! fn:string(.)[. ne '']
+  where fn:exists($thesaurus) and fn:exists($original-values)
   return
-    for $value in ($expand-values ! fn:lower-case(fn:string(.)))
-    let $entries := thsr:lookup($thesaurus, $value)
+    let $expand-options := fn:head(($expand/options, $expand))
+    let $filters := if (fn:exists($expand-options/*:filter/*)) then
+      $expand-options/*:filter/*
+    else if (fn:exists($expand-options/*:filter[fn:normalize-space(.)])) then
+        xdmp:unquote($expand-options/*:filter)
+      else ()
+    (: using query-lookup to support case-insensitive :)
+    let $entries := filter-entries(thsr:query-lookup($thesaurus, cts:element-value-query(xs:QName("thsr:term"), $original-values, "case-insensitive")), $filters)
     where fn:exists($entries)
     return
-      let $weight := $expand/(@weight|weight)
-      let $query := helper-impl:property-name-to-query($options, $property-name)($value, $weight)
-      return expand-query($query, $entries, $expand)
+      expand-query($entries, $expand, $options)
 };
 
 (: Allows synonym to be used instead of thesaurus in the options :)
@@ -53,25 +53,31 @@ declare function algorithms:synonym(
 };
 
 declare function expand-query(
-  $query as cts:query,
-  $entries as element(thsr:entry)*,
-  $expand as node()
+  $entries as element(thsr:entry)+,
+  $expand as node()?,
+  $options as node()
 ) as cts:query
 {
-  let $weight := $expand/(weight|@weight)
+  let $property-name := helper-impl:get-property-name($expand)
   let $expand-options := fn:head(($expand/options, $expand))
-  let $filters := if (fn:exists($expand-options/*:filter/*)) then
-      $expand-options/*:filter/*
-    else if (fn:exists($expand-options/*:filter[fn:normalize-space(.)])) then
-      xdmp:unquote($expand-options/*:filter)
-    else ()
-  return
-  (: thsr:expand does not yet work properly on cts:json-property-scope-query, so must run thsr:expand on the child query instead :)
-    if ($query instance of cts:json-property-scope-query) then
-      let $property-name := cts:json-property-scope-query-property-name($query)
-      let $child-query := cts:json-property-scope-query-query($query)
-      let $expanded-query := thsr:expand($child-query, $entries, $weight, (), $filters)
-      return cts:json-property-scope-query($property-name, $expanded-query)
-    else
-      thsr:expand($query, $entries, $weight, (), $filters)
+  let $weight := $expand-options/(weight|@weight)
+  let $values := ($entries/thsr:term | $entries/thsr:synonym/thsr:term) ! fn:string(.)
+  return helper-impl:property-name-to-query($options, $property-name)($values, $weight)
+};
+
+(: filter entries based on filter XML.
+This is taken from the thesaurus library since we need to filter outside of thrs:expand-query to support case-insensitive range index queries.  :)
+declare private function
+filter-entries($entries as element(thsr:entry)*,
+    $filter as node()*)
+as element(thsr:entry)*
+{
+  if (fn:empty($filter))
+  then $entries
+  else $entries[
+  some $desc in .//*
+  satisfies (
+    some $f in $filter satisfies fn:deep-equal($desc,$f)
+  )
+  ]
 };
