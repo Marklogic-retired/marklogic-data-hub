@@ -1,6 +1,4 @@
 .tabular{
-    padding: 40px;
-    margin-top: 40px;
 }
 
 .events{
@@ -8,10 +6,8 @@
 }
 
 .columnSelector {
-    float: right;
-    margin-right: 50px;
-    margin-top: 10px;
-    height: 15px;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .fixedPopup {
