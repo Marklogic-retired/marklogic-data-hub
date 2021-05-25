@@ -4,19 +4,8 @@
     justify-content: flex-start;
     width: 100%;
     margin: 0;
-    padding: 20px 20px 0px 20px;
-    margin-left:20px;
     .intro {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
         font-size: 24px;
-        .switchViewContainer {
-            display: flex;
-            flex-direction: row-reverse;
-            margin: 0;
-            padding: 0;
-        }
     }
 }
 
@@ -41,4 +30,11 @@
     margin-top: 25px;
     max-height: 200vh;
     height:200vh;
+}
+
+.monitorPagination {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: -10px;
+    margin-top: -39px;
 }

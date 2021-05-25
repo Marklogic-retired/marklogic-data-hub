@@ -101,16 +101,14 @@ const Monitor: React.FC = () => {
         <div>
           {canAccessMonitor ?
             <div className={styles.monitorContainer}>
-              <div className={styles.intro}>
-                <p>{tiles.monitor.intro}</p>
-              </div>
+              <p className={styles.intro}>{tiles.monitor.intro}</p>
             </div>
             :
             <div className={styles.monitorContainer}>
               <p>{MissingPagePermission}</p>
             </div>
           }
-          <div id="top-search-pagination-bar" style={{"marginRight": "32px"}}>
+          <div id="top-search-pagination-bar" className={styles.monitorPagination}>
             <SearchPagination
               total={totalDocuments}
               pageNumber={monitorOptions.pageNumber}
