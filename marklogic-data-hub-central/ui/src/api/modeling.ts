@@ -13,8 +13,13 @@ export const updateModelInfo = async (name: string, description: string, namespa
   });
 };
 
-export const entityReferences = async (entityName: string) => {
-  return await axios.get(`/api/models/${entityName}/references`);
+export const entityReferences = async (entityName: string, propertyName?: string) => {
+  if(propertyName){
+      return await axios.get(`/api/models/${entityName}/references?propertyName=${propertyName}`);
+  }
+  else{
+      return await axios.get(`/api/models/${entityName}/references`);
+  }
 };
 
 export const deleteEntity = async (entityName: string) => {

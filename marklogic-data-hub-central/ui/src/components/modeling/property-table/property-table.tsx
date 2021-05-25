@@ -641,20 +641,24 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const deletePropertyShowModal = async (text: string, record: any, definitionName: string) => {
     try {
-      const response = await entityReferences(text);
+      const response = await entityReferences(text, record.propertyName);
       if (response["status"] === 200) {
         //let definitionName = record.delete;
         let newConfirmType = ConfirmationType.DeletePropertyWarn;
         let boldText: string[] = [record.propertyName];
 
-        if (response["data"]["stepNames"].length > 0) {
+        if (response["data"]["entityNamesWithForeignKeyReferences"].length > 0) {
+          newConfirmType = ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences;
+          boldText.push(text);
+          setStepValuesArray(response["data"]["entityNamesWithForeignKeyReferences"]);
+        } else if (response["data"]["stepNames"].length > 0) {
           newConfirmType = ConfirmationType.DeletePropertyStepWarn;
           boldText.push(text);
+          setStepValuesArray(response["data"]["stepNames"]);
         }
 
         setDeletePropertyOptions({definitionName: definitionName, propertyName: record.propertyName});
         setConfirmBoldTextArray(boldText);
-        setStepValuesArray(response["data"]["stepNames"]);
         setConfirmType(newConfirmType);
         toggleConfirmModal(true);
       }

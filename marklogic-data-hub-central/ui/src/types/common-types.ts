@@ -6,6 +6,7 @@ export enum ConfirmationType {
   DeleteEntityNoRelationshipOutstandingEditWarn = "deleteEntityNoRelationshipOutstandingEditWarn",
   DeleteEntityStepWarn = "deleteEntityStepWarn",
   DeleteEntityWithForeignKeyReferences = "deleteEntityWithForeignKeyReferences",
+  DeleteEntityPropertyWithForeignKeyReferences = "deleteEntityPropertyWithForeignKeyReferences",
   DeletePropertyWarn = "deletePropertyWarn",
   DeletePropertyStepWarn = "deletePropertyStepWarn",
   SaveEntity = "saveEntity",

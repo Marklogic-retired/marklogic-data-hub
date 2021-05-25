@@ -203,7 +203,7 @@ public interface MappingService {
    * Gets the references  associated with given mapping step name.
    *
    * @param stepName	provides input
-   * @return	as output
+   * @return	An array of objects, where each object has a reference name and an optional description
    */
     com.fasterxml.jackson.databind.JsonNode getReferences(String stepName);
 
