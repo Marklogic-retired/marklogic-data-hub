@@ -1,0 +1,22 @@
+{
+  "info": {
+    "title": "MasteringTestEntity",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "MasteringTestEntity": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "datatype": "string",
+          "description": "This will be be used to test detecting facetable indexes for matching in the entity type definition.",
+          "facetable": true,
+          "collation": "http://marklogic.com/collation//S2"
+        }
+      }
+    }
+  }
+}

@@ -48,8 +48,9 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
               if (fn:count($scalar-type) eq 1) then
                 function($val, $weight) {
                   let $cast-values := $val ! fn:data(element val { attribute xsi:type {"xs:"||$scalar-type}, fn:string(.)})
+                  let $expanded-values := if ($scalar-type eq "string") then cts:value-match($index-references, $cast-values, "case-insensitive") else $cast-values
                   return
-                    cts:range-query($index-references, "=", $cast-values, ("score-function=linear"), $weight)
+                    cts:range-query($index-references, "=", if (fn:exists($expanded-values)) then $expanded-values else $cast-values, ("score-function=linear"), $weight)
                 }
               else
                 httputils:throw-bad-request((), ("Attempted to used mixed scalar types for range indexed match query", $full-property-name, $index-references))

@@ -1,0 +1,13 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "MasteringTestEntity",
+        "version": "0.0.1"
+      },
+      "MasteringTestEntity": {
+        "name": "Bob"
+      }
+    }
+  }
+}
