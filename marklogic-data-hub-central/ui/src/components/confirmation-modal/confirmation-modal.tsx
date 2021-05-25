@@ -76,7 +76,9 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       className={styles.confirmModal}
       onCancel={closeModal}
       maskClosable={false}
-      footer={(props.type === ConfirmationType.DeleteEntityStepWarn || props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences) ? modalFooterClose : modalFooter}
+      footer={(props.type === ConfirmationType.DeleteEntityStepWarn
+          || props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences
+          || props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences) ? modalFooterClose : modalFooter}
     >
       <div className={styles.modalBody}>
         {props.type === ConfirmationType.Identifer && (
@@ -186,7 +188,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             >{showEntities ? "Hide Entities in foreign key relationship..." : "Show Entities in foreign key relationship..."}</p>
 
             {showEntities && (
-              <ul className={styles.stepList} data-testid="entitiesWithForeignKey">
+              <ul className={styles.stepList} data-testid="entitiesWithForeignKeyReferences">
                 {renderArrayValues}
               </ul>
             )}
@@ -198,12 +200,37 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
         }
 
+        {props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences && (
+          <>
+            <MLAlert
+              className={styles.alert}
+              closable={false}
+              description={"Deleting this property may affect some entities."}
+              showIcon
+              type="warning"
+            />
+            <p aria-label="delete-property-foreign-key-text">The property <b>{props.boldTextArray[0]}</b> appears in foreign key relationships in one or more other entity types.</p>
+            <p
+              aria-label="toggle-entities"
+              className={styles.toggleSteps}
+              onClick={() => toggleEntities(!showEntities)}
+            >{showEntities ? "Hide Entities..." : "Show Entities..."}</p>
+
+            {showEntities && (
+              <ul className={styles.stepList} data-testid="entityPropertyWithForeignKeyReferences">
+                {renderArrayValues}
+              </ul>
+            )}
+            <p>Edit the foreign key relationships of these entity types before deleting this property.</p>
+          </>
+        )}
+
         {props.type === ConfirmationType.DeletePropertyStepWarn && (
           <>
             <MLAlert
               className={styles.alert}
               closable={false}
-              description={"Delete may affect some steps."}
+              description={"Deleting this property may affect some steps."}
               showIcon
               type="warning"
             />

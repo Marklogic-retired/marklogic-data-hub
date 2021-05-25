@@ -6,6 +6,12 @@
       "name": "entityName",
       "datatype": "string",
       "desc": "The name of the primary entity in the model"
+    },
+    {
+      "name": "propertyName",
+      "nullable": true,
+      "datatype": "string",
+      "desc": "The property in the primary entity in the model"
     }
   ],
   "return": {

@@ -80,7 +80,7 @@ public interface ModelsService {
                 this.req_saveModels = this.baseProxy.request(
                     "saveModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
-                    "getModelReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                    "getModelReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_updateModelEntityTypes = this.baseProxy.request(
                     "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getLatestJobData = this.baseProxy.request(
@@ -197,16 +197,17 @@ public interface ModelsService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName) {
+            public com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName, String propertyName) {
                 return getModelReferences(
-                    this.req_getModelReferences.on(this.dbClient), entityName
+                    this.req_getModelReferences.on(this.dbClient), entityName, propertyName
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode getModelReferences(BaseProxy.DBFunctionRequest request, String entityName) {
+            private com.fasterxml.jackson.databind.JsonNode getModelReferences(BaseProxy.DBFunctionRequest request, String entityName, String propertyName) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
-                          BaseProxy.atomicParam("entityName", false, BaseProxy.StringType.fromString(entityName))
+                          BaseProxy.atomicParam("entityName", false, BaseProxy.StringType.fromString(entityName)),
+                          BaseProxy.atomicParam("propertyName", true, BaseProxy.StringType.fromString(propertyName))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -312,9 +313,10 @@ public interface ModelsService {
    * Returns a json containing the names of the models and steps that reference the given entity model.
    *
    * @param entityName	The name of the primary entity in the model
+   * @param propertyName	The property in the primary entity in the model
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName);
+    com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName, String propertyName);
 
   /**
    * Invokes the updateModelEntityTypes operation on the database server

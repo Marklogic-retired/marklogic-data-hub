@@ -22,6 +22,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 
 var entityName;
+var propertyName;
 if (!entityName) {
   httpUtils.throwBadRequest("Must specify a name in order to get model references");
 }
@@ -36,7 +37,7 @@ const entityModelUri = entityLib.getModelUri(entityName);
 
 const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
 const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUri, entityTypeId);
-const entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel);
+const entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel, propertyName);
 const result = {stepNames, entityNames, entityNamesWithForeignKeyReferences};
 
 result;

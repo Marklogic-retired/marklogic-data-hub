@@ -263,10 +263,15 @@ function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   return [...affectedModels];
 }
 
-function findForeignKeyReferencesInOtherModels(entityModel){
+function findForeignKeyReferencesInOtherModels(entityModel, propertyName){
   const entityTypeId = getEntityTypeId(entityModel, entityModel.info.title);
-  const entityModelsWithForeignKeyReferences = cts.search(cts.andQuery([cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION),
-    cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive")])).toArray().map(entityModel =>{
+  const queries = [];
+  queries.push(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION));
+  queries.push(cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"));
+  if(propertyName){
+    queries.push(cts.jsonPropertyValueQuery("joinPropertyName", propertyName, "case-insensitive"));
+  }
+  const entityModelsWithForeignKeyReferences = cts.search(cts.andQuery(queries)).toArray().map(entityModel =>{
     return entityModel.toObject().info.title;
   });
   return entityModelsWithForeignKeyReferences;

@@ -40,7 +40,7 @@ public class DeleteModelTest extends AbstractModelTest {
     }
 
     private void getModelReferences() {
-        JsonNode jsonNode = controller.getModelReferences("Entity2").getBody();
+        JsonNode jsonNode = controller.getModelReferences("Entity2", null).getBody();
         assertNotNull(jsonNode);
         assertEquals(2, jsonNode.get("stepNames").size());
         assertEquals(1, jsonNode.get("entityNames").size());

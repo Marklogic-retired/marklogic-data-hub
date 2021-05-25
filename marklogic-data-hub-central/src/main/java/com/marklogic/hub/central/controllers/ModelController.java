@@ -119,8 +119,8 @@ public class ModelController extends BaseController {
 
     @RequestMapping(value = "/{modelName}/references", method = RequestMethod.GET)
     @ApiOperation(value = "Get step and model names that refer to this model.", response = ModelReferencesInfo.class)
-    public ResponseEntity<JsonNode> getModelReferences(@PathVariable String modelName) {
-        return ResponseEntity.ok(newService().getModelReferences(modelName));
+    public ResponseEntity<JsonNode> getModelReferences(@PathVariable String modelName, @RequestParam(value = "propertyName", required = false) String propertyName) {
+        return ResponseEntity.ok(newService().getModelReferences(modelName, propertyName));
     }
 
     @RequestMapping(value = "/entityTypes", method = RequestMethod.PUT)

@@ -9,7 +9,7 @@ import {ConfirmationType} from "../../../types/common-types";
 import {getSystemInfo} from "../../../api/environment";
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {propertyTableEntities, referencePayloadEmpty, referencePayloadSteps} from "../../../assets/mock-data/modeling/modeling";
+import {propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadForeignKey} from "../../../assets/mock-data/modeling/modeling";
 import {entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
 
 jest.mock("../../../api/modeling");
@@ -427,6 +427,46 @@ describe("Entity Modeling Property Table Component", () => {
     expect(mockGetSystemInfo).toBeCalledTimes(1);
     expect(screen.queryByTestId("shipping-city-span")).toBeNull();
 
+  });
+  test("cannot delete a property that's a foreign key", async () => {
+    mockEntityReferences.mockResolvedValueOnce({status: 200, data: referencePayloadForeignKey});
+
+    let entityName = propertyTableEntities[0].entityName;
+    let definitions = propertyTableEntities[0].model.definitions;
+    const {getByTestId} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName}
+        definitions={definitions}
+      />
+    );
+
+    userEvent.click(getByTestId("delete-Concept-synonyms"));
+
+    await wait(() =>
+      expect(screen.getByLabelText("delete-property-foreign-key-text")).toBeInTheDocument(),
+    );
+
+    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(screen.getByText("Edit the foreign key relationships of these entity types before deleting this property.")).toBeInTheDocument();
+    expect(screen.getByText("Show Entities...")).toBeInTheDocument();
+    expect(screen.queryByText("Hide Entities...")).toBeNull();
+    userEvent.click(screen.getByLabelText("toggle-entities"));
+
+    expect(screen.getByText("Hide Entities...")).toBeInTheDocument();
+    expect(screen.queryByText("Show Entities...")).toBeNull();
+
+
+    expect(screen.getByTestId("entityPropertyWithForeignKeyReferences")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[0]);
+    expect(screen.getByTestId("entityPropertyWithForeignKeyReferences")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[1]);
+
+    userEvent.click(screen.getByLabelText("toggle-entities"));
+    expect(screen.getByText("Show Entities...")).toBeInTheDocument();
+    expect(screen.queryByText("Hide Entities...")).toBeNull();
+
+
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences}-close`));
   });
 });
 

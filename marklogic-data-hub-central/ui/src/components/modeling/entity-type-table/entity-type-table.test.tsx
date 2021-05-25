@@ -308,8 +308,8 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Hide Entities in foreign key relationship...")).toBeInTheDocument();
     expect(queryByText("Show Entities in foreign key relationship...")).toBeNull();
 
-    expect(screen.getByTestId("entitiesWithForeignKey")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[0]);
-    expect(screen.getByTestId("entitiesWithForeignKey")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[1]);
+    expect(screen.getByTestId("entitiesWithForeignKeyReferences")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[0]);
+    expect(screen.getByTestId("entitiesWithForeignKeyReferences")).toHaveTextContent(referencePayloadForeignKey.entityNamesWithForeignKeyReferences[1]);
 
     userEvent.click(getByLabelText("toggle-entities"));
     expect(getByText("Show Entities in foreign key relationship...")).toBeInTheDocument();
