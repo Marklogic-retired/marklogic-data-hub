@@ -204,7 +204,6 @@ task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     args = ["run", "test"]
     execOverrides { it.workingDir = reactUiPath }
 }
-test.finalizedBy('testUI')
 
 build.dependsOn buildRpm
 

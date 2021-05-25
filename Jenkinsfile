@@ -206,22 +206,12 @@ def runCypressE2e(){
 }
 
 void UnitTest(){
-    script{
         props = readProperties file:'data-hub/pipeline.properties';
         copyRPM 'Release','10.0-6'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:lintUI -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/'
+        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew installer-for-dhs:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-client-jar:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/'
         junit '**/TEST-*.xml'
-        cobertura coberturaReportFile: '**/cobertura-coverage.xml'
         jacoco classPattern: 'data-hub/marklogic-data-hub-central/build/classes/java/main/com/marklogic/hub/central,data-hub/marklogic-data-hub-spark-connector/build/classes/java/main/com/marklogic/hub/spark,data-hub/marklogic-data-hub/build/classes/java/main/com/marklogic/hub',exclusionPattern: '**/*Test*.class'
-        def output=readFile 'data-hub/console.log'
-        def result=false;
-        if(output.contains("npm ERR!")){
-            result=true;
-        }
-        if(result){
-            currentBuild.result='UNSTABLE'
-        }
         if(env.CHANGE_TITLE){
             JIRA_ID=env.CHANGE_TITLE.split(':')[0]
             jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
@@ -229,7 +219,6 @@ void UnitTest(){
         if(!env.CHANGE_URL){
             env.CHANGE_URL=" "
         }
-    }
 }
 
 void PreBuildCheck() {
@@ -244,6 +233,8 @@ void PreBuildCheck() {
        println(reviewState)
        sh 'exit 1'
   }
+
+  if(!isChangeInUI()){env.NO_UI_TESTS=true}
 
  }
  def obj=new abortPrevBuilds();
@@ -267,6 +258,37 @@ void Tests(){
             env.CHANGE_URL=" "
         }
     }
+}
+
+void RTLTests(String type,String mlVersion){
+
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+
+    props = readProperties file:'data-hub/pipeline.properties';
+    copyRPM type,mlVersion
+    mlHubHosts=setupMLDockerNodes 3
+    env.mlHubHosts=mlHubHosts
+
+    sh '''
+
+      export PATH=$JAVA_HOME/bin:$PATH
+      cd $WORKSPACE/data-hub
+      ./gradlew -g ./cache-build --continue clean marklogic-data-hub:bootstrap :marklogic-data-hub-central:testUI :marklogic-data-hub-central:lintUI |& tee console.log
+
+    '''
+
+    junit '**/TEST-*.xml'
+    cobertura coberturaReportFile: '**/cobertura-coverage.xml'
+
+    def output=readFile 'data-hub/console.log'
+    def result=false;
+    if(output.contains("npm ERR!")){
+        result=true;
+    }
+    if(result){
+        currentBuild.result='UNSTABLE'
+    }
+
 }
 
 void BuildDatahub(){
@@ -596,6 +618,36 @@ void mergePR(){
     }
 }
 
+def isChangeInUI(){
+
+    def  num_of_ui_changes;
+
+    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+      num_of_ui_changes = sh(returnStdout: true, script: '''
+           curl -u $Credentials  -X GET  https://patch-diff.githubusercontent.com/raw/marklogic/marklogic-data-hub/pull/$CHANGE_ID.diff | grep -c '^diff.*/ui' || true
+       ''')
+    }
+
+    num_of_ui_changes as Integer != 0
+}
+
+void singleNodeTestOnLinux(String type,String mlVersion){
+        cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+        props = readProperties file:'data-hub/pipeline.properties';
+        copyRPM type,mlVersion
+        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+        sh 'export JAVA_HOME="$JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean;set +e;./gradlew -g ./cache-build marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+        junit '**/TEST-*.xml'
+        def output=readFile 'data-hub/console.log'
+        def result=false;
+        if(output.contains("npm ERR!")){
+            result=true;
+        }
+        if(result){
+            currentBuild.result='UNSTABLE'
+        }
+}
+
 pipeline{
 	agent none;
 	options {
@@ -730,10 +782,12 @@ pipeline{
                   }
 		}
 		stage('cypresse2e'){
+        when {
+            expression {return !env.NO_UI_TESTS}
+            beforeAgent true
+        }
 		agent { label 'dhfLinuxAgent'}
-		steps{
-		    runCypressE2e()
-		}
+		steps{runCypressE2e()}
         post{
 				  always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -767,7 +821,33 @@ pipeline{
                       }
                   }
                   }
-		}}
+		}
+
+        stage('UI-tests'){
+        when {
+           expression {return !env.NO_UI_TESTS}
+           beforeAgent true
+        }
+        environment{
+            JAVA_HOME="$JAVA_HOME_DIR"
+        }
+        agent { label 'dhfLinuxAgent'}
+        steps {
+           timeout(time: 3,  unit: 'HOURS'){
+             catchError(catchInterruptions: true) { RTLTests('Release','10.0-6') }
+        }}
+        post{
+          success {
+             println("$STAGE_NAME Completed")
+             sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME | Passed"
+          }
+          unstable {
+             println("$STAGE_NAME Failed")
+              sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+              archiveArtifacts artifacts: 'MLLogs/**/*'
+              sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>",false,"$BRANCH_NAME on $STAGE_NAME Failed"
+          }}
+        }}
         post{
            unstable { script{
                if(!params.regressions) error("Pre merge tests Failed");
@@ -840,39 +920,22 @@ pipeline{
             when { expression {return params.regressions} }
             parallel {
                 stage('rh7-singlenode-9.0-11') {
-                    when { expression {return params.regressions} }
-                    agent { label 'dhfLinuxAgent'}
-                    steps{timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
-                            script{
-                                cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
-                                props = readProperties file:'data-hub/pipeline.properties';
-                                copyRPM 'Release','9.0-11'
-                                setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-                                sh 'export JAVA_HOME="$JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean;set +e;./gradlew -g ./cache-build marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew -g ./cache-build marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
-                                junit '**/TEST-*.xml'
-                                def output=readFile 'data-hub/console.log'
-                                def result=false;
-                                if(output.contains("npm ERR!")){
-                                    result=true;
-                                }
-                                if(result){
-                                    currentBuild.result='UNSTABLE'
-                                }
-                            }}}
-                    }
-                    post{
-                        success {
-                            println("End-End Tests Completed")
-                            sendMail Email,'<h3>Tests Passed on Released 9.0 ML Server Single Node </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Passed'
-
-                        }
-                        unstable {
+                when { expression {return params.regressions} }
+                agent {label 'dhfLinuxAgent'}
+                steps{timeout(time: 3,  unit: 'HOURS'){
+                   catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {singleNodeTestOnLinux('Release','9.0-11')}
+                }}
+                post{
+                   success {
+                        println("End-End Tests Completed")
+                        sendMail Email,'<h3>Tests Passed on Released 9.0 ML Server Single Node </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Passed'
+                   }
+                   unstable {
                             println("End-End Tests Failed")
                             sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
                             archiveArtifacts artifacts: 'MLLogs/**/*'
                             sendMail Email,'<h3>Some Tests Failed on Released 9.0 ML Server Single Node </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-9.0-11 | Single Node | Failed'
-                        }}
+                   }}
                 }
                 stage('fullCycle-rh7-singlenode-9.0-11') {
                     agent { label 'dhfLinuxAgent' }
@@ -1239,7 +1302,6 @@ pipeline{
                         JAVA_HOME="C:\\Program Files\\Java\\jdk-9.0.4"
                         M2_LOCAL_REPO="$WORKSPACE/repository"
                         NODE_JS="C:\\Program Files\\nodejs"
-                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
                     }
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
