@@ -163,7 +163,7 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.setXpathExpressionInput("Address", "Address");
     mappingStepDetail.setXpathExpressionInput("DateOfBirth", "DateOfBirth");
     curatePage.dataPresent().should("be.visible");
-    mappingStepDetail.expandSource().click({force: true});
+    mappingStepDetail.navigateUrisRight().click({force: true});
     // Test the mappings
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
     cy.waitUntil(() => mappingStepDetail.expandEntity()).click();

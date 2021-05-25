@@ -160,19 +160,22 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.runStep(stepName).click();
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
-    loadPage.runInNewFlow(stepName).click({force: true});
-    cy.waitForAsyncRequest();
-    cy.findByText("New Flow").should("be.visible");
+    loadPage.confirmationOptions("Close").click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.createFlowButton().click();
+    runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName1);
     runPage.setFlowDescription(`${flowName1} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
-    cy.waitForAsyncRequest();
-    //Upload file to start running
+    // add step to that new flow
+    runPage.addStep(flowName1);
+    runPage.addStepToFlow(stepName);
+    runPage.runStep(stepName);
     cy.uploadFile("input/test-1.json");
+    cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
-    cy.verifyStepAddedToFlow("Load", stepName, flowName1);
-    cy.waitForAsyncRequest();
   });
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();

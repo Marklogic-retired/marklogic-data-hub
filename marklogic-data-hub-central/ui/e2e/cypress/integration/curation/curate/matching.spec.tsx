@@ -10,7 +10,7 @@ import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleM
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 
-const matchStep = "matchCustomerTest";
+const matchStep = "matchCustTest";
 
 const uriMatchedResults  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "6"},
   {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "5"}];
@@ -45,7 +45,7 @@ describe("Matching", () => {
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("matching", "matchCustomerTest");
+    cy.deleteSteps("matching", "matchCustTest");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -354,6 +354,7 @@ describe("Matching", () => {
       cy.waitUntil(() => cy.findByText(ruleset[j].ruleName).should("have.length.gt", 0).trigger("mousemove"));
       cy.waitUntil(() => cy.findByText("(Threshold: "+ruleset[j].threshold + ")").should("have.length.gt", 0));
     }
+    cy.wait(1000);
     cy.findByText(ruleset[0].ruleName).click();
     for (let k in urisMerged) {
       cy.waitUntil(() => cy.findAllByText(urisMerged[k]).should("have.length.gt", 0));

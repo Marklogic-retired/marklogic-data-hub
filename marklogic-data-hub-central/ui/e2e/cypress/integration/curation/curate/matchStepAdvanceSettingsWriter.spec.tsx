@@ -11,7 +11,7 @@ import {
   advancedSettingsDialog
 } from "../../../support/components/mapping/index";
 
-const matchStep = "matchCustomerTest";
+const matchStep = "matchCustomerTesting";
 
 describe("Validate Advance Settings for hub-central-match-merge-writer role", () => {
   before(() => {
@@ -31,7 +31,7 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps("matching", "matchCustomerTest");
+    cy.deleteSteps("matching", "matchCustomerTesting");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });

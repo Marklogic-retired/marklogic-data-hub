@@ -19,13 +19,13 @@ describe("Run Tile tests", () => {
 
   after(() => {
     cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
-    cy.deleteFlows("testPersonXML");
+    cy.deleteFlows("testPerson");
     cy.resetTestUser();
   });
 
   it("can create flow and add steps to flow, reorder flow, and should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
 
-    const flowName = "testPersonXML";
+    const flowName = "testPerson";
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");

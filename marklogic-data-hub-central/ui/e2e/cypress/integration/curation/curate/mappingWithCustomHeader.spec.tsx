@@ -164,13 +164,21 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.runStepInCardView(mapStep).click();
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
-    curatePage.runInNewFlow(mapStep).click({force: true});
-    cy.waitForAsyncRequest();
-    cy.findByText("New Flow").should("be.visible");
+    loadPage.confirmationOptions("Close").click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    runPage.createFlowButton().click();
+    runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
-    //Step should automatically run
+    cy.wait(500);
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
+    runPage.addStep(flowName);
+    runPage.addStepToFlow(mapStep);
+    cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
+    runPage.runStep(mapStep);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });

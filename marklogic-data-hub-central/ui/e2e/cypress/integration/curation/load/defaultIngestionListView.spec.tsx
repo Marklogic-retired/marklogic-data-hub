@@ -5,8 +5,8 @@ import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
 
 let stepName = "cyListView";
-let flowName = "newE2eFlow";
-let flowName2 = "newE2eFlow2";
+let flowName = "e2eFlow";
+let flowName2 = "e2eFlow2";
 
 describe("Validate CRUD functionality from list view", () => {
   before(() => {
@@ -226,6 +226,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
+    cy.wait(1000);
     runPage.getFlowName(flowName).should("not.exist");
     runPage.deleteFlow(flowName2).click();
     runPage.deleteFlowConfirmationMessage(flowName2).should("be.visible");
