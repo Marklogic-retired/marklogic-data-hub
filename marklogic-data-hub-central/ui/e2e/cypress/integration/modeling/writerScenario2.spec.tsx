@@ -34,7 +34,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteEntities("Patient");
+    cy.deleteEntities("Patients");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -303,12 +303,12 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("testing").should("not.exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });
-  it("Create another entity Patient and add a property", () => {
+  it("Create another entity Patients and add a property", () => {
     modelPage.getAddEntityButton().should("exist").click();
-    entityTypeModal.newEntityName("Patient");
+    entityTypeModal.newEntityName("Patients");
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();
-    propertyTable.getAddPropertyButton("Patient").should("be.visible").click();
+    propertyTable.getAddPropertyButton("Patients").should("be.visible").click();
     propertyModal.newPropertyName("patientID");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("More number types").click();
@@ -318,8 +318,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getIdentifierIcon("patientID").should("exist");
     //propertyTable.getWildcardIcon('patientID').should('exist');
-    propertyTable.getAddPropertyButton("Patient").should("exist");
-    propertyTable.getAddPropertyButton("Patient").click();
+    propertyTable.getAddPropertyButton("Patients").should("exist");
+    propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("personType");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
@@ -329,8 +329,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("personType").should("exist");
   });
-  it("Add second property to Patient Entity and delete it", () => {
-    propertyTable.getAddPropertyButton("Patient").click();
+  it("Add second property to Patients Entity and delete it", () => {
+    propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("patientId");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("More number types").click();
@@ -342,8 +342,8 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty("patientId").should("not.exist");
   });
-  it("Add third property to Patient Entity , Save all the changes and Delete Concept Entity", () => {
-    propertyTable.getAddPropertyButton("Patient").click();
+  it("Add third property to Patients Entity, Save all the changes and Delete Concept Entity", () => {
+    propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("More number types").click();

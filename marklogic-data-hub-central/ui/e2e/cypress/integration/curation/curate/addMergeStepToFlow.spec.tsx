@@ -108,30 +108,28 @@ describe("Add Merge step to a flow", () => {
     runPage.deleteStep(mergeStep).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
+    runPage.expandFlow(flowName1);
   });
-  it("Navigating to merge tab", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-    curatePage.toggleEntityTypeId("Customer");
-    curatePage.selectMergeTab("Customer");
-  });
-  it("Add the Merge step to new flow from card run button and should automatically run", {defaultCommandTimeout: 120000}, () => {
-    curatePage.runStepInCardView(mergeStep).click();
-    curatePage.runInNewFlow(mergeStep).click();
-    cy.waitForAsyncRequest();
-    cy.findByText("New Flow").should("be.visible");
+  it("Add the Merge step to new flow from card run button", {defaultCommandTimeout: 120000}, () => {
+    runPage.createFlowButton().click();
+    runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName2);
     runPage.setFlowDescription(`${flowName2} description`);
+    cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(500);
     cy.waitForAsyncRequest();
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
+    runPage.addStep(flowName2);
+    runPage.addStepToFlow(mergeStep);
+    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
+    runPage.runStep(mergeStep);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
-    cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
   });
   it("Delete the merge step and Navigating to merge tab", () => {
     runPage.deleteStep(mergeStep).click();
-    loadPage.confirmationOptions("Yes").click();
+    loadPage.confirmationOptionsAll("Yes").eq(0).click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
