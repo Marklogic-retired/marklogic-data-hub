@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {Row, Col, Card, Select, Input, Divider} from "antd";
 import styles from "./zero-state-explorer.module.scss";
 import {SearchContext} from "../../util/search-context";
@@ -8,8 +8,12 @@ import {MLButton, MLRadio, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faThLarge} from "@fortawesome/free-solid-svg-icons";
 import tiles from "../../config/tiles.config";
+import {getViewSettings, setViewSettings} from "../../util/user-context";
 
 const ZeroStateExplorer = (props) => {
+  const storage = getViewSettings();
+  const optionsStorage = storage?.explore?.searchOptions;
+
   const {
     searchOptions,
   } = useContext(SearchContext);
@@ -27,6 +31,15 @@ const ZeroStateExplorer = (props) => {
     applySaveQuery,
   } = useContext(SearchContext);
 
+  // If session storage contains data, persist explore data.
+  useEffect(() => {
+    if (optionsStorage === undefined) {
+      return;
+    }
+
+    applySaveQuery(optionsStorage);
+  });
+
   const onClickExplore = () => {
     props.setCardView(cardView);
     props.toggleDataHubArtifacts(true);
@@ -40,6 +53,9 @@ const ZeroStateExplorer = (props) => {
       sortOrder: [],
       database: zeroStatePageDatabase,
     };
+
+    const newStorage = {...storage, explore: {...storage.explore, searchOptions: options}};
+    setViewSettings(newStorage);
     applySaveQuery(options);
   };
 
@@ -110,6 +126,11 @@ const ZeroStateExplorer = (props) => {
           sortOrder: query.savedQuery.sortOrder,
           database: searchOptions.database,
         };
+
+        // Saved query persistence
+        const newStorage = {...storage, explore: {...storage.explore, searchOptions: options}};
+        setViewSettings(newStorage);
+
         applySaveQuery(options);
       }
     });

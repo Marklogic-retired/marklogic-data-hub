@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {getUserPreferences} from "../services/user-preferences";
-import {UserContext} from "./user-context";
+import {getViewSettings, setViewSettings, UserContext} from "./user-context";
 import {QueryOptions} from "../types/query-types";
 
 type SearchContextInterface = {
@@ -125,8 +125,17 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
+  const storage = getViewSettings();
 
-  const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
+  const query = storage?.explore?.searchOptions?.searchText ?? defaultSearchOptions.query;
+  const selectedQuery = storage?.explore?.searchOptions?.selectedQuery ?? defaultSearchOptions.selectedQuery;
+
+  const [searchOptions, setSearchOptions] = useState<SearchContextInterface>({
+    ...defaultSearchOptions,
+    query,
+    selectedQuery
+  });
+
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
@@ -158,6 +167,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       pageNumber: 1,
       pageLength: searchOptions.pageSize
     });
+
+    const newStorage = {...storage, explore: {...storage.explore}};
+
+    const newSearchOptions = newStorage.explore?.searchOptions;
+    if (newSearchOptions !== undefined) {
+      newSearchOptions.searchText = searchString;
+    }
+    setViewSettings(newStorage);
   };
 
   const setPage = (pageNumber: number, totalDocuments: number) => {
@@ -481,17 +498,28 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       ...searchOptions,
       start: 1,
       selectedFacets: query.selectedFacets,
-      query: query.searchText,
+      query: storage?.explore?.searchOptions?.searchText ?? query.searchText,
       entityTypeIds: query.entityTypeIds,
       nextEntityType: query.entityTypeIds[0],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
-      selectedQuery: query.selectedQuery,
+      selectedQuery: selectedQuery ?? query.selectedQuery,
       selectedTableProperties: query.propertiesToDisplay,
       zeroState: query.zeroState,
       sortOrder: query.sortOrder,
       database: query.database,
     });
+
+    const newStorage = {...storage, explore: {...storage.explore}};
+
+    // Redirects back to zero state when zero state is triggered. If not triggered, persist selected query.
+    if (query.zeroState === true) {
+      const emptyStorage = {...storage, explore: {}};
+      setViewSettings(emptyStorage);
+    } else if (newStorage.explore?.searchOptions?.selectedQuery !== undefined) {
+      newStorage.explore.searchOptions.selectedQuery = query.selectedQuery;
+      setViewSettings(newStorage);
+    }
   };
 
   const setSelectedTableProperties = (propertiesToDisplay: string[]) => {
@@ -509,6 +537,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       pageLength: searchOptions.pageSize,
       selectedQuery: query
     });
+
+    const newStorage = {...storage, explore: {...storage.explore}};
+
+    const newSearchOptions = newStorage.explore?.searchOptions;
+    if (newSearchOptions !== undefined) {
+      newSearchOptions.selectedQuery = query;
+    }
+    setViewSettings(newStorage);
   };
 
   const setZeroState = (zeroState: boolean) => {

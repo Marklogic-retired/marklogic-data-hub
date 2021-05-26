@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Button, Modal, Tooltip} from "antd";
-import {UserContext} from "../../util/user-context";
+import {getViewSettings, UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import SelectedFacets from "../../components/selected-facets/selected-facets";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -34,6 +34,10 @@ interface Props {
 }
 
 const Query: React.FC<Props> = (props) => {
+  const storage = getViewSettings();
+  const optionsViewStorage = storage?.explore?.searchOptions;
+  const selectedQuery = storage?.explore?.searchOptions?.selectedQuery;
+  const searchQuery = storage?.explore?.searchOptions?.searchText;
 
   const {
     user,
@@ -61,7 +65,7 @@ const Query: React.FC<Props> = (props) => {
   const [showDiscardIcon, toggleDiscardIcon] = useState(false);
   const [openSaveCopyModal, setOpenSaveCopyModal] = useState(false);
   const [openDiscardChangesModal, setOpenDiscardChangesModal] = useState(false);
-  const [currentQueryName, setCurrentQueryName] = useState(searchOptions.selectedQuery);
+  const [currentQueryName, setCurrentQueryName] = useState(selectedQuery === undefined || selectedQuery === "select a query" ? "select a query" : selectedQuery);
   const [nextQueryName, setNextQueryName] = useState("");
   const [currentQueryDescription, setCurrentQueryDescription] = useState("");
   const [showEntityConfirmation, toggleEntityConfirmation] = useState(false);
@@ -81,7 +85,7 @@ const Query: React.FC<Props> = (props) => {
         name: queryName,
         description: queryDescription,
         query: {
-          searchText: searchOptions.query,
+          searchText: searchQuery,
           entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : props.entities,
           selectedFacets: facets,
         },
@@ -109,6 +113,15 @@ const Query: React.FC<Props> = (props) => {
     }
   };
 
+  useEffect(() => {
+    if (optionsViewStorage !== undefined && optionsViewStorage?.selectedQuery !== "select a query") {
+      const queryKey = props.queries.find(query => query.savedQuery.name === optionsViewStorage.selectedQuery);
+      if (queryKey !== undefined) {
+        getSaveQueryWithId(queryKey);
+      }
+    }
+  }, []);
+
   const getSaveQueryWithId = async (key) => {
     try {
       const response = await fetchQueryById(key);
@@ -124,6 +137,7 @@ const Query: React.FC<Props> = (props) => {
             sortOrder: response.data.savedQuery.sortOrder,
             database: searchOptions.database,
           };
+
           applySaveQuery(options);
           setCurrentQuery(response.data);
           if (props.greyFacets.length > 0) {
@@ -144,16 +158,16 @@ const Query: React.FC<Props> = (props) => {
 
   const isSaveQueryChanged = () => {
     if (currentQuery && currentQuery.hasOwnProperty("savedQuery") && currentQuery.savedQuery.hasOwnProperty("query")) {
-      if (currentQuery.savedQuery.name !== searchOptions.selectedQuery) {
+      if (currentQuery.savedQuery.name !== selectedQuery) {
         if (Array.isArray(savedQueries) === false) {
-          if (savedQueries.savedQuery.name === searchOptions.selectedQuery) {
+          if (savedQueries.savedQuery.name === selectedQuery) {
             setCurrentQuery(savedQueries.savedQuery);
             setCurrentQueryName(savedQueries.savedQuery.name);
             setCurrentQueryDescription(savedQueries.savedQuery.description);
           }
         } else {
           for (let key of savedQueries) {
-            if (key.savedQuery.name === searchOptions.selectedQuery) {
+            if (key.savedQuery.name === selectedQuery) {
               setCurrentQuery(key);
               setCurrentQueryName(key.savedQuery.name);
               setCurrentQueryDescription(key.savedQuery.description);
@@ -167,7 +181,7 @@ const Query: React.FC<Props> = (props) => {
         (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
         (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
         (props.greyFacets.length > 0) || props.isColumnSelectorTouched) &&
-        searchOptions.selectedQuery !== "select a query") {
+        selectedQuery !== "select a query") {
         return true;
       }
     }
@@ -179,7 +193,7 @@ const Query: React.FC<Props> = (props) => {
       if (props.isSavedQueryUser && searchOptions.entityTypeIds.length > 0 &&
         (props.selectedFacets.length > 0 || searchOptions.query.length > 0
           || searchOptions.sortOrder.length > 0 || props.isColumnSelectorTouched)
-        && searchOptions.selectedQuery === "select a query") {
+        && selectedQuery === "select a query") {
         return true;
       }
     }
@@ -217,7 +231,7 @@ const Query: React.FC<Props> = (props) => {
         }
       }
     }
-    if (searchOptions.selectedQuery === "select a query") {
+    if (selectedQuery === "select a query") {
       setCurrentQueryDescription("");
     }
   }, [savedQueries]);
@@ -322,6 +336,7 @@ const Query: React.FC<Props> = (props) => {
       sortOrder: [],
       database: "final",
     };
+
     applySaveQuery(options);
     toggleResetQueryEditedConfirmation(false);
     toggleResetQueryNewConfirmation(false);
@@ -330,11 +345,11 @@ const Query: React.FC<Props> = (props) => {
 
   const resetIconClicked = () => {
     const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
-      && searchOptions.selectedQuery !== "select a query" && isSaveQueryChanged();
+      && selectedQuery !== "select a query" && isSaveQueryChanged();
     const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.entityTypeIds.length > 0 &&
       (props.selectedFacets.length > 0 || searchOptions.query.length > 0
         || searchOptions.sortOrder.length > 0)
-      && searchOptions.selectedQuery === "select a query";
+      && selectedQuery === "select a query";
     if (resetQueryNewConfirmation) {
       toggleResetQueryNewConfirmation(true);
     } else if (resetQueryEditedConfirmation) {
@@ -356,7 +371,7 @@ const Query: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== "select a query") {
+    if (Object.entries(currentQuery).length !== 0 && selectedQuery !== "select a query") {
       setHoverOverDropdown(true);
       setCurrentQueryName(currentQuery.hasOwnProperty("name") ? currentQuery["name"] : currentQuery["savedQuery"]["name"]);
       setCurrentQueryDescription(currentQuery.hasOwnProperty("description") ? currentQuery["description"] : currentQuery["savedQuery"]["description"]);
@@ -368,7 +383,7 @@ const Query: React.FC<Props> = (props) => {
 
 
   useEffect(() => {
-    if (isSaveQueryChanged() && searchOptions.selectedQuery !== "select a query") {
+    if (isSaveQueryChanged() && selectedQuery !== "select a query") {
       toggleSaveChangesIcon(true);
       toggleDiscardIcon(true);
       toggleSaveNewIcon(false);
@@ -408,7 +423,7 @@ const Query: React.FC<Props> = (props) => {
             <div className={styles.iconBar}>
               {(props.selectedFacets.length > 0 || searchOptions.query
                 || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
-                showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === "select a query" &&
+                showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && selectedQuery === "select a query" &&
                 <div>
                   <MLTooltip title={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"}>
                     <FontAwesomeIcon
@@ -499,7 +514,7 @@ const Query: React.FC<Props> = (props) => {
                   </div>
                 </div>}
 
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div>
+              {props.isSavedQueryUser && selectedQuery !== "select a query" && props.queries.length > 0 && <div>
                 <MLTooltip title={"Edit query details"}>
                   {hoverOverDropdown && <FontAwesomeIcon
                     icon={faPencilAlt}
@@ -521,7 +536,7 @@ const Query: React.FC<Props> = (props) => {
                   />
                 }
               </div>}
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+              {props.isSavedQueryUser && selectedQuery !== "select a query" && props.queries.length > 0 &&
                 <div>
                   <MLTooltip title={"Save a copy"}>
                     {hoverOverDropdown && <FontAwesomeIcon
@@ -569,17 +584,17 @@ const Query: React.FC<Props> = (props) => {
                     footer={[
                       <Button key="cancel" id="reset-confirmation-cancel-button" onClick={() => onResetCancel()}>Cancel</Button>,
                       <Button key="back" id="reset-confirmation-no-button" onClick={() => onNoResetClick()}>
-                      No
+                        No
                       </Button>,
                       <Button key="submit" id="reset-confirmation-yes-button" type="primary" onClick={() => onResetOk()}>
-                      Yes
+                        Yes
                       </Button>
                     ]}>
                     {showResetQueryEditedConfirmation &&
-                    <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
-                      <br />
-                      <p>Would you like to save the changes before switching to another query?</p>
-                    </div>}
+                      <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                        <br />
+                        <p>Would you like to save the changes before switching to another query?</p>
+                      </div>}
                     {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
                   </Modal>
                 </div>}
@@ -590,7 +605,7 @@ const Query: React.FC<Props> = (props) => {
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
             <MLTooltip title={currentQueryDescription}>
               {
-                searchOptions.selectedQuery === "select a query" ? "" : searchOptions.selectedQuery && searchOptions.selectedQuery !== "select a query" &&
+                selectedQuery === "select a query" ? "" : selectedQuery && selectedQuery !== "select a query" &&
                   currentQueryDescription.length > 50 ? currentQueryDescription.substring(0, 50).concat("...") : currentQueryDescription
               }
             </MLTooltip>

@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "r
 import axios from "axios";
 import {Layout} from "antd";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import {UserContext} from "../util/user-context";
+import {getViewSettings, setViewSettings, UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
 import AsyncLoader from "../components/async-loader/async-loader";
 import Sidebar from "../components/sidebar/sidebar";
@@ -29,6 +29,10 @@ interface Props extends RouteComponentProps<any> {
 }
 
 const Browse: React.FC<Props> = ({location}) => {
+  const storage = getViewSettings();
+  const optionsViewStorage = storage?.explore?.searchOptions;
+  const selectedQuery = storage?.explore?.searchOptions?.selectedQuery;
+
   const {Content, Sider} = Layout;
   const componentIsMounted = useRef(true);
   const {
@@ -72,6 +76,13 @@ const Browse: React.FC<Props> = ({location}) => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
+
+  useEffect(() => {
+    if (optionsViewStorage === undefined) {
+      return;
+    }
+
+  });
 
   const getEntityModel = async () => {
     try {
@@ -201,6 +212,8 @@ const Browse: React.FC<Props> = ({location}) => {
         sortOrder: savedQuery.sortOrder,
         database: searchOptions.database,
       };
+      const newStorage = {...storage, explore: {...storage.explore, searchOptions: options}};
+      setViewSettings(newStorage);
       applySaveQuery(options);
     } else if (location.state && location.state.hasOwnProperty("zeroState") && !location.state["zeroState"]) {
       setPageWithEntity(location.state["entity"],
@@ -247,7 +260,9 @@ const Browse: React.FC<Props> = ({location}) => {
       sortOrder: [],
       database: "final",
     };
-    applySaveQuery(options);
+    if (optionsViewStorage === undefined) {
+      applySaveQuery(options);
+    }
   };
 
   const initializeUserPreferences = async () => {
@@ -269,7 +284,7 @@ const Browse: React.FC<Props> = ({location}) => {
             searchText: parsedPreferences.query.searchText || "",
             entityTypeIds: parsedPreferences.query.entityTypeIds || [],
             selectedFacets: parsedPreferences.query.selectedFacets || {},
-            selectedQuery: searchOptions.selectedQuery || "select a query",
+            selectedQuery: selectedQuery || "select a query",
             start: parsedPreferences.start || 1,
             pageNumber: parsedPreferences.pageNumber || 1,
             pageLength: parsedPreferences.pageLength,
@@ -305,7 +320,7 @@ const Browse: React.FC<Props> = ({location}) => {
       pageNumber: searchOptions.pageNumber,
       start: searchOptions.start,
       tableView: view ? (view === "snippet" ? false : true) : tableView,
-      selectedQuery: searchOptions.selectedQuery,
+      selectedQuery: selectedQuery,
       queries: queries,
       propertiesToDisplay: searchOptions.selectedTableProperties,
       zeroState: searchOptions.zeroState,

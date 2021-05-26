@@ -1,5 +1,6 @@
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
+import browsePage from "../../support/pages/browse";
 import curatePage from "../../support/pages/curate";
 import loadPage from "../../support/pages/load";
 import LoginPage from "../../support/pages/login";
@@ -90,5 +91,42 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item ant-collapse-item-active");
+  });
+
+  // Creating a new query to check for persistence of saved queries
+  it("Apply facet search,open save modal, save new query, select query", () => {
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+    browsePage.selectEntity("Customer");
+    browsePage.getSelectedEntity().should("contain", "Customer");
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
+    browsePage.getSelectedFacets().should("exist");
+    browsePage.getGreySelectedFacets("Adams Cole").should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.clickColumnTitle(2);
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveModalIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveQueryName().should("be.visible");
+    browsePage.getSaveQueryName().type("new-query");
+    browsePage.getSaveQueryDescription().should("be.visible");
+    browsePage.getSaveQueryDescription().type("new-query description");
+    browsePage.getSaveQueryButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    // Creating a new query
+    browsePage.getSelectedQuery().should("contain", "new-query");
+    browsePage.getSelectedQueryDescription().should("contain", "new-query description");
+    browsePage.getSaveQueryButton().should("not.exist");
+    browsePage.getSaveQueriesDropdown().should("be.visible");
+  });
+
+  it("Switch to explore view and then visit another tile. When returning to explore tile, the selected query is persisted.", () => {
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.findByTestId("dropdown-list").should("contain", "new-query");
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.findByTestId("dropdown-list").should("contain", "new-query");
   });
 });

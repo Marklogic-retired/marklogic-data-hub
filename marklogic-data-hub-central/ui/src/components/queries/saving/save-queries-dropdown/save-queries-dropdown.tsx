@@ -1,8 +1,9 @@
 import {Select, Modal} from "antd";
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import styles from "./save-queries-dropdown.module.scss";
 import {SearchContext} from "../../../../util/search-context";
 import {MLButton} from "@marklogic/design-system";
+import {getViewSettings} from "../../../../util/user-context";
 
 interface Props {
     savedQueryList: any[];
@@ -24,15 +25,14 @@ interface Props {
 
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
 
+
+  const storage = getViewSettings();
+  const storedSelectedQuery = storage?.explore?.searchOptions?.selectedQuery;
+
   const {Option} = Select;
   const [showConfirmation, toggleConfirmation] = useState(false);
-
-
-  const {
-    searchOptions
-  } = useContext(SearchContext);
-
-  const [switchedQueryName, setSwitchedQueryName] = useState(searchOptions.selectedQuery);
+  useContext(SearchContext);
+  const [switchedQueryName, setSwitchedQueryName] = useState((storedSelectedQuery === undefined || storedSelectedQuery === "select a query" ? "select a query" : storedSelectedQuery));
 
   const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
 
@@ -40,8 +40,19 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     <Option value={query} key={index+1} data-cy={`query-option-${query}`}>{query}</Option>
   );
 
+  useEffect(() => {
+    if (storedSelectedQuery === undefined) {
+      return;
+    }
+    if (storedSelectedQuery !== "select a query") {
+      setSwitchedQueryName(storedSelectedQuery);
+    } else {
+      setSwitchedQueryName("select a query");
+    }
+  });
+
   const checkCurrentQueryChange = (e) => {
-    if (props.isSaveQueryChanged() && searchOptions.selectedQuery !== "select a query") {
+    if (props.isSaveQueryChanged() && storedSelectedQuery !== "select a query") {
       toggleConfirmation(true);
       setSwitchedQueryName(e);
     } else {
@@ -82,13 +93,13 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
       <Select
         id="dropdownList"
         placeholder={"select a query"}
-        className={searchOptions.selectedQuery === "select a query" ? styles.dropDownStyle_placeholder : styles.dropDownStyle}
+        className={storedSelectedQuery === "select a query" ? styles.dropDownStyle_placeholder : styles.dropDownStyle}
         onChange={checkCurrentQueryChange}
         value={(() => {
-          if (props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === "select a query") {
-            onItemSelect(searchOptions.selectedQuery);
+          if (props.currentQueryName !== storedSelectedQuery && props.currentQueryName === "select a query") {
+            onItemSelect(storedSelectedQuery);
           }
-          return searchOptions.selectedQuery;
+          return switchedQueryName;
         })()}
         getPopupContainer={() => document.getElementById("dropdownList") || document.body}
         data-testid="dropdown-list"

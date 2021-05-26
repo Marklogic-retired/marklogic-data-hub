@@ -1,3 +1,5 @@
+import {QueryOptions} from "./query-types";
+
 export type ViewSettingsType = {
     load?: {
         page?: number,
@@ -20,4 +22,8 @@ export type ViewSettingsType = {
     run?: {
         openFlows?: string[],
     },
+    explore?: {
+        searchOptions?: QueryOptions,
+        viewMode?: string,
+    }
 };
