@@ -37,7 +37,6 @@ export function clearSessionStorageOnRefresh () {
   const storage = getViewSettings();
   window.onbeforeunload = function() {
     setViewSettings({...storage, curate: {}});
-    return true;
   };
 
   return () => {
