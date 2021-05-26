@@ -3,7 +3,6 @@ import {Application} from "../../support/application.config";
 import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
 import LoginPage from "../../support/pages/login";
-import browsePage from "../../support/pages/browse";
 
 describe("Monitor Tile", () => {
 

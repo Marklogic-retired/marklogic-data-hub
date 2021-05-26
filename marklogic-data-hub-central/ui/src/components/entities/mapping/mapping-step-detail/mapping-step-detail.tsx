@@ -824,9 +824,7 @@ const MappingStepDetail: React.FC = () => {
           onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
           className={styles.searchInput}
         />
-        <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
-                    Reset
-        </MLButton>
+        <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>Reset</MLButton>
         <MLButton
           data-testid={`submitSearch-${dataIndex}`}
           type="primary"
@@ -1313,16 +1311,26 @@ const MappingStepDetail: React.FC = () => {
         handleOnBack={onBack}
       />
       <div className={styles.mapContainer}>
-        <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
-          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
-          <span className={styles.stepSettingsLabel}>Step Settings</span>
-        </div>
         <div className={styles.legend}>
+          <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
+            <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
+            <span className={styles.stepSettingsLabel}>Step Settings</span>
+          </div>
+          <span className={styles.clearTestIcons} id="ClearTestButtons">
+            <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+                                Clear
+            </MLButton>
+                        &nbsp;&nbsp;
+            <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
+                                Test
+            </MLButton>
+          </span>
           <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key Relationship</i></div>
           <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
           <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
           <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
         </div>
+
         <div className={styles.header}>
           {errorInSaving ? success() : <span className={styles.noMessage}></span>}
         </div>
@@ -1396,15 +1404,7 @@ const MappingStepDetail: React.FC = () => {
               className={styles.entityContainer}>
               <div className={styles.entityDetails}>
                 <span className={styles.entityTypeTitle}><p className={styles.entityTypeText}><span className={styles.entityIcon}></span><strong>Entity Type: {curationOptions.activeStep.entityName}</strong></p></span>
-                <span className={styles.clearTestIcons} id="ClearTestButtons">
-                  <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
-                                Clear
-                  </MLButton>
-                        &nbsp;&nbsp;
-                  <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
-                                Test
-                  </MLButton>
-                </span>
+
               </div>
               <div ref={dummyNode}></div>
               <div className={styles.columnOptionsSelectorContainer}>

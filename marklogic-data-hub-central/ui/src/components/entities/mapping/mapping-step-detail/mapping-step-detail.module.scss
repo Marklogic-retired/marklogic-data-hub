@@ -5,7 +5,7 @@
 
 .mapContainer{
     height: auto;
-    width: 94vw;
+    width: 95.6vw;
 }
 
 .header{
@@ -28,6 +28,7 @@
     display: flex;
     flex-direction: row;
     padding-bottom: 1vh;
+    padding-right: 40px;
 }
 
 .sourceContainer{
@@ -79,7 +80,7 @@
 }
 .resetButton {
     width: 90px;
-    margin-right: 8px
+    margin-right: 8px;
 }
 
 .searchSubmitButton {
@@ -104,7 +105,6 @@
     > .entityDetails{
         display: inline-block;
         vertical-align: middle;
-        //height: 5vh;
         margin-bottom: 3px;
         > .entityTypeTitle{
             float: left;
@@ -126,7 +126,8 @@
 
         > .entityCollapseButtons{
             float: right;
-            margin-top: 10px;  
+            margin-top: 10px;
+            padding-right: 15px;  
         }
     }
 }
@@ -175,11 +176,6 @@ padding-bottom: 9px;
     margin-top: 4px;
 }
 
-.clearTestIcons{
-    float: right;
-    padding-top: 2px;
-    padding-right: 4px;
-}
 hr {
     display: block;
     margin-top: 2em;
@@ -201,7 +197,6 @@ hr {
     width: 100%;
     line-height: 1px;
     vertical-align: top;
-    //justify-content: top;
 }
 
 .entityIcon:before{
@@ -378,8 +373,9 @@ hr {
 
   .stepSettingsLink {
     position: absolute;
-    top: 18px;
-    right: 24px;
+    bottom: 75px;
+    padding-right: 27px;
+    right: 22px;
     color: #44499C;
     cursor: pointer;
     .stepSettingsLabel {
@@ -395,11 +391,20 @@ hr {
   display: flex;
   justify-content: flex-end;
   margin-bottom: -80px;
-  padding-right: 20px;
+  padding-top: 20px;
+  padding-right: 40px;
+  position: relative;
+
+  .clearTestIcons{
+    bottom: 80%;
+    padding-right: 10px;
+    position: absolute;
+  }
 
   .legendText {
     font-size: 14px;
     margin-left: 18px;
+    margin-right: 10px;
     img, svg {
       margin-right: 2px;
     }

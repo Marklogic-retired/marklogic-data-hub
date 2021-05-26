@@ -38,9 +38,10 @@ div.mosaic-container div.mosaic-window-toolbar {
     height: 40px;
 }
 
-div.mosaic-container div.mosaic-window-body {
-    overflow: auto;
-}
+// Removed to drop the extra scroll bar in mapping step details. Keeping this commented for now. DHFPROD-7290
+// div.mosaic-container div.mosaic-window-body {
+//     overflow: auto;
+// }
 
 div.mosaic-container-load div.mosaic-tile,
 div.mosaic-container-model div.mosaic-tile,
