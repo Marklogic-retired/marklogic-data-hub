@@ -22,9 +22,9 @@ describe("Job response modal", () => {
 
   test("Verify successful job response information displays", async () => {
     mocks.runAPI(axiosMock);
-    let getByText, queryByText;
+    let getByText;
     act(() => {
-      ({getByText, queryByText} = render(
+      ({getByText} = render(
         <Router>
           <CurationContext.Provider value={curationContextMock}>
             <JobResponse
