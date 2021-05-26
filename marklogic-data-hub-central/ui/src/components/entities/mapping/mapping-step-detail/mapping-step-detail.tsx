@@ -26,6 +26,7 @@ import arrayIcon from "../../../../assets/icon_array.png";
 import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
+import {paginationOptions, mappingColors} from "../../../../config/mapping.config";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -144,7 +145,7 @@ const MappingStepDetail: React.FC = () => {
   const [docNotFound, setDocNotFound] = useState(false);
   const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
 
-  const tableColors = ["#e4f1f4", "#f0f9f5", "#fae9d3", "#f6e2e9", "#edecf5", "#f0e8ed", "#e0e1ea", "#e6eff6", "#f0f6d9", "#fff5d7", "#ecfaf7", "#ecfae2", "#dcebf3", "#f3dbd8", "#f1eef5", "#dee2ed", "#effadd", "#fae3df", "#f6f7f8"];
+  let tableColors = [...mappingColors];
 
   // For Column Option dropdown checkboxes
   const [checkedEntityColumns, setCheckedEntityColumns] = useState({
@@ -1380,7 +1381,7 @@ const MappingStepDetail: React.FC = () => {
                       <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
                     </div>
                     <Table
-                      pagination={false}
+                      pagination={paginationOptions}
                       expandIcon={(props) => customExpandIcon(props)}
                       onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
                       expandedRowKeys={sourceExpandedKeys}

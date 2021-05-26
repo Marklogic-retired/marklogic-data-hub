@@ -1,6 +1,7 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
 import {waitForElement, waitForElementToBeRemoved, render, wait, cleanup, fireEvent, within} from "@testing-library/react";
+import {waitFor} from "@testing-library/dom";
 import MappingStepDetail from "./mapping-step-detail";
 import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
@@ -1634,6 +1635,91 @@ describe("RTL Source-to-entity map tests", () => {
     expect(uriIndex.getByText("1")).toBeInTheDocument();
   });
 
+  test("verify if pagination works properly in Source table", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataLargeDataset});
+
+    let getByText, queryByText, getByTestId, getByTitle, queryByTitle;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+      queryByText = renderResults.queryByText;
+      getByTestId = renderResults.getByTestId;
+      getByTitle = renderResults.getByTitle;
+      queryByTitle = renderResults.queryByTitle;
+    });
+
+    await waitFor(() => {
+      //Check the elements of page 1 are visible
+      expect(getByText("CustomerID")).toBeInTheDocument();
+      expect(getByText("FirstName")).toBeInTheDocument();
+      expect(getByText("LastName")).toBeInTheDocument();
+    });
+
+    //Filter options
+    let sourcefilterIcon = getByTestId("filterIcon-key");
+    let inputSearchSource = getByTestId("searchInput-key");
+    let submitSearchText = getByTestId("submitSearch-key");
+
+    //Pagination options
+    let previousPageLink = getByTitle("Previous Page");
+    let nextPageLink = getByTitle("Next Page");
+    let page1_Option = getByTitle("1");
+    let next_5_Pages_Option = getByTitle("Next 5 Pages");
+
+    expect(previousPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(queryByTitle("9")).not.toBeInTheDocument();
+    expect(queryByText("prop169")).not.toBeInTheDocument();
+
+    userEvent.click(next_5_Pages_Option);
+    expect(queryByTitle("9")).not.toBeInTheDocument();
+    expect(getByText("prop108")).toBeInTheDocument();
+    expect(previousPageLink).toHaveAttribute("aria-disabled", "false");
+
+    userEvent.click(next_5_Pages_Option);
+    expect(getByText("prop208")).toBeInTheDocument();
+
+    let page9_Option = getByTitle("9");
+    expect(page9_Option).toBeInTheDocument();
+    //Check the elements of page 1 are not visible
+    expect(queryByText("CustomerID")).not.toBeInTheDocument();
+    expect(queryByText("FirstName")).not.toBeInTheDocument();
+    expect(queryByText("LastName")).not.toBeInTheDocument();
+
+    userEvent.click(page9_Option);
+
+    expect(getByText("prop169")).toBeInTheDocument();
+
+    userEvent.click(page1_Option);
+    expect(getByText("CustomerID")).toBeInTheDocument();
+    expect(queryByText("prop126Billing")).not.toBeInTheDocument();
+
+    fireEvent.click(sourcefilterIcon);
+    fireEvent.change(inputSearchSource, {target: {value: "fiveDigit"}});
+    expect(inputSearchSource).toHaveValue("fiveDigit");
+    fireEvent.click(submitSearchText);
+
+    expect(previousPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(nextPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(getByText("prop126Billing")).toBeInTheDocument();
+    expect(getByText("Street")).toBeInTheDocument();
+    expect(getByText("City")).toBeInTheDocument();
+    expect(getByText("State")).toBeInTheDocument();
+    expect(getByText("Postal")).toBeInTheDocument();
+    expect(getByText("fiveDigit")).toBeInTheDocument();
+
+    fireEvent.click(sourcefilterIcon);
+    fireEvent.change(inputSearchSource, {target: {value: "prop1"}});
+    expect(inputSearchSource).toHaveValue("prop1");
+    fireEvent.click(submitSearchText);
+
+    expect(queryByTitle("Next 5 Pages")).not.toBeInTheDocument();
+    expect(nextPageLink).toHaveAttribute("aria-disabled", "false");
+
+    userEvent.click(getByTitle("6"));
+    expect(nextPageLink).toHaveAttribute("aria-disabled", "true");
+  });
 });
 
 describe("Enzyme Source-to-entity map tests", () => {
