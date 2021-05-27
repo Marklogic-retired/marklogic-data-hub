@@ -23,7 +23,7 @@ const verifyPrimaryKeys = function(result) {
     for (let uri of action.uris) {
       if (!allURIs.includes(allURIs)) {
         allURIs.push(uri);
-        results.push(test.assertEqual(resultObj.primaryKeys[uri], fn.string(cts.doc(uri).toObject().envelope.instance.Customer.customerId) || uri, `Unexpected primary key value! primaryKeys: ${xdmp.toJsonString(resultObj.primaryKeys)}`));
+        results.push(test.assertEqual(fn.string(cts.doc(uri).toObject().envelope.instance.Customer.customerId) || uri, resultObj.primaryKeys[uri], `Unexpected primary key value! primaryKeys: ${xdmp.toJsonString(resultObj.primaryKeys)}`));
       }
     }
   }

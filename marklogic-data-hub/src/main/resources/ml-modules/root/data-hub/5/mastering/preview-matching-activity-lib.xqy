@@ -41,33 +41,38 @@ declare function pma:match-within-uris($uris as xs:string*, $options as object-n
 (:
   Finds matches for the $uris against the rest of the database, filtered by sourceQuery. Excludes any matches between $uris,
   which were already returned by the match-within-uris() function.
-
-  Using the some-satisfies-set pattern for short-circuiting when max results is reached. Use sparingly.
 :)
 declare function pma:match-against-source-query-docs(
   $uris as xs:string*,
   $options as object-node(),
   $source-query as cts:query,
-  $previous-count as xs:integer)
-  as element(results)*
+  $previous-count as xs:integer,
+  $all-results as element(results)*
+) (: as element(results)* :) (: Return signature commented out to facilitate tail recursion :)
 {
-  let $exclude-uris-query := cts:not-query(cts:document-query($uris))
-  let $query := cts:and-query(($source-query, $exclude-uris-query))
-  let $count := $previous-count
-  let $all-results := ()
-  let $_ :=
-    some $uri in $uris satisfies
-      $count >= $PMA-MAX-RESULTS or
-        (
-          let $doc := fn:doc($uri)
-          let $remaining-count := $PMA-MAX-RESULTS - $count
-          let $results := matcher:find-document-matches-by-options($doc, $options, 1, $remaining-count, fn:true(), $query)
-          let $results := pma:transform-results($results, $uri)
-          let $_ := xdmp:set($all-results, ($all-results, $results))
-          let $_ := xdmp:set($count, $count + fn:count($results/result))
-          return fn:false()
+  if (fn:count($all-results) >= ($PMA-MAX-RESULTS - $previous-count) or fn:empty($uris)) then
+    $all-results
+  else
+    pma:match-against-source-query-docs(
+      fn:tail($uris),
+      $options,
+      $source-query,
+      $previous-count,
+      (
+        $all-results,
+        pma:transform-results(
+          matcher:find-document-matches-by-options(
+            fn:doc(fn:head($uris)),
+            $options,
+            1,
+            $PMA-MAX-RESULTS - (fn:count($all-results) + $previous-count),
+            fn:true(),
+            $source-query
+          ),
+          fn:head($uris)
         )
-  return $all-results
+      )
+    )
 };
 
 (: main purpose of this transform is to store the URI used for the match in the results element :)
@@ -118,7 +123,9 @@ declare function pma:get-uri-sample($source-query as cts:query, $sample-size as 
       $DEFAULT-URI-SAMPLE-SIZE
   return
     for $doc in cts:search(doc(), $source-query, ("unfiltered", "score-random"))[1 to $sample-size]
-    return xdmp:node-uri($doc)
+    let $uri := xdmp:node-uri($doc)
+    order by $uri
+    return $uri
 };
 
 (:
@@ -155,7 +162,7 @@ declare function pma:preview-matching-activity(
       ()
     else
       pma:consolidate-preview-results(
-        pma:match-against-source-query-docs($uris, $options, $source-query, $previous-count)
+        pma:match-against-source-query-docs($uris, $options, cts:and-not-query($source-query, cts:document-query($uris)), $previous-count, ())
       )
   let $all-results := fn:subsequence(($results-within-uris, $results-against-source-query-docs), 1, $PMA-MAX-RESULTS)
   let $all-uris := fn:distinct-values(($all-results ! ( json:array-values(map:get(., "uris")))))
