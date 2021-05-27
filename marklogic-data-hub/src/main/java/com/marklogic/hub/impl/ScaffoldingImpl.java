@@ -74,6 +74,28 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
     }
 
     /**
+     *
+     * @param name
+     * @param type
+     * @param format
+     * @return the new step definition
+     */
+    public StepDefinition createStepDefinition(String name, String type, String format) {
+        StepDefinition stepDef = StepDefinition.create(name, StepDefinition.StepDefinitionType.getStepDefinitionType(type));
+
+        StepDefinitionManager stepDefinitionManager = new StepDefinitionManagerImpl(this.hubConfig);
+        if (stepDefinitionManager.getStepDefinition(name, stepDef.getType()) != null) {
+            throw new IllegalArgumentException(format("A step definition already exists with the name '%s' and type '%s'", name, type));
+        }
+
+        stepDef.setModulePath(String.format("/custom-modules/%s/%s/main.sjs", type.toLowerCase(), name));
+        stepDefinitionManager.saveStepDefinition(stepDef);
+        createCustomModule(name, type, format);
+
+        return stepDef;
+    }
+
+    /**
      * Create a step file  based on the given stepName, stepType, entityType (for non ingestion steps),
      *  and stepDefName.
      *
@@ -224,10 +246,16 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             moduleFile = customModuleDir.resolve("main.sjs").toFile();
             InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(moduleScaffoldingSrcFile);
             try {
+                if (logger.isInfoEnabled()) {
+                    logger.info(format("Writing module to: %s", moduleFile.getAbsolutePath()));
+                }
                 FileUtils.copyInputStreamToFile(inputStream, moduleFile);
                 libFile = customModuleDir.resolve("lib.xqy").toFile();
                 if(libScaffoldingSrcFile != null) {
                     InputStream libInputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(libScaffoldingSrcFile);
+                    if (logger.isInfoEnabled()) {
+                        logger.info(format("Writing module to: %s", libFile.getAbsolutePath()));
+                    }
                     FileUtils.copyInputStreamToFile(libInputStream, libFile);
                 }
             } catch (IOException e) {

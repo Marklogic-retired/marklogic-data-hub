@@ -1,68 +1,52 @@
 /**
- * This shows an example of a custom ingestion step, this is for when data comes into the data hub
- * We must construct an envelope wrapper about it and add any metadata or in-flight transforms here
- * so it is persisted once written to the database.
- *
- * Anytime data is sent to a step that is not from the database, it is mutable
+ * This scaffolded step module provides a template for implementing your own logic as a DHF ingestion step.
+ * All of the comments in this module are intended to explain how to implement a DHF ingestion step. You are free to delete
+ * any or all of the comments at any point.
  */
 
+ const flowApi = require('/data-hub/public/flow/flow-api.sjs');
 
-//If you'd like to construct triples using the semantics library, uncomment below
-//const sem = require("/MarkLogic/semantics.xqy");
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
+ /**
+  * Performs the main step processing on the given content, returning zero or many content objects. DHF will run this function
+  * in query (read-only) mode, as the intent of a step is for it to return content objects that DHF will then handle persisting.
+  *
+  * The content argument is either a content object, as defined by
+  * https://github.com/marklogic/marklogic-data-hub/blob/master/specs/models/ContentObject.schema.json, or it is an array of content
+  * objects defined by that same schema. Whether or not content object is an array is determined by the tool ingesting data.
+  * For example, when using the DHF mlRunIngest REST transform, content will be a single object. When using the DHF transform for
+  * MLCP, content will be an array.
+  *
+  * @param content either a single content object, or an array of content objects
+  * @param options an object consisting of combined options from the runtime options, the step configuration, the flow options,
+  *  and the step definition options
+  * @returns a content object, or an array of content objects, depending on the tool ingesting data
+  */
+ function main(content, options) {
+   const inputDocument = content.value;
 
-const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+   // DHF recommends wrapping documents in an envelope, particularly for curated documents based on an entity model.
+   // The below code is a starting point for constructing the 3 parts of an envelope.
+   // If your input document is XML and you need to modify it, it is recommended to generate an XQuery custom step instead.´
+   const instance = inputDocument.toObject();
+   const headers = {};
+   const triples = [];
 
-function main(content, options) {
+   // makeEnvelope is a convenience function for building an envelope with the inputs that were defined above.
+   // You may wish to specify the output format in your step configuration. But for a custom step, which is typically coded
+   // based on an expected output format, it's usually simpler to define the output format in the code.
+   const outputFormat = 'json';
+   content.value = flowApi.makeEnvelope(instance, headers, triples, outputFormat);
 
-  //example of how to check options for an input format in case we wanted to do operations based on type
-  //let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+   // If this ingestion step is being referenced via the DHF transform for MLCP, you may also modify the 'uri' and
+   // 'context' properties. This is not allowed though when referencing the step via the DHF mlRunIngest REST transform,
+   // as a REST transform does not allow for these properties to be modified.
+   // content.uri = "/test" + content.uri;
+   // content.context.collections = ["my-collection"];
+   // content.context.permissions = [xdmp.permission("data-hub-common", "read"), xdmp.permission("data-hub-common", "update")];
 
-  //What output format do we want for the data?
-  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+   return content;
+ }
 
-  //Example of error checking for data types
-  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML && outputFormat !== datahub.flow.consts.BINARY && outputFormat !== datahub.flow.consts.TEXT) {
-    let errMsg = 'The output format of type ' + outputFormat + ' is invalid. Valid options are '
-      + datahub.flow.consts.XML + ' , ' + datahub.flow.consts.JSON + ', '+ datahub.flow.consts.TEXT +' or' + datahub.flow.consts.BINARY + '.';
-    datahub.debug.log({message: errMsg, type: 'error'});
-    throw Error(errMsg);
-  }
-
-  //we're going to grab the value of the content that was passed in, and use that to define our instance
-  let instance = content.value.root || content.value;
-
-  //If the type of data is binary OR the expected output was set to unstructured data (binary/text), let's return it as is.
-  if (instance.nodeType === Node.BINARY_NODE || outputFormat === datahub.flow.consts.BINARY || outputFormat === datahub.flow.consts.TEXT) {
-    return content;
-  }
-  else if (instance.nodeType === Node.TEXT_NODE) {
-    //if it's text, and we want json or xml, let's try to parse it. If it can't, it'll throw an unchecked error.
-    instance = flowUtils.parseText(instance, outputFormat);
-  }
-
-  //let's create our triples array.
-  let triples = [];
-
-  //now our headers for any document level metadata
-  let headers = flowUtils.createHeaders(options);
-
-  //And lastly we put it all together in an envelope structure
-  content.value = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
-
-  //Context changes are possible, here we show how to grab the context and example manipulate it
-  //let context = content.context;
-  //For example, we can get permissions, then manipulate them here
-  //let permissions = context.permissions;
-
-  //uri is set on content.uri
-  //content.uri = "my/new/uri.json";
-
-  //Now we return out our 'content' object to be written
-  return content;
-}
-
-module.exports = {
-  main: main
-};
+ module.exports = {
+   main
+ };
