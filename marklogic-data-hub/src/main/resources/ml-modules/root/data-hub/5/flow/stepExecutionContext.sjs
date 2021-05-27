@@ -299,7 +299,10 @@ class StepExecutionContext {
       if (!this.stepOutputErrorMessages) {
         this.stepOutputErrorMessages = [];
       }
-      this.stepOutputErrorMessages.push(error.message);
+      // A limit of 10 is used here to be consistent with the Java FlowRunner
+      if (this.stepOutputErrorMessages.length < 10) {
+        this.stepOutputErrorMessages.push(error.message);
+      }
     }
 
     this.stepErrors.push(stepError);
