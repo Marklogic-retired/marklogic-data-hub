@@ -210,6 +210,7 @@ const EntitySettings: React.FC<Props> = (props) => {
             <Input
               id="targetPermissions"
               placeholder="Please enter target permissions"
+              data-testid={`${props.entityTitle}-targetPermissions`}
               value={targetPermissions}
               onChange={handleChange}
               onBlur={handleBlur}
@@ -222,7 +223,7 @@ const EntitySettings: React.FC<Props> = (props) => {
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
               </MLTooltip>
             </div>
-            <div className={styles.validationError} data-testid="validationError">
+            <div className={styles.validationError} aria-label={`${props.entityTitle}-validationError`} data-testid="validationError">
               {permissionValidationError}
             </div>
           </Form.Item>
@@ -231,9 +232,9 @@ const EntitySettings: React.FC<Props> = (props) => {
               <MLButton data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
               {!canReadWrite || !targetPermissionsValid ? <MLTooltip title={tooltips.missingPermission} placement={"bottomRight"}>
                 <span className={styles.disabledCursor}>
-                  <MLButton id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</MLButton>
+                  <MLButton id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</MLButton>
                 </span>
-              </MLTooltip> : <MLButton id={"saveButton"} data-testid={`save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</MLButton>}
+              </MLTooltip> : <MLButton id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</MLButton>}
             </div>
           </Form.Item>
         </Form>
