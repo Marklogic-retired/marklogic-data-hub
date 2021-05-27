@@ -18,6 +18,10 @@ class PropertyTable {
     return cy.findByTestId(`${entityName}-last-processed`);
   }
 
+  getForeignIcon(propertyName: string) {
+    return cy.findByTestId(`foreign-${propertyName}`);
+  }
+
   getIdentifierIcon(propertyName: string) {
     return cy.findByTestId(`identifier-${propertyName}`);
   }

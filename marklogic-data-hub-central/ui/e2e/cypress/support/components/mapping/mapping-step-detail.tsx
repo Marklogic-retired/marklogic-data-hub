@@ -75,6 +75,14 @@ class MappingStepDetail {
     return cy.findByTestId(`lessLink`);
   }
 
+  relatedFilterMenu (entityName: string) {
+    return cy.get(`#${entityName}-entities-filter`);
+  }
+
+  entityTitle (title: string) {
+    return cy.findByLabelText(`${title}-title`);
+  }
+
   /**
    * Get property icon from dropdown list by Entity type property name
    * @param propertyName
@@ -121,7 +129,16 @@ class MappingStepDetail {
   }
 
   /**
-   * Xpath Expresion
+   * Get related entity from dropdown list, depends on relatedFilterMenu() being clicked first
+   * @param entityTitle
+   * @example Child (childOf Person)
+   */
+  getRelatedEntityFromList(entityTitle: string) {
+    return cy.findByLabelText(`${entityTitle}-option`);
+  }
+
+  /**
+   * Xpath Expression
    * @param propertyName
    * @example OrderId, address
    * @param value
@@ -131,8 +148,24 @@ class MappingStepDetail {
     cy.findByTestId(`${propertyName}-mapexpression`).type(value);
   }
 
-  validateMapValues(entityName: string, propertyName: string, value:string) {
+  validateContextInput(entityTitle: string, value:string) {
+    return cy.findByTestId(`${entityTitle}-Context-mapexpression`).should("have.text", value);
+  }
+
+  validateURIInput(entityTitle: string, value:string) {
+    return cy.findByTestId(`${entityTitle}-URI-mapexpression`).should("have.text", value);
+  }
+
+  validateMapValue(entityName: string, propertyName: string, value:string) {
     cy.findByTestId(`${entityName}-${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
+  }
+
+  getURIInput(entityTitle: string) {
+    return cy.findByTestId(`${entityTitle}-URI-mapexpression`);
+  }
+
+  getURIValue(entityTitle: string) {
+    return cy.findByTestId(`${entityTitle}-URI-value`).find(".ml-tooltip-container");
   }
 
   goBackToCurateHomePage() {
@@ -141,6 +174,14 @@ class MappingStepDetail {
 
   noDataAvailable() {
     return cy.get("#noData");
+  }
+
+  dataAvailable() {
+    return cy.get("#dataPresent");
+  }
+
+  successMessage() {
+    return cy.findByTestId("successMessage")
   }
 }
 

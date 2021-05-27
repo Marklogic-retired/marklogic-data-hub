@@ -165,6 +165,9 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("Entity Type: Person")).toBeInTheDocument();
     expect(getByText("Test")).toBeEnabled();
 
+    // No related entity filter if no related entities
+    expect(queryByText("Person-entities-filter")).not.toBeInTheDocument();
+
     // Link to Settings
     const settingsLink = getByLabelText("stepSettings");
     settingsLink.onclick = jest.fn();
@@ -701,6 +704,9 @@ describe("RTL Source-to-entity map tests", () => {
     await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
     await wait(() => expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument());
 
+    // Verify top-level entity does not have Context row
+    expect(queryByTestId("Person-Context-name")).not.toBeInTheDocument();
+    
     // Verify related Context row has expected menus (property but NO function or reference)
     expect(getByTestId("Order (orderedBy Person)-Context-listIcon")).toBeInTheDocument();
     expect(queryByTestId("Context-112-functionIcon")).not.toBeInTheDocument();
