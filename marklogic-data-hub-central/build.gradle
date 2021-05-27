@@ -69,6 +69,12 @@ dependencies {
     implementation 'com.azure:azure-storage-blob:12.8.0'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.11.847'
     implementation 'com.amazonaws:aws-java-sdk-ssm:1.11.847'
+    constraints {
+        implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.11.4') {
+            because 'gradle automatically ups the version to 2.11.4 but Palamida scan still thinks that version 2.6.7 ' +
+                    'is being used so setting the version forcibly here to avoid confusing Palamida'
+        }
+    }
 
 
     // Used to generate Swagger docs at /swagger-ui.html

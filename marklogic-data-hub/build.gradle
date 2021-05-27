@@ -52,9 +52,10 @@ dependencies {
 
     implementation ('com.marklogic:mlcp-util:0.9.0') {
         // mlcp-util depends on 4.2.5, but Gradle forces this up to 5.x based on other Spring dependencies.
-        // But the Palomida security tool thinks 4.2.5 is still being used and reports it as a vulnerability.
-        // So it's forcibly exclude here to avoid confusing Palomida.
+        // But the Palamida security tool thinks 4.2.5 is still being used and reports it as a vulnerability.
+        // So it's forcibly exclude here to avoid confusing Palamida.
         exclude module: "spring-beans"
+        exclude module: "spring-core"
     }
 
     implementation 'com.marklogic:marklogic-data-movement-components:2.2.1'
