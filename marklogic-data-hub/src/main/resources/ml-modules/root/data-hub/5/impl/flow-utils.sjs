@@ -666,6 +666,8 @@ const sem = require("/MarkLogic/semantics.xqy");
     };
   }
 
+  // This function was used in the scaffolded custom-ingestion from DHF 5.0 to 5.4 and thus
+  // must be retained in the 5.x timeframe
   function parseText(text, outputFormat){
     let options = outputFormat == consts.XML ? "format-xml" : "format-json";
     return fn.head(xdmp.unquote(text, null, options));

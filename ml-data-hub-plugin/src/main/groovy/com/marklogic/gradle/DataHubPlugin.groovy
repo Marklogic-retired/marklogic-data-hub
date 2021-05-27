@@ -66,7 +66,6 @@ class DataHubPlugin implements Plugin<Project> {
     private LoadUserArtifactsCommand loadUserArtifactsCommand
     private MappingManagerImpl mappingManager
     private MasteringManagerImpl masteringManager
-    private StepDefinitionManagerImpl stepManager
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
@@ -283,7 +282,6 @@ class DataHubPlugin implements Plugin<Project> {
         generateFunctionMetadataCommand = ctx.getBean(GenerateFunctionMetadataCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         masteringManager = ctx.getBean(MasteringManagerImpl.class)
-        stepManager = ctx.getBean(StepDefinitionManagerImpl.class)
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
@@ -342,7 +340,6 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("loadUserArtifactsCommand", loadUserArtifactsCommand)
             project.extensions.add("mappingManager", mappingManager)
             project.extensions.add("masteringManager", masteringManager)
-            project.extensions.add("stepManager", stepManager)
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("legacyFlowManager", legacyFlowManager)
             project.extensions.add("entityManager", entityManager)

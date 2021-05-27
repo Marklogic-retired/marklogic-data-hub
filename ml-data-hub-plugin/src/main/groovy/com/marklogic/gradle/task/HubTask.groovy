@@ -100,11 +100,6 @@ abstract class HubTask extends DefaultTask {
     }
 
     @Internal
-    StepDefinitionManager getStepDefinitionManager() {
-        getProject().property("stepManager")
-    }
-
-    @Internal
     EntityManager getEntityManager() {
         getProject().property("entityManager")
     }

@@ -18,7 +18,6 @@
 package com.marklogic.gradle.task
 
 
-import com.marklogic.hub.StepDefinitionManager
 import com.marklogic.hub.scaffold.Scaffolding
 import com.marklogic.hub.step.StepDefinition
 import org.gradle.api.GradleException
@@ -42,21 +41,11 @@ class CreateStepDefinitionTask extends HubTask {
             throw new GradleException("stepDefType must have a value of either 'ingestion' or 'custom'")
         }
 
-        StepDefinitionManager stepDefinitionManager = getStepDefinitionManager()
-        StepDefinition stepDefinition = StepDefinition.create(stepDefName, StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefType))
-
-        if (stepDefinitionManager.getStepDefinition(stepDefinition.name, stepDefinition.type) != null) {
-            throw new GradleException("A step definition already exists with the name '${stepDefName}' and type '${stepDefType}'")
-        }
-
         String format = project.hasProperty(propFormat) ? project.property(propFormat) : "sjs"
         if (!"sjs".equalsIgnoreCase(format) && !"xqy".equalsIgnoreCase(format)) {
             throw new GradleException("format must have a value of either 'sjs' or 'xqy'")
         }
 
-        Scaffolding scaffolding = getScaffolding()
-        stepDefinition.setModulePath("/custom-modules/" + stepDefType.toLowerCase() + "/" + stepDefName + "/main.sjs")
-        stepDefinitionManager.saveStepDefinition(stepDefinition)
-        scaffolding.createCustomModule(stepDefName, stepDefType, format)
+        getScaffolding().createStepDefinition(stepDefName, stepDefType, format)
     }
 }
