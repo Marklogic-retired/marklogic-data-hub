@@ -396,12 +396,13 @@ declare function hent:find-entity-identifiers(
   let $entity-type-iri := sem:iri($entity-type)
   let $primary-key-defined := xdmp:exists(cts:search(fn:doc(), cts:triple-range-query($entity-type-iri, sem:iri('http://marklogic.com/entity-services#primaryKey'), ())))
   let $primary-keys := if ($primary-key-defined) then
+    (: Optimize set to zero to avoid issue where query occausional doesn't return primary keys. See https://project.marklogic.com/jira/browse/DHFPROD-7388 :)
     let $results := sem:sparql('
       SELECT * WHERE {
         ?instanceIRI <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?entityTypeIRI;
            <http://www.w3.org/2000/01/rdf-schema#isDefinedBy> ?URI.
-      }', map:entry("entityTypeIRI", $entity-type-iri), (), cts:document-query($all-uris))
-    return map:new(
+      }', map:entry("entityTypeIRI", $entity-type-iri), ("optimize=0"), cts:document-query($all-uris))
+    let $primary-keys := map:new(
         let $entity-type-prefix := $entity-type || "/"
         for $result in $results
         let $uri := fn:string(map:get($result, "URI"))
@@ -413,7 +414,13 @@ declare function hent:find-entity-identifiers(
             else
               $primary-key
         )
-    )
+      )
+    let $_fill-in-missing :=
+      for $uri in $all-uris
+      where fn:not(map:contains($primary-keys, $uri))
+      return
+        map:put($primary-keys, $uri, $uri)
+    return $primary-keys
   else
     map:new(
         $all-uris ! map:entry(., .)
