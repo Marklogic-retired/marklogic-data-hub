@@ -75,6 +75,35 @@ class MappingStepDetail {
     return cy.findByTestId(`lessLink`);
   }
 
+  relatedFilterMenu (entityName: string) {
+    return cy.get(`#${entityName}-entities-filter`);
+  }
+
+  deleteConfirmationButtonYes() {
+    return cy.get(".ant-modal-content button.ant-btn").contains("Yes");
+  }
+
+  deleteConfirmationButtonNo() {
+    return cy.get(".ant-modal-content button.ant-btn").contains("No");
+  }
+
+  relatedFilterSelection(entityName: string, relatedName: string) {
+    return cy.get(`#${entityName}-entities-filter li[title="${relatedName}"]`);
+  }
+
+  relatedFilterSelectionDeleteIcon(entityName: string, relatedName: string) {
+    return cy.get(`#${entityName}-entities-filter li[title="${relatedName}"]`).find("span.ant-select-selection__choice__remove");
+  }
+
+  entityTitle (title: string) {
+    return cy.findByLabelText(`${title}-title`);
+  }
+
+  relatedDeleteIcon(entityName: string) {
+    // data-testid="Relation (relatedTo Person)-delete"
+    return cy.findByTestId(`${entityName}-delete`);
+  }
+
   /**
    * Get property icon from dropdown list by Entity type property name
    * @param propertyName
@@ -121,7 +150,16 @@ class MappingStepDetail {
   }
 
   /**
-   * Xpath Expresion
+   * Get related entity from dropdown list, depends on relatedFilterMenu() being clicked first
+   * @param entityTitle
+   * @example Child (childOf Person)
+   */
+  getRelatedEntityFromList(entityTitle: string) {
+    return cy.findByLabelText(`${entityTitle}-option`);
+  }
+
+  /**
+   * Xpath Expression
    * @param propertyName
    * @example OrderId, address
    * @param value
@@ -131,8 +169,32 @@ class MappingStepDetail {
     cy.findByTestId(`${propertyName}-mapexpression`).type(value);
   }
 
-  validateMapValues(entityName: string, propertyName: string, value:string) {
+  validateContextInput(entityTitle: string, value:string) {
+    return cy.findByTestId(`${entityTitle}-Context-mapexpression`).should("have.text", value);
+  }
+
+  validateURIInput(entityTitle: string, value:string) {
+    return cy.findByTestId(`${entityTitle}-URI-mapexpression`).should("have.text", value);
+  }
+
+  validateMapValue(entityName: string, propertyName: string, value:string) {
     cy.findByTestId(`${entityName}-${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
+  }
+
+  validateMapInput(propertyName: string, value:string) {
+    cy.findByTestId(`${propertyName}-mapexpression`).should("have.text", value);
+  }
+
+  getURIInput(entityTitle: string) {
+    return cy.findByTestId(`${entityTitle}-URI-mapexpression`);
+  }
+
+  getURIValue(entityTitle: string) {
+    return cy.findByTestId(`${entityTitle}-URI-value`).find(".ml-tooltip-container");
+  }
+
+  getForeignIcon(propertyName: string) {
+    return cy.findByTestId(`foreign-${propertyName}`);
   }
 
   goBackToCurateHomePage() {
@@ -141,6 +203,38 @@ class MappingStepDetail {
 
   noDataAvailable() {
     return cy.get("#noData");
+  }
+
+  dataAvailable() {
+    return cy.get("#dataPresent");
+  }
+
+  successMessage() {
+    return cy.findByTestId("successMessage");
+  }
+
+  getEntitySettings(entityName: string) {
+    return cy.findByTestId(`${entityName}-entity-settings`);
+  }
+
+  getTargetPermissions(entityName: string) {
+    return cy.findByTestId(`${entityName}-targetPermissions`);
+  }
+
+  getSaveSettings(entityName: string) {
+    return cy.findByLabelText(`${entityName}-save-settings`);
+  }
+
+  getValidationError(entityName: string) {
+    return cy.findByLabelText(`${entityName}-validationError`);
+  }
+
+  cancelSettings() {
+    return cy.findByTestId("cancel-settings");
+  }
+
+  targetCollection() {
+    return cy.findByLabelText("additionalColl-select");
   }
 }
 
