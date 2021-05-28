@@ -631,6 +631,14 @@ def isChangeInUI(){
     num_of_ui_changes as Integer != 0
 }
 
+def isPRMergable(){
+    return env.TESTS_PASSED && env.UNIT_TESTS_PASSED &&
+        (env.NO_UI_TESTS || env.UI_TESTS_PASSED) && (env.NO_UI_TESTS || env.CYPRESSE2E_TESTS_PASSED) &&
+        env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() &&
+        (env.NO_UI_TESTS || (env.UI_TESTS_PASSED && env.UI_TESTS_PASSED.toBoolean())) &&
+        (env.NO_UI_TESTS || (env.CYPRESSE2E_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED.toBoolean()))
+}
+
 void singleNodeTestOnLinux(String type,String mlVersion){
         cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
         props = readProperties file:'data-hub/pipeline.properties';
@@ -837,9 +845,19 @@ pipeline{
              catchError(catchInterruptions: true) { RTLTests('Release','10.0-6') }
         }}
         post{
-          success {
-             println("$STAGE_NAME Completed")
-             sendMail Email,"<h3>$STAGE_NAME Server on Linux Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>",false,"$BRANCH_NAME on $STAGE_NAME | Passed"
+           success {
+                println("UI Tests Completed")
+                script{
+                    env.UI_TESTS_PASSED=true
+                    def email;
+                    if(env.CHANGE_AUTHOR){
+                        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                        email=getEmailFromGITUser author
+                    }else{
+                        email=Email
+                    }
+                    sendMail email,"<h3>$STAGE_NAME Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'E2E Tests for  $BRANCH_NAME Passed"
+                }
           }
           unstable {
              println("$STAGE_NAME Failed")
@@ -856,7 +874,7 @@ pipeline{
 
 		stage('code-review'){
 		 when {
-            expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
+            expression {return isPRMergable()}
             allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
   			beforeAgent true
 		 }
@@ -866,7 +884,7 @@ pipeline{
 
 		stage('Merge-PR'){
 		when {
-            expression {return env.TESTS_PASSED && env.UNIT_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED && env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() && env.CYPRESSE2E_TESTS_PASSED.toBoolean()}
+            expression {return isPRMergable()}
             changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
   			beforeAgent true
 		}
