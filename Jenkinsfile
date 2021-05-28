@@ -967,7 +967,7 @@ pipeline{
 		stage('rh7_cluster_10.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-            timeout(time: 3,  unit: 'HOURS'){
+            timeout(time: 4,  unit: 'HOURS'){
                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0","Latest")}
             }}
 			post{
@@ -988,7 +988,7 @@ pipeline{
 		stage('rh7_cluster_9.0-Nightly'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-             timeout(time: 3,  unit: 'HOURS'){
+             timeout(time: 4,  unit: 'HOURS'){
               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0","Latest")}
 			}}
 			post{
@@ -1008,7 +1008,7 @@ pipeline{
         stage('rh7_cluster_9.0-11'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-             timeout(time: 3,  unit: 'HOURS'){
+             timeout(time: 4,  unit: 'HOURS'){
               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("9.0-11","Release")}
 			}}
 			post{
@@ -1027,7 +1027,7 @@ pipeline{
          stage('rh7_cluster_10.0-3'){
              agent { label 'dhfLinuxAgent'}
              steps{
-              timeout(time: 3,  unit: 'HOURS'){
+              timeout(time: 4,  unit: 'HOURS'){
                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-3","Release")}
              }}
              post{
@@ -1047,7 +1047,7 @@ pipeline{
              stage('rh7_cluster_10.0-4'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                timeout(time: 3,  unit: 'HOURS'){
+                timeout(time: 4,  unit: 'HOURS'){
                  catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-4.4","Release")}
                }}
                post{
@@ -1067,7 +1067,7 @@ pipeline{
              stage('rh7_cluster_10.0-5'){
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                timeout(time: 3,  unit: 'HOURS'){
+                timeout(time: 4,  unit: 'HOURS'){
                  catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-5.3","Release")}
                 }}
                 post{
@@ -1087,7 +1087,7 @@ pipeline{
 		stage('rh7_cluster_10.0-6'){
             agent { label 'dhfLinuxAgent'}
             steps{
-             timeout(time: 3,  unit: 'HOURS'){
+             timeout(time: 4,  unit: 'HOURS'){
                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhflinuxTests("10.0-6","Release")}
             }}
             post{
@@ -1189,7 +1189,7 @@ pipeline{
         		stage('w10_SN_9.0-Nightly'){
         			agent { label 'dhfWinagent'}
         			steps{
-                     timeout(time: 3,  unit: 'HOURS'){
+                     timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0","Latest")}
                     }}
         			post{
@@ -1209,7 +1209,7 @@ pipeline{
                 stage('w10_SN_10.0-Nightly'){
         			agent { label 'dhfWinagent'}
         			steps{
-                     timeout(time: 3,  unit: 'HOURS'){
+                     timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("10.0","Latest")}
         			}}
         			post{
@@ -1229,7 +1229,7 @@ pipeline{
         		stage('w10_SN_9.0-11'){
         			agent { label 'dhfWinagent'}
         			steps{
-                    timeout(time: 3,  unit: 'HOURS'){
+                    timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){dhfWinTests("9.0-11","Release")}
         			}}
         			post{
@@ -1249,7 +1249,7 @@ pipeline{
         		stage('w12_cluster_10.0-6'){
         			agent { label 'dhfWinCluster'}
         			steps{
-                    timeout(time: 3,  unit: 'HOURS'){
+                    timeout(time: 4,  unit: 'HOURS'){
                      catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){winParallel()}
         			}}
         			post{
