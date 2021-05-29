@@ -243,12 +243,12 @@ void PreBuildCheck() {
 }
 
 void Tests(){
-    script{
+        cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+
         props = readProperties file:'data-hub/pipeline.properties';
         copyRPM 'Release','10.0-6'
-        mlHubHosts=setupMLDockerNodes 3
-        env.mlHubHosts=mlHubHosts
-        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost=${mlHubHosts};'
+        def mlHubHosts=setupMLDockerNodes 3
+        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost='+mlHubHosts
         junit '**/TEST-*.xml'
         if(env.CHANGE_TITLE){
             JIRA_ID=env.CHANGE_TITLE.split(':')[0]
@@ -257,7 +257,6 @@ void Tests(){
         if(!env.CHANGE_URL){
             env.CHANGE_URL=" "
         }
-    }
 }
 
 void RTLTests(String type,String mlVersion){
@@ -266,8 +265,7 @@ void RTLTests(String type,String mlVersion){
 
     props = readProperties file:'data-hub/pipeline.properties';
     copyRPM type,mlVersion
-    mlHubHosts=setupMLDockerNodes 3
-    env.mlHubHosts=mlHubHosts
+    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 
     sh '''
 
@@ -713,13 +711,10 @@ pipeline{
 		}
 		stage('tests'){
 		parallel{
-		stage('Core-Unit-Tests'){
-		agent { label 'dhfLinuxAgent'}
+		 stage('Core-Unit-Tests'){
+		 agent { label 'dhfLinuxAgent'}
 			steps{Tests()}
 			post{
-				  always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
                   success {
                     println("Core Unit Tests Completed")
                     script{
