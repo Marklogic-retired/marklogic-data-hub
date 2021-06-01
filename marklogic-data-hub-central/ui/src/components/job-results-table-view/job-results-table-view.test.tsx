@@ -27,7 +27,7 @@ describe("Job results Table view component", () => {
     expect(getByText("mapClientJSON")).toBeInTheDocument();
     expect(getByText("mapping")).toBeInTheDocument();
     expect(getByText("2021-04-21 20:37")).toBeInTheDocument();
-    expect(getByText("0.066399s")).toBeInTheDocument();
+    expect(getByText("0s 66ms")).toBeInTheDocument();
     expect(getByText("pari")).toBeInTheDocument();
 
     //Check if the tooltip on 'completed Status works fine'.

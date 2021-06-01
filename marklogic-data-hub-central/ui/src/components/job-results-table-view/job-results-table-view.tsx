@@ -40,7 +40,7 @@ const JobResultsTableView = (props) => {
       title: "Job ID",
       dataIndex: "jobId",
       visible: true,
-      width: 150,
+      width: 200,
       sortable: false,
       render: (jobId) => {
         return <><a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a></>;
@@ -110,31 +110,16 @@ const JobResultsTableView = (props) => {
       dataIndex: "duration",
       visible: true,
       sortable: false,
-      width: 150,
+      width: 100,
       render: ((duration:string) => renderDuration(duration))
     },
     {
-      title: "Records Processed",
+      title: "Records Written",
       dataIndex: "successfulItemCount",
       visible: true,
       width: 150,
       sortable: false,
-      render: (successfulItemCount, record) => {
-        return <>
-          <div>
-            <CheckCircleFilled style={{color: "#389E0D"}}/>
-            <span className={styles.events}>
-              {successfulItemCount}
-            </span>
-          </div>
-          <div>
-            <CloseCircleFilled style={{color: "#B32424"}}/>
-            <span className={styles.events}>
-              {record.failedItemCount}
-            </span>
-          </div>
-        </>;
-      }
+      align: "right",
     }
   ];
 

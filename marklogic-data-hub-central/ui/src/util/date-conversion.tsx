@@ -29,8 +29,9 @@ export const renderDuration = (duration) => {
     let days = durationObj.days && durationObj.days > 0 ? durationObj.days + "d" : " ";
     let hours = durationObj.hours && durationObj.hours > 0 ? durationObj.hours + "h" : " ";
     let min = durationObj.minutes && durationObj.minutes > 0 ? durationObj.minutes + "m" : " ";
-    let seconds = durationObj.seconds && durationObj.seconds > 0 ? durationObj.seconds + "s" : " ";
-    let finalDuration = days + " " + hours + " " + min + " " + seconds;
+    let seconds = durationObj.seconds && durationObj.seconds > 0 ? Math.trunc(durationObj.seconds) + "s" : " ";
+    let milliseconds = durationObj.seconds && durationObj.seconds > 0 ?   Math.trunc(((durationObj.seconds - Math.trunc(durationObj.seconds))*1000)) + "ms": "";
+    let finalDuration = days + " " + hours + " " + min + " " + seconds+ " "+ milliseconds;
     return <span>{finalDuration}</span>;
   }
 };

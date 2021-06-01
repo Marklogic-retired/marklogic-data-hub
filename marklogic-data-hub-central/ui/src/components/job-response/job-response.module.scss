@@ -1,7 +1,7 @@
 .jobResponseContainer {
   header {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 35px;
     .title {
       font-size :24px;
       font-weight: 500;
@@ -90,13 +90,12 @@
 .exploreDataContainer {
   margin: auto;
   width: 50%;
-  padding-top: 10px;
-  margin-bottom: -10px;
   text-align: center;
 }
 
 .closeContainer {
-  height: 25px;
+  height: 40px;
+  margin-top: -20px;
 }
 
 .exploreCuratedData, .exploreLoadedData {

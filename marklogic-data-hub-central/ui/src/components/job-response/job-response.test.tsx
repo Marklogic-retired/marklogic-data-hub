@@ -40,7 +40,7 @@ describe("Job response modal", () => {
     // check that
     await (waitForElement(() => (getByText("testFlow"))));
     expect(getByText("2020-04-24 14:05")).toBeInTheDocument();
-    expect(getByText("0.702s")).toBeInTheDocument();
+    expect(getByText("0s 702ms")).toBeInTheDocument();
 
     // check that expected steps are listed
     expect(getByText("Mapping1")).toBeInTheDocument();
@@ -73,7 +73,7 @@ describe("Job response modal", () => {
     // check that
     await (waitForElement(() => (getByText("testFlow"))));
     expect(getByText("2020-04-04 01:17")).toBeInTheDocument();
-    expect(getByText("0.702s")).toBeInTheDocument();
+    expect(getByText("0s 702ms")).toBeInTheDocument();
 
     // check that expected steps are listed
     expect(getByText("failedIngest")).toBeInTheDocument();
