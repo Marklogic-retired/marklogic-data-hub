@@ -830,7 +830,8 @@ pipeline{
                    }
                    unstable {
                       println("E2E Tests Failed")
-                      archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*"
+                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                      archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*,MLLogs/**/*"
                       script{
                       def email;
                     if(env.CHANGE_AUTHOR){
