@@ -9,6 +9,7 @@ import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
+import "./job-response.scss";
 
 const {Panel} = Collapse;
 
