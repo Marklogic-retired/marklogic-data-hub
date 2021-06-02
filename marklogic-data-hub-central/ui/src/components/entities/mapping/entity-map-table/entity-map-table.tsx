@@ -614,18 +614,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
       mapExp[propName] = "";
     }
     if (propName === "URI" && !selectedRow.isProperty) {
-      insertedContext = uriExpression.substr(0, caretPosition) + content +
+      insertedUri = uriExpression.substr(0, caretPosition) + content +
         uriExpression.substr(caretPosition, uriExpression.length);
-      setUriExpression(insertedContext);
-      await setMapExp({...mapExp});
-      tempMapExp = Object.assign({}, mapExp);
+      setUriExpression(insertedUri);
+      tempMapExp = mapExp;
     } else {
       let newExp = mapExp[propName].substr(0, caretPosition) + content +
         mapExp[propName].substr(caretPosition, mapExp[propName].length);
-      await setMapExp({...mapExp, [propName]: newExp});
-      tempMapExp = Object.assign({}, mapExp);
+      let newMapExp = {...mapExp, [propName]: newExp};
+      setMapExp(newMapExp);
+      tempMapExp = Object.assign({}, newMapExp);
     }
-
     await props.saveMapping(tempMapExp, props.entityMappingId, insertedContext, insertedUri, props.entityModel);
     setDisplaySelectList(prev => false);
     setDisplayFuncMenu(prev => false);
