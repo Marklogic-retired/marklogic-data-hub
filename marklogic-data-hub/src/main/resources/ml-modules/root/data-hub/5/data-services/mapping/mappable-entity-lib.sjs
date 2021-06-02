@@ -12,18 +12,32 @@ function getEntitiesForUI(targetEntityName){
 
   //Used to avoid cyclical dependencies
   let entitiesNotToExpand = [targetEntityName];
+  const targetEntityContext = {
+    "entityName" :  targetEntityName,
+    targetEntityName,
+    "entityProperties": expandStructuredProperties(targetEntityModel, targetEntityName)
+  };
+
   entitiesNotToExpand = entitiesNotToExpand.concat(entityModelsReferringToTargetEntity.map(entityModel => entityModel.info.title));
-  addRelatedMappableEntities(targetEntityName, targetEntityName, expandStructuredProperties(targetEntityModel, targetEntityName), entitiesNotToExpand,
-    {"mappingTitle": targetEntityName, "entityType": targetEntityName}, targetEntityName);
+  addRelatedMappableEntities(targetEntityContext, entitiesNotToExpand, {"mappingTitle": targetEntityName, "entityType": targetEntityName}, targetEntityName);
+
   entityModelsReferringToTargetEntity.forEach(entityModel=>{
     const entityName = entityModel.info.title;
-    addRelatedMappableEntities(entityName, targetEntityName, expandStructuredProperties(entityModel, entityName), entitiesNotToExpand,
-      {"entityType": entityName}, entityName);
+    const entityContext = {
+      "entityName" :  entityName,
+      targetEntityName,
+      "entityProperties": expandStructuredProperties(entityModel, entityName)
+    };
+    addRelatedMappableEntities(entityContext, entitiesNotToExpand, {"entityType": entityName}, entityName, "");
   });
   return responseArray;
 }
 
-function addRelatedMappableEntities(entityName, targetEntityName, entityProperties, entitiesNotToExpand, entityResponseObject , propertyPath ) {
+function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityResponseObject, propertyPath, pathSoFar ) {
+  const entityName = entityContext.entityName;
+  const targetEntityName = entityContext.targetEntityName;
+  const entityProperties = entityContext.entityProperties;
+
   if(!entityResponseObject.entityType){
     entityResponseObject.entityType = entityName;
   }
@@ -35,32 +49,59 @@ function addRelatedMappableEntities(entityName, targetEntityName, entityProperti
       let relatedEntityName = relatedEntityType.substring(relatedEntityType.lastIndexOf('/') + 1);
       let joinPropertyName = entityPropertyValue["joinPropertyName"] ? entityPropertyValue["joinPropertyName"] : entityPropertyValue.items["joinPropertyName"]
       if(relatedEntityName==targetEntityName){
-        const entityMappingId = entityName + ":" + targetEntityName + "." + joinPropertyName;
-        const mappingTitle = entityName + " (" + entityPropertyName + " "+ relatedEntityName + ")";
-        entityResponseObject.entityMappingId = entityMappingId;
-        entityResponseObject.mappingTitle = mappingTitle;
-        setRelatedEntityMappings(responseArray.find(response => response.entityType == targetEntityName), mappingTitle, entityMappingId);
+        const targetEntityResponse = responseArray.find(response => response.entityType == targetEntityName);
+        if(!entityHasMultipleForeignKey(targetEntityResponse, entityName)){
+          const entityMappingId =  targetEntityName + "." + joinPropertyName + ":" + entityName;
+          const mappingTitle = entityName + " (" + entityPropertyName + " "+ relatedEntityName + ")";
+          entityResponseObject.entityMappingId = entityMappingId;
+          entityResponseObject.mappingTitle = mappingTitle;
+          setRelatedEntityMappings(targetEntityResponse, mappingTitle, entityMappingId);
+          pathSoFar = targetEntityName + "." + joinPropertyName;
+        }
       }
       else if(!entitiesNotToExpand.includes(relatedEntityName)){
         propertyPath += "." + entityPropertyName;
-        let relatedEntityResponseObject = createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath);
+        pathSoFar = pathSoFar ?  pathSoFar + ":" + propertyPath : propertyPath;
+        let relatedEntityResponseObject = createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath, pathSoFar);
         setRelatedEntityMappings(entityResponseObject, entityPropertyName + " " + relatedEntityName, relatedEntityResponseObject.entityMappingId)
         entitiesNotToExpand.push(relatedEntityName)
         let relatedEntityProperties = expandStructuredProperties(getEntityModel(relatedEntityName), relatedEntityName);
-        addRelatedMappableEntities(relatedEntityName, targetEntityName, relatedEntityProperties , entitiesNotToExpand ,  relatedEntityResponseObject, relatedEntityName);
+        const entityContext = {
+          "entityName": relatedEntityName,
+          targetEntityName,
+          "entityProperties": relatedEntityProperties
+        }
+        addRelatedMappableEntities(entityContext, entitiesNotToExpand, relatedEntityResponseObject, relatedEntityName, pathSoFar);
+        pathSoFar = pathSoFar.lastIndexOf(":") != -1 ? pathSoFar.substring(0, pathSoFar.lastIndexOf(":")) : pathSoFar;
+        propertyPath = propertyPath.lastIndexOf(".") != -1 ? propertyPath.substring(0, propertyPath.lastIndexOf(".")) : propertyPath;
         entitiesNotToExpand.pop();
       }
     }
     if (entityPropertyValue["subProperties"]) {
-      addRelatedMappableEntities(entityName, targetEntityName, entityPropertyValue["subProperties"], entitiesNotToExpand, entityResponseObject, propertyPath+ "." + entityPropertyName);
+      const entityContext = {
+        entityName,
+        targetEntityName,
+        "entityProperties": entityPropertyValue["subProperties"]
+      }
+      addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityResponseObject, propertyPath+ "." + entityPropertyName, pathSoFar);
       propertyPath = propertyPath.lastIndexOf(".") != -1 ? propertyPath.substring(0, propertyPath.lastIndexOf(".")) : propertyPath;
     }
   }
 }
 
-function createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath){
+function entityHasMultipleForeignKey(targetEntityResponse, entityName ){
+  let relatedEntityMapping;
+  if(targetEntityResponse.relatedEntityMappings){
+    relatedEntityMapping = targetEntityResponse.relatedEntityMappings.find(relatedEntityMapping =>{
+      relatedEntityMapping.entityMappingId.substring(relatedEntityMapping.entityMappingId.lastIndexOf(":")) == entityName
+    });
+  }
+  return relatedEntityMapping ? true : false;
+}
+
+function createRelatedEntityResponseObject(entityName, relatedEntityName, entityPropertyName, propertyPath, pathSoFar){
   let relatedEntityResponseObject ={};
-  relatedEntityResponseObject.entityMappingId = relatedEntityName + ":" + propertyPath;
+  relatedEntityResponseObject.entityMappingId = pathSoFar + ":"+ relatedEntityName;
   relatedEntityResponseObject.entityType = relatedEntityName;
   relatedEntityResponseObject.mappingTitle = relatedEntityName + " (" + entityName + " " +entityPropertyName + ")";
   return relatedEntityResponseObject;

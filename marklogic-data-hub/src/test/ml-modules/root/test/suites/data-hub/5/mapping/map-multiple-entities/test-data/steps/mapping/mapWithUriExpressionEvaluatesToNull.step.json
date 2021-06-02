@@ -15,7 +15,7 @@
   },
   "relatedEntityMappings": [
     {
-      "relatedEntityMappingId": "Order:Customer.customerId",
+      "relatedEntityMappingId": "Customer.customerId:Order",
       "collections": ["mapCustomersJSON", "Order"],
       "expressionContext": "/Orders",
       "uriExpression": "InvalidProperty",

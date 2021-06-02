@@ -30,7 +30,7 @@
   },
   "relatedEntityMappings": [
     {
-      "relatedEntityMappingId": "Product:Order.lineItems.orderIncludes",
+      "relatedEntityMappingId": "Customer.customerId:Order.lineItems.orderIncludes:Product",
       "collections": ["mapCustomersXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order/customerInfo:Products/customerInfo:Product",
@@ -45,7 +45,7 @@
       "targetEntityType": "http://example.org/Product-1.0.0/Product"
     },
     {
-      "relatedEntityMappingId": "Order:Customer.customerId",
+      "relatedEntityMappingId": "Customer.customerId:Order",
       "collections": ["mapCustomersXML", "Order"],
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order",
       "permissions": "data-hub-common,read,data-hub-common,update",

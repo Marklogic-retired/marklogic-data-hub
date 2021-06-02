@@ -84,7 +84,7 @@
   },
   "relatedEntityMappings": [
     {
-      "relatedEntityMappingId": "Order:Customer.customerId",
+      "relatedEntityMappingId": "Customer.customerId:Order",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Order"],
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order",
       "permissions": "data-hub-common,read,data-hub-common,update",
@@ -118,7 +118,7 @@
       "targetEntityType": "http://marklogic.com/example/Order-0.0.1/Order"
     },
     {
-      "relatedEntityMappingId": "Product:Order.lineItems.includes",
+      "relatedEntityMappingId": "Customer.customerId:Order.lineItems.includes:Product",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/customerInfo:Customer/customerInfo:Orders/customerInfo:Order/customerInfo:Products/customerInfo:Product",
@@ -134,7 +134,7 @@
       "targetEntityType": "http://example.org/Product-1.0.0/Product"
     },
     {
-      "relatedEntityMappingId": "BabyRegistry:Customer.customerId",
+      "relatedEntityMappingId": "Customer.customerId:BabyRegistry",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "BabyRegistry"],
       "expressionContext": "/customerInfo:Customer/customerInfo:BabyRegistry",
       "uriExpression": "concat('/BabyRegistry/', *:BabyRegistryId)",
@@ -156,7 +156,7 @@
       "targetEntityType": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry"
     },
     {
-      "relatedEntityMappingId": "Product:BabyRegistry.includes",
+      "relatedEntityMappingId": "Customer.customerId:BabyRegistry.includes:Product",
       "collections": ["mapCustomersWithRelatedEntitiesXML", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/*:Customer/customerInfo:BabyRegistry/customerInfo:Products/customerInfo:Product",
