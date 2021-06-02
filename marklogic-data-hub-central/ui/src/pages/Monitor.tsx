@@ -55,7 +55,7 @@ const Monitor: React.FC = () => {
         setTotalDocuments(response.data.total);
         setFacets(response.data.facets);
       } else {
-        return null;
+        return;
       }
     } catch (error) {
       console.error("error", error);
@@ -68,6 +68,7 @@ const Monitor: React.FC = () => {
   };
 
   useEffect(() => {
+    mountedRef.current = true;
     getJobResults();
     return () => {
       mountedRef.current = false;
