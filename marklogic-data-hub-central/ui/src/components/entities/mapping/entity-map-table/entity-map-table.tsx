@@ -128,7 +128,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     let defaultSelected : any = [];
     let entityTitle = props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle;
     props.relatedEntitiesSelected.map(entity => {
-      if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) { defaultSelected.push(entity.entityLabel); }
+      let entityIdSections = entity["entityMappingId"].split(":");
+      let entityId = entityIdSections.length > 2 ?  /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] :  /([^.]+)/.exec(entityIdSections[0])![1];
+      if (entityId && entityId === entityTitle) { defaultSelected.push(entity.entityLabel); }
     });
     return defaultSelected;
   };
@@ -1000,7 +1002,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     >
       {props.relatedEntityTypeProperties?.map((entity, i) => {
         let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
-        if (/:(.*?)\./.exec(entity["entityMappingId"])![1] === entityTitle) {
+        let entityIdSections = entity["entityMappingId"].split(":");
+        let entityId = entityIdSections.length > 2 ?  /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] :  /([^.]+)/.exec(entityIdSections[0])![1];
+        if (entityId && entityId === entityTitle) {
           let entityLabel = entity.entityLabel;
           return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={i}>{entityLabel}</Option>;
         }
@@ -1072,7 +1076,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       //find any related mappings to the removed entity that are currently also being mapped/displayed
       props.relatedEntitiesSelected.forEach(entity => {
         relatedMappings.forEach(ent => {
-          if (ent["entityMappingId"].substring(0, ent["entityMappingId"].indexOf(".")) === entity["entityMappingId"].substring(0, entity["entityMappingId"].indexOf("."))) {
+          if (ent["entityMappingId"] === entity["entityMappingId"]) {
             if (!referringEntities.includes(entity)) {
               referringEntities.push(entity);
             }
