@@ -148,6 +148,9 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDeleteJobs", type: DeleteJobsTask, group: developGroup,
             description: "Deletes job and batch documents in the jobs database that are older than a duration specified  " +
                 "via -PretainDuration=(duration) (e.g. -PretainDuration=P30D to delete every document that is older than 30 days)")
+        project.task("hubDeleteProvenance", type: DeleteProvenanceTask, group: developGroup,
+            description: "Deletes provenance records in the jobs database that are older than a duration specified " +
+                 "via -PretainDuration=(duration) (e.g. -PretainDuration=P30D to delete every record that is older than 30 days)")
         project.task("hubClearUserData", type: ClearUserDataTask, group: developGroup,
             description: "Clears user data in the staging, final, and job databases, only leaving behind hub and user " +
                 "artifacts. Requires sufficient privilege to be able to clear each of the databases. " +

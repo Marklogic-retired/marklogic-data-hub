@@ -1,8 +1,8 @@
 'use strict';
 // No privilege required: The xdmp.securityAssert call is in the pruneProvenance function.
-const provPruneLib = require('/data-hub/5/provenance/pruning');
+const provLib = require('/data-hub/5/provenance/prov-lib.sjs');
 
 var endpointConstants;
 var endpointState;
 
-provPruneLib.pruneProvenance(endpointConstants, endpointState);
+provLib.deleteProvenance(fn.head(xdmp.fromJSON(endpointConstants)), endpointState);

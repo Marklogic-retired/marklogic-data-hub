@@ -2,7 +2,6 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.SessionState;
 import com.marklogic.client.io.Format;
 import java.io.Reader;
 
@@ -49,33 +48,28 @@ public interface ProvenanceService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_pruneProvenance;
+            private BaseProxy.DBFunctionRequest req_deleteProvenance;
 
             private ProvenanceServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/provenance/", servDecl);
 
-                this.req_pruneProvenance = this.baseProxy.request(
-                    "pruneProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
-            }
-            @Override
-            public SessionState newSessionState() {
-              return baseProxy.newSessionState();
+                this.req_deleteProvenance = this.baseProxy.request(
+                    "deleteProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
             }
 
             @Override
-            public Reader pruneProvenance(SessionState session, Reader endpointState, Reader endpointConstants) {
-                return pruneProvenance(
-                    this.req_pruneProvenance.on(this.dbClient), session, endpointState, endpointConstants
+            public com.fasterxml.jackson.databind.JsonNode deleteProvenance(Reader endpointState, Reader endpointConstants) {
+                return deleteProvenance(
+                    this.req_deleteProvenance.on(this.dbClient), endpointState, endpointConstants
                     );
             }
-            private Reader pruneProvenance(BaseProxy.DBFunctionRequest request, SessionState session, Reader endpointState, Reader endpointConstants) {
-              return BaseProxy.JsonDocumentType.toReader(
+            private com.fasterxml.jackson.databind.JsonNode deleteProvenance(BaseProxy.DBFunctionRequest request, Reader endpointState, Reader endpointConstants) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
                 request
-                      .withSession("session", session, true)
                       .withParams(
-                          BaseProxy.documentParam("endpointState", true, BaseProxy.ObjectType.fromReader(endpointState)),
-                          BaseProxy.documentParam("endpointConstants", true, BaseProxy.ObjectType.fromReader(endpointConstants))
+                          BaseProxy.documentParam("endpointState", true, BaseProxy.JsonDocumentType.fromReader(endpointState)),
+                          BaseProxy.documentParam("endpointConstants", false, BaseProxy.JsonDocumentType.fromReader(endpointConstants))
                           ).responseSingle(true, Format.JSON)
                 );
             }
@@ -83,22 +77,14 @@ public interface ProvenanceService {
 
         return new ProvenanceServiceImpl(db, serviceDeclaration);
     }
-    /**
-     * Creates an object to track a session for a set of operations
-     * that require session state on the database server.
-     *
-     * @return	an object for session state
-     */
-    SessionState newSessionState();
 
   /**
-   * Prunes provenance according to the retainDuration property provided in endpointConstants.
+   * Deletes provenance according to the retainDuration property provided in endpointConstants.
    *
-   * @param session	provides input
    * @param endpointState	provides input
    * @param endpointConstants	provides input
    * @return	as output
    */
-    Reader pruneProvenance(SessionState session, Reader endpointState, Reader endpointConstants);
+    com.fasterxml.jackson.databind.JsonNode deleteProvenance(Reader endpointState, Reader endpointConstants);
 
 }

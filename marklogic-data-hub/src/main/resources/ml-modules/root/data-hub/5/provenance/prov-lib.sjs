@@ -4,7 +4,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const config = require("/com.marklogic.hub/config.sjs");
 
 
-function validatePruneRequest({ retainDuration, batchSize = 100 }) {
+function validateDeleteRequest({ retainDuration, batchSize = 100 }) {
     if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "yearMonthDuration", retainDuration)) {
         retainDuration = xs.yearMonthDuration(retainDuration);
     } else if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "dayTimeDuration", retainDuration)) {
@@ -23,11 +23,11 @@ function validatePruneRequest({ retainDuration, batchSize = 100 }) {
     return { retainDuration, batchSize };
 }
 
-function pruneProvenance(pruneRequest, endpointState) {
-    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/prune-provenance", "execute");
+function deleteProvenance(deleteRequest, endpointState) {
+    xdmp.securityAssert("http://marklogic.com/data-hub/privileges/delete-provenance", "execute");
     // update with validated request properties
-    Object.assign(pruneRequest, validatePruneRequest(pruneRequest));
-    const { retainDuration, batchSize } = pruneRequest;
+    deleteRequest = validateDeleteRequest(deleteRequest);
+    const { retainDuration, batchSize } = deleteRequest;
     const timePruningBegins = fn.currentDateTime().subtract(retainDuration);
     return fn.head(xdmp.invokeFunction(function() {
         const collectionQuery = cts.collectionQuery('http://marklogic.com/provenance-services/record');
@@ -49,5 +49,5 @@ function pruneProvenance(pruneRequest, endpointState) {
 }
 
 module.exports = {
-    pruneProvenance: module.amp(pruneProvenance)
+    deleteProvenance: module.amp(deleteProvenance)
 };

@@ -56,7 +56,7 @@ public class DeleteJobsTest extends AbstractHubCoreTest {
                 "data-hub-operator does not have the privilege needed to delete jobs");
 
         String message = ex.getMessage();
-        assertTrue(message.startsWith("Unable to delete jobs, cause:"), "Unexpected message: " + message);
+        assertTrue(message.startsWith("Unable to delete data, cause:"), "Unexpected message: " + message);
         assertTrue(message.contains("You do not have permission to this method and URL"),
                 "Unexpected message: " + message);
     }
