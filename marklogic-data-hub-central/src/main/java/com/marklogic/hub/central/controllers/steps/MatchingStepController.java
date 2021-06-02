@@ -3,7 +3,6 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
-import com.marklogic.hub.central.controllers.MappingController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MasteringService;
@@ -11,7 +10,6 @@ import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -43,9 +41,9 @@ public class MatchingStepController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeMatching")
-    public ResponseEntity<Void> createMatchingStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign) {
+    public ResponseEntity<Void> createMatchingStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign) {
         String stepName = propertiesToAssign.get("name").asText();
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, true);
@@ -53,9 +51,9 @@ public class MatchingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeMatching")
-    public ResponseEntity<Void> updateMatchingStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
+    public ResponseEntity<Void> updateMatchingStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, false);
         return emptyOk();

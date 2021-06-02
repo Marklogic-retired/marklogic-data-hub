@@ -12,7 +12,10 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.ArrayList;
 
@@ -38,9 +41,9 @@ public class CustomStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeCustom")
-    public ResponseEntity<Void> updateCustomStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
+    public ResponseEntity<Void> updateCustomStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
         customStepService().updateCustomStep(propertiesToAssign);
         return emptyOk();

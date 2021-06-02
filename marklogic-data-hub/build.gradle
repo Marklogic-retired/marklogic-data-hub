@@ -71,7 +71,7 @@ dependencies {
     testImplementation files("src/testFixtures/resources")
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
-    testImplementation "org.springframework:spring-test:5.2.9.RELEASE"
+    testImplementation "org.springframework:spring-test:5.2.15.RELEASE"
 
     // For managing a pool of HubConfigImpl objects
     testFixturesApi "org.apache.commons:commons-pool2:2.8.1"

@@ -39,9 +39,9 @@ public class MergingStepController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeMerging")
-    public ResponseEntity<Void> createMergingStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign) {
+    public ResponseEntity<Void> createMergingStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign) {
         String stepName = propertiesToAssign.get("name").asText();
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, true);
@@ -49,9 +49,9 @@ public class MergingStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeMerging")
-    public ResponseEntity<Void> updateMergingStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
+    public ResponseEntity<Void> updateMergingStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, false);
         return emptyOk();
