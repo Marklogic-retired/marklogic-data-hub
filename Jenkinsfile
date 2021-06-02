@@ -287,6 +287,13 @@ void RTLTests(String type,String mlVersion){
         currentBuild.result='UNSTABLE'
     }
 
+    if(env.CHANGE_TITLE){
+        JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+        jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+    }
+    if(!env.CHANGE_URL){
+        env.CHANGE_URL=" "
+    }
 }
 
 void BuildDatahub(){
