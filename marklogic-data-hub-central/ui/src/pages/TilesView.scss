@@ -18,7 +18,6 @@ div.mosaic-container{
     z-index: 0;
 }
 
-
 div.mosaic-container div.mosaic-tile {
     border: solid 1px;
     padding: 0;
@@ -38,10 +37,9 @@ div.mosaic-container div.mosaic-window-toolbar {
     height: 40px;
 }
 
-// Removed to drop the extra scroll bar in mapping step details. Keeping this commented for now. DHFPROD-7290
-// div.mosaic-container div.mosaic-window-body {
-//     overflow: auto;
-// }
+div.mosaic-container div.mosaic-window-body {
+    overflow-y: auto;
+}
 
 div.mosaic-container-load div.mosaic-tile,
 div.mosaic-container-model div.mosaic-tile,
