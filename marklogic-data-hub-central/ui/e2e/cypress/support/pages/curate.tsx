@@ -199,6 +199,34 @@ class CuratePage {
   xpathExpression(propertyName: string) {
     return cy.findByTestId(`${propertyName}-mapexpression`);
   }
+
+  targetCollectionDropdown() {
+    cy.get(".ant-select-dropdown").eq(0).click();
+  }
+
+  alertMessage() {
+    return cy.get("[class*=\"advanced-settings_alert__dBHmT\"] span[class=\"ant-alert-message\"] div");
+  }
+
+  alertDescription() {
+    return cy.get("[class*=\"advanced-settings_alert__dBHmT\"] span[class=\"ant-alert-description\"]");
+  }
+
+  removeTargetCollection(collection: string) {
+    cy.get(`[title=${collection}] span[class="ant-select-selection__choice__remove"]`).click();
+  }
+
+  matchTargetCollection(collection: string) {
+    return cy.get(`[id="additionalColl"] [class="ant-select-selection__rendered"] [title=${collection}]`);
+  }
+
+  targetCollection(collection: string) {
+    cy.get("div[id=\"additionalColl\"]").type(collection);
+  }
+
+  mergeTargetCollection(collection: string) {
+    return cy.get(`[data-row-key=${collection}] [class="advanced-target-collections_preWrap__3Dwhq"]`);
+  }
 }
 
 const curatePage = new CuratePage();
