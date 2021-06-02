@@ -201,7 +201,7 @@ class Flow {
         const contentToWrite = writeQueue.getContentArray(stepExecutionContext.getTargetDatabase());
         writeTransactionInfo = this.flowUtils.writeContentArray(contentToWrite, stepExecutionContext.getTargetDatabase());
       } catch (e) {
-        this.handleWriteError(this, stepExecutionContext, e);
+        this.handleWriteError(writeQueue, stepExecutionContext, e);
       }
     }
 
@@ -251,20 +251,24 @@ class Flow {
     }
   }
 
-  handleWriteError(flowInstance, stepExecutionContext, error) {
-    stepExecutionContext.setCompletedItems([]);
-    const failedItems = flowInstance.writeQueue.getContentUris(stepExecutionContext.getTargetDatabase());
+  handleWriteError(writeQueue, stepExecutionContext, error) {
+    stepExecutionContext.clearCompletedItems();
+
+    // Note that in this scenario, and this scenario only, DHF 5 changes the definition of "failed items" to be
+    // "URIs written" (or "attempted to be written") instead of "items processed". This makes a difference when
+    // a step returns multiple content objects per item that it receives.
+    const failedItems = writeQueue.getContentUris(stepExecutionContext.getTargetDatabase());
     stepExecutionContext.setFailedItems(failedItems);
 
     const operation = error.stackFrames && error.stackFrames[0] && error.stackFrames[0].operation;
     let uri;
     // see if we can determine a uri based off the operation in the stackFrames
     if (operation) {
-      uri = failedItems.find(uri => operation.includes(`"${uri}"`));
+      uri = failedItems.find(item => operation.includes(`"${item}"`));
     }
 
     // Directly add this to avoid the failedItems count from being incremented
-    stepExecutionContext.stepErrors.push(Object.assign(error, {"uri":uri}));
+    stepExecutionContext.stepErrors.push(Object.assign(error, {"uri": uri}));
   }
 }
 
