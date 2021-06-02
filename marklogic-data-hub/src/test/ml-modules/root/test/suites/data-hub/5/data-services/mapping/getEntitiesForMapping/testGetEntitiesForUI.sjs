@@ -40,20 +40,23 @@ function testExpandStructuredProperties(result){
 
 function testGetAllRelatedEntities(){
   const response1 = mappableEntityLib.getEntitiesForUI("Customer");
-  const customerResponse = getEntityResponse(response1, "Customer");
-  const orderResponse = getEntityResponse(response1, "Order");
-  //console.log(JSON.stringify(orderResponse))
-  const productResponse = getEntityResponse(response1, "Product");
-  const productTypeResponse = getEntityResponse(response1, "ProductType");
+  const customerResponse = getEntityResponseByName(response1, "Customer");
+  const orderResponse = getEntityResponseByName(response1, "Order");
+
+  const productIncludesResponse = getEntityResponseById(response1, "Customer.customerId:Order.lineItems.includes:Product");
+  const productIncludesTypeResponse = getEntityResponseById(response1, "Customer.customerId:Order.lineItems.includes:Product.productCategory:ProductType");
+
+  const productAdditionalItemResponse = getEntityResponseById(response1, "Customer.customerId:Order.lineItems.additionalItem:Product");
+  const productAdditionalItemTypeResponse = getEntityResponseById(response1, "Customer.customerId:Order.lineItems.additionalItem:Product.productCategory:ProductType");
 
   testExpandStructuredProperties(customerResponse.entityModel.definitions.Customer.properties);
   assertions.push(
-    test.assertEqual(4, response1.length),
+    test.assertEqual(6, response1.length),
     test.assertEqual("Customer", customerResponse.entityType),
     test.assertEqual("Customer", customerResponse.mappingTitle),
     test.assertEqual(1, customerResponse.relatedEntityMappings.length),
     test.assertEqual("Order (orderedBy Customer)", customerResponse.relatedEntityMappings[0].mappingLinkText),
-    test.assertEqual("Order:Customer.customerId", customerResponse.relatedEntityMappings[0].entityMappingId),
+    test.assertEqual("Customer.customerId:Order", customerResponse.relatedEntityMappings[0].entityMappingId),
 
     test.assertEqual("integer", orderResponse.entityModel.definitions.Order.properties.orderId.datatype),
     test.assertEqual("integer", orderResponse.entityModel.definitions.Order.properties.orderedBy.datatype),
@@ -62,35 +65,58 @@ function testGetAllRelatedEntities(){
     test.assertEqual("array", orderResponse.entityModel.definitions.Order.properties.lineItems.datatype),
     test.assertEqual("#/definitions/LineItem", orderResponse.entityModel.definitions.Order.properties.lineItems.items.$ref),
     test.assertEqual("integer", orderResponse.entityModel.definitions.Order.properties.lineItems.subProperties.quantity.datatype),
-    test.assertEqual("Order:Customer.customerId", orderResponse.entityMappingId),
+    test.assertEqual("Customer.customerId:Order", orderResponse.entityMappingId),
     test.assertEqual("Order", orderResponse.entityType),
     test.assertEqual("Order (orderedBy Customer)", orderResponse.mappingTitle),
-    test.assertEqual(1, orderResponse.relatedEntityMappings.length),
+    test.assertEqual(2, orderResponse.relatedEntityMappings.length),
     test.assertEqual("includes Product", orderResponse.relatedEntityMappings[0].mappingLinkText),
-    test.assertEqual("Product:Order.lineItems.includes", orderResponse.relatedEntityMappings[0].entityMappingId),
+    test.assertEqual("Customer.customerId:Order.lineItems.includes:Product", orderResponse.relatedEntityMappings[0].entityMappingId),
+    test.assertEqual("additionalItem Product", orderResponse.relatedEntityMappings[1].mappingLinkText),
+    test.assertEqual("Customer.customerId:Order.lineItems.additionalItem:Product", orderResponse.relatedEntityMappings[1].entityMappingId),
 
-    test.assertEqual("integer", productResponse.entityModel.definitions.Product.properties.productId.datatype),
-    test.assertEqual("string", productResponse.entityModel.definitions.Product.properties.productCategory.datatype),
-    test.assertEqual("http://example.org/ProductType-0.0.1/ProductType", productResponse.entityModel.definitions.Product.properties.productCategory.relatedEntityType),
-    test.assertEqual("productType", productResponse.entityModel.definitions.Product.properties.productCategory.joinPropertyName),
-    test.assertEqual("Product:Order.lineItems.includes", productResponse.entityMappingId),
-    test.assertEqual("Product", productResponse.entityType),
-    test.assertEqual("Product (Order includes)", productResponse.mappingTitle),
-    test.assertEqual(1, productResponse.relatedEntityMappings.length),
-    test.assertEqual("productCategory ProductType", productResponse.relatedEntityMappings[0].mappingLinkText),
-    test.assertEqual("ProductType:Product.productCategory", productResponse.relatedEntityMappings[0].entityMappingId),
+    test.assertEqual("integer", productIncludesResponse.entityModel.definitions.Product.properties.productId.datatype),
+    test.assertEqual("string", productIncludesResponse.entityModel.definitions.Product.properties.productCategory.datatype),
+    test.assertEqual("http://example.org/ProductType-0.0.1/ProductType", productIncludesResponse.entityModel.definitions.Product.properties.productCategory.relatedEntityType),
+    test.assertEqual("productType", productIncludesResponse.entityModel.definitions.Product.properties.productCategory.joinPropertyName),
+    test.assertEqual("Customer.customerId:Order.lineItems.includes:Product", productIncludesResponse.entityMappingId),
+    test.assertEqual("Product", productIncludesResponse.entityType),
+    test.assertEqual("Product (Order includes)", productIncludesResponse.mappingTitle),
+    test.assertEqual(1, productIncludesResponse.relatedEntityMappings.length),
+    test.assertEqual("productCategory ProductType", productIncludesResponse.relatedEntityMappings[0].mappingLinkText),
+    test.assertEqual("Customer.customerId:Order.lineItems.includes:Product.productCategory:ProductType", productIncludesResponse.relatedEntityMappings[0].entityMappingId),
 
-    test.assertEqual("string", productTypeResponse.entityModel.definitions.ProductType.properties.productType.datatype),
-    test.assertEqual("ProductType:Product.productCategory", productTypeResponse.entityMappingId),
-    test.assertEqual("ProductType", productTypeResponse.entityType),
-    test.assertEqual("ProductType (Product productCategory)", productTypeResponse.mappingTitle),
-    test.assertEqual(null, productTypeResponse.relatedEntityMappings)
+    test.assertEqual("string", productIncludesTypeResponse.entityModel.definitions.ProductType.properties.productType.datatype),
+    test.assertEqual("Customer.customerId:Order.lineItems.includes:Product.productCategory:ProductType", productIncludesTypeResponse.entityMappingId),
+    test.assertEqual("ProductType", productIncludesTypeResponse.entityType),
+    test.assertEqual("ProductType (Product productCategory)", productIncludesTypeResponse.mappingTitle),
+    test.assertEqual(null, productIncludesTypeResponse.relatedEntityMappings),
+
+    test.assertEqual("integer", productAdditionalItemResponse.entityModel.definitions.Product.properties.productId.datatype),
+    test.assertEqual("string", productAdditionalItemResponse.entityModel.definitions.Product.properties.productCategory.datatype),
+    test.assertEqual("http://example.org/ProductType-0.0.1/ProductType", productAdditionalItemResponse.entityModel.definitions.Product.properties.productCategory.relatedEntityType),
+    test.assertEqual("productType", productAdditionalItemResponse.entityModel.definitions.Product.properties.productCategory.joinPropertyName),
+    test.assertEqual("Customer.customerId:Order.lineItems.additionalItem:Product", productAdditionalItemResponse.entityMappingId),
+    test.assertEqual("Product", productAdditionalItemResponse.entityType),
+    test.assertEqual("Product (Order additionalItem)", productAdditionalItemResponse.mappingTitle),
+    test.assertEqual(1, productAdditionalItemResponse.relatedEntityMappings.length),
+    test.assertEqual("productCategory ProductType", productAdditionalItemResponse.relatedEntityMappings[0].mappingLinkText),
+    test.assertEqual("Customer.customerId:Order.lineItems.additionalItem:Product.productCategory:ProductType", productAdditionalItemResponse.relatedEntityMappings[0].entityMappingId),
+
+    test.assertEqual("string", productAdditionalItemTypeResponse.entityModel.definitions.ProductType.properties.productType.datatype),
+    test.assertEqual("Customer.customerId:Order.lineItems.additionalItem:Product.productCategory:ProductType", productAdditionalItemTypeResponse.entityMappingId),
+    test.assertEqual("ProductType", productAdditionalItemTypeResponse.entityType),
+    test.assertEqual("ProductType (Product productCategory)", productAdditionalItemTypeResponse.mappingTitle),
+    test.assertEqual(null, productAdditionalItemTypeResponse.relatedEntityMappings)
 
   );
 }
 
-function getEntityResponse(response, entityName){
+function getEntityResponseByName(response, entityName){
   return response.find(entityResponse => entityResponse.entityType == entityName);
+}
+
+function getEntityResponseById(response, entityMappingId){
+  return response.find(entityResponse => entityResponse.entityMappingId == entityMappingId);
 }
 
 

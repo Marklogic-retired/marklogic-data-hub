@@ -39,6 +39,11 @@
           "datatype": "integer",
           "relatedEntityType": "http://example.org/Product-1.0.0/Product",
           "joinPropertyName": "productId"
+        },
+        "additionalItem": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Product-1.0.0/Product",
+          "joinPropertyName": "productId"
         }
       }
     }

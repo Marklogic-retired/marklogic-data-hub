@@ -26,7 +26,7 @@
   },
   "relatedEntityMappings": [
     {
-      "relatedEntityMappingId": "Product:Order.lineItems.orderIncludes",
+      "relatedEntityMappingId": "Customer.customerId:Order.lineItems.orderIncludes:Product",
       "collections": ["mapCustomersJSON", "Product"],
       "permissions": "data-hub-operator,read,data-hub-operator,update",
       "expressionContext": "/Orders/Products",
@@ -42,7 +42,7 @@
       "targetEntityType": "http://example.org/Product-1.0.0/Product"
     },
     {
-      "relatedEntityMappingId": "Order:Customer.customerId",
+      "relatedEntityMappingId": "Customer.customerId:Order",
       "collections": ["mapCustomersJSON", "Order"],
       "expressionContext": "/Orders",
       "uriExpression": "concat('/Order/', OrderId)",
