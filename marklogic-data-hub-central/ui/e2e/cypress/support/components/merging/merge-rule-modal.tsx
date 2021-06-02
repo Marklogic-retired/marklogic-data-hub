@@ -56,6 +56,22 @@ class MergeRuleModal {
     cy.findByLabelText("strategy-name-select").should("be.visible").click();
     cy.waitUntil(() => cy.findByTestId(`strategyNameOptions-${strategyName}`).should("be.visible")).click({force: true});
   }
+
+  alertMessage() {
+    return cy.get(".merge-rule-dialog_alertMessage__28dTa");
+  }
+
+  alertDescription() {
+    return cy.get(".ant-alert-description");
+  }
+
+  ruleMaxValuesInput(value: string) {
+    cy.get("#maxValuesRuleInput").clear().type(value).type("{enter}");
+  }
+
+  ruleMaxScoreInput(value: string) {
+    cy.get("#maxSourcesRuleInput").clear().type(value).type("{enter}");
+  }
 }
 
 const mergeRuleModal = new MergeRuleModal();

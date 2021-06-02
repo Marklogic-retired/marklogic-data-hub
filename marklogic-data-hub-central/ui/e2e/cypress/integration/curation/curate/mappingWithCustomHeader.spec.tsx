@@ -197,7 +197,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
   });
   it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
-    toolbar.getCurateToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.addToNewFlow("Order", mapStep);
@@ -211,7 +211,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
     //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
-    toolbar.getCurateToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
