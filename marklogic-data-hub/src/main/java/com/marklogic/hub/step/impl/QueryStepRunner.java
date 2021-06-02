@@ -46,7 +46,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     private int batchSize;
     private int threadCount;
     private Map<String, Object> combinedOptions;
-    private int previousPercentComplete;
     private boolean stopOnFailure = false;
     private String jobId;
     private boolean isFullOutput = false;
@@ -55,8 +54,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
 
     private List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
     private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
-    private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
-    private List<StepFinishedListener> stepFinishedListeners = new ArrayList<>();
     private Map<String, Object> stepConfig = new HashMap<>();
     private HubClient hubClient;
     private Thread runningThread = null;
@@ -132,18 +129,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     @Override
     public StepRunner onItemFailed(StepItemFailureListener listener) {
         this.stepItemFailureListeners.add(listener);
-        return this;
-    }
-
-    @Override
-    public StepRunner onStatusChanged(StepStatusListener listener) {
-        this.stepStatusListeners.add(listener);
-        return this;
-    }
-
-    @Override
-    public StepRunner onFinished(StepFinishedListener listener) {
-        this.stepFinishedListeners.add(listener);
         return this;
     }
 
@@ -258,33 +243,18 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
 
     private DiskQueue<String> runCollector(String sourceDatabase) {
         CollectorImpl collector = new CollectorImpl(hubClient, sourceDatabase);
-
-        stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");
-        });
-
         return !isStopped.get() ? collector.run(this.flow.getName(), step, combinedOptions) : null;
     }
 
     private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection<String> uris) {
         StepMetrics stepMetrics = new StepMetrics();
         final int urisCount = uris != null ? uris.size() : 0;
-
-        stepStatusListeners.forEach((StepStatusListener listener) -> {
-            listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0,0, "starting step execution");
-        });
-
         if (urisCount == 0) {
             logger.info("No items found to process");
             final String stepStatus = isStopped.get() ?
                 JobStatus.CANCELED_PREFIX + step :
                 JobStatus.COMPLETED_PREFIX + step;
 
-            stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, 0, 0,
-                    (stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? "collector returned 0 items" : "job was stopped"));
-            });
-            stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
@@ -376,15 +346,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
                         stepMetrics.getFailedBatches().addAndGet(1);
                     }
 
-                    int percentComplete = (int) (((double) stepMetrics.getSuccessfulBatchesCount() / batchCount) * 100.0);
-
-                    if (percentComplete != previousPercentComplete && (percentComplete % 5 == 0)) {
-                        previousPercentComplete = percentComplete;
-                        stepStatusListeners.forEach((StepStatusListener listener) -> {
-                            listener.onStatusChange(runStepResponse.getJobId(), percentComplete, JobStatus.RUNNING_PREFIX + step, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "");
-                        });
-                    }
-
                     if (stepItemCompleteListeners.size() > 0) {
                         response.completedItems.forEach((String item) -> {
                             stepItemCompleteListeners.forEach((StepItemCompleteListener listener) -> {
@@ -450,12 +411,6 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
             }
 
             String stepStatus = determineStepStatus(stepMetrics);
-
-            stepStatusListeners.forEach((StepStatusListener listener) -> {
-                listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "");
-            });
-
-            stepFinishedListeners.forEach((StepFinishedListener::onStepFinished));
 
             dataMovementManager.stopJob(queryBatcher);
 
