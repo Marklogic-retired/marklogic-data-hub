@@ -83,8 +83,8 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "data-hub-prune-provenance",
-      "action": "http://marklogic.com/data-hub/privileges/prune-provenance",
+      "privilege-name": "data-hub-delete-provenance",
+      "action": "http://marklogic.com/data-hub/privileges/delete-provenance",
       "kind": "execute"
     }
   ]

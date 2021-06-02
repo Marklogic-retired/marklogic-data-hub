@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-delete-provenance",
+  "action": "http://marklogic.com/data-hub/privileges/delete-provenance",
+  "kind": "execute"
+}

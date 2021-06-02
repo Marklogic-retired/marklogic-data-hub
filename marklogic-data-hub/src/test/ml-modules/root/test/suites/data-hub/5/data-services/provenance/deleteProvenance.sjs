@@ -10,7 +10,7 @@ const assertions = [];
 function assertNeedsPrivilege() {
     try {
         hubTest.runWithRolesAndPrivileges(['data-hub-common'], [], function() {
-            provenanceService.pruneProvenance({retainDuration: 'P3D'}, {});
+            provenanceService.deleteProvenance({retainDuration: 'P3D'}, {});
         });
         throw new Error("Expected to fail due to missing privilege");
     } catch (e) {
@@ -21,7 +21,7 @@ function assertNeedsPrivilege() {
 function assertThrowsBadRequest(badConstants, errRegex) {
     try {
         hubTest.runWithRolesAndPrivileges(['data-hub-operator'], [], function() {
-            provenanceService.pruneProvenance(badConstants, {});
+            provenanceService.deleteProvenance(badConstants, {});
         });
         throw new Error("Expected constants to fail validation: " + xdmp.toJsonString(badConstants));
     } catch (e) {
@@ -29,9 +29,9 @@ function assertThrowsBadRequest(badConstants, errRegex) {
     }
 }
 
-function pruneProvAsOperator(constants) {
+function deleteProvAsOperator(constants) {
     hubTest.runWithRolesAndPrivileges(['data-hub-operator'], [], function() {
-        provenanceService.pruneProvenance(constants, {});
+        provenanceService.deleteProvenance(constants, {});
     });
 }
 
@@ -41,7 +41,7 @@ const collections = ["http://marklogic.com/provenance-services/record"];
 function insertProvenanceGeneratedAt(dateTime) {
     let uuid = sem.uuidString();
     xdmp.documentInsert(`/prov/${uuid}.xml`, xdmp.unquote(`
-        <prov:document 
+        <prov:document
             xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ps="http://marklogic.com/provenance-services" xmlns:dhf="http://marklogic.com/dhf">
             <prov:entity prov:id="testEntity-${uuid}"></prov:entity>
             <prov:wasGeneratedBy>
@@ -99,15 +99,15 @@ addProvenanceDocuments();
 assertions.push(test.assertEqual(olderThanAYearCount + olderThanAMonthCount + olderThanADayCount, getProvenanceCount()));
 
 // test removing older than a year
-pruneProvAsOperator({ retainDuration: 'P1Y' });
+deleteProvAsOperator({ retainDuration: 'P1Y' });
 assertions.push(test.assertEqual(olderThanAMonthCount + olderThanADayCount, getProvenanceCount()));
 
 // test removing older than a month
-pruneProvAsOperator({ retainDuration: 'P1M' });
+deleteProvAsOperator({ retainDuration: 'P1M' });
 assertions.push(test.assertEqual(olderThanADayCount, getProvenanceCount()));
 
 // test removing older than a day
-pruneProvAsOperator({ retainDuration: 'P1D' });
+deleteProvAsOperator({ retainDuration: 'P1D' });
 assertions.push(test.assertEqual(0, getProvenanceCount()));
 
 

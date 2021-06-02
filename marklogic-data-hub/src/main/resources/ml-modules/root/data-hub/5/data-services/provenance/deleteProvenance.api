@@ -1,0 +1,25 @@
+{
+    "functionName": "deleteProvenance",
+    "endpoint": "/data-hub/5/data-services/provenance/deleteProvenance.sjs",
+    "desc": "Deletes provenance according to the retainDuration property provided in endpointConstants.",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name":     "endpointConstants",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": false
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": true,
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
