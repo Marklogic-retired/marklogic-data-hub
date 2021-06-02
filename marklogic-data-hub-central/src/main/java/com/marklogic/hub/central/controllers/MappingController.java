@@ -24,10 +24,10 @@ public class MappingController extends BaseController {
 
     @RequestMapping(value = "/validation", method = RequestMethod.POST)
     @ResponseBody
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "MappingArtifact")
+    @ApiImplicitParam(name = "mapping", required = true, paramType = "body", dataTypeClass = MappingArtifact.class)
     @ApiOperation(value = "Test a mapping against a source document", response = MappingArtifact.class)
     @Secured("ROLE_readMapping")
-    public ResponseEntity<ObjectNode> testMapping(@RequestBody @ApiParam(hidden=true) ObjectNode jsonMapping,
+    public ResponseEntity<ObjectNode> testMapping(@RequestBody @ApiParam(name = "mapping", hidden=true) ObjectNode jsonMapping,
                                                   @RequestParam(value = "uri", required = true) String uri,
                                                   @RequestParam(value = "db", required = true) String database) {
         return new ResponseEntity<>((ObjectNode) getMappingService().testMapping(uri, database, jsonMapping), HttpStatus.OK);

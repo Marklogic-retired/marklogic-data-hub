@@ -59,35 +59,35 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(value = "/facet-values", method = RequestMethod.POST)
     @ResponseBody
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "FacetValuesQuery")
+    @ApiImplicitParam(name = "facetValuesQuery", required = true, paramType = "body", dataTypeClass = FacetValuesQuery.class)
     @ApiOperation(value = "Get an array of strings that match the pattern for the given index", response = FacetValues.class)
-    public JsonNode getFacetValues(@RequestBody @ApiParam(hidden = true) JsonNode fsQuery, @RequestParam(defaultValue = "final") String database) {
+    public JsonNode getFacetValues(@RequestBody @ApiParam(name = "facetValuesQuery", hidden = true) JsonNode fsQuery, @RequestParam(defaultValue = "final") String database) {
         return getEntitySearchService(database).getMatchingPropertyValues(fsQuery);
     }
 
     @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
     @ResponseBody
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "IndexMinMaxQuery")
+    @ApiImplicitParam(name = "facetInfo", required = true, paramType = "body", dataTypeClass = IndexMinMaxQuery.class)
     @ApiOperation(value = "Get values for a range index", response = IndexMinMax.class)
-    public JsonNode getFacetValuesRange(@RequestBody @ApiParam(hidden = true) JsonNode facetInfo, @RequestParam(defaultValue = "final") String database) {
+    public JsonNode getFacetValuesRange(@RequestBody @ApiParam(name = "facetInfo", hidden = true) JsonNode facetInfo, @RequestParam(defaultValue = "final") String database) {
         return getEntitySearchService(database).getMinAndMaxPropertyValues(facetInfo);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/savedQueries")
     @ResponseBody
     @Secured("ROLE_savedQueryUser")
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "SavedQueryRequest")
+    @ApiImplicitParam(name = "queryDocument", required = true, paramType = "body", dataTypeClass = SavedQueryRequest.class)
     @ApiOperation(value = "Create a search query", response = SavedQuery.class)
-    public ResponseEntity<JsonNode> saveQueryDocument(@RequestBody @ApiParam(hidden = true) JsonNode queryDocument) {
+    public ResponseEntity<JsonNode> saveQueryDocument(@RequestBody @ApiParam(name = "queryDocument", hidden = true) JsonNode queryDocument) {
         return new ResponseEntity<>(getEntitySearchService().saveSavedQuery(queryDocument), HttpStatus.CREATED);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/savedQueries")
     @ResponseBody
     @Secured("ROLE_savedQueryUser")
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "SavedQueryRequest")
+    @ApiImplicitParam(name = "savedQueryRequest", required = true, paramType = "body", dataTypeClass = SavedQueryRequest.class)
     @ApiOperation(value = "Update a search query", response = SavedQuery.class)
-    public ResponseEntity<JsonNode> updateQueryDocument(@RequestBody @ApiParam(hidden = true) JsonNode queryDocument) {
+    public ResponseEntity<JsonNode> updateQueryDocument(@RequestBody @ApiParam(name = "savedQueryRequest", hidden = true) JsonNode queryDocument) {
         return new ResponseEntity<>(getEntitySearchService().saveSavedQuery(queryDocument), HttpStatus.OK);
     }
 

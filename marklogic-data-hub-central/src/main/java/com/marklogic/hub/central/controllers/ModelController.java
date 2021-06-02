@@ -78,9 +78,9 @@ public class ModelController extends BaseController {
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "Create a new model and return the persisted model descriptor", response = ModelDescriptor.class)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "CreateModelInput")
+    @ApiImplicitParam(name = "entityModel", required = true, paramType = "body", dataTypeClass = CreateModelInput.class)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(hidden = true) JsonNode input) {
+    public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(name = "entityModel", hidden = true) JsonNode input) {
         JsonNode modelNode = newService().createModel(input);
 
         JsonNode modelConfigNode = newService().generateModelConfig();
@@ -91,9 +91,9 @@ public class ModelController extends BaseController {
     }
 
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "UpdateModelInfoInput")
+    @ApiImplicitParam(name = "entityModel", required = true, paramType = "body", dataTypeClass = UpdateModelInfoInput.class)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody @ApiParam(hidden = true) JsonNode input) {
+    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody @ApiParam(name = "entityModel", hidden = true) JsonNode input) {
         if(input.get("name") != null && !(input.get("name").asText().equals(modelName))){
             throw new RuntimeException("Unable to update entity model; incorrect model name: " + input.get("name").asText());
         }
@@ -124,9 +124,9 @@ public class ModelController extends BaseController {
     }
 
     @RequestMapping(value = "/entityTypes", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", allowMultiple = true, dataType = "UpdateModelInput")
+    @ApiImplicitParam(name = "entityTypes", required = true, paramType = "body", allowMultiple = true, dataTypeClass = UpdateModelInput.class)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes) {
+    public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(name = "entityTypes", hidden = true) @RequestBody JsonNode entityTypes) {
         // update the model
         newService().updateModelEntityTypes(entityTypes);
 

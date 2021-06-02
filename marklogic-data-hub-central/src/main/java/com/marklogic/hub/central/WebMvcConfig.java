@@ -50,10 +50,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         : new ClassPathResource("static/index.html");
                 }
             });
-
-        // Needed by springfox
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     @Override

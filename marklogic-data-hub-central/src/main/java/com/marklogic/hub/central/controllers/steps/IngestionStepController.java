@@ -40,18 +40,18 @@ public class IngestionStepController extends BaseController {
     }
 
     @RequestMapping(value = "/{stepName}", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeIngestion")
-    public ResponseEntity<Void> updateIngestionStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
+    public ResponseEntity<Void> updateIngestionStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, false);
         return emptyOk();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "StepSchema")
+    @ApiImplicitParam(name = "step", required = true, paramType = "body", dataTypeClass = StepSchema.class)
     @Secured("ROLE_writeIngestion")
-    public ResponseEntity<Void> createIngestionStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign) {
+    public ResponseEntity<Void> createIngestionStep(@RequestBody @ApiParam(name = "step", hidden = true) ObjectNode propertiesToAssign) {
         String stepName = propertiesToAssign.get("name").asText();
         propertiesToAssign.put("name", stepName);
         newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false, true);
