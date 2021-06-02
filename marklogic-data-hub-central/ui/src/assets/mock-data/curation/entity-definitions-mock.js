@@ -538,13 +538,13 @@ export const personRelatedEntityDef = [{
   "mappingTitle": "Person",
   "relatedEntityMappings": [{
     "mappingLinkText": "Order (orderedBy Person)",
-    "entityMappingId": "Order:Person.items",
+    "entityMappingId": "Person.items:Order",
     "additionalCollections": [],
     "collections": ["Order"]
   },
   {
     "mappingLinkText": "BabyRegistry (ownedBy Person)",
-    "entityMappingId": "BabyRegistry:Person.items"
+    "entityMappingId": "Person.items:BabyRegistry"
   }
   ],
   "entityModel": {
@@ -606,9 +606,9 @@ export const personRelatedEntityDef = [{
   "mappingTitle": "Order (orderedBy Person)",
   "relatedEntityMappings": [{
     "mappingLinkText": "hasProduct Product",
-    "entityMappingId": "Product:Order.lineItem.orderIncludes"
+    "entityMappingId": "Person.items:Order.lineItem.orderIncludes:Product"
   }],
-  "entityMappingId": "Order:Person.items",
+  "entityMappingId": "Person.items:Order",
   "entityModel": {
     "info": {
       "title": "Order",
@@ -656,7 +656,7 @@ export const personRelatedEntityDef = [{
 },
 {
   "entityType": "Product",
-  "entityMappingId": "Product:Order.lineItem.orderIncludes",
+  "entityMappingId": "Person.items:Order.lineItem.orderIncludes:Product",
   "mappingTitle": "Product (Order hasProduct)",
   "entityModel": {
     "info": {
@@ -682,11 +682,11 @@ export const personRelatedEntityDef = [{
 },
 {
   "entityType": "BabyRegistry",
-  "entityMappingId": "BabyRegistry:Person.items",
+  "entityMappingId": "Person.items:BabyRegistry",
   "mappingTitle": "BabyRegistry (ownedBy Person)",
   "relatedEntityMappings": [{
     "mappingLinkText": "includes Product",
-    "entityMappingId": "Product:BabyRegistry.hasProduct"
+    "entityMappingId": "Person.items:BabyRegistry.hasProduct:Product"
   }],
   "entityModel": {
     "info": {
@@ -725,7 +725,7 @@ export const personRelatedEntityDef = [{
 {
   "entityType": "Product",
   "mappingTitle": "Product (BabyRegistry hasProduct)",
-  "entityMappingId": "Product:BabyRegistry.hasProduct",
+  "entityMappingId": "Person.items:BabyRegistry.hasProduct:Product",
   "entityModel": {
     "info": {
       "title": "Product",

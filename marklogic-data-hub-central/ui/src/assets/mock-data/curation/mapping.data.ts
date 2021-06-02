@@ -57,7 +57,7 @@ export const mappingStep = {
       },
       relatedEntityMappings: [
         {
-          relatedEntityMappingId: "Order:Person.items",
+          relatedEntityMappingId: "Person.items:Order",
           collections: ["mapPersonWithRelated", "Order"],
           expressionContext: "/Orders",
           uriExpression: "",
@@ -77,7 +77,7 @@ export const mappingStep = {
           targetEntityType: "http://example.org/Order-0.0.1/Order"
         },
         {
-          relatedEntityMappingId: "BabyRegistry:Person.items",
+          relatedEntityMappingId: "Person.items:BabyRegistry",
           collections: ["mapPersonWithRelated", "BabyRegistry"],
           permissions: "data-hub-common,read,data-hub-common,update",
           expressionContext: "/",
@@ -96,7 +96,7 @@ export const mappingStep = {
           targetEntityType: "http://example.org/BabyRegistry-0.0.1/BabyRegistry"
         },
         {
-          relatedEntityMappingId: "Product:Order.lineItem.orderIncludes",
+          relatedEntityMappingId: "Person.items:Order.lineItem.orderIncludes:Product",
           collections: ["mapPersonWithRelated", "Product"],
           permissions: "data-hub-common,read,data-hub-common,update",
           expressionContext: "/Orders/Products",
@@ -108,7 +108,7 @@ export const mappingStep = {
           targetEntityType: "http://example.org/Product-0.0.1/Product"
         },
         {
-          relatedEntityMappingId: "Product:BabyRegistry.hasProduct",
+          relatedEntityMappingId: "Person.items:BabyRegistry.hasProduct:Product",
           collections: ["mapPersonWithRelated", "Product"],
           permissions: "data-hub-common,read,data-hub-common,update",
           expressionContext: "/Orders/Products",
