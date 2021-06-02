@@ -14,8 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
@@ -32,58 +33,6 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
     public void setupEach() throws IOException {
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), getHubConfig().getFlowsDir().toFile());
         installUserModules(runAsFlowDeveloper(), true);
-    }
-
-    @Test
-    public void testRunningPercent() {
-        WriteStepRunner wsr = new WriteStepRunner(getHubConfig().newHubClient(), getHubProject());
-        Flow flow = flowManager.getFullFlow("testFlow");
-        Map<String, Step> steps = flow.getSteps();
-        Step step = steps.get("3");
-        StepDefinition stepDef = stepDefMgr.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
-        wsr.withStepDefinition(stepDef).withFlow(flow).withStep("3").withBatchSize(1).withRuntimeOptions(new HashMap<String, Object>())
-            .withJobId(UUID.randomUUID().toString());
-        wsr.loadStepRunnerParameters();
-        Collection<String> files = Arrays.asList("firstFile", "secondFile", "thirdFile","fourthFile", "fifthFile");
-        StepMetrics stepMetrics = new StepMetrics();
-        final AtomicInteger percent = new AtomicInteger(0);
-        wsr.onStatusChanged((jobId, percentComplete, status, successfulEvents, failedEvents,  message)->{
-            percent.addAndGet(20);
-            Assertions.assertTrue(percent.get() == percentComplete);
-            if(percent.get() == 100) {
-                percent.set(0);
-            }
-        });
-
-        //test csv 'inputFileType'
-        Runnable csvTask = ()->{
-            files.stream().forEach(uri->{
-                logger.info("Processing csv file: "+ uri);
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {}
-                wsr.csvFilesProcessed++;
-                wsr.runStatusListener(files.size(),stepMetrics);
-            });
-        };
-        csvTask.run();
-
-        //test xml 'inputFileType'
-        wsr.withStep("1").withRuntimeOptions(new HashMap<String, Object>());
-        wsr.loadStepRunnerParameters();
-
-        Runnable xmlTask = ()->{
-            files.stream().forEach(uri->{
-                logger.info("Processing xml file: "+ uri);
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {}
-                stepMetrics.getSuccessfulEvents().incrementAndGet();
-                stepMetrics.getSuccessfulBatches().incrementAndGet();
-                wsr.runStatusListener(files.size(),stepMetrics);
-            });
-        };
-        xmlTask.run();
     }
 
     @Test

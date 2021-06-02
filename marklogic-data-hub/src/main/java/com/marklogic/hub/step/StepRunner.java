@@ -103,20 +103,6 @@ public interface StepRunner {
     StepRunner onItemFailed(StepItemFailureListener listener);
 
     /**
-     * Sets the status change listener on the flowrunner object
-     * @param listener - the listener for when the status changes
-     * @return the step runner object
-     */
-    StepRunner onStatusChanged(StepStatusListener listener);
-
-    /**
-     * Sets the finished listener for when the item has processed (similar to a finally)
-     * @param listener - the listener for the flow item when it finishes
-     * @return the step runner object
-     */
-    StepRunner onFinished(StepFinishedListener listener);
-
-    /**
      * Blocks until the step execution is complete.
      */
     void awaitCompletion();
