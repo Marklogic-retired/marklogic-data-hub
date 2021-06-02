@@ -210,6 +210,10 @@ class StepExecutionContext {
     });
   }
 
+  clearCompletedItems() {
+    this.completedItems = [];
+  }
+
   setFailedItems(items) {
     this.failedItems = items;
   }
