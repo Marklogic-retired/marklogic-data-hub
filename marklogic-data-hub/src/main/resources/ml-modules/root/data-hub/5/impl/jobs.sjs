@@ -110,7 +110,9 @@ function saveNewJob(job) {
             return Artifacts.getFullFlow(flowName);
           }, config.FINALDATABASE
       ));
-      const allArtifacts = [fullFlow].concat(Object.values(fullFlow.steps));
+      const steps = fullFlow.steps;
+      const stepValues = Object.keys(steps).map(step => steps[step]);
+      const allArtifacts = [fullFlow].concat(stepValues);
       return allArtifacts.some((artifact) => {
         if (xdmp.castableAs(XS_NAMESPACE, "dateTime", artifact.lastUpdated)) {
           return xs.dateTime(artifact.lastUpdated).gt(dateTime);
