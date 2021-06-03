@@ -133,6 +133,11 @@ class AdvancedSettingsDialog {
   saveSettings(stepName: string) {
     return cy.findByTestId(`${stepName}-save-settings`);
   }
+
+  attachSourceDocument() {
+    return cy.findByTestId("attachmentTrue");
+  }
+
 }
 
 const advancedSettingsDialog = new AdvancedSettingsDialog();
