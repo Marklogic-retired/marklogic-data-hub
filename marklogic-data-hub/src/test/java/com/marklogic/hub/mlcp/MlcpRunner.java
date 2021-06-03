@@ -28,28 +28,32 @@ import com.marklogic.hub.legacy.job.Job;
 import com.marklogic.hub.legacy.job.JobStatus;
 import com.marklogic.hub.legacy.job.LegacyJobManager;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
 
-    private LegacyJobManager jobManager;
-    private LegacyFlow flow;
-    private JsonNode mlcpOptions;
+    private final LegacyJobManager jobManager;
+    private final LegacyFlow flow;
+    private final JsonNode mlcpOptions;
     private MlcpBean mlcpBean;
-    private String jobId = UUID.randomUUID().toString();
-    private AtomicLong successfulEvents = new AtomicLong(0);
-    private AtomicLong failedEvents = new AtomicLong(0);
-    private DatabaseClient databaseClient;
+    private final String jobId = UUID.randomUUID().toString();
+    private final AtomicLong successfulEvents = new AtomicLong(0);
+    private final AtomicLong failedEvents = new AtomicLong(0);
+    private final DatabaseClient databaseClient;
     private String database = null;
 
     private Boolean isHostLoadBalancer;
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     /**
      * To support running parallel tests, this stores whether
@@ -125,7 +129,7 @@ public class MlcpRunner extends ProcessRunner {
         } catch (Exception e) {
             if (job != null) {
                 job.withStatus(JobStatus.FAILED)
-                        .withEndTime(new Date());
+                    .withEndTime(new Date());
                 jobManager.saveJob(job);
             }
             throw new RuntimeException(e);
@@ -142,9 +146,9 @@ public class MlcpRunner extends ProcessRunner {
 
                 // store the thing in MarkLogic
                 job.withJobOutput(getProcessOutput())
-                        .withStatus(status)
-                        .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
-                        .withEndTime(new Date());
+                    .withStatus(status)
+                    .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
+                    .withEndTime(new Date());
                 jobManager.saveJob(job);
             }
         }
@@ -191,7 +195,7 @@ public class MlcpRunner extends ProcessRunner {
             bean.setDatabase(database);
         }
 
-        if (!"copy".equals(bean.getCommand().toLowerCase())) {
+        if (!"copy".equalsIgnoreCase(bean.getCommand())) {
             // Assume that the HTTP credentials will work for mlcp
             bean.setUsername(this.username);
             bean.setPassword(this.password);
@@ -213,62 +217,74 @@ public class MlcpRunner extends ProcessRunner {
 
     private void buildCommand(MlcpBean bean) throws IOException {
         ArrayList<String> args = new ArrayList<>();
-            String javaHome = System.getProperty("java.home");
-            String javaBin = javaHome +
-                File.separator + "bin" +
-                File.separator + "java";
-            String classpath = System.getProperty("java.class.path");
-
-            //logger.warn("Classpath before is: " + classpath);
-            // strip out non-essential entries to truncate classpath
-            List<String> classpathEntries = Arrays.asList(classpath.split(File.pathSeparator));
-            String filteredClasspathEntries = classpath;
-            int MAX_CLASSPATH_LENGTH = 10000;
-            // if classpath was not alrady shortened (say, by IDE) then strip to run mlcp
-            if (filteredClasspathEntries.length() > MAX_CLASSPATH_LENGTH)
-                filteredClasspathEntries = classpathEntries
-                            .stream()
-                            .filter(
-                                u -> (
-                                    u.contains(System.getProperty("user.dir")) ||
-                                    u.contains("jdk") ||
-                                    u.contains("jre") ||
-                                    u.contains("log") ||
-                                    u.contains("xml") ||
-                                    u.contains("json") ||
-                                    u.contains("jackson") ||
-                                    u.contains("xerces") ||
-                                    u.contains("slf") ||
-                                    u.contains("mlcp") ||
-                                    u.contains("xcc") ||
-                                    u.contains("xpp") ||
-                                    u.contains("protobuf") ||
-                                    u.contains("mapreduce") ||
-                                    u.contains("guava") ||
-                                    u.contains("apache") ||
-                                    u.contains("commons") ||
-                                    u.contains("hadoop") ||
-                                    u.contains("thoughtworks"))
-                            ).collect(Collectors.joining(File.pathSeparator));
-
-            //logger.warn("Classpath filtered to: " + filteredClasspathEntries);
-
-            File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
-            FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
-
-            args.add(javaBin);
-            args.add("-Dlogback.configurationFile=" + loggerFile.toURI());
-            if (classpath.endsWith(".war")) {
-                args.add("-jar");
-                args.add(classpath);
-                args.add("mlcp");
+        // avoid escaping issues in Windows by using an options file to hold the transform_param
+        if (SystemUtils.IS_OS_WINDOWS_10) {
+            String transformParam = bean.getTransform_param();
+            if (transformParam != null) {
+                Path tempFilePath = Files.createTempFile("mlcp", ".options");
+                try (FileWriter fw = new FileWriter(tempFilePath.toFile())) {
+                    fw.write("-transform_param\n");
+                    fw.write(transformParam);
+                    fw.flush();
+                }
+                bean.setTransform_param(null);
+                bean.setOptions_file(tempFilePath.toAbsolutePath().toString());
             }
-            else {
-                args.add("-cp");
-                args.add(filteredClasspathEntries);
-                args.add("com.marklogic.contentpump.ContentPump");
-            }
+        }
+        String javaHome = System.getProperty("java.home");
+        String javaBin = javaHome +
+            File.separator + "bin" +
+            File.separator + "java";
+        String classpath = System.getProperty("java.class.path");
 
+        //logger.warn("Classpath before is: " + classpath);
+        // strip out non-essential entries to truncate classpath
+        List<String> classpathEntries = Arrays.asList(classpath.split(File.pathSeparator));
+        String filteredClasspathEntries = classpath;
+        int MAX_CLASSPATH_LENGTH = 10000;
+        // if classpath was not alrady shortened (say, by IDE) then strip to run mlcp
+        if (filteredClasspathEntries.length() > MAX_CLASSPATH_LENGTH)
+            filteredClasspathEntries = classpathEntries
+                .stream()
+                .filter(
+                    u -> (
+                        u.contains(System.getProperty("user.dir")) ||
+                            u.contains("jdk") ||
+                            u.contains("jre") ||
+                            u.contains("log") ||
+                            u.contains("xml") ||
+                            u.contains("json") ||
+                            u.contains("jackson") ||
+                            u.contains("xerces") ||
+                            u.contains("slf") ||
+                            u.contains("mlcp") ||
+                            u.contains("xcc") ||
+                            u.contains("xpp") ||
+                            u.contains("protobuf") ||
+                            u.contains("mapreduce") ||
+                            u.contains("guava") ||
+                            u.contains("apache") ||
+                            u.contains("commons") ||
+                            u.contains("hadoop") ||
+                            u.contains("thoughtworks"))
+                ).collect(Collectors.joining(File.pathSeparator));
+
+        //logger.warn("Classpath filtered to: " + filteredClasspathEntries);
+
+        File loggerFile = File.createTempFile("mlcp-", "-logger.xml");
+        FileUtils.writeStringToFile(loggerFile, buildLoggerconfig());
+
+        args.add(javaBin);
+        args.add("-Dlogback.configurationFile=" + loggerFile.toURI());
+        if (classpath.endsWith(".war")) {
+            args.add("-jar");
+            args.add(classpath);
+            args.add("mlcp");
+        } else {
+            args.add("-cp");
+            args.add(filteredClasspathEntries);
+            args.add("com.marklogic.contentpump.ContentPump");
+        }
         args.addAll(Arrays.asList(bean.buildArgs()));
 
         this.withArgs(args);
@@ -278,6 +294,7 @@ public class MlcpRunner extends ProcessRunner {
 
     /**
      * Set the database context for the MlCP Client
+     *
      * @param database the database name to use
      */
     public void setDatabase(String database) {

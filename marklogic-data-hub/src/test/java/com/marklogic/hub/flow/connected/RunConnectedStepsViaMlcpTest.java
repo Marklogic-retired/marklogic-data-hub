@@ -4,10 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Collections;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hp.hpl.jena.util.FileUtils;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.AbstractHubCoreTest;
@@ -16,6 +22,7 @@ import com.marklogic.hub.DocumentMetadataHelper;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mlcp.MlcpRunner;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.FileCopyUtils;
 
@@ -29,15 +36,12 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
 
     @Test
     void ingestAndMapWithOptions() {
-        // Ran into weird errors when running tests in Jenkins on Windows where customers above 90 produced this error:
-        // 04:07:58.568 [pool-1-thread-3] WARN  c.m.contentpump.TransformWriter - RESTAPI-SRVEXERR: Extension Error:  code: 400
-        // message: Could not parse JSON options; cause: Unexpected token p in JSON at position 1 document: /data/customer96.json
-        // So trying a count less than 90 to see if we can avoid those errors
         int recordCount = 80;
 
         installProject();
         writeTestDocumentsToProjectDirectory(recordCount);
-        runFlowWithTransformParam("flow-name=" + FLOW_NAME + ",steps=1;2,options={\"permissions\":\"data-hub-operator,read,data-hub-developer,update\",\"provenanceGranularityLevel\":\"off\"}");
+        String transformParam = "flow-name=" + FLOW_NAME + ",steps=1;2,options={\"permissions\":\"data-hub-operator,read,data-hub-developer,update\",\"provenanceGranularityLevel\":\"off\"}";
+        runFlowWithTransformParam(transformParam);
 
         verifyMlcpOutputShowsSuccess(recordCount);
         verifyIngestedDataInStaging(recordCount);
@@ -89,8 +93,14 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
         for (int i = 1; i <= count; i++) {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("customerId", i + "");
+            File customerFile = new File(projectDataDir, "customer" + i + ".json");
             try {
-                FileCopyUtils.copy(node.toString().getBytes(), new File(projectDataDir, "customer" + i + ".json"));
+                if (!customerFile.exists()) {
+                    customerFile.createNewFile();
+                }
+                byte[] bytes = node.toString().getBytes(StandardCharsets.UTF_8);
+                Files.write(customerFile.toPath(), bytes);
+                assertEquals(bytes.length, customerFile.length());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
