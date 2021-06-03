@@ -29,6 +29,7 @@ import com.marklogic.gradle.task.deploy.DeployAsDeveloperTask
 import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
 import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
+import com.marklogic.hub.gradle.task.DeleteJobsTask
 import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
 import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
 import com.marklogic.hub.gradle.task.DescribeRoleTask
@@ -145,9 +146,8 @@ class DataHubPlugin implements Plugin<Project> {
                 "deleting all such user configuration files in the project directory, "+
                 "and finally extracting the contents of the downloaded zip into the project directory.")
         project.task("hubDeleteJobs", type: DeleteJobsTask, group: developGroup,
-            description: "Clears job and batch in the job database older than a given duration " +
-                "specify a duration to retain via -PretainDuration=(duration) " +
-                "(e.g. -PretainDuration=P30D)")
+            description: "Deletes job and batch documents in the jobs database that are older than a duration specified  " +
+                "via -PretainDuration=(duration) (e.g. -PretainDuration=P30D to delete every document that is older than 30 days)")
         project.task("hubClearUserData", type: ClearUserDataTask, group: developGroup,
             description: "Clears user data in the staging, final, and job databases, only leaving behind hub and user " +
                 "artifacts. Requires sufficient privilege to be able to clear each of the databases. " +

@@ -15,18 +15,21 @@
  *
  */
 
-package com.marklogic.gradle.task
+package com.marklogic.hub.gradle.task
 
+import com.marklogic.gradle.task.HubTask
 import com.marklogic.hub.flow.JobManager
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
 class DeleteJobsTask extends HubTask {
 
     @TaskAction
-    void cleanJobsData() {
+    void deleteJobs() {
         def propName = "retainDuration"
-        def retainDuration = project.hasProperty(propName) ? project.property(propName) : null
-        JobManager jobManager = new JobManager(getHubConfig().newHubClient());
-        jobManager.deleteJobs(retainDuration);
+        if (!project.hasProperty(propName)) {
+            throw new GradleException("Please specify a duration via -PretainDuration=(value in format of PnYnM or PnDTnHnMnS)")
+        }
+        new JobManager(getHubConfig().newHubClient()).deleteJobs(project.property(propName))
     }
 }
