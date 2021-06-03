@@ -98,7 +98,7 @@ const Monitor: React.FC = () => {
         />
         <SidebarFooter />
       </Sider>
-      <Content className={styles.content}>
+      <Content className={styles.content} id="monitorContent">
         <div>
           {canAccessMonitor ?
             <div className={styles.monitorContainer}>
