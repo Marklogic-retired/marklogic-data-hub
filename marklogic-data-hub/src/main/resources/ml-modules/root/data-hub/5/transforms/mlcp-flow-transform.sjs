@@ -60,7 +60,10 @@ function transform(content, context = {}) {
 
     const flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
     if (flowName === 'default-ingestion') {
-      context.collections.push('default-ingestion');
+      context.collections = context.collections || [];
+      if (!context.collections.includes('default-ingestion')) {
+        context.collections.push('default-ingestion');
+      }
     }
 
     const jobId = params["job-id"] || `mlcp-${xdmp.transaction()}`;
@@ -78,19 +81,19 @@ function transform(content, context = {}) {
       options.throwStepError = true; // Let errors propagate to MLCP
       flowApi.runFlowOnContent(flowName, contentArray, jobId, options, stepNumbers);
       return Sequence.from([]);
-    } 
-    
-    // It would be possible to always use the above approach, thus removing all of the code below. The only issue 
+    }
+
+    // It would be possible to always use the above approach, thus removing all of the code below. The only issue
     // is that instead of getting a useless Job document that is 'started' with no step responses, we instead get a
-    // finished Job document, but it only represents one batch. It's hard to say that's an improvement, so leaving the 
-    // below code in place for now. 
+    // finished Job document, but it only represents one batch. It's hard to say that's an improvement, so leaving the
+    // below code in place for now.
     else {
       const step = params['step'] ? xdmp.urlDecode(params['step']) : null;
       options.writeStepOutput = false;
       options.fullOutput = true;
       // This maps to the ResponseHolder Java class; it's not a RunFlowResponse or RunStepResponse
       const responseHolder = datahub.flow.runFlow(flowName, jobId, contentArray, options, step);
-      
+
       // If the flow response has an error, propagate it up to MLCP so MLCP can report it
       if (responseHolder.errors && responseHolder.errors.length) {
         httpUtils.throwBadRequestWithArray([`Flow failed with error: ${responseHolder.errors[0].stack}`, contentUri]);
