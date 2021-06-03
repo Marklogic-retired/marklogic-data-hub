@@ -91,6 +91,31 @@ describe("Mapping", () => {
     mappingStepDetail.validateURIInput("Person", "$URI");
     mappingStepDetail.validateURIInput("Relation (relatedTo Person)", "hubURI('Relation')");
   });
+  it("Test the dropdown form that appears for each entity table in the enhanced mapping ", () => {
+    mappingStepDetail.getPersonEntitySettings().click();
+    mappingStepDetail.targetCollection().should("exist");
+    cy.waitUntil(() => mappingStepDetail.personTargetPermissions().focus().clear());
+    cy.waitUntil(() => mappingStepDetail.personTargetPermissions().type("data-hub-common,read"));
+    cy.waitUntil(() => mappingStepDetail.personTargetPermissions().focus().clear());
+    cy.waitUntil(() => mappingStepDetail.personTargetPermissions().type("data-hub-common,read,data-hub-common,update"));
+    cy.waitUntil(() => mappingStepDetail.personSaveSettings().click({force: true}));
+    mappingStepDetail.personValidationError().should("not.be.visible");
+
+    mappingStepDetail.getRelationEntitySettings().click();
+    cy.waitUntil(() => mappingStepDetail.relationTargetPermissions().focus().clear());
+    cy.waitUntil(() => mappingStepDetail.relationTargetPermissions().type("data-hub-common,read,data-hub-common"));
+    cy.waitUntil(() => mappingStepDetail.relationSaveSettings().click({force: true}));
+    mappingStepDetail.relationValidationError().should("exist");
+    cy.waitUntil(() => mappingStepDetail.relationTargetPermissions().focus().clear());
+    cy.waitUntil(() => mappingStepDetail.relationTargetPermissions().type("data-hub-common,read"));
+    cy.waitUntil(() => mappingStepDetail.relationSaveSettings().click({force: true}));
+    mappingStepDetail.relationValidationError().should("not.be.visible");
+    cy.waitUntil(() => mappingStepDetail.relationTargetPermissions().focus().clear());
+    cy.waitUntil(() => mappingStepDetail.relationTargetPermissions().type("data-hub-common,read,data-hub-common,update"));
+    cy.waitUntil(() => mappingStepDetail.relationSaveSettings().click({force: true}));
+    mappingStepDetail.getRelationEntitySettings().click();
+    cy.waitUntil(() => mappingStepDetail.relationSaveSettings().click({force: true}));
+  });
   it("Add and test mapping expressions to related entities", () => {
     mappingStepDetail.setXpathExpressionInput("id", "SSN");
     mappingStepDetail.entityTitle("Person").click(); // click outside field to auto-save
@@ -128,7 +153,7 @@ describe("Mapping", () => {
     runPage.runStep("mapRelation");
     cy.verifyStepRunResult("success", "Mapping", "mapRelation");
     cy.waitForAsyncRequest();
-    
+
     // Navigate to Explore
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();

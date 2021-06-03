@@ -181,7 +181,47 @@ class MappingStepDetail {
   }
 
   successMessage() {
-    return cy.findByTestId("successMessage")
+    return cy.findByTestId("successMessage");
+  }
+
+  getPersonEntitySettings() {
+    return cy.findByTestId("Person-entity-settings");
+  }
+
+  getRelationEntitySettings() {
+    return cy.findByTestId("Relation-entity-settings");
+  }
+
+  personTargetPermissions() {
+    return cy.findByTestId("Person-targetPermissions");
+  }
+
+  relationTargetPermissions() {
+    return cy.findByTestId("Relation-targetPermissions");
+  }
+
+  personSaveSettings() {
+    return cy.findByLabelText("Person-save-settings");
+  }
+
+  relationSaveSettings() {
+    return cy.findByLabelText("Relation-save-settings");
+  }
+
+  personValidationError() {
+    return cy.findByLabelText("Person-validationError");
+  }
+
+  relationValidationError() {
+    return cy.findByLabelText("Relation-validationError");
+  }
+
+  cancelSettings() {
+    return cy.findByTestId("cancel-settings");
+  }
+
+  targetCollection() {
+    return cy.findByLabelText("additionalColl-select");
   }
 }
 
