@@ -166,6 +166,9 @@ function createContextForRelatedEntityInstance(relatedEntityMapping, content){
   let entityContext = {};
   let relatedEntityPermissions = fn.string(relatedEntityMapping.permissions);
   let relatedEntityCollections = relatedEntityMapping.collections;
+  if(relatedEntityMapping.additionalCollections){
+    relatedEntityCollections = relatedEntityCollections.concat(relatedEntityMapping.additionalCollections);
+  }
   entityContext["permissions"] = hubUtils.parsePermissions(relatedEntityPermissions);
   entityContext["collections"] = relatedEntityCollections;
   if(content.context && content.context.originalCollections){
