@@ -17,6 +17,7 @@ function runJSONMapping(){
   let results = datahub.flow.runFlow('customerFlow', 'test-job', content, {outputFormat: 'json', mapping:{name:'mapCustomersJSON'}}, 1);
   let customerUris = hubTest.getUrisInCollection("Customer");
   let orderUris = hubTest.getUrisInCollection("Order").sort();
+  let userOrderUris = hubTest.getUrisInCollection("UserOrder").sort();
   let productUris = hubTest.getUrisInCollection("Product").sort();
   let orderDocPermissions = hubTest.getRecord(orderUris[0], "data-hub-FINAL");
   let productDocPermissions = hubTest.getRecord(productUris[0], "data-hub-FINAL")
@@ -28,6 +29,7 @@ function runJSONMapping(){
     test.assertEqual(1, customerUris.length),
     test.assertEqual("/mapped/content/customerInfo.json", customerUris[0]),
     test.assertEqualJson(["/Order/2002.json", "/Order/2012.json"], orderUris),
+    test.assertEqualJson(["/Order/2002.json", "/Order/2012.json"], userOrderUris),
     test.assertEqualJson(["/Product/10.json", "/Product/30.json", "/Product/40.json"], productUris),
     /* Not checking for permissions of the main entity instance since we have tests for it and also permissions passed through options
     won't get applied before runFlow() is called. */
