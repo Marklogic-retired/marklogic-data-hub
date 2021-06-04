@@ -153,9 +153,10 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName).should("not.exist");
+    cy.wait(1000);
   });
   it("Verify Run Load step in a New Flow", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click({force: true});
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
     loadPage.runStep(stepName).click();
     //Just deleted flow should not be visible on flows list

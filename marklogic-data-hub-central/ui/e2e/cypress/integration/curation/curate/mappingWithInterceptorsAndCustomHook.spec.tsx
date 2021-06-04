@@ -174,10 +174,10 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.lessLink().click();
     mappingStepDetail.toggleEntityFilterMenu();
     mappingStepDetail.resetEntitySearch().click();
-    //Go back to curate homepage
-    mappingStepDetail.goBackToCurateHomePage();
   });
   it("Edit Map step", () => {
+    //Go back to curate homepage
+    mappingStepDetail.goBackToCurateHomePage();
     curatePage.toggleEntityTypeId("Order");
     // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
@@ -197,6 +197,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     //verify that step details page remains opens when step settings was opened from within the step details page
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
+    cy.wait(2000);
   });
   it("verify Map step settings change from within map step details page", () => {
     //Check that the source data is visible
