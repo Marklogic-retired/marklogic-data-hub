@@ -227,5 +227,26 @@ describe("Create and verify load steps, map step and flows with a custom header"
     detailPage.getSourceView().click();
     cy.contains("accessLevel");
     cy.contains("999ABC");
+    // By default attachment is not present in detailed view of document
+    detailPage.attachmentPresent().should("not.exist");
+
+    detailPage.clickBackButton();
+    toolbar.getCurateToolbarIcon().click();
+    curatePage.toggleEntityTypeId("Order");
+    // Open step settings and switch to Advanced tab
+    cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
+    curatePage.switchEditAdvanced().click();
+    // user selects Yes for attachment present in advanced settings
+    advancedSettingsDialog.attachSourceDocument().click();
+    cy.waitUntil(() => advancedSettingsDialog.saveSettings(mapStep).click({force: true}));
+    curatePage.runStepInCardView(mapStep).click();
+    curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName);
+    cy.waitForAsyncRequest();
+    runPage.explorerLink().click();
+    browsePage.getTableViewInstanceIcon().click();
+    detailPage.getSourceView().click();
+    // attachment is present in detailed view of document
+    detailPage.attachmentPresent().should("exist");
   });
 });

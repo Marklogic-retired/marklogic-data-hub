@@ -48,6 +48,10 @@ class DetailPage {
     return cy.get("#back-button").click({force: true});
   }
 
+  attachmentPresent() {
+    return cy.contains("attachments");
+  }
+
 }
 
 const detailPage = new DetailPage();

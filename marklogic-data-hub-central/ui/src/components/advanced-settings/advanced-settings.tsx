@@ -770,8 +770,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           className={styles.formItem}
         >
           <Radio.Group  onChange={handleChange} name="attachSourceDocument" value={attachSourceDocument}>
-            <Radio value={true}>Yes</Radio>
-            <Radio value={false}>No</Radio>
+            <Radio value={true} data-testid="attachmentTrue">Yes</Radio>
+            <Radio value={false} data-testid="attachmentFalse">No</Radio>
           </Radio.Group>
           <MLTooltip title={tooltips.attachSourceDocument} placement={"right"}>
             <Icon type="question-circle" className={styles.centerCircle} theme="filled" />
