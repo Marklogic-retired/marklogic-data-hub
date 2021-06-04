@@ -366,7 +366,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForTableToLoad();
-    browsePage.getTotalDocuments().should("eq", 5);
+    browsePage.getTotalDocuments().should("eq", 4);
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", mergeStep).should("to.exist");
@@ -383,7 +383,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 10);
+    browsePage.getTotalDocuments().should("eq", 8);
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-archived").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-mastered").click();
@@ -391,7 +391,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 7);
+    browsePage.getTotalDocuments().should("eq", 8);
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-mastered").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-merged").click();
@@ -399,7 +399,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 5);
+    browsePage.getTotalDocuments().should("eq", 4);
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-merged").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
@@ -407,7 +407,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 5);
+    browsePage.getTotalDocuments().should("eq", 4);
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-auditing").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-notification").click();
@@ -415,7 +415,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
-    browsePage.getTotalDocuments().should("eq", 2);
+    browsePage.getTotalDocuments().should("eq", 3);
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-notification").click();
     browsePage.waitForSpinnerToDisappear();
   });
