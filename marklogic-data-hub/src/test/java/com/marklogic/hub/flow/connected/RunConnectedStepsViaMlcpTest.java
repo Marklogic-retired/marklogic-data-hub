@@ -144,6 +144,7 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
 
         DocumentMetadataHelper metadata = getMetadata(getHubClient().getStagingClient(), uri);
         metadata.assertInCollections(INGESTION_STEP_NAME);
+        assertEquals(1, metadata.getMetadata().getCollections().size(), "ingestCustomer is the only collection and duplicates should not exist");
         metadata.assertHasPermissions("data-hub-operator", DocumentMetadataHandle.Capability.READ);
         metadata.assertHasPermissions("data-hub-developer", DocumentMetadataHandle.Capability.UPDATE);
         metadata.assertDataHubMetadata(getHubClient().getUsername(), FLOW_NAME, INGESTION_STEP_NAME);

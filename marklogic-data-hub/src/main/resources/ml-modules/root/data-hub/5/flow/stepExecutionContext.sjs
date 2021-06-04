@@ -175,7 +175,7 @@ class StepExecutionContext {
 
         // Added in 5.5 to support mapping steps that can return many objects
         if (!context.useContextCollectionsOnly) {
-          context.collections = this.collectionsFromOptions.concat(context.collections || []);
+          context.collections = [...new Set(this.collectionsFromOptions.concat(context.collections || []))];
         }
 
         if (!context.collections || context.collections.length == 0) {
