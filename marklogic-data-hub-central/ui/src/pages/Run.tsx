@@ -376,7 +376,6 @@ const Run = (props) => {
         if (!response.data) {
           throw new Error("Empty response body received");
         }
-
         let status = response.data.jobStatus;
         if (status === Statuses.FINISHED || status === Statuses.CANCELED ||
                     status === Statuses.FAILED || status === Statuses.FINISHED_WITH_ERRORS) {

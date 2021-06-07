@@ -17,8 +17,15 @@
 
 // No privilege required: A user only needs read permissions on a job document
 
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 var jobId;
 
-jobs.getJobWithDetails(jobId);
+const jobWithDetails = jobs.getJobWithDetails(jobId);
+
+if (jobWithDetails) {
+    jobWithDetails;
+} else {
+    httpUtils.throwNotFound(`Job with ID '${jobId}' not found`);
+}
