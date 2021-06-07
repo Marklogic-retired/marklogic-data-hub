@@ -12,6 +12,7 @@ import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
 import {css} from "@emotion/css";
 import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion";
+import {paginationOptions} from "../../../../config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
 import StepsConfig from "../../../../config/steps.config";
 
@@ -81,6 +82,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [updateContextFlag, setUpdateContextFlag] = useState(false);
   const [expressionContext, setExpressionContext] = useState(relatedEntityMapData?.expressionContext ? relatedEntityMapData.expressionContext : "/");
   const [uriExpression, setUriExpression] = useState("");
+  const [tableCollapsed, setTableCollapsed] = useState(false);
+  const [tableToggled, setTableToggled] = useState(false);
+  const [filterApplied, setFilterApplied] = useState(false);
+  const [filteredValues, setFilteredValues] = useState<any>([]);
 
   //For Dropdown menu
   const [propName, setPropName] = useState("");
@@ -137,7 +142,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [filterValues, setFilterValues] = useState<any[]>(getDefaultEntities());
 
   useEffect(() => {
-    if (props.entityMappingId || !props.isRelatedEntity) {
+    if (tableToggled) {
+      setMapExp({...mapExp});
+    } else if (props.entityMappingId || !props.isRelatedEntity) {
       initializeMapExpressions();
     }
     return (() => {
@@ -155,9 +162,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.filterStr.length > 0) {
       let filteredData = [...getFilteredData(props.filterStr.toLowerCase(), props.entityTypeProperties)];
+      setFilterApplied(true);
+      setFilteredValues(filteredData);
       setEntityProperties(filteredData);
       props.setEntityExpandedKeys([...props.entityExpandedKeys, ...props.allRelatedEntitiesKeys]);
     } else {
+      setFilterApplied(false);
       setEntityProperties(props.entityTypeProperties);
     }
   }, [props.filterStr]);
@@ -344,6 +354,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const handleColSearch = (selectedKeys, confirm, dataIndex) => {
 
     confirm();
+    setFilterApplied(true);
     setSearchEntityText(selectedKeys[0]);
     setSearchedEntityColumn(dataIndex);
 
@@ -358,7 +369,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const handleSearchReset = (clearFilters, dataIndex) => {
     props.setFilterStr("");
-
+    setTableCollapsed(false);
+    setFilterApplied(false);
+    setFilteredValues([]);
     clearFilters();
     if (searchEntityText) {
       props.setEntityExpandedKeys([...props.initialEntityKeys]);
@@ -1011,12 +1024,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
     </Select>
   );
 
+  const expandTableIcon = (
+    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}><Icon type={tableCollapsed ? "right" : "down"}/></a>
+  );
+
   const topRowDetails = (
     <div>
       <div className = {styles.entityTopRow}>
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
-          <strong>{props.entityTypeTitle}
-          </strong>
+          {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
         </div>
         <div className={styles.entitySettingsLink}>
           <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle}/>
@@ -1033,10 +1049,25 @@ const EntityMapTable: React.FC<Props> = (props) => {
           <div className={styles.entityFilter}>{relatedEntitiesFilter}</div>
         </div>
         :
-        ""
+        null
       }
     </div>
   );
+
+  const toggleEntityTable = () => {
+    setTableToggled(true);
+    if (tableCollapsed) {
+      if (!filterApplied) {
+        setEntityProperties(props.entityTypeProperties);
+      } else {
+        setEntityProperties(filteredValues);
+      }
+      setTableCollapsed(false);
+    } else {
+      setEntityProperties([]);
+      setTableCollapsed(true);
+    }
+  };
 
   const getRowClassName = (record, index) => {
     return (record.name === "Context" || record.name === "URI") ? "settingRow" : "propRow";
@@ -1332,28 +1363,50 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
-  return (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
-    <Table
-      className={tableCSS}
-      pagination={false}
-      expandIcon={(props) => customExpandIcon(props)}
-      onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
-      expandedRowKeys={props.entityExpandedKeys}
-      indentSize={18}
-      //defaultExpandAllRows={true}
-      columns={getColumnsForEntityTable()}
-      scroll={{x: 1000}}
-      dataSource={[{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: "", children: entityProperties}]}
-      tableLayout="unset"
-      rowKey={(record: any) => record.key}
-      getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
-      showHeader={!props.isRelatedEntity}
-      rowClassName={(record, index) => getRowClassName(record, index)}
-    />
+  return ((props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
+    <div id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"}>
+      <Table
+        pagination={false}
+        className={tableCSS}
+        indentSize={28}
+        //defaultExpandAllRows={true}
+        expandIcon={(props) => customExpandIcon(props)}
+        onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
+        expandedRowKeys={props.entityExpandedKeys}
+        columns={getColumnsForEntityTable()}
+        scroll={{x: 1000}}
+        dataSource={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]]: [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
+        tableLayout="unset"
+        rowKey={(record: any) => record.key}
+        getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
+        showHeader={!props.isRelatedEntity}
+        rowClassName={(record, index) => getRowClassName(record, index)}
+      />
+    </div>
+    {entityProperties.length > 0 ?
+      <div id="lowerTable">
+        <Table
+          pagination={paginationOptions}
+          className={tableCSS}
+          expandIcon={(props) => customExpandIcon(props)}
+          onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
+          expandedRowKeys={props.entityExpandedKeys}
+          indentSize={28}
+          //defaultExpandAllRows={true}
+          columns={getColumnsForEntityTable()}
+          scroll={{x: 1000}}
+          dataSource={filterApplied ? entityProperties : props.isRelatedEntity ? entityProperties.slice(2, entityProperties.length) : entityProperties.slice(1, entityProperties.length)}
+          tableLayout="unset"
+          rowKey={(record: any) => record.key}
+          getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
+          showHeader={false}
+          rowClassName={(record, index) => getRowClassName(record, index)}
+        />
+      </div>
+      : null
+    }
     {deleteConfirmation}
-  </div>)
-    :
-    null;
+  </div>) : null);
 };
 
 export default EntityMapTable;

@@ -626,6 +626,906 @@ const jsonSourceDataLargeDataset = {
   }
 };
 
+const entityDefLargePropSet = {
+  "propId": {
+    "datatype": "string"
+  },
+  "propId2": {
+    "datatype": "string"
+  },
+  "propId3": {
+    "datatype": "string"
+  },
+  "propId4": {
+    "datatype": "string"
+  },
+  "propId5": {
+    "datatype": "string"
+  },
+  "propId6": {
+    "datatype": "string"
+  },
+  "propId7": {
+    "datatype": "string"
+  },
+  "propId8": {
+    "datatype": "string"
+  },
+  "propId9": {
+    "datatype": "string"
+  },
+  "propId10": {
+    "datatype": "string"
+  },
+  "propId11": {
+    "datatype": "string"
+  },
+  "propId12": {
+    "datatype": "string"
+  },
+  "propId13": {
+    "datatype": "string"
+  },
+  "propId14": {
+    "datatype": "string"
+  },
+  "propId15": {
+    "datatype": "string"
+  },
+  "propId16": {
+    "datatype": "string"
+  },
+  "propId17": {
+    "datatype": "string"
+  },
+  "propId18": {
+    "datatype": "string"
+  },
+  "propId19": {
+    "datatype": "string"
+  },
+  "propId20": {
+    "datatype": "string"
+  },
+  "propId21": {
+    "datatype": "string"
+  },
+  "propId22": {
+    "datatype": "string"
+  },
+  "propId23": {
+    "datatype": "string"
+  },
+  "propId24": {
+    "datatype": "string"
+  },
+  "propId25": {
+    "datatype": "string"
+  },
+  "propId26": {
+    "datatype": "string"
+  },
+  "propId27": {
+    "datatype": "string"
+  },
+  "propId28": {
+    "datatype": "string"
+  },
+  "propId29": {
+    "datatype": "string"
+  },
+  "propId30": {
+    "datatype": "string"
+  },
+  "propId31": {
+    "datatype": "string"
+  },
+  "propId32": {
+    "datatype": "string"
+  },
+  "propId33": {
+    "datatype": "string"
+  },
+  "propId34": {
+    "datatype": "string"
+  },
+  "propId35": {
+    "datatype": "string"
+  },
+  "propId36": {
+    "datatype": "string"
+  },
+  "propId37": {
+    "datatype": "string"
+  },
+  "propId38": {
+    "datatype": "string"
+  },
+  "propId39": {
+    "datatype": "string"
+  },
+  "propId40": {
+    "datatype": "string"
+  },
+  "propId41": {
+    "datatype": "string"
+  },
+  "propId42": {
+    "datatype": "string"
+  },
+  "propId43": {
+    "datatype": "string"
+  },
+  "propId44": {
+    "datatype": "string"
+  },
+  "propId45": {
+    "datatype": "string"
+  },
+  "propId46": {
+    "datatype": "string"
+  },
+  "propId47": {
+    "datatype": "string"
+  },
+  "propId48": {
+    "datatype": "string"
+  },
+  "propId49": {
+    "datatype": "string"
+  },
+  "propId50": {
+    "datatype": "string"
+  },
+  "propId51": {
+    "datatype": "string"
+  },
+  "propId52": {
+    "datatype": "string"
+  },
+  "propId53": {
+    "datatype": "string"
+  },
+  "propId54": {
+    "datatype": "string"
+  },
+  "propId55": {
+    "datatype": "string"
+  },
+  "propId56": {
+    "datatype": "string"
+  },
+  "propId57": {
+    "datatype": "string"
+  },
+  "propId58": {
+    "datatype": "string"
+  },
+  "propId59": {
+    "datatype": "string"
+  },
+  "propId60": {
+    "datatype": "string"
+  },
+  "propId61": {
+    "datatype": "string"
+  },
+  "propId62": {
+    "datatype": "string"
+  },
+  "propId63": {
+    "datatype": "string"
+  },
+  "propId64": {
+    "datatype": "string"
+  },
+  "propId65": {
+    "datatype": "string"
+  },
+  "propId66": {
+    "datatype": "string"
+  },
+  "propId67": {
+    "datatype": "string"
+  },
+  "propId68": {
+    "datatype": "string"
+  },
+  "propId69": {
+    "datatype": "string"
+  },
+  "propId70": {
+    "datatype": "string"
+  },
+  "propId71": {
+    "datatype": "string"
+  },
+  "propId72": {
+    "datatype": "string"
+  },
+  "propId73": {
+    "datatype": "string"
+  },
+  "propId74": {
+    "datatype": "string"
+  },
+  "propId75": {
+    "datatype": "string"
+  },
+  "propId76": {
+    "datatype": "string"
+  },
+  "propId77": {
+    "datatype": "string"
+  },
+  "propId78": {
+    "datatype": "string"
+  },
+  "propId79": {
+    "datatype": "string"
+  },
+  "propId80": {
+    "datatype": "string"
+  },
+  "propId81": {
+    "datatype": "string"
+  },
+  "propId82": {
+    "datatype": "string"
+  },
+  "propId83": {
+    "datatype": "string"
+  },
+  "propId84": {
+    "datatype": "string"
+  },
+  "propId85": {
+    "datatype": "string"
+  },
+  "propId86": {
+    "datatype": "string"
+  },
+  "propId87": {
+    "datatype": "string"
+  },
+  "propId88": {
+    "datatype": "string"
+  },
+  "propId89": {
+    "datatype": "string"
+  },
+  "propId90": {
+    "datatype": "string"
+  },
+  "propId91": {
+    "datatype": "string"
+  },
+  "propId92": {
+    "datatype": "string"
+  },
+  "propId93": {
+    "datatype": "string"
+  },
+  "propId94": {
+    "datatype": "string"
+  },
+  "propId95": {
+    "datatype": "string"
+  },
+  "propId96": {
+    "datatype": "string"
+  },
+  "propId97": {
+    "datatype": "string"
+  },
+  "propId98": {
+    "datatype": "string"
+  },
+  "propId99": {
+    "datatype": "string"
+  },
+  "propId100": {
+    "datatype": "string"
+  },
+  "propId101": {
+    "datatype": "string"
+  },
+  "propId102": {
+    "datatype": "string"
+  },
+  "propId103": {
+    "datatype": "string"
+  },
+  "propId104": {
+    "datatype": "string"
+  },
+  "propId105": {
+    "datatype": "string"
+  },
+  "propId106": {
+    "datatype": "string"
+  },
+  "propId107": {
+    "datatype": "string"
+  },
+  "propId108": {
+    "datatype": "string"
+  },
+  "propId109": {
+    "datatype": "string"
+  },
+  "propId110": {
+    "datatype": "string"
+  },
+  "propId111": {
+    "datatype": "string"
+  },
+  "propId112": {
+    "datatype": "string"
+  },
+  "propId113": {
+    "datatype": "string"
+  },
+  "propId114": {
+    "datatype": "string"
+  },
+  "propId115": {
+    "datatype": "string"
+  },
+  "propId116": {
+    "datatype": "string"
+  },
+  "propId117": {
+    "datatype": "string"
+  },
+  "propId118": {
+    "datatype": "string"
+  },
+  "propId119": {
+    "datatype": "string"
+  },
+  "propId120": {
+    "datatype": "string"
+  },
+  "propId121": {
+    "datatype": "string"
+  },
+  "propId122": {
+    "datatype": "string"
+  },
+  "propId123": {
+    "datatype": "string"
+  },
+  "propId124": {
+    "datatype": "string"
+  },
+  "propId125": {
+    "datatype": "string"
+  },
+  "propId126": {
+    "datatype": "string"
+  },
+  "propId127": {
+    "datatype": "string"
+  },
+  "propId128": {
+    "datatype": "string"
+  },
+  "propId129": {
+    "datatype": "string"
+  },
+  "propId130": {
+    "datatype": "string"
+  },
+  "propId131": {
+    "datatype": "string"
+  },
+  "propId132": {
+    "datatype": "string"
+  },
+  "propId133": {
+    "datatype": "string"
+  },
+  "propId134": {
+    "datatype": "string"
+  },
+  "propId135": {
+    "datatype": "string"
+  },
+  "propId136": {
+    "datatype": "string"
+  },
+  "propId137": {
+    "datatype": "string"
+  },
+  "propId138": {
+    "datatype": "string"
+  },
+  "propId139": {
+    "datatype": "string"
+  },
+  "propId140": {
+    "datatype": "string"
+  },
+  "propId141": {
+    "datatype": "string"
+  },
+  "propId142": {
+    "datatype": "string"
+  },
+  "propId143": {
+    "datatype": "string"
+  },
+  "propId144": {
+    "datatype": "string"
+  },
+  "propId145": {
+    "datatype": "string"
+  },
+  "propId146": {
+    "datatype": "string"
+  },
+  "propId147": {
+    "datatype": "string"
+  },
+  "propId148": {
+    "datatype": "string"
+  },
+  "propId149": {
+    "datatype": "string"
+  },
+  "propId150": {
+    "datatype": "string"
+  },
+  "propId151": {
+    "datatype": "string"
+  },
+  "propId152": {
+    "datatype": "string"
+  },
+  "propId153": {
+    "datatype": "string"
+  },
+  "propId154": {
+    "datatype": "string"
+  },
+  "propId155": {
+    "datatype": "string"
+  },
+  "propId156": {
+    "datatype": "string"
+  },
+  "propId157": {
+    "datatype": "string"
+  },
+  "propId158": {
+    "datatype": "string"
+  },
+  "propId159": {
+    "datatype": "string"
+  },
+  "propId160": {
+    "datatype": "string"
+  },
+  "propId161": {
+    "datatype": "string"
+  },
+  "propId162": {
+    "datatype": "string"
+  },
+  "propId163": {
+    "datatype": "string"
+  },
+  "propId164": {
+    "datatype": "string"
+  },
+  "propId165": {
+    "datatype": "string"
+  },
+  "propId166": {
+    "datatype": "string"
+  },
+  "propId167": {
+    "datatype": "string"
+  },
+  "propId168": {
+    "datatype": "string"
+  },
+  "propId169": {
+    "datatype": "string"
+  },
+  "propId170": {
+    "datatype": "string"
+  },
+  "propId171": {
+    "datatype": "string"
+  },
+  "propId172": {
+    "datatype": "string"
+  },
+  "propId173": {
+    "datatype": "string"
+  },
+  "propId174": {
+    "datatype": "string"
+  },
+  "propId175": {
+    "datatype": "string"
+  },
+  "propId176": {
+    "datatype": "string"
+  },
+  "propId177": {
+    "datatype": "string"
+  },
+  "propId178": {
+    "datatype": "string"
+  },
+  "propId179": {
+    "datatype": "string"
+  },
+  "propId180": {
+    "datatype": "string"
+  },
+  "propId181": {
+    "datatype": "string"
+  },
+  "propId182": {
+    "datatype": "string"
+  },
+  "propId183": {
+    "datatype": "string"
+  },
+  "propId184": {
+    "datatype": "string"
+  },
+  "propId185": {
+    "datatype": "string"
+  },
+  "propId186": {
+    "datatype": "string"
+  },
+  "propId187": {
+    "datatype": "string"
+  },
+  "propId188": {
+    "datatype": "string"
+  },
+  "propId189": {
+    "datatype": "string"
+  },
+  "propId190": {
+    "datatype": "string"
+  },
+  "propId191": {
+    "datatype": "string"
+  },
+  "propId192": {
+    "datatype": "string"
+  },
+  "propId193": {
+    "datatype": "string"
+  },
+  "propId194": {
+    "datatype": "string"
+  },
+  "propId195": {
+    "datatype": "string"
+  },
+  "propId196": {
+    "datatype": "string"
+  },
+  "propId197": {
+    "datatype": "string"
+  },
+  "propId198": {
+    "datatype": "string"
+  },
+  "propId199": {
+    "datatype": "string"
+  },
+  "propId200": {
+    "datatype": "string"
+  },
+  "propId201": {
+    "datatype": "string"
+  },
+  "propId202": {
+    "datatype": "string"
+  },
+  "propId203": {
+    "datatype": "string"
+  },
+  "propId204": {
+    "datatype": "string"
+  },
+  "propId205": {
+    "datatype": "string"
+  },
+  "propId206": {
+    "datatype": "string"
+  },
+  "propId207": {
+    "datatype": "string"
+  },
+  "propId208": {
+    "datatype": "string"
+  },
+  "propId209": {
+    "datatype": "string"
+  },
+  "propId210": {
+    "datatype": "string"
+  },
+  "propId211": {
+    "datatype": "string"
+  },
+  "propId212": {
+    "datatype": "string"
+  },
+  "propId213": {
+    "datatype": "string"
+  },
+  "propId214": {
+    "datatype": "string"
+  },
+  "propId215": {
+    "datatype": "string"
+  },
+  "propId216": {
+    "datatype": "string"
+  },
+  "propId217": {
+    "datatype": "string"
+  },
+  "propId218": {
+    "datatype": "string"
+  },
+  "propId219": {
+    "datatype": "string"
+  },
+  "propId220": {
+    "datatype": "string"
+  },
+  "propId221": {
+    "datatype": "string"
+  },
+  "propId222": {
+    "datatype": "string"
+  },
+  "propId223": {
+    "datatype": "string"
+  },
+  "propId224": {
+    "datatype": "string"
+  },
+  "propId225": {
+    "datatype": "string"
+  },
+  "propId226": {
+    "datatype": "string"
+  },
+  "propId227": {
+    "datatype": "string"
+  },
+  "propId228": {
+    "datatype": "string"
+  },
+  "propId229": {
+    "datatype": "string"
+  },
+  "propId230": {
+    "datatype": "string"
+  },
+  "propId231": {
+    "datatype": "string"
+  },
+  "propId232": {
+    "datatype": "string"
+  },
+  "propId233": {
+    "datatype": "string"
+  },
+  "propId234": {
+    "datatype": "string"
+  },
+  "propId235": {
+    "datatype": "string"
+  },
+  "propId236": {
+    "datatype": "string"
+  },
+  "propId237": {
+    "datatype": "string"
+  },
+  "propId238": {
+    "datatype": "string"
+  },
+  "propId239": {
+    "datatype": "string"
+  },
+  "propId240": {
+    "datatype": "string"
+  },
+  "propId241": {
+    "datatype": "string"
+  },
+  "propId242": {
+    "datatype": "string"
+  },
+  "propId243": {
+    "datatype": "string"
+  },
+  "propId244": {
+    "datatype": "string"
+  },
+  "propId245": {
+    "datatype": "string"
+  },
+  "propId246": {
+    "datatype": "string"
+  },
+  "propId247": {
+    "datatype": "string"
+  },
+  "propId248": {
+    "datatype": "string"
+  },
+  "propId249": {
+    "datatype": "string"
+  },
+  "propId250": {
+    "datatype": "string"
+  },
+  "propId251": {
+    "datatype": "string"
+  },
+  "propId252": {
+    "datatype": "string"
+  },
+  "propId253": {
+    "datatype": "string"
+  },
+  "propId254": {
+    "datatype": "string"
+  },
+  "propId255": {
+    "datatype": "string"
+  },
+  "propId256": {
+    "datatype": "string"
+  },
+  "propId257": {
+    "datatype": "string"
+  },
+  "propId258": {
+    "datatype": "string"
+  },
+  "propId259": {
+    "datatype": "string"
+  },
+  "propId260": {
+    "datatype": "string"
+  },
+  "propId261": {
+    "datatype": "string"
+  },
+  "propId262": {
+    "datatype": "string"
+  },
+  "propId263": {
+    "datatype": "string"
+  },
+  "propId264": {
+    "datatype": "string"
+  },
+  "propId265": {
+    "datatype": "string"
+  },
+  "propId266": {
+    "datatype": "string"
+  },
+  "propId267": {
+    "datatype": "string"
+  },
+  "propId268": {
+    "datatype": "string"
+  },
+  "propId269": {
+    "datatype": "string"
+  },
+  "propId270": {
+    "datatype": "string"
+  },
+  "propId271": {
+    "datatype": "string"
+  },
+  "propId272": {
+    "datatype": "string"
+  },
+  "propId273": {
+    "datatype": "string"
+  },
+  "propId274": {
+    "datatype": "string"
+  },
+  "propId275": {
+    "datatype": "string"
+  },
+  "propId276": {
+    "datatype": "string"
+  },
+  "propId277": {
+    "datatype": "string"
+  },
+  "propId278": {
+    "datatype": "string"
+  },
+  "propId279": {
+    "datatype": "string"
+  },
+  "propId280": {
+    "datatype": "string"
+  },
+  "propId281": {
+    "datatype": "string"
+  },
+  "propId282": {
+    "datatype": "string"
+  },
+  "propId283": {
+    "datatype": "string"
+  },
+  "propId284": {
+    "datatype": "string"
+  },
+  "propId285": {
+    "datatype": "string"
+  },
+  "propId286": {
+    "datatype": "string"
+  },
+  "propId287": {
+    "datatype": "string"
+  },
+  "propId288": {
+    "datatype": "string"
+  },
+  "propId289": {
+    "datatype": "string"
+  },
+  "propId290": {
+    "datatype": "string"
+  },
+  "propId291": {
+    "datatype": "string"
+  },
+  "propId292": {
+    "datatype": "string"
+  },
+  "propId293": {
+    "datatype": "string"
+  },
+  "propId294": {
+    "datatype": "string"
+  },
+  "propId295": {
+    "datatype": "string"
+  },
+  "propId296": {
+    "datatype": "string"
+  },
+  "propId297": {
+    "datatype": "string"
+  },
+  "propId298": {
+    "datatype": "string"
+  },
+  "propId299": {
+    "datatype": "string"
+  },
+};
+
 const xmlSourceDataMultipleSiblings = "<envelope><headers><sources xmlns=\"\"><name>loadPersonXML</name></sources><createdOn xmlns=\"\">2021-02-26T14:09:13.783548-08:00</createdOn><createdBy xmlns=\"\">hc-developer</createdBy></headers><triples/><instance xmlns=\"\"><sampleProtein proteinType=\"home\" xmlns:nutFree=\"http://uniprot.org/nutFree\" xmlns:withNuts=\"http://uniprot.org/withNuts\"><proteinId>123EAC</proteinId><nutFree:name><FirstNamePreferred>John</FirstName><LastName>Smith</LastName></nutFree:name><nutFree:name><FirstNamePreferred>Eric</FirstName><LastName>Johnson</LastName></nutFree:name><proteinCat><withNuts:Organism><OrganismName>Frog virus 3</OrganismName><OrganismType>scientific</OrganismType></withNuts:Organism></proteinCat></sampleProtein></instance><attachments/></envelope>";
 
 const xmlSourceDataDefault = "<envelope><headers><sources xmlns=\"\"><name>loadPersonXML</name></sources><createdOn xmlns=\"\">2021-02-26T14:09:13.783548-08:00</createdOn><createdBy xmlns=\"\">hc-developer</createdBy></headers><triples/><instance><sampleProtein proteinType=\"home\" xmlns:nutFree=\"http://uniprot.org/nutFree\" xmlns:withNuts=\"http://uniprot.org/withNuts\"><proteinId>123EAC</proteinId><nutFree:name><FirstNamePreferred>John</FirstName><LastName>Smith</LastName></nutFree:name><proteinCat>commercial</proteinCat><nutFree:proteinDog>retriever</nutFree:proteinDog><nutFree:proteinDog> </nutFree:proteinDog><nutFree:proteinDog>golden</nutFree:proteinDog><nutFree:proteinDog>labrador</nutFree:proteinDog></sampleProtein></instance><attachments/></envelope>";
@@ -1028,7 +1928,8 @@ const data = {
   jsonSourceDataDefault: jsonSourceDataDefault,
   jsonSourceDataRelated: jsonSourceDataRelated,
   xmlSourceDataDefault: xmlSourceDataDefault,
-  jsonSourceDataLargeDataset: jsonSourceDataLargeDataset
+  jsonSourceDataLargeDataset: jsonSourceDataLargeDataset,
+  entityDefLargePropSet: entityDefLargePropSet
 };
 
 export default data;

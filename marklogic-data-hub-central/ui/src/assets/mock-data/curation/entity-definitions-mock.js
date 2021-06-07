@@ -1,3 +1,5 @@
+import data from "./common.data";
+
 export const customerEntityDef = [{
   "entityModel": {
     "info": {
@@ -749,6 +751,84 @@ export const personRelatedEntityDef = [{
   }
 }
 ];
+
+export const personRelatedEntityDefLargePropSet = [{
+  "entityType": "Person",
+  "mappingTitle": "Person",
+  "relatedEntityMappings": [{
+    "mappingLinkText": "Order (orderedBy Person)",
+    "entityMappingId": "Person.items:Order",
+    "additionalCollections": [],
+    "collections": ["Order"]
+  },
+  {
+    "mappingLinkText": "BabyRegistry (ownedBy Person)",
+    "entityMappingId": "Person.items:BabyRegistry"
+  }
+  ],
+  "entityModel": {
+    "info": {
+      "title": "Person",
+      "version": "0.0.1",
+      "baseUri": "http://example.org/"
+    },
+    "definitions": {
+      "Person": {
+        "required": [
+          "propId"
+        ],
+        "primaryKey": "propId",
+        "properties": data.entityDefLargePropSet
+      }
+    }
+  }
+},
+{
+  "entityType": "Order",
+  "mappingTitle": "Order (orderedBy Person)",
+  "relatedEntityMappings": [{
+    "mappingLinkText": "hasProduct Product",
+    "entityMappingId": "Person.items:Order.lineItem.orderIncludes:Product"
+  }],
+  "entityMappingId": "Person.items:Order",
+  "entityModel": {
+    "info": {
+      "title": "Order",
+      "version": "0.0.1",
+      "baseUri": "http://marklogic.com/example/"
+    },
+    "definitions": {
+      "Order": {
+        "primaryKey": "orderId",
+        "properties": data.entityDefLargePropSet
+      }
+    }
+  }
+},
+{
+  "entityType": "BabyRegistry",
+  "entityMappingId": "Person.items:BabyRegistry",
+  "mappingTitle": "BabyRegistry (ownedBy Person)",
+  "relatedEntityMappings": [{
+    "mappingLinkText": "includes Product",
+    "entityMappingId": "Person.items:BabyRegistry.hasProduct:Product"
+  }],
+  "entityModel": {
+    "info": {
+      "title": "BabyRegistry",
+      "version": "0.0.1",
+      "baseUri": "http://marklogic.com/example/"
+    },
+    "definitions": {
+      "BabyRegistry": {
+        "primaryKey": "babyRegistryId",
+        "properties": data.entityDefLargePropSet
+      }
+    }
+  }
+}
+];
+
 
 export const customerNestedEntityDef = [{
   "entityModel": {

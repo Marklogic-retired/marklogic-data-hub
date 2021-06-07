@@ -12,7 +12,7 @@
 }
 
 .entityTopRow {
-  margin-top: -20px;
+  margin-top: -10px;
 }
 
 .entityTitle {
@@ -221,6 +221,14 @@
   text-align: left;
   font-size: 13px;
   padding-right: 1px;
+}
+
+.tableExpandIcon {
+  margin-left: -18px;
+  vertical-align:middle;
+  text-align: left;
+  font-size: 13px;
+  padding-right: 5px;
 }
 
 .foreignKeyIcon {
