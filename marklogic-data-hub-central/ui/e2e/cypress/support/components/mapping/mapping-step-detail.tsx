@@ -236,6 +236,22 @@ class MappingStepDetail {
   targetCollection() {
     return cy.findByLabelText("additionalColl-select");
   }
+
+  searchIcon() {
+    return cy.findByTestId("filterIcon-name");
+  }
+
+  searchName() {
+    return cy.findByTestId("searchInput-name");
+  }
+
+  searchButton() {
+    return cy.findByTestId("submitSearch-name");
+  }
+
+  customerEntity() {
+    return cy.findByTestId("Customer")
+  }
 }
 
 const mappingStepDetail = new MappingStepDetail();
