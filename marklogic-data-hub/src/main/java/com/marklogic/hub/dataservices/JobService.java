@@ -121,7 +121,7 @@ public interface JobService {
                 request
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId))
-                          ).responseSingle(false, Format.JSON)
+                          ).responseSingle(true, Format.JSON)
                 );
             }
 
