@@ -1,7 +1,6 @@
-
 @font-face {
     font-family: 'ExploreIcon';
-    src: url(../fonts/ML_IconFont.ttf)  format('truetype');
+    src: url(../fonts/ML_IconFont.ttf) format('truetype');
 }
 
 .exploreIconHeader:before {
@@ -14,7 +13,7 @@
     padding-left: 10px;
 }
 
-div.mosaic-container{
+div.mosaic-container {
     z-index: 0;
 }
 
@@ -24,10 +23,9 @@ div.mosaic-container div.mosaic-tile {
     margin: 0;
 }
 
-div.ant-collapse-item{
+div.ant-collapse-item {
     background: white;
 }
-
 
 div.mosaic-container-explore div.mosaic-tile {
     border-color: #00474F;
@@ -50,8 +48,6 @@ div.mosaic-container-explore div.mosaic-tile {
     border-color: #BFBFBF;
     border-radius: 2px;
 }
-
-
 
 footer.ant-layout-footer {
     margin-top: 0;

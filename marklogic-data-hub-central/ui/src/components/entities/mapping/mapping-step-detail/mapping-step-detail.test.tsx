@@ -13,7 +13,7 @@ import {mappingStep, mappingStepPerson} from "../../../../assets/mock-data/curat
 import {getUris, getDoc} from "../../../../util/search-service";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import {act} from "react-dom/test-utils";
-import {personEntityDef, personNestedEntityDef, personNestedEntityDefSameNames, personRelatedEntityDef} from "../../../../assets/mock-data/curation/entity-definitions-mock";
+import {personEntityDef, personNestedEntityDef, personNestedEntityDefSameNames, personRelatedEntityDef, personRelatedEntityDefLargePropSet} from "../../../../assets/mock-data/curation/entity-definitions-mock";
 import {AuthoritiesContext, AuthoritiesService} from "../../../../util/authorities";
 import SplitPane from "react-split-pane";
 import userEvent from "@testing-library/user-event";
@@ -1407,7 +1407,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("artCraft")).toBeInTheDocument();
 
     //Check if indentation is right
-    expect(getByText("artCraft").closest("td")?.firstElementChild).toHaveStyle("padding-left: 54px;");
+    expect(getByText("artCraft").closest("td")?.firstElementChild).toHaveStyle("padding-left: 56px;");
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
@@ -1635,19 +1635,23 @@ describe("RTL Source-to-entity map tests", () => {
     expect(uriIndex.getByText("1")).toBeInTheDocument();
   });
 
-  test("verify if pagination works properly in Source table", async () => {
-    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
+  test("verify if pagination works properly in Source and Entity tables", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[4]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataLargeDataset});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDefLargePropSet});
 
-    let getByText, queryByText, getByTestId, getByTitle, queryByTitle;
+    let getByText, queryByText, getByTestId, getByTitle, getAllByTitle, queryByTitle, getByLabelText, queryByTestId;
     await act(async () => {
-      const renderResults = defaultRender(personMappingStepWithData);
+      const renderResults = defaultRender(personMappingStepWithRelatedEntityData);
       getByText = renderResults.getByText;
       queryByText = renderResults.queryByText;
       getByTestId = renderResults.getByTestId;
       getByTitle = renderResults.getByTitle;
+      getAllByTitle = renderResults.getAllByTitle;
       queryByTitle = renderResults.queryByTitle;
+      getByLabelText = renderResults.getByLabelText;
+      queryByTestId = renderResults.queryByTestId;
     });
 
     await waitFor(() => {
@@ -1663,21 +1667,21 @@ describe("RTL Source-to-entity map tests", () => {
     let submitSearchText = getByTestId("submitSearch-key");
 
     //Pagination options
-    let previousPageLink = getByTitle("Previous Page");
-    let nextPageLink = getByTitle("Next Page");
-    let page1_Option = getByTitle("1");
-    let next_5_Pages_Option = getByTitle("Next 5 Pages");
+    let srcPreviousPageLink = getAllByTitle("Previous Page")[0];
+    let srcNextPageLink = getAllByTitle("Next Page")[0];
+    let srcPage1_Option = getAllByTitle("1")[0];
+    let srcNext_5_Pages_Option = getAllByTitle("Next 5 Pages")[0];
 
-    expect(previousPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(srcPreviousPageLink).toHaveAttribute("aria-disabled", "true");
     expect(queryByTitle("9")).not.toBeInTheDocument();
     expect(queryByText("prop169")).not.toBeInTheDocument();
 
-    userEvent.click(next_5_Pages_Option);
+    userEvent.click(srcNext_5_Pages_Option);
     expect(queryByTitle("9")).not.toBeInTheDocument();
     expect(getByText("prop108")).toBeInTheDocument();
-    expect(previousPageLink).toHaveAttribute("aria-disabled", "false");
+    expect(srcPreviousPageLink).toHaveAttribute("aria-disabled", "false");
 
-    userEvent.click(next_5_Pages_Option);
+    userEvent.click(srcNext_5_Pages_Option);
     expect(getByText("prop208")).toBeInTheDocument();
 
     let page9_Option = getByTitle("9");
@@ -1691,7 +1695,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     expect(getByText("prop169")).toBeInTheDocument();
 
-    userEvent.click(page1_Option);
+    userEvent.click(srcPage1_Option);
     expect(getByText("CustomerID")).toBeInTheDocument();
     expect(queryByText("prop126Billing")).not.toBeInTheDocument();
 
@@ -1700,8 +1704,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(inputSearchSource).toHaveValue("fiveDigit");
     fireEvent.click(submitSearchText);
 
-    expect(previousPageLink).toHaveAttribute("aria-disabled", "true");
-    expect(nextPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(srcPreviousPageLink).toHaveAttribute("aria-disabled", "true");
     expect(getByText("prop126Billing")).toBeInTheDocument();
     expect(getByText("Street")).toBeInTheDocument();
     expect(getByText("City")).toBeInTheDocument();
@@ -1714,11 +1717,85 @@ describe("RTL Source-to-entity map tests", () => {
     expect(inputSearchSource).toHaveValue("prop1");
     fireEvent.click(submitSearchText);
 
-    expect(queryByTitle("Next 5 Pages")).not.toBeInTheDocument();
-    expect(nextPageLink).toHaveAttribute("aria-disabled", "false");
+    expect(getAllByTitle("Next 5 Pages")).toHaveLength(3);
+    expect(srcNextPageLink).toHaveAttribute("aria-disabled", "false");
 
-    userEvent.click(getByTitle("6"));
-    expect(nextPageLink).toHaveAttribute("aria-disabled", "true");
+    userEvent.click(getAllByTitle("6")[0]);
+
+    //All mapped entity tables should be present on the screen by default
+    expect(getByLabelText("Person-title")).toBeInTheDocument();
+    await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument());
+
+    await waitFor(() => {
+      //Check the elements of page 1 are visible in target entity and related entity tablbes
+      expect(getByTestId("Person-propId-name")).toBeInTheDocument();
+      expect(getByTestId("Person-propId2-name")).toBeInTheDocument();
+      expect(getByTestId("Order (orderedBy Person)-propId-name")).toBeInTheDocument();
+      expect(getByTestId("Order (orderedBy Person)-propId2-name")).toBeInTheDocument();
+    });
+
+    let tgtEntityPreviousPageLink = getAllByTitle("Previous Page")[1];
+    let tgtEntityNextPageLink = getAllByTitle("Next Page")[1];
+    let tgtEntityPage1_Option = getAllByTitle("1")[1];
+    let tgtEntityNext_5_Pages_Option = getAllByTitle("Next 5 Pages")[0];
+    let orderEntityPreviousPageLink = getAllByTitle("Previous Page")[2];
+    let orderEntityNextPageLink = getAllByTitle("Next Page")[2];
+    let orderEntityPage1_Option = getAllByTitle("1")[2];
+    let orderEntityNext_5_Pages_Option = getAllByTitle("Next 5 Pages")[1];
+
+    expect(tgtEntityPreviousPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(orderEntityPreviousPageLink).toHaveAttribute("aria-disabled", "true");
+
+    expect(queryByTitle("9")).not.toBeInTheDocument();
+    expect(queryByTestId("Person-propId155-name")).not.toBeInTheDocument();
+    expect(queryByTestId("Order (orderedBy Person)-propId155-name")).not.toBeInTheDocument();
+
+    userEvent.click(tgtEntityNext_5_Pages_Option);
+    userEvent.click(orderEntityNext_5_Pages_Option);
+    expect(queryByTitle("9")).not.toBeInTheDocument();
+    expect(getByTestId("Person-propId102-name")).toBeInTheDocument();
+    expect(getByTestId("Order (orderedBy Person)-propId102-name")).toBeInTheDocument();
+    expect(tgtEntityPreviousPageLink).toHaveAttribute("aria-disabled", "false");
+    expect(orderEntityPreviousPageLink).toHaveAttribute("aria-disabled", "false");
+
+    //Check the elements of page 1 are not visible
+    expect(queryByTestId("Person-propId-name")).not.toBeInTheDocument();
+    expect(queryByTestId("Person-propId2-name")).not.toBeInTheDocument();
+    expect(queryByTestId("Order (orderedBy Person)-propId-name")).not.toBeInTheDocument();
+    expect(queryByTestId("Order (orderedBy Person)-propId2-name")).not.toBeInTheDocument();
+
+    userEvent.click(tgtEntityPage1_Option);
+    userEvent.click(orderEntityPage1_Option);
+    expect(getByTestId("Person-propId-name")).toBeInTheDocument();
+    expect(getByTestId("Order (orderedBy Person)-propId-name")).toBeInTheDocument();
+    expect(queryByTestId("Person-propId110-name")).not.toBeInTheDocument();
+    expect(queryByTestId("Order (orderedBy Person)-propId110-name")).not.toBeInTheDocument();
+
+    //Filter options
+    let entityfilterIcon = getByTestId("filterIcon-name");
+    let inputSearchEntity = getByTestId("searchInput-name");
+    let submitEntitySearchText = getByTestId("submitSearch-name");
+
+    fireEvent.click(entityfilterIcon);
+    fireEvent.change(inputSearchEntity, {target: {value: "propId111"}});
+    expect(inputSearchEntity).toHaveValue("propId111");
+    fireEvent.click(submitEntitySearchText);
+
+    expect(tgtEntityPreviousPageLink).toHaveAttribute("aria-disabled", "true");
+    expect(orderEntityPreviousPageLink).toHaveAttribute("aria-disabled", "true");
+
+    expect(getByTestId("Person-propId111-name")).toBeInTheDocument();
+    expect(getByTestId("Order (orderedBy Person)-propId111-name")).toBeInTheDocument();
+
+    fireEvent.click(entityfilterIcon);
+    fireEvent.change(inputSearchEntity, {target: {value: "propId1"}});
+    expect(inputSearchEntity).toHaveValue("propId1");
+    fireEvent.click(submitEntitySearchText);
+
+    expect(queryByTitle("Next 5 Pages")).not.toBeInTheDocument();
+    expect(tgtEntityNextPageLink).toHaveAttribute("aria-disabled", "false");
+    expect(orderEntityNextPageLink).toHaveAttribute("aria-disabled", "false");
   });
 });
 

@@ -271,18 +271,63 @@ ul.ant-cascader-menu:nth-child(2) {
 }
 
 #entityTableContainer { 
-  .ant-table-body {
-    min-height: 12vh;
-    border-radius: 10px;
+  #upperTable {
+    .ant-table-body {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
   }
-  .ant-table-wrapper {
-    margin-bottom: 20px;
+
+  #upperTableEmptyProps {
+    .ant-table-body {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .ant-table-wrapper {
+      margin-bottom: 20px;
+    }
+  }
+
+  #lowerTable {
+    .ant-table-body {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }    
+    .ant-table-wrapper {
+      margin-bottom: 20px;
+    }
+  }
+  .ant-table-row-indent.indent-level-0 {
+    padding-left: 15px !important;
   }
 }
 
 #rootTableContainer {
-  .ant-table-wrapper {
-    margin-bottom: 20px;
+  #upperTableEmptyProps {
+    .ant-table-body {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .ant-table-wrapper {
+      margin-bottom: 20px;
+    }
+  }
+
+  #lowerTable {
+    .ant-table-body {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .ant-table-wrapper {
+      margin-bottom: 20px;
+    }
+  }
+  .ant-table-row-indent.indent-level-0 {
+    padding-left: 15px !important;
   }
 }
 .ant-modal-confirm-body{
