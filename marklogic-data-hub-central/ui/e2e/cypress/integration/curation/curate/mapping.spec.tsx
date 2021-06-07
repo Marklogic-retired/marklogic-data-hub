@@ -3,10 +3,10 @@
 import {Application} from "../../../support/application.config";
 import {confirmationModal, toolbar} from "../../../support/components/common";
 import {
-    entityTypeModal,
-    entityTypeTable,
-    propertyModal,
-    propertyTable
+  entityTypeModal,
+  entityTypeTable,
+  propertyModal,
+  propertyTable
 } from "../../../support/components/model/index";
 import {
   createEditMappingDialog,
@@ -140,6 +140,21 @@ describe("Mapping", () => {
     mappingStepDetail.validateMapValue("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
     mappingStepDetail.getURIValue("Relation (relatedTo Person)").trigger("mouseover");
     cy.contains("/Relation/444-44-4440.json");
+    // Search by name for non structured property
+    mappingStepDetail.searchIcon().click();
+    mappingStepDetail.searchName().type("URI");
+    mappingStepDetail.searchButton().click();
+    cy.findAllByText("URI").should("have.length.gt", 1);
+    // more/less visible on search by name for structured property
+    mappingStepDetail.goBackToCurateHomePage();
+    mappingStepDetail.customerEntity().click();
+    curatePage.openMappingStepDetail("Customer", "mapCustomersJSON");
+    mappingStepDetail.searchIcon().click();
+    mappingStepDetail.searchName().type("street");
+    mappingStepDetail.searchButton().click();
+    cy.findAllByText("more").should("have.length.gt", 1);
+    cy.findAllByText("more").first().click();
+    cy.findByText("less").should("be.visible");
   });
   it("Switch views and return to mapping details, verify persistence of expressions", () => {
     mappingStepDetail.goBackToCurateHomePage();
@@ -173,7 +188,7 @@ describe("Mapping", () => {
     runPage.runStep("mapRelation");
     cy.verifyStepRunResult("success", "Mapping", "mapRelation");
     cy.waitForAsyncRequest();
-    
+
     // Navigate to Explore
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
