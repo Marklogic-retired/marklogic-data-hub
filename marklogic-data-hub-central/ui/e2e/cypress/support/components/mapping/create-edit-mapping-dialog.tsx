@@ -11,8 +11,12 @@ class CreateEditMappingDialog {
     cy.get("#name").focus().clear();
   }
 
+  getMappingDescriptionInput() {
+    return cy.get("#description");
+  }
+
   setMappingDescription(str: string) {
-    cy.get("#description").type(str);
+    cy.get("#description").clear().type(str);
   }
 
   /**
