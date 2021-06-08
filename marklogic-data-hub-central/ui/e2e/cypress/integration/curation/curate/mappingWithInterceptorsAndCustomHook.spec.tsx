@@ -204,6 +204,8 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     // Open step settings and switch to Advanced tab in step settings
     mappingStepDetail.stepSettingsLink().click();
+    createEditMappingDialog.getMappingDescriptionInput().should("have.value", "An order mapping with custom interceptors");
+    createEditMappingDialog.setMappingDescription("Test description for Order");
     curatePage.switchEditAdvanced().click();
     // change source database
     advancedSettingsDialog.setSourceDatabase("data-hub-FINAL");
@@ -215,6 +217,8 @@ describe("Create and verify load steps, map step and flows with interceptors & c
 
     //Change the source Database again to see if the previous data comes back
     mappingStepDetail.stepSettingsLink().click();
+    createEditMappingDialog.getMappingDescriptionInput().should("have.value", "Test description for Order");
+    createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     curatePage.switchEditAdvanced().click();
     // change source database
     advancedSettingsDialog.setSourceDatabase("data-hub-STAGING");
@@ -223,6 +227,16 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     //Step source data is present now.
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
+
+    mappingStepDetail.entitySettingsLink().click();
+    advancedSettingsDialog.getTargetPermissions().should("have.value", "data-hub-common,read,data-hub-common,update");
+    advancedSettingsDialog.setTargetPermissions("data-hub-common,read");
+    advancedSettingsDialog.saveEntitySettings();
+
+    mappingStepDetail.entitySettingsLink().click();
+    advancedSettingsDialog.getTargetPermissions().should("have.value", "data-hub-common,read");
+    advancedSettingsDialog.setTargetPermissions("data-hub-common,read,data-hub-common,update");
+    advancedSettingsDialog.cancelEntitySettings();
 
     //Go back to curate homepage
     mappingStepDetail.goBackToCurateHomePage();

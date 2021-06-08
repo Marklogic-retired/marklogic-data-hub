@@ -39,6 +39,14 @@ class AdvancedSettingsDialog {
     // update id
   }
 
+  getTargetPermissions() {
+    return cy.get("#targetPermissions");
+  }
+
+  setTargetPermissions(permissions: string) {
+    cy.get("#targetPermissions").clear({force: true}).type(permissions);
+  }
+
   /**
    * Set Provenance Granularity
    * @param provenance
@@ -130,8 +138,16 @@ class AdvancedSettingsDialog {
     return cy.findByTestId(`${stepName}-cancel-settings`);
   }
 
+  cancelEntitySettings() {
+    return cy.findByTestId(`cancel-settings`).click({force: true});
+  }
+
   saveSettings(stepName: string) {
     return cy.findByTestId(`${stepName}-save-settings`);
+  }
+
+  saveEntitySettings() {
+    cy.findByTestId("save-settings").click({force: true});
   }
 
   attachSourceDocument() {

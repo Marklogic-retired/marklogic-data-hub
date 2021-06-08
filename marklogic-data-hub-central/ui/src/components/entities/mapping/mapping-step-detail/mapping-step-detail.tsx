@@ -1288,6 +1288,15 @@ const MappingStepDetail: React.FC = () => {
     if (mapSavedResult) {
       let mapArt = await getMappingArtifactByMapName(payload.targetEntityType, payload.name);
       if (mapArt) {
+        if (storage.curate?.modelDefinition && storage.curate?.entityType) {
+          await setViewSettings({...storage,
+            curate: {
+              stepArtifact: mapArt,
+              modelDefinition: {...storage.curate?.modelDefinition},
+              entityType: storage.curate?.entityType
+            }
+          });
+        }
         updateActiveStepArtifact({...mapArt});
       }
     }

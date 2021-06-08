@@ -67,6 +67,10 @@ class MappingStepDetail {
     return cy.findByLabelText(`stepSettings`);
   }
 
+  entitySettingsLink() {
+    return cy.findByLabelText(`entitySettings`);
+  }
+
   moreLink() {
     return cy.findByTestId(`moreLink`);
   }
