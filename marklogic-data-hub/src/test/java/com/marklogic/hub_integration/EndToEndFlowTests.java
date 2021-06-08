@@ -800,16 +800,10 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
         String inputPath = getResourceFile("e2e-test/input/input" + fileSuffix + "." + dataFormat.toString()).getAbsolutePath();
         String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
-        String OS = System.getProperty("os.name").toLowerCase();
         String optionString;
         JsonNode mlcpOptions;
         try {
-        	if (OS.indexOf("win") >= 0) {
-        		optionString = toJsonString(options).replace("\"", "\\\\\\\"");
-        	}
-        	else {
-        		optionString = toJsonString(options).replace("\"", "\\\"");
-        	}
+            optionString = toJsonString(options).replace("\"", "\\\"");
             String optionsJson =
                 "{" +
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
