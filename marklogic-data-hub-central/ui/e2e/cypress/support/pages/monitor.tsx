@@ -53,6 +53,29 @@ class MonitorPage {
       cy.findByTestId(`clear-grey-${facet}`).trigger("mouseover").dblclick({force: true});
     });
   }
+  validateClearStartTimeGreyFacet(option: string) {
+    cy.get(`[data-testid=clear-grey-${option}]`).click();
+  }
+
+  selectStartTimeFromDropDown(option: string) {
+    this.getStartTimeDropDown().click();
+    this.getStartTimeOption(option).click();
+    cy.waitForAsyncRequest();
+  }
+
+  getStartTimeDropDown() {
+    return cy.get("#date-select");
+  }
+
+  getStartTimeOption(option: string) {
+    return cy.get(`[data-cy="date-select-option-${option}"]`);
+  }
+
+  getSelectedTime() {
+    return this.getStartTimeDropDown().invoke("text");
+  }
+
+
 }
 const monitorPage = new MonitorPage();
 export default monitorPage;
