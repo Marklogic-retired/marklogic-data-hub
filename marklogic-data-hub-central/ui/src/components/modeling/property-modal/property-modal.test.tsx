@@ -182,9 +182,35 @@ describe("Property Modal Component", () => {
     expect(screen.queryByLabelText("Facet")).toBeNull();
     //expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
 
+    expect(getByLabelText("joinProperty-select")).toBeInTheDocument();
+    //Join property select field should disappear after selecting a different property type like string
+    userEvent.click(getByLabelText("icon: close-circle")); //clear "Customer" from property field
+    userEvent.click(getByPlaceholderText("Select the property type"));
+    userEvent.click(getByText("string"));
+    expect(screen.queryByLabelText("joinProperty-select")).toBeNull();
+
+    //Try selection of a structured type after selecting related entity type again, join property select should disappear
+    userEvent.click(getByLabelText("icon: close-circle")); //clear "string" from property field
+    userEvent.click(getByPlaceholderText("Select the property type"));
+    userEvent.click(getByText("Related Entity"));
+    userEvent.click(getAllByText("Customer")[1]);
+    expect(getByLabelText("joinProperty-select")).toBeInTheDocument();
+
+    userEvent.click(getByLabelText("icon: close-circle")); //clear "Customer" from property field
+    userEvent.click(getByPlaceholderText("Select the property type"));
+    userEvent.click(getByText("Structured"));
+    userEvent.click(getByText("Address"));
+    expect(screen.queryByLabelText("joinProperty-select")).toBeNull();
+
+    //Now go back to related entity type to populate
+    userEvent.click(getByLabelText("icon: close-circle")); //clear "Address" from property field
+    userEvent.click(getByPlaceholderText("Select the property type"));
+    userEvent.click(getByText("Related Entity"));
+    userEvent.click(getAllByText("Customer")[1]);
+
     // Choose join property after menu is populated
     userEvent.click(getByLabelText("joinProperty-select"));
-    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+    expect(mockPrimaryEntityTypes).toBeCalledTimes(3);
     await wait(() => userEvent.click(getByText("customerId")));
 
     const multipleRadio = screen.getByLabelText("multiple-no");
@@ -328,7 +354,7 @@ describe("Property Modal Component", () => {
     expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
-  test.only("Add a Property with relationship type to a structured type definition", async () => {
+  test("Add a Property with relationship type to a structured type definition", async () => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
     // Mock population of Join Property menu
     mockPrimaryEntityTypes.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});

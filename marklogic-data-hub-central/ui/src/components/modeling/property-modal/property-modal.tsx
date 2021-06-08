@@ -295,6 +295,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       case "structured":
         newSelectedPropertyOptions.propertyType = PropertyType.Structured;
         newSelectedPropertyOptions.identifier = "";
+        toggleShowJoinProperty(false);
         //newSelectedPropertyOptions.wildcard = false;
         if (value[1] === "newPropertyType") {
           toggleStructuredTypeModal(true);
@@ -314,6 +315,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
         }
+        toggleShowJoinProperty(false);
         toggleShowConfigurationOptions(true);
         break;
       default:
@@ -324,6 +326,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
         }
+        toggleShowJoinProperty(false);
         toggleShowConfigurationOptions(true);
         break;
       }
