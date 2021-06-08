@@ -32,6 +32,7 @@ function describeRole(roleName) {
     defaultCollections: xdmp.roleGetDefaultCollections(roleName).toArray()
   };
 
+  addPrivilegesToResponse(response, xdmp.role(roleName));
   addRoleDataToResponse(response, xdmp.roleRoles(roleName).toArray());
   return response;
 }
@@ -54,9 +55,9 @@ function describeUser(username) {
 /**
  * Adds roles, privileges, default permissions, and default collections to the response object based on each of the given role IDs.
  * The response object is expected to be created by either describeRole or describeUser.
- * 
- * @param response 
- * @param roleIds 
+ *
+ * @param response
+ * @param roleIds
  */
 function addRoleDataToResponse(response, roleIds) {
   roleIds.forEach(roleId => {
