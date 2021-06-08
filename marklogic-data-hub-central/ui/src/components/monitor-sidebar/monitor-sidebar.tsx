@@ -127,11 +127,16 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             }
           });
         }
+        if (!Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime") && !Object.keys(monitorOptions.selectedFacets).includes("startTime")) {
+          setDateRangeValue("select time");
+        }
         props.facetRender(selectedFacets);
       } else {
         props.facetRender([]);
         setAllSelectedFacets({});
-        setDateRangeValue("select time");
+        if (!Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime")) {
+          setDateRangeValue("select time");
+        }
       }
     }
   }, [props.facets]);
@@ -157,6 +162,9 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             checkedFacets.push({constraint, facet, displayName});
           }
         });
+      }
+      if (!Object.keys(monitorGreyedOptions.selectedFacets).includes("startTime") && !Object.keys(monitorOptions.selectedFacets).includes("startTime")) {
+        setDateRangeValue("select time");
       }
       props.checkFacetRender(checkedFacets);
 
@@ -262,7 +270,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             onChange={value => handleOptionSelect(value)}
             getPopupContainer={() => document.getElementById("date-select") || document.body}
           >{dateRangeOptions.map((timeBucket, index) => {
-              return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
+              return <Option key={index} value={timeBucket} data-cy={`date-select-option-${timeBucket}`} data-testid={`date-select-option-${timeBucket}`}>
                 {timeBucket}
               </Option>;
             })

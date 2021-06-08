@@ -73,13 +73,15 @@ describe("Monitor Tile", () => {
 
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
     browsePage.getShowMoreLink("step").click();
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    cy.wait(1000);
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
     browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox("flow", "personJSON").click();
+    cy.wait(1000);
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+    browsePage.getFacetItemCheckbox("flow", "personJSON").click();
     browsePage.getGreySelectedFacets("personJSON").should("exist");
     browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
     browsePage.getGreySelectedFacets("ingestion").should("exist");
@@ -130,9 +132,31 @@ describe("Monitor Tile", () => {
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
     browsePage.getFacetItemCheckbox("status", "finished").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("not.be.checked");
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
     browsePage.getFacetItemCheckbox("status", "finished").should("not.be.checked");
+  });
+
+  it("Verify select, apply, remove grey and applied startTime facet", () => {
+    // Select multiple facets and remove startTime grey facet
+    monitorPage.validateGreyFacet("step-type", 0);
+    monitorPage.validateGreyFacet("step-type", 1);
+    monitorPage.selectStartTimeFromDropDown("Today");
+    monitorPage.getSelectedTime().should("contain", "Today");
+    browsePage.getGreySelectedFacets("Today").should("exist");
+    monitorPage.validateClearStartTimeGreyFacet("Today");
+    monitorPage.getSelectedTime().should("contain", "select time");
+
+    // Select multiple facets and apply all facets
+    monitorPage.selectStartTimeFromDropDown("Today");
+    monitorPage.getSelectedTime().should("contain", "Today");
+    browsePage.getApplyFacetsButton().click();
+    browsePage.getAppliedFacets("Today").should("exist");
+    monitorPage.getSelectedTime().should("contain", "Today");
+
+    // Remove applied startTime facet
+    browsePage.clickClearFacetSearchSelection("Today");
+    browsePage.getSelectedFacet("Today").should("not.exist");
+    browsePage.getClearAllFacetsButton().click();
   });
 
 });
