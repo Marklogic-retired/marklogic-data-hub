@@ -175,3 +175,12 @@ span.readOnlyLabel {
 .alertMessage {
     font-weight: bold;
 }
+
+.deprecatedLabel {
+    font-size: 9px;
+    color: #B32424;
+    border: 1px solid #B32424;
+    border-radius: 4px;
+    margin-left: 0.5vw;
+    padding: 3px;
+}
