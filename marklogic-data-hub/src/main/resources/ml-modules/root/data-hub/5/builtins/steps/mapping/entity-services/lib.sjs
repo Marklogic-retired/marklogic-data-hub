@@ -134,8 +134,7 @@ function makeParameterElements(mappingStep, userParameterNames) {
         hubUtils.hubTrace(infoEvent, `Applying mapping parameters module at path '${modulePath}`);
       }
       try {
-        const paramsFunction = require(modulePath)["getParameterDefinitions"];
-        const userParams = paramsFunction(mappingStep);
+        const userParams = require(modulePath)["getParameterDefinitions"](mappingStep);
         userParams.forEach(userParam => elements += `<m:param name="${userParam.name}"/>`);
       } catch (error) {
         throw Error(`getParameterDefinitions failed in module '${modulePath}'; cause: ${error.message}`);
@@ -388,8 +387,8 @@ function validateAndTestMapping(mapping, uri) {
     if (modulePath) {
       const contentSequence = Sequence.from([{"uri": uri, "value": sourceDocument}]);
       const moduleLib = require(modulePath);
-      userParameterNames = moduleLib["getParameterDefinitions"]().map(def => def.name);
-      userParameterMap = moduleLib["getParameterValues"](contentSequence);
+      userParameterNames = moduleLib["getParameterDefinitions"](mapping).map(def => def.name);
+      userParameterMap = moduleLib["getParameterValues"](contentSequence, mapping);
     }
   } catch (error) {
     // Need to throw an HTTP error so that the testMapping endpoint returns a proper error

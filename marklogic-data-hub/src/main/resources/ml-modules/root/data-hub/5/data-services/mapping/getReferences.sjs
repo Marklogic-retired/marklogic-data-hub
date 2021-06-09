@@ -21,8 +21,7 @@ let response = [{"name": "$URI", "description": "The URI of the source document"
 const modulePath = mappingStep.mappingParametersModulePath;
 if (modulePath) {
   try {
-    const paramsFunction = require(modulePath)["getParameterDefinitions"];
-    const userParams = paramsFunction(mappingStep);
+    const userParams = require(modulePath)["getParameterDefinitions"](mappingStep);
     userParams.forEach(userParam => userParam.name = "$" + userParam.name);
     response = response.concat(userParams);
     response.sort((a, b) => (a.name > b.name) ? 1 : -1);
