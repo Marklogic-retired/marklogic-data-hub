@@ -13,7 +13,7 @@
       <stemmed-searches>off</stemmed-searches>
       <word-searches>false</word-searches>
       <field-value-searches>true</field-value-searches>
-      <field-value-positions>true</field-value-positions>
+      <field-value-positions>false</field-value-positions>
       <fast-phrase-searches>false</fast-phrase-searches>
       <fast-case-sensitive-searches>false</fast-case-sensitive-searches>
       <fast-diacritic-sensitive-searches>false</fast-diacritic-sensitive-searches>
@@ -123,28 +123,28 @@
       <scalar-type>dateTime</scalar-type>
       <collation/>
       <field-name>datahubCreatedOn</field-name>
-      <range-value-positions>true</range-value-positions>
+      <range-value-positions>false</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedByJob</field-name>
-      <range-value-positions>true</range-value-positions>
+      <range-value-positions>false</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedByStep</field-name>
-      <range-value-positions>true</range-value-positions>
+      <range-value-positions>false</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
     <range-field-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedInFlow</field-name>
-      <range-value-positions>true</range-value-positions>
+      <range-value-positions>false</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>
     <range-field-index>
