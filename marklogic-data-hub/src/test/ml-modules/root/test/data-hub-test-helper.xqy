@@ -155,6 +155,20 @@ declare function clear-jobs-database()
   )
 };
 
+(:
+We want to remove everything from the schemas database except for the step response TDE
+which is added as part of the deployment process.
+Also enabling "ifNotExists" option so that the document-delete function does not complain
+if the document URI is not found which can happen if the document is already deleted
+by a database trigger.
+:)
+declare function clear-schemas-databases()
+{
+  invoke-in-staging-and-final-schema-database(function() {
+    cts:uris((), (), cts:not-query(cts:collection-query("hub-template"))) ! xdmp:document-delete(., map:map() => map:with("ifNotExists", "allow"))
+  })
+};
+
 declare function reset-staging-and-final-databases()
 {
   invoke-in-staging-and-final(function() {
@@ -165,6 +179,11 @@ declare function reset-staging-and-final-databases()
 declare function invoke-in-staging-and-final($function)
 {
   ($config:STAGING-DATABASE, $config:FINAL-DATABASE) ! invoke-in-db($function, .)
+};
+
+declare function invoke-in-staging-and-final-schema-database($function)
+{
+  ("data-hub-final-SCHEMAS", "data-hub-staging-SCHEMAS") ! invoke-in-db($function, .)
 };
 
 declare function get-staging-collection-size($collection-name as xs:string) as xs:integer
