@@ -13,6 +13,7 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.runStep("personJSON", "2");
     cy.waitForAsyncRequest();
   });
   beforeEach(() => {

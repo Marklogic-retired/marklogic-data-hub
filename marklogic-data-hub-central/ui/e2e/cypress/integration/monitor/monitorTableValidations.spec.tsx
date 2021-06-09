@@ -125,6 +125,7 @@ describe("Monitor Tile", () => {
     browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
+    cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
     browsePage.getFacetItemCheckbox("status", "finished").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").click();
@@ -132,6 +133,7 @@ describe("Monitor Tile", () => {
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
     browsePage.getFacetItemCheckbox("status", "finished").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("not.be.checked");
+    cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
     browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
     browsePage.getFacetItemCheckbox("status", "finished").should("not.be.checked");
   });
