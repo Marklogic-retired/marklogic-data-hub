@@ -57,6 +57,8 @@ describe("Advanced step settings", () => {
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -95,6 +97,8 @@ describe("Advanced step settings", () => {
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
     expect(getByPlaceholderText("Please enter additional settings")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter additional settings")).toBeEnabled();
@@ -143,6 +147,8 @@ describe("Advanced step settings", () => {
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -169,12 +175,16 @@ describe("Advanced step settings", () => {
 
     expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
     fireEvent.click(getByText("Interceptors"));
     expect((await(waitForElement(() => getByText("{ \"interceptor\": true }"))))).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -247,6 +257,8 @@ describe("Advanced step settings", () => {
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 
@@ -338,6 +350,8 @@ describe("Advanced step settings", () => {
     fireEvent.click(getByText("Custom Hook"));
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "hook-changed"}});
     expect(getByLabelText("customHook-textarea")).toHaveValue("hook-changed");
+    fireEvent.mouseOver(getByText("DEPRECATED"));
+    await wait(() =>  expect(getByText(AdvancedSettingsTooltips.customHookDeprecated)).toBeInTheDocument());
 
   });
 

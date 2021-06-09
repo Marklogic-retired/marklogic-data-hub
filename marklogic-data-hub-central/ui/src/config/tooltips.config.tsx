@@ -484,6 +484,7 @@ const AdvancedSettingsTooltips = {
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
   batchSize : 'The maximum number of items to process in a batch.',
+  customHookDeprecated: 'Custom hooks are deprecated and will be removed in a future version. Please use interceptors instead.',
 
   /* TO BE DEPRECATED. Please use SecurityTooltips.missingPermission. */
   missingPermission: 'Contact your security administrator for access.',

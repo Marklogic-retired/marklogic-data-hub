@@ -869,6 +869,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               rotate={customHookExpanded ? 90 : 0}
             />
             <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
+            <MLTooltip title={tooltips.customHookDeprecated} placement={"right"}><span className={styles.deprecatedLabel}>DEPRECATED</span></MLTooltip>
           </span>}
           labelAlign="left"
           className={styles.formItem}
