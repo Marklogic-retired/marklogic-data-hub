@@ -83,6 +83,8 @@ declare namespace Cypress {
 
       waitForModalToDisappear(): void
 
+      runStep(flowName: string, stepNumber: string): Chainable<Element>
+
       verifyStepAddedToFlow(stepType: string, stepName: string, flowName: string): Chainable<Element>
 
       /**

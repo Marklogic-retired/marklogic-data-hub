@@ -6,6 +6,7 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
 import LoginPage from "../../support/pages/login";
+import runPage from "../../support/pages/run";
 
 describe("save/manage queries scenarios, developer role", () => {
   before(() => {
@@ -13,6 +14,7 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
+    cy.runStep("personJSON", "2");
     cy.waitForAsyncRequest();
   });
   beforeEach(() => {
