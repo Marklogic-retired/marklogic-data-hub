@@ -181,6 +181,15 @@ Cypress.Commands.add("deleteFlows", (...flowNames) => {
   });
 });
 
+Cypress.Commands.add("runStep", (flowName, stepNumber) => {
+  cy.request({
+    method: "POST",
+    url: `/api/flows/${flowName}/steps/${stepNumber}`
+  }).then(response => {
+    console.warn(`RUN FLOW ${flowName}: ${JSON.stringify(response.statusText)}`);
+  });
+});
+
 Cypress.Commands.add("deleteSteps", (stepType, ...stepNames) => {
   stepNames.forEach(step => {
     cy.request({

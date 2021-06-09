@@ -267,11 +267,11 @@ describe("Matching", () => {
     cy.findByLabelText("allDataTooltip").should("have.length.gt", 0);
 
     // to test validation checks when user selects test among URIs only radio
-    matchingStepDetail.getTestMatchUriButton().click();
+    matchingStepDetail.getTestMatchUriButton();
     cy.findByText("At least Two URIs are required.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
-    matchingStepDetail.getTestMatchUriButton().click();
+    matchingStepDetail.getTestMatchUriButton();
     cy.findByText("At least Two URIs are required.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
@@ -291,7 +291,7 @@ describe("Matching", () => {
     cy.findByText("/test/Uri1").should("not.exist");
 
     matchingStepDetail.getAddUriIcon().click();
-    matchingStepDetail.getTestMatchUriButton().click();
+    matchingStepDetail.getTestMatchUriButton();
     cy.findByText("At least one URI is required.").should("be.visible");
     matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
@@ -331,7 +331,7 @@ describe("Matching", () => {
     //To test when users click on test button and no data is returned
     cy.waitUntil(() => matchingStepDetail.getUriInputField().type("/json/noDataUri"));
     matchingStepDetail.getAddUriIcon().click();
-    matchingStepDetail.getTestMatchUriButton().click();
+    matchingStepDetail.getTestMatchUriButton();
     cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
     matchingStepDetail.getUriDeleteIcon().click();
 
@@ -340,8 +340,10 @@ describe("Matching", () => {
       cy.waitUntil(() => matchingStepDetail.getUriInputField().type(uris[i]));
       matchingStepDetail.getAddUriIcon().click();
     }
-    matchingStepDetail.getTestMatchUriButton().click();
-    cy.findByLabelText("noMatchedDataView").should("have.length.lt", 1);
+    matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(3000);
+    cy.findByLabelText("noMatchedDataView").should("not.exist");
     for (let j in uriMatchedResults) {
       cy.findByText(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
       cy.findByText("(Threshold: "+uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
@@ -349,7 +351,7 @@ describe("Matching", () => {
 
     //To test when user selects all data and click on test button
     matchingStepDetail.getAllDataRadio().click();
-    matchingStepDetail.getTestMatchUriButton().click();
+    matchingStepDetail.getTestMatchUriButton();
     for (let j in ruleset) {
       cy.waitUntil(() => cy.findByText(ruleset[j].ruleName).should("have.length.gt", 0).trigger("mousemove"));
       cy.waitUntil(() => cy.findByText("(Threshold: "+ruleset[j].threshold + ")").should("have.length.gt", 0));
@@ -416,4 +418,3 @@ describe("Matching", () => {
     cy.findAllByLabelText("expandedTableView").should("not.visible");
   });
 });
-
