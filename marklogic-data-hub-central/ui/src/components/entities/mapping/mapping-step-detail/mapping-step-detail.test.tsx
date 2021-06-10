@@ -1641,7 +1641,7 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataLargeDataset});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDefLargePropSet});
 
-    let getByText, queryByText, getByTestId, getByTitle, getAllByTitle, queryByTitle, getByLabelText, queryByTestId;
+    let getByText, queryByText, getByTestId, getByTitle, getAllByTitle, queryByTitle, getByLabelText, queryByTestId, getAllByText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithRelatedEntityData);
       getByText = renderResults.getByText;
@@ -1652,6 +1652,7 @@ describe("RTL Source-to-entity map tests", () => {
       queryByTitle = renderResults.queryByTitle;
       getByLabelText = renderResults.getByLabelText;
       queryByTestId = renderResults.queryByTestId;
+      getAllByText = renderResults.getAllByText;
     });
 
     await waitFor(() => {
@@ -1665,6 +1666,7 @@ describe("RTL Source-to-entity map tests", () => {
     let sourcefilterIcon = getByTestId("filterIcon-key");
     let inputSearchSource = getByTestId("searchInput-key");
     let submitSearchText = getByTestId("submitSearch-key");
+    let resetFilter = getByTestId("ResetSearch-key");
 
     //Pagination options
     let srcPreviousPageLink = getAllByTitle("Previous Page")[0];
@@ -1720,8 +1722,6 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getAllByTitle("Next 5 Pages")).toHaveLength(3);
     expect(srcNextPageLink).toHaveAttribute("aria-disabled", "false");
 
-    userEvent.click(getAllByTitle("6")[0]);
-
     //All mapped entity tables should be present on the screen by default
     expect(getByLabelText("Person-title")).toBeInTheDocument();
     await wait(() => expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument());
@@ -1776,6 +1776,7 @@ describe("RTL Source-to-entity map tests", () => {
     let entityfilterIcon = getByTestId("filterIcon-name");
     let inputSearchEntity = getByTestId("searchInput-name");
     let submitEntitySearchText = getByTestId("submitSearch-name");
+    let resetSearchEntity = getByTestId("ResetSearch-name");
 
     fireEvent.click(entityfilterIcon);
     fireEvent.change(inputSearchEntity, {target: {value: "propId111"}});
@@ -1796,6 +1797,80 @@ describe("RTL Source-to-entity map tests", () => {
     expect(queryByTitle("Next 5 Pages")).not.toBeInTheDocument();
     expect(tgtEntityNextPageLink).toHaveAttribute("aria-disabled", "false");
     expect(orderEntityNextPageLink).toHaveAttribute("aria-disabled", "false");
+
+    //Verify page size changer is present in all tables tables (1 source table and 3 entity tables)
+    let pageSizeChanger = getAllByText(
+      (_content, element) =>
+        element.className !== null &&
+        element.className === "ant-pagination-options"
+    );
+    let i: number;
+
+    expect(pageSizeChanger).toHaveLength(4);
+
+    //Test all page size changers' default value is at 20 / page
+    for (i = 0; i < 4; ++i) {
+      expect(pageSizeChanger[i]).toHaveTextContent("20 / page");
+    }
+
+    fireEvent.click(sourcefilterIcon);
+    fireEvent.click(resetFilter);
+
+    //Verify page size changing for source table
+    fireEvent.click(getAllByText("20 / page")[0]);
+    await wait(() => fireEvent.click(getByText("1 / page")));
+
+    expect(queryByText("CustomerID")).toBeInTheDocument(); //only first property is present
+    expect(getAllByText("Name")).toHaveLength(2); //second "Name" property should not be present, two instances come from table headers
+
+    expect(queryByTitle("310")).toBeInTheDocument();   //there should be 310 pages now
+
+    //test page 4 should only have fourth property
+    fireEvent.click(getAllByTitle("4")[0]);
+    await wait(() => expect(queryByText("Email")).toBeInTheDocument());
+    await wait(() => expect(queryByText("CustomerID")).not.toBeInTheDocument());
+
+    //reopen page size options
+    fireEvent.click(getAllByText("1 / page")[0]);
+
+    //test 5 per page
+    fireEvent.click(getByText("5 / page"));
+    fireEvent.click(getAllByTitle("1")[0]);
+
+    //first through fifth properties should be present
+    expect(queryByText("CustomerID")).toBeInTheDocument(); //1st property
+    expect(queryByText("Address")).toBeInTheDocument(); //5th property
+    expect(queryByText("Phone")).not.toBeInTheDocument(); //6th property
+
+
+    fireEvent.click(entityfilterIcon);
+    fireEvent.click(resetSearchEntity);
+
+    //Verify page size changing for entity table
+    fireEvent.click(getAllByText("20 / page")[1]);
+    fireEvent.click(getAllByText("1 / page")[1]);
+
+    expect(getByTestId("Person-propId-name")).toBeInTheDocument(); //only first property is present
+    expect(queryByTestId("Person-propId2-name")).not.toBeInTheDocument();
+    expect(queryByTitle("299")).toBeInTheDocument();   //there should be 299 pages now
+
+    //next page should only have second property
+    fireEvent.click(getAllByTitle("2")[1]);
+    expect(queryByTestId("Person-propId-name")).not.toBeInTheDocument();
+    expect(getByTestId("Person-propId2-name")).toBeInTheDocument();
+
+    //reopen page size options
+    fireEvent.click(getAllByText("1 / page")[2]);
+
+    //test 5 per page
+    fireEvent.click(getAllByText("5 / page")[2]);
+    fireEvent.click(getAllByTitle("1")[1]);
+
+    //first through fifth properties should be present
+    expect(getByTestId("Person-propId-name")).toBeInTheDocument();
+    expect(getByTestId("Person-propId5-name")).toBeInTheDocument();
+    expect(queryByTestId("Person-propId6-name")).not.toBeInTheDocument();
+
   });
 });
 
