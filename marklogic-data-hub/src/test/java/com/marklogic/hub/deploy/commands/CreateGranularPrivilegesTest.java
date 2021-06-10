@@ -153,7 +153,9 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
     @Test
     void deletePrivilegesOnUndeploy() {
-        final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig());
+        final CreateGranularPrivilegesCommand command = getHubConfig().getIsProvisionedEnvironment()
+                ? new CreateGranularPrivilegesCommand(getHubConfig(), Arrays.asList("Evaluator", "Curator", "Analyzer", "Operator"))
+                : new CreateGranularPrivilegesCommand(getHubConfig());
         final CommandContext context = newCommandContext();
 
         PrivilegeManager privilegeManager = new PrivilegeManager(context.getManageClient());
