@@ -1,19 +1,9 @@
 package com.marklogic.hub.flow.connected;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.util.Collections;
-
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.hp.hpl.jena.util.FileUtils;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.contentpump.bean.MlcpBean;
 import com.marklogic.hub.AbstractHubCoreTest;
@@ -21,10 +11,13 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.DocumentMetadataHelper;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mlcp.MlcpRunner;
-
-import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.FileCopyUtils;
+
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
 
@@ -95,12 +88,8 @@ public class RunConnectedStepsViaMlcpTest extends AbstractHubCoreTest {
             node.put("customerId", i + "");
             File customerFile = new File(projectDataDir, "customer" + i + ".json");
             try {
-                if (!customerFile.exists()) {
-                    customerFile.createNewFile();
-                }
-                byte[] bytes = node.toString().getBytes(StandardCharsets.UTF_8);
-                Files.write(customerFile.toPath(), bytes);
-                assertEquals(bytes.length, customerFile.length());
+                ObjectWriter writer = objectMapper.writer(new DefaultPrettyPrinter());
+                writer.writeValue(customerFile, node);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
