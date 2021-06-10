@@ -111,7 +111,7 @@ public class TestAppInstaller {
             if (includeSecurityCommands) {
                 commands.add(new DeployRolesCommand());
                 commands.add(new DeployAmpsCommand());
-                commands.add(new CreateGranularPrivilegesCommand(hubConfig));
+                commands.add(getCreateGranularPrivilegesCommand(hubConfig));
             }
             new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), commands.toArray(new Command[0])).deploy(appConfig);
 
@@ -128,6 +128,12 @@ public class TestAppInstaller {
             appConfig.setModulesLoaderBatchSize(originalBatchSize);
             appConfig.setModulePaths(originalModulePaths);
         }
+    }
+
+    private static CreateGranularPrivilegesCommand getCreateGranularPrivilegesCommand(HubConfig hubConfig) {
+        return hubConfig.getIsProvisionedEnvironment()
+                ? new CreateGranularPrivilegesCommand(hubConfig, Arrays.asList("Evaluator", "Curator", "Analyzer", "Operator"))
+                : new CreateGranularPrivilegesCommand(hubConfig);
     }
 }
 
