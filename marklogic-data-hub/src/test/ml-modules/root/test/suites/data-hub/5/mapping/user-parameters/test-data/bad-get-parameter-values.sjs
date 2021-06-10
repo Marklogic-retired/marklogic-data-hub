@@ -6,7 +6,7 @@ function getParameterDefinitions(mappingStep) {
   ];
 }
 
-function getParameterValues(contentSequence, mappingStep) {
+function getParameterValues(contentSequence) {
   throw Error("Throwing error on purpose");
 }
 

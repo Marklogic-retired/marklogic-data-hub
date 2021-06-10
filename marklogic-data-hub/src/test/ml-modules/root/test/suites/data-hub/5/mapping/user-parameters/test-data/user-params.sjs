@@ -13,11 +13,7 @@ function getParameterDefinitions(mappingStep) {
   ];
 }
 
-function getParameterValues(contentSequence, mappingStep) {
-  if (!mappingStep) {
-    throw Error("A mappingStep should be included when getParameterValues is called");
-  }
-
+function getParameterValues(contentSequence) {
   // Just verifying that we can iterate over the sequence
   for (var ignore of contentSequence) {
   }
