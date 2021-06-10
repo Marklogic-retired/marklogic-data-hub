@@ -7,7 +7,6 @@ import {ViewSettingsType} from "../types/view-types";
 import {AuthoritiesContext} from "./authorities";
 import {StompContext, STOMPState} from "./stomp";
 import {resetEnvironment, setEnvironment} from "../util/environment";
-import {useInterval} from "../hooks/use-interval";
 import {MAX_SESSION_TIME} from "../config/application.config";
 
 const defaultUserData = {
@@ -65,11 +64,14 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const sessionUser = localStorage.getItem("dataHubUser");
   const authoritiesService = useContext(AuthoritiesContext);
   const stompService = useContext(StompContext);
-  const sessionCount = useRef<number>(MAX_SESSION_TIME);
-  let sessionTimer = true;
+  const initialTimeoutDate = new Date();
+  initialTimeoutDate.setSeconds(initialTimeoutDate.getSeconds() + MAX_SESSION_TIME);
+  const sessionTimeoutDate = useRef<Date>(initialTimeoutDate);
 
-  const setSessionTime = (timeInSeconds) => {
-    sessionCount.current = timeInSeconds;
+  const setSessionTimeoutDate = (timeInSeconds) => {
+    const timeoutDate = new Date();
+    timeoutDate.setSeconds(timeoutDate.getSeconds() + timeInSeconds);
+    sessionTimeoutDate.current = timeoutDate;
   };
 
   const resetSessionMonitor = () => {
@@ -103,7 +105,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     if (hubCentralSessionToken) {
       if (!stompMessageSubscription) {
         setStompMessageSubscription(stompService.messages.subscribe((message) => {
-          setSessionTime(parseInt(JSON.parse(message.body).sessionTimeout));
+          setSessionTimeoutDate(parseInt(JSON.parse(message.body).sessionTimeout));
         }));
       }
       if (!unsubscribeId) {
@@ -123,7 +125,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const loginAuthenticated = async (username: string, authResponse: any) => {
     setEnvironment();
     let session = await axios("/api/environment/systemInfo");
-    setSessionTime(parseInt(session.data["sessionTimeout"]));
+    setSessionTimeoutDate(parseInt(session.data["sessionTimeout"]));
 
     localStorage.setItem("dataHubUser", username);
     localStorage.setItem("serviceName", session.data.serviceName);
@@ -160,7 +162,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: defaultUserData.pageRoute,
-        maxSessionTime: sessionCount.current
+        maxSessionTime: MAX_SESSION_TIME
       });
     } else {
       createUserPreferences(username);
@@ -169,7 +171,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: defaultUserData.pageRoute,
-        maxSessionTime: sessionCount.current
+        maxSessionTime: MAX_SESSION_TIME
       });
     }
   };
@@ -184,7 +186,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         pageRoute: defaultUserData.pageRoute,
-        maxSessionTime: sessionCount.current
+        maxSessionTime: MAX_SESSION_TIME
       });
     } else {
       createUserPreferences(username);
@@ -307,11 +309,15 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const resetSessionTime = () => {
-    setSessionTime(user.maxSessionTime);
+    const initialTimeoutDate = new Date();
+    initialTimeoutDate.setSeconds(initialTimeoutDate.getSeconds() + MAX_SESSION_TIME);
+    setSessionTimeoutDate(user.maxSessionTime);
   };
 
   const getSessionTime = () => {
-    return sessionCount.current;
+    const currentDateSeconds = Math.round(new Date().getTime() / 1000);
+    let timeoutDateSeconds = Math.floor(sessionTimeoutDate.current.getTime() / 1000);
+    return timeoutDateSeconds - currentDateSeconds;
   };
 
   useEffect(() => {
@@ -323,12 +329,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       }
     }
   }, []);
-
-  useInterval(() => {
-    if (user.authenticated && sessionTimer) {
-      setSessionTime(getSessionTime() - 1);
-    }
-  }, 1000);
 
   return (
     <UserContext.Provider value={{
