@@ -69,7 +69,7 @@ object has a unique "name" property and an optional "description" property. This
 is loaded or saved in MarkLogic.
 1. getParameterValues is called each time the mapping step processes a batch of documents, which includes when the "Test" button 
 is used in the Hub Central mapping editor. This function receives a sequence of content objects that encapsulate the documents
-being processed and the mapping step. It must return a JSON object whose keys match the parameter "names" defined by getParameterDefinitions. 
+being processed. It must return a JSON object whose keys match the parameter "names" defined by getParameterDefinitions. 
 
 Typically, the value of each key in the JSON object returned by getParameterValues will be an object itself and will represent some 
 mapping between keys and values. In this example project, the getParameterValues function uses the content sequence to construct a mapping of

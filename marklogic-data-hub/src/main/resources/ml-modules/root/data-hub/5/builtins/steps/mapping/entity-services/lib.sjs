@@ -388,7 +388,7 @@ function validateAndTestMapping(mapping, uri) {
       const contentSequence = Sequence.from([{"uri": uri, "value": sourceDocument}]);
       const moduleLib = require(modulePath);
       userParameterNames = moduleLib["getParameterDefinitions"](mapping).map(def => def.name);
-      userParameterMap = moduleLib["getParameterValues"](contentSequence, mapping);
+      userParameterMap = moduleLib["getParameterValues"](contentSequence);
     }
   } catch (error) {
     // Need to throw an HTTP error so that the testMapping endpoint returns a proper error

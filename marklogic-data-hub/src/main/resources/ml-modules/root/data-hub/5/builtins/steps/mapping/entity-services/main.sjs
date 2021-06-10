@@ -145,7 +145,7 @@ function buildUri(entityInstance, entityName, outputFormat){
 function getUserMappingParameterMap(stepExecutionContext, contentSequence) {
   if (stepExecutionContext != null) {
     const path = stepExecutionContext.flowStep.options.mappingParametersModulePath;
-    return path ? require(path)["getParameterValues"](contentSequence, stepExecutionContext.flowStep) : {};
+    return path ? require(path)["getParameterValues"](contentSequence) : {};
   }
   return {};
 }
