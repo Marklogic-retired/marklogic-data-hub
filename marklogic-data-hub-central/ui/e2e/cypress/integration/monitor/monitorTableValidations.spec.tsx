@@ -75,39 +75,39 @@ describe("Monitor Tile", () => {
     browsePage.getShowMoreLink("step").click();
     cy.wait(2000);
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    cy.findByTestId("step-loadPersonJSON-checkbox").trigger("mousemove", {force: true});
+    cy.findByTestId("step-loadPatient-checkbox").trigger("mousemove", {force: true});
     cy.wait(2000);
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
+    browsePage.getFacetItemCheckbox("step", "loadPatient").click();
+    browsePage.getGreySelectedFacets("loadPatient").should("exist");
+    browsePage.getFacetItemCheckbox("step", "loadPatient").should("be.checked");
     browsePage.getFacetApplyButton().click();
     cy.wait(1000);
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("flow", "personJSON").click();
-    browsePage.getGreySelectedFacets("personJSON").should("exist");
+    browsePage.getFacetItemCheckbox("flow", "patientFlow").click();
+    browsePage.getGreySelectedFacets("patientFlow").should("exist");
     browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
     browsePage.getGreySelectedFacets("ingestion").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.clickClearFacetSearchSelection("personJSON");
+    browsePage.clickClearFacetSearchSelection("patientFlow");
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
     browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.getFacetItemCheckbox("step", "loadPatient").click();
     browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
+    browsePage.getFacetItemCheckbox("step", "loadPatient").should("not.be.checked");
     browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
+    browsePage.getGreySelectedFacets("loadPatient").should("not.exist");
     browsePage.getGreySelectedFacets("ingestion").should("not.exist");
     cy.waitForAsyncRequest();
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.getFacetItemCheckbox("step", "loadPatient").click();
     browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
     cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
     browsePage.getFacetApplyButton().click();
-    browsePage.clickClearFacetSearchSelection("loadPersonJSON");
+    browsePage.clickClearFacetSearchSelection("loadPatient");
     browsePage.clickClearFacetSearchSelection("ingestion");
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
+    browsePage.getFacetItemCheckbox("step", "loadPatient").should("not.be.checked");
     browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("not.exist");
+    browsePage.getGreySelectedFacets("loadPatient").should("not.exist");
     browsePage.getGreySelectedFacets("ingestion").should("not.exist");
   });
 
@@ -122,22 +122,22 @@ describe("Monitor Tile", () => {
   it("Apply facets, unchecking them should not recheck original facets", () => {
     browsePage.getShowMoreLink("step").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").click();
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click();
+    browsePage.getFacetItemCheckbox("step", "loadPatient").click();
     browsePage.getGreySelectedFacets("mapPersonJSON").should("exist");
-    browsePage.getGreySelectedFacets("loadPersonJSON").should("exist");
+    browsePage.getGreySelectedFacets("loadPatient").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
     cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("be.checked");
+    browsePage.getFacetItemCheckbox("step", "loadPatient").should("be.checked");
     browsePage.getFacetItemCheckbox("status", "finished").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").click();
     browsePage.waitForSpinnerToDisappear();
-    cy.findByTestId("step-loadPersonJSON-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").click({force: true});
+    cy.findByTestId("step-loadPatient-checkbox").trigger("mousemove", {force: true});
+    browsePage.getFacetItemCheckbox("step", "loadPatient").click({force: true});
     browsePage.getFacetItemCheckbox("status", "finished").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("not.be.checked");
     cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step", "loadPersonJSON").should("not.be.checked");
+    browsePage.getFacetItemCheckbox("step", "loadPatient").should("not.be.checked");
     browsePage.getFacetItemCheckbox("status", "finished").should("not.be.checked");
   });
 
@@ -165,4 +165,3 @@ describe("Monitor Tile", () => {
   });
 
 });
-

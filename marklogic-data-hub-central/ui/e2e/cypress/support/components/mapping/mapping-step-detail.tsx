@@ -256,6 +256,19 @@ class MappingStepDetail {
   customerEntity() {
     return cy.findByTestId("Customer");
   }
+
+  XPathInfoIcon() {
+    return cy.findByTestId("XPathInfoIcon");
+  }
+
+  relatedInfoIcon() {
+    return cy.findByTestId("relatedInfoIcon");
+  }
+
+  relatedInfoContent() {
+    return cy.findByTestId("relatedInfoContent");
+  }
+
 }
 
 const mappingStepDetail = new MappingStepDetail();
