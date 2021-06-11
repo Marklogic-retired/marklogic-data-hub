@@ -35,7 +35,7 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Create new flow", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.createFlowButton().click();
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -46,8 +46,7 @@ describe("Add Custom step to a flow", () => {
   });
 
   it("Add custom step from Run tile and Run the step", {defaultCommandTimeout: 120000}, () => {
-    cy.intercept("/api/jobs/**").as("getJobs");
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
@@ -56,7 +55,7 @@ describe("Add Custom step to a flow", () => {
     cy.waitForAsyncRequest();
 
     runPage.verifyStepInFlow("Custom", stepName);
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
@@ -73,7 +72,7 @@ describe("Add Custom step to a flow", () => {
 
   it("Add custom steps from Curate tile and Run steps", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon().should("be.visible")).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectCustomTab("Customer");
@@ -83,11 +82,11 @@ describe("Add Custom step to a flow", () => {
     curatePage.confirmAddStepToFlow(stepName, flowName);
     cy.waitForAsyncRequest();
 
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
 
     runPage.verifyStepInFlow("Custom", stepName);
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
