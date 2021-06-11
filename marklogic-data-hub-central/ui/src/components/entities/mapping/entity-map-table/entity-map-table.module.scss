@@ -135,7 +135,7 @@
   align-items: flex-start;
 }
 
-.mapExpressionContainer > span > i, 
+.mapExpressionContainer > span > i,
 .mapExpressionContainer > span > button {
   display: inline-block;
   cursor: pointer;
@@ -253,6 +253,7 @@
 .arrayImage {
   margin-left: 5px;
   margin-bottom: 1px;
+  cursor: pointer;
 }
 
 .rowLink  {
