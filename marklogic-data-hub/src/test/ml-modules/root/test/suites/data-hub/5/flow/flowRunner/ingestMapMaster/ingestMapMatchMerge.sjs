@@ -40,6 +40,12 @@ const response = flowApi.runFlowOnContent(flowName,
   sem.uuidString(), {}, stepNumbersExceptCustomStep
 );
 
+const assertTripleFrequency = (tripleArray, subject, predicate, object) => {
+  const cnt = tripleArray.map(tripleObject => tripleObject["triple"])
+      .filter(triple => (triple.subject === subject && triple.predicate === predicate && triple.object === object)).length
+  return test.assertEqual(1, cnt);
+}
+
 const assertions = [
   test.assertEqual("finished", response.jobStatus)
 ];
@@ -66,18 +72,10 @@ assertions.push(
   test.assertEqual("/incomingCustomer.json", mergedDoc.headers.merges[1]["document-uri"]),
 
   // Verify triples
-  test.assertEqual(3, mergedDoc.triples.length, 
-    "The matching customer has 2 triples, and the incoming customer has 2 triples; " + 
-    "one of those 2 triples is a duplicate, so there should be 3 total"),
-  test.assertEqual("duplicateSubject", mergedDoc.triples[0].triple.subject),
-  test.assertEqual("dupe", mergedDoc.triples[0].triple.predicate),
-  test.assertEqual("dupe", mergedDoc.triples[0].triple.object),
-  test.assertEqual("matchingCustomer", mergedDoc.triples[1].triple.subject),
-  test.assertEqual("myPredicate", mergedDoc.triples[1].triple.predicate),
-  test.assertEqual("myObject", mergedDoc.triples[1].triple.object),
-  test.assertEqual("newCustomer", mergedDoc.triples[2].triple.subject),
-  test.assertEqual("willThis", mergedDoc.triples[2].triple.predicate),
-  test.assertEqual("showUp", mergedDoc.triples[2].triple.object),
+  // The matching customer has 2 triples, and the incoming customer has 2 triples; one of those 2 triples is a duplicate, so there should be 3 total
+  assertTripleFrequency(mergedDoc.triples, "duplicateSubject", "dupe", "dupe"),
+  assertTripleFrequency(mergedDoc.triples, "matchingCustomer", "myPredicate", "myObject"),
+  assertTripleFrequency(mergedDoc.triples, "newCustomer", "willThis", "showUp"),
 
   // Verify instance
   test.assertEqual("Customer", mergedDoc.instance.info.title),
