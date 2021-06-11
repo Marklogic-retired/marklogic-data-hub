@@ -34,12 +34,12 @@ class RunPage {
   }
 
   addStep(stepName: string) {
-    return cy.waitUntil(() => cy.findByLabelText(`addStep-${stepName}`)).click({force: true});
+    cy.waitUntil(() => cy.findByLabelText(`addStep-${stepName}`)).click({force: true});
   }
 
   addStepToFlow(stepName: string) {
-    cy.waitUntil(() => cy.findByLabelText(`${stepName}-to-flow`)).click();
-    return cy.findByLabelText("Yes").click();
+    cy.waitUntil(() => cy.findByLabelText(`${stepName}-to-flow`).should("exist")).click();
+    cy.findByLabelText("Yes").click();
   }
 
   verifyStepInFlow(stepType: string, stepName: string) {

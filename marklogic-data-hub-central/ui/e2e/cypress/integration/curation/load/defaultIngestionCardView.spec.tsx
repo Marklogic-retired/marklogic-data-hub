@@ -171,6 +171,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("Save").click();
     // add step to that new flow
     runPage.addStep(flowName1);
+    cy.wait(1000);
     runPage.addStepToFlow(stepName);
     runPage.runStep(stepName);
     cy.uploadFile("input/test-1.json");
