@@ -10,6 +10,7 @@ import {faList, faTerminal, faSearch} from "@fortawesome/free-solid-svg-icons";
 import EntitySettings from "../entity-settings/entity-settings";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../../../../assets/icon_array.png";
+import DocIcon from "../../../../assets/DocIcon.png";
 import {css} from "@emotion/css";
 import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion";
 import {paginationOptions} from "../../../../config/mapping.config";
@@ -75,6 +76,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   //Text for URI Icon
   const uriHelp = <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>;
+
+  //Text for related entities help icon
+  const relatedInfo = <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br/>Refer to the <a href="https://docs.marklogic.com/datahub/5.5/index.html" target="_blank">documentation</a> for more details.</div>;
 
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
@@ -1034,6 +1038,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
       <div className = {styles.entityTopRow}>
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
+          {props.relatedMappings &&
+                <Popover
+                  content={relatedInfo}
+                  trigger="hover"
+                  placement="right"
+                  overlayStyle={{
+                    width: "16vw"
+                  }}>
+                  <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon"/></Popover>}
         </div>
         <div className={styles.entitySettingsLink}>
           <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle}/>
@@ -1257,9 +1270,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       title: <span>XPath Expression <Popover
         content={xPathDocLinks}
-        trigger="click"
+        trigger="hover"
         placement="top"
-        getPopupContainer={() => document.getElementById("parentContainer") || document.body}><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
+        getPopupContainer={() => document.getElementById("parentContainer") || document.body}><img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" /></Popover>
       </span>,
       dataIndex: "key",
       key: "key",
