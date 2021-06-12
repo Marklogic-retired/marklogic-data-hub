@@ -1,0 +1,60 @@
+.graphViewContainer {
+    padding: 10px 0px 0px 0px;
+
+    .graphHeader {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .filterInput{
+          padding-bottom: 20px;
+          width: 280px;
+        }
+        .buttons {
+          display: flex;
+          .stepMenu {
+            margin-top: -40px;
+            border: 1px solid rgb(222, 220, 220);
+          }
+
+          .addButtonContainer {
+            padding-right: 10px;
+
+            .addButtonText {
+              font-size: 16px;
+            }
+
+            .downArrowIcon {
+              font-size: 16px;
+            }
+          }
+          .publishButtonContainer {
+            display: inline-flex;
+            vertical-align: middle;
+            
+            .publishButtonText {
+              margin-left: 4px;
+              font-size: 16px;
+            }
+          }
+
+          .graphExportIcon{
+            cursor: pointer;
+            font-size: 24px;
+            margin-left: 8px;
+            margin-top: 2px;
+            color: #777777;
+            &:hover{
+              color: var(--hoverColor);
+            }
+          }
+      }
+    }
+
+    .searchIcon {
+        float: right;
+        font-size: 20px;
+        position: relative;
+        color: #bfbfbf;
+    }
+}

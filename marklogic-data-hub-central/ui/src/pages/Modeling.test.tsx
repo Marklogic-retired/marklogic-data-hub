@@ -1,5 +1,6 @@
 import React from "react";
 import {render, wait, screen, fireEvent} from "@testing-library/react";
+import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 
@@ -47,6 +48,7 @@ describe("Modeling Page", () => {
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
+    userEvent.click(getByLabelText("switch-view-table"));
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
@@ -90,6 +92,8 @@ describe("Modeling Page", () => {
     );
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+
+    userEvent.click(getByLabelText("switch-view-table"));
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
@@ -191,6 +195,99 @@ describe("getViewSettings", () => {
     expect(actualValue).toEqual({});
     expect(window.sessionStorage.getItem).toBeCalledWith("dataHubViewSettings");
     expect(getItemSpy).toBeCalledWith("dataHubViewSettings");
+  });
+});
+
+
+describe("Graph view page", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("Modeling: graph view renders properly", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
+    mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
+
+    const {getByText, getByLabelText} = render(
+      <AuthoritiesContext.Provider value={mockDevRolesService}>
+        <ModelingContext.Provider value={isModified}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+
+    expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
+
+    expect(getByLabelText("switch-view")).toBeInTheDocument();
+    expect(getByLabelText("switch-view-graph")).toBeChecked(); // Graph view is checked by default.
+    expect(getByText("Entity Types")).toBeInTheDocument();
+    expect(getByLabelText("graph-view-filter-input")).toBeInTheDocument();
+    userEvent.click(getByLabelText("add-entity-type-relationship"));
+    await waitFor(() => {
+      expect(getByLabelText("addNewEntityTypeOption")).toBeInTheDocument();
+      expect(getByLabelText("addNewRelationshipOption")).toBeInTheDocument();
+    });
+
+    userEvent.hover(getByLabelText("publish-to-database"));
+    await waitFor(() => expect(getByText(ModelingTooltips.publish)).toBeInTheDocument());
+    userEvent.hover(getByLabelText("graph-export"));
+    await waitFor(() => expect(getByText(ModelingTooltips.exportGraph)).toBeInTheDocument());
+  });
+
+  it("can toggle between graph view and table view properly", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
+    mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
+
+    const {getByText, getByLabelText, queryByLabelText} = render(
+      <AuthoritiesContext.Provider value={mockDevRolesService}>
+        <ModelingContext.Provider value={isModified}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+
+    expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
+
+    let graphViewButton = getByLabelText("switch-view-graph");
+    let tableViewButton = getByLabelText("switch-view-table");
+    let filterInput = getByLabelText("graph-view-filter-input");
+    let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
+    let publishToDatabaseBtn = getByLabelText("publish-to-database");
+    let graphExportIcon = getByLabelText("graph-export");
+
+    expect(getByLabelText("switch-view")).toBeInTheDocument();
+    expect(graphViewButton).toBeChecked(); // Graph view is checked by default.
+    expect(getByText("Entity Types")).toBeInTheDocument();
+    expect(filterInput).toBeInTheDocument();
+    expect(addEntityOrRelationshipBtn).toBeInTheDocument();
+    expect(publishToDatabaseBtn).toBeInTheDocument();
+    expect(graphExportIcon).toBeInTheDocument();
+    expect(queryByLabelText("add-entity")).not.toBeInTheDocument();
+    expect(queryByLabelText("Instances")).not.toBeInTheDocument();
+
+    userEvent.click(tableViewButton); // switch to table view
+    expect(tableViewButton).toBeChecked();
+    expect(getByLabelText("add-entity")).toBeInTheDocument();
+    expect(getByText("Instances")).toBeInTheDocument();
+    expect(getByText("Last Processed")).toBeInTheDocument();
+    expect(queryByLabelText("graph-view-filter-input")).not.toBeInTheDocument();
+    expect(queryByLabelText("add-entity-type-relationship")).not.toBeInTheDocument();
+    expect(queryByLabelText("graph-export")).not.toBeInTheDocument();
+
+    userEvent.click(graphViewButton); // switch back to graph view
+    expect(graphViewButton).toBeChecked();
+    expect(filterInput).toBeVisible();
+    expect(addEntityOrRelationshipBtn).toBeVisible();
+    expect(publishToDatabaseBtn).toBeVisible();
+    expect(graphExportIcon).toBeVisible();
   });
 });
 
