@@ -49,6 +49,7 @@ describe("Mapping", () => {
   });
   it("Define new entity, add relationship property", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName("Relation");
@@ -164,6 +165,7 @@ describe("Mapping", () => {
     mappingStepDetail.goBackToCurateHomePage();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));

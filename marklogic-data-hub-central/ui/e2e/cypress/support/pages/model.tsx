@@ -1,5 +1,12 @@
 class ModelPage {
 
+  /**
+  * @param type - accepts `table` for table-view or `project-diagram` for graph-view
+  */
+  selectView(view: string) {
+    return cy.get(`[data-icon="${view}"]`).trigger("mouseover").click();
+  }
+
   getAddEntityButton() {
     return cy.findByLabelText("add-entity");
   }

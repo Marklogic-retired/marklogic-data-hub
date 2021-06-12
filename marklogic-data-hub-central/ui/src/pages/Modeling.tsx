@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useContext} from "react";
-import {faSave, faUndo} from "@fortawesome/free-solid-svg-icons";
+import React, {useState, useEffect, useContext, CSSProperties} from "react";
+import {faProjectDiagram, faSave, faTable, faUndo} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLAlert, MLRadio} from "@marklogic/design-system";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
 import EntityTypeModal from "../components/modeling/entity-type-modal/entity-type-modal";
@@ -20,11 +20,13 @@ import {MissingPagePermission} from "../config/messages.config";
 import {faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../assets/icon_array.png";
 import relatedEntityIcon from "../assets/icon_related_entities.png";
+import GraphView from "../components/modeling/graph-view/graph-view";
+import {defaultModelingView} from "../config/modeling.config";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
   const {modelingOptions, setEntityTypeNamesArray, clearEntityModified} = useContext(ModelingContext);
-
+  const [view, setView] = useState(defaultModelingView);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
@@ -168,56 +170,109 @@ const Modeling: React.FC = () => {
     Revert All
   </MLButton>;
 
+  const handleViewChange = (view) => {
+    if (view === "table") {
+      setView("table");
+    } else {
+      setView(defaultModelingView);
+    }
+  };
+
+  const mlRadioStyle: CSSProperties = {
+    color: "#999"
+  };
+
+  const viewSwitch = <div id="switch-view" aria-label="switch-view">
+    <MLRadio.MLGroup
+      buttonStyle="outline"
+      className={"radioGroupView"}
+      defaultValue={view}
+      name="radiogroup"
+      onChange={e => handleViewChange(e.target.value)}
+      size="large"
+      style={mlRadioStyle}
+      tabIndex={0}
+    >
+      <MLRadio.MLButton aria-label="switch-view-graph" value={"graph"} checked={view === "graph"}>
+        <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
+      </MLRadio.MLButton>
+      <MLRadio.MLButton aria-label="switch-view-table" value={"table"} checked={view === "table"}>
+        <i>{<FontAwesomeIcon icon={faTable} />}</i>
+      </MLRadio.MLButton>
+    </MLRadio.MLGroup>
+  </div>;
+
   if (canAccessModel) {
     return (
       <div className={styles.modelContainer}>
         <div className={styles.intro}>
           <p>{tiles.model.intro}</p>
+          {viewSwitch}
         </div>
         { modelingOptions.isModified && (
           <MLAlert type="info" aria-label="entity-modified-alert" showIcon message={ModelingTooltips.entityEditedAlert}/>
         )}
-        <div className={styles.header}>
-          <h1>Entity Types</h1>
-          <div className={styles.buttonContainer}>
-            <div className={styles.legend}>
-              <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key Relationship</div>
-              <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
-              <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
-              <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
-            </div>
+        {view === "table" ? <div>
+          <div className={styles.header}>
+            <h1>Entity Types</h1>
+            <div className={styles.buttonContainer}>
+              <div className={styles.legend}>
+                <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} /> Foreign Key Relationship</div>
+                <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""} /> Related Entity</div>
+                <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple</div>
+                <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type</div>
+              </div>
 
-            <div style={{float: "right"}}>
-              {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.addNewEntity}>
-                  {addButton}
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
-                  <span className={styles.disabledCursor}>{addButton}</span>
-                </MLTooltip>
-              }
-              {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
-                  <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
-                  <span className={styles.disabledCursor}>{saveAllButton}</span>
-                </MLTooltip>
-              }
-              {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
-                  <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
-                  <span className={styles.disabledCursor}>{revertAllButton}</span>
-                </MLTooltip>
-              }
+              <div style={{float: "right"}}>
+                {canWriteEntityModel ?
+                  <MLTooltip title={ModelingTooltips.addNewEntity}>
+                    {addButton}
+                  </MLTooltip>
+                  :
+                  <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
+                    <span className={styles.disabledCursor}>{addButton}</span>
+                  </MLTooltip>
+                }
+                {canWriteEntityModel ?
+                  <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
+                    <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{saveAllButton}</span>
+                  </MLTooltip>
+                  :
+                  <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
+                    <span className={styles.disabledCursor}>{saveAllButton}</span>
+                  </MLTooltip>
+                }
+                {canWriteEntityModel ?
+                  <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
+                    <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{revertAllButton}</span>
+                  </MLTooltip>
+                  :
+                  <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
+                    <span className={styles.disabledCursor}>{revertAllButton}</span>
+                  </MLTooltip>
+                }
+              </div>
             </div>
           </div>
-        </div>
+          <EntityTypeTable
+            canReadEntityModel={canReadEntityModel}
+            canWriteEntityModel={canWriteEntityModel}
+            allEntityTypesData={entityTypes}
+            editEntityTypeDescription={editEntityTypeDescription}
+            updateEntities={setEntityTypesFromServer}
+            updateSavedEntity={updateSavedEntity}
+            autoExpand={autoExpand}
+            revertAllEntity={revertAllEntity}
+            toggleRevertAllEntity={toggleRevertAllEntity}
+          />
+        </div> : <>
+          <h1>Entity Types</h1>
+          <div className={styles.borderBelowHeader}></div>
+          <GraphView
+            entityTypes={entityTypes}
+          />
+        </>
+        }
         <ConfirmationModal
           isVisible={showConfirmModal}
           type={confirmType}
@@ -236,17 +291,8 @@ const Modeling: React.FC = () => {
           namespace={namespace}
           prefix={prefix}
         />
-        <EntityTypeTable
-          canReadEntityModel={canReadEntityModel}
-          canWriteEntityModel={canWriteEntityModel}
-          allEntityTypesData={entityTypes}
-          editEntityTypeDescription={editEntityTypeDescription}
-          updateEntities={setEntityTypesFromServer}
-          updateSavedEntity={updateSavedEntity}
-          autoExpand={autoExpand}
-          revertAllEntity={revertAllEntity}
-          toggleRevertAllEntity={toggleRevertAllEntity}
-        />
+
+
       </div>
     );
   } else {

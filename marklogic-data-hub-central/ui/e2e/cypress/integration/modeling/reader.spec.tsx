@@ -21,6 +21,7 @@ describe("Entity Modeling: Reader Role", () => {
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
   });
   after(() => {

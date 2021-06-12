@@ -59,6 +59,10 @@ const ModelingTooltips = {
     )
   },
 
+  /* Graph view */
+  publish: "Publish to Database",
+  exportGraph: "Export graph to PNG",
+
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',
 
