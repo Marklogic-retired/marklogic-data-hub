@@ -38,6 +38,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
   });
   it("Create a new entity", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName("Person");
@@ -162,6 +163,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.url().should("include", "/tiles/explore");
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should("exist");
+    modelPage.selectView("table");
     cy.waitUntil(() => entityTypeTable.getExpandEntityIcon("Customer")).click();
     modelPage.getEntityModifiedAlert().should("exist");
     propertyTable.getFacetIcon("nicknames").should("exist");
@@ -175,6 +177,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
   it("Add new property to Order entity", () => {
     LoginPage.postLogin();
     toolbar.getModelToolbarIcon().click();
+    modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Order").click();
     propertyTable.getAddPropertyButton("Order").click();

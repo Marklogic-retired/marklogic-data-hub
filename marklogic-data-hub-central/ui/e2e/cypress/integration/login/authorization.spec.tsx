@@ -89,6 +89,7 @@ describe("login", () => {
 
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should("exist");
+    modelPage.selectView("table");
     modelPage.getAddEntityButton().should("be.disabled");
   });
 
