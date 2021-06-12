@@ -46,17 +46,18 @@ describe("Validate persistence across Hub Central", () => {
     cy.findByTestId("shipping-street-span").should("be.visible");
   });
 
-  it("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
-    curatePage.toggleEntityTypeId("Person");
-    curatePage.openStepDetails("mapPersonJSON");
-    cy.contains("Entity Type: Person");
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.contains("Entity Type: Person");
-    cy.findByTestId("arrow-left").click();
-  });
+  // Persistence of mapping step details is disabled temporarily. DHFPROD-7466
+  // it("Switch to curate tile, go to Mapping step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
+  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+  //   cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+  //   curatePage.toggleEntityTypeId("Person");
+  //   curatePage.openStepDetails("mapPersonJSON");
+  //   cy.contains("Entity Type: Person");
+  //   cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+  //   cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+  //   cy.contains("Entity Type: Person");
+  //   cy.findByTestId("arrow-left").click();
+  // });
 
   it.skip("Switch to curate tile, go to Matching step details, and then visit another tile. When returning to curate tile, the step details view is persisted", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
