@@ -172,6 +172,11 @@ const MappingStepDetail: React.FC = () => {
     return ref.current;
   }
 
+  // Disable persistence temporarily, DHFPROD-7466
+  useEffect(() => {
+    setViewSettings({...storage, curate: {}});
+  }, []);
+
   const handleEditIconClick = () => {
     setEditingUri(true);
   };
@@ -1078,6 +1083,7 @@ const MappingStepDetail: React.FC = () => {
     let dataPayload = savedMappingArt;
     let updateRelatedMappings : any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings));
     let indexToRemove = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityToDelete.entityMappingId);
+
     if (indexToRemove > -1) {
       updateRelatedMappings.splice(indexToRemove, 1);
     }
