@@ -40,6 +40,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
   it("Create an entity with property that already exists", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName("User3");
