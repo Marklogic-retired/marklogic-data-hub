@@ -79,6 +79,7 @@ describe("Mapping", () => {
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['loadPersonJSON'])`);
     createEditMappingDialog.saveButton().click({force: true});
     curatePage.verifyStepDetailsOpen("mapRelation");
+    browsePage.waitForSpinnerToDisappear();
     cy.waitUntil(() => mappingStepDetail.dataAvailable().should("be.visible"));
     mappingStepDetail.entityTitle("Person").should("exist");
   });
@@ -128,8 +129,8 @@ describe("Mapping", () => {
     mappingStepDetail.getValidationError("Person").should("exist");
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").focus().clear());
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").type("data-hub-common,read,data-hub-common,update"));
-    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person").click({force: true}));
     mappingStepDetail.getValidationError("Person").should("not.be.visible");
+    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person").click({force: true}));
 
     mappingStepDetail.getEntitySettings("Relation").click();
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
@@ -143,12 +144,14 @@ describe("Mapping", () => {
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read,data-hub-common,update"));
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
+    browsePage.waitForSpinnerToDisappear();
   });
 
   it("Verify more/less functionality on filtering by name for structured properties", () => {
     mappingStepDetail.goBackToCurateHomePage();
     mappingStepDetail.customerEntity().click();
     curatePage.openMappingStepDetail("Customer", "mapCustomersJSON");
+    browsePage.waitForSpinnerToDisappear();
     mappingStepDetail.searchIcon().click();
     mappingStepDetail.searchName().type("street");
     mappingStepDetail.searchButton().click();
@@ -167,6 +170,7 @@ describe("Mapping", () => {
     curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
+    browsePage.waitForSpinnerToDisappear();
 
     mappingStepDetail.validateURIInput("Person", "$URI");
     mappingStepDetail.validateMapInput("id", "SSN");
@@ -208,6 +212,7 @@ describe("Mapping", () => {
     curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
+    browsePage.waitForSpinnerToDisappear();
     cy.waitUntil(() => mappingStepDetail.relatedFilterSelection("Person", "Relation (relatedTo Person)").should("exist"));
     // Related entity exists before deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
@@ -234,6 +239,7 @@ describe("Mapping", () => {
     curatePage.toggleEntityTypeId("Person");
     curatePage.openMappingStepDetail("Person", "mapRelation");
     curatePage.verifyStepDetailsOpen("mapRelation");
+    browsePage.waitForSpinnerToDisappear();
     //Related entity does not exist after reopening step
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });

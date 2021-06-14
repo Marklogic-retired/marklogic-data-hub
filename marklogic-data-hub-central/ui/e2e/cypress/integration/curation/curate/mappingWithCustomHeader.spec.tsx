@@ -103,6 +103,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     // map source to entity
     curatePage.openMappingStepDetail("Order", mapStep);
+    browsePage.waitForSpinnerToDisappear();
     cy.waitUntil(() => mappingStepDetail.expandEntity());
     mappingStepDetail.setXpathExpressionInput("orderId", "OrderID");
     mappingStepDetail.setXpathExpressionInput("address", "/");
