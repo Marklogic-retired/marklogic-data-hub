@@ -10,6 +10,7 @@ import loadPage from "../../../support/pages/load";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import LoginPage from "../../../support/pages/login";
+import browsePage from "../../../support/pages/browse";
 import "cypress-wait-until";
 
 const flowName = "orderFlow";
@@ -118,6 +119,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
     //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
+    browsePage.waitForSpinnerToDisappear();
   });
   it("Validate xpath expressions are blank by default", () => {
     curatePage.xpathExpression("orderId").should("have.value", "");

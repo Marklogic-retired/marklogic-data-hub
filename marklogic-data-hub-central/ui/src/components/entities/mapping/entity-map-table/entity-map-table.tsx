@@ -2,7 +2,7 @@ import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
 import {Icon, Table, Popover, Input, Select, Dropdown, Modal} from "antd";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLSpin} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
@@ -55,6 +55,7 @@ interface Props {
   savedMappingArt: any;
   deleteRelatedEntity: any;
   labelRemoved: any;
+  entityLoaded: any;
 }
 
 const EntityMapTable: React.FC<Props> = (props) => {
@@ -1025,7 +1026,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}><Icon type={tableCollapsed ? "right" : "down"}/></a>
+    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}><Icon type={tableCollapsed && entityProperties.length < 1 ? "right" : "down"}/></a>
   );
 
   const topRowDetails = (
@@ -1363,7 +1364,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
-  return ((props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
+  return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
     <div id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"}>
       <Table
         pagination={false}
@@ -1406,7 +1407,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       : null
     }
     {deleteConfirmation}
-  </div>) : null);
+  </div>) : null : !props.isRelatedEntity ? <MLSpin size={"large"} data-testid="spinner"/> : null);
 };
 
 export default EntityMapTable;
