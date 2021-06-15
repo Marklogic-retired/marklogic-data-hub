@@ -5,8 +5,9 @@ const datahub = DataHubSingleton.instance();
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const mappingLib = require("/data-hub/5/mapping/mapping-lib.sjs");
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
-const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+const mappingStepLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const infoEvent = datahub.consts.TRACE_MAPPING;
 const infoEnabled = xdmp.traceEnabled(infoEvent);
@@ -350,7 +351,7 @@ function fallbackLegacyEntityLookup(targetEntityType) {
   let entityName = targetArr[targetArr.length - 1];
   let tVersion = targetArr[targetArr.length - 2] ? targetArr[targetArr.length - 2].split('-') : '';
   let modelVersion = tVersion[tVersion.length - 1];
-  return fn.head(mappingLib.getModel(entityName, modelVersion));
+  return fn.head(mappingStepLib.getModel(entityName, modelVersion));
 }
 
 function escapeXML(input = '') {
@@ -586,7 +587,7 @@ function validatePropertyMapping(fullMapping, userParameterNames, propertyName, 
     // Thus, this is not using es.mappingCompile, which does validation, and just invokes the transform instead.
     validateXmlMapping(xmlMapping);
   } catch (e) {
-    return hubUtils.getErrorMessage(e);
+    return mappingLib.extractErrorMessageForMappingUI(e);
   }
 }
 
@@ -687,7 +688,7 @@ function testMappingExpression(mapping, propertyName, sourceInstance, userParame
     }
   }
   catch(e){
-    resp.errorMessage = hubUtils.getErrorMessage(e);
+    resp.errorMessage = mappingLib.extractErrorMessageForMappingUI(e);
   }
   return resp;
 }

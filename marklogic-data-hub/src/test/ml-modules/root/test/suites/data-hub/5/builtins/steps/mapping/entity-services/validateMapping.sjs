@@ -40,14 +40,14 @@ function unrecognizedProperty() {
 function missingFunctionReference() {
   let result = validateGenderMapping("memoryLookupp()");
   return [
-    test.assertEqual("Undefined function: memoryLookupp()", result.properties.gender.errorMessage)
+    test.assertEqual("Unable to find function: 'memoryLookupp()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.properties.gender.errorMessage)
   ];
 }
 
 function incorrectNumberOfFunctionArguments() {
   let result = validateGenderMapping("memoryLookup(gender)");
   return [
-    test.assertEqual("Undefined function: memoryLookup()", result.properties.gender.errorMessage,
+    test.assertEqual("Unable to find function: 'memoryLookup()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.properties.gender.errorMessage,
       "If an incorrect number of function arguments are included, then the XSLT validation treats this as the function not being recognized")
   ];
 }
@@ -82,7 +82,7 @@ function mixOfValidAndInvalidExpressions() {
     test.assertEqual("lastName", validatedMapping.properties.lastname.sourcedFrom),
     test.assertEqual(null, validatedMapping.properties.lastname.errorMessage),
     test.assertEqual("memoryLookupp()", validatedMapping.properties.gender.sourcedFrom),
-    test.assertEqual("Undefined function: memoryLookupp()", validatedMapping.properties.gender.errorMessage)
+    test.assertEqual("Unable to find function: 'memoryLookupp()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", validatedMapping.properties.gender.errorMessage)
   ];
 }
 
@@ -98,7 +98,7 @@ function validUseOfCustomFunction() {
 function invalidUseOfCustomFunction() {
   let result = validateGenderMapping("echo(gender, 'invalidSecondArg')");
   return [
-    test.assertEqual("Undefined function: echo()", result.properties.gender.errorMessage)
+    test.assertEqual("Unable to find function: 'echo()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.properties.gender.errorMessage)
   ];
 }
 

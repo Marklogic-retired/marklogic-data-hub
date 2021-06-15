@@ -2,6 +2,7 @@ const consts = require('/data-hub/5/impl/consts.sjs');
 const defaultLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
+const mappingLibrary = require("/data-hub/5/mapping/mapping-lib.sjs");
 const entityValidationLib = require('entity-validation-lib.sjs');
 const xqueryLib = require('xquery-lib.xqy')
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
@@ -79,9 +80,14 @@ function main(contentSequence, options, stepExecutionContext) {
       try {
         arrayOfInstanceArrays = xqueryLib.dataHubMapToCanonical(instance, mappingURIforXML, mappingParams, {"format":outputFormat});
       } catch (e) {
-        throw Error(e);
+        const errorMessage = mappingLibrary.extractFriendlyErrorMessage(e);
+        if(errorMessage){
+          throw Error(errorMessage);
+        }
+        else{
+          throw Error(e);
+        }
       }
-
       hubUtils.hubTrace(traceEvent, `Entity instances with mapping ${mappingStep.name} and source document ${currentContentUri}: ${arrayOfInstanceArrays}`);
 
       let counter = 0;
