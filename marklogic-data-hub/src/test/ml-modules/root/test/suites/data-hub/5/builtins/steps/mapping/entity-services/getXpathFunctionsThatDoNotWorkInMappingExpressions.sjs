@@ -29,11 +29,11 @@ const functions = esMappingLib.getFunctionsWithSignatures(xdmp.functions().toObj
 const actualFunctionsThatDontWork = [];
 for(let i=0; i< functions.length; i++){
   const result = testFunctionInMapping(functions[i].signature);
-  if (result.properties.gender.errorMessage && result.properties.gender.errorMessage.startsWith("Undefined function")){
+  if (result.properties.gender.errorMessage && result.properties.gender.errorMessage.startsWith("Unable to find function")){
     actualFunctionsThatDontWork.push(String(functions[i].functionName));
   }
 }
-console.log(actualFunctionsThatDontWork);
+
 [
   test.assertEqual(expectedFunctionsThatDontWork.length, actualFunctionsThatDontWork.length,
     "Expected to find zero functions that don't work, as getXpathMappingFunctions should have already removed " +

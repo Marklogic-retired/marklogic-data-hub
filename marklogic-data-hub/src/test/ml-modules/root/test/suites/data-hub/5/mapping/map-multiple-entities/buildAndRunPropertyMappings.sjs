@@ -54,7 +54,7 @@ function testMappingWithInvalidProperties(){
 
   assertions = assertions.concat([
     test.assertTrue(orderUriRegex.test(fn.string(result.relatedEntityMappings[0].uriExpression.output)), "The uri is " + fn.string(result.relatedEntityMappings[0].uriExpression.output)),
-    test.assertEqual("Undefined function: remove-dashes()", result.relatedEntityMappings[0].properties.orderId.errorMessage)
+    test.assertEqual("Unable to find function: 'remove-dashes()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.relatedEntityMappings[0].properties.orderId.errorMessage)
 
   ]);
 }

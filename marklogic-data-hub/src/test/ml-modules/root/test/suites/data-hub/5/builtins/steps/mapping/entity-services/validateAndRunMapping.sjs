@@ -42,14 +42,14 @@ function unrecognizedProperty() {
 function missingFunctionReference() {
   let result = validateAndRunGenderMapping("memoryLookupp()");
   return [
-    test.assertEqual("Undefined function: memoryLookupp()", result.properties.gender.errorMessage)
+    test.assertEqual("Unable to find function: 'memoryLookupp()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.properties.gender.errorMessage)
   ];
 }
 
 function incorrectNumberOfFunctionArguments() {
   let result = validateAndRunGenderMapping("memoryLookup(gender)");
   return [
-    test.assertEqual("Undefined function: memoryLookup()", result.properties.gender.errorMessage,
+    test.assertEqual("Unable to find function: 'memoryLookup()'. Cause: Either the function does not exist or the wrong number of arguments were specified.", result.properties.gender.errorMessage,
       "If an incorrect number of function arguments are included, then the XSLT validation treats this as the function not being recognized")
   ];
 }
