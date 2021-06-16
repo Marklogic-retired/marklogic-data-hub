@@ -163,7 +163,7 @@ public class ModelController extends BaseController {
     private void deployIndexConfig(JsonNode modelConfigNode, ManageClient manageClient) {
         try {
             for (String databaseName : Arrays.asList(getHubClient().getDbName(DatabaseKind.STAGING), getHubClient().getDbName(DatabaseKind.FINAL))) {
-                final ObjectNode modelBasedProperties = (ObjectNode)modelConfigNode.get("indexConfig");
+                final ObjectNode modelBasedProperties = modelConfigNode.get("indexConfig").deepCopy();
                 final ObjectNode existingProperties = (ObjectNode)new ObjectMapper().readTree(manageClient.getJson("/manage/v2/databases/" + databaseName + "/properties"));
                 JsonNode mergedProperties = ResourceUtil.mergeExistingArrayProperties(modelBasedProperties, existingProperties);
                 manageClient.putJson("/manage/v2/databases/" + databaseName + "/properties", mergedProperties.toString());
