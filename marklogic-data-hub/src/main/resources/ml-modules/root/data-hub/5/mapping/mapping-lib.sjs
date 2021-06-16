@@ -22,6 +22,9 @@ function extractFriendlyErrorMessage(e){
     case "XDMP-UNDFUN":
       errorMessage = `Unable to find function: '${e.data[0]}'. Cause: Either the function does not exist or the wrong number of arguments were specified.`;
       break;
+    case "XDMP-ARGTYPE":
+      errorMessage = `Invalid argument. Cause: Either the argument to the function in a mapping expression is not the right type, or the function does not expect arguments.`;
+      break;
     default:
       errorMessage = null;
   }
