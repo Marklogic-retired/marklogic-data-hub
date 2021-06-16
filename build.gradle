@@ -40,20 +40,21 @@ task updateVersion {
     doLast {
         def files = [
             "gradle.properties",
-            "marklogic-data-hub/gradle.properties",
-            "ml-data-hub-plugin/gradle.properties",
-            "marklogic-data-hub-central/gradle.properties",
             "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
             "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/VersionInfo.java",
             "marklogic-data-hub/src/main/resources/hub-internal-config/security/roles/data-hub-admin.json",
             "marklogic-data-hub-central/ui/e2e/hc-qa-project/build.gradle",
+            "examples/README.md",
             "examples/dh-5-example/build.gradle",
             "examples/dhf5-custom-hook/build.gradle",
             "examples/insurance/build.gradle",
             "examples/mapping-example/build.gradle",
             "examples/patient-hub/build.gradle",
+            "examples/reference-entity-model/build.gradle",
             "examples/smart-mastering-complete/build.gradle",
-            "examples/snapshot-testing/build.gradle"
+            "examples/snapshot-testing/build.gradle",
+            "examples/step-interceptors/build.gradle",
+            "performance-tests/projects/commoncrawl/build.gradle",
         ]
         String sourceVersion = project.hasProperty('sourceVersion') ? project.property('sourceVersion') : ""
         String targetVersion = project.hasProperty('targetVersion') ? project.property('targetVersion') : ""
