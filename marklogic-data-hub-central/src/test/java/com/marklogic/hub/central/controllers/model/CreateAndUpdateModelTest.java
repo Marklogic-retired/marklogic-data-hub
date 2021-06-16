@@ -71,6 +71,19 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         createNamespacedModel();
     }
 
+    @Test
+    @WithMockUser(roles = {"writeEntityModel"})
+    void testUpdatedIndexes() {
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
+        createModel();
+        updateDataType("dateTime");
+        updateDataType("date");
+        assertDateTimeIndexExists();
+        removeRangeElementIndexesFromFinalDatabase();
+        addProperty();
+        assertDateTimeIndexDoesntExist();
+    }
+
     private void createNamespacedModel() {
         ArrayNode existingEntityTypes = (ArrayNode) controller.getPrimaryEntityTypes().getBody();
         assertEquals(0, existingEntityTypes.size(), "Any existing models should have been deleted when this test started");
@@ -207,6 +220,58 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         assertEquals("string", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("properties").get(ENTITY_PROPERTY_1).get("datatype").asText());
     }
 
+    private void updateDataType(String datatype) {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+
+        String entityTypes = "[\n" +
+            "  {\n" +
+            "    \"entityName\": \"" + MODEL_NAME + "\",\n" +
+            "    \"modelDefinition\": {\n" +
+            "      \"Customer\": {\n" +
+            "        \"elementRangeIndex\": [\n" +
+            "          \"" + ENTITY_PROPERTY_1 + "\"\n" +
+            "        ],\n" +
+            "        \"properties\": {\n" +
+            "          \"" + ENTITY_PROPERTY_1 + "\": {\n" +
+            "            \"datatype\": \"" + datatype + "\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "]";
+
+        controller.updateModelEntityTypes(readJsonArray(entityTypes));
+    }
+
+    private void addProperty() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+
+        String entityTypes = "[\n" +
+            "  {\n" +
+            "    \"entityName\": \"" + MODEL_NAME + "\",\n" +
+            "    \"modelDefinition\": {\n" +
+            "      \"Customer\": {\n" +
+            "        \"elementRangeIndex\": [\n" +
+            "          \"" + ENTITY_PROPERTY_1 + "\"\n" +
+            "        ],\n" +
+            "        \"properties\": {\n" +
+            "          \"" + ENTITY_PROPERTY_1 + "\": {\n" +
+            "            \"datatype\": \"date\"\n" +
+            "          },\n" +
+            "          \"" + ENTITY_PROPERTY_2 + "\": {\n" +
+            "            \"datatype\": \"string\",\n" +
+            "            \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "]";
+
+        controller.updateModelEntityTypes(readJsonArray(entityTypes));
+    }
+
     private JsonNode loadModel(DatabaseClient client) {
         return client.newJSONDocumentManager().read("/entities/" + MODEL_NAME + ".entity.json", new JacksonHandle()).get();
     }
@@ -228,6 +293,29 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         Stream.of(getHubConfig().getDbName(DatabaseKind.STAGING), getHubConfig().getDbName(DatabaseKind.FINAL)).forEach(databaseKind -> {
             verifyIndexes(databaseKind);
         });
+    }
+
+    private void assertDateTimeIndexExists() {
+        String json = new DatabaseManager(getHubClient().getManageClient()).getPropertiesAsJson(getHubConfig().getDbName(DatabaseKind.FINAL));
+        Database db = new DefaultResourceMapper(new API(getHubClient().getManageClient())).readResource(json, Database.class);
+        assertEquals(true, rangeIndexExists(db, "someProperty", "dateTime"));
+        assertEquals(true, rangeIndexExists(db, "someProperty", "date"));
+    }
+
+    private void assertDateTimeIndexDoesntExist() {
+        String json = new DatabaseManager(getHubClient().getManageClient()).getPropertiesAsJson(getHubConfig().getDbName(DatabaseKind.FINAL));
+        Database db = new DefaultResourceMapper(new API(getHubClient().getManageClient())).readResource(json, Database.class);
+        assertEquals(false, rangeIndexExists(db, "someProperty", "dateTime"));
+    }
+
+    private boolean rangeIndexExists(Database db, String name, String type){
+        List<ElementIndex> rangeIndexes = db.getRangeElementIndex();
+            for(int i=0;i<rangeIndexes.size();i++){
+                if(rangeIndexes.get(i).getLocalname().equals(name) && rangeIndexes.get(i).getScalarType().equals(type)){
+                    return true;
+                }
+            }
+            return false;
     }
 
     private void verifyIndexes(String dbName) {
@@ -252,6 +340,17 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         assertEquals(4, pathIndexes.size(), "OOTB indexes URIsToProcess and uris path indexes exists along with above deployed indexes in the test");
         pathIndexes.forEach(pathIndex -> pathExpressions.add(pathIndex.getPathExpression()));
         assertTrue(pathExpressions.containsAll(Arrays.asList("//*:instance/testPathIndexForDHFPROD4704", "/(es:envelope|envelope)/(es:instance|instance)/Customer/someOtherProperty")));
+    }
+
+    private void removeRangeElementIndexesFromFinalDatabase() {
+        ManageClient manageClient = getHubClient().getManageClient();
+        final String finalName = getHubConfig().getDbName(DatabaseKind.FINAL);
+
+        Database db = new Database(new API(manageClient), finalName);
+
+        db.setRangePathIndex(new ArrayList<>());
+        db.setRangeElementIndex(new ArrayList<>());
+        db.save();
     }
 
     private void loadUnrelatedIndexes() {
