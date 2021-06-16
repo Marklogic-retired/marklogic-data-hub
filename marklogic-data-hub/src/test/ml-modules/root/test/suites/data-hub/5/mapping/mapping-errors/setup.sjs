@@ -14,6 +14,13 @@ hubTest.createSimpleMappingProject( [
       "customerId": {"sourcedFrom": "parseDate('xyz')"},
       "name": {"sourcedFrom": "unavailableFunction()"}
     }
+  },
+  {
+    "name":"invalidArgumentMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "generate-id(1234)"}
+      }
   }
 ]
 );
