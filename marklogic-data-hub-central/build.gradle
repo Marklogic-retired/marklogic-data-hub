@@ -12,7 +12,7 @@ buildscript {
 
 plugins {
     id "net.saliman.properties"
-    id "java"
+    id "application"
     id "nebula.ospackage" version "8.4.1"
 
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
@@ -31,6 +31,10 @@ snyk {
     api = snykToken
     autoDownload = true
     autoUpdate = true
+}
+
+application {
+    mainClass = 'com.marklogic.hub.central.Application'
 }
 
 ext {
