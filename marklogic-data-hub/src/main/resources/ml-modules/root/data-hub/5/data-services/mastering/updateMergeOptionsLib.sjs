@@ -125,7 +125,11 @@ function strategy(item, algorithms) {
     }
   }
 
-  return s
+  if (item.default) {
+    s.default = item.default;
+  }
+
+  return s;
 };
 
 function mergeRule(item, algorithms, properties, namespaces) {
