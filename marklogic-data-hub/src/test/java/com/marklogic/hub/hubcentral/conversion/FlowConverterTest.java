@@ -306,7 +306,6 @@ class FlowConverterTest extends AbstractHubCoreTest {
 
     private void verifyFlows(HubProject hubProject) {
         JsonNode ingMapFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestionMappingFlow.flow.json").toFile());
-        logger.info("ING: " + ingMapFlow);
         JsonNode ingMapMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestionMappingMasteringFlow.flow.json").toFile());
         JsonNode custFlow = readJsonObject(hubProject.getFlowsDir().resolve("custom_only-flow.flow.json").toFile());
         JsonNode customMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("custom-master.flow.json").toFile());

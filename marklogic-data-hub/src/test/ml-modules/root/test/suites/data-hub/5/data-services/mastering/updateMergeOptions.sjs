@@ -14,6 +14,7 @@ const defInput =
   {
     "mergeStrategies": [
       {
+        "default": true,
         "algorithmRef": "standard",
         "length": {
           "weight": "2"
@@ -69,7 +70,8 @@ const defExpected =
             }
           ]
         },
-        "strategyName": "myFavoriteSource"
+        "strategyName": "myFavoriteSource",
+        "default": true
       }
     ],
     "mergeRules": [
@@ -248,6 +250,7 @@ const withoutPropDefsInput =
         }
       ]
     };
+
 const withoutPropDefsExpected =
     {
       "mergeStrategies": [
@@ -380,5 +383,6 @@ const lastExpected =
   test.assertEqualJson(xpathExpected, invokeService(xpathInput), "merge with XPath"),
   test.assertEqualJson(xpathExpected, invokeService(xpathInput), "merge with XPath"),
   test.assertEqualJson(collExpected, invokeService(collInput), "merge collections"),
-  test.assertEqualJson(lastExpected, invokeService(lastInput), "last updated location")
+  test.assertEqualJson(lastExpected, invokeService(lastInput), "last updated location"),
+  test.assertEqualJson(withoutPropDefsExpected, invokeService(withoutPropDefsInput), "withoutPropsDefs")
 ];
