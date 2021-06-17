@@ -126,6 +126,7 @@ const MappingStepDetail: React.FC = () => {
   const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
   const previousSelected : any = usePrevious(relatedEntitiesSelected);
   const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
+  const [entityLoaded, setEntityLoaded] = useState(false);
   const [labelRemoved, setLabelRemoved] = useState("");
   // For Entity table filtering
   const [filterStr, setFilterStr] = useState("");
@@ -541,6 +542,7 @@ const MappingStepDetail: React.FC = () => {
           }
         });
       }
+      setEntityLoaded(true);
       setRelatedEntitiesSelected(defaultEntitiesToDisplay);
       setRelatedEntityTypeProperties(relatedEntities);
       setTgtEntityReferences({...tgtRefs});
@@ -1290,6 +1292,7 @@ const MappingStepDetail: React.FC = () => {
 
   const UpdateMappingArtifact = async (payload) => {
     // Update local form state
+    setEntityLoaded(false);
     let mapSavedResult = await updateMappingArtifact(payload);
     if (mapSavedResult) {
       let mapArt = await getMappingArtifactByMapName(payload.targetEntityType, payload.name);
@@ -1466,6 +1469,7 @@ const MappingStepDetail: React.FC = () => {
                 savedMappingArt = {savedMappingArt}
                 deleteRelatedEntity = {deleteRelatedEntity}
                 labelRemoved = {labelRemoved}
+                entityLoaded = {entityLoaded}
               />
               {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
                 <EntityMapTable
@@ -1507,6 +1511,7 @@ const MappingStepDetail: React.FC = () => {
                   savedMappingArt = {savedMappingArt}
                   deleteRelatedEntity = {deleteRelatedEntity}
                   labelRemoved = {labelRemoved}
+                  entityLoaded = {entityLoaded}
                 /> : "")}
             </div>
           </SplitPane>
