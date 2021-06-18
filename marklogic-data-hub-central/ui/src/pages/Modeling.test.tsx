@@ -10,11 +10,12 @@ import authorities from "../assets/mock-data/authorities.testutils";
 import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
 import {getEntityTypes} from "../assets/mock-data/modeling/modeling";
-import {isModified, notModified} from "../assets/mock-data/modeling/modeling-context-mock";
+import {isModified, notModified, isModifiedTableView, notModifiedTableView} from "../assets/mock-data/modeling/modeling-context-mock";
 import {primaryEntityTypes, updateEntityModels} from "../api/modeling";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
 import {getViewSettings} from "../util/user-context";
+import {act} from "react-dom/test-utils";
 
 jest.mock("../api/modeling");
 
@@ -25,6 +26,19 @@ const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;
 const mockHCUserRolesService = authorities.HCUserRolesService;
 
+const renderView = (view) => {
+  let contextValue = view === "table" ? isModifiedTableView : isModified;
+  return (
+    <AuthoritiesContext.Provider value={mockDevRolesService}>
+      <ModelingContext.Provider value={contextValue}>
+        <Router>
+          <Modeling/>
+        </Router>
+      </ModelingContext.Provider>
+    </AuthoritiesContext.Provider>
+  );
+};
+
 describe("Modeling Page", () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -34,21 +48,25 @@ describe("Modeling Page", () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
     mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
 
-    const {getByText, getByLabelText} = render(
-      <AuthoritiesContext.Provider value={mockDevRolesService}>
-        <ModelingContext.Provider value={isModified}>
-          <Router>
-            <Modeling/>
-          </Router>
-        </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
-    );
+    let getByText, getByLabelText;
+    await act(async () => {
+      const renderResults = render(
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <ModelingContext.Provider value={isModifiedTableView}>
+            <Router>
+              <Modeling/>
+            </Router>
+          </ModelingContext.Provider>
+        </AuthoritiesContext.Provider>
+      );
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+    });
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
-    userEvent.click(getByLabelText("switch-view-table"));
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
@@ -81,19 +99,24 @@ describe("Modeling Page", () => {
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
 
-    const {getByText, getByLabelText, queryByLabelText} = render(
-      <AuthoritiesContext.Provider value={mockOpRolesService}>
-        <ModelingContext.Provider value={notModified}>
-          <Router>
-            <Modeling/>
-          </Router>
-        </ModelingContext.Provider>
-      </AuthoritiesContext.Provider>
-    );
+    let getByText, getByLabelText, queryByLabelText;
+    await act(async () => {
+      const renderResults = render(
+        <AuthoritiesContext.Provider value={mockOpRolesService}>
+          <ModelingContext.Provider value={notModifiedTableView}>
+            <Router>
+              <Modeling/>
+            </Router>
+          </ModelingContext.Provider>
+        </AuthoritiesContext.Provider>
+      );
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+      queryByLabelText = renderResults.queryByLabelText;
+    });
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
 
-    userEvent.click(getByLabelText("switch-view-table"));
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
@@ -242,7 +265,7 @@ describe("Graph view page", () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
     mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
 
-    const {getByText, getByLabelText, queryByLabelText} = render(
+    const {getByText, getByLabelText, queryByLabelText, rerender} = render(
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
           <Router>
@@ -274,6 +297,7 @@ describe("Graph view page", () => {
     expect(queryByLabelText("Instances")).not.toBeInTheDocument();
 
     userEvent.click(tableViewButton); // switch to table view
+    rerender(renderView("table"));
     expect(tableViewButton).toBeChecked();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
@@ -283,6 +307,7 @@ describe("Graph view page", () => {
     expect(queryByLabelText("graph-export")).not.toBeInTheDocument();
 
     userEvent.click(graphViewButton); // switch back to graph view
+    rerender(renderView("graph"));
     expect(graphViewButton).toBeChecked();
     expect(filterInput).toBeVisible();
     expect(addEntityOrRelationshipBtn).toBeVisible();

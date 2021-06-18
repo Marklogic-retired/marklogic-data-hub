@@ -35,13 +35,68 @@ export const isModified = {
           }
         }
       }
-    ]
+    ],
+    view: "graph",
+    selectedEntity: "Order"
   },
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn(),
   updateEntityModified: jest.fn(),
   removeEntityModified: jest.fn(),
-  clearEntityModified: jest.fn()
+  clearEntityModified: jest.fn(),
+  setView: jest.fn(),
+  setSelectedEntity: jest.fn(),
+  setGraphViewOptions: jest.fn()
+};
+
+export const isModifiedTableView = {
+  modelingOptions: {
+    isModified: true,
+    entityTypeNamesArray: ["Order"],
+    modifiedEntitiesArray: [
+      {
+        "entityName": "Order",
+        "modelDefinition": {
+          "Order": {
+            "required": [],
+            "pii": [
+              "someProperty"
+            ],
+            "elementRangeIndex": [
+              "someProperty"
+            ],
+            "rangeIndex": [
+              "someOtherProperty"
+            ],
+            "properties": {
+              "someProperty": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "someOtherProperty": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "zip": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              }
+            }
+          }
+        }
+      }
+    ],
+    view: "table",
+    selectedEntity: "Order"
+  },
+  toggleIsModified: jest.fn(),
+  setEntityTypeNamesArray: jest.fn(),
+  updateEntityModified: jest.fn(),
+  removeEntityModified: jest.fn(),
+  clearEntityModified: jest.fn(),
+  setView: jest.fn(),
+  setSelectedEntity: jest.fn(),
+  setGraphViewOptions: jest.fn()
 };
 
 export const notModified = {
@@ -50,7 +105,23 @@ export const notModified = {
   },
   clearEntityModified: jest.fn(),
   toggleIsModified: jest.fn(),
-  setEntityTypeNamesArray: jest.fn()
+  setEntityTypeNamesArray: jest.fn(),
+  setView: jest.fn(),
+  setSelectedEntity: jest.fn(),
+  setGraphViewOptions: jest.fn()
+};
+
+export const notModifiedTableView = {
+  modelingOptions: {
+    isModified: false,
+    view: "table"
+  },
+  clearEntityModified: jest.fn(),
+  toggleIsModified: jest.fn(),
+  setEntityTypeNamesArray: jest.fn(),
+  setView: jest.fn(),
+  setSelectedEntity: jest.fn(),
+  setGraphViewOptions: jest.fn()
 };
 
 export const entityNamesArray = {

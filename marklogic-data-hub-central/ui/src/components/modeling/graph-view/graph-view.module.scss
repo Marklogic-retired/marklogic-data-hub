@@ -1,5 +1,5 @@
 .graphViewContainer {
-    padding: 10px 0px 0px 0px;
+    padding: 10px 10px 0px 0px;
 
     .graphHeader {
         display: flex;
@@ -58,3 +58,26 @@
         color: #bfbfbf;
     }
 }
+
+.resizerStyle {
+  border: 1px solid rgba(1, 22, 39, 0.21);
+  cursor: col-resize;
+  height: auto;
+  margin-top: 10px;
+  min-height: 60vh;
+};
+
+.resizerStyle::before {
+  content: '| |';
+  position: absolute;
+  top: 50%;
+  padding: 0 8px;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  color: #CCCCCC;
+  line-height: 16px;
+  font-size: 16px;
+  letter-spacing: 0px;
+  display: inline-block;
+}
+

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
 import {MLTable, MLTooltip} from "@marklogic/design-system";
-import {faUndo, faTrashAlt, faSave} from "@fortawesome/free-solid-svg-icons";
+import {faUndo, faTrashAlt, faSave, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
 
@@ -33,7 +33,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const expandedRowStorage = storage?.model?.entityExpandedRows;
 
   const {handleError} = useContext(UserContext);
-  const {modelingOptions, removeEntityModified, clearEntityModified} = useContext(ModelingContext);
+  const {modelingOptions, removeEntityModified, clearEntityModified, setGraphViewOptions} = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
@@ -225,6 +225,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   };
 
+  const navigateToGraphView = (entityName) => {
+    setGraphViewOptions({view: "graph", selectedEntity: entityName});
+  };
+
   const columns = [
     {
       title: <span data-testid="entityName">Name</span>,
@@ -372,6 +376,14 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   }
                 }}
                 size="2x"
+              />
+            </MLTooltip>
+            <MLTooltip title={ModelingTooltips.viewGraph} overlayStyle={{maxWidth: "225px"}}>
+              <FontAwesomeIcon
+                data-testid={text + "-graphView-icon"}
+                className={styles.iconViewGraph}
+                icon={faProjectDiagram}
+                onClick={() => navigateToGraphView(text)}
               />
             </MLTooltip>
             <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}}>

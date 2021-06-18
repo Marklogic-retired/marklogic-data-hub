@@ -1,15 +1,19 @@
 import React, {useState} from "react";
+import {defaultModelingView} from "../config/modeling.config";
 import {
   ModelingOptionsInterface,
   ModelingContextInterface,
-  EntityModified
+  EntityModified,
+  graphViewOptions
 } from "../types/modeling-types";
 
 const DEFAULT_MODELING_OPTIONS = {
   entityTypeNamesArray: [],
   isModified: false,
   modifiedEntitiesArray: [],
-  entityPropertiesNamesArray: []
+  entityPropertiesNamesArray: [],
+  view: defaultModelingView,
+  selectedEntity: undefined
 };
 
 export const ModelingContext = React.createContext<ModelingContextInterface>({
@@ -19,7 +23,10 @@ export const ModelingContext = React.createContext<ModelingContextInterface>({
   updateEntityModified: () => {},
   removeEntityModified: () => {},
   clearEntityModified: () => {},
-  setEntityPropertiesNamesArray: () => {}
+  setEntityPropertiesNamesArray: () => {},
+  setView: () => {},
+  setSelectedEntity: () => {},
+  setGraphViewOptions: () => {}
 });
 
 const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
@@ -71,6 +78,22 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
     setModelingOptions({...modelingOptions, entityPropertiesNamesArray});
   };
 
+  const setView = (view: string) => {
+    setModelingOptions({...modelingOptions, view: view});
+  };
+
+  const setSelectedEntity = (selectedEntity: string | undefined) => {
+    setModelingOptions({...modelingOptions, selectedEntity: selectedEntity});
+  };
+
+  const setGraphViewOptions = (graphViewOptions: graphViewOptions) => {
+    setModelingOptions({
+      ...modelingOptions,
+      view: graphViewOptions.view,
+      selectedEntity: graphViewOptions.selectedEntity
+    });
+  };
+
   return (
     <ModelingContext.Provider value={{
       modelingOptions,
@@ -79,7 +102,10 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
       updateEntityModified,
       removeEntityModified,
       clearEntityModified,
-      setEntityPropertiesNamesArray
+      setEntityPropertiesNamesArray,
+      setView,
+      setSelectedEntity,
+      setGraphViewOptions
     }}>
       {children}
     </ModelingContext.Provider>

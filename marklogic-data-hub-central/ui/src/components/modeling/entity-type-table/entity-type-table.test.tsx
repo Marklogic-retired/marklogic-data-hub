@@ -461,6 +461,37 @@ describe("EntityTypeModal Component", () => {
     expect(container.querySelector(".ant-pagination")).toBeNull();
   });
 
+  test("can mock navigation to graph view", async () => {
+    mockEntityReferences.mockResolvedValueOnce({status: 200, data: referencePayloadEmpty});
+    mockDeleteEntity.mockResolvedValueOnce({status: 200});
+
+    const updateMock = jest.fn();
+
+    const {getByTestId} =  render(
+      <ModelingContext.Provider value={isModified}>
+        <Router>
+          <EntityTypeTable
+            allEntityTypesData={getEntityTypes}
+            canReadEntityModel={true}
+            canWriteEntityModel={true}
+            autoExpand=""
+            editEntityTypeDescription={jest.fn()}
+            updateEntities={updateMock}
+            revertAllEntity={false}
+            toggleRevertAllEntity={jest.fn()}
+            updateSavedEntity={jest.fn()}
+          />
+        </Router>
+      </ModelingContext.Provider>
+    );
+
+    // check if graph view icon tooltip appears
+    fireEvent.mouseOver(getByTestId("Order-graphView-icon"));
+    await wait(() => expect(screen.getByText(ModelingTooltips.viewGraph)).toBeInTheDocument());
+
+    userEvent.click(getByTestId("Order-graphView-icon"));
+    expect(isModified.setGraphViewOptions).toBeCalledWith({view: "graph", selectedEntity: "Order"});
+  });
 
 });
 

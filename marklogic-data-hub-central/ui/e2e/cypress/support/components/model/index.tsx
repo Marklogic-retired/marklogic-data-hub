@@ -3,6 +3,8 @@ import entityTypeTable from "./entity-type-table";
 import propertyModal from "./property-modal";
 import propertyTable from "./property-table";
 import structuredTypeModal from "./structured-type-modal";
+import graphViewSidePanel from "./graph-view-side-panel";
+import graphView from "./graph-view";
 
 
 export {
@@ -10,5 +12,7 @@ export {
   entityTypeTable,
   propertyModal,
   propertyTable,
-  structuredTypeModal
+  structuredTypeModal,
+  graphView,
+  graphViewSidePanel
 };

@@ -6,13 +6,18 @@ export interface ModelingContextInterface {
   removeEntityModified: (entityModified: EntityModified) => void;
   clearEntityModified: () => void;
   setEntityPropertiesNamesArray: (entityDefinitionsArray: any[]) => void;
+  setView: (view: string) => void;
+  setSelectedEntity: (entityName: string | undefined) => void;
+  setGraphViewOptions: (graphViewOptions: graphViewOptions) => void;
 }
 
 export interface ModelingOptionsInterface {
   entityTypeNamesArray: any[],
   isModified: boolean,
   modifiedEntitiesArray:  any[],
-  entityPropertiesNamesArray: string[]
+  entityPropertiesNamesArray: string[],
+  view: string,
+  selectedEntity?: string
 }
 
 export interface Definition {
@@ -82,4 +87,9 @@ export enum PropertyType {
 export interface EntityModified {
   entityName: string,
   modelDefinition: any
+}
+
+export interface graphViewOptions {
+  view: string,
+  selectedEntity: string
 }

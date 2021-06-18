@@ -23,6 +23,7 @@ const ModelingTooltips = {
   saveIcon: 'Save changes to this entity type.',
   revertIcon: 'Discard unsaved changes to this entity type.',
   deleteIcon: 'Delete this entity type.',
+  viewGraph: 'View entity in graph view.',
 
   /* Icons for entity properties */
   addStructuredProperty: 'Add a property to this structured property.',
