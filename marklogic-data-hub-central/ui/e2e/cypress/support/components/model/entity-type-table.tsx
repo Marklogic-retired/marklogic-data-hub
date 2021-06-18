@@ -48,6 +48,10 @@ class EntityTypeTable {
   waitForTableToLoad() {
     cy.waitUntil(() => cy.get(".ant-table-row").should("have.length.gt", 0));
   }
+
+  viewEntityInGraphView(entityName: string) {
+    return cy.findByTestId(`${entityName}-graphView-icon`);
+  }
 }
 
 const entityTypeTable = new EntityTypeTable();

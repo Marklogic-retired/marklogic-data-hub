@@ -4,6 +4,8 @@ import modelPage from "../../support/pages/model";
 import {
   entityTypeModal,
   entityTypeTable,
+  graphView,
+  graphViewSidePanel,
   propertyModal,
   propertyTable,
 } from "../../support/components/model/index";
@@ -88,5 +90,25 @@ describe("Entity Modeling: Reader Role", () => {
 
     propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "zip-fiveDigit").click({force: true});
     confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
+  });
+
+  it("can navigate to graph view from table view", () => {
+    // Should be updated once the dummy entity links are replaced by actual graph nodes.
+    entityTypeTable.viewEntityInGraphView("Customer").click({force: true});
+    graphView.getFilterInput().should("be.visible");
+    graphView.getAddEntityButton().should("be.visible");
+    graphView.getPublishToDatabaseButton().should("be.visible");
+    graphView.getExportGraphIcon().should("be.visible");
+    graphViewSidePanel.getSelectedEntityHeading("Customer").should("be.visible");
+    graphViewSidePanel.getPropertiesTab().should("be.visible");
+    graphViewSidePanel.getEntityTypeTab().should("be.visible");
+    graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
+
+    graphViewSidePanel.closeSidePanel();
+    graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
+
+    modelPage.selectView("table");
+    entityTypeTable.viewEntityInGraphView("Person").click({force: true});
+    graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
   });
 });

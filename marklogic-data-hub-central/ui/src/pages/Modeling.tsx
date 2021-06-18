@@ -25,8 +25,7 @@ import {defaultModelingView} from "../config/modeling.config";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
-  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified} = useContext(ModelingContext);
-  const [view, setView] = useState(defaultModelingView);
+  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView} = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
@@ -186,17 +185,17 @@ const Modeling: React.FC = () => {
     <MLRadio.MLGroup
       buttonStyle="outline"
       className={"radioGroupView"}
-      defaultValue={view}
+      defaultValue={modelingOptions.view}
       name="radiogroup"
       onChange={e => handleViewChange(e.target.value)}
       size="large"
       style={mlRadioStyle}
       tabIndex={0}
     >
-      <MLRadio.MLButton aria-label="switch-view-graph" value={"graph"} checked={view === "graph"}>
+      <MLRadio.MLButton aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
         <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
       </MLRadio.MLButton>
-      <MLRadio.MLButton aria-label="switch-view-table" value={"table"} checked={view === "table"}>
+      <MLRadio.MLButton aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
         <i>{<FontAwesomeIcon icon={faTable} />}</i>
       </MLRadio.MLButton>
     </MLRadio.MLGroup>
@@ -212,7 +211,7 @@ const Modeling: React.FC = () => {
         { modelingOptions.isModified && (
           <MLAlert type="info" aria-label="entity-modified-alert" showIcon message={ModelingTooltips.entityEditedAlert}/>
         )}
-        {view === "table" ? <div>
+        {modelingOptions.view === "table" ? <div>
           <div className={styles.header}>
             <h1>Entity Types</h1>
             <div className={styles.buttonContainer}>
@@ -291,8 +290,6 @@ const Modeling: React.FC = () => {
           namespace={namespace}
           prefix={prefix}
         />
-
-
       </div>
     );
   } else {
