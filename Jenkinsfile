@@ -637,11 +637,10 @@ def isChangeInUI(){
 }
 
 def isPRMergable(){
-    return env.TESTS_PASSED && env.UNIT_TESTS_PASSED &&
-        (env.NO_UI_TESTS || env.UI_TESTS_PASSED) && (env.NO_UI_TESTS || env.CYPRESSE2E_TESTS_PASSED) &&
-        env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() &&
-        (env.NO_UI_TESTS || (env.UI_TESTS_PASSED && env.UI_TESTS_PASSED.toBoolean())) &&
-        (env.NO_UI_TESTS || (env.CYPRESSE2E_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED.toBoolean()))
+    return env.TESTS_PASSED?.toBoolean() && env.UNIT_TESTS_PASSED?.toBoolean() &&
+        (
+            env.NO_UI_TESTS || (env.UI_TESTS_PASSED?.toBoolean() && env.CYPRESSE2E_TESTS_PASSED?.toBoolean())
+        ) && !params.regressions
 }
 
 void singleNodeTestOnLinux(String type,String mlVersion){
@@ -879,7 +878,7 @@ pipeline{
 		stage('code-review'){
 		 when {
             expression {return isPRMergable()}
-            allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
+//            allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
   			beforeAgent true
 		 }
 		 agent {label 'dhmaster'};
@@ -889,7 +888,7 @@ pipeline{
 		stage('Merge-PR'){
 		when {
             expression {return isPRMergable()}
-            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+//            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'dhmaster'}
