@@ -48,7 +48,7 @@ describe("Merging Step Detail view component", () => {
 
   it("can render merging step with merge strategies and rulesets", async () => {
 
-    const {getByText, getAllByText, getByLabelText, getByTestId} = render(
+    const {getByText, getAllByText, getByLabelText, getByTestId, queryByTestId} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
       </CurationContext.Provider>
@@ -77,10 +77,15 @@ describe("Merging Step Detail view component", () => {
     expect((await(waitForElement(() => getByText(multiSliderTooltips.viewOnlyTooltip))))).toBeInTheDocument();
 
     //Verify merge rules table is rendered with data
-    // Check table column headers are rendered
+    //Check table column headers are rendered
     expect(getByText("Property")).toBeInTheDocument();
     expect(getByText("Merge Type")).toBeInTheDocument();
     expect(getByText("Strategy")).toBeInTheDocument();
+    expect(getByText("Default")).toBeInTheDocument();
+
+    //Verify default icon is rendered for only default strategy
+    expect(getByTestId("default-testMerge-icon")).toBeInTheDocument();
+    expect(queryByTestId("default-customMergeStrategy-icon")).not.toBeInTheDocument();
 
     //check table data is rendered correctly
     expect(getByText("name")).toBeInTheDocument();

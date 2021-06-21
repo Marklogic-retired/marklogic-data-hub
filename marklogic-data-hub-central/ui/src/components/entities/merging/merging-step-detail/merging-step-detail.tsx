@@ -12,7 +12,7 @@ import {
 } from "../../../../types/curation-types";
 import {MergeStrategyTooltips, MergingStepDetailText, multiSliderTooltips} from "../../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt, faCheck} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
@@ -148,6 +148,18 @@ const MergingStepDetail: React.FC = () => {
       width: 200,
     },
     {
+      title: "Default",
+      dataIndex: "default",
+      key: "default",
+      sortDirections: ["ascend", "descend", "ascend"],
+      sorter: (a, b) => {
+        a = a.maxSources || "";
+        b = b.maxSources || "";
+        return a.localeCompare(b);
+      },
+      width: 200,
+    },
+    {
       title: "Delete",
       dataIndex: "delete",
       key: "delete",
@@ -228,6 +240,7 @@ const MergingStepDetail: React.FC = () => {
         strategyName: i["strategyName"],
         maxValues: i["maxValues"],
         maxSources: i["maxSources"],
+        default: i["default"] === true ? <FontAwesomeIcon className={styles.defaultIcon} icon={faCheck} data-testid={"default-" + i["strategyName"] + "-icon"} /> : null,
         priorityOrder: i.hasOwnProperty("priorityOrder") ? true : false,
         delete: <MLTooltip title={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? MergeStrategyTooltips.delete : ""}>
           <FontAwesomeIcon
