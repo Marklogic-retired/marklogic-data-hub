@@ -32,6 +32,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [strategyNameTouched, setStrategyNameTouched] = useState(false);
   const [radioSourcesOptionClicked, setRadioSourcesOptionClicked] = useState(1);
   const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
+  const [radioDefaultOptionClicked, setRadioDefaultOptionClicked] = useState(1);
   const [maxValues, setMaxValues] = useState<any>("");
   const [maxValuesTouched, setMaxValuesTouched] = useState(false);
   const [maxSources, setMaxSources] = useState<any>("");
@@ -39,6 +40,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [isCustomStrategy, setIsCustomStrategy] = useState(false);
   const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([defaultPriorityOption]);
   const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState("");
+  const [defaultStrategyErrorMessage, setDefaultStrategyErrorMessage] = useState<any>();
   const [dropdownOption, setDropdownOption] = useState("Length");
   const [dropdownOptionTouched, setDropdownOptionTouched] = useState(false);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
@@ -48,7 +50,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
   const layout = {
     labelCol: {span: 4},
-    wrapperCol: {span: 8},
+    wrapperCol: {span: 20},
   };
 
   const handleChange = (event) => {
@@ -70,6 +72,18 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       setMaxValuesTouched(true);
       setRadioValuesOptionClicked(2);
     }
+    if (event.target.name === "defaultYesNo") {
+      if (radioDefaultOptionClicked === 2) {
+        let defaultStrategy = checkExistingDefaultStrategy();
+        if (defaultStrategy) {
+          displayErrorMessage(defaultStrategy);
+        } else {
+          setRadioDefaultOptionClicked(event.target.value);
+        }
+      } else {
+        setRadioDefaultOptionClicked(event.target.value);
+      }
+    }
     if (event.target.name === "maxSources") {
       setRadioSourcesOptionClicked(event.target.value);
       if (event.target.value === 1) {
@@ -81,6 +95,26 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       if (event.target.value === 1) {
         setMaxValues("");
       }
+    }
+  };
+
+  const displayErrorMessage = (strategy) => {
+    const defaultStrategyErrorMsg = <span aria-label="default-strategy-error">The default strategy is already set to <strong>{strategy}</strong>. You must first go to that strategy and unselect it as a default.</span>;
+    setDefaultStrategyErrorMessage(defaultStrategyErrorMsg);
+  };
+
+  const checkExistingDefaultStrategy = () => {
+    let strategies = curationOptions.activeStep.stepArtifact.mergeStrategies;
+    let existingDefault;
+    if (strategies) {
+      strategies.map((obj) => {
+        if (obj.hasOwnProperty("default") && obj.default === true && !(props.isEditStrategy && obj.strategyName === strategyName)) {
+          existingDefault = obj.strategyName;
+        }
+      });
+      return existingDefault;
+    } else {
+      return;
     }
   };
 
@@ -101,7 +135,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         "strategyName": strategyName,
         "maxSources": maxSources ? maxSources : "All",
         "maxValues": maxValues ? maxValues : "All",
-        "priorityOrder": parsePriorityOrder(priorityOrderOptions)
+        "priorityOrder": parsePriorityOrder(priorityOrderOptions),
+        "default": radioDefaultOptionClicked === 1 ? true : false
       };
       onSave(newMergeStrategies);
       props.setOpenEditMergeStrategyDialog(false);
@@ -135,6 +170,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       await updateMergingArtifact(newStepArtifact);
       updateActiveStepArtifact(newStepArtifact);
     }
+    setDefaultStrategyErrorMessage("");
   };
 
   const onCancel = () => {
@@ -182,9 +218,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const resetModal = () => {
+    setDefaultStrategyErrorMessage("");
     setStrategyNameErrorMessage("");
     setPriorityOrderOptions([defaultPriorityOption]);
     setDropdownOption("Length");
+    setRadioDefaultOptionClicked(2);
     setRadioValuesOptionClicked(1);
     setRadioSourcesOptionClicked(1);
     setMaxValues("");
@@ -279,6 +317,13 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             setMaxSources(key.maxSources);
           }
         }
+        if (key.hasOwnProperty("default")) {
+          if (key.default === true) {
+            setRadioDefaultOptionClicked(1);
+          } else {
+            setRadioDefaultOptionClicked(2);
+          }
+        }
       }
     }
   };
@@ -341,6 +386,18 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
               </MLTooltip>
             </Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          colon={false}
+          label="Default Strategy?"
+          validateStatus={defaultStrategyErrorMessage ? "error" : ""}
+          help={defaultStrategyErrorMessage}
+          labelAlign="left"
+        >
+          <Radio.Group  value={radioDefaultOptionClicked} onChange={handleChange}  name={"defaultYesNo"}>
+            <Radio value={1} >Yes</Radio>
+            <Radio value={2} >No</Radio>
           </Radio.Group>
         </Form.Item>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
