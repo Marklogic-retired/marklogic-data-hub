@@ -66,6 +66,7 @@ describe("Merge Strategy Dialog component", () => {
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
           {...data.mergeStrategyDataProps}
+          isEditStrategy={false}
         />
       </CurationContext.Provider>
     );
@@ -74,6 +75,51 @@ describe("Merge Strategy Dialog component", () => {
     expect(screen.queryByLabelText("confirm-body")).toBeNull();
     expect(data.mergeStrategyDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
+  });
+
+  it("Verify Add/Edit Merge Strategy dialog shows default strategy and error message ", async () => {
+    mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    const {getByText, getByLabelText, queryByLabelText, rerender} = render(
+      <CurationContext.Provider value={customerMergingStep}>
+        <MergeStrategyDialog
+          {...data.mergeStrategyDataProps}
+          isEditStrategy={false}
+        />
+      </CurationContext.Provider>
+    );
+
+    //testing Add strategy scenario
+    expect(getByText("Add Strategy")).toBeInTheDocument();
+
+    expect(getByText("Default Strategy?")).toBeInTheDocument();
+    //default strategy radio button should be set to "No" by default
+    let radio = getByLabelText("No");
+    expect(radio["value"]).toBe("2");
+
+    expect(queryByLabelText("default-strategy-error")).not.toBeInTheDocument();
+    //selecting "Yes" when there is an existing default strategy should prompt error message
+    fireEvent.click(getByLabelText("Yes"));
+    expect(getByLabelText("default-strategy-error")).toBeInTheDocument();
+
+    //rerender to test edit scenario
+    rerender(<CurationContext.Provider value={customerMergingStep}>
+      <MergeStrategyDialog
+        {...data.mergeStrategyDataProps}
+        strategyName={"myFavouriteSource"}
+      />
+    </CurationContext.Provider>);
+
+    expect(getByText("Edit Strategy")).toBeInTheDocument();
+
+    expect(getByText("Default Strategy?")).toBeInTheDocument();
+    //default strategy radio button should be set to "No" by default
+    radio = getByLabelText("No");
+    expect(radio["value"]).toBe("2");
+
+    //selecting "Yes" when there is an existing default strategy should prompt error message
+    fireEvent.click(getByLabelText("Yes"));
+    expect(getByLabelText("default-strategy-error")).toBeInTheDocument();
+
   });
 
   it("Verify Edit Merge Strategy dialog renders correctly with priority order options", () => {
