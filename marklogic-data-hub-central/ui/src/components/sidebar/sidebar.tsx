@@ -667,6 +667,7 @@ const Sidebar: React.FC<Props> = (props) => {
             className={styles.datePicker}
             onChange={onDateChange}
             value={datePickerValue}
+            getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
           />}
           {hubFacets.map(facet => {
             return facet && (
