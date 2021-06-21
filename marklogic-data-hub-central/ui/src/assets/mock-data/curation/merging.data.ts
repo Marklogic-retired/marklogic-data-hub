@@ -54,6 +54,7 @@ export const mergingStep = {
         },
         {
           strategyName: "testMerge",
+          default: true,
           mergeModulePath: "/custom/merge/strategy.sjs",
           mergeModuleFunction: "testMergeFunction",
           mergeModuleNamespace: "",
