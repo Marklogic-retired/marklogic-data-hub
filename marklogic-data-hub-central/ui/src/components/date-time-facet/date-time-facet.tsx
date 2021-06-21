@@ -76,6 +76,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
         onChange={onChange}
         //onOk={onOk}
         value={dateTimePickerValue}
+        style={{width: "auto"}}
         key={props.name}
         getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
       />
