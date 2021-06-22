@@ -115,7 +115,7 @@ processResources.dependsOn extractFastXmlParserZip
 
 node {
   // Version of node to use.
-  version = '14.15.4'
+  version = '14.17.1'
 
   // // Version of npm to use.
   npmVersion = '6.14.10'
