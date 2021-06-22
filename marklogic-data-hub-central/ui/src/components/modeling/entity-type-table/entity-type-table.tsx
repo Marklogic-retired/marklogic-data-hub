@@ -4,7 +4,6 @@ import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {faUndo, faTrashAlt, faSave} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
-
 import PropertyTable from "../property-table/property-table";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {entityReferences, deleteEntity, updateEntityModels} from "../../../api/modeling";
