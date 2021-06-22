@@ -980,7 +980,8 @@ declare function merge-impl:expand-merge-rule(
     if (fn:exists($merge-details)) then
       $merge-details
     else
-      $options/*:merging/(merging:merge|self::object-node())[(@default|default)][fn:head(@default|default) cast as xs:boolean]
+      (: New Merge Steps store the default as a merge strategy instead of as a merge rule. :)
+      $options/(*:merging|mergeStrategies)/(merging:merge|self::object-node())[(@default|default)][fn:head(@default|default) cast as xs:boolean]
   let $strategy-name := $merge-details/(@strategy|strategy|mergeStrategyName)
   return
     if (fn:exists($strategy-name)) then
