@@ -13,13 +13,14 @@ function invokeService(options) {
 const defInput =
   {
     "mergeStrategies": [
+    ],
+    "merging": [
       {
         "default": true,
         "algorithmRef": "standard",
         "length": {
           "weight": "2"
         },
-        "name": "myFavoriteSource",
         "maxSources": 1,
         "sourceWeights": [
           {
@@ -35,12 +36,6 @@ const defInput =
             }
           }
         ]
-      }
-    ],
-    "merging": [
-      {
-        "propertyName": "name",
-        "strategy": "myFavoriteSource"
       }
     ],
     "propertyDefs": {
@@ -70,16 +65,11 @@ const defExpected =
             }
           ]
         },
-        "strategyName": "myFavoriteSource",
+        "strategyName": "Default Strategy",
         "default": true
       }
     ],
-    "mergeRules": [
-      {
-        "entityPropertyPath": "name",
-        "mergeStrategyName": "myFavoriteSource"
-      }
-    ]
+    "mergeRules": []
   };
 
 // -----------------------------------------------
