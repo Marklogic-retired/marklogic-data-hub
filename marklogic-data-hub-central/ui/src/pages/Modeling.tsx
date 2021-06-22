@@ -37,6 +37,7 @@ const Modeling: React.FC = () => {
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.SaveAll);
+  const [width, setWidth] = React.useState(window.innerWidth);
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -50,6 +51,15 @@ const Modeling: React.FC = () => {
     }
   }, []);
 
+
+  useEffect(() => {
+    window.addEventListener("resize", updateWidthAndHeight);
+    return () => window.removeEventListener("resize", updateWidthAndHeight);
+  });
+
+  const updateWidthAndHeight = () => {
+    setWidth(window.innerWidth);
+  };
   const setEntityTypesFromServer = async () => {
     try {
       const response = await primaryEntityTypes();
@@ -171,50 +181,52 @@ const Modeling: React.FC = () => {
   if (canAccessModel) {
     return (
       <div className={styles.modelContainer}>
-        <div className={styles.intro}>
-          <p>{tiles.model.intro}</p>
-        </div>
-        { modelingOptions.isModified && (
-          <MLAlert type="info" aria-label="entity-modified-alert" showIcon message={ModelingTooltips.entityEditedAlert}/>
-        )}
-        <div className={styles.header}>
-          <h1>Entity Types</h1>
-          <div className={styles.buttonContainer}>
-            <div className={styles.legend}>
-              <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key Relationship</div>
-              <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
-              <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
-              <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
-            </div>
+        <div className={styles.stickyHeader} style={{width: width-138, maxWidth: width-138}}>
+          <div className={styles.intro}>
+            <p>{tiles.model.intro}</p>
+          </div>
+          { modelingOptions.isModified && (
+            <MLAlert type="info" aria-label="entity-modified-alert" showIcon message={ModelingTooltips.entityEditedAlert}/>
+          )}
+          <div className={styles.header}>
+            <h1>Entity Types</h1>
+            <div className={styles.buttonContainer}>
+              <div className={styles.legend}>
+                <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key Relationship</div>
+                <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
+                <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
+                <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+              </div>
 
-            <div style={{float: "right"}}>
-              {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.addNewEntity}>
-                  {addButton}
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
-                  <span className={styles.disabledCursor}>{addButton}</span>
-                </MLTooltip>
-              }
-              {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
-                  <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
-                  <span className={styles.disabledCursor}>{saveAllButton}</span>
-                </MLTooltip>
-              }
-              {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
-                  <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
-                  <span className={styles.disabledCursor}>{revertAllButton}</span>
-                </MLTooltip>
-              }
+              <div style={{float: "right"}}>
+                {canWriteEntityModel ?
+                  <MLTooltip title={ModelingTooltips.addNewEntity}>
+                    {addButton}
+                  </MLTooltip>
+                  :
+                  <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
+                    <span className={styles.disabledCursor}>{addButton}</span>
+                  </MLTooltip>
+                }
+                {canWriteEntityModel ?
+                  <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
+                    <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
+                  </MLTooltip>
+                  :
+                  <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
+                    <span className={styles.disabledCursor}>{saveAllButton}</span>
+                  </MLTooltip>
+                }
+                {canWriteEntityModel ?
+                  <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
+                    <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
+                  </MLTooltip>
+                  :
+                  <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
+                    <span className={styles.disabledCursor}>{revertAllButton}</span>
+                  </MLTooltip>
+                }
+              </div>
             </div>
           </div>
         </div>
@@ -236,17 +248,19 @@ const Modeling: React.FC = () => {
           namespace={namespace}
           prefix={prefix}
         />
-        <EntityTypeTable
-          canReadEntityModel={canReadEntityModel}
-          canWriteEntityModel={canWriteEntityModel}
-          allEntityTypesData={entityTypes}
-          editEntityTypeDescription={editEntityTypeDescription}
-          updateEntities={setEntityTypesFromServer}
-          updateSavedEntity={updateSavedEntity}
-          autoExpand={autoExpand}
-          revertAllEntity={revertAllEntity}
-          toggleRevertAllEntity={toggleRevertAllEntity}
-        />
+        <div className={styles.entityTableContainer}>
+          <EntityTypeTable
+            canReadEntityModel={canReadEntityModel}
+            canWriteEntityModel={canWriteEntityModel}
+            allEntityTypesData={entityTypes}
+            editEntityTypeDescription={editEntityTypeDescription}
+            updateEntities={setEntityTypesFromServer}
+            updateSavedEntity={updateSavedEntity}
+            autoExpand={autoExpand}
+            revertAllEntity={revertAllEntity}
+            toggleRevertAllEntity={toggleRevertAllEntity}
+          />
+        </div>
       </div>
     );
   } else {
