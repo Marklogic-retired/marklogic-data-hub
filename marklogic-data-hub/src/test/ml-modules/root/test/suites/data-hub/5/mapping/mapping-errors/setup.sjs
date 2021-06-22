@@ -21,6 +21,13 @@ hubTest.createSimpleMappingProject( [
       {
         "name": {"sourcedFrom": "generate-id(1234)"}
       }
+  },
+  {
+    "name":"cannotComputeMapping",
+    "properties":
+      {
+        "customerId": {"sourcedFrom": "sum((1234,'a'))"}
+      }
   }
 ]
 );
