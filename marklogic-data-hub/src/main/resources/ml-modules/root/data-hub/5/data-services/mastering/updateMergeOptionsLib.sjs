@@ -33,7 +33,12 @@ function updateMergeOptions(opt)
     const namespaces = opt.propertyDefs ? opt.propertyDefs.namespaces : {};
     opt.merging.forEach((item) =>
       {
-        mergeRules.push(mergeRule(item, algorithms, properties, namespaces));
+        // The default merge rule has moved to merge strategies
+        if (item.default) {
+          mergeStrategies.push(strategy(Object.assign({ name: "Default Strategy"},item), algorithms));
+        } else {
+          mergeRules.push(mergeRule(item, algorithms, properties, namespaces));
+        }
       }
     );
   }
