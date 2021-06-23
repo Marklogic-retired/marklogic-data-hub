@@ -249,4 +249,16 @@ describe("Mapping", () => {
     //Related entity does not exist after reopening step
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
   });
+
+  it("Verify page automically scrolls to top of table after pagination", () => {
+    cy.waitUntil(() => mappingStepDetail.relatedFilterMenu("Person")).click();
+    cy.waitUntil(() => mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)")).click();
+    cy.get("#entityContainer").scrollTo("bottom",  {ensureScrollable: false});
+    mappingStepDetail.entityTitle("Person").should("not.be.visible");
+    browsePage.getPaginationPageSizeOptions().then(attr => {
+      attr[1].click();
+    });
+    browsePage.getPageSizeOption("10 / page").click();
+    mappingStepDetail.entityTitle("Person").should("be.visible");
+  });
 });

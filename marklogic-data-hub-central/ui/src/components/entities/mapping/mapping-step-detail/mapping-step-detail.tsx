@@ -26,7 +26,8 @@ import arrayIcon from "../../../../assets/icon_array.png";
 import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
-import {paginationOptions, mappingColors} from "../../../../config/mapping.config";
+import {paginationMapping, mappingColors} from "../../../../config/mapping.config";
+import useDynamicRefs from "use-dynamic-refs";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -145,6 +146,14 @@ const MappingStepDetail: React.FC = () => {
   const [sourceFormat, setSourceFormat] = useState("");
   const [docNotFound, setDocNotFound] = useState(false);
   const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
+  const [getRef, setRef] =  useDynamicRefs();
+
+  const executeScroll = (refId) => {
+    const scrollToRef : any = getRef(refId);
+    if (scrollToRef && scrollToRef.current) {
+      scrollToRef.current.scrollIntoView();
+    }
+  };
 
   let tableColors = [...mappingColors];
 
@@ -1399,7 +1408,7 @@ const MappingStepDetail: React.FC = () => {
                       <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
                     </div>
                     <Table
-                      pagination={paginationOptions}
+                      pagination={paginationMapping}
                       expandIcon={(props) => customExpandIcon(props)}
                       onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
                       expandedRowKeys={sourceExpandedKeys}
@@ -1431,6 +1440,8 @@ const MappingStepDetail: React.FC = () => {
                 <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
               </div>
               <EntityMapTable
+                setScrollRef = {setRef}
+                executeScroll = {executeScroll}
                 mapResp={mapResp}
                 mapData={mapData}
                 setMapResp={setMapResp}
@@ -1471,8 +1482,10 @@ const MappingStepDetail: React.FC = () => {
                 labelRemoved = {labelRemoved}
                 entityLoaded = {entityLoaded}
               />
-              {relatedEntityTypeProperties.map(entity => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
+              {relatedEntityTypeProperties.map((entity, i) => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
                 <EntityMapTable
+                  setScrollRef = {setRef}
+                  executeScroll = {executeScroll}
                   mapResp={mapResp}
                   mapData={mapData}
                   setMapResp={setMapResp}
