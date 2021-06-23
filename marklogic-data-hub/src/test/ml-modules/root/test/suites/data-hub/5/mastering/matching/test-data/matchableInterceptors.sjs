@@ -7,7 +7,7 @@ function baselineQueryInterceptorB(baselineQuery) {
 }
 
 function filterQueryInterceptor(filterQuery, docNode) {
-  return cts.andQuery([filterQuery, cts.collectionQuery(fn.string(docNode.xpath("filterCollection")))]);
+  return cts.andQuery([filterQuery, cts.collectionQuery(fn.string(docNode.xpath("envelope/headers/filterCollection")))]);
 }
 
 module.exports = {

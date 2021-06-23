@@ -48,7 +48,7 @@ function testBaselineQuery() {
   }
   return [
     test.assertExists(matchableEntityInstanceQuery, "matchableEntityInstanceQuery should exist."),
-    test.assertTrue(matchableEntityInstanceQuery instanceof cts.tripleRangeQuery, "matchableEntityInstanceQuery should be a triple range query."),
+    test.assertTrue(matchableEntityInstanceQuery instanceof cts.tripleRangeQuery, `matchableEntityInstanceQuery should be a triple range query. ${xdmp.describe(matchableEntityInstanceQuery)}`),
     test.assertEqual(sem.iri("http://example.org/Customer-0.0.1/Customer"), cts.tripleRangeQueryObject(matchableEntityInstanceQuery), "matchableEntityInstanceQuery should have it's object properly set."),
     test.assertExists(matchableEntityInstanceFallbackQuery, "matchableEntityInstanceFallbackQuery should exist."),
     test.assertTrue(matchableEntityInstanceFallbackQuery instanceof cts.collectionQuery, "matchableEntityInstanceFallbackQuery should be a collection query."),
@@ -101,7 +101,48 @@ function testFilterQuery() {
   ];
 }
 
+function testMatchRulesetDefinitions() {
+  const docA = cts.doc("/content/docA.json");
+  const matchStep = {
+    targetEntityType: "http://example.org/Customer-0.0.1/Customer",
+    matchRulesets: [
+      {
+        name: "name - exact",
+        matchRules: [{ entityPropertyPath: "name", matchType: "exact"}]
+      },
+      {
+        name: "name - synonym",
+        matchRules: [{ entityPropertyPath: "name", matchType: "synonym",
+          options: {
+            thesaurusURI: "/content/nicknames.xml"
+          }
+        }]
+      },
+      {
+        name: "name - double metaphone",
+        matchRules: [{ entityPropertyPath: "name", matchType: "doubleMetaphone",
+          options: {
+            dictionaryURI: "/content/first-names.xml",
+            distanceThreshold: 100
+          }
+        }]
+      }
+    ]
+  };
+  const matchable = new Matchable(matchStep, {});
+  const matchRulesetDefinitions = matchable.matchRulesetDefinitions();
+  const assertions = [
+    test.assertEqual(matchStep.matchRulesets.length, matchRulesetDefinitions.length, "Count of match ruleset definitions should match count of objects in the step.")
+  ];
+  for (let i = 0; i < matchStep.matchRulesets.length; i++) {
+    assertions.push(test.assertEqual(matchStep.matchRulesets[i].name, matchRulesetDefinitions[i].name(), "Name should be set for MatchRulesetDefinition"));
+    assertions.push(test.assertEqualJson(matchStep.matchRulesets[i], matchRulesetDefinitions[i].raw(), "Raw value should be set for MatchRulesetDefinition"));
+    matchRulesetDefinitions[i].buildCtsQuery(docA);
+  }
+}
+
 []
   .concat(testMatchableClass())
   .concat(testBaselineQuery())
-  .concat(testFilterQuery());
+  .concat(testFilterQuery())
+  .concat(testMatchRulesetDefinitions());
