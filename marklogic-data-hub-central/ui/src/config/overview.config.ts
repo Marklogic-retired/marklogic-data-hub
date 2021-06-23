@@ -1,4 +1,4 @@
-const VERSION = "5.4";
+const VERSION = "5.5";
 
 const documentationLinkRoot = "https://docs.marklogic.com/datahub/" + VERSION + "/";
 const documentationLinks = {
@@ -9,7 +9,8 @@ const documentationLinks = {
     explore: documentationLinkRoot + "tools/hubcentral/exploring-with-hubcentral.html",
 }
 
-const videoLinkRoot = "https://developer.marklogic.com/video/datahub/" + VERSION + "/";
+// TODO Video Tutorial links currently pegged to version 5.4, see: DHFPROD-7513
+const videoLinkRoot = "https://developer.marklogic.com/video/datahub/5.4/";
 const videoLinks = {
     load: videoLinkRoot + "data-hub-central-load",
     model: videoLinkRoot + "data-hub-central-model",
