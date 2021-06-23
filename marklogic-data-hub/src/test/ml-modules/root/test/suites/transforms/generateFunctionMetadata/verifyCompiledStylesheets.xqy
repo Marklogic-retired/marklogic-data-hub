@@ -13,10 +13,15 @@ declare function local:verify-stylesheet-has-map-namespace-declared($path as xs:
   return test:assert-true(
     $stylesheet/namespace::* = "http://marklogic.com/xdmp/map",
     "Each compiled stylesheet is expected to have the 'map' namespace prefix declared so that map functions " ||
-    "are guaranteed to resolve no matter what context the stylesheet is used in."
+    "are guaranteed to resolve no matter what context the stylesheet is used in; failed for path: " || $path
   )
 };
 
-local:verify-stylesheet-has-map-namespace-declared("/data-hub/5/mapping-functions/core.xml.xslt"),
+(:
+core-functions.xml.xslt is not tested here because the problem with the 'map' namespace prefix not being
+referenceable isn't a problem for an XQuery mapping functions module. The 'map' namespace prefix is used
+in the xdmp:javascript-call elements added to the XSLT module for an SJS mapping functions module, and
+thus we verify that it exists for the XSLT associated with the custom-mapping-functions.sjs module.
+:)
 local:verify-stylesheet-has-map-namespace-declared("/custom-modules/mapping-functions/custom-mapping-functions.xml.xslt")
 
