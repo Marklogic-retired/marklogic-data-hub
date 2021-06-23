@@ -19,6 +19,10 @@ class MergeStrategyModal {
   maxValue(str: string) {
     cy.get("#maxValuesStrategyInput").focus().clear().type(str);
   }
+
+  strategyMaxScoreInput(value: string) {
+    cy.get("#maxSourcesStrategyInput").clear().type(value).type("{enter}");
+  }
 }
 
 const mergeStrategyModal = new MergeStrategyModal();
