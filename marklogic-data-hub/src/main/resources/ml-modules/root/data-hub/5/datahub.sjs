@@ -34,7 +34,6 @@ class DataHub {
 
     this.consts = consts;
 
-    this.debug = new Debug(config);
     this.performance = new Perf(config, this);
     this.flow = new Flow(config);
     this.debug = new Debug(config, this);

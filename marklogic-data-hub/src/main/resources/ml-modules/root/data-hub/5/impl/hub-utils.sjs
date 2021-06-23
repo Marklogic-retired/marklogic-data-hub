@@ -184,6 +184,15 @@ function getErrorMessage(e) {
   return errorMessage;
 }
 
+const cachedLibraries = {};
+
+function requireFunction(modulePath, functionName) {
+  if (!cachedLibraries[modulePath]) {
+    cachedLibraries[modulePath] = require(modulePath);
+  }
+  return cachedLibraries[modulePath][functionName];
+}
+
 module.exports = {
   capitalize,
   deleteDocument,
@@ -199,6 +208,7 @@ module.exports = {
   parsePermissions,
   queryToContentDescriptorArray,
   replaceLanguageWithLang,
+  requireFunction,
   warn,
   writeDocument
 };

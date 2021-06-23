@@ -1,5 +1,6 @@
 'use strict';
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const blocks = require("/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy");
 const cachedInterceptorModules = {};
 
@@ -37,6 +38,23 @@ class Matchable {
   constructor(matchStep, stepContext) {
     this.matchStep = matchStep;
     this.stepContext = stepContext;
+    const targetEntityType = this.matchStep.targetEntityType;
+    if (targetEntityType) {
+      const entities = require("/data-hub/core/models/entities.sjs");
+      this._model = entities.getEntityModel(targetEntityType);
+    }
+    if (!this._model) {
+      this._model = new GenericMatchModel(this.matchStep, {collection: targetEntityType ? targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1):null});
+    }
+  }
+
+  /*
+   * Returns a Model class instance that defines how match queries should be built
+   * @return Model class instance
+   * @since 5.8.0
+   */
+  model() {
+    return this._model;
   }
 
   /*
@@ -46,21 +64,7 @@ class Matchable {
    */
   baselineQuery() {
     if (!this._baselineQuery) {
-      let firstBaseline;
-      if (this.matchStep.targetEntityType) {
-        const targetEntityType = this.matchStep.targetEntityType;
-        const tripleQuery = cts.tripleRangeQuery(null, sem.iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), sem.iri(targetEntityType))
-        // check for TDE for entity to be enabled
-        if (cts.exists(tripleQuery)) {
-          firstBaseline = tripleQuery;
-        } else {
-          firstBaseline = cts.collectionQuery(targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1));
-        }
-      } else if (this.matchStep.collections && this.matchStep.collections.content) {
-        firstBaseline = cts.collectionQuery(this.matchStep.collections.content);
-      } else {
-        firstBaseline = null;
-      }
+      const firstBaseline = this._model.instanceQuery();
       this._baselineQuery = applyInterceptors("Baseline Query Interceptor", firstBaseline, this.matchStep.baselineQueryInterceptors);
     }
     return this._baselineQuery;
@@ -71,7 +75,10 @@ class Matchable {
    * @since 5.8.0
    */
   matchRulesetDefinitions() {
-    // TODO DHFPROD-8590
+    if (!this._matchRulesetDefinitions) {
+      this._matchRulesetDefinitions = (this.matchStep.matchRulesets || []).map((ruleset) => new MatchRulesetDefinition(ruleset, this));
+    }
+    return this._matchRulesetDefinitions;
   }
 
   /*
@@ -131,8 +138,165 @@ class Matchable {
   buildActionDetails(matchingDocumentSet, thresholdBucket, matchRulesets) {
     // TODO DHFPROD-8610
   }
+
+  /*
+   * Returns a query given a property path a set of values based on the model associated with Matchable.
+   * This will likely be reused and so can be moved to a common at some point.
+   * @param {string} propertyPath
+   * @param {item*} values
+   * @return {cts.query}
+   * @since 5.8.0
+   */
+  propertyQuery(propertyPath, values) {
+    const indexes = this._model.propertyIndexes(propertyPath);
+    if (indexes.length) {
+      const scalarType = cts.referenceScalarType(indexes[0]);
+      const collation = (scalarType === "string") ? cts.referenceCollation(indexes[0]): null;
+      let typedValues = [];
+      for (const value of values) {
+        if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", scalarType, value)) {
+          typedValues.push(xs[scalarType](value));
+        }
+      }
+      if (collation) {
+        typedValues = cts.valueMatch(indexes, typedValues, "case-insensitive");
+      }
+      return cts.rangeQuery(indexes, typedValues)
+    } else {
+      const propertyDefinition = this._model.propertyDefinition(propertyPath);
+      const localname = propertyDefinition.localname;
+      return cts.orQuery([
+        cts.jsonPropertyValueQuery(localname, values),
+        cts.elementValueQuery(fn.QName(propertyDefinition.namespace, localname), values)
+      ]);
+    }
+  }
+}
+
+class MatchRulesetDefinition {
+  constructor(matchRuleset, matchable) {
+    this.matchRuleset = matchRuleset;
+    this.matchable = matchable;
+  }
+
+  name() {
+    return this.matchRuleset.name;
+  }
+
+  _valueFunction(matchRule, model) {
+    if (!matchRule._valueFunction) {
+      matchRule._valueFunction = (documentNode) => model.propertyValues(matchRule.entityPropertyPath, documentNode);
+    }
+    return matchRule._valueFunction;
+  }
+
+  _matchFunction(matchRule, model) {
+    if (!matchRule._matchFunction) {
+      let matchFunction;
+      let convertToNode = false;
+      switch (matchRule.matchType) {
+        case "exact":
+          matchFunction = (values) => model.propertyQuery(matchRule.entityPropertyPath, values);
+          convertToNode = true;
+          break;
+        case "doubleMetaphone":
+          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy", "doubleMetaphone");
+          convertToNode = true;
+          break;
+        case "synonym":
+          matchFunction = hubUtils.requireFunction("/com.marklogic.smart-mastering/algorithms/thesaurus.xqy", "synonym");
+          convertToNode = true;
+          break;
+        case "custom":
+          matchFunction = hubUtils.requireFunction(matchRule.algorithmModulePath, matchRule.algorithmFunction);
+          convertToNode = /\.xq[yml]?$/.test(matchRule.algorithmModulePath);
+          break;
+        default:
+          httpUtils.throwBadRequest(`Undefined match type "${matchRule.matchType}" provided.`);
+      }
+      if (convertToNode) {
+        matchFunction = (values, matchRule, matchStep) => matchFunction(values, new NodeBuilder().addNode(matchRule).toNode(), new NodeBuilder().addNode(matchStep).toNode());
+      }
+      matchRule._matchFunction = matchFunction;
+    }
+    return matchRule._matchFunction;
+  }
+
+  buildCtsQuery(documentNode) {
+    const queries = [];
+    const model = this.matchable.model();
+    for (const matchRule of this.matchRuleset.matchRules) {
+      const valueFunction = this._valueFunction(matchRule, model);
+      const matchFunction = this._matchFunction(matchRule, model);
+      const values = valueFunction(documentNode);
+      const query = fn.exists(values) ? matchFunction(values, matchRule, this.matchStep): null;
+      if (!query) {
+        return null;
+      }
+      queries.push(query);
+    }
+    return queries.length > 1 ? cts.andQuery(queries): queries[0];
+  }
+
+  weight() {
+    return fn.number(this.matchRuleset.weight);
+  }
+
+
+
+  raw() {
+    return this.matchRuleset;
+  }
+}
+
+class GenericMatchModel {
+  constructor(matchStep, options = {}) {
+    this.matchStep = matchStep;
+    this.matchStep.propertyDefs = this.matchStep.propertyDefs || {properties:[]};
+    this._propertyDefinitionMap = {};
+    this._indexesByPath = {};
+    this._propertyDefinitionMap = {};
+    this._namespaces = this.matchStep.propertyDefs.namespaces || {};
+    for (const propertyDefinition of this.matchStep.propertyDefs.properties) {
+      this._propertyDefinitionMap[propertyDefinition.name] = propertyDefinition;
+    }
+    const defaultCollection = matchStep.collections && matchStep.collections.content ? matchStep.collections.content : "mdm-content";
+    this._instanceQuery = cts.collectionQuery(options.collection || defaultCollection);
+  }
+
+  instanceQuery() {
+    return this._instanceQuery;
+  }
+
+  propertyDefinition(propertyPath) {
+    return this._propertyDefinitionMap[propertyPath] || { localname: propertyPath, namespace: "" };
+  }
+
+  propertyValues(propertyPath, documentNode) {
+    const propertyDefinition = this.propertyDefinition(propertyPath);
+    return propertyPath.path ? documentNode.xpath(propertyDefinition.path, this._namespaces) : documentNode.xpath(`.//ns:${propertyDefinition.localname}`, {ns: propertyDefinition.namespace});
+  }
+
+  propertyIndexes(propertyPath) {
+    if (!this._indexesByPath.hasOwnProperty(propertyPath)) {
+      const pathIndexes = [];
+      const propertyDefinition = this._propertyDefinitionMap[propertyPath];
+      if (propertyDefinition.indexReferences && propertyDefinition.indexReferences.length) {
+        for (const indexReference of  propertyDefinition.indexReferences) {
+          try {
+            pathIndexes.push(cts.reference(indexReference));
+          } catch (e) {
+            xdmp.log(`Couldn't use index for property path '${propertyPath}' Reason: ${xdmp.toJsonString(e)}`);
+          }
+        }
+      }
+      this._indexesByPath[propertyPath] = pathIndexes;
+    }
+    return this._indexesByPath[propertyPath];
+  }
 }
 
 module.exports = {
-  Matchable
+  Matchable,
+  MatchRulesetDefinition
 }
