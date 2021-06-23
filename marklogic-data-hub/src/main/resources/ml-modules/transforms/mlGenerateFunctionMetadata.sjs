@@ -1,28 +1,20 @@
 'use strict';
 const es = require('/MarkLogic/entity-services/entity-services');
-const esMappingLib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const xqueryLib = require('/data-hub/5/builtins/steps/mapping/entity-services/xquery-lib.xqy');
 
 function mlGenerateFunctionMetadata(context, params, content) {
-  let uri = context.uri;
-  let pattern = '^(.*)\.(sjs|mjs|xqy)$';
-  let match = new RegExp(pattern).exec(uri);
-  let metadataXml;
+  const uri = context.uri;
+  const match = new RegExp('^(.*)\.(sjs|mjs|xqy)$').exec(uri);
+
   if (match !== null) {
-    let uriVal = match[1];
-    // The namespace for custom xqy functions should be "http://marklogic.com/mapping-functions/custom"
-    if(uri.includes("/custom-modules/mapping-functions/") && uri.endsWith('.xqy')){
-      metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/mapping-functions/custom", uri));
-    }
-    else {
-      metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
-    }
-    metadataXml = addMapNamespaceToMetadata(metadataXml);
-    let collection = 'http://marklogic.com/entity-services/function-metadata';
-    let permissions = xdmp.defaultPermissions().concat([
+    const uriVal = match[1];
+    const metadataXml = generateMetadata(uri);
+
+    const collection = 'http://marklogic.com/entity-services/function-metadata';
+    const permissions = xdmp.defaultPermissions().concat([
       xdmp.permission(datahub.config.FLOWOPERATORROLE, 'execute'),
       xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'execute'),
       xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'update'),
@@ -37,6 +29,7 @@ function mlGenerateFunctionMetadata(context, params, content) {
       // does not have this permission on it, which is expected to be on every other DHF module.
       xdmp.permission("rest-extension-user", "execute")
     ]);
+
     let writeInfo = hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
     if (writeInfo && fn.exists(writeInfo.transaction)) {
       // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
@@ -58,6 +51,23 @@ function mlGenerateFunctionMetadata(context, params, content) {
     }
   }
   return content;
+}
+
+function generateMetadata(uri) {
+  let metadataXml;
+  if (uri === "/data-hub/5/mapping-functions/core-functions.xqy") {
+    metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/data-hub/mapping/functions", uri));
+  }
+  // Custom XQuery mapping functions are required to have a URI starting with /custom-modules/mapping-functions and
+  // a namespace of http://marklogic.com/mapping-functions/custom
+  else if (uri.startsWith("/custom-modules/mapping-functions/") && uri.endsWith(".xqy")){
+    metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/mapping-functions/custom", uri));
+  }
+  else {
+    metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+  }
+
+  return addMapNamespaceToMetadata(metadataXml);
 }
 
 /**

@@ -1,18 +1,16 @@
-const core = require('/data-hub/5/mapping-functions/core.sjs');
+const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
 const test = require("/test/test-helper.xqy");
 
 function testMemoryLookup() {
-  let dictionaryStr = '{"M": "Man", "W": "Woman", "NB": "Non-Binary"}';
-  let dictionaryObj = {"M": "Man", "W": "Woman", "NB": "Non-Binary"};
+  const dictionary = '{"M": "Man", "W": "Woman", "NB": "Non-Binary", "Number": 3, "AnObject": {"hello":"world"}}';
   return [
-    test.assertEqual('Non-Binary', core.memoryLookup('NB', dictionaryStr)),
-    test.assertEqual('Woman', core.memoryLookup('W', dictionaryStr)),
-    test.assertEqual('Man', core.memoryLookup('m', dictionaryStr)),
-    test.assertEqual(null, core.memoryLookup('none', dictionaryStr)),
-    test.assertEqual('Non-Binary', core.memoryLookup('NB', dictionaryObj)),
-    test.assertEqual('Woman', core.memoryLookup('W', dictionaryObj)),
-    test.assertEqual('Man', core.memoryLookup('m', dictionaryObj)),
-    test.assertEqual(null, core.memoryLookup('none', dictionaryObj)),
+    test.assertEqual('Non-Binary', core.memoryLookup('NB', dictionary)),
+    test.assertEqual('Woman', core.memoryLookup('W', dictionary)),
+    test.assertEqual('Man', core.memoryLookup('m', dictionary)),
+    test.assertEqual(3, core.memoryLookup("Number", dictionary)),
+    test.assertEqual(null, core.memoryLookup('none', dictionary)),
+    test.assertEqual("world", core.memoryLookup('AnObject', dictionary).hello),
+
     // invalid JSON
     test.assertThrowsError(xdmp.function(xs.QName('core.memoryLookup')), 'val',"{'not valid': ''}", null)
   ];
@@ -28,7 +26,7 @@ function testMemoryLookup() {
  * the above message is not logged.
  */
 function lookupOfFalseShouldNotLogThatValueWasNotFound() {
-  const lookup = {"T": true, "F": false};
+  const lookup = '{"T": true, "F": false}';
   return [
     test.assertEqual(true, core.memoryLookup('T', lookup)),
     test.assertEqual(false, core.memoryLookup('F', lookup))

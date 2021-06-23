@@ -10,7 +10,7 @@ import com.marklogic.client.document.ServerTransform;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.MappingService;
-import com.marklogic.hub.impl.Versions;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +51,8 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
     }
 
     public void generateFunctionMetadata() {
+        deleteCoreJavascriptFunctions();
+
         DatabaseClient modulesClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.MODULES));
         DataMovementManager dataMovementManager = modulesClient.newDataMovementManager();
         final List<Throwable> caughtExceptions = new ArrayList<>();
@@ -105,6 +107,34 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
         if (!caughtExceptions.isEmpty()) {
             throw new RuntimeException(caughtExceptions.get(0));
+        }
+    }
+
+    /**
+     * This is not expected to run into permission issues in a DHS environment, where a data-hub-developer user is
+     * prohibited from updating/deleting DHF modules. In DHS, DHF would have been upgraded by a user that has permission
+     * to delete these modules, such that the modules are gone by the time a data-hub-developer user tries to deploy
+     * her application to DHS.
+     */
+    private void deleteCoreJavascriptFunctions() {
+        String script = "let $uris := \n" +
+            "  for $uri in ('/data-hub/5/mapping-functions/core.sjs', '/data-hub/5/mapping-functions/core.xml', '/data-hub/5/mapping-functions/core.xml.xslt')\n" +
+            "  where fn:doc-available($uri)\n" +
+            "  return ($uri, xdmp:document-delete($uri))\n" +
+            "where $uris\n" +
+            "return \"Deleted: \" || fn:string-join($uris, \",\")";
+        DatabaseClient client = this.hubConfig.newModulesDbClient();
+        try {
+            String response = client.newServerEval().xquery(script).evalAs(String.class);
+            if (StringUtils.isNotEmpty(response)) {
+                logger.info(response);
+            }
+        } catch (Exception ex) {
+            logger.error("Unable to delete core mapping functions written in SJS; these are intended to be deleted " +
+                "so that they do not overlap with the core mapping functions written in XQuery. " +
+                "Mappings may not behave correctly as a result. Cause: " + ex.getMessage(), ex);
+        } finally {
+            client.release();
         }
     }
 

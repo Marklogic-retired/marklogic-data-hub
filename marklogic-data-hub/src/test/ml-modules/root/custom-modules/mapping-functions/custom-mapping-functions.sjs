@@ -14,9 +14,6 @@
   limitations under the License.
 */
 
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
-
 function echo(input) {
   return "You said: " + input;
 }

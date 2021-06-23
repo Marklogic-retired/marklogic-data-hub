@@ -127,11 +127,16 @@ function main(contentSequence, options, stepExecutionContext) {
 
       outputContentArray = outputContentArray.concat(contentResponse);
     } catch (error) {
-      if (stepExecutionContext.isStopOnError()) {
-        stepExecutionContext.stopWithError(error, currentContentUri);
-        return [];
+      // This should always be defined, but some DHF unit tests do not pass it in
+      if (stepExecutionContext != null) {
+        if (stepExecutionContext.isStopOnError()) {
+          stepExecutionContext.stopWithError(error, currentContentUri);
+          return [];
+        }
+        stepExecutionContext.addStepErrorForItem(error, currentContentUri);
+      } else {
+        throw error;
       }
-      stepExecutionContext.addStepErrorForItem(error, currentContentUri);
     }
   }
 
