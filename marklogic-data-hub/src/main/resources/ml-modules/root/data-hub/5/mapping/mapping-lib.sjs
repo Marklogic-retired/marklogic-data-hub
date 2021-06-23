@@ -25,6 +25,9 @@ function extractFriendlyErrorMessage(e){
     case "XDMP-ARGTYPE":
       errorMessage = `Invalid argument. Cause: Either the argument to the function in a mapping expression is not the right type, or the function does not expect arguments.`;
       break;
+    case "XDMP-COMPUTE":
+      errorMessage = `Cannot compute. Cause: The provided argument(s) for a mapping expression include invalid values.`;
+      break;
     default:
       errorMessage = null;
   }
