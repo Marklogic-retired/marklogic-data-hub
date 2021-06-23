@@ -1,0 +1,6 @@
+{
+    "host" : "http://localhost:3000/tiles",
+    "username" : "hub-developer",
+    "password" : "password",
+    "headless" : true
+}
