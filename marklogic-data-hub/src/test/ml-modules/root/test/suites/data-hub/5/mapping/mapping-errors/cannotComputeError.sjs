@@ -2,7 +2,7 @@ const test = require("/test/test-helper.xqy");
 const lib = require("lib/lib.sjs")
 let assertions = [];
 
-const runMappingOutput = lib.runMappingStep("cannotComputeMapping", 2);
+const runMappingOutput = lib.runMappingStep("cannotComputeMapping", 3);
 const testMappingOutput = lib.validateAndTestMapping("cannotComputeMapping");
 
 assertions = assertions.concat([
