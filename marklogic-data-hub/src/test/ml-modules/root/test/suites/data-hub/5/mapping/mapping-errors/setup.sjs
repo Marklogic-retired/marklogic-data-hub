@@ -28,6 +28,13 @@ hubTest.createSimpleMappingProject( [
       {
         "customerId": {"sourcedFrom": "sum((1234,'a'))"}
       }
+  },
+  {
+    "name":"invalidLexicalValueMapping",
+    "properties":
+      {
+        "customerId": {"sourcedFrom": "'abc'"}
+      }
   }
 ]
 );

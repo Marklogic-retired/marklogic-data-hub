@@ -87,7 +87,7 @@ function testvalidateAndTestMappingWithErrors() {
   let uri = "/content/person2.json";
   let result = esMappingLib.validateAndTestMapping(map, uri);
   return [
-    test.assertEqual("Invalid lexical value: \"Nicky-ID\"", result.properties.id.errorMessage, "Error thrown since int prop is mapped to string"),
+    test.assertEqual("Data type mismatch. Cause: Returned type value (\"Nicky-ID\") from a mapping expression does not match expected property type (int).", result.properties.id.errorMessage, "Error thrown since int prop is mapped to string"),
   ];
 }
 
