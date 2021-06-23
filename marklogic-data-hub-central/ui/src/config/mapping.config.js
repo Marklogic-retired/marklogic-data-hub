@@ -1,4 +1,4 @@
-export const paginationOptions = {
+export const paginationMapping = {
   defaultCurrent: 1,
   defaultPageSize: 20,
   hideOnSinglePage: false,

@@ -13,11 +13,13 @@ import arrayIcon from "../../../../assets/icon_array.png";
 import DocIcon from "../../../../assets/DocIcon.png";
 import {css} from "@emotion/css";
 import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion";
-import {paginationOptions} from "../../../../config/mapping.config";
+import {paginationMapping} from "../../../../config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
 import StepsConfig from "../../../../config/steps.config";
 
 interface Props {
+  setScrollRef: any;
+  executeScroll: any;
   mapResp: any;
   mapData: any;
   setMapResp: any;
@@ -212,6 +214,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   /*  The source context is updated when mapping is saved/loaded, this function does a level order traversal of entity
      json and updates the sourceContext for every entity property */
+
+  const paginationFunction = {
+    defaultCurrent: paginationMapping.defaultCurrent,
+    defaultPageSize: paginationMapping.defaultPageSize,
+    hideOnSinglePage: paginationMapping.hideOnSinglePage,
+    pageSizeOptions: paginationMapping.pageSizeOptions,
+    showSizeChanger: paginationMapping.showSizeChanger,
+    size: paginationMapping.size,
+    onChange: (e) => { props.executeScroll(`${props.entityMappingId}-ref`); },
+    onShowSizeChange: (e) => { props.executeScroll(`${props.entityMappingId}-ref`); }
+  };
 
   const updateSourceContext = (mapExp, entityTable) => {
 
@@ -1378,7 +1391,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   });
 
   return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
-    <div id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"}>
+    <div id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
       <Table
         pagination={false}
         className={tableCSS}
@@ -1400,7 +1413,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {entityProperties.length > 0 ?
       <div id="lowerTable">
         <Table
-          pagination={paginationOptions}
+          pagination={paginationFunction}
           className={tableCSS}
           expandIcon={(props) => customExpandIcon(props)}
           onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
