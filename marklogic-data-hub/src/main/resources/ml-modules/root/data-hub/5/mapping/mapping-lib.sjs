@@ -28,8 +28,23 @@ function extractFriendlyErrorMessage(e){
     case "XDMP-COMPUTE":
       errorMessage = `Cannot compute. Cause: The provided argument(s) for a mapping expression include invalid values.`;
       break;
+    case "XDMP-LEXVAL":
+      errorMessage = extractInvalidLexicalValueError(e);
+      break;
     default:
       errorMessage = null;
+  }
+  return errorMessage;
+}
+
+function extractInvalidLexicalValueError(e) {
+  const error = new Error(e);
+  const mappedValue = e.data[0];
+  const regex = /^XDMP-LEXVAL: xs:(\w+).*$/;
+  let errorMessage = error.message;
+  const expectedDataType = errorMessage.match(regex)[1];
+  if(expectedDataType){
+    errorMessage = `Data type mismatch. Cause: Returned type value (${mappedValue}) from a mapping expression does not match expected property type (${expectedDataType}).`
   }
   return errorMessage;
 }
