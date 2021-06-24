@@ -1,0 +1,78 @@
+plugins {
+    id "java"
+    id "net.saliman.properties"
+
+    // Used the construct a single jar of core DHF classes which can then be copied to the JMeter installation. Copying
+    // a single jar is much cleaner than copying dozens of jars.
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":marklogic-data-hub"))
+}
+
+shadowJar {
+    archiveBaseName = "marklogic-data-hub"
+    archiveClassifier = "all"
+}
+
+task copyShadowJarToJMeter(type: Copy, dependsOn: "shadowJar") {
+    description = "Copies the shadow jar, which contains all DHF core classes, to the JMeter installation"
+    from tasks.getByPath("shadowJar").outputs
+    into jmeterHome + "/lib"
+}
+
+task prepareJMeter(dependsOn: "copyShadowJarToJMeter") {
+    description = "Prepares your local JMeter installation so that you can run JMeter plans that depend on DHF classes"
+}
+
+task jmeter(type: Exec) {
+    description = "Convenience task for launching JMeter with one of the plans under src/main/jmeter"
+    commandLine jmeterHome + "/bin/jmeter"
+    args = ["-t", "src/main/jmeter/${filename}.jmx"]
+}
+
+ext {
+    // Each task for running a test plan should be added to this group so that all of them can be run via the
+    // runPerformanceTests task
+    taskGroup = "JMeter Test Plan"
+}
+
+task runPerformanceTests {
+    description = "Run every performance test; intended to be run via Jenkins"
+    dependsOn {
+        tasks.findAll { task -> taskGroup.equals(task.group) }
+    }
+}
+
+// Generate a task for each mapping expression scenario. The "simple" scenario - testsimpleMappingExpression - allows
+// for any expression to be used via the mappingExpression property.
+[
+    "simple": mappingExpression,
+    "javascript": "echo('hello')",
+    "xquery": "hubURI('person')"
+].each { key, value ->
+    task "test${key}MappingExpression"(type: Exec, group: taskGroup) {
+        commandLine jmeterHome + "/bin/jmeter"
+        args = [
+            "-n", // no GUI
+            "-l", "build/jmeter-output.txt",
+            "-j", "build/jmeter.log",
+            "-Jhost=" + mlHost,
+            "-Jusername=" + mlUsername,
+            "-Jpassword=" + mlPassword,
+            "-t", "src/main/jmeter/mapping-expression.jmx",
+            "-JsourceDocumentCount=" + sourceDocumentCount,
+            "-JentityPropertyCount=" + entityPropertyCount,
+            "-Jiterations=" + iterations,
+            "-JmappingExpression=${value}",
+            "-Jsample_variables=sourceDocumentCount,entityPropertyCount,mappingExpression"
+        ]
+    }
+}
+
