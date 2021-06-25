@@ -31,8 +31,35 @@ function extractFriendlyErrorMessage(e){
     case "XDMP-LEXVAL":
       errorMessage = extractInvalidLexicalValueError(e);
       break;
+    case "XSLT-BADXPATH":
+      errorMessage = extractBadXPathError(e);
+      break;
     default:
       errorMessage = null;
+  }
+  return errorMessage;
+}
+
+function extractBadXPathError(e) {
+  const expression = e.data[0];
+  const errorInfo = e.data[1];
+  let errorMessage = null;
+  if(errorInfo.startsWith("XDMP-UNEXPECTED")){
+    if(errorInfo.includes("unexpected Rpar_")){
+      errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected right parenthesis.`;
+    }
+    else if(errorInfo.includes("expecting Rpar_")){
+      errorMessage = `Invalid XPath expression: '${expression}'. Cause: Missing right parenthesis.`;
+    }
+    else if(errorInfo.includes("unexpected Comma_")){
+      errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected comma.`;
+    }
+    else if(errorInfo.includes("Unexpected token syntax error")){
+      errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected character.`;
+    }
+  }
+  else if(errorInfo.startsWith("XDMP-BADCHAR")){
+    errorMessage = `Invalid XPath expression: '${expression}'. Cause: Unexpected character.`
   }
   return errorMessage;
 }

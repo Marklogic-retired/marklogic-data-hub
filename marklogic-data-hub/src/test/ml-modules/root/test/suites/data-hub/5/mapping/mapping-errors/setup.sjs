@@ -35,6 +35,34 @@ hubTest.createSimpleMappingProject( [
       {
         "customerId": {"sourcedFrom": "'abc'"}
       }
+  },
+  {
+    "name":"unexpectedRparMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "string-join(firstName, lastName))"}
+      }
+  },
+  {
+    "name":"expectingRparMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "string-join((firstName, lastName)"}
+      }
+  },
+  {
+    "name":"unexpectedCommaMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "string-join((firstName,,lastName))" }
+      }
+  },
+  {
+    "name":"unexpectedCharacterMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "upper-case('a)" }
+      }
   }
 ]
 );
