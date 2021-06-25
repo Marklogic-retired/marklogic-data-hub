@@ -88,8 +88,8 @@ public class MergingStepController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Validate the merging step")
     @Secured("ROLE_readMerging")
-    public ResponseEntity<JsonNode> validateMatchingStep(@PathVariable String stepName, @RequestParam(required = false, defaultValue = "settings") String view) {
-        return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).validateMergingStep(stepName, view));
+    public ResponseEntity<JsonNode> validateMergingStep(@PathVariable String stepName, @RequestParam(required = false, defaultValue = "settings") String view, @RequestParam(required = false) String entityPropertyPath) {
+        return ResponseEntity.ok(MasteringService.on(getHubClient().getFinalClient()).validateMergingStep(stepName, view, entityPropertyPath));
     }
 
     private StepService newService() {
