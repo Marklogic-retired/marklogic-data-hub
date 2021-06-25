@@ -34,6 +34,10 @@ function extractFriendlyErrorMessage(e){
     case "XSLT-BADXPATH":
       errorMessage = extractBadXPathError(e);
       break;
+    case "XDMP-TOOFEWARGS":
+    case "XDMP-TOOMANYARGS":
+      errorMessage = extractIncorrectNumberOfArgumentsError(e);
+      break;
     default:
       errorMessage = null;
   }
@@ -79,6 +83,17 @@ function extractInvalidLexicalValueError(e) {
 function extractErrorMessageForMappingUI(e){
   let errorMessage = extractFriendlyErrorMessage(e);
   return errorMessage ? errorMessage : hubUtils.getErrorMessage(e);
+}
+
+function extractIncorrectNumberOfArgumentsError(e) {
+  const error = new Error(e);
+  let errorMessage = error.message;
+  const regex = /^(XDMP-TOOMANYARGS|XDMP-TOOFEWARGS): \(err:XPST0017\) fn:(.+) -- Too (many|few) args, expected (\d+) but got (\d+)$/;
+  const extractedError = errorMessage.match(regex);
+  if(extractedError){
+    errorMessage = `Wrong number of arguments: '${extractedError[2]}'. Cause: Requires ${extractedError[4]} arguments but received ${extractedError[5]}.`;
+  }
+  return errorMessage;
 }
 
 module.exports = {

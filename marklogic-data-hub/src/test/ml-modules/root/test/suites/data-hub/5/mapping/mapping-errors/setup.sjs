@@ -63,6 +63,20 @@ hubTest.createSimpleMappingProject( [
       {
         "name": {"sourcedFrom": "upper-case('a)" }
       }
+  },
+  {
+    "name":"tooFewArgsMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "upper-case()" }
+      }
+  },
+  {
+    "name":"tooManyArgsMapping",
+    "properties":
+      {
+        "name": {"sourcedFrom": "lower-case('a','b')" }
+      }
   }
 ]
 );
