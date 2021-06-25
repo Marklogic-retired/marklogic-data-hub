@@ -44,18 +44,18 @@ function invalidProperty() {
     test.assertEqual("http://marklogic.com/data-hub/example/Person-1.0.0/Person", result.targetEntityType),
 
     test.assertTrue(result.properties.id.hasOwnProperty("errorMessage")),
-    test.assertEqual("Invalid XPath expression: concat(id,", result.properties.id.errorMessage),
+    test.assertEqual("Invalid XPath expression: 'concat(id,'. Cause: Unexpected character.", result.properties.id.errorMessage),
     test.assertFalse(result.properties.nickname.hasOwnProperty("errorMessage"), "The nickname expression is valid"),
 
     test.assertEqual("concat(someName,", result.properties.name.sourcedFrom),
-    test.assertEqual("Invalid XPath expression: concat(someName,", result.properties.name.errorMessage),
+    test.assertEqual("Invalid XPath expression: 'concat(someName,'. Cause: Unexpected character.", result.properties.name.errorMessage),
     test.assertEqual("http://marklogic.com/data-hub/example/Person-1.0.0/Name", result.properties.name.targetEntityType),
 
-    test.assertEqual("Invalid XPath expression: concat(lastName, ", result.properties.name.properties.last.errorMessage),
+    test.assertEqual("Invalid XPath expression: 'concat(lastName, '. Cause: Unexpected character.", result.properties.name.properties.last.errorMessage),
     test.assertFalse(result.properties.name.properties.middle.hasOwnProperty("errorMessage"), "The name/middle expression is valid"),
 
     test.assertEqual("http://marklogic.com/data-hub/example/Person-1.0.0/FirstName", result.properties.name.properties.first.targetEntityType),
-    test.assertEqual("Invalid XPath expression: concat(theValue", result.properties.name.properties.first.properties.value.errorMessage),
+    test.assertEqual("Invalid XPath expression: 'concat(theValue'. Cause: Missing right parenthesis.", result.properties.name.properties.first.properties.value.errorMessage),
     test.assertFalse(result.properties.name.properties.first.properties.prefix.hasOwnProperty("errorMessage"), "The name/first/prefix expression is valid")
   ];
 }

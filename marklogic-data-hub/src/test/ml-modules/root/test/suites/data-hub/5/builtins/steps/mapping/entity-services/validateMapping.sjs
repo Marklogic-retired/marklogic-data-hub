@@ -55,7 +55,7 @@ function incorrectNumberOfFunctionArguments() {
 function functionSyntaxError() {
   let result = validateGenderMapping("concat('test',)");
   return [
-    test.assertEqual("Invalid XPath expression: concat('test',)", result.properties.gender.errorMessage)
+    test.assertEqual("Invalid XPath expression: 'concat('test',)'. Cause: Unexpected right parenthesis.", result.properties.gender.errorMessage)
   ];
 }
 
@@ -78,7 +78,7 @@ function mixOfValidAndInvalidExpressions() {
   return [
     test.assertEqual(entityType, validatedMapping.targetEntityType),
     test.assertEqual("concat(firstName, )", validatedMapping.properties.firstname.sourcedFrom),
-    test.assertEqual("Invalid XPath expression: concat(firstName, )", validatedMapping.properties.firstname.errorMessage),
+    test.assertEqual("Invalid XPath expression: 'concat(firstName, )'. Cause: Unexpected right parenthesis.", validatedMapping.properties.firstname.errorMessage),
     test.assertEqual("lastName", validatedMapping.properties.lastname.sourcedFrom),
     test.assertEqual(null, validatedMapping.properties.lastname.errorMessage),
     test.assertEqual("memoryLookupp()", validatedMapping.properties.gender.sourcedFrom),
