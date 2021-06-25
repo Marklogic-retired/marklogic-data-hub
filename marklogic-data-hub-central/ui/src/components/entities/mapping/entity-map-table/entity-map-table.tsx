@@ -118,6 +118,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [entitiesReferencing, setEntitiesReferencing] = useState<any>([]);
   const [pendingOptions, setPendingOptions] = useState<any>([]);
 
+  let directRelation = props.isRelatedEntity ? ("(" + props.entityMappingId.split(".")[0]) === props.entityTypeTitle.split(" ")[1] ? true : false : null;
+
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
   const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
@@ -1280,7 +1282,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       render: (text, row, index) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
           if (row.name === "Context" && !row.isProperty) {
-            return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+            return {children: <div className={!directRelation ? styles.relatedMapExpParentContainer: styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
               <TextArea
                 id={"mapexpression"+row.name.split("/").pop()}
                 data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
@@ -1295,7 +1297,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
             </div>
             {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
           } else if (row.name === "URI" && !row.isProperty) {
-            return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+            return {children: <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
               <TextArea
                 id={"mapexpression"+row.name.split("/").pop()}
                 data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
@@ -1358,6 +1360,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   ];
 
   const tableCSS = css({
+    minWidth: "1000px",
     "& thead > tr > th": {
       backgroundColor: props.tableColor,
       paddingTop: "12px",
@@ -1388,7 +1391,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
         onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
         expandedRowKeys={props.entityExpandedKeys}
         columns={getColumnsForEntityTable()}
-        scroll={{x: 1000}}
         dataSource={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]]: [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
         tableLayout="unset"
         rowKey={(record: any) => record.key}
@@ -1408,7 +1410,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
           indentSize={28}
           //defaultExpandAllRows={true}
           columns={getColumnsForEntityTable()}
-          scroll={{x: 1000}}
           dataSource={filterApplied ? entityProperties : props.isRelatedEntity ? entityProperties.slice(2, entityProperties.length) : entityProperties.slice(1, entityProperties.length)}
           tableLayout="unset"
           rowKey={(record: any) => record.key}
