@@ -10,6 +10,12 @@
       "properties": {
         "property1": {
           "datatype": "string"
+        },
+        "property2": {
+          "datatype": "string"
+        },
+        "property3": {
+          "datatype": "string"
         }
       }
     }

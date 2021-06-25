@@ -188,17 +188,18 @@ public interface MasteringService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode validateMergingStep(String stepName, String view) {
+            public com.fasterxml.jackson.databind.JsonNode validateMergingStep(String stepName, String view, String entityPropertyPath) {
                 return validateMergingStep(
-                    this.req_validateMergingStep.on(this.dbClient), stepName, view
+                    this.req_validateMergingStep.on(this.dbClient), stepName, view, entityPropertyPath
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode validateMergingStep(BaseProxy.DBFunctionRequest request, String stepName, String view) {
+            private com.fasterxml.jackson.databind.JsonNode validateMergingStep(BaseProxy.DBFunctionRequest request, String stepName, String view, String entityPropertyPath) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
-                          BaseProxy.atomicParam("view", false, BaseProxy.StringType.fromString(view))
+                          BaseProxy.atomicParam("view", false, BaseProxy.StringType.fromString(view)),
+                          BaseProxy.atomicParam("entityPropertyPath", true, BaseProxy.StringType.fromString(entityPropertyPath))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -271,8 +272,9 @@ public interface MasteringService {
    *
    * @param stepName	provides input
    * @param view	Designates the view the messages are for. Valid values are 'settings' or 'rules'
+   * @param entityPropertyPath	Restricts property warnings to a given entity property path
    * @return	Returns an array of zero or more warning objects; each object has "level" and "message" properties
    */
-    com.fasterxml.jackson.databind.JsonNode validateMergingStep(String stepName, String view);
+    com.fasterxml.jackson.databind.JsonNode validateMergingStep(String stepName, String view, String entityPropertyPath);
 
 }
