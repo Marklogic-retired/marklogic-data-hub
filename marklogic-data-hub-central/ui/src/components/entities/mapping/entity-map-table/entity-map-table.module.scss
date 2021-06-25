@@ -128,6 +128,21 @@
   }
 }
 
+.relatedMapExpParentContainer {
+  margin-left: 9px;
+  margin-top: -12px;
+  margin-bottom: -12px;
+  > .validationErrors {
+      width: 23vw;
+      line-height: normal;
+      padding-top: 6px;
+      padding-left: 2px;
+      padding-bottom: 4px;
+      color: #DB4f59;
+      word-break: break-all;
+  }
+}
+
 .mapExpressionContainer {
   width: 100%;
   display: inline-flex;
