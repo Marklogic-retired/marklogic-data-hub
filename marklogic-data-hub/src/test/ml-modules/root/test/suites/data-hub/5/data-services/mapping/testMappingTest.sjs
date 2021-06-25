@@ -71,7 +71,7 @@ function testMappings() {
         test.assertEqual("concat(id, 'A')", result.properties.id.sourcedFrom),
         test.assertEqual("100A", result.properties.id.output),
         test.assertEqual("concat(id, ')", errorResult.properties.id.sourcedFrom),
-        test.assertEqual("Invalid XPath expression: concat(id, ')", errorResult.properties.id.errorMessage)
+        test.assertEqual("Invalid XPath expression: 'concat(id, ')'. Cause: Unexpected character.", errorResult.properties.id.errorMessage)
     ];
 }
 

@@ -51,7 +51,7 @@ public class MappingControllerTest extends AbstractMvcTest {
             .andDo(response -> {
                 JsonNode errorResult = parseJsonResponse(response);
                 assertEquals("concat(name, ')", errorResult.get("properties").get("name").get("sourcedFrom").asText());
-                assertEquals("Invalid XPath expression: concat(name, ')", errorResult.get("properties").get("name").get("errorMessage").asText());
+                assertEquals("Invalid XPath expression: 'concat(name, ')'. Cause: Unexpected character.", errorResult.get("properties").get("name").get("errorMessage").asText());
             });
     }
 
