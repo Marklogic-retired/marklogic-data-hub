@@ -469,7 +469,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       newStepArtifact.mergeRules[index] = newMergeRules;
       await updateMergingArtifact(newStepArtifact);
       updateActiveStepArtifact(newStepArtifact);
-      let warnings= await getMergingRulesWarnings(newStepArtifact);
+      let warnings= await getMergingRulesWarnings(newStepArtifact, newMergeRules);
       if (warnings !== undefined) { setValidationWarnings(warnings.data); }
     }
   };

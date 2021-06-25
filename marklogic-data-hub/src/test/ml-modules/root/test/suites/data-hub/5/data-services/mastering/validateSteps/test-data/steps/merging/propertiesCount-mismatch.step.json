@@ -12,7 +12,22 @@
   "targetFormat" : "json",
   "targetEntityType" : "validateMergeEntity",
   "stepId" : "propertiesCount-mismatch-merging",
+  "mergeStrategies": [
+    {
+      "strategyName": "only-one",
+      "maxValues": 1,
+      "maxSources": "All"
+    }
+  ],
   "mergeRules" : [ {
-    "entityPropertyPath": "property1"
-  } ]
+      "entityPropertyPath": "property1"
+    },
+    {
+      "entityPropertyPath": "property2"
+    },
+    {
+      "entityPropertyPath": "property3",
+      "mergeStrategyName": "only-one"
+    }
+  ]
 }

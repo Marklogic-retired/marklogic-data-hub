@@ -18,14 +18,19 @@
 const mergingOptions = require("/com.marklogic.smart-mastering/survivorship/merging/options.xqy");
 const common = require("/data-hub/5/data-services/mastering/validateStepCommonLib.sjs");
 
-function propertiesWarning(mergeStep) {
+function propertiesWarning(mergeStep, entityPropertyPath) {
     let compiledOptions = mergingOptions.compileMergeOptions(mergeStep, true);
     let mergeRulesInfo = compiledOptions.mergeRulesInfo ? Sequence.from([compiledOptions.mergeRulesInfo]).toArray() : [];
     let nonCompliantRules = mergeRulesInfo.filter((ruleInfo) => {
         let allowsMultipleValues = ruleInfo.allowsMultipleValues;
         let ruleObject = ruleInfo.mergeRule ? ruleInfo.mergeRule.toObject() : null;
-        let valuesLimitedToOne = ruleObject && (ruleObject.maxValues === "1" || ruleObject.maxSources === "1");
-        return !(allowsMultipleValues || valuesLimitedToOne);
+        let valuesLimitedToOne = ruleObject && (fn.string(ruleObject.maxValues) === "1" || fn.string(ruleObject.maxSources) === "1");
+        let ruleFilteredOut = false;
+        if (entityPropertyPath) {
+            let ruleEntityPropertyPath = ruleObject ? ruleObject.entityPropertyPath : "";
+            ruleFilteredOut = ruleEntityPropertyPath !== entityPropertyPath;
+        }
+        return !(ruleFilteredOut || allowsMultipleValues || valuesLimitedToOne);
     });
     let nonCompliantRuleProperties = nonCompliantRules.map((ruleInfo) => {
         return ruleInfo.propertyName;

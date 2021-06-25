@@ -226,15 +226,17 @@ const MergingStepDetail: React.FC = () => {
   ];
 
   for (let key of mergingStep.mergeRules) {
-    for (let key1 of mergingStep.mergeStrategies) {
-      if (key.mergeStrategyName === key1.strategyName && commonStrategyNames.indexOf(key.mergeStrategyName)=== -1) {
-        commonStrategyNames.push(key.mergeStrategyName);
+    if (mergingStep.mergeStrategies) {
+      for (let key1 of mergingStep.mergeStrategies) {
+        if (key.mergeStrategyName === key1.strategyName && commonStrategyNames.indexOf(key.mergeStrategyName) === -1) {
+          commonStrategyNames.push(key.mergeStrategyName);
+        }
       }
     }
   }
 
 
-  mergingStep && mergingStep.mergeStrategies.length > 0 && mergingStep.mergeStrategies.forEach((i) => {
+  mergingStep && mergingStep.mergeStrategies && mergingStep.mergeStrategies.length > 0 && mergingStep.mergeStrategies.forEach((i) => {
     mergeStrategiesData.push(
       {
         strategyName: i["strategyName"],
