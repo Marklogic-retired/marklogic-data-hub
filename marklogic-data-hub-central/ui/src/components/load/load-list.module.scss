@@ -26,7 +26,16 @@
         color:var(--hoverColor) !important;
     }
 }
-
+.editIcon{
+    font-size: 20px;
+    color: #5B69AF;
+    cursor: pointer;
+    padding-right: 9px;
+    padding-left: 6px;
+    &:hover{
+        color: var(--hoverColor) !important;
+    }
+}
 .popover {
     color: #FF8C00;
     align-items: flex-start;
@@ -81,6 +90,7 @@
     font-size: 21px;
     align-items: flex-start;
     cursor: pointer;
+    margin-bottom: 1.5px;
     padding-bottom: 2px;
     &:hover{
         color: var(--hoverColor) !important;
