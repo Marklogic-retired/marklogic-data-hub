@@ -10,6 +10,12 @@
       "name": "view",
       "desc": "Designates the view the messages are for. Valid values are 'settings' or 'rules'",
       "datatype": "string"
+    },
+    {
+      "name": "entityPropertyPath",
+      "desc": "Restricts property warnings to a given entity property path",
+      "datatype": "string",
+      "nullable": true
     }
   ],
   "return": {

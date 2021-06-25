@@ -15,9 +15,10 @@ export const updateMergingArtifact = async (merging) => {
   }
 };
 
-export const getMergingRulesWarnings = async (merging) => {
+export const getMergingRulesWarnings = async (merging, newMergeRule) => {
   try {
-    let warningResponse = await axios.get(`/api/steps/merging/${merging.name}/validate?view=rules`);
+    let filter = `&entityPropertyPath=${newMergeRule.entityPropertyPath}`;
+    let warningResponse = await axios.get(`/api/steps/merging/${merging.name}/validate?view=rules${filter}`);
     if (warningResponse.status === 200) {
       return warningResponse;
     } else {

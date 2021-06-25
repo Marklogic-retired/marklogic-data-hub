@@ -17,7 +17,7 @@
 
 const validateMergeLib = require("/data-hub/5/data-services/mastering/validateMergingStepLib.sjs");
 
-var stepName, view;
+var stepName, view, entityPropertyPath;
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
@@ -52,7 +52,7 @@ if (view === "settings") {
         }
     }
 } else if (view === "rules") {
-    let propertyWarnings = validateMergeLib.propertiesWarning(step);
+    let propertyWarnings = validateMergeLib.propertiesWarning(step, entityPropertyPath);
     if (propertyWarnings) {
         warnings.push(propertyWarnings);
     }
