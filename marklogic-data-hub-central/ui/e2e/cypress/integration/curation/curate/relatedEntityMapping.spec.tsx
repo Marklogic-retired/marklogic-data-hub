@@ -47,7 +47,7 @@ describe("Mapping", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it("Define new entity, add relationship property", () => {
+  it("Define new entity, add relationship property", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();

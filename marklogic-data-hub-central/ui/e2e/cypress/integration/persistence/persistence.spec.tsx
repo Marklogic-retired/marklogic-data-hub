@@ -24,7 +24,7 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitForAsyncRequest();
   });
 
-  it("Go to load tile, switch to list view, sort, and then visit another tile. When returning to load tile the list view is persisted", () => {
+  it("Go to load tile, switch to list view, sort, and then visit another tile. When returning to load tile the list view is persisted", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     cy.findByTestId("loadTableName").click();

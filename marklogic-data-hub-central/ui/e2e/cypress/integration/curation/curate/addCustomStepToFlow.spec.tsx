@@ -42,11 +42,12 @@ describe("Add Custom step to a flow", () => {
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`test flow for adding custom step`);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(2000);
     cy.waitForAsyncRequest();
   });
 
   it("Add custom step from Run tile and Run the step", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click({force: true});
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
