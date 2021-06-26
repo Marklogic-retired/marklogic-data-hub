@@ -88,6 +88,7 @@ describe("login", () => {
     });
 
     toolbar.getModelToolbarIcon().click();
+    cy.wait(2000);
     tiles.getModelTile().should("exist");
     modelPage.getAddEntityButton().should("be.disabled");
   });

@@ -36,7 +36,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it("Create a new entity", () => {
+  it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
@@ -146,7 +146,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });
-  it("Save new Buyer entity", () => {
+  it("Save new Buyer entity", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.getSaveEntityIcon("Buyer").click();
     confirmationModal.getSaveEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();

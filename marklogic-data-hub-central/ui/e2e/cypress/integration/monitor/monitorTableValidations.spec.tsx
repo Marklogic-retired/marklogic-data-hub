@@ -135,6 +135,7 @@ describe("Monitor Tile", () => {
     cy.findByTestId("step-loadPatient-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "loadPatient").click({force: true});
     browsePage.getFacetItemCheckbox("status", "finished").click();
+    cy.findByTestId("step-mapPersonJSON-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("not.be.checked");
     cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
     browsePage.getFacetItemCheckbox("step", "loadPatient").should("not.be.checked");
