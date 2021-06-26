@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Table, Icon, Modal, Menu, Select, Row, Col, Divider, Dropdown} from "antd";
+import {Table, Icon, Modal, Menu, Select, Row, Col, Divider} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {MLButton} from "@marklogic/design-system";
@@ -13,6 +13,7 @@ import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {MLTooltip} from "@marklogic/design-system";
 import {LoadingContext} from "../../util/loading-context";
 import {getViewSettings, setViewSettings} from "../../util/user-context";
+import {faCog} from "@fortawesome/free-solid-svg-icons";
 
 const {Option} = Select;
 
@@ -310,6 +311,7 @@ const LoadList: React.FC<Props> = (props) => {
     </Modal>
   );
 
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   const menu = (name) => (
     <Menu className={styles.dropdownMenu}>
       <Menu.Item key="0">
@@ -368,9 +370,6 @@ const LoadList: React.FC<Props> = (props) => {
       title: <span data-testid="loadTableName">Name</span>,
       dataIndex: "name",
       key: "name",
-      render: (text: any, record: any) => (
-        <span><span onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
-      ),
       sortDirections: ["ascend", "descend", "ascend"],
       sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       sortOrder: (sortedInfo && sortedInfo.columnKey === "name") ? sortedInfo.order : "",
@@ -424,11 +423,7 @@ const LoadList: React.FC<Props> = (props) => {
       render: (text, row) => (
         <span>
           {props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={row.name + "-run"} onClick={() => handleStepRun(row.name)} /></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load-list button" data-testid={row.name + "-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon} /></i></MLTooltip>}
-          <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={["click"]} disabled={!props.canWriteFlow} placement="bottomCenter">
-            {props.canWriteFlow ? <MLTooltip title={"Add to Flow"} placement="bottom"><span className={"AddToFlowIcon"} aria-label={row.name + "-add-icon"}></span></MLTooltip> : <MLTooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}><span aria-label={row.name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span></MLTooltip>}
-          </Dropdown>
-          {/* <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></MLTooltip> */}
-                    &nbsp;
+          <MLTooltip title={"Step Settings"} placement="bottom"><i key="edit" className={styles.editIcon}><FontAwesomeIcon icon={faCog} data-testid={row.name + "-edit"} onClick={() => OpenStepSettings(row)}/></i></MLTooltip>
           {props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name + "-delete"} onClick={() => { showDeleteConfirm(row.name); }} className={styles.deleteIcon} size="lg" /></i></MLTooltip> :
             <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name + "-disabled-delete"} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg" /></i></MLTooltip>}
         </span>

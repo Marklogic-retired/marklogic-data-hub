@@ -2,15 +2,15 @@ class LoadPage {
 
   //Load tile list view page objects
   /**
-     * @param type - accepts `table` for list-view or `th-large` for card-view
-     */
+       * @param type - accepts `table` for list-view or `th-large` for card-view
+       */
   loadView(type: string) {
     return cy.get(`[data-icon="${type}"]`);
   }
 
   /**
-     * @param type - accepts `list` or `card`
-     */
+       * @param type - accepts `list` or `card`
+       */
   addNewButton(type: string) {
     return cy.findByLabelText(`add-new-${type}`);
   }
@@ -44,15 +44,15 @@ class LoadPage {
   }
 
   /**
-     * add to flow icon in load table view
-     * @param stepName
-     */
+       * add to flow icon in load table view
+       * @param stepName
+       */
   addToFlow(stepName: string) {
-    return cy.findByLabelText(`${stepName}-add-icon`);
+    return cy.findByLabelText(`${stepName}-run`);
   }
 
   addToFlowDisabled(stepName: string) {
-    return cy.findByLabelText(`${stepName}-disabled-add-icon`);
+    return cy.findByTestId(`${stepName}-disabled-run`);
   }
 
   switchEditAdvanced() {
@@ -114,8 +114,8 @@ class LoadPage {
   }
 
   /**
-     * @param text - a string that matches any button by its label
-     */
+       * @param text - a string that matches any button by its label
+       */
   findByButtonText(text: string) {
     return cy.findByLabelText(text);
   }
@@ -168,17 +168,17 @@ class LoadPage {
   }
 
   /**
-     * Clicks on a database option
-     * @param db - accepts `STAGING` or `FINAL`
-     */
+       * Clicks on a database option
+       * @param db - accepts `STAGING` or `FINAL`
+       */
   selectTargetDB(db: string) {
     cy.waitUntil(() => cy.findByLabelText("targetDatabase-select")).click();
     cy.waitUntil(() => cy.findByTestId(`targetDbOptions-data-hub-${db}`)).click({force: true});
   }
 
   /**
-     * This input field takes multiple values with special character sequences for keyboard events
-     */
+       * This input field takes multiple values with special character sequences for keyboard events
+       */
   targetCollectionInput() {
     return cy.findByLabelText("additionalColl-select");
   }
@@ -188,19 +188,19 @@ class LoadPage {
   }
 
   /**
-     * Overwrite the existing default permissions
-     * @param permissions - accepts a comma separated text of roles and capabilities alternately
-     * @example role1,cap1,role2,cap2
-     */
+       * Overwrite the existing default permissions
+       * @param permissions - accepts a comma separated text of roles and capabilities alternately
+       * @example role1,cap1,role2,cap2
+       */
   setTargetPermissions(permissions: string) {
     return cy.get("#targetPermissions").clear().type(permissions);
   }
 
   /**
-     * Add to the existing default permissions
-     * @param permissions - accepts a comma separated text of roles and capabilities alternately
-     * @example role1,cap1,role2,cap2
-     */
+       * Add to the existing default permissions
+       * @param permissions - accepts a comma separated text of roles and capabilities alternately
+       * @example role1,cap1,role2,cap2
+       */
   appendTargetPermissions(permissions: string) {
     return cy.get("#targetPermissions").type(`,${permissions}`);
   }
@@ -215,10 +215,10 @@ class LoadPage {
   }
 
   /**
-     * Textarea that takes a file path in fixtures and pastes the json object {} in the text area
-     * @param fixturePath - file path to headerContent json config file
-     * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
-     */
+       * Textarea that takes a file path in fixtures and pastes the json object {} in the text area
+       * @param fixturePath - file path to headerContent json config file
+       * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
+       */
   setHeaderContent(fixturePath: string) {
     cy.fixture(fixturePath).then(content => {
       cy.get("#headers").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
@@ -226,10 +226,10 @@ class LoadPage {
   }
 
   /**
-     * Textarea that takes a file path in fixtures and pastes the json array object [] in the text area
-     * @param fixturePath - file path to stepInterceptor json config file
-     * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
-     */
+       * Textarea that takes a file path in fixtures and pastes the json array object [] in the text area
+       * @param fixturePath - file path to stepInterceptor json config file
+       * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
+       */
   setStepInterceptor(fixturePath: string) {
     cy.findByText("Interceptors").click();
     if (fixturePath === "") { return cy.get("#interceptors").clear(); } else {
@@ -240,10 +240,10 @@ class LoadPage {
   }
 
   /**
-     * Textarea that takes a file path in fixtures and pastes the json object {} in the text area
-     * @param fixturePath - file path to customHook json config file
-     * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
-     */
+       * Textarea that takes a file path in fixtures and pastes the json object {} in the text area
+       * @param fixturePath - file path to customHook json config file
+       * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
+       */
   setCustomHook(fixturePath: string) {
     cy.findByText("Custom Hook").click();
     if (fixturePath === "") { return cy.get("#customHook").clear(); } else {
@@ -296,8 +296,8 @@ class LoadPage {
   }
 
   addStepToNewFlowListView(stepName: string) {
-    cy.findByLabelText(`${stepName}-add-icon`).click();
-    this.addToNewFlow(stepName).click({force: true});
+    cy.findByTestId(`${stepName}-run`).click();
+    this.runInNewFlow(stepName).click({force: true});
     cy.waitForAsyncRequest();
   }
 
