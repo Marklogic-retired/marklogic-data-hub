@@ -45,7 +45,7 @@ describe("Load component", () => {
 
     // Open settings
     await act(async () => {
-      await fireEvent.click(getByText("testLoad"));
+      await fireEvent.click(getByTestId("testLoad-edit"));
     });
     expect(getByText("Loading Step Settings")).toBeInTheDocument();
     expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
@@ -109,7 +109,7 @@ describe("Load component", () => {
 
     // Open settings
     await act(async () => {
-      await fireEvent.click(getByText("testLoad"));
+      await fireEvent.click(getByTestId("testLoad-edit"));
     });
     expect(getByText("Loading Step Settings")).toBeInTheDocument();
     expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");

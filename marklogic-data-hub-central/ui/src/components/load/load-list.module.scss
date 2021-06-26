@@ -27,6 +27,17 @@
     }
 }
 
+.editIcon{
+    font-size: 21px;
+    color: #5B69AF;
+    cursor: pointer;
+    padding-right: 9px;
+    padding-left: 3px;
+    &:hover{
+        color: var(--hoverColor) !important;
+    }
+}
+
 .popover {
     color: #FF8C00;
     align-items: flex-start;
@@ -79,8 +90,8 @@
 .deleteIcon {
     color: #B32424;
     font-size: 21px;
-    align-items: flex-start;
     cursor: pointer;
+    margin-bottom: 2px;
     padding-bottom: 2px;
     &:hover{
         color: var(--hoverColor) !important;

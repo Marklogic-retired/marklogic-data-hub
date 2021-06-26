@@ -88,7 +88,6 @@ describe("login", () => {
     });
 
     toolbar.getModelToolbarIcon().click();
-    cy.wait(2000);
     tiles.getModelTile().should("exist");
     modelPage.getAddEntityButton().should("be.disabled");
   });
@@ -119,7 +118,7 @@ describe("login", () => {
     loadPage.loadView("table").click();
     tiles.waitForTableToLoad();
     loadPage.addToFlowDisabled(stepName).should("exist");
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.saveButton().should("be.disabled");
     loadPage.cancelButton().click();
     loadPage.deleteStepDisabled(stepName).should("exist");

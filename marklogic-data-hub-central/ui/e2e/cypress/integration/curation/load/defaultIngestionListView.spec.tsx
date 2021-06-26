@@ -57,7 +57,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.findByText(stepName).should("be.visible");
   });
   it("Verify Edit", () => {
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.stepNameInput().should("be.disabled");
     loadPage.stepDescriptionInput().clear().type("UPDATED");
     loadPage.saveButton().click();
@@ -65,7 +65,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.findByText("UPDATED").should("be.visible");
   });
   it("Verify Advanced Settings and Error validations", () => {
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.switchEditAdvanced().click();  // Advanced tab
     loadPage.selectTargetDB("FINAL");
     loadPage.targetCollectionInput().type("e2eTestCollection{enter}test1{enter}test2{enter}");
@@ -95,29 +95,29 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.confirmationOptions("No").click();
     cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
-    loadPage.stepName(stepName).should("be.visible");
+    loadPage.editStepInCardView(stepName).should("be.visible");
   });
   it("Open settings, change setting, switch tabs, save", () => {
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.stepDescriptionInput().clear().type("UPDATE2");
     loadPage.switchEditAdvanced().click();
     cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
   });
   it("Verify that change was saved", () => {
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.stepDescription("UPDATE2").should("be.visible");
     loadPage.cancelButton().click();
   });
   it("Open settings, change setting, switch tabs, cancel, discard changes", () => {
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.stepDescriptionInput().clear().type("DISCARD");
     loadPage.switchEditAdvanced().click();
     cy.findByTestId(`${stepName}-cancel-settings`).click();
     cy.findByText("Discard changes?").should("be.visible");
     loadPage.confirmationOptions("Yes").click();
     // Verify that change was NOT saved.
-    loadPage.stepName(stepName).click();
+    loadPage.editStepInCardView(stepName).click();
     loadPage.stepDescription("UPDATE2").should("be.visible");
     loadPage.stepDescription("DISCARD").should("not.exist");
     loadPage.cancelButton().click();
@@ -200,8 +200,8 @@ describe("Validate CRUD functionality from list view", () => {
   });
   it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    loadPage.loadView("table").click();
-    loadPage.addStepToNewFlowListView(stepName);
+    loadPage.loadView("th-large").click();
+    loadPage.addStepToNewFlow(stepName);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName2);
@@ -239,10 +239,10 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("No").click();
     cy.waitForAsyncRequest();
-    loadPage.stepName(stepName).should("be.visible");
+    loadPage.editStepInCardView(stepName).should("be.visible");
     loadPage.deleteStep(stepName).click();
     cy.waitUntil(() => loadPage.confirmationOptions("Yes")).click();
     cy.waitForAsyncRequest();
-    loadPage.stepName(stepName).should("not.exist");
+    loadPage.editStepInCardView(stepName).should("not.exist");
   });
 });
