@@ -44,6 +44,12 @@
     overflow-y: auto;
 }
 
+.srcDataContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .sourceTable{
       & thead > tr > th {
         background-color: #EEEEEE;
@@ -65,8 +71,6 @@
 
 .sourceTitle{
     font-size: 16px;
-    margin-top: -15px;
-    margin-bottom: 16px;
     white-space: nowrap;
 }
 
@@ -117,36 +121,38 @@
 
     > .columnOptionsSelectorContainer {
         display: inline-block;
-        min-width: 1000px;
-        margin-bottom: 10px;
 
         > .columnOptionsSelector{
             float: right;
-            margin: 15px 15px 0px 0px;
+            margin: -20px 15px 0px 0px;
+            padding-bottom: 10px;
         }
 
         > .entityCollapseButtons{
             float: right;
-            margin-top: 10px;
-            padding-right: 15px;  
+            margin-top: -25px;
         }
     }
 }
 
 .sourceButtons{
   display: flex;
-  float: right;
-  margin-top: -25px;
+  align-items: center;
+  margin-left: 50px;
 }
 
 .navigationButtons{
   width: 100%;
+  position: absolute;
+  margin-top: 5%;
+  margin-left: -20%;
 }
 
 .sourceCollapseButtons{
-width: 100%;
-padding-top: 23px;
-padding-bottom: 9px;
+  width: 100%;
+  position: absolute;
+  margin-left: 63%;
+  padding-right: 20px;
 }
 
 > .expandCollapseBtn {
@@ -234,11 +240,6 @@ hr {
     align-items: flex-start;
     float: left;
 }
-.sourceDetails{
-    position: relative;
-    padding-top: 5px;
-    margin-bottom: -41px;
-}
 .sourceDataIcon:before {
   content: "\e934";
   font-family: MLCustomFont;
@@ -252,6 +253,13 @@ hr {
 }
 .srcDetails {
     font-size: 14px;
+}
+
+.sourceDetailsContainer{
+    display: flex;
+    flex: 1;
+    padding-left: 20px;
+    padding-bottom: 10px;
 }
 
 .sourceValue{
@@ -279,15 +287,14 @@ hr {
 
 .expandIcon{
     margin-left: -16px;
-    vertical-align:middle;
+    vertical-align: middle;
     text-align: left;
-    font-size: 13px;
+    font-size: 13px; 
     padding-right: 1px;
 }
 
 .inputURIContainer{
     padding-top: 10px;
-    margin-left: -4px;
     vertical-align: middle;
     text-align: left;
     width: 105%;
@@ -374,8 +381,8 @@ hr {
 
   .stepSettingsLink {
     position: absolute;
-    bottom: 75px;
-    padding-right: 27px;
+    bottom: 105px;
+    padding-right: 30px;
     right: 22px;
     color: #44499C;
     cursor: pointer;
@@ -389,15 +396,16 @@ hr {
 }
 
 .legend {
+  align-items: center;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: -80px;
+  margin-bottom: -100px;
   padding-top: 20px;
   padding-right: 40px;
   position: relative;
 
   .clearTestIcons{
-    bottom: 80%;
+    bottom: 70%;
     padding-right: 10px;
     position: absolute;
   }
