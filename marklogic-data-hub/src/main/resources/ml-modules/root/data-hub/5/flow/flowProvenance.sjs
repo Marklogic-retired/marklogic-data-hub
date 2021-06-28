@@ -16,35 +16,34 @@
 'use strict';
 
 /**
- * This module contains functions that used to be in data-hub/5/impl/flow.sjs, but they needed to be reused by 
+ * This module contains functions that used to be in data-hub/5/impl/flow.sjs, but they needed to be reused by
  * flowRunner.sjs without having to instantiate a "Flow" object. If you need to see the history of the logic in here,
  * please look at the version history of the flow.sjs file.
  */
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const prov = require("/data-hub/5/impl/prov.sjs");
+const provLib = require("/data-hub/5/impl/prov.sjs");
+
 
 /**
  * Generates and writes provenance records based on the given content array.
- * 
- * @param stepExecutionContext 
- * @param outputContentArray 
+ *
+ * @param stepExecutionContext
+ * @param outputContentArray
  */
 function writeProvenanceData(stepExecutionContext, outputContentArray) {
-  const provInstance = new prov.Provenance();
-  queueProvenanceData(stepExecutionContext, provInstance, outputContentArray);
-  provInstance.commit();
+  queueProvenanceData(stepExecutionContext, outputContentArray);
+  provLib.commit();
 }
 
 /**
- * Adds provenance records to the given provInstance object, which is expected to be an instance of the Provenance class.
- * 
- * @param stepExecutionContext 
- * @param provInstance 
- * @param outputContentArray 
+ * Adds provenance records to the given provLib object, which is expected to be an instance of the Provenance class.
+ *
+ * @param stepExecutionContext
+ * @param outputContentArray
  */
-function queueProvenanceData(stepExecutionContext, provInstance, outputContentArray) {
+function queueProvenanceData(stepExecutionContext, outputContentArray) {
   const jobId = stepExecutionContext.jobId;
   const flowName = stepExecutionContext.flow.name;
   const stepDefinition = stepExecutionContext.stepDefinition;
@@ -53,7 +52,7 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
   if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
     hubUtils.hubTrace(consts.TRACE_FLOW, `Generating provenance records for ${stepExecutionContext.describe()}`);
   }
-  
+
   const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase() : stepDefinition.type;
   const stepName = flowStep.name || flowStep.stepDefinitionName;
   for (let content of outputContentArray) {
@@ -75,8 +74,8 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
       }
 
       const provResult = isFineGranularity && !isMappingStep && content.provenance ?
-        buildFineProvenanceData(provInstance, jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) :
-        provInstance.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+        buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) :
+        provLib.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
 
       if (provResult instanceof Error) {
         hubUtils.error(provResult.message);
@@ -85,7 +84,7 @@ function queueProvenanceData(stepExecutionContext, provInstance, outputContentAr
   }
 }
 
-function buildFineProvenanceData(provInstance, jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
+function buildFineProvenanceData(jobId, flowName, stepName, stepDefName, stepDefType, content, info) {
   let previousUris = fn.distinctValues(Sequence.from([Sequence.from(Object.keys(content.provenance)), Sequence.from(info.derivedFrom)]));
   let newDocURI = content.uri;
   let docProvIDs = [];
@@ -97,7 +96,7 @@ function buildFineProvenanceData(provInstance, jobId, flowName, stepName, stepDe
     let docProvenance = content.provenance[prevUri];
     if (docProvenance) {
       let docProperties = Object.keys(docProvenance);
-      let docPropRecords = provInstance.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
+      let docPropRecords = provLib.createStepPropertyRecords(jobId, flowName, stepName, stepDefName, stepDefType, prevUri, docProperties, info);
       let docProvID = docPropRecords[0];
       docProvIDs.push(docProvID);
       let docProvPropertyIDKeyVals = docPropRecords[1];
@@ -137,12 +136,12 @@ function buildFineProvenanceData(provInstance, jobId, flowName, stepName, stepDe
       }
     }
     let propInfo = Object.assign({}, info, { metadata: docProvPropertyMetadata });
-    let newPropertyProvID = provInstance.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
+    let newPropertyProvID = provLib.createStepPropertyAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, prop, docProvDocumentIDs, docProvPropertyIDs, propInfo);
     newPropertyProvIDs.push(newPropertyProvID);
   }
 
   // Now create the merged document record from both the original document records & the merged property records
-  return provInstance.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
+  return provLib.createStepDocumentAlterationRecord(jobId, flowName, stepName, stepDefName, stepDefType, newDocURI, docProvIDs, newPropertyProvIDs, info);
 }
 
 module.exports = {

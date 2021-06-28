@@ -21,7 +21,7 @@ const FlowExecutionContext = require("flowExecutionContext.sjs");
 const flowProvenance = require("flowProvenance.sjs");
 const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const prov = require("/data-hub/5/impl/prov.sjs");
+const provLib = require("/data-hub/5/impl/prov.sjs");
 const WriteQueue = require("/data-hub/5/flow/writeQueue.sjs");
 
 const INFO_EVENT = consts.TRACE_FLOW;
@@ -48,7 +48,6 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
   hubUtils.hubTrace(INFO_EVENT, `Processing content with flow ${flowName}; content array length: ${currentContentArray.length}`);
 
   const writeQueue = new WriteQueue();
-  const provInstance = new prov.Provenance();
   const flowExecutionContext = new FlowExecutionContext(Artifacts.getFullFlow(flowName), jobId, runtimeOptions, stepNumbers);
 
   for (let stepNumber of flowExecutionContext.stepNumbers) {
@@ -67,7 +66,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
       else {
         addFullOutputIfNecessary(stepExecutionContext, currentContentArray, stepResponse);
         if (stepExecutionContext.provenanceIsEnabled()) {
-          flowProvenance.queueProvenanceData(stepExecutionContext, provInstance, currentContentArray);
+          flowProvenance.queueProvenanceData(stepExecutionContext, currentContentArray);
         } else {
           hubUtils.hubTrace(INFO_EVENT, `Provenance is disabled for ${stepExecutionContext.describe()}`);
         }
@@ -86,7 +85,7 @@ function runFlowOnContent(flowName, contentArray, jobId, runtimeOptions, stepNum
     }
   }
 
-  finishFlowExecution(flowExecutionContext, writeQueue, provInstance);
+  finishFlowExecution(flowExecutionContext, writeQueue);
   return flowExecutionContext.flowResponse;
 }
 
@@ -98,8 +97,8 @@ function normalizeContentArray(contentArray) {
 }
 
 /**
- * Runs the step defined by stepExecutionContext against the appropriate source database. 
- * 
+ * Runs the step defined by stepExecutionContext against the appropriate source database.
+ *
  * @param stepExecutionContext {array} defines the step to execute and context for executing the step
  * @param contentArray {array} array of content objects to process
  * @param writeQueue {object} optional; if not null, and step output should be written, then the content returned
@@ -411,9 +410,8 @@ function addFullOutputIfNecessary(stepExecutionContext, outputContentArray, step
  *
  * @param flowExecutionContext
  * @param writeQueue
- * @param provInstance
  */
-function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
+function finishFlowExecution(flowExecutionContext, writeQueue) {
   // Any error in here is logged since the user may not see the flowResponse or have job data enabled
   let writeInfos;
   if (!flowExecutionContext.flowFailed()) {
@@ -425,7 +423,7 @@ function finishFlowExecution(flowExecutionContext, writeQueue, provInstance) {
     }
 
     try {
-      provInstance.commit();
+      provLib.commit();
     } catch (error) {
       hubUtils.error(`Unable to persist provenance for ${flowExecutionContext.describe()}`, error);
       flowExecutionContext.addFlowError(error);
