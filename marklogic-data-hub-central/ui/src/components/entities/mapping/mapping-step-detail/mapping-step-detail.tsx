@@ -95,7 +95,7 @@ const MappingStepDetail: React.FC = () => {
   const [mapRefs, setMapRefs] = useState<any>([]);
 
   // For source dropdown search menu
-  const [flatArray, setFlatArray]   = useState<any[]>([]);
+  const [flatArray, setFlatArray] = useState<any[]>([]);
 
   // For Test and Clear buttons
   const [mapResp, setMapResp] = useState({});
@@ -110,10 +110,10 @@ const MappingStepDetail: React.FC = () => {
   const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
   const [expandedEntityFlag, setExpandedEntityFlag] = useState(false);
   const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
-  const [initialSourceKeys, setInitialSourceKeys] = useState<any []>([]);
-  const [initialEntityKeys, setInitialEntityKeys] = useState<any []>([]);
-  const [allSourceKeys, setAllSourceKeys] = useState<any []>([]);
-  const [allEntityKeys, setAllEntityKeys] = useState<any []>([]);
+  const [initialSourceKeys, setInitialSourceKeys] = useState<any[]>([]);
+  const [initialEntityKeys, setInitialEntityKeys] = useState<any[]>([]);
+  const [allSourceKeys, setAllSourceKeys] = useState<any[]>([]);
+  const [allEntityKeys, setAllEntityKeys] = useState<any[]>([]);
   const [allRelatedEntitiesKeys, setAllRelatedEntitiesKeys] = useState<any[]>([]);
 
   // For Entity table
@@ -122,10 +122,10 @@ const MappingStepDetail: React.FC = () => {
   let sourceTableKeyIndex = 0;
   let firstRowTableKeyIndex = 0;
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
-  let tgtRefs:any = {};
+  let tgtRefs: any = {};
   const [relatedEntityTypeProperties, setRelatedEntityTypeProperties] = useState<any[]>([]);
   const [relatedEntitiesSelected, setRelatedEntitiesSelected] = useState<any[]>([]);
-  const previousSelected : any = usePrevious(relatedEntitiesSelected);
+  const previousSelected: any = usePrevious(relatedEntitiesSelected);
   const [targetRelatedMappings, setTargetRelatedMappings] = useState<any[]>([]);
   const [entityLoaded, setEntityLoaded] = useState(false);
   const [labelRemoved, setLabelRemoved] = useState("");
@@ -219,7 +219,7 @@ const MappingStepDetail: React.FC = () => {
           setIsLoading(false);
         }
       }
-    } catch (error)  {
+    } catch (error) {
       let message = error;
       console.error("Error While loading the source data!", message);
       setIsLoading(false);
@@ -232,7 +232,7 @@ const MappingStepDetail: React.FC = () => {
       let srcDocResp = await getDoc(stepName, uri);
       if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
         let parsedDoc: any;
-        if (typeof(srcDocResp.data) === "string") {
+        if (typeof (srcDocResp.data) === "string") {
           parsedDoc = getParsedXMLDoc(srcDocResp);
           setSourceFormat("xml");
         } else {
@@ -256,13 +256,13 @@ const MappingStepDetail: React.FC = () => {
         let sDta = generateNestedDataSource(docRoot, nestedDoc);
         setSourceData([]);
         setSourceData([...sDta]);
-        if (typeof(srcDocResp.data) === "string") {
+        if (typeof (srcDocResp.data) === "string") {
           let mData = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
           updateMappingWithNamespaces(mData);
         }
       }
       setIsLoading(false);
-    } catch (error)  {
+    } catch (error) {
       let message = error;//.response.data.message;
       setIsLoading(false);
       console.error("Error While loading the Doc from URI!", message);
@@ -341,7 +341,7 @@ const MappingStepDetail: React.FC = () => {
       }
     }
     currentPrefix = defaultNamespace !== "" && objWithNmspace === "" ? getNamespaceKey(defaultNamespace) : parentNamespacePrefix;
-    return objWithNmspace === "" ? (currentPrefix !== "" ? currentPrefix +":"+ key : key) : objWithNmspace;
+    return objWithNmspace === "" ? (currentPrefix !== "" ? currentPrefix + ":" + key : key) : objWithNmspace;
   };
 
   const getNamespaceObject = (val, el) => {
@@ -530,7 +530,7 @@ const MappingStepDetail: React.FC = () => {
           let relatedEntityName = entityObject["entityType"];
           if (relatedEntityName !== curationOptions.activeStep.entityName && entityObject["entityModel"].definitions && entityObject.mappingTitle && entityObject["entityMappingId"]) {
             let relatedEntProps = entityObject["entityModel"].definitions[relatedEntityName].properties;
-            let relatedEntityTempData: any =[];
+            let relatedEntityTempData: any = [];
             let contextKey = EntityTableKeyIndex + 1;
             uriKey = contextKey + 1;
             EntityTableKeyIndex += 2;
@@ -543,7 +543,7 @@ const MappingStepDetail: React.FC = () => {
       }
       //set related entities selected to appear by default if their mappings exist
       let existingRelatedMappings = curationOptions.activeStep.stepArtifact.relatedEntityMappings;
-      let defaultEntitiesToDisplay : any = [];
+      let defaultEntitiesToDisplay: any = [];
       if (existingRelatedMappings) {
         relatedEntities.map(entity => {
           if (existingRelatedMappings.findIndex(existingEntity => existingEntity.relatedEntityMappingId === entity.entityMappingId) !== -1) {
@@ -584,7 +584,7 @@ const MappingStepDetail: React.FC = () => {
         };
         nestedEntityData.push(propty);
         extractNestedEntityData(val.subProperties, propty.children, parentKey);
-        parentKey = (parentKey.indexOf("/")!==-1)?parentKey.substring(0, parentKey.lastIndexOf("/")):"";
+        parentKey = (parentKey.indexOf("/") !== -1) ? parentKey.substring(0, parentKey.lastIndexOf("/")) : "";
 
       } else {
         let dataTp = getDatatype(val);
@@ -657,7 +657,7 @@ const MappingStepDetail: React.FC = () => {
       className={styles.uri}>{!showEditURIOption ? <span data-testid={"uri-edit"} className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 32, "...")}</span></span> :
         <span className={styles.showingEditContainer}>URI: <span data-testid={"uri-edit"} className={styles.showingEditIcon}>{getLastChars(sourceURI, 32, "...")} <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}
         /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
-      <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/></span></div>}
+      <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} /></span></div>}
   </div> : "";
 
   // Run when mapping details is opened or returned to
@@ -720,7 +720,7 @@ const MappingStepDetail: React.FC = () => {
 
   //Set the collapse/Expand options for Source table, when mapping opens up.
   const initializeSourceExpandKeys = () => {
-    let initialKeysToExpand:any = [];
+    let initialKeysToExpand: any = [];
     sourceData.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.rowKey);
@@ -733,7 +733,7 @@ const MappingStepDetail: React.FC = () => {
 
   //Set the collapse/Expand options for Entity table, when mapping opens up.
   const initializeEntityExpandKeys = () => {
-    let initialKeysToExpand:any = [];
+    let initialKeysToExpand: any = [];
     initialKeysToExpand.push(...firstRowKeys);
     entityTypeProperties.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
@@ -853,7 +853,7 @@ const MappingStepDetail: React.FC = () => {
         </MLButton>
       </div>
     ),
-    filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={ filtered ? "active" : "inactive" }  /></i>,
+    filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={filtered ? "active" : "inactive"} /></i>,
     onFilter: (value, record) => {
       let recordString = getPropValueFromDataIndex(record, dataIndex);
       return recordString.toString().toLowerCase().includes(value.toLowerCase());
@@ -868,13 +868,13 @@ const MappingStepDetail: React.FC = () => {
   const getPropValueFromDataIndex = (record, index) => {
     let res;
     if (record.hasOwnProperty("children")) {
-      res = "-"+record[index];
+      res = "-" + record[index];
       record["children"].forEach(obj => {
         res = res + getPropValueFromDataIndex(obj, index);
       });
       return res;
     } else {
-      return "-"+record[index];
+      return "-" + record[index];
     }
   };
 
@@ -892,7 +892,7 @@ const MappingStepDetail: React.FC = () => {
   };
 
   //Get the expandKeys for the tables based on the applied filter
-  const getKeysToExpandForFilter = (dataArr, rowKey, searchText, allKeysToExpand:any = [], parentRowKey = 0) => {
+  const getKeysToExpandForFilter = (dataArr, rowKey, searchText, allKeysToExpand: any = [], parentRowKey = 0) => {
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         if (((rowKey === "rowKey" ? obj.key : obj.name) + JSON.stringify(obj["children"])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
@@ -924,8 +924,8 @@ const MappingStepDetail: React.FC = () => {
       width: "60%",
       defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
       render: (text, row) => {
-        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0]+": "+text?.split(":")[1] : text;
-        let valueToDisplay = <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
+        let valueToDisplay = <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.key);
       }
     },
@@ -936,19 +936,19 @@ const MappingStepDetail: React.FC = () => {
       ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
       width: "40%",
-      render: (text, row) => (<div data-testid = {row.key +"-srcValue"} className = {styles.sourceValue}>{(text || text === "") ?  getTextforSourceValue(text, row) : ""}</div>)
+      render: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
     }
   ];
 
   const getClassNames = (format, datatype) => {
-    let classNames : string[] = [];
+    let classNames: string[] = [];
     if (format) classNames.push("format-".concat(format));
     if (datatype) classNames.push("datatype-".concat(datatype));
     return classNames.join(" ");
   };
 
   const getTextforSourceValue = (text, row) => {
-    let arr = typeof(text) === "string" ? text.split(", ") : text;
+    let arr = typeof (text) === "string" ? text.split(", ") : text;
     let stringLenWithoutEllipsis = 14;
     let requiresToolTip = false;
     let response;
@@ -960,11 +960,11 @@ const MappingStepDetail: React.FC = () => {
         let itemTwo = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[1], stringLenWithoutEllipsis, "...")}</span>;
         let fullItem = <span>{itemOne}{"\n"}{itemTwo}</span>;
         if (arr.length === 2) {
-          response =  <p>{fullItem}</p>;
+          response = <p>{fullItem}</p>;
         } else {
           //If there are more than 2 elements in array, tooltip is required.
           requiresToolTip = true;
-          response =  <p>{fullItem}{"\n"}{xMore}</p>;
+          response = <p>{fullItem}{"\n"}{xMore}</p>;
         }
       } else {
         response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
@@ -974,7 +974,7 @@ const MappingStepDetail: React.FC = () => {
       requiresToolTip = text.length > stringLenWithoutEllipsis;
       response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
-    return requiresToolTip ?  <MLTooltip placement="bottom" title={text}>{response}</MLTooltip> : response;
+    return requiresToolTip ? <MLTooltip placement="bottom" title={text}>{response}</MLTooltip> : response;
   };
 
   const customExpandIcon = (props) => {
@@ -984,9 +984,9 @@ const MappingStepDetail: React.FC = () => {
           props.onExpand(props.record, e);
         }}><Icon type="down" /> </a>;
       } else {
-        return <a  className={styles.expandIcon} onClick={e => {
+        return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="right" data-testid="expandedIcon"/> </a>;
+        }}><Icon type="right" data-testid="expandedIcon" /> </a>;
       }
     } else {
       return <span style={{color: "black"}} onClick={e => {
@@ -1007,7 +1007,7 @@ const MappingStepDetail: React.FC = () => {
     let errorMesg = `An error occured while saving the changes.`;
 
     let msg = <span data-testid="successMessage" id="successMessage"><Alert type="success" message={mesg} banner style={saveMessageCSS} /></span>;
-    let errorMsg = <span  id="errorMessage"><Alert type="error" message={errorMesg} banner style={saveMessageCSS} /></span>;
+    let errorMsg = <span id="errorMessage"><Alert type="error" message={errorMesg} banner style={saveMessageCSS} /></span>;
     setTimeout(() => {
       setErrorInSaving("");
     }, 2000);
@@ -1041,7 +1041,7 @@ const MappingStepDetail: React.FC = () => {
     sourceData.forEach(element => {
       let flatArrayVal = element.key;
       if (!element.children && (element.val || element.val === "")) {
-        if (!flatArrayKey&& flatArrayKey.indexOf("/") === -1) {
+        if (!flatArrayKey && flatArrayKey.indexOf("/") === -1) {
           trackUniqueKeys.push(element.key);
           flatArray.push({"value": flatArrayVal, "key": element.key, "struct": element.array ? true : false});
         } else {
@@ -1053,9 +1053,9 @@ const MappingStepDetail: React.FC = () => {
         }
       } else {
         if (!flatArrayKey) {
-          flatArrayKey =element.key;
+          flatArrayKey = element.key;
         } else {
-          flatArrayKey = flatArrayKey +"/"+ element.key;
+          flatArrayKey = flatArrayKey + "/" + element.key;
         }
         if (!trackUniqueKeys.includes(flatArrayKey)) {
           trackUniqueKeys.push(flatArrayKey);
@@ -1064,7 +1064,7 @@ const MappingStepDetail: React.FC = () => {
       }
       if (element.children) {
         flattenSourceDoc(element.children, flatArray, flatArrayKey);
-        flatArrayKey = (flatArrayKey.indexOf("/")===-1)?"":flatArrayKey.substring(0, flatArrayKey.lastIndexOf("/"));
+        flatArrayKey = (flatArrayKey.indexOf("/") === -1) ? "" : flatArrayKey.substring(0, flatArrayKey.lastIndexOf("/"));
       }
     });
     return flatArray;
@@ -1092,7 +1092,7 @@ const MappingStepDetail: React.FC = () => {
 
   const deleteRelatedEntity = async (entityToDelete) => {
     let dataPayload = savedMappingArt;
-    let updateRelatedMappings : any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings));
+    let updateRelatedMappings: any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings));
     let indexToRemove = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityToDelete.entityMappingId);
 
     if (indexToRemove > -1) {
@@ -1113,7 +1113,7 @@ const MappingStepDetail: React.FC = () => {
     setMapSaved(mapSavedResult);
   };
 
-  const saveMapping =  async (mapObject, entityMappingId, updatedContext, updatedUri, relatedEntityModel) => {
+  const saveMapping = async (mapObject, entityMappingId, updatedContext, updatedUri, relatedEntityModel) => {
     let obj = {};
     Object.keys(mapObject).forEach(key => {
       convertMapExpToMapArt(obj, key, {"sourcedFrom": mapObject[key]});
@@ -1126,7 +1126,7 @@ const MappingStepDetail: React.FC = () => {
         dataPayload = {...dataPayload, relatedEntityMappings: []};
       }
       //when saveMapping is called by related entities, parse payload to make update inside the proper index of the relatedEntityMappings array
-      let updateRelatedMappings : any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings)); //make deep copy of related mappings to update without triggering useEffects
+      let updateRelatedMappings: any = JSON.parse(JSON.stringify(dataPayload.relatedEntityMappings)); //make deep copy of related mappings to update without triggering useEffects
       let indexToUpdate = updateRelatedMappings.findIndex(entity => entity["relatedEntityMappingId"] === entityMappingId);
       if (indexToUpdate !== -1) {
         if (updatedContext && updatedContext.trim() === "") {
@@ -1157,7 +1157,8 @@ const MappingStepDetail: React.FC = () => {
       await setSavedMappingArt({...mapArt});
       // On success and if session storage mapping data exists, update it
       if (storage.curate?.modelDefinition && storage.curate?.entityType) {
-        setViewSettings({...storage,
+        setViewSettings({
+          ...storage,
           curate: {
             stepArtifact: mapArt,
             modelDefinition: {...storage.curate?.modelDefinition},
@@ -1170,17 +1171,17 @@ const MappingStepDetail: React.FC = () => {
   };
 
 
-  const splitPaneStyles= {
+  const splitPaneStyles = {
     pane1: {minWidth: "150px"},
     pane2: {minWidth: "140px", maxWidth: "90%"},
     pane: {overflow: "hidden"},
   };
 
-  const splitStyle:CSSProperties= {
+  const splitStyle: CSSProperties = {
     position: "relative",
     height: "none",
   };
-  const resizerStyle:CSSProperties = {
+  const resizerStyle: CSSProperties = {
     border: "1px solid rgba(1, 22, 39, 0.21)",
     cursor: "col-resize",
     height: "auto",
@@ -1224,20 +1225,20 @@ const MappingStepDetail: React.FC = () => {
   );
 
   const columnOptionsSelector =
-        <Dropdown overlay={columnOptionsDropdown}
-          className={styles.dropdownHover}
-          trigger={["click"]}
-          onVisibleChange={handleColOptMenuVisibleChange}
-          visible={colOptMenuVisible}
-          placement="bottomRight"
-          overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
-        Column Options <Icon type="down" theme="outlined"/>
-          </a></Dropdown>;
+    <Dropdown overlay={columnOptionsDropdown}
+      className={styles.dropdownHover}
+      trigger={["click"]}
+      onVisibleChange={handleColOptMenuVisibleChange}
+      visible={colOptMenuVisible}
+      placement="bottomRight"
+      overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
+        Column Options <Icon type="down" theme="outlined" />
+      </a></Dropdown>;
 
 
   //Collapse all-Expand All button
 
-  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand:any = [], expanded?) => {
+  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
 
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
@@ -1307,7 +1308,8 @@ const MappingStepDetail: React.FC = () => {
       let mapArt = await getMappingArtifactByMapName(payload.targetEntityType, payload.name);
       if (mapArt) {
         if (storage.curate?.modelDefinition && storage.curate?.entityType) {
-          await setViewSettings({...storage,
+          await setViewSettings({
+            ...storage,
             curate: {
               stepArtifact: mapArt,
               modelDefinition: {...storage.curate?.modelDefinition},
@@ -1346,26 +1348,29 @@ const MappingStepDetail: React.FC = () => {
           </div>
           <span className={styles.clearTestIcons} id="ClearTestButtons">
             <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
-                                Clear
+              Clear
             </MLButton>
                         &nbsp;&nbsp;
             <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
-                                Test
+              Test
             </MLButton>
           </span>
-          <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key Relationship</i></div>
-          <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
-          <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
-          <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+          <div className={styles.sourceDetailsContainer}>
+            {srcDetails}
+          </div>
+          <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} /> <i>Foreign Key Relationship</i></div>
+          <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""} /> Related Entity</div>
+          <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple</div>
+          <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type</div>
         </div>
 
         <div className={styles.header}>
           {errorInSaving ? success() : <span className={styles.noMessage}></span>}
         </div>
-        <br/>
-        <br/>
-        <hr/>
-        <br/>
+        <br />
+        <br />
+        <hr />
+        <br />
         <div id="parentContainer" className={styles.parentContainer}>
           <SplitPane
             style={splitStyle}
@@ -1382,17 +1387,20 @@ const MappingStepDetail: React.FC = () => {
               id="srcContainer"
               data-testid="srcContainer"
               className={styles.sourceContainer}>
-              <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
-                <div className={styles.sourceTitle}
-                ><span className={styles.sourceDataIcon}></span><strong>Source Data</strong>
-                  <span className={styles.srcDetails}>{srcDetails}</span></div>
+              <div className={styles.srcDataContainer}>
+                <div id="srcDetails" data-testid="srcDetails">
+                  <div className={styles.sourceTitle}
+                  ><span className={styles.sourceDataIcon}></span><strong>Source Data</strong>
+                  </div>
+                </div>
               </div>
+
               {isLoading === true ? <div className={styles.spinRunning}>
-                <MLSpin size={"large"} data-testid="spinTest"/>
-              </div>:
+                <MLSpin size={"large"} data-testid="spinTest" />
+              </div> :
                 emptyData ?
                   <div id="noData">
-                    <br/><br/>
+                    <br /><br />
                     <Card className={styles.emptyCard} size="small">
                       <div className={styles.emptyText}>
                         <p>Unable to find source records using the specified collection or query.</p>
@@ -1424,7 +1432,7 @@ const MappingStepDetail: React.FC = () => {
                       rowKey={(record) => record.rowKey}
                       getPopupContainer={() => document.getElementById("srcContainer") || document.body}
                     />
-                  </div> }
+                  </div>}
             </div>
             <div
               id="entityContainer"
@@ -1475,12 +1483,12 @@ const MappingStepDetail: React.FC = () => {
                 setFilterStr={setFilterStr}
                 allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                 setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
-                mapFunctions = {mapFunctions}
-                mapRefs = {mapRefs}
-                savedMappingArt = {savedMappingArt}
-                deleteRelatedEntity = {deleteRelatedEntity}
-                labelRemoved = {labelRemoved}
-                entityLoaded = {entityLoaded}
+                mapFunctions={mapFunctions}
+                mapRefs={mapRefs}
+                savedMappingArt={savedMappingArt}
+                deleteRelatedEntity={deleteRelatedEntity}
+                labelRemoved={labelRemoved}
+                entityLoaded={entityLoaded}
               />
               {relatedEntityTypeProperties.map((entity, i) => relatedEntitiesSelected.map(selectedEntity => selectedEntity.entityMappingId).includes(entity.entityMappingId) ?
                 <EntityMapTable
@@ -1510,7 +1518,7 @@ const MappingStepDetail: React.FC = () => {
                   tooltipsData={AdvMapTooltips}
                   updateStep={UpdateMappingArtifact}
                   relatedEntityTypeProperties={relatedEntityTypeProperties}
-                  relatedEntitiesSelected = {relatedEntitiesSelected}
+                  relatedEntitiesSelected={relatedEntitiesSelected}
                   setRelatedEntitiesSelected={setRelatedEntitiesSelected}
                   isRelatedEntity={true}
                   tableColor={tableColors.length > 0 ? tableColors.shift() : "#EAE9EE"}
@@ -1519,12 +1527,12 @@ const MappingStepDetail: React.FC = () => {
                   setFilterStr={setFilterStr}
                   allRelatedEntitiesKeys={allRelatedEntitiesKeys}
                   setAllRelatedEntitiesKeys={setAllRelatedEntitiesKeys}
-                  mapFunctions = {mapFunctions}
-                  mapRefs = {mapRefs}
-                  savedMappingArt = {savedMappingArt}
-                  deleteRelatedEntity = {deleteRelatedEntity}
-                  labelRemoved = {labelRemoved}
-                  entityLoaded = {entityLoaded}
+                  mapFunctions={mapFunctions}
+                  mapRefs={mapRefs}
+                  savedMappingArt={savedMappingArt}
+                  deleteRelatedEntity={deleteRelatedEntity}
+                  labelRemoved={labelRemoved}
+                  entityLoaded={entityLoaded}
                 /> : "")}
             </div>
           </SplitPane>
