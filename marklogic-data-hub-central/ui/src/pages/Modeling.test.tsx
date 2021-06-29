@@ -298,7 +298,6 @@ describe("Graph view page", () => {
 
     userEvent.click(tableViewButton); // switch to table view
     rerender(renderView("table"));
-    expect(tableViewButton).toBeChecked();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
