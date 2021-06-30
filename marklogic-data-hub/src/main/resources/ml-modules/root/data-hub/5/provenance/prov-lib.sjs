@@ -2,6 +2,7 @@
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 
 function validateDeleteRequest({ retainDuration, batchSize = 100 }) {
@@ -48,6 +49,132 @@ function deleteProvenance(deleteRequest, endpointState) {
     }, { database: xdmp.database(config.JOBDATABASE), update: 'true', commit: 'auto', ignoreAmps: false}));
 }
 
+function installProvTemplates() {
+  const recordProvenanceTemplate = xdmp.unquote('<template xmlns="http://marklogic.com/xdmp/tde">\n' +
+    '  <context>/prov:document</context>\n' +
+    '  <path-namespaces>\n' +
+    '    <path-namespace>\n' +
+    '      <prefix>prov</prefix>\n' +
+    '      <namespace-uri>http://www.w3.org/ns/prov#</namespace-uri>\n' +
+    '    </path-namespace>\n' +
+    '  </path-namespaces>\n' +
+    '  <collections>\n' +
+    '    <collection>http://marklogic.com/provenance-services/record</collection>\n' +
+    '  </collections>\n' +
+    '  <templates>\n' +
+    '    <template>\n' +
+    '      <context>(prov:activity|prov:agent|prov:softwareAgent)</context>\n' +
+    '      <vars>\n' +
+    '        <var>\n' +
+    '          <name>id</name>\n' +
+    '          <val>sem:iri(@prov:id)</val>\n' +
+    '        </var>\n' +
+    '      </vars>\n' +
+    '      <templates>\n' +
+    '        <template>\n' +
+    '          <context>prov:type</context>\n' +
+    '          <vars>\n' +
+    '            <var>\n' +
+    '              <name>obj</name>\n' +
+    '              <val>sem:QName-to-iri(fn:resolve-QName(string(.),.))</val>\n' +
+    '            </var>\n' +
+    '          </vars>\n' +
+    '          <triples>\n' +
+    '            <triple>\n' +
+    '              <subject>\n' +
+    '                <val>$id</val>\n' +
+    '              </subject>\n' +
+    '              <predicate>\n' +
+    '                <val>sem:iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")</val>\n' +
+    '              </predicate>\n' +
+    '              <object>\n' +
+    '                <val>$obj</val>\n' +
+    '              </object>\n' +
+    '            </triple>\n' +
+    '          </triples>\n' +
+    '        </template>\n' +
+    '        <template>\n' +
+    '          <context>*[fn:namespace-uri(.) != "http://www.w3.org/ns/prov#"]</context>\n' +
+    '          <triples>\n' +
+    '            <triple>\n' +
+    '              <subject>\n' +
+    '                <val>$id</val>\n' +
+    '              </subject>\n' +
+    '              <predicate>\n' +
+    '                <val>sem:iri(fn:namespace-uri(.)||fn:local-name(.))</val>\n' +
+    '              </predicate>\n' +
+    '              <object>\n' +
+    '                <val>xs:string(string(.))</val>\n' +
+    '              </object>\n' +
+    '            </triple>\n' +
+    '          </triples>\n' +
+    '        </template>\n' +
+    '      </templates>\n' +
+    '    </template>\n' +
+    '    <template>\n' +
+    '      <context>prov:used</context>\n' +
+    '      <triples>\n' +
+    '        <triple>\n' +
+    '          <subject>\n' +
+    '            <val>sem:iri(prov:activity/@prov:ref)</val>\n' +
+    '          </subject>\n' +
+    '          <predicate>\n' +
+    '            <val>sem:iri("http://www.w3.org/ns/prov#used")</val>\n' +
+    '          </predicate>\n' +
+    '          <object>\n' +
+    '            <val>sem:iri(prov:entity/@prov:ref)</val>\n' +
+    '          </object>\n' +
+    '        </triple>\n' +
+    '      </triples>\n' +
+    '    </template>\n' +
+    '    <template>\n' +
+    '      <context>prov:*[@prov:id][prov:label]</context>\n' +
+    '      <vars>\n' +
+    '        <var>\n' +
+    '          <name>id</name>\n' +
+    '          <val>sem:iri(@prov:id)</val>\n' +
+    '        </var>\n' +
+    '      </vars>\n' +
+    '      <templates>\n' +
+    '        <template>\n' +
+    '          <context>prov:label</context>\n' +
+    '          <vars>\n' +
+    '            <var>\n' +
+    '              <name>obj</name>\n' +
+    '              <val>string(.)</val>\n' +
+    '            </var>\n' +
+    '          </vars>\n' +
+    '          <triples>\n' +
+    '            <triple>\n' +
+    '              <subject>\n' +
+    '                <val>$id</val>\n' +
+    '              </subject>\n' +
+    '              <predicate>\n' +
+    '                <val>sem:iri("http://www.w3.org/ns/prov#label")</val>\n' +
+    '              </predicate>\n' +
+    '              <object>\n' +
+    '                <val>$obj</val>\n' +
+    '              </object>\n' +
+    '            </triple>\n' +
+    '          </triples>\n' +
+    '        </template>\n' +
+    '      </templates>\n' +
+    '    </template>\n' +
+    '  </templates>\n' +
+    '</template>');
+  const templateUri = '/hub-template/RecordProvenance.xml';
+  const permissions = [
+    xdmp.permission('ps-user', 'read'),
+    xdmp.permission('ps-internal', 'update'),
+    xdmp.permission('data-hub-developer', 'update')
+  ];
+  const collections = ["hub-template", "http://marklogic.com/xdmp/tde"];
+
+  hubUtils.writeDocument(templateUri, recordProvenanceTemplate, permissions, collections, config.STAGINGSCHEMASDATABASE);
+  hubUtils.writeDocument(templateUri, recordProvenanceTemplate, permissions, collections, config.FINALSCHEMASDATABASE);
+}
+
 module.exports = {
-    deleteProvenance: module.amp(deleteProvenance)
+  deleteProvenance: module.amp(deleteProvenance),
+  installProvTemplates
 };
