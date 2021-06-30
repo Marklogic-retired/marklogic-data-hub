@@ -31,24 +31,24 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     @Test
     public void testDeployTDEWithNoEntities() {
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
 
         installUserModules(getHubConfig(), true);
 
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
     }
 
     @Test
     public void testDeployTDE() throws Exception {
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
 
         installProjectInFolder("es-alignment-test");
 
-        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
-        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs TDE exists");
+        assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
+        assertEquals(3, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION), "The hub default jobs and prov TDEs exists");
 
 
         runAsFlowOperator();

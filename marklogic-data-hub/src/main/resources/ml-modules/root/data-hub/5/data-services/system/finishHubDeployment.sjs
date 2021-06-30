@@ -18,4 +18,7 @@
 // No privilege required: For now it is only used during installation and installation requires admin privileges.
 
 const jobQueryLib = require("/data-hub/5/flow/job-query-lib.sjs");
+const provLib = require('/data-hub/5/provenance/prov-lib.sjs');
+
 jobQueryLib.installJobTemplates();
+provLib.installProvTemplates();

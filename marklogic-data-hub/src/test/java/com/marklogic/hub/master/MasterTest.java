@@ -38,8 +38,8 @@ public class MasterTest extends AbstractHubCoreTest {
     public void beforeEach() {
         runAsAdmin();
         new FinishHubDeploymentCommand(getHubConfig()).execute(newCommandContext());
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"), "The hub default jobs TDE exists");
-        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"), "The hub default jobs TDE exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"), "The hub default jobs and prov TDE exists");
+        assertEquals(2, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, "http://marklogic.com/xdmp/tde"), "The hub default jobs and prov TDE exists");
 
         runAsDataHubDeveloper();
         installProjectInFolder("master-test");
