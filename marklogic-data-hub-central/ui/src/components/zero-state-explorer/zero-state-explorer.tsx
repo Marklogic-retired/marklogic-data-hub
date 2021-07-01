@@ -217,13 +217,15 @@ const ZeroStateExplorer = (props) => {
                             <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
                           </MLRadio.MLButton>
                         </MLTooltip>
-                        <MLTooltip
-                          title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
-                          placement="bottom"
-                        ><MLRadio.MLButton aria-label="switch-view-card" value={"card"} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
-                            <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
-                          </MLRadio.MLButton>
-                        </MLTooltip>
+                        <span id="viewAsCard" className={styles.viewAsCard}>
+                          <MLTooltip
+                            title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
+                            placement="bottom"
+                          ><MLRadio.MLButton  aria-label="switch-view-card" value={"card"} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
+                              <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
+                            </MLRadio.MLButton>
+                          </MLTooltip>
+                        </span>
                       </MLRadio.MLGroup>
                     </div>
                   </Col>

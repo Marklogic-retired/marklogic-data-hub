@@ -360,6 +360,12 @@ ul.ant-cascader-menu:nth-child(2) {
   color: #7F86B5 ;
 }
 
+#zero-state-explorer #viewAsCard {
+  .ant-radio-button-wrapper.ant-radio-button-wrapper-checked, .ant-radio-button-wrapper:first-child {
+    border-radius: 0px 4px 4px 0px;
+  }
+}
+
 /* styling for expand-collapse component */
 #expand-collapse .ant-radio-group-small .ant-radio-button-wrapper {
   height: 26px;
