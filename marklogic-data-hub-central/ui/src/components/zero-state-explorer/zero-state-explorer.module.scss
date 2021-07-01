@@ -92,6 +92,10 @@
     justify-content: center;
   }
 
+  .viewAsCard {
+    margin-left: -1px;
+  }
+
   .database {
     display: flex;
     align-items: center;
@@ -162,6 +166,7 @@
   }
 
   .searchBar {
+    top: -1px;
     width: 700px;
   }
 
