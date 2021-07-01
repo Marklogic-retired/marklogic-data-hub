@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.w3.org/ns/prov#" xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xs:import namespace="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="Provenance.xsd"/>
+    <xs:element name="document">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:activity" minOccurs="0" />
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="prov:agent" />
+                    <xs:element ref="prov:wasAssociatedWith"/>
+                    <xs:element ref="prov:collection"/>
+                    <xs:element ref="prov:entity"/>
+                    <xs:element ref="prov:softwareAgent"/>
+                    <xs:element ref="prov:used"/>
+                    <xs:element ref="prov:wasAttributedTo"/>
+                    <xs:element ref="prov:wasDerivedFrom"/>
+                    <xs:element ref="prov:wasGeneratedBy"/>
+                    <xs:element ref="prov:wasInfluencedBy"/>
+                    <xs:element ref="prov:hadMember"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="wasAssociatedWith">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:activity"/>
+                <xs:element ref="prov:agent"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="softwareAgent">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:label"/>
+            </xs:sequence>
+            <xs:attribute name="id" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="used">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:activity"/>
+                <xs:element ref="prov:entity"/>
+                <xs:element minOccurs="0" ref="prov:type"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="wasAttributedTo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:entity"/>
+                <xs:element ref="prov:agent"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="wasDerivedFrom">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice>
+                    <xs:element ref="prov:entity"/>
+                    <xs:element ref="prov:generatedEntity"/>
+                </xs:choice>
+                <xs:element ref="prov:usedEntity"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="generatedEntity">
+        <xs:complexType>
+            <xs:attribute name="ref" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="usedEntity">
+        <xs:complexType>
+            <xs:attribute name="ref" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="wasGeneratedBy">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:entity"/>
+                <xs:element ref="prov:activity"/>
+                <xs:element ref="prov:time"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="time" type="xs:dateTime"/>
+    <xs:element name="wasInfluencedBy">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:influencee"/>
+                <xs:element ref="prov:influencer"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="influencee">
+        <xs:complexType>
+            <xs:attribute name="ref" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="influencer">
+        <xs:complexType>
+            <xs:attribute name="ref" use="required" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="hadMember">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="prov:collection"/>
+                <xs:element ref="prov:entity"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="activity">
+        <xs:complexType>
+            <xs:sequence minOccurs="0">
+                <xs:element ref="prov:label"/>
+                <xs:element ref="prov:type" maxOccurs="unbounded" />
+                <xs:element ref="prov:startTime"/>
+                <xs:element ref="prov:endTime"/>
+            </xs:sequence>
+            <xs:attribute name="id" form="qualified" type="xs:anyURI"/>
+            <xs:attribute name="ref" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="startTime" type="xs:dateTime"/>
+    <xs:element name="endTime" type="xs:dateTime"/>
+    <xs:element name="agent">
+        <xs:complexType>
+            <xs:sequence minOccurs="0">
+                <xs:element ref="prov:label"/>
+                <xs:element ref="prov:type"/>
+            </xs:sequence>
+            <xs:attribute name="id" form="qualified" type="xs:anyURI"/>
+            <xs:attribute name="ref" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="entity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" ref="prov:type"/>
+                <xs:choice minOccurs="0">
+                    <xs:element ref="prov:label"/>
+                    <xs:element name="xpathExpression" form="unqualified" type="xs:string"/>
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="id" form="qualified" type="xs:anyURI"/>
+            <xs:attribute name="ref" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="type">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:NMTOKEN">
+                    <xs:attribute ref="xsi:type" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="collection">
+        <xs:complexType>
+            <xs:sequence minOccurs="0">
+                <xs:element maxOccurs="unbounded" ref="prov:type"/>
+                <xs:element name="database" form="unqualified" type="xs:NCName"/>
+                <xs:element name="stepName" form="unqualified" type="xs:NCName"/>
+                <xs:element name="entityName" form="unqualified" type="xs:NCName"/>
+                <xs:element name="entityVersion" form="unqualified" type="xs:string"/>
+                <xs:element name="documentURI" form="unqualified" type="xs:anyURI"/>
+            </xs:sequence>
+            <xs:attribute name="id" form="qualified" type="xs:anyURI"/>
+            <xs:attribute name="ref" form="qualified" type="xs:anyURI"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="label" type="xs:string"/>
+</xs:schema>
