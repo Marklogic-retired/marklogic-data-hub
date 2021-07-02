@@ -47,6 +47,12 @@ const Modeling: React.FC = () => {
   const canAccessModel = authorityService.canAccessModel();
 
   useEffect(() => {
+    if (canReadEntityModel && modelingOptions.view === "table") {
+      setEntityTypesFromServer();
+    }
+  }, [modelingOptions.view]);
+
+  useEffect(() => {
     if (canReadEntityModel) {
       setEntityTypesFromServer();
     }
