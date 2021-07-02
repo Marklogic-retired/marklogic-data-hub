@@ -269,7 +269,6 @@ describe("save/manage queries scenarios, developer role", () => {
   it("Switching between entities when making changes to saved query", () => {
     browsePage.selectQuery("new-query");
     browsePage.getClearFacetSearchSelection("Adams Cole").click();
-    browsePage.clickColumnTitle(3);
     browsePage.selectEntity("Person");
     browsePage.getEntityConfirmationCancelClick().click();
     browsePage.getSelectedQuery().should("contain", "new-query");
@@ -449,7 +448,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForTableToLoad();
     browsePage.selectEntity("Order");
     browsePage.getSelectedEntity().should("contain", "Order");
-    browsePage.getDataExportIcon().click();
+    browsePage.getDataExportIcon().click({force: true});
     browsePage.getStructuredDataWarning().should("be.visible");
     browsePage.getStructuredDataCancel().should("be.visible");
     browsePage.getStructuredDataCancel().click();

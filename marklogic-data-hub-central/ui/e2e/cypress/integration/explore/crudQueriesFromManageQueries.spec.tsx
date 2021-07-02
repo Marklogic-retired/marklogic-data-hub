@@ -89,7 +89,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveQueriesDropdown().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.selectEntity("Person");
-    cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json"), {timeout: 10000}).click();
+    cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json"), {timeout: 10000}).click({force: true});
     browsePage.waitForSpinnerToDisappear();
   });
   it("Navigate to detail page and verify if manage query modal opens up.", () => {
@@ -155,7 +155,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     //open record instance view for the first document
-    cy.get("#instance").first().click();
+    cy.get("#instance").first().click({force: true});
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     //verify the manage queries modal button is visible
@@ -243,7 +243,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //open record instance view for a document of a different entity
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
-    cy.get("#instance").first().click();
+    cy.get("#instance").first().click({force: true});
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
 

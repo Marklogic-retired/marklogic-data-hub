@@ -366,7 +366,7 @@ class BrowsePage {
 
   selectColumnSelectorProperty(name:string) {
     cy.waitUntil(() => cy.findByTestId("column-selector-popover"));
-    return cy.get("li[data-testid=node-" + name + "] .ant-tree-checkbox").click();
+    cy.get("li[data-testid=node-" + name + "] .ant-tree-checkbox").click({force: true});
   }
 
   getDataExportIcon() {
