@@ -43,7 +43,7 @@ describe("Validate table and column selector in explore", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getColumnSelectorIcon().should("be.visible");
-    browsePage.getColumnSelectorIcon().click();
+    browsePage.getColumnSelectorIcon().click({force: true});
     browsePage.getColumnSelector().should("be.visible");
     browsePage.getTreeItemTitle(2).should("have.class", "draggable");
     browsePage.getTreeItem(2).should("have.class", "ant-tree-treenode-checkbox-checked");
