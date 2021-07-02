@@ -26,6 +26,22 @@ class GraphViewSidePanel {
   getPropertyName(propName: string) {
     return cy.findByTestId(`${propName}-span`);
   }
+
+  getPersonEntityNode() {
+    return cy.findByTestId("Person-entityNode").click();
+  }
+
+  getPersonEntityDescription() {
+    return cy.findByTestId("description");
+  }
+
+  getPersonEntityNamespace() {
+    return cy.findByTestId("namespace");
+  }
+
+  getPersonEntityPrefix() {
+    return cy.findByTestId("prefix");
+  }
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();

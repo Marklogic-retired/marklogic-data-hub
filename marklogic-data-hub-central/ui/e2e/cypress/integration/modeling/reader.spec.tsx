@@ -121,4 +121,31 @@ describe("Entity Modeling: Reader Role", () => {
     entityTypeTable.viewEntityInGraphView("Person").click({force: true});
     graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
   });
+
+  it("can view and edit Entity Type tab in side panel", () => {
+    cy.loginAsDeveloper().withRequest();
+    entityTypeTable.viewEntityInGraphView("Person").click({force: true});
+    graphViewSidePanel.getPersonEntityNode().click();
+    graphViewSidePanel.getEntityTypeTab().click();
+    graphViewSidePanel.getPersonEntityDescription().should("be.visible");
+
+    graphViewSidePanel.getPersonEntityDescription().clear();
+    graphViewSidePanel.getPersonEntityNamespace().clear();
+    graphViewSidePanel.getPersonEntityPrefix().clear();
+
+    graphViewSidePanel.getPersonEntityDescription().clear();
+    graphViewSidePanel.getPersonEntityNamespace().clear();
+    graphViewSidePanel.getPersonEntityPrefix().clear();
+    cy.waitUntil(() => graphViewSidePanel.getPersonEntityDescription().type("test description"));
+    cy.waitUntil(() => graphViewSidePanel.getPersonEntityNamespace().type("test"));
+    graphViewSidePanel.getPersonEntityDescription().click();
+    cy.waitUntil(() => cy.findByText("Since you entered a namespace, you must specify a prefix.").should("be.visible"));
+    cy.waitUntil(() => graphViewSidePanel.getPersonEntityPrefix().type("pre"));
+    graphViewSidePanel.getPersonEntityDescription().click();
+    cy.waitUntil(() => cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("be.visible"));
+    graphViewSidePanel.getPersonEntityDescription().clear();
+    cy.waitUntil(() => graphViewSidePanel.getPersonEntityNamespace().type("http://example.org/test"));
+    graphViewSidePanel.getPersonEntityDescription().click();
+    cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
+  });
 });

@@ -89,7 +89,7 @@ const GraphView: React.FC<Props> = (props) => {
   const splitPaneStyles = {
     pane1: {minWidth: "150px"},
     pane2: {minWidth: "140px", maxWidth: "90%"},
-    pane: {overflow: "hidden"},
+    pane: {overflow: "auto"},
   };
 
   const splitStyle: CSSProperties = {

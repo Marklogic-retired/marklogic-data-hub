@@ -63,7 +63,7 @@ describe("Modeling Page", () => {
       getByLabelText = renderResults.getByLabelText;
     });
 
-    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
@@ -93,7 +93,7 @@ describe("Modeling Page", () => {
 
     userEvent.click(getByText("Revert All"));
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));
-    expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1);
+    expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2);
   });
 
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
@@ -115,7 +115,7 @@ describe("Modeling Page", () => {
       queryByLabelText = renderResults.queryByLabelText;
     });
 
-    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
@@ -241,7 +241,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
@@ -275,7 +275,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 

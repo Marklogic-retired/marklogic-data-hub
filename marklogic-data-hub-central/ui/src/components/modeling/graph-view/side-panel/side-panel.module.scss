@@ -1,22 +1,22 @@
 .sidePanel {
     padding: 10px 10px;
-  
+
     .selectedEntityHeading{
       font-size: 22px;
       color: #333333;
       padding-right: 10px;
     }
-  
+
     .deleteIcon {
       color: #5B69AF;
       font-size: 24px;
     }
-  
+
     .deleteIcon:hover{
       color: var(--hoverColor);
       cursor: pointer;
     }
-  
+
     .close {
       position: relative;
       float: right;
@@ -24,7 +24,7 @@
       height: 28px;
       cursor: pointer;
     }
-  
+
     .tabs {
       padding: 10px 0px 10px 0px;
       .sidePanelTabLabel {
@@ -32,3 +32,51 @@
       }
     }
   }
+
+.formItem {
+    display: flex;
+    margin-left: 0.4vw;
+    margin-bottom: 1vh;
+}
+
+.icon {
+    position: absolute;
+    top: 0px;
+    right: -20px;
+    font-size: 12px;
+    color: #7F86B5;
+}
+
+.prefixTooltipIcon {
+    position: absolute;
+    top: -7px;
+    right: -20px;
+    font-size: 12px;
+    color: #7F86B5;
+}
+.prefixLabel {
+    display: inline-flex;
+    width: 2.85vw;
+    line-height: 32px;
+    margin-left: 0.55vw;
+    margin-right: 0.4vw;
+}
+
+.descriptionInput {
+    margin-left: 1.5vw;
+    width: 17.8vw;
+}
+
+.entityName {
+    margin-left: 1.5vw;
+}
+
+.prefixInput {
+    margin-left: -1vw;
+}
+
+.errorServer {
+    color: #B32424;
+    line-height: 20px;
+    margin-left: 1.5vw;
+}
