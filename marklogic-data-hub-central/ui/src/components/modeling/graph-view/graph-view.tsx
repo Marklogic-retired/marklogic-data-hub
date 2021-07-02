@@ -11,6 +11,7 @@ import SplitPane from "react-split-pane";
 import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import {defaultModelingView} from "../../../config/modeling.config";
+import Graph from "react-graph-vis";
 
 type Props = {
   entityTypes: any;
@@ -20,6 +21,156 @@ const GraphView: React.FC<Props> = (props) => {
 
   const [viewSidePanel, setViewSidePanel] = useState(false);
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
+  const [nodePositions, setNodePositions] = useState({});
+  const [physicsEnabled, setPhysicsEnabled] = useState(true);
+
+  //Use these to set specific positions for entity nodes temporarily
+  let nodeP = {
+    BabyRegistry: {
+      x: 134.5, y: -165
+    },
+    Customer: {
+      x: -1.8683534551792256, y: -13.817459136071609
+    },
+    Product: {
+      x: -290.5, y: -57
+    },
+    Order: {
+      x: 311.5, y: 1
+    },
+    NamespacedCustomer: {
+      x: -193.56170318899566, y: 27.318452823974837
+    },
+    Person: {
+      x: -143.5, y: -143
+    }
+  }
+
+  let entityMetadata = {
+    BabyRegistry: {
+      color: "#e3ebbc",
+      instances: 5
+    },
+    Customer: {
+      color: "#ecf7fd",
+      instances: 63
+    },
+    Product: {
+      color: "#ded2da",
+      instances: 252
+    },
+    Order: {
+      color: "#cfe3e8",
+      instances: 50123
+    },
+    NamespacedCustomer: {
+      color: "#dfe2ec",
+      instances: 75
+    },
+    Person: {
+      color: "#dfe2ec",
+      instances: 75
+    }
+  };
+  const getNodes = () => {
+    let nodes = props.entityTypes && props.entityTypes?.map((e) => {
+    return { 
+    shape: "box",
+    shapeProperties: {
+      borderRadius: 2
+    },
+    id: e.entityName,
+    label: e.entityName.concat("\n<b>", entityMetadata[e.entityName].instances, "</b>"),
+    color: {
+      background: entityMetadata[e.entityName].color,
+      border: entityMetadata[e.entityName].color
+    },
+    icon: {
+  face: "Font Awesome",
+  code: "\uf0c0",
+  size: 50,
+  color: "#f0a30a",
+},
+    font: {
+      multi: true,
+      align: "left",
+      bold: {
+        color: "#6773af",
+        vadjust: 3,
+        size: 12
+      }
+    },
+    margin: 10,
+    widthConstraint: {
+      minimum: 80
+    },
+    // x: nodeP[e.entityName]?.x, 
+    // y: nodeP[e.entityName]?.y
+  }});
+  return nodes;
+}
+
+  const getEdges = () => {
+    let edges:any = [];
+    props.entityTypes.forEach((e, i) => {
+      let properties:any = Object.keys(e.model.definitions[e.entityName].properties);
+      properties.forEach((p, i) => {
+        if (e.model.definitions[e.entityName].properties[p].relatedEntityType) {
+          let parts = e.model.definitions[e.entityName].properties[p].relatedEntityType.split("/");
+          edges.push({
+            from: e.entityName,
+            to: parts[parts.length-1],
+            label: e.model.definitions[e.entityName].properties[p].joinPropertyName,
+            arrows: "to",
+            color: "#666",
+            font: { align: "top" } 
+          });
+        }
+      });
+    });
+    return edges;
+  }
+
+  //Graph view options
+  const graph = {
+    nodes: getNodes(),
+    edges: getEdges()
+  }
+
+  const options = {
+    layout: {
+      //hierarchical: true
+      //randomSeed: "0.7696:1625099255200",
+    },
+    edges: {
+      color: "#000000"
+    },
+    height: "500px",
+    physics: {
+      enabled: physicsEnabled,
+      barnesHut: {
+        springLength: 160,
+        avoidOverlap: 0.4
+      }
+    }
+  };
+
+  const events = {
+    select: function(event) {
+      var { nodes, edges } = event;
+      console.log('select',event)
+    },
+    dragStart: (event) => {
+      if(physicsEnabled) {
+        setPhysicsEnabled(false);
+      }
+    },
+    dragEnd: (event) => {
+      console.log('dragEnd',event,event.pointer.canvas);
+      setNodePositions({[event.nodes[0]]: event.pointer.canvas})
+    }
+
+  };
 
   useEffect(() => {
     if (modelingOptions.view === defaultModelingView && modelingOptions.selectedEntity) {
@@ -120,6 +271,18 @@ const GraphView: React.FC<Props> = (props) => {
         </ul>
         //--------------//
       }
+    </div>
+    <div>
+    <Graph
+      graph={graph}
+      options={options}
+      events={events}
+      getNetwork={network => {
+        
+        //  if you want access to vis.js network api you can set the state in a parent component using this property
+        console.log("getSeed(): ", network, network.getSeed(), network.getPositions("Customer"))
+      }}
+    />
     </div>
   </div>;
 
