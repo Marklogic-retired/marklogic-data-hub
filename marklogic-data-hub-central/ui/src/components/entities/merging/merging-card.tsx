@@ -366,7 +366,7 @@ const MergingCard: React.FC<Props> = (props) => {
   };
 
   return (
-    <div className={styles.mergeContainer}>
+    <div className={styles.mergingContainer}>
       <Row gutter={16} type="flex">
         {props.canWriteMatchMerge ? (
           <Col>
