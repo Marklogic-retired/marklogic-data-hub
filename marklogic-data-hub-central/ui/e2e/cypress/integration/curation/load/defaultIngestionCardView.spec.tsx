@@ -169,6 +169,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.setFlowDescription(`${flowName1} description`);
     cy.wait(500);
     loadPage.confirmationOptions("Save").click();
+    cy.wait(2000);
     // add step to that new flow
     runPage.addStep(flowName1);
     cy.wait(1000);
@@ -227,6 +228,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.selectSourceFormat("TEXT");
     loadPage.selectTargetFormat("TEXT");
     loadPage.saveButton().click();
+    cy.wait(2000);
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
     loadPage.addStepToExistingFlow(stepName, flowName1);

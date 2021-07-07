@@ -94,7 +94,7 @@ describe("Validate E2E Mastering Flow", () => {
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", loadStepName).should("to.exist");
   });
-  it("Create a new entity", () => {
+  it("Create a new entity", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
