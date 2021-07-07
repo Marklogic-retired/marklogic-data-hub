@@ -6,6 +6,8 @@ import scrollIntoView from "scroll-into-view";
 import styles from "./property-table.module.scss";
 import PropertyModal from "../property-modal/property-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
+import ExpandCollapse from "../../expand-collapse/expand-collapse";
+import "./property-table.scss";
 
 import {
   Definition,
@@ -40,6 +42,7 @@ type Props = {
   canWriteEntityModel: boolean;
   entityName: string;
   definitions: any;
+  sidePanelView: boolean;
 }
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
@@ -121,7 +124,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const columns = [
     {
-      title: "Property Name",
+      title: <span aria-label="propertyName-header">Property Name</span>,
       dataIndex: "propertyName",
       width: 200,
       render: (text, record) => {
@@ -143,12 +146,14 @@ const PropertyTable: React.FC<Props> = (props) => {
             }}>
             {text}
           </span>;
+        } else {
+          renderText = <span data-testid={text + "-span"}>{text}</span>;
         }
         return renderText;
       }
     },
     {
-      title: "Type",
+      title: <span aria-label="type-header">Type</span>,
       dataIndex: "type",
       width: 125,
       render: (text, record) => {
@@ -239,7 +244,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       }
     },
     {
-      title: "Delete",
+      title: <span aria-label="delete-header">Delete</span>,
       dataIndex: "delete",
       width: 75,
       render: (text, record) => {
@@ -262,7 +267,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${recordKey}-${record.propertyName}`;
 
 
-        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : props.sidePanelView ? styles.iconTrashSidePanel : styles.iconTrash}
           icon={faTrashAlt}
           size="2x"
           data-testid={id}
@@ -276,7 +281,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       }
     },
     {
-      title: "Add",
+      title: <span aria-label="add-header">Add</span>,
       dataIndex: "add",
       width: 75,
       render: text => {
@@ -324,8 +329,12 @@ const PropertyTable: React.FC<Props> = (props) => {
   const updateEntityDefinitionsAndRenderTable = (definitions: Definition) => {
     let entityDefinitionsArray = definitionsParser(definitions);
     let renderTableData = parseDefinitionsToTable(entityDefinitionsArray);
+    if (props.sidePanelView) {
+      //remove unneeded middle columns if table is in side panel view
+      columns.splice(2, 5);
+    }
     if (entityDefinitionsArray.length === 1) {
-      setHeaderColumns(columns.slice(0, 8));
+      setHeaderColumns(props.sidePanelView ? columns.slice(0, 3) : columns.slice(0, 8));
     } else if (entityDefinitionsArray.length > 1) {
       setHeaderColumns(columns);
     }
@@ -822,6 +831,10 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
+  const handleSourceExpandCollapse = (option) => {
+
+  };
+
   const addPropertyButton = <MLButton
     type="primary"
     aria-label={props.entityName + "-add-property"}
@@ -832,7 +845,10 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   return (
     <div>
-      <div className={styles.addButtonContainer}>
+      <div className={styles.extraButtonContainer} id="extraButtonsContainer">
+        {props.sidePanelView ?
+          <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
+        }
         {props.canWriteEntityModel ?
           <MLTooltip title={ModelingTooltips.addProperty}>
             <span>{addPropertyButton}</span>

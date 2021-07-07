@@ -104,6 +104,16 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
     graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
 
+    //Properties tab should display property table
+    graphViewSidePanel.getPropertyTableHeader("propertyName").should("be.visible");
+    graphViewSidePanel.getPropertyTableHeader("type").should("be.visible");
+    graphViewSidePanel.getPropertyTableHeader("delete").should("be.visible");
+
+    //Verify table is populated with Customer properties
+    graphViewSidePanel.getPropertyName("customerId").should("be.visible");
+    graphViewSidePanel.getPropertyName("name").should("be.visible");
+    graphViewSidePanel.getPropertyName("email").should("be.visible");
+
     graphViewSidePanel.closeSidePanel();
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
 

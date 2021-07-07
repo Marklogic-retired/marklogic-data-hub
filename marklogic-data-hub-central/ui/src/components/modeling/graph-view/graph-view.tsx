@@ -14,6 +14,8 @@ import {defaultModelingView} from "../../../config/modeling.config";
 
 type Props = {
   entityTypes: any;
+  canReadEntityModel: any;
+  canWriteEntityModel: any;
 };
 
 const GraphView: React.FC<Props> = (props) => {
@@ -141,6 +143,8 @@ const GraphView: React.FC<Props> = (props) => {
           entityTypes={props.entityTypes}
           onCloseSidePanel={onCloseSidePanel}
           deleteEntityClicked={deleteEntityClicked}
+          canReadEntityModel={props.canReadEntityModel}
+          canWriteEntityModel={props.canWriteEntityModel}
         />
       </SplitPane>
   );

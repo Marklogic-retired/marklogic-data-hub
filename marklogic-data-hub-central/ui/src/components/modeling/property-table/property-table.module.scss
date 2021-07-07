@@ -39,10 +39,14 @@
   color: #cccccc;
 }
 
-.addButtonContainer {
+.extraButtonContainer {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 8px;
+}
+
+.expandCollapseBtns {
+  margin-right: 5px;
 }
 
 .iconTrash {
@@ -52,6 +56,16 @@
   color: #B32424;
   &:hover{
       color:var(--hoverColor) !important;
+  }
+}
+
+.iconTrashSidePanel { 
+  cursor: pointer;
+  font-size: 21px;
+  margin-left: 11px;
+  color: #5B69AF;
+  &:hover{
+    color:var(--hoverColor) !important;
   }
 }
 

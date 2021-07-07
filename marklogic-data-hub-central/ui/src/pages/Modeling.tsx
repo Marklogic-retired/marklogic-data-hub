@@ -301,6 +301,8 @@ const Modeling: React.FC = () => {
             <h1>Entity Types</h1>
             <div className={styles.borderBelowHeader}></div>
             <GraphView
+              canReadEntityModel={canReadEntityModel}
+              canWriteEntityModel={canWriteEntityModel}
               entityTypes={entityTypes}
             />
           </>
