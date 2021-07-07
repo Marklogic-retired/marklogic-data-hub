@@ -150,59 +150,62 @@ def PRDraftCheck(){
     return jsonObj.draft
 }
 
-def runCypressE2e(){
-    script{
-        copyRPM 'Release','10.0-6'
-        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        sh 'rm -rf *central*.rpm || true'
-        copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
-        sh(script:'''#!/bin/bash
-            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
-            sudo mladmin install-hubcentral $WORKSPACE/*central*.rpm;
-            sudo mladmin add-javahome-hubcentral $JAVA_HOME
-            sudo mladmin start-hubcentral
-        ''')
-        sh(script:'''#!/bin/bash
-            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
-            export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
-            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
-            export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
-            rm -rf $M2_LOCAL_REPO || true
-            mkdir -p $M2_LOCAL_REPO
-            cd $WORKSPACE/data-hub;
-            ./gradlew publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/
-            '''
-        )
-        sh(script:'''
-          #!/bin/bash
-          export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
-          export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
-          export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
-          export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
-          cd $WORKSPACE/data-hub;
-          rm -rf $GRADLE_USER_HOME/caches;
-          cd marklogic-data-hub-central/ui/e2e;
-          repo="maven {url '"$M2_LOCAL_REPO"'}"
-          sed -i "/repositories {/a$repo" hc-qa-project/build.gradle
-          chmod +x setup.sh;
-          ./setup.sh dhs=false mlHost=localhost mlSecurityUsername=admin mlSecurityPassword=admin;
-          '''
-        )
-        sh(script:'''#!/bin/bash
-            export NODE_HOME=$NODE_HOME_DIR/bin;
-            export PATH=$NODE_HOME:$PATH
-            cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-            npm run cy:run |& tee -a e2e_err.log;
-        '''
-        )
+void runCypressE2e(String cmd){
+   copyRPM 'Release','10.0-6'
+   setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+   sh 'rm -rf *central*.rpm || true'
+   copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+   sh(script:'''#!/bin/bash
+        export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+        sudo mladmin install-hubcentral $WORKSPACE/*central*.rpm;
+        sudo mladmin add-javahome-hubcentral $JAVA_HOME
+        sudo mladmin start-hubcentral
+   ''')
 
-        def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
-        if(output.contains("npm ERR!")){
-           // currentBuild.result='UNSTABLE';
-        }
+   sh(script:'''#!/bin/bash
+        export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+        export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
+        export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+        export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
+        rm -rf $M2_LOCAL_REPO || true
+        mkdir -p $M2_LOCAL_REPO
+        cd $WORKSPACE/data-hub;
+        ./gradlew publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/
+     '''
+  )
 
-        junit '**/e2e/**/*.xml'
-    }
+  sh(script:'''
+        #!/bin/bash
+        export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+        export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+        export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
+        export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
+        cd $WORKSPACE/data-hub;
+        rm -rf $GRADLE_USER_HOME/caches;
+        cd marklogic-data-hub-central/ui/e2e;
+        repo="maven {url '"$M2_LOCAL_REPO"'}"
+        sed -i "/repositories {/a$repo" hc-qa-project/build.gradle
+        chmod +x setup.sh;
+        ./setup.sh dhs=false mlHost=localhost mlSecurityUsername=admin mlSecurityPassword=admin;
+       '''
+  )
+
+  sh(script:'''#!/bin/bash
+        export NODE_HOME=$NODE_HOME_DIR/bin;
+        export PATH=$NODE_HOME:$PATH
+        cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+        '''+cmd+''' |& tee -a e2e_err.log;
+    '''
+  )
+
+  def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
+  if(output.contains("npm ERR!")){
+//    currentBuild.result="FAILURE";
+    stageResult."{STAGE_NAME}" = "FAILURE"
+  }
+
+  junit '**/e2e/**/*.xml'
+
 }
 
 void UnitTest(){
@@ -798,7 +801,7 @@ pipeline{
             beforeAgent true
         }
 		agent { label 'dhfLinuxAgent'}
-		steps{runCypressE2e()}
+		steps{runCypressE2e('npm run cy:run')}
         post{
 				  always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -834,6 +837,19 @@ pipeline{
                   }
                   }
 		}
+
+        stage('cypresse2e-firefox') {
+            when {
+                expression { return params.regressions }
+                beforeAgent true
+            }
+ //           agent { label 'dhfLinuxAgent' }
+            agent { label 'rh7v-10-dhf-5.marklogic.com' }
+            steps{timeout(time: 3,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run-firefox-headed')}
+            }}
+            post { always { sh 'rm -rf $WORKSPACE/xdmp' } }
+        }
 
         stage('UI-tests'){
         when {
@@ -930,7 +946,10 @@ pipeline{
         }
 
         stage('dhs-test'){
-            when { expression {return params.regressions} }
+            when {
+                expression {return params.regressions}
+                beforeAgent true
+            }
             agent { label 'dhfLinuxAgent' }
             steps {
                 sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
@@ -942,7 +961,6 @@ pipeline{
             when { expression {return params.regressions} }
             parallel {
                 stage('rh7-singlenode-9.0-11') {
-                when { expression {return params.regressions} }
                 agent {label 'dhfLinuxAgent'}
                 steps{timeout(time: 3,  unit: 'HOURS'){
                    catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {singleNodeTestOnLinux('Release','9.0-11')}
@@ -1128,7 +1146,8 @@ pipeline{
               }
 		}
 	}
-		stage('example projects parallel'){
+
+	stage('example projects parallel'){
             when { expression {return params.regressions} }
             parallel{
             stage('dh5-example'){
