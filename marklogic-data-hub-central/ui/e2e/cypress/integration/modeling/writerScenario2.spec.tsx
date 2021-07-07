@@ -38,7 +38,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it("Create an entity with property that already exists", () => {
+  it("Create an entity with property that already exists", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -203,7 +203,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("OrderedBy").should("exist");
   });
-  it("Delete a property, a structured property and then the entity", () => {
+  it("Delete a property, a structured property and then the entity", {defaultCommandTimeout: 120000}, () => {
     //Structured Property
     propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "alt_address-streetAlt").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
@@ -275,7 +275,7 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
-  it("Create Concept entity and add a property", () => {
+  it("Create Concept entity and add a property", {defaultCommandTimeout: 120000}, () => {
     modelPage.getAddEntityButton().should("exist").click();
     entityTypeModal.newEntityName("Concept");
     entityTypeModal.newEntityDescription("A concept entity");
@@ -304,7 +304,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("testing").should("not.exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });
-  it("Create another entity Patients and add a property", () => {
+  it("Create another entity Patients and add a property", {defaultCommandTimeout: 120000}, () => {
     modelPage.getAddEntityButton().should("exist").click();
     entityTypeModal.newEntityName("Patients");
     entityTypeModal.newEntityDescription("An entity for patients");
@@ -343,7 +343,7 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty("patientId").should("not.exist");
   });
-  it("Add third property to Patients Entity, Save all the changes and Delete Concept Entity", () => {
+  it("Add third property to Patients Entity, Save all the changes and Delete Concept Entity", {defaultCommandTimeout: 120000}, () => {
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();

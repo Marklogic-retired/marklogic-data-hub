@@ -128,6 +128,7 @@ class BrowsePage {
   }
 
   clickClearFacetSearchSelection(facet: string) {
+    cy.findByTestId(`clear-${facet}`).scrollIntoView();
     cy.findByTestId(`clear-${facet}`).trigger("mousemove").dblclick({force: true});
     this.waitForSpinnerToDisappear();
   }
