@@ -721,7 +721,7 @@ pipeline{
 		parallel{
 		stage('cypresse2e'){
         when {
-            expression {return !env.NO_UI_TESTS}
+//            expression {return !env.NO_UI_TESTS}
             beforeAgent true
         }
 //		agent { label 'dhfLinuxAgent'}
