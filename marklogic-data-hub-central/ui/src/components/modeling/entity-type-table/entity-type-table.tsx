@@ -421,6 +421,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       definitions={entity.definitions}
       canReadEntityModel={props.canReadEntityModel}
       canWriteEntityModel={props.canWriteEntityModel}
+      sidePanelView={false}
     />;
   };
 

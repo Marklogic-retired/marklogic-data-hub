@@ -35,6 +35,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={false}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -46,6 +47,58 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByLabelText("NewEntity-add-property")).toBeDisabled();
   });
 
+  test("Property Table renders in side panel view with less columns as designed", () => {
+    let entityName = propertyTableEntities[0].entityName;
+    let definitions = propertyTableEntities[0].model.definitions;
+
+    const {queryByLabelText, getByText, rerender} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName}
+        definitions={definitions}
+        sidePanelView={true}
+      />
+    );
+
+    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(queryByLabelText("propertyName-header")).toBeInTheDocument();
+    expect(queryByLabelText("type-header")).toBeInTheDocument();
+    expect(queryByLabelText("delete-header")).toBeInTheDocument();
+
+    expect(queryByLabelText("add-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("multiple-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("sort-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("identifier-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("pii-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("facet-header")).not.toBeInTheDocument();
+
+    //Rerender with structured model to verify that "Add" column appears only when there are structured types
+    let entityNameStruct = propertyTableEntities[2].entityName;
+    let definitionsStruct = propertyTableEntities[2].model.definitions;
+    rerender(<PropertyTable
+      canReadEntityModel={true}
+      canWriteEntityModel={true}
+      entityName={entityNameStruct}
+      definitions={definitionsStruct}
+      sidePanelView={true}
+    />
+    );
+
+    expect(getByText("Add Property")).toBeInTheDocument();
+    expect(queryByLabelText("propertyName-header")).toBeInTheDocument();
+    expect(queryByLabelText("type-header")).toBeInTheDocument();
+    expect(queryByLabelText("delete-header")).toBeInTheDocument();
+    expect(queryByLabelText("add-header")).toBeInTheDocument();
+
+    expect(queryByLabelText("multiple-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("sort-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("identifier-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("pii-header")).not.toBeInTheDocument();
+    expect(queryByLabelText("facet-header")).not.toBeInTheDocument();
+  });
+
+
   test("Property Table renders with basic datatypes, with writer role & hover text shows", async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
@@ -55,6 +108,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -101,6 +155,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={false}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -169,6 +224,7 @@ describe("Entity Modeling Property Table Component", () => {
           canWriteEntityModel={true}
           entityName={entityName}
           definitions={definitions}
+          sidePanelView={false}
         />
       </ModelingContext.Provider>
     );
@@ -207,6 +263,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -238,6 +295,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -280,6 +338,7 @@ describe("Entity Modeling Property Table Component", () => {
           canWriteEntityModel={true}
           entityName={entityName}
           definitions={definitions}
+          sidePanelView={false}
         />
       </ModelingContext.Provider>
     );
@@ -359,6 +418,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -387,6 +447,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -414,6 +475,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 
@@ -439,6 +501,7 @@ describe("Entity Modeling Property Table Component", () => {
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
+        sidePanelView={false}
       />
     );
 

@@ -18,6 +18,14 @@ class GraphViewSidePanel {
   getEntityTypeTab() {
     return cy.findByLabelText("entityTypeTabInSidePanel");
   }
+
+  getPropertyTableHeader(headerName: string) {
+    return cy.findByLabelText(`${headerName}-header`);
+  }
+
+  getPropertyName(propName: string) {
+    return cy.findByTestId(`${propName}-span`);
+  }
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();

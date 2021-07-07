@@ -7,11 +7,14 @@ import {ModelingTooltips} from "../../../../config/tooltips.config";
 import {CloseOutlined} from "@ant-design/icons";
 import {Menu} from "antd";
 import {ModelingContext} from "../../../../util/modeling-context";
+import PropertiesTab from "../properties-tab/properties-tab";
 
 type Props = {
   entityTypes: any;
   onCloseSidePanel: () => void;
   deleteEntityClicked: (selectedEntity) => void;
+  canWriteEntityModel: any;
+  canReadEntityModel: any;
 };
 
 const DEFAULT_TAB = "properties";
@@ -26,7 +29,14 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   const displayPanelContent = () => {
-    return currentTab === "entityType" ? <div>Dummy content for Entity Type tab.</div> : <div>Dummy content for Properties tab.</div>;
+    return currentTab === "entityType" ?
+      <div>Dummy content for Entity Type tab.</div>
+      :
+      <PropertiesTab
+        entityTypeData={props.entityTypes.find(e => e.entityName === modelingOptions.selectedEntity)}
+        canWriteEntityModel={props.canWriteEntityModel}
+        canReadEntityModel={props.canReadEntityModel}
+      />;
   };
 
   return (
