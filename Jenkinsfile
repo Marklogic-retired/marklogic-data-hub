@@ -720,11 +720,6 @@ pipeline{
 		stage('tests'){
 		parallel{
 		stage('cypresse2e'){
-        when {
-//            expression {return !env.NO_UI_TESTS}
-            beforeAgent true
-        }
-//		agent { label 'dhfLinuxAgent'}
         agent { label 'rh7v-10-dhf-5.marklogic.com'}
 		steps{runCypressE2e()}
         post{
