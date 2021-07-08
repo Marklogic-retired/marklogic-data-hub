@@ -227,6 +227,13 @@ class BaseTest extends Specification {
                 break
             case HubConfig.DEFAULT_JOB_NAME:
                 eval = _hubConfig.newJobDbClient().newServerEval()
+                break
+            case HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME:
+                eval = _hubConfig.newStagingClient(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME).newServerEval()
+                break
+            case HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME:
+                eval = _hubConfig.newFinalClient(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME).newServerEval()
+                break
         }
         try {
             return eval.xquery(query).eval()
