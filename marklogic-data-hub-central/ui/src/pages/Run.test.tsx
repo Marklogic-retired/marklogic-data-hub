@@ -144,7 +144,7 @@ describe("Verify load step failures in a flow", () => {
     // Click disclosure icon
     fireEvent.click(getByLabelText("icon: right"));
     let runButton = await getByLabelText("runStep-failedIngest");
-    fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]);
+    fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[1]);
     await waitForElement(() => getByText(RunToolTips.ingestionStep));
     fireEvent.mouseOver(getAllByLabelText("icon: close")[0]);
     await waitForElement(() => getByText(RunToolTips.removeStep));

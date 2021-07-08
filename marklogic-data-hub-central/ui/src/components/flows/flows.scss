@@ -1,11 +1,21 @@
 #panelActions {
-
     .ant-dropdown-trigger {
         margin-top: -4px;
-        height: 30px;
-        margin-right: 15px;
+        height: 32px;
+        margin-right: 16px;
+        margin-left: -8px;
     }
+}
 
+#stepsDropdown {
+    .ant-dropdown-trigger  {
+        padding: 0px !important;
+        width: 23%;
+        margin-right: 2.4vw;
+        &:hover{
+            background-color: #E9F7FE;
+        }
+    }
 }
 
 .stepMenu {
