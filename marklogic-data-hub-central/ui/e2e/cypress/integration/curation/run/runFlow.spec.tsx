@@ -24,7 +24,6 @@ describe("Run Tile tests", () => {
   });
 
   it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
-
     const flowName = "testPersonXML";
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click();
@@ -52,6 +51,35 @@ describe("Run Tile tests", () => {
     runPage.verifyStepInFlow("Custom", "generate-dictionary");
     //confirm the first load step is no longer visible because panel scrolled to the end
     cy.findByText("loadPersonXML").should("not.be.visible");
+
+    //Verify selected steps in run flow dropdown are executed successfully
+    runPage.openStepsSelectDropdown("testPersonXML");
+    cy.get("#mapPersonXML").click();
+    cy.get("#match-xml-person").click();
+    cy.get("#merge-xml-person").click();
+    cy.get("#master-person").click();
+    runPage.runFlow("testPersonXML");
+    tiles.closeRunMessage();
+    runPage.clickSuccessCircleIcon("mapPersonXML");
+    cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
+    tiles.closeRunMessage();
+    runPage.clickSuccessCircleIcon("match-xml-person");
+    cy.verifyStepRunResult("success", "Matching", "match-xml-person");
+    tiles.closeRunMessage();
+    runPage.clickSuccessCircleIcon("merge-xml-person");
+    cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
+    tiles.closeRunMessage();
+
+    //Verify if no step is selected in run flow dropdown; all steps are executed
+    runPage.expandFlow("testCustomFlow");
+    runPage.runFlow("testCustomFlow");
+    cy.uploadFile("input/test-1.zip");
+    cy.waitForAsyncRequest();
+    tiles.closeRunMessage();
+    runPage.expandFlow("testCustomFlow");
+    runPage.clickSuccessCircleIcon("mapping-step");
+    cy.verifyStepRunResult("success", "Custom", "mapping-step");
+    tiles.closeRunMessage();
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML");

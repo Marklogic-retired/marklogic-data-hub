@@ -99,6 +99,17 @@ class RunPage {
     cy.waitForAsyncRequest();
   }
 
+  openStepsSelectDropdown(flowName: string) {
+    cy.findByLabelText(`stepSettings-${flowName}`).first().click();
+  }
+
+  clickSuccessCircleIcon(stepName: string) {
+    cy.findByTestId(`check-circle-${stepName}`).click();
+  }
+
+  runFlow(flowName :string) {
+    cy.findByTestId(`runFlow-${flowName}`).click();
+  }
 }
 
 const runPage = new RunPage();

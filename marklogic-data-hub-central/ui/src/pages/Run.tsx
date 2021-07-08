@@ -9,7 +9,7 @@ import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
-import {MLButton} from "@marklogic/design-system";
+import {MLButton, MLSpin} from "@marklogic/design-system";
 import {getMappingArtifactByStepName} from "../api/mapping";
 
 const {Panel} = Collapse;
@@ -38,6 +38,7 @@ const Run = (props) => {
   const [runEnded, setRunEnded] = useState<any>({});
   const [running, setRunning] = useState<any[]>([]);
   const [uploadError, setUploadError] = useState("");
+  const [isStepRunning, setIsStepRunning] = useState(false);
 
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -198,12 +199,6 @@ const Run = (props) => {
     setFlows(newFlows);
   };
 
-
-  // function formatStepType(stepType){
-  //     stepType = stepType.toLowerCase();
-  //     return stepType[0].toUpperCase() + stepType.substr(1);
-  // }
-
   const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
     if (stepType === "ingestion") {
       history.push({
@@ -229,6 +224,7 @@ const Run = (props) => {
     const stepName = step.stepName;
     const stepType = step.stepDefinitionType;
     const stepNumber = step.stepNumber;
+    const stepStatus = step.lastRunStatus;
     const targetDatabase = getFromPath(["stepResponses", stepNumber, "targetDatabase"], response);
     let entityName;
 
@@ -237,16 +233,26 @@ const Run = (props) => {
       let splitTargetEntity = targetEntityType.split("/");
       entityName = splitTargetEntity[splitTargetEntity.length - 1];
     }
-
-    if (response["jobStatus"] === Statuses.FINISHED) {
+    if (response["jobStatus"] === Statuses.FINISHED || (stepStatus !== undefined && stepStatus.indexOf("completed step") !== -1)) {
       showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber);
     } else if (response["jobStatus"] === Statuses.FINISHED_WITH_ERRORS) {
-      let errors = getErrors(response);
+      let errors = getErrors(response, stepNumber);
       showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber);
     } else if (response["jobStatus"] === Statuses.FAILED) {
-      let errors = getErrors(response);
+      let errors = getErrors(response, stepNumber);
       showFailed(stepName, stepType, errors.slice(0, 1));
     }
+  }
+
+  function showStepsRunSuccess(flowName) {
+    Modal.success({
+      title: <div><p style={{fontWeight: 400}}>The selected steps in <strong>{flowName}</strong> flow completed successfully</p></div>,
+      icon: <Icon type="check-circle" theme="filled"/>,
+      okText: "Close",
+      mask: false,
+      width: 650,
+    });
+    setIsStepRunning(false);
   }
 
   function showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber) {
@@ -273,11 +279,10 @@ const Run = (props) => {
     });
   }
 
-  function getErrors(response) {
+  function getErrors(response, stepNumber) {
     let errors = [];
     if (response["stepResponses"]) {
-      let stepProp = Object.keys(response["stepResponses"])[0];
-      errors = response["stepResponses"][stepProp]["stepOutput"];
+      errors = response["stepResponses"][stepNumber]["stepOutput"];
     }
     return errors;
   }
@@ -362,7 +367,7 @@ const Run = (props) => {
         <span className={styles.errorLabel}>Details:</span>  <span style={{whiteSpace: "pre-line"}}> {errorObject.stack}</span>
       </div>;
     } catch (ex) {
-      return  <div><span className={styles.errorLabel}>Message:</span>  <span style={{whiteSpace: "pre-line"}}> {e}</span> </div>;
+      return  <div key={e}><span className={styles.errorLabel} >Message:</span>  <span style={{whiteSpace: "pre-line"}}> {e}</span> </div>;
     }
   }
 
@@ -397,6 +402,58 @@ const Run = (props) => {
     };
     return new Promise(checkStatus);
   }
+  const runFlowSteps = async (flowName, stepNumbers, formData) => {
+    setIsStepRunning(true);
+    let stepNumber=[{}];
+    for (let i=0; i<stepNumbers.length;i++) {
+      stepNumber.push(stepNumbers[i].stepNumber);
+    }
+    stepNumber.shift();
+    let response;
+    try {
+      setIsLoading(true);
+      if (formData) {
+        response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumber}`, formData, {headers: {
+          "Content-Type": "multipart/form-data; boundary=${formData._boundary}", crossorigin: true
+        }});
+      } else {
+        response = await axios.post("/api/flows/" + flowName + `/run?stepNumbers=${stepNumber}`);
+      }
+      if (response.status === 200) {
+        let jobId = response.data.jobId;
+        await setTimeout(function() {
+          poll(async    function () {
+            const res = await axios.get("/api/jobs/" + jobId);
+            return res;
+          }, pollConfig.interval)
+            .then(function(response: any) {
+              if (stepNumbers.length === 0) {
+                for (let i=1;i<=Object.keys(response.stepResponses).length;i++) {
+                  stepNumbers.push(response.stepResponses[i]);
+                }
+              }
+              for (let i=0; i<stepNumbers.length;i++) {
+                setRunEnded({flowId: flowName, stepId: stepNumbers[i].stepNumber});
+                // showStepRunResponse(stepNumbers[i], jobId, response);
+              }
+              showStepsRunSuccess(flowName);
+            }).catch(function(error) {
+              console.error("Flow timeout", error);
+              for (let i=0; i<stepNumbers.length;i++) {
+                setRunEnded({flowId: flowName, stepId: stepNumbers[i]});
+              }
+            });
+        }, pollConfig.interval);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error running step", error);
+      setRunEnded({flowId: flowName, stepId: stepNumbers});
+      if (error.response && error.response.data && (error.response.data.message.includes("The total size of all files in a single upload must be 100MB or less.") || error.response.data.message.includes("Uploading files to server failed"))) {
+        setUploadError(error.response.data.message);
+      }
+    }
+  };
 
   // POST /flows​/{flowId}​/steps​/{stepId}
   const runStep = async (flowId, stepDetails, formData) => {
@@ -459,6 +516,10 @@ const Run = (props) => {
             [
               <div className={styles.intro} key={"run-intro"}>
                 <p>{tiles.run.intro}</p>
+                <div className={styles.running} style={{display: isStepRunning ? "block" : "none"}}>
+                  <div><MLSpin data-testid="spinner" /></div>
+                  <div className={styles.runningLabel}>Running...</div>
+                </div>
               </div>,
               <Flows
                 key={"run-flows-list"}
@@ -468,6 +529,7 @@ const Run = (props) => {
                 createFlow={createFlow}
                 updateFlow={updateFlow}
                 runStep={runStep}
+                runFlowSteps={runFlowSteps}
                 deleteStep={deleteStep}
                 canReadFlow={canReadFlow}
                 canWriteFlow={canWriteFlow}
@@ -480,6 +542,7 @@ const Run = (props) => {
                 showStepRunResponse={showStepRunResponse}
                 runEnded={runEnded}
                 onReorderFlow={onReorderFlow}
+                isStepRunning={isStepRunning}
               />
             ]
             :

@@ -2,6 +2,7 @@ import React, {useState, CSSProperties, useEffect, useContext, createRef} from "
 import {Collapse, Icon, Card, Modal, Menu, Dropdown} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import {MLButton} from "@marklogic/design-system";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
@@ -9,7 +10,7 @@ import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
 import "./flows.scss";
 import styles from "./flows.module.scss";
-import {MLTooltip, MLSpin} from "@marklogic/design-system";
+import {MLTooltip, MLSpin, MLCheckbox} from "@marklogic/design-system";
 import {useDropzone} from "react-dropzone";
 import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
@@ -32,6 +33,7 @@ interface Props {
   updateFlow: any;
   deleteStep: any;
   runStep: any;
+  runFlowSteps: any;
   canReadFlow: boolean;
   canWriteFlow: boolean;
   hasOperatorRole: boolean;
@@ -42,7 +44,8 @@ interface Props {
   flowsDefaultActiveKey: any;
   showStepRunResponse: any;
   runEnded: any;
-  onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
+  onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void;
+  isStepRunning: boolean
 }
 
 const StepDefinitionTypeTitles = {
@@ -94,6 +97,10 @@ const Flows: React.FC<Props> = (props) => {
   const [addFlowDirty, setAddFlowDirty] = useState({});
   const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
   const [hasQueriedInitialJobData, setHasQueriedInitialJobData] = useState(false);
+  const [selectedStepOptions, setSelectedStepOptions] = useState<any>({});
+  const [currentFlowName, setCurrentFlowName] = useState("");
+  const [selectedStepDetails, setSelectedStepDetails]= useState<any>([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+  const [runFlowClicked, setRunFlowClicked] = useState(false);
   const location = useLocation();
 
   // maintain a list of panel refs
@@ -141,7 +148,7 @@ const Flows: React.FC<Props> = (props) => {
     }
 
     // Shows job data for steps in a flow that is expanded in session storage
-    openFlows.forEach(flowKey => {
+    Array.from(openFlows).forEach(flowKey => {
       getFlowWithJobInfo(Number(flowKey));
     });
 
@@ -224,7 +231,6 @@ const Flows: React.FC<Props> = (props) => {
       getFlowWithJobInfo(num);
     }
   }, [props.runEnded]);
-
 
   useEffect(() => {
     if (props.newStepToFlowOptions && props.newStepToFlowOptions.startRunStep) {
@@ -412,6 +418,102 @@ const Flows: React.FC<Props> = (props) => {
     </Modal>
   );
 
+  const onCheckboxChange = (event, checkedValues, stepNumber, stepDefinitionType, flowNames, stepId, sourceFormat) => {
+    if (currentFlowName !== flowNames) {
+      if (currentFlowName.length > 0) {
+        let propertyNames=Object.getOwnPropertyNames(selectedStepOptions);
+        for (let i=0;i<propertyNames.length;i++) {
+          delete selectedStepOptions[propertyNames[i]];
+        }
+        for (let i=0;i<selectedStepDetails.length;i++) {
+          selectedStepDetails.shift();
+        }
+        setSelectedStepDetails({stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false});
+      }
+      setCurrentFlowName(flowNames);
+    }
+    let data={stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false, flowName: "", stepId: "", sourceFormat: ""};
+    data.stepName=checkedValues;
+    data.stepNumber=stepNumber;
+    data.stepDefinitionType=stepDefinitionType;
+    data.isChecked=event.target.checked;
+    data.flowName=flowNames;
+    data.stepId=stepId;
+    data.sourceFormat=sourceFormat;
+
+    let obj = selectedStepDetails;
+    if (data.isChecked) {
+      obj.push(data);
+    } else {
+      for (let i=0; i< obj.length;i++) {
+        if (obj[i].stepName === checkedValues) {
+          obj.splice(i, 1);
+        }
+      }
+    }
+    setSelectedStepDetails(obj);
+    setSelectedStepOptions({...selectedStepOptions, [checkedValues]: event.target.checked});
+    event.stopPropagation();
+  };
+
+  const flowMenu = (flowName) => {
+    return (
+      <Menu>
+        <Menu.ItemGroup title="Select the steps to include in the run.">
+          {props.flows.map((flow) => (
+            flow["name"] === flowName &&
+                       flow.steps.map((step, index)  => (
+                         <Menu.Item key={index}>
+                           <MLCheckbox
+                             id={step.stepName}
+                             checked={selectedStepOptions[step.stepName]}
+                             onClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)
+                             }
+                           >{step.stepName}</MLCheckbox>
+                         </Menu.Item>
+                       ))
+          ))}
+        </Menu.ItemGroup>
+      </Menu>
+    );
+  };
+
+  const handleRunFlow = async (index, name) => {
+    setRunFlowClicked(true);
+    const setKey = async () => {
+      await setActiveKeys(`${index}`);
+    };
+    setRunningFlow(name);
+    selectedStepDetails.shift();
+    let flag=false;
+
+    await selectedStepDetails.map(async step => {
+      if (step.stepDefinitionType === "ingestion") {
+        flag=true;
+        setRunningStep(step);
+        await setKey();
+        await openFilePicker();
+      }
+    });
+    if (Object.keys(selectedStepOptions).length === 0 && selectedStepOptions.constructor === Object) {
+      flag=true;
+      await setKey();
+      await openFilePicker();
+    }
+    if (!flag) {
+      let stepNumbers=[{}];
+      for (let i=0;i<selectedStepDetails.length;i++) {
+        stepNumbers.push(selectedStepDetails[i]);
+      }
+      stepNumbers.shift();
+      await props.runFlowSteps(name, stepNumbers)
+        .then(() => {
+          setSelectedStepOptions({});
+          setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+        });
+    }
+  };
+
   const stepMenu = (flowName) => {
     return (
       <Menu>
@@ -481,6 +583,18 @@ const Flows: React.FC<Props> = (props) => {
         event.preventDefault();
       }}
     >
+      <span id="stepsDropdown" className={styles.hoverColor}>
+        <Dropdown.Button
+          className={styles.runFlow}
+          overlay={flowMenu(name)}
+          data-testid={`runFlow-${name}`}
+          trigger={["click"]}
+          onClick={() => handleRunFlow(i, name)}
+          icon={<FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={`stepSettings-${name}`} className={styles.settingsIcon}/>}
+        >
+          <span className={styles.runIconAlign}><Icon type="play-circle" theme="filled"  className={styles.runIcon}/></span>
+          <span className={styles.runFlowLabel}>Run Flow</span>
+        </Dropdown.Button></span>
       <Dropdown
         overlay={stepMenu(name)}
         trigger={["click"]}
@@ -493,7 +607,6 @@ const Flows: React.FC<Props> = (props) => {
             size="default"
             aria-label={`addStep-${name}`}
             style={{}}
-            type="primary"
           >Add Step <DownOutlined /></MLButton>
           :
           <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}} placement="bottom">
@@ -564,11 +677,28 @@ const Flows: React.FC<Props> = (props) => {
       fl.forEach(file => {
         formData.append("files", file);
       });
-      await props.runStep(runningFlow, runningStep, formData)
-        .then(resp => {
-          setShowUploadError(true);
-          setFileList([]);
-        });
+
+      if (!runFlowClicked) {
+        await props.runStep(runningFlow, runningStep, formData)
+          .then(resp => {
+            setShowUploadError(true);
+            setFileList([]);
+          });
+      } else {
+        let stepNumbers=[{}];
+        for (let i=0;i<selectedStepDetails.length;i++) {
+          stepNumbers.push(selectedStepDetails[i]);
+        }
+        stepNumbers.shift();
+        await props.runFlowSteps(runningFlow, stepNumbers, formData)
+          .then(resp => {
+            setShowUploadError(true);
+            setFileList([]);
+            setSelectedStepOptions({});
+            setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+            setRunFlowClicked(false);
+          });
+      }
     }
   };
 
@@ -604,7 +734,7 @@ const Flows: React.FC<Props> = (props) => {
       return (
         <MLTooltip overlayStyle={{maxWidth: "200px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
           onClick={(e) => showStepRunResponse(step)}>
-          <Icon type="check-circle" theme="filled" className={styles.successfulRun} />
+          <Icon type="check-circle" theme="filled" className={styles.successfulRun} data-testid={`check-circle-${step.stepName}`}/>
         </MLTooltip>
       );
 
