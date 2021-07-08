@@ -160,6 +160,8 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubClearUserModules", type: ClearUserModulesTask, group: developGroup,
             description: "Clears user modules in the modules database, only leaving the modules " +
                 "that come with DataHub installation. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
+        project.task("hubClearUserSchemas", type: ClearUserSchemasTask, group: developGroup,
+            description: "Clears all user schemas in the staging, final schemas databases. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask,
             description: "Create a legacy mapping file in the project directory (does not deploy it to MarkLogic); " +
                 "only use this if your project has not been converted for Hub Central usage")

@@ -27,6 +27,7 @@ import com.marklogic.appdeployer.command.modules.DeleteTestModulesCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.command.security.*;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
@@ -72,6 +73,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 @Component
 public class DataHubImpl implements DataHub, InitializingBean {
@@ -1064,6 +1066,36 @@ public class DataHubImpl implements DataHub, InitializingBean {
         final boolean catchException = false;
         databaseManager.clearDatabase(databaseName, catchException);
         logger.info("Finished clearing database: " + databaseName + "; time elapsed: " + (System.currentTimeMillis() - start));
+    }
+
+    public void clearUserSchemas() {
+        final HubClient hubClientToUse = hubClient != null ? hubClient : hubConfig.newHubClient();
+
+        long start = System.currentTimeMillis();
+        logger.info("Clearing user schemas as user: " + hubClientToUse.getUsername());
+
+        String xquery = "cts:not-query(" +
+                "cts:collection-query((" +
+                "'http://marklogic.com/xdmp/temporal/axis', " +
+                "'http://marklogic.com/xdmp/temporal/collection', 'http://marklogic.com/xdmp/view'" +
+                "))" +
+                ")";
+
+        String fullQuery = "cts:uris((), (), " + xquery + ") ! xdmp:document-delete(.)";
+
+        DatabaseClient stagingSchemasClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS));
+        DatabaseClient finalSchemasClient = hubConfig.newFinalClient(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS));
+
+        Stream.of(stagingSchemasClient, finalSchemasClient).forEach(databaseClient -> {
+            try {
+                logger.info("Deleting user schemas in database '" + databaseClient.getDatabase() + "' via : " + fullQuery);
+                databaseClient.newServerEval().xquery(fullQuery).eval();
+            }
+            finally {
+                databaseClient.release();
+            }
+        });
+        logger.info("Finished clearing user schemas; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
     /**
