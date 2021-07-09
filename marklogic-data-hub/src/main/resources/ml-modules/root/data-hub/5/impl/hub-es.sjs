@@ -241,10 +241,19 @@ function generateProtectedPathConfig(models) {
   return response;
 }
 
+function getEntityInfoFromRecord(record) {
+  if (record instanceof Node) {
+    const infoNode = fn.head(record.xpath("/*:envelope/*:instance/*:info"));
+    return (infoNode instanceof ObjectNode) ? infoNode.toObject(): { title: fn.string(infoNode.xpath("./*:title")), version: fn.string(infoNode.xpath("./*:version"))};
+  }
+  return record.envelope && record.envelope.instance && record.envelope.instance.info;
+}
+
 module.exports = {
+  buildPathReferenceParts,
   findEntityServiceTitle,
   generateProtectedPathConfig,
-  buildPathReferenceParts,
-  getPropertyReferenceType,
-  getEntityDefinitionFromIRI
+  getEntityDefinitionFromIRI,
+  getEntityInfoFromRecord,
+  getPropertyReferenceType
 };

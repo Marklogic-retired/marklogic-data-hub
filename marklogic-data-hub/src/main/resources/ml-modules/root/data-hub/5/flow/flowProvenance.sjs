@@ -48,6 +48,8 @@ function queueProvenanceData(stepExecutionContext, outputContentArray) {
   const flowName = stepExecutionContext.flow.name;
   const stepDefinition = stepExecutionContext.stepDefinition;
   const flowStep = stepExecutionContext.flowStep;
+  // This is a temporary runtime option to enable the updated record provenance until it becomes the default
+  const latestProvenance = stepExecutionContext.combinedOptions.latestProvenance;
 
   if (xdmp.traceEnabled(consts.TRACE_FLOW)) {
     hubUtils.hubTrace(consts.TRACE_FLOW, `Generating provenance records for ${stepExecutionContext.describe()}`);
@@ -61,7 +63,7 @@ function queueProvenanceData(stepExecutionContext, outputContentArray) {
       const previousUris = hubUtils.normalizeToArray(content.previousUri || content.uri);
       const info = {
         derivedFrom: previousUris,
-        influencedBy: stepName,
+        influencedBy: latestProvenance ? `step:${stepName}` : stepName,
         status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
         metadata: {}
       };
@@ -73,9 +75,14 @@ function queueProvenanceData(stepExecutionContext, outputContentArray) {
         hubUtils.hubTrace(consts.TRACE_FLOW, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
       }
 
-      const provResult = isFineGranularity && !isMappingStep && content.provenance ?
-        buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) :
-        provLib.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+      let provResult;
+      if (isFineGranularity && !isMappingStep && content.provenance) {
+        provResult = buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info);
+      } else if (latestProvenance) {
+        provResult = provLib.buildRecordEntity(stepExecutionContext, content, [], info);
+      } else {
+        provResult = provLib.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+      }
 
       if (provResult instanceof Error) {
         hubUtils.error(provResult.message);
