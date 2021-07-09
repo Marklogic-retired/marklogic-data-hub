@@ -108,7 +108,25 @@ public class FlowController extends BaseController {
     @ResponseBody
     @Secured("ROLE_runStep")
     public ResponseEntity<RunFlowResponse> runStep(@PathVariable String flowName, @PathVariable String stepNumber, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles) {
-        FlowInputs inputs = new FlowInputs(flowName, stepNumber);
+        return ResponseEntity.ok(runStepsInAFlow(flowName, uploadedFiles, new String[] {stepNumber}));
+    }
+
+    @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
+    @ResponseBody
+    @Secured("ROLE_runStep")
+    public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestParam(value = "stepNumbers", required = false) String[] stepNumbers, @RequestPart(value = "files", required = false) MultipartFile[] uploadedFiles ) {
+        return ResponseEntity.ok(runStepsInAFlow(flowName, uploadedFiles, stepNumbers));
+    }
+
+    private RunFlowResponse runStepsInAFlow(String flowName, MultipartFile[] uploadedFiles, String ... stepNumbers) {
+        FlowInputs inputs;
+        if(stepNumbers == null || stepNumbers.length == 0){
+            inputs = new FlowInputs(flowName);
+        }
+        else{
+            inputs = new FlowInputs(flowName, stepNumbers);
+        }
+
         try{
             if(uploadedFiles != null && uploadedFiles.length > 0){
                 Path tempDir = Files.createTempDirectory("ingestion-");
@@ -131,7 +149,7 @@ public class FlowController extends BaseController {
         if(flowRunnerConsumer != null){
             flowRunnerConsumer.accept(flowRunner);
         }
-        return ResponseEntity.ok(runFlowResponse);
+        return runFlowResponse;
     }
 
     //Included for testing purposes.
