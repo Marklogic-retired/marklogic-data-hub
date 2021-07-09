@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.ws.rs.core.MediaType;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -283,6 +284,50 @@ public class FlowControllerTest extends AbstractMvcTest {
                     JsonNode response = parseJsonResponse(result);
                 assertEquals("finished", response.path("jobStatus").asText(), "The job response should indicate the steps ran successfully: " + response);
             });
+    }
+
+    @Test
+    void testFlow() throws Exception {
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/run-flow-test");
+
+        loginAsTestUserWithRoles("hub-central-step-runner");
+
+        final String flowName = "testFlow";
+
+        final String[] jobIds = new String[1];
+        // Run the flow
+        flowController.setFlowRunnerConsumer(FlowRunner::awaitCompletion);
+        MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));
+        mockMvc.perform(multipart(PATH + "/{flowName}/run", flowName)
+            .file(file1)
+            .file(file2)
+            .session(mockHttpSession))
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                JsonNode response = parseJsonResponse(result);
+                assertTrue(response.has("jobId"), "Running a step should result in a response with a jobId so that the " +
+                    "client can then query for job status; response: " + response);
+                jobIds[0] = response.get("jobId").asText();
+            });
+
+
+        // Check on the Job
+        getJson("/api/jobs/" + URLEncoder.encode(jobIds[0],"UTF-8"))
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                JsonNode response = parseJsonResponse(result);
+                assertNotNull(response.get("stepResponses").get("1"));
+                assertEquals("completed step 1", response.get("stepResponses").get("1").get("status").asText());
+                assertNotNull(response.get("stepResponses").get("2"));
+                assertEquals("completed step 2", response.get("stepResponses").get("2").get("status").asText());
+                assertEquals("2", response.get("lastAttemptedStep").asText());
+                assertEquals("2", response.get("lastCompletedStep").asText());
+                assertEquals("finished", response.path("jobStatus").asText(), "The job response should indicate the steps ran successfully: " + response);
+            });
+        assertTrue(getFinalDoc("/data/file1.json").path("processed").asBoolean(false), "Document should have processed attribute set to true");
+
     }
 
     @Test
