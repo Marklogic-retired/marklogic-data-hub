@@ -16,9 +16,12 @@
 'use strict';
 const consts = require("/data-hub/5/impl/consts.sjs");
 const config = require("/com.marklogic.hub/config.sjs");
+const hubES = require("/data-hub/5/impl/hub-es.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const ps = require('/MarkLogic/provenance');
 const op = require('/MarkLogic/optic');
+const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
+
 let commitQueue = [];
 
 function newProvId(jobId, flowId, stepType, docUri) {
@@ -144,22 +147,27 @@ function createRecords(recordsQueue) {
       for (let recordDetails of recordsQueue) {
         let options = recordDetails.options || {};
         options.dateTime = String(fn.currentDateTime());
-        options.namespaces = { "dhf":"http://marklogic.com/dhf" }; // for user defined provenance types
+        // namespaces for user defined provenance types
+        options.namespaces = { 
+          dhf:"http://marklogic.com/dhf", 
+          job:"http://marklogic.com/data-hub/job#",
+          step:"http://marklogic.com/data-hub/step#",
+          user:"http://marklogic.com/data-hub/user#",
+          dh:"http://marklogic.com/data-hub/provenance#"
+        }; 
 
         // relations
         options.relations = options.relations || {};
-        options.relations.attributedTo = xdmp.getCurrentUser();
+        options.relations.attributedTo = options.relations.attributedTo || xdmp.getCurrentUser();
 
         // attributes
         options.attributes = options.attributes || {};
-        options.attributes.roles = xdmp.getCurrentRoles().toArray().join(',');
-        options.attributes.roleNames = xdmp.getCurrentRoles().toArray().map((r) => xdmp.roleName(r)).join(',');
 
         let metadata = recordDetails.metadata || {};
         if (metadata)
             Object.assign(options.attributes, metadata)
 
-        let record = ps.provenanceRecord(recordDetails.id, options);
+        let record = ps.provenanceRecord(fn.replace(recordDetails.id,"%%dateTime%%", options.dateTime), options);
         ps.provenanceRecordInsert(record);
       }
       `,
@@ -675,7 +683,72 @@ function findProvenance(docUri, relations) {
   }, { 'database': xdmp.database(config.JOBDATABASE) }).toArray();
 }
 
+function urisToLatestProvIDs(sourceURIs, database) {
+  return fn.head(hubUtils.invokeFunction(() => {
+      return sourceURIs.map((sourceURI) => {
+        const match = {
+          attributes: {
+            documentURI: sourceURI,
+            database
+          }
+        };
+        const output = {
+          dateTime: '?'
+        };
+        const kvPattern = ps.opTriplePattern(match, output);
+        //get latest dateTime
+        const result = fn.head(op.fromTriples(kvPattern)
+          .select(['dateTime'])
+          .orderBy(op.desc('dateTime'))
+          .limit(1).result());
+        return result ? `${database}:${sourceURI}#${result.dateTime}`: sourceURI;
+      });
+    },
+    config.JOBDATABASE));
+}
+
+function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info) {
+  let resp = [];
+  const jobId = stepExecutionContext.jobId;
+  const stepName = stepExecutionContext.flowStep.name;
+  const targetDatabase = stepExecutionContext.getTargetDatabase();
+  const entityInfo = hubES.getEntityInfoFromRecord(contentObject.value);
+  const sourceProvIDs = contentObject.previousUri ? urisToLatestProvIDs(hubUtils.normalizeToArray(contentObject.previousUri)): [];
+  let provId = `${targetDatabase}:${contentObject.uri}#%%dateTime%%`
+  let attributes = {
+      documentURI: contentObject.uri,
+      database: targetDatabase,
+      stepName
+  };
+  let provTypes = ["ps:Document"];
+  if (info && info.status) {
+    provTypes.push(`dhf:Doc${hubUtils.capitalize(info.status)}`);
+  }
+  if (entityInfo) {
+    provTypes.push("ps:Entity");
+    provTypes.push(entityInfo.title);
+    attributes.entityName = entityInfo.title;
+    attributes.entityVersion = entityInfo.version;
+  }
+  let influencedBy = info && info.influencedBy;
+  let recordOpts = {
+    provTypes,
+    attributes,
+    relations: {
+      generatedBy: `job:${jobId}`,
+      attributedTo: `user:${xdmp.getCurrentUser()}`,
+      derivedFrom: sourceProvIDs,
+      hadMember: hadMember,
+      influencedBy
+    }
+  };
+  queueForCommit(provId, recordOpts, info.metadata);
+  resp = provId;
+  return resp;
+}
+
 module.exports = {
+  buildRecordEntity,
   commit,
   createStepDocumentAlterationRecord,
   createStepPropertyAlterationRecord,
