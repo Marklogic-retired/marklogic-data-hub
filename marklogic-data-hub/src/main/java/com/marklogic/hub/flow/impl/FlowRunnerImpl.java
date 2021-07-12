@@ -337,8 +337,7 @@ public class FlowRunnerImpl implements FlowRunner {
                         .onItemFailed((jobId, itemId)-> {
                             errorCount.incrementAndGet();
                             if(flow.isStopOnError()){
-                                jobStoppedOnError.set(true);
-                                stopJob(jobId);
+                                stopJobOnError(jobId);
                             }
                         });
 
@@ -347,6 +346,10 @@ public class FlowRunnerImpl implements FlowRunner {
                     }
                     stepResp = stepRunner.run();
                     stepRunner.awaitCompletion();
+                    final boolean stepFailed = stepResp.getStatus() != null && stepResp.getStatus().startsWith("failed");
+                    if (stepFailed && runningFlow.isStopOnError()) {
+                        stopJobOnError(runningJobId);
+                    }
                 }
                 catch (Exception e) {
                     stepResp = RunStepResponse.withFlow(flow).withStep(stepNum);
@@ -370,8 +373,7 @@ public class FlowRunnerImpl implements FlowRunner {
                     }
 
                     if(runningFlow.isStopOnError()) {
-                        jobStoppedOnError.set(true);
-                        stopJob(runningJobId);
+                        stopJobOnError(runningJobId);
                     }
                 }
                 finally {
@@ -450,6 +452,12 @@ public class FlowRunnerImpl implements FlowRunner {
                 }
             }
         }
+
+        private void stopJobOnError(String jobId) {
+            jobStoppedOnError.set(true);
+            stopJob(jobId);
+        }
+
     }
 
     public void awaitCompletion() {
