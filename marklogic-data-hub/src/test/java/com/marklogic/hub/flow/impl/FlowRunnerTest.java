@@ -130,7 +130,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         List<String> errors = stepResponse.getStepOutput();
         assertEquals(1, errors.size(), "Expecting an error due to the missing module");
         assertTrue(errors.get(0).contains("Unable to access module: /custom-modules/custom/value-step/main.sjs. " +
-            "Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module"),
+                "Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module"),
             "Did not find expected message in error; error: " + errors.get(0));
 
         assertEquals(2, stepResponse.getTotalEvents(), "Expecting 2, as there are 2 URIs matching the collection query");
@@ -235,7 +235,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
             "Per DHFPROD-6665, the DHF file ingester now includes a no-namespaced 'root' element around each of the elements constructed from a " +
                 "row in the delimited file. This matches what MLCP does, thereby avoiding confusion from a user getting different results from DHF " +
                 "and from MLCP.");
-     }
+    }
 
     @SuppressWarnings("deprecation")
     protected RunFlowResponse runFlow(String flowName, String commaDelimitedSteps, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
@@ -286,15 +286,18 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         verifyJobFinished(resp);
         assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
 
+        final String stopOnErrorReason = "Per DHFPROD-7570, if the sourceQuery fails for any reason, and the flow has stopOnError=true, then " +
+            "the flow should be stopped and the job status should be stop-on-error.";
+
         opts.put("sourceQueryLimit", -2);
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
         flowRunner.awaitCompletion();
-        assertEquals("failed", resp.getJobStatus(), "Unexpected job status: " + resp.toJson());
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), stopOnErrorReason);
 
         opts.put("sourceQueryLimit", "invalidValue");
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, new HashMap<>());
         flowRunner.awaitCompletion();
-        assertEquals("failed", resp.getJobStatus(), "Unexpected job status: " + resp.toJson());
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), stopOnErrorReason);
     }
 
     @Test
@@ -343,8 +346,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        assertEquals(JobStatus.FINISHED_WITH_ERRORS.toString(), resp.getJobStatus(), "Since one step completed and " +
-            "the other failed, the status should be finished with errors: " + resp.toJson());
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), "Per DHFPROD-7570, since the sourceQuery failed and " +
+            "stopOnError=true, the job status should be stop-on-error, even though one step did complete successfully");
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
 
@@ -355,8 +358,9 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        assertEquals(JobStatus.FAILED.toString(), resp.getJobStatus(), "Since all steps failed (there was just one step), " +
-            "the status should be failed: " + resp.toJson());
+        
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), "Per DHFPROD-7570, since the sourceQuery failed " +
+            "and stopOnError=true, the job status should be stop-on-error");
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
         stepResponse = resp.getStepResponses().get("6");
         assertEquals("failed step 6", stepResponse.getStatus());
@@ -496,7 +500,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
             .withOption("throwErrorOnPurpose", true)
         );
 
-        assertEquals("stop-on-error", response.getJobStatus());
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus());
         assertEquals("1", response.getLastAttemptedStep());
         assertEquals("0", response.getLastCompletedStep());
 
@@ -510,6 +514,35 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         assertEquals(1, response.getStepResponses().keySet().size(),
             "The second step should not have been run since stopOnError=true");
+    }
+
+    @Test
+    void stopOnErrorIsTrueAndSourceQueryThrowsError() {
+        installReferenceModelProject().createRawCustomer(1, "Jane");
+
+        RunFlowResponse response = runFlow(new FlowInputs("customHookFlow", "1", "2")
+            .withOption("stopOnError", true)
+            .withOption("sourceQuery", "cts.collectionQuery('this should throw an error")
+        );
+
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus());
+        assertEquals("1", response.getLastAttemptedStep());
+        assertEquals("0", response.getLastCompletedStep());
+        assertEquals(1, response.getStepResponses().keySet().size(),
+            "The second step should not have been run since stopOnError=true");
+
+        RunStepResponse stepResponse = response.getStepResponses().get("1");
+        assertEquals(0, stepResponse.getTotalEvents(), "Total events is zero because the collector failed");
+        assertEquals(0, stepResponse.getSuccessfulEvents());
+        assertEquals(0, stepResponse.getFailedEvents());
+        assertEquals(0, stepResponse.getSuccessfulBatches());
+        assertEquals(0, stepResponse.getFailedBatches());
+        assertFalse(stepResponse.isSuccess());
+        assertEquals("failed step 1", stepResponse.getStatus(), "The step status is 'failed' since the sourceQuery could not be evaluated");
+        assertEquals(1, stepResponse.getStepOutput().size());
+        assertTrue(stepResponse.getStepOutput().get(0).contains("Unable to collect items to process for flow customHookFlow and step 1"));
+        assertTrue(stepResponse.getStepOutput().get(0).contains("Invalid or unexpected token"),
+            "The stepOutput should have a stacktrace that includes the ML-generated error message");
     }
 
     @Test
@@ -587,7 +620,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         final String status = resp.getJobStatus() != null ? resp.getJobStatus().toLowerCase() : "";
         assertEquals(JobStatus.CANCELED.toString().toLowerCase(), status,
             "Expected the response status to be canceled, since the job was stopped before it finished, but was instead: " + status
-         + ". If this failed in Jenkins, it likely can be ignored because we don't have a firm idea of how long the " +
+                + ". If this failed in Jenkins, it likely can be ignored because we don't have a firm idea of how long the " +
                 "thread that stops the job should wait until it stops the job; response: " + resp.toJson());
     }
 
