@@ -81,3 +81,15 @@
   display: inline-block;
 }
 
+
+.svgBox{
+  fill: #cfe3e8;
+  cursor: pointer;
+}
+.svgBox:hover{
+  fill: blue;
+}
+.customIcon{
+  fill: black;
+  font-size: 16px;
+};
