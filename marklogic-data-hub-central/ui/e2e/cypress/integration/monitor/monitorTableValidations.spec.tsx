@@ -130,6 +130,7 @@ describe("Monitor Tile", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
     cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
+    cy.findByTestId("step-loadCustomersJSON-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").should("be.checked");
     browsePage.getFacetItemCheckbox("status", "finished").click();
     browsePage.getFacetItemCheckbox("step", "mapPersonJSON").click();

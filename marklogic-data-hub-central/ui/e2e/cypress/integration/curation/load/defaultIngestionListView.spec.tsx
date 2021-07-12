@@ -159,6 +159,7 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    cy.wait(1000);
     runPage.getFlowName(flowName).should("not.exist");
   });
   // NOTE Moved testing of adding step to a new flow and running the step to RTL unit tests
