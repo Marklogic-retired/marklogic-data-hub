@@ -57,7 +57,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.waitForAsyncRequest();
     cy.findByText(loadStep).should("be.visible");
   });
-  it("Edit load step", () => {
+  it("Edit load step", {defaultCommandTimeout: 120000}, () => {
     // Open step settings and switch to Advanced tab
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();

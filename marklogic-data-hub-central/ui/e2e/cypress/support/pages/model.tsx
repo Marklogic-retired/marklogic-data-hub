@@ -4,7 +4,7 @@ class ModelPage {
   * @param type - accepts `table` for table-view or `project-diagram` for graph-view
   */
   selectView(view: string) {
-    return cy.get(`[data-icon="${view}"]`).trigger("mouseover").click();
+    return cy.get(`[data-icon="${view}"]`).trigger("mouseover").click({force: true});
   }
 
   getAddEntityButton() {
