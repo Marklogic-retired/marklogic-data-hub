@@ -1,0 +1,34 @@
+.legend {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+
+  .legendText {
+    font-size: 14px;
+    margin-right: 18px;
+    img, svg {
+      margin-right: 2px;
+    }
+  }
+
+  .foreignKeyLegendText {
+    font-size: 14px;
+    margin-right: 18px;
+  }
+
+  .foreignKeyIcon {
+    color: #37AA6C;
+    font-size: 14px;
+  }
+
+  .structuredIcon {
+    color: #5B69AF;
+    font-size: 14px;
+  }
+
+  .arrayImage {
+    margin-bottom: 4px
+  }
+}
