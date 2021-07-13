@@ -216,6 +216,11 @@ declare function get-first-prov-document()
   invoke-in-db(function() {fn:collection("http://marklogic.com/provenance-services/record")[1]}, $config:JOB-DATABASE)
 };
 
+declare function get-prov-documents()
+{
+  invoke-in-db(function() {fn:collection("http://marklogic.com/provenance-services/record")}, $config:JOB-DATABASE)
+};
+
 declare function get-final-schema($uri as xs:string)
 {
   xdmp:eval("fn:doc('" || $uri || "')", (), 
