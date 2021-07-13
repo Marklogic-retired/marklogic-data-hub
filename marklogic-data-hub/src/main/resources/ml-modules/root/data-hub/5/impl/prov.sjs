@@ -707,6 +707,21 @@ function urisToLatestProvIDs(sourceURIs, database) {
     config.JOBDATABASE));
 }
 
+function queueSourceProvenance(sourceLabel, stepExecutionContext, sourceProvIDs) {
+  const sourceProvID = `external:${sourceLabel}#%%dateTime%%`;
+  const sourceRecordOptions = {
+    provTypes: ["dh:Source","ps:Application"],
+    label: sourceLabel,
+    attributes: {
+      file: stepExecutionContext.combinedOptions.file,
+      dataSourceName: stepExecutionContext.combinedOptions.sourceName,
+      dataSourceType: stepExecutionContext.combinedOptions.sourceType
+    }
+  };
+  sourceProvIDs.push(sourceProvID);
+  queueForCommit(sourceProvID, sourceRecordOptions, {});
+}
+
 function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info) {
   let resp = [];
   const jobId = stepExecutionContext.jobId;
@@ -723,6 +738,10 @@ function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info)
   let provTypes = ["ps:Document"];
   if (info && info.status) {
     provTypes.push(`dhf:Doc${hubUtils.capitalize(info.status)}`);
+    const sourceLabel = stepExecutionContext.combinedOptions.file || stepExecutionContext.combinedOptions.sourceName;
+    if (info.status === "created" && sourceLabel) {
+      queueSourceProvenance(sourceLabel, stepExecutionContext, sourceProvIDs);
+    }
   }
   if (entityInfo) {
     provTypes.push("ps:Entity");
@@ -743,7 +762,7 @@ function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info)
     }
   };
   queueForCommit(provId, recordOpts, info.metadata);
-  resp = provId;
+  resp.push(provId);
   return resp;
 }
 
