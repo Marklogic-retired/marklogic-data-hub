@@ -8,9 +8,9 @@ examples/* @rjrudin @srinathgit
 
 marklogic-data-hub/* @rjrudin @srinathgit @ryanjdew @rahulvudutala @akshaysonvane
 
-marklogic-data-hub-central/src/* @rjrudin @srinathgit @ryanjdew @rahulvudutala @akshaysonvane
+marklogic-data-hub-central/src/* @rjrudin @srinathgit @ryanjdew @rahulvudutala
 
-marklogic-data-hub-central/ui/* @wooldridge @briantang @xnikhil08 @Sanjeevani19 @akshaysonvane @AkshayBajajML @rahulvudutala
+marklogic-data-hub-central/ui/* @wooldridge @briantang @xnikhil08 @Sanjeevani19 @AkshayBajajML @rahulvudutala
 
 marklogic-data-hub-spark-connector/* @rjrudin @srinathgit @anu3990 @SameeraPriyathamTadikonda
 
