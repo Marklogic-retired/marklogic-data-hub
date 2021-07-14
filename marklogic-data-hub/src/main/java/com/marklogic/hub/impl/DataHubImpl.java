@@ -43,9 +43,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.dataservices.ArtifactService;
-import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.*;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.mgmt.ManageClient;
@@ -73,6 +71,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -143,11 +142,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
         return appConfig != null ?
             new ServerManager(hubConfig.getManageClient(), appConfig.getGroupName()) :
             new ServerManager(hubConfig.getManageClient());
-    }
-
-    @Override
-    public void clearDatabase(String database) {
-        getDatabaseManager().clearDatabase(database);
     }
 
     private AdminManager getAdminManager() {
@@ -420,12 +414,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
         logger.info("Finished clearing user artifacts; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
-    public void deleteDocument(String uri, DatabaseKind databaseKind) {
-        String query = "xdmp:document-delete(\"" + uri + "\")";
-        logger.info("Deleting URI " + uri + " from " + databaseKind + " database.");
-        runInDatabase(query, hubConfig.getDbName(databaseKind));
-    }
-
     public List<Command> buildListOfCommands() {
         Map<String, List<Command>> commandMap = buildCommandMap();
         List<Command> commands = new ArrayList<>();
@@ -516,16 +504,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
      */
     @Override
     public void install() {
-        install(null);
-    }
-
-    /**
-     * Installs the data hub configuration and server-side config files into MarkLogic
-     *
-     * @param listener - the callback method to receive status updates
-     */
-    @Override
-    public void install(HubDeployStatusListener listener) {
         if (!hubConfig.getHubProject().isInitialized()) {
             initProject();
         }
@@ -554,9 +532,9 @@ public class DataHubImpl implements DataHub, InitializingBean {
             }
         }
 
-        HubAppDeployer finalDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setCommands(buildListOfCommands());
-        finalDeployer.deploy(appConfig);
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(buildListOfCommands());
+        deployer.deploy(appConfig);
     }
 
     /**
@@ -613,32 +591,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
         return Pattern.compile("(staging|final|job)-database.json");
     }
 
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     */
-    @Override
-    public void uninstall() {
-        uninstall(null);
-    }
-
-    /**
-     * Uninstalls the data hub configuration and server-side config files from MarkLogic
-     *
-     * @param listener - the callback method to receive status updates
-     */
-    @Override
-    public void uninstall(HubDeployStatusListener listener) {
-        logger.warn("Uninstalling the Data Hub and Final Databases/Servers from MarkLogic");
-        List<Command> commandMap = buildListOfCommands();
-
-        // Removing this command as databases are deleted by other DatabaseCommands
-        commandMap.removeIf(command -> command instanceof DeployDatabaseFieldCommand);
-
-        HubAppDeployer finalDeployer = new HubAppDeployer(getManageClient(), getAdminManager(), listener, hubConfig.newStagingClient());
-        finalDeployer.setCommands(commandMap);
-        finalDeployer.undeploy(hubConfig.getAppConfig());
-    }
-
     private void runInDatabase(String query, String databaseName) {
         ServerEvaluationCall eval = hubConfig.newModulesDbClient().newServerEval();
         String xqy =
@@ -652,6 +604,34 @@ public class DataHubImpl implements DataHub, InitializingBean {
         eval.xquery(xqy).eval().close();
     }
 
+    public void deployToReplicaClusterOnPremise() {
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(buildCommandsForDeployingToReplica());
+        deployer.deploy(hubConfig.getAppConfig());
+    }
+
+    /**
+     *
+     * @return a list of commands that equate to what a full deployment will run, minus any commands that can write to
+     * any of the 8 DHF databases (staging, final, jobs, modules, and then the 4 triggers and schemas databases)
+     */
+    public List<Command> buildCommandsForDeployingToReplica() {
+        Map<String, List<Command>> commandMap = buildCommandMap();
+        Stream.of(
+            "mlModuleCommands", "mlAlertCommands", "mlCpfCommands", "mlDataCommands", "mlSchemaCommands", "mlFlexrepCommands",
+            "mlTemporalCommands", "mlTriggerCommands", "mlViewCommands", "finishHubDeploymentCommands"
+        ).forEach(groupName -> commandMap.remove(groupName));
+
+        List<Command> commands = new ArrayList<>();
+        commandMap.values().forEach(commandList -> commands.addAll(commandList));
+        return commands;
+    }
+
+    /**
+     *
+     * @return a map of command groups. The initial map is based on what ml-app-deployer constructs, and then modifications
+     * are made to many of the groups based on DHF requirements.
+     */
     public Map<String, List<Command>> buildCommandMap() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
 
@@ -693,7 +673,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     private void updateSecurityCommandList(Map<String, List<Command>> commandMap) {
         for (Command c : commandMap.get("mlSecurityCommands")) {
             if (c instanceof DeployAmpsCommand) {
-                ((DeployAmpsCommand) c).setExecuteSortOrder(390);
+                ((DeployAmpsCommand) c).setExecuteSortOrder(new LoadHubModulesCommand().getExecuteSortOrder() - 1);
             }
         }
     }
@@ -842,23 +822,6 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     @Override
-    public void setPortInUseBy(DatabaseKind kind, String usedBy) {
-        switch (kind) {
-            case STAGING:
-                stagingPortInUseBy = usedBy;
-                break;
-            case FINAL:
-                finalPortInUseBy = usedBy;
-                break;
-            case JOB:
-                jobPortInUseBy = usedBy;
-                break;
-            default:
-                throw new InvalidDBOperationError(kind, "set if port in use");
-        }
-    }
-
-    @Override
     public String getPortInUseBy(DatabaseKind kind) {
         String inUseBy;
         switch (kind) {
@@ -883,21 +846,11 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     @Override
-    public void setServerVersionOk(boolean serverVersionOk) {
-        this.serverVersionOk = serverVersionOk;
-    }
-
-    @Override
     public String getServerVersion() {
         if(serverVersion == null) {
             serverVersion = versions.getMarkLogicVersionString();
         }
         return serverVersion;
-    }
-
-    @Override
-    public void setServerVersion(String serverVersion) {
-        this.serverVersion = serverVersion;
     }
 
     @Override
