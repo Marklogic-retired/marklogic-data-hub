@@ -8,8 +8,8 @@ import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
 import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.dhs.installer.deploy.CopyQueryOptionsCommand;
@@ -34,7 +34,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
         if(canInstall.get("canBeInstalled").asBoolean()){
             logger.info("Installing DHF version " + hubConfig.getJarVersion());
 
-            HubAppDeployer deployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
+            SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
 
             String groupName = "Evaluator";
             modifyHubConfigForDhs(groupName);
