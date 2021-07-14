@@ -16,11 +16,8 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.deploy.util.HubDeployStatusListener;
 import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
-
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,13 +26,6 @@ import java.util.Map;
  * Includes installs, version validation, updates, and the init of a DHF project.
  */
 public interface DataHub {
-
-    /**
-     * Clears the database of all documents
-     * @param database - the name of the database in string form
-     */
-
-    void clearDatabase(String database);
 
     /**
      * Determines if the data hub is installed in MarkLogic
@@ -62,13 +52,6 @@ public interface DataHub {
     void clearUserModules();
 
     /**
-     * Deletes document based on supplied doc uri in supplied database
-     * @param uri - document uri
-     * @param databaseKind - database type
-     */
-    void deleteDocument(String uri, DatabaseKind databaseKind);
-
-    /**
      * Runs the pre-install check for the datahub populating the object
      * with variables necessary to perform the install.
      * This is used for running install.
@@ -84,30 +67,10 @@ public interface DataHub {
     void install();
 
     /**
-     * Installs the data hub configuration and server-side config files into MarkLogic
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param listener - the callback method to receive status updates
-     */
-    void install(HubDeployStatusListener listener);
-
-    /**
      * Updates the indexes in the database based on the project
      * Must be run as a user with flow-developer-role or equivalent
      */
     void updateIndexes();
-
-    /**
-     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
-     * Must be run as a user with sufficient privileges to install a data hub.
-     */
-    void uninstall();
-
-    /**
-     * Uninstalls the data hub configuration, server-side config files and final databases and servers from MarkLogic
-     * Must be run as a user with sufficient privileges to install a data hub.
-     * @param listener - the callback method to receive status updates
-     */
-    void uninstall(HubDeployStatusListener listener);
 
     /**
      * Checks to make sure all the versions and database in a valid configuration with version check
@@ -124,13 +87,6 @@ public interface DataHub {
     boolean isPortInUse(DatabaseKind kind);
 
     /**
-     * Sets what appserver name is using the port
-     * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
-     * @param usedBy - string name of what is using the port
-     */
-    void setPortInUseBy(DatabaseKind kind, String usedBy);
-
-    /**
      * Returns name of what is using the port
      * @param kind - the DatabaseKind enum value (ex STAGING or JOB)
      * @return name of who using the port
@@ -144,22 +100,10 @@ public interface DataHub {
     boolean isServerVersionOk();
 
     /**
-     * Sets true or false if the server version is okay with this version of DHF
-     * @param serverVersionOk - true if it compatible or false if it is not
-     */
-    void setServerVersionOk(boolean serverVersionOk);
-
-    /**
      * Returns the string presentation of the server version, eg: "9.03-1"
      * @return server version as a string, eg: "9.03-1"
      */
     String getServerVersion();
-
-    /**
-     * Sets the server version holder on the datahub object - currently unused
-     * @param serverVersion - server version as a string, eg: "9.03-1"
-     */
-    void setServerVersion(String serverVersion);
 
     /**
      * Upgrades the installed datahub on the server to this version of the DataHub

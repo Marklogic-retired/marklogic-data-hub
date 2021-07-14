@@ -17,17 +17,17 @@ import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsLSQTCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.deploy.HubAppDeployer;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubAmpsCommand;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.impl.VersionInfo;
 
 import java.io.File;
@@ -37,36 +37,39 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Handles deploying resources to DHS.
+ * Handles deploying to DHS.
  */
 public class DhsDeployer extends LoggingObject {
 
     public void deployAsDeveloper(HubConfigImpl hubConfig) {
-        throwExceptionIfMarkLogicVersionIsInvalid(hubConfig);
-        prepareAppConfigForDeployingToDhs(hubConfig);
-
-        HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
-        dhsDeployer.setCommands(buildCommandsForDeveloper(hubConfig));
-        dhsDeployer.deploy(hubConfig.getAppConfig());
+        deployWithCommands(hubConfig, buildCommandsForDeveloper(hubConfig));
     }
 
     public void deployAsSecurityAdmin(HubConfigImpl hubConfig) {
+        deployWithCommands(hubConfig, buildCommandsForSecurityAdmin());
+    }
+
+    public void deployToReplica(HubConfig hubConfig) {
+        deployWithCommands(hubConfig, buildCommandsForReplica(hubConfig));
+    }
+
+    private void deployWithCommands(HubConfig hubConfig, List<Command> commands) {
         throwExceptionIfMarkLogicVersionIsInvalid(hubConfig);
         prepareAppConfigForDeployingToDhs(hubConfig);
 
-        HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
-        dhsDeployer.setCommands(buildCommandsForSecurityAdmin());
-        dhsDeployer.deploy(hubConfig.getAppConfig());
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
     }
 
     public void throwExceptionIfMarkLogicVersionIsInvalid(HubConfig hubConfig) {
         MarkLogicVersion mlVersion = new MarkLogicVersion(hubConfig.getManageClient());
         if (!mlVersion.supportsDataHubFramework()) {
             throw new RuntimeException(String.format("Cannot proceed as this version of Data Hub does not support the detected version of MarkLogic:\n" +
-                    "MarkLogic host: %s\n" +
-                    "MarkLogic version: %s\n" +
-                    "Data Hub client version: %s\n" +
-                    "Please see https://docs.marklogic.com/datahub/refs/version-compatibility.html for information on the minimum required MarkLogic version.", hubConfig.getHost(), mlVersion.getVersionString(), VersionInfo.getBuildVersion()));
+                "MarkLogic host: %s\n" +
+                "MarkLogic version: %s\n" +
+                "Data Hub client version: %s\n" +
+                "Please see https://docs.marklogic.com/datahub/refs/version-compatibility.html for information on the minimum required MarkLogic version.", hubConfig.getHost(), mlVersion.getVersionString(), VersionInfo.getBuildVersion()));
         }
     }
 
@@ -90,7 +93,7 @@ public class DhsDeployer extends LoggingObject {
         removeHubInternalConfigFromConfigDirs(appConfig);
         addEntityConfigToConfigDirs(hubConfig.getHubProject(), appConfig);
 
-        if(hubConfig.getIsProvisionedEnvironment()){
+        if (hubConfig.getIsProvisionedEnvironment()) {
             setKnownValuesForDhsDeployment(hubConfig);
 
             // 8000 is not available in DHS
@@ -201,7 +204,18 @@ public class DhsDeployer extends LoggingObject {
         return commands;
     }
 
-    protected List<Command> buildCommandsForDeveloper(HubConfig hubConfig) {
+    protected List<Command> buildCommandsForReplica(HubConfig hubConfig) {
+        List<Command> commands = buildCommandsForDeveloperForReplica(hubConfig);
+        commands.addAll(buildCommandsForSecurityAdmin());
+        return commands;
+    }
+
+    /**
+     * @param hubConfig
+     * @return the list of commands for resources that a data-hub-developer can safely deploy to a replica cluster; all
+     * of these commands can thus safely run against a master cluster as well
+     */
+    private List<Command> buildCommandsForDeveloperForReplica(HubConfig hubConfig) {
         List<Command> commands = new ArrayList<>();
 
         DeployOtherDatabasesCommand deployOtherDatabasesCommand = new DeployOtherDatabasesCommand();
@@ -214,6 +228,26 @@ public class DhsDeployer extends LoggingObject {
 
         // Per DHFPROD-5073, need this so that OOTB DH fields/indexes can be restored in case they're removed by the user
         commands.add(new DeployDatabaseFieldCommand());
+
+        commands.add(new DeployScheduledTasksCommand());
+
+        /**
+         * Have run into an odd problem where when a user without the "security" role deploys QRs immediately after
+         * deploying PPs, the PPs don't work. Deploying PPs immediately after QRs does result in the PPs working. Or,
+         * deploying QRs some amount of time after deploying PPs works as well. So in this context, PPs are deployed
+         * after everything else is done, and QRs are deployed first based on the default sort order of the command.
+         */
+        DeployProtectedPathsCommand pathsCommand = new DeployProtectedPathsCommand();
+        pathsCommand.setExecuteSortOrder(Integer.MAX_VALUE);
+        commands.add(pathsCommand);
+
+        commands.add(new DeployHubQueryRolesetsCommand());
+
+        return commands;
+    }
+
+    protected List<Command> buildCommandsForDeveloper(HubConfig hubConfig) {
+        List<Command> commands = buildCommandsForDeveloperForReplica(hubConfig);
 
         commands.add(new DeployAlertConfigsCommand());
         commands.add(new DeployAlertActionsCommand());
@@ -230,19 +264,6 @@ public class DhsDeployer extends LoggingObject {
         commands.add(new DeployTemporalCollectionsLSQTCommand());
         commands.add(new DeployTriggersCommand());
         commands.add(new LoadSchemasCommand());
-        commands.add(new DeployScheduledTasksCommand());
-
-        /**
-         * Have run into an odd problem where when a user without the "security" role deploys QRs immediately after
-         * deploying PPs, the PPs don't work. Deploying PPs immediately after QRs does result in the PPs working. Or,
-         * deploying QRs some amount of time after deploying PPs works as well. So in this context, PPs are deployed
-         * after everything else is done, and QRs are deployed first based on the default sort order of the command.
-         */
-        DeployProtectedPathsCommand pathsCommand = new DeployProtectedPathsCommand();
-        pathsCommand.setExecuteSortOrder(Integer.MAX_VALUE);
-        commands.add(pathsCommand);
-
-        commands.add(new DeployHubQueryRolesetsCommand());
 
         return commands;
     }

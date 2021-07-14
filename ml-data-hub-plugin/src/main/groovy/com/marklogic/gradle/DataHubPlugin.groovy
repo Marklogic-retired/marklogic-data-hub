@@ -32,6 +32,7 @@ import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteJobsTask
 import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
 import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
+import com.marklogic.hub.gradle.task.DeployToReplicaTask
 import com.marklogic.hub.gradle.task.DescribeRoleTask
 import com.marklogic.hub.gradle.task.DescribeUserTask
 import com.marklogic.hub.gradle.task.FixCreatedByStepTask
@@ -39,6 +40,7 @@ import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.gradle.task.GenerateTestSuiteTask
+import com.marklogic.hub.gradle.task.HubDeployToReplicaTask
 import com.marklogic.hub.gradle.task.PreviewFixCreatedByStepTask
 import com.marklogic.hub.gradle.task.PrintInheritableRolesTask
 import com.marklogic.hub.gradle.task.PullChangesTask
@@ -109,10 +111,17 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Print the roles that can be inherited in a custom role created by a user with the data-hub-security-admin role")
 
         String deployGroup = "Data Hub Deploy"
+        project.task("mlDeployToReplica", group: deployGroup, type: DeployToReplicaTask,
+            description: "Deploys the DHF application in the same manner as mlDeploy, but will not deploy anything that " +
+                "involves writing data to a database, such as artifacts, modules, schemas, and triggers"
+        )
+        project.task("hubDeployToReplica", group: deployGroup, type: HubDeployToReplicaTask,
+            description: "Deploys DHS-allowable security resources and project configuration, but not any data that would be written to a database, " +
+                "as a user that must have both the data-hub-developer and data-hub-security-admin roles")
         project.task("hubDeployAsSecurityAdmin", group: deployGroup, type: DeployAsSecurityAdminTask,
-            description: "Deploy roles as a user with the data-hub-security-admin role")
+            description: "Deploy DHS-allowable security resources as a user with the data-hub-security-admin role")
         project.task("hubDeployAsDeveloper", group: deployGroup, type: DeployAsDeveloperTask,
-            description: "Deploy project configuration as a user with the data-hub-developer role"
+            description: "Deploy DHS-allowable project configuration as a user with the data-hub-developer role"
         )
             .dependsOn("mlPrepareBundles", "hubGeneratePii", "hubSaveIndexes") // Needed for https://github.com/marklogic-community/ml-gradle/wiki/Bundles
             .mustRunAfter("hubDeployAsSecurityAdmin")
