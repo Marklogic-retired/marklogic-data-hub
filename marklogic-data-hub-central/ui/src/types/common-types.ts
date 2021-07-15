@@ -22,6 +22,7 @@ export enum ConfirmationType {
 declare global {
   interface Window {
     pendo: any,
-    usePendo: any
+    usePendo: any,
+    graphVisApi: any
   }
 }
