@@ -38,6 +38,7 @@
     "react-dom": "^16.12.0",
     "react-drag-listview": "^0.1.6",
     "react-dropzone": "^11.2.0",
+    "react-graph-vis": "^1.0.7",
     "react-highlight-words": "^0.16.0",
     "react-html-parser": "^2.0.2",
     "react-json-view": "^1.19.1",
@@ -126,6 +127,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.21.3",
     "eslint-plugin-standard": "^4.0.1",
+    "jest-canvas-mock": "^2.3.1",
     "path": "^0.12.7"
   }
 }

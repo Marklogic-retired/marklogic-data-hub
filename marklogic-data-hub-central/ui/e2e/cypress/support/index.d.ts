@@ -104,5 +104,7 @@ declare namespace Cypress {
       waitForAsyncRequest(): Chainable<WaitXHR>
 
       getAttached(selector: any): Chainable<Element>
+
+      getGraphNodePositions(nodeid: any): Chainable<any>
     }
   }

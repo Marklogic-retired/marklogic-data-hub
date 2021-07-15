@@ -11,6 +11,7 @@ import SplitPane from "react-split-pane";
 import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import {defaultModelingView} from "../../../config/modeling.config";
+import GraphVis from "./graph-vis/graph-vis";
 
 type Props = {
   entityTypes: any;
@@ -111,19 +112,27 @@ const GraphView: React.FC<Props> = (props) => {
   };
 
   const graphViewMainPanel =
-  <div className={styles.graphViewContainer}>
-    <div className={styles.graphHeader}>
-      {filter}
-      {headerButtons}
-    </div>
-    <div>
-      {//Just a placeholder for actual graph view. Below code should be removed.
-        <ul>{props.entityTypes && props.entityTypes?.map((el) => <li data-testid={`${el.entityName}-entityNode`} key={el.entityName} style={{color: "blue", cursor: "pointer"}} onClick={(e) => handleEntitySelection(el.entityName)}>{el.entityName}</li>)}
-        </ul>
-        //--------------//
-      }
-    </div>
-  </div>;
+    <div className={styles.graphViewContainer}>
+      <div className={styles.graphHeader}>
+        {filter}
+        {headerButtons}
+      </div>
+      <div>
+        {//Just a placeholder for actual graph view. Below code should be removed.
+          // <ul>{props.entityTypes && props.entityTypes?.map((el) => <li data-testid={`${el.entityName}-entityNode`} key={el.entityName} style={{ color: "blue", cursor: "pointer" }} onClick={(e) => handleEntitySelection(el.entityName)}>{el.entityName}</li>)}
+          // </ul>
+          //--------------//
+        }
+      </div>
+      <div>
+        <GraphVis
+          entityTypes={props.entityTypes}
+          handleEntitySelection={handleEntitySelection}
+        />
+      </div>
+    </div>;
+
+
 
   return (
     !viewSidePanel ? graphViewMainPanel :

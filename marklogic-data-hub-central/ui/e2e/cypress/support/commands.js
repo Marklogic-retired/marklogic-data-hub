@@ -258,3 +258,9 @@ Cypress.Commands.add("getAttached", selector => {
     expect(Cypress.dom.isDetached($el)).to.be.false;
   }).then(() => cy.wrap($el));
 });
+
+Cypress.Commands.add("getGraphNodePositions", (nodeid) => {
+  return cy.window().then((win) => {
+    return win.graphVisApi.getGraphNodes(nodeid);
+  });
+});

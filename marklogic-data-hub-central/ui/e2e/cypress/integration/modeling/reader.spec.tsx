@@ -125,10 +125,10 @@ describe("Entity Modeling: Reader Role", () => {
   it("can view and edit Entity Type tab in side panel", () => {
     cy.loginAsDeveloper().withRequest();
     entityTypeTable.viewEntityInGraphView("Person").click({force: true});
-    graphViewSidePanel.getPersonEntityNode().click();
+    let coordinates:any  = cy.getGraphNodePositions("Person");
+    graphView.getGraphVisContainer().trigger("mousemove", {clientX: coordinates.x, clientY: coordinates.y});
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getPersonEntityDescription().should("be.visible");
-
     graphViewSidePanel.getPersonEntityDescription().clear();
     graphViewSidePanel.getPersonEntityNamespace().clear();
     graphViewSidePanel.getPersonEntityPrefix().clear();
