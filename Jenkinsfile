@@ -201,7 +201,7 @@ void runCypressE2e(String cmd){
   def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
   if(output.contains("npm ERR!")){
 //    currentBuild.result="FAILURE";
-    stageResult."{STAGE_NAME}" = "FAILURE"
+      stageResult."{STAGE_NAME}" = "FAILURE"
   }
 
   junit '**/e2e/**/*.xml'
@@ -664,6 +664,16 @@ void singleNodeTestOnLinux(String type,String mlVersion){
         }
 }
 
+void postStage(String status){
+    println("${STAGE_NAME} " + status)
+    def email;
+    if (env.CHANGE_AUTHOR) {
+       def author = env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+       email = getEmailFromGITUser author
+     } else {email = Email}
+     sendMail email, '<h3>All the ${STAGE_NAME} ' + status + ' on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>', false, '${STAGE_NAME} for  $BRANCH_NAME ' + status
+}
+
 pipeline{
 	agent none;
 	options {
@@ -801,56 +811,49 @@ pipeline{
             beforeAgent true
         }
 		agent { label 'dhfLinuxAgent'}
-		steps{runCypressE2e('npm run cy:run')}
+        steps{timeout(time: 3,  unit: 'HOURS'){
+          catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run')}
+        }}
         post{
-				  always{
-				  	sh 'rm -rf $WORKSPACE/xdmp'
-				  }
-                  success {
-                    println("E2e Tests Completed")
-                    script{
-                    env.CYPRESSE2E_TESTS_PASSED=true
-                    def email;
-                    if(env.CHANGE_AUTHOR){
-                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                     email=getEmailFromGITUser author
-                    }else{
-                    	email=Email
-                    }
-                    sendMail email,'<h3>All the E2E Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'E2E Tests for  $BRANCH_NAME Passed'
-                    }
-                   }
-                   unstable {
-                      println("E2E Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*,MLLogs/**/*"
-                      script{
-                      def email;
-                    if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
-                    }else{
-                    email=Email
-                    }
-                      sendMail email,'<h3>Some of the  E2E Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'E2E Tests for $BRANCH_NAME Failed'
-                      }
-                  }
-                  }
+		   always{sh 'rm -rf $WORKSPACE/xdmp' }
+           success {
+              script{env.CYPRESSE2E_TESTS_PASSED=true}
+              postStage('Tests Passed')
+           }
+           unstable {
+              sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+              archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*,MLLogs/**/*"
+              postStage('Tests Failed')
+           }
+           failure{
+              sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+              archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*,MLLogs/**/*"
+              postStage('Stage Failed')
+          }}
 		}
-
         stage('cypresse2e-firefox') {
             when {
                 expression { return params.regressions }
                 beforeAgent true
             }
- //           agent { label 'dhfLinuxAgent' }
+            //agent { label 'dhfLinuxAgent' }
             agent { label 'rh7v-10-dhf-5.marklogic.com' }
             steps{timeout(time: 3,  unit: 'HOURS'){
                 catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e('npm run cy:run-firefox-headed')}
             }}
-            post { always { sh 'rm -rf $WORKSPACE/xdmp' } }
+            post { always { sh 'rm -rf $WORKSPACE/xdmp' }
+              success {postStage('Tests Passed')}
+              unstable {
+                 sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                 archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*,MLLogs/**/*"
+                 postStage('Tests Failed')
+              }
+              failure{
+                 sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                 archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*,MLLogs/**/*"
+                 postStage('Stage Failed')
+              }}
         }
-
         stage('UI-tests'){
         when {
            expression {return !env.NO_UI_TESTS}
