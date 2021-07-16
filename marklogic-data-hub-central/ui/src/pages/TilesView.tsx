@@ -13,6 +13,7 @@ import Run from "./Run";
 import Monitor from "./Monitor";
 import Browse from "./Browse";
 import Detail from "./Detail";
+import Bootstrap from "./Bootstrap";
 import MatchingDetailStep from "../components/entities/matching/matching-step-detail/matching-step-detail";
 import {AuthoritiesContext} from "../util/authorities";
 import {SearchContext} from "../util/search-context";
