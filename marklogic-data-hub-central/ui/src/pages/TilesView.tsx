@@ -13,6 +13,7 @@ import Run from "./Run";
 import Monitor from "./Monitor";
 import Browse from "./Browse";
 import Detail from "./Detail";
+import Bootstrap from "./Bootstrap";
 import MatchingDetailStep from "../components/entities/matching/matching-step-detail/matching-step-detail";
 import {AuthoritiesContext} from "../util/authorities";
 import {SearchContext} from "../util/search-context";
@@ -21,7 +22,7 @@ import MergingStepDetail from "../components/entities/merging/merging-step-detai
 import {ConfigProvider} from "antd";
 import MappingStepDetail from "../components/entities/mapping/mapping-step-detail/mapping-step-detail";
 
-export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor";
+export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "bootstrap";
 export type IconType = "fa" | "custom";
 interface TileItem {
     title: string;
@@ -60,7 +61,8 @@ const TilesView = (props) => {
     curate: setCurateView(),
     run: <Run />,
     explore: location.pathname.startsWith("/tiles/explore/detail") ? <Detail /> : <Browse/>,
-    monitor: <Monitor />
+    monitor: <Monitor />,
+    bootstrap: <Bootstrap />,
   };
 
   const {
@@ -88,7 +90,8 @@ const TilesView = (props) => {
     curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge() || auth.canReadCustom(),
     run: auth.canReadFlow() || auth.canWriteFlow(),
     explore: true,
-    monitor: auth.canAccessMonitor()
+    monitor: auth.canAccessMonitor(),
+    bootstrap: true,
     // TODO - Needs to be updated if there are any changes in authorities for Explorer
     // explore: auth.canReadFlow() || auth.canWriteFlow(),
   };
