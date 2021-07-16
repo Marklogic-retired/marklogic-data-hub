@@ -16,6 +16,7 @@ import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
 import axios from "axios";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
+import Button from 'react-bootstrap/Button';
 
 
 enum ReorderFlowOrderDirection {
@@ -1052,12 +1053,21 @@ const Flows: React.FC<Props> = (props) => {
           <div className={styles.createContainer}>
             {
               props.canWriteFlow ?
-                <span> <MLButton
+                <span> 
+                  <Button 
+                    variant="primary"
+                    onClick={OpenAddNewDialog}
+                    onKeyDown={createFlowKeyDownHandler}
+                    aria-label={"create-flow"}
+                    tabIndex={0}
+                  >Create Flow</Button>
+                {/* <MLButton
                   className={styles.createButton} size="default"
                   type="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
                   aria-label={"create-flow"}
                   tabIndex={0}
-                >Create Flow</MLButton></span>
+                >Create Flow</MLButton> */}
+                </span>
                 :
                 <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}}>
                   <span className={styles.disabledCursor}>
