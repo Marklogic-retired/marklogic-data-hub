@@ -1,6 +1,7 @@
 import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram } from "@fortawesome/free-solid-svg-icons";
 
-export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore' | 'monitor';;
+// TODO Temporary test button for React Bootstrap components, 'bootstrap' to be removed.
+export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore' | 'monitor' | 'bootstrap';
 export type IconType = 'fa' | 'custom';
 export type ControlType = 'menu' | 'newTab' | 'maximize' | 'minimize' | 'close';
 
@@ -82,6 +83,18 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['menu', 'close'],
         intro: 'Monitor Flows and Steps',
+    },
+    // TODO Temporary test button for React Bootstrap components, 'bootstrap' property to be removed.
+    bootstrap: {
+        title: 'React Bootstrap',
+        iconType: 'custom',
+        icon: 'monitorIcon',
+        color: '#f09022',
+        bgColor: '#F4F6F8',
+        border: '#BFBFBF',
+        controlColor: '#777',
+        controls: ['menu', 'close'],
+        intro: 'Test sandbox for Boostrap UI components',
     }
 };
 

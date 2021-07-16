@@ -70,7 +70,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const resultsRef = useRef<HTMLDivElement>(null);
-  const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
+  let state: any = location.state;
+  const [cardView, setCardView] = useState(state && state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
 
   const getEntityModel = async () => {
@@ -179,18 +180,21 @@ const Browse: React.FC<Props> = ({location}) => {
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
-    if (location.state && location.state["zeroState"] === false && location.state["isBackToResultsClicked"]) {
+    let state: any = location.state;
+    if (state && state["zeroState"] === false && state["isBackToResultsClicked"]) {
       getSearchResults(entities);
     }
   }, []);
 
   useEffect(() => {
+    let state: any = location.state;
+
     if (searchOptions.zeroState && Object.keys(greyedOptions.selectedFacets).length) {
       clearAllGreyFacets();
     }
 
-    if (location.state && location.state.hasOwnProperty("savedQuery")) {
-      let savedQuery = location.state["savedQuery"];
+    if (state && state.hasOwnProperty("savedQuery")) {
+      let savedQuery = state["savedQuery"];
       let options: QueryOptions = {
         searchText: savedQuery["query"]["searchText"],
         entityTypeIds: savedQuery["query"]["entityTypeIds"],
@@ -202,37 +206,37 @@ const Browse: React.FC<Props> = ({location}) => {
         database: searchOptions.database,
       };
       applySaveQuery(options);
-    } else if (location.state && location.state.hasOwnProperty("zeroState") && !location.state["zeroState"]) {
-      setPageWithEntity(location.state["entity"],
-        location.state["pageNumber"],
-        location.state["start"],
-        location.state["searchFacets"],
-        location.state["query"],
-        location.state["sortOrder"],
-        location.state["targetDatabase"]);
-      location.state["tableView"] ? toggleTableView(true) : toggleTableView(false);
-    } else if (location.state
-      && location.state.hasOwnProperty("entityName")
-      && location.state.hasOwnProperty("targetDatabase")
-      && location.state.hasOwnProperty("jobId")
-      && location.state.hasOwnProperty("Collection")) {
+    } else if (state && state.hasOwnProperty("zeroState") && !state["zeroState"]) {
+      setPageWithEntity(state["entity"],
+        state["pageNumber"],
+        state["start"],
+        state["searchFacets"],
+        state["query"],
+        state["sortOrder"],
+        state["targetDatabase"]);
+        state["tableView"] ? toggleTableView(true) : toggleTableView(false);
+    } else if (state
+      && state.hasOwnProperty("entityName")
+      && state.hasOwnProperty("targetDatabase")
+      && state.hasOwnProperty("jobId")
+      && state.hasOwnProperty("Collection")) {
       setCardView(false);
-      setLatestJobFacet(location.state["jobId"], location.state["entityName"], location.state["targetDatabase"], location.state["Collection"]);
-    } else if (location.state
-      && location.state.hasOwnProperty("entityName")
-      && location.state.hasOwnProperty("targetDatabase")
-      && location.state.hasOwnProperty("jobId")) {
+      setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"], state["Collection"]);
+    } else if (state
+      && state.hasOwnProperty("entityName")
+      && state.hasOwnProperty("targetDatabase")
+      && state.hasOwnProperty("jobId")) {
       setCardView(false);
-      setLatestJobFacet(location.state["jobId"], location.state["entityName"], location.state["targetDatabase"]);
-    } else if (location.state && location.state.hasOwnProperty("entityName") && location.state.hasOwnProperty("jobId")) {
+      setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"]);
+    } else if (state && state.hasOwnProperty("entityName") && state.hasOwnProperty("jobId")) {
       setCardView(false);
-      setLatestJobFacet(location.state["jobId"], location.state["entityName"]);
-    } else if (location.state && location.state.hasOwnProperty("entity")) {
+      setLatestJobFacet(state["jobId"], state["entityName"]);
+    } else if (state && state.hasOwnProperty("entity")) {
       setCardView(false);
-      setEntityClearQuery(location.state["entity"]);
-    } else if (location.state && location.state.hasOwnProperty("targetDatabase") && location.state.hasOwnProperty("jobId")) {
+      setEntityClearQuery(state["entity"]);
+    } else if (state && state.hasOwnProperty("targetDatabase") && state.hasOwnProperty("jobId")) {
       setCardView(true);
-      setLatestDatabase(location.state["targetDatabase"], location.state["jobId"]);
+      setLatestDatabase(state["targetDatabase"], state["jobId"]);
     }
   }, [searchOptions.zeroState]);
 
@@ -251,11 +255,12 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const initializeUserPreferences = async () => {
+    let state: any = location.state;
     let defaultPreferences = getUserPreferences(user.name);
     if (defaultPreferences !== null) {
       let parsedPreferences = JSON.parse(defaultPreferences);
-      if (location.state) {
-        if (location.state["tileIconClicked"]) {
+      if (state) {
+        if (state["tileIconClicked"]) {
           await setZeroStateQueryOptions();
           let preferencesObject = {
             ...parsedPreferences,
