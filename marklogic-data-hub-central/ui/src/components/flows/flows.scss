@@ -23,3 +23,16 @@
     overflow: scroll;
     border: solid 1px #ddd;
 }
+
+#flows-container {
+    .btn-primary {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        height: 32px;
+        width: 110px;
+        background-color: #394494;
+        border-color: #394494;
+        margin: 0 0 20px 0;
+        padding: 0 15px;
+    }
+}

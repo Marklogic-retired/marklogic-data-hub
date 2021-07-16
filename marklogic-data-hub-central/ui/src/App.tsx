@@ -148,6 +148,9 @@ const App: React.FC<Props> = ({history, location}) => {
                       <PrivateRoute path="/tiles/monitor">
                         <TilesView id="monitor"/>
                       </PrivateRoute>
+                      <PrivateRoute path="/tiles/bootstrap">
+                        <TilesView id="bootstrap"/>
+                      </PrivateRoute>
                       <Route component={NoMatchRedirect}/>
                     </Switch>
                   </div>
