@@ -36,9 +36,10 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const detailPagePreferences = getPreferences(); //Fetching preferences first to be used later everywhere in the component
-  const uri = location.state && location.state["uri"] ? location.state["uri"] : detailPagePreferences["uri"];
-  const database = location.state && location.state["database"] ? location.state["database"] : detailPagePreferences["database"];
-  const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
+  let state: any = location.state;
+  const uri = state && state["uri"] ? state["uri"] : detailPagePreferences["uri"];
+  const database = state && state["database"] ? state["database"] : detailPagePreferences["database"];
+  const pkValue = state && state["primaryKey"] ? state["primaryKey"] : detailPagePreferences["primaryKey"];
   const [entityInstance, setEntityInstance] = useState({});
   const [selected, setSelected] = useState("");
   const [data, setData] = useState();
@@ -46,7 +47,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const [contentType, setContentType] = useState("");
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
-  const [sources, setSources] = useState(location && location.state && location.state["sources"] ? location.state["sources"] : []);
+  const [sources, setSources] = useState(location && state && state["sources"] ? state["sources"] : []);
   const [documentSize, setDocumentSize] = useState();
   const [entityInstanceDocument, setIsEntityInstanceDocument] = useState<boolean | undefined>(undefined);
   const [sourcesTableData, setSourcesTableData] = useState<any[]>([]);
@@ -138,12 +139,13 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
 
   useEffect(() => {
-    if (location.state && JSON.stringify(location.state) !== JSON.stringify({})) {
-      entityInstanceDocument && location.state.hasOwnProperty("selectedValue") && location.state["selectedValue"] === "source" ?
+    let state: any = location.state;
+    if (state && JSON.stringify(state) !== JSON.stringify({})) {
+      entityInstanceDocument && state.hasOwnProperty("selectedValue") && state["selectedValue"] === "source" ?
         setSelected("full") : setSelected("instance");
     } else {
-      if (location.state === undefined) {
-        location.state = {};
+      if (state === undefined) {
+        state = {};
       }
       entityInstanceDocument && setSelected(detailPagePreferences["selected"] ? detailPagePreferences["selected"] : "instance");
       handleUserPreferences();
@@ -230,26 +232,27 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const updateDetailPagePreferences = () => {
-    if (location.state && (location.state.hasOwnProperty("sources") || location.state.hasOwnProperty("uri") || location.state.hasOwnProperty("primaryKey") || location.state.hasOwnProperty("entityInstance"))) {
+    let state: any = location.state;
+    if (state && (state.hasOwnProperty("sources") || state.hasOwnProperty("uri") || state.hasOwnProperty("primaryKey") || state.hasOwnProperty("entityInstance"))) {
       let sources: any = [];
       let primaryKey: any = "";
       let uri: any = "";
       let entityInstance: any = {};
       let isEntityInstance = true;
-      if (location.state["sources"] && location.state["sources"].length) {
-        sources = location.state["sources"];
+      if (state["sources"] && state["sources"].length) {
+        sources = state["sources"];
       }
-      if (location.state["primaryKey"]) {
-        primaryKey = location.state["primaryKey"];
+      if (state["primaryKey"]) {
+        primaryKey = state["primaryKey"];
       }
-      if (location.state["uri"] && location.state["uri"].length) {
-        uri = location.state["uri"];
+      if (state["uri"] && state["uri"].length) {
+        uri = state["uri"];
       }
-      if (location.state["entityInstance"] && Object.keys(location.state["entityInstance"]).length) {
-        entityInstance = location.state["entityInstance"];
+      if (state["entityInstance"] && Object.keys(state["entityInstance"]).length) {
+        entityInstance = state["entityInstance"];
       }
-      if (location.state.hasOwnProperty("isEntityInstance") && location.state["isEntityInstance"]) {
-        isEntityInstance = location.state["isEntityInstance"];
+      if (state.hasOwnProperty("isEntityInstance") && state["isEntityInstance"]) {
+        isEntityInstance = state["isEntityInstance"];
       }
 
       let preferencesObject = {
@@ -257,7 +260,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
         sources: sources,
         primaryKey: primaryKey,
         uri: uri,
-        selected: location.state["selectedValue"] && location.state["selectedValue"] === "source" ? "full" : "instance",
+        selected: state["selectedValue"] && state["selectedValue"] === "source" ? "full" : "instance",
         entityInstance: entityInstance,
         isEntityInstance: isEntityInstance
       };
@@ -280,16 +283,16 @@ const Detail: React.FC<Props> = ({history, location}) => {
     pathname: "/tiles/explore",
     state: {
       zeroState: false,
-      entity: location.state && location.state.hasOwnProperty("entity") ? location.state["entity"] : parentPagePreferences["entity"],
-      pageNumber: location.state && location.state.hasOwnProperty("pageNumber") ? location.state["pageNumber"] : parentPagePreferences["pageNumber"],
-      start: location.state && location.state.hasOwnProperty("start") ? location.state["start"] : parentPagePreferences["start"],
-      searchFacets: location.state && location.state.hasOwnProperty("searchFacets") ? location.state["searchFacets"] : parentPagePreferences["searchFacets"],
-      query: location.state && location.state.hasOwnProperty("query") ? location.state["query"] : parentPagePreferences["query"],
-      tableView: location.state && location.state.hasOwnProperty("tableView") ? location.state["tableView"] : parentPagePreferences["tableView"],
-      sortOrder: location.state && location.state.hasOwnProperty("sortOrder") ? location.state["sortOrder"] : parentPagePreferences["sortOrder"],
-      sources: location.state && location.state.hasOwnProperty("sources") ? location.state["sources"] : parentPagePreferences["sources"],
-      isEntityInstance: location.state && location.state.hasOwnProperty("isEntityInstance") ? location.state["isEntityInstance"] : parentPagePreferences["isEntityInstance"],
-      targetDatabase: location.state && location.state.hasOwnProperty("targetDatabase") ? location.state["targetDatabase"] : parentPagePreferences["targetDatabase"],
+      entity: state && state.hasOwnProperty("entity") ? state["entity"] : parentPagePreferences["entity"],
+      pageNumber: state && state.hasOwnProperty("pageNumber") ? state["pageNumber"] : parentPagePreferences["pageNumber"],
+      start: state && state.hasOwnProperty("start") ? state["start"] : parentPagePreferences["start"],
+      searchFacets: state && state.hasOwnProperty("searchFacets") ? state["searchFacets"] : parentPagePreferences["searchFacets"],
+      query: state && state.hasOwnProperty("query") ? state["query"] : parentPagePreferences["query"],
+      tableView: state && state.hasOwnProperty("tableView") ? state["tableView"] : parentPagePreferences["tableView"],
+      sortOrder: state && state.hasOwnProperty("sortOrder") ? state["sortOrder"] : parentPagePreferences["sortOrder"],
+      sources: state && state.hasOwnProperty("sources") ? state["sources"] : parentPagePreferences["sources"],
+      isEntityInstance: state && state.hasOwnProperty("isEntityInstance") ? state["isEntityInstance"] : parentPagePreferences["isEntityInstance"],
+      targetDatabase: state && state.hasOwnProperty("targetDatabase") ? state["targetDatabase"] : parentPagePreferences["targetDatabase"],
       isBackToResultsClicked: true,
     }
   };
