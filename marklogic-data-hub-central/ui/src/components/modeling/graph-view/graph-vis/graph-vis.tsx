@@ -4,6 +4,7 @@ import "./graph-vis.scss";
 import ReactDOMServer from "react-dom/server";
 import { faFileExport, faTrashAlt, faAddressBook, faAmbulance } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import NodeSvg from "./node-svg";
 
 type Props = {
   entityTypes: any;
@@ -22,14 +23,15 @@ const GraphVis: React.FC<Props> = (props) => {
     setNetwork(networkInstance)
   }
   const [hoveringNode, setHoveringNode] = useState<string | undefined>(undefined);
+  const hoverColor: string = "#E9F7FE";
 
-  // Initialize graph after async loading of entity data
+  // Initialize or update graph
   useEffect(() => {
     setGraphData({
-      nodes: getNodesAsImages(),
+      nodes: getNodes(),
       edges: getEdges()
     });
-  }, [props.entityTypes]);
+  }, [props.entityTypes, hoveringNode]);
 
   //Use these to set specific positions for entity nodes temporarily
   let nodeP = {
@@ -86,80 +88,44 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   };
 
-  const getLabelIcon = (entityName) => {
-    let icon = entityMetadata[entityName].icon;
+  const getIcon = (entityName) => {
+    let icon = <FontAwesomeIcon icon={faFileExport} aria-label="node-icon" />;
+    if (entityMetadata[entityName] && entityMetadata[entityName].icon) {
+      icon = entityMetadata[entityName].icon;
+    }
     return ReactDOMServer.renderToString(icon);
   }
 
-  const getEncodedSvg = (entityName) => {
-    let svgImage = `<svg class="box" width="550" height="170" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <style type="text/css">
-    @namespace svg url(http://www.w3.org/2000/svg);
-    svg|a:link, svg|a:visited {
-      cursor: pointer;
+  const getColor = (entityName) => {
+    let color = "#cfe3e8";
+    if (hoveringNode === entityName) {
+      color = hoverColor;
+    } else if (entityMetadata[entityName] && entityMetadata[entityName].color) {
+      color = entityMetadata[entityName].color;
     }
-    
-    svg|a text,
-    text svg|a {
-      fill: blue; /* Even for text, SVG uses fill over color */
-    }
-    .box{
-      fill: ${hoveringNode === entityName ? "#E9F7FE" : entityMetadata[entityName].color};
-    }
-    .instances{
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 40px;
-      fill: #6773af;
-      width: 100%;
-    }
-    .label{
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 40px;
-      font-weight: 600;
-      color: #333;
-      width: 100%;
-      word-wrap: break-word;
-    }
-    <![CDATA[
-    .customIcon{
-      color: black;
-      font-size: 24px;
-    };
-    ]]>
-    </style>
-      <rect x="0px" y="0px" width="100%" height="100%" rx="4px"/>
-      <foreignObject x="100" y="120" width="180" height="200" class="customIcon" transform="translate(2,8) scale(0.20,0.20)">
-      ${getLabelIcon(entityName)}
-      </foreignObject>
-      <foreignObject x="80" y="30" width="100%" height="100%">
-      <div xmlns="http://www.w3.org/1999/xhtml" class="label">
-      ${entityName}
-      </div>
-      </foreignObject>
-      <a id="alink" xlink:href="https://www.google.com" target="_top">
-      <text x="20" y="120" class="instances">${entityMetadata[entityName].instances}</text>
-      </a>
-</svg>`
-
-    return encodeURIComponent(svgImage);
-  }
-  const getNodeImage = (entityName) => {
-    //var url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(ReactDOMServer.renderToString(getNodeSVGJSX(entityName)));//getEncodedSvg(e);
-    var url = "data:image/svg+xml;charset=utf-8," + getEncodedSvg(entityName);
-    return url;
+    return color;
   }
 
-  const getNodesAsImages = () => {
-    let nodesTemp = props.entityTypes && props.entityTypes?.map((e) => {
+  const getNumInstances = (entityName) => {
+    let num = 123;
+    if (entityMetadata[entityName] && entityMetadata[entityName].instances) {
+      num = entityMetadata[entityName].instances;
+    }
+    return num;
+  }
+
+  const getNodes = () => {
+    let nodes = props.entityTypes && props.entityTypes?.map((e) => {
+      const node = new NodeSvg(e.entityName, getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
       return {
         id: e.entityName,
         label: "",
         title: e.model.definitions[e.entityName].description ? e.model.definitions[e.entityName].description : "Description is not available for the entity",
-        image: getNodeImage(e.entityName),
+        image: "data:image/svg+xml;charset=utf-8," + node.getSvg(),
         shape: "image"
-      }
+      };
     });
-    return nodesTemp;
+    return nodes;
   }
 
   const getEdges = () => {
@@ -220,7 +186,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const events = {
     select: (event) => {
-      var { nodes, edges } = event;
+      let { nodes, edges } = event;
       console.log('select', nodes, event);
       if (nodes.length > 0) {
         props.handleEntitySelection(nodes[0]);
