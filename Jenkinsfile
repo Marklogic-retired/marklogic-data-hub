@@ -140,7 +140,6 @@ def getReviewState(){
     return reviewState
 }
 def PRDraftCheck(){
-    def type;
     withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
         PrObj= sh (returnStdout: true, script:'''
                    curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID
@@ -148,6 +147,16 @@ def PRDraftCheck(){
     }
     def jsonObj = new JsonSlurperClassic().parseText(PrObj.toString().trim())
     return jsonObj.draft
+}
+
+def isPRUITest(){
+    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+        PrObj= sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID
+                   ''')
+    }
+    def jsonObj = new JsonSlurperClassic().parseText(PrObj.toString().trim())
+    return jsonObj.body.contains('[x] Run UI tests')
 }
 
 def runCypressE2e(){
@@ -199,6 +208,7 @@ def runCypressE2e(){
         def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
         if(output.contains("npm ERR!")){
            // currentBuild.result='UNSTABLE';
+           error 'cypress test failed. Tests might run succesfully or with some failures.'
         }
 
         junit '**/e2e/**/*.xml'
@@ -234,7 +244,7 @@ void PreBuildCheck() {
        sh 'exit 1'
   }
 
-  if(!isChangeInUI()){env.NO_UI_TESTS=true}
+  if(!isChangeInUI() && !isPRUITest()){env.NO_UI_TESTS=true}
 
  }
  def obj=new abortPrevBuilds();
