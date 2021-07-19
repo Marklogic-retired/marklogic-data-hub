@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import ReactDOMServer from "react-dom/server";
@@ -16,6 +16,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const [nodePositions, setNodePositions] = useState({});
   const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
+  const [testingMode, setTestingMode] = useState(true); // Should be used further to handle testing only in non-production environment
 
   //Initializing network instance
   const [network, setNetwork] = useState<any>(null);
@@ -32,6 +33,15 @@ const GraphVis: React.FC<Props> = (props) => {
       edges: getEdges()
     });
   }, [props.entityTypes, hoveringNode]);
+
+  useLayoutEffect(() => {
+    if(testingMode && network) {
+      window.graphVisApi = {
+        getGraphNodes: (nodeId) => { return network.getPosition(nodeId); },
+        canvasToDOM: (x, y) => { return network.canvasToDOM({x: x, y: y}); },
+      }
+    }
+  },[network])
 
   //Use these to set specific positions for entity nodes temporarily
   let nodeP = {
