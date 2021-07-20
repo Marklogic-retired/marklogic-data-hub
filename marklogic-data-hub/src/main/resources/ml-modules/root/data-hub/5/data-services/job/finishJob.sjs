@@ -18,8 +18,44 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
 const Job = require("/data-hub/5/flow/job.sjs");
+const dhProv = require('/data-hub/5/provenance/dh-provenance.xqy');
+const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 var jobId;
 var jobStatus;
 
-Job.getRequiredJob(jobId).finishJob(jobStatus, fn.currentDateTime()).update();
+function updateJobProvenance(jobId, jobEndTime) {
+  const options = {
+    "endTime": jobEndTime
+  }
+  const provCollectionQuery = cts.collectionQuery("http://marklogic.com/provenance-services/record");
+  const provIdAttributeQuery = cts.elementAttributeValueQuery(fn.QName("http://www.w3.org/ns/prov#", "activity"),
+    fn.QName("http://www.w3.org/ns/prov#", "id"), fn.concat("job:", jobId));
+  const jobProvQuery = cts.andQuery([provCollectionQuery, provIdAttributeQuery]);
+
+  const stagingJobProvRecordUri = fn.head(
+    hubUtils.invokeFunction(function () {
+      return cts.uris("", null, jobProvQuery);
+    }, config.STAGINGDATABASE)
+  );
+
+  let finalJobProvRecordUri = fn.head(
+    hubUtils.invokeFunction(function () {
+      return cts.uris("", null, jobProvQuery);
+    }, config.FINALDATABASE)
+  );
+
+  if(stagingJobProvRecordUri) {
+    dhProv.updateEndTimeInProvenanceRecord(stagingJobProvRecordUri, options, config.STAGINGDATABASE);
+  }
+
+  if(finalJobProvRecordUri) {
+    dhProv.updateEndTimeInProvenanceRecord(finalJobProvRecordUri, options, config.FINALDATABASE);
+  }
+}
+
+const jobEndTime = fn.currentDateTime();
+const finishedJob = Job.getRequiredJob(jobId).finishJob(jobStatus, jobEndTime).update();
+updateJobProvenance(jobId, jobEndTime);
+finishedJob;

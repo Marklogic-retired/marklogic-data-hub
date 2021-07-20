@@ -23,7 +23,17 @@ function getMatchingPropertyValues(facetValuesSearchQuery) {
     ));
 }
 
+function startJob(jobId, flowName, stepNumber) {
+  return invokeModule("startJob.sjs", {jobId, flowName, stepNumber});
+}
+
+function finishJob(jobId, jobStatus) {
+  return invokeModule("finishJob.sjs", {jobId, jobStatus});
+}
+
 module.exports = {
   findStepResponses,
-  getMatchingPropertyValues
+  getMatchingPropertyValues,
+  startJob,
+  finishJob
 };
