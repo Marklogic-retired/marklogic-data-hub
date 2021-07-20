@@ -1461,14 +1461,13 @@ describe("RTL Source-to-entity map tests", () => {
     let lastName = getByText("LastName");
     let proteinId = getByText("proteinId");
     expect(firstName).toBeInTheDocument();
-    expect(firstName.closest("td")?.firstElementChild).toHaveStyle("padding-left: 40px;"); // Check if the indentation is right
-
+    expect(firstName.closest("td")?.firstElementChild).toHaveStyle("padding-left: 20px;"); // Check if the indentation is right
     expect(lastName).toBeInTheDocument();
-    expect(lastName.closest("td")?.firstElementChild).toHaveStyle("padding-left: 40px;"); // Check if the indentation is right
+    expect(lastName.closest("td")?.firstElementChild).toHaveStyle("padding-left: 20px;"); // Check if the indentation is right
 
     //Collapsing back to the default view (root and 1st level)
     fireEvent.click(collapseBtnSource);
-    expect(onClosestTableRow(proteinId)?.style.display).toBe("none");
+    expect(onClosestTableRow(proteinId)?.style.display).toBe("");
     expect(onClosestTableRow(firstName)?.style.display).toBe("none");
     expect(onClosestTableRow(lastName)?.style.display).toBe("none");
   });
@@ -1878,6 +1877,59 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("Person-propId5-name")).toBeInTheDocument();
     expect(queryByTestId("Person-propId6-name")).not.toBeInTheDocument();
 
+  });
+
+  test("verify pagination and page size menu works properly in Source XML table", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[4]});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.xmlSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDefLargePropSet});
+
+    let getByText, queryByText, getAllByTitle, getAllByText;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithRelatedEntityData);
+      getByText = renderResults.getByText;
+      queryByText = renderResults.queryByText;
+      getAllByTitle = renderResults.getAllByTitle;
+      getAllByText = renderResults.getAllByText;
+    });
+
+    //Verify all XML source properties are displayed at first
+    await wait(() => expect(getByText("sampleProtein")).toBeInTheDocument());
+    await wait(() => expect(getByText("@proteinType")).toBeInTheDocument());
+    await wait(() => expect(getByText("home")).toBeInTheDocument());
+    await wait(() => expect(getByText("proteinId")).toBeInTheDocument());
+    await wait(() => expect(getByText("123EAC")).toBeInTheDocument());
+    await wait(() => expect(getByText("proteinCat")).toBeInTheDocument());
+
+    //Verify page size starts at 20/page by default and can be changed for source table
+    fireEvent.click(getAllByText("20 / page")[0]);
+    await wait(() => fireEvent.click(getByText("1 / page")));
+
+    //only first child property is present, in addition to top level parent
+    expect(getByText("sampleProtein")).toBeInTheDocument();
+    expect(getByText("@proteinType")).toBeInTheDocument();
+
+    //remaining children properties should no longer be present
+    expect(queryByText("proteinId")).not.toBeInTheDocument();
+    expect(queryByText("123EAC")).not.toBeInTheDocument();
+    expect(queryByText("proteinCat")).not.toBeInTheDocument();
+
+    //test page 4 should only have fourth property
+    fireEvent.click(getAllByTitle("4")[0]);
+    await wait(() => expect(queryByText("nutFree:")).toBeInTheDocument());
+    await wait(() => expect(queryByText("@proteinType")).not.toBeInTheDocument());
+
+    //reopen page size options
+    fireEvent.click(getAllByText("1 / page")[0]);
+
+    //test 5 per page
+    fireEvent.click(getByText("5 / page"));
+    fireEvent.click(getAllByTitle("1")[0]);
+
+    //first through fifth properties should be present
+    expect(queryByText("sampleProtein")).toBeInTheDocument(); //1st property
+    expect(queryByText("proteinCat")).toBeInTheDocument(); //5th property
   });
 });
 
