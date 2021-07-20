@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {faSave, faUndo} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
+import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
 import EntityTypeModal from "../components/modeling/entity-type-modal/entity-type-modal";

@@ -38,7 +38,6 @@ describe("json scenario for table on browse documents page", () => {
   });
   it("select \"all entities\" and verify table default columns", () => {
     browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.getExpandableTableView();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getColumnTitle(2).should("contain", "Identifier");
     browsePage.getColumnTitle(3).should("contain", "Entity Type");
