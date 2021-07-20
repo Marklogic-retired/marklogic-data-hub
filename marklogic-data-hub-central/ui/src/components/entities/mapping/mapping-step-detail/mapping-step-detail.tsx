@@ -81,7 +81,7 @@ const MappingStepDetail: React.FC = () => {
   /*-------------------*/
 
   const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
-
+  const [srcPropertiesXML, setSrcPropertiesXML] = useState<any[]>([]);
   const [mapExpTouched, setMapExpTouched] = useState(false);
   const [editingURI, setEditingUri] = useState(false);
   const [showEditURIOption, setShowEditURIOption] = useState(false);
@@ -115,6 +115,7 @@ const MappingStepDetail: React.FC = () => {
   const [allSourceKeys, setAllSourceKeys] = useState<any[]>([]);
   const [allEntityKeys, setAllEntityKeys] = useState<any[]>([]);
   const [allRelatedEntitiesKeys, setAllRelatedEntitiesKeys] = useState<any[]>([]);
+  const [tableCollapsed, setTableCollapsed] = useState(false);
 
   // For Entity table
   const [tgtEntityReferences, setTgtEntityReferences] = useState({});
@@ -256,7 +257,8 @@ const MappingStepDetail: React.FC = () => {
         let sDta = generateNestedDataSource(docRoot, nestedDoc);
         setSourceData([]);
         setSourceData([...sDta]);
-        if (typeof (srcDocResp.data) === "string") {
+        setSrcPropertiesXML(sDta[0].children);
+        if (typeof(srcDocResp.data) === "string") {
           let mData = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
           updateMappingWithNamespaces(mData);
         }
@@ -651,6 +653,16 @@ const MappingStepDetail: React.FC = () => {
     setEditingUri(false);
   };
 
+  const toggleSourceTable = () => {
+    if (tableCollapsed) {
+      setSrcPropertiesXML(sourceData[0].children);
+      setTableCollapsed(false);
+    } else {
+      setSrcPropertiesXML([]);
+      setTableCollapsed(true);
+    }
+  };
+
   const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
     {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(mapData["sourceQuery"], 32, "...")}</div>}
     {!editingURI ? <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)}
@@ -659,6 +671,10 @@ const MappingStepDetail: React.FC = () => {
         /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
       <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} /></span></div>}
   </div> : "";
+
+  const expandTableIcon = (
+    <a onClick={() => toggleSourceTable()}><Icon type={tableCollapsed && srcPropertiesXML.length < 1 ? "right" : "down"}/></a>
+  );
 
   // Run when mapping details is opened or returned to
   useEffect(() => {
@@ -856,7 +872,7 @@ const MappingStepDetail: React.FC = () => {
     filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={filtered ? "active" : "inactive"} /></i>,
     onFilter: (value, record) => {
       let recordString = getPropValueFromDataIndex(record, dataIndex);
-      return recordString.toString().toLowerCase().includes(value.toLowerCase());
+      return sourceFormat === "xml" ? true : recordString.toString().toLowerCase().includes(value.toLowerCase());
     },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
@@ -880,12 +896,24 @@ const MappingStepDetail: React.FC = () => {
 
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt, rowNum) => {
     if (searchedCol === columnName && rowNum !== 0) {
-      return <Highlighter
-        highlightClassName={styles.highlightStyle}
-        searchWords={[searchTxt]}
-        autoEscape
-        textToHighlight={textToSearchInto}
-      />;
+      if (sourceFormat === "xml" && rowNum === 1) {
+        return <div className={styles.filteredXMLHeader}>
+          <span className={styles.tableExpandIcon}>{expandTableIcon}</span>
+          <Highlighter
+            highlightClassName={styles.highlightStyle}
+            searchWords={[searchTxt]}
+            autoEscape
+            textToHighlight={textToSearchInto}
+          />
+        </div>;
+      } else {
+        return <Highlighter
+          highlightClassName={styles.highlightStyle}
+          searchWords={[searchTxt]}
+          autoEscape
+          textToHighlight={textToSearchInto}
+        />;
+      }
     } else {
       return valueToDisplay;
     }
@@ -924,9 +952,9 @@ const MappingStepDetail: React.FC = () => {
       width: "60%",
       defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
       render: (text, row) => {
-        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
-        let valueToDisplay = <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.key);
+        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0]+": "+text?.split(":")[1] : text;
+        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div><span className={styles.tableExpandIcon}>{expandTableIcon}</span><span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
       }
     },
     {
@@ -1415,24 +1443,75 @@ const MappingStepDetail: React.FC = () => {
                       <span className={styles.navigationButtons}>{navigationButtons}</span>
                       <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
                     </div>
-                    <Table
-                      pagination={paginationMapping}
-                      expandIcon={(props) => customExpandIcon(props)}
-                      onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
-                      expandedRowKeys={sourceExpandedKeys}
-                      className={styles.sourceTable}
-                      rowClassName={() => styles.sourceTableRows}
-                      scroll={{x: 300}}
-                      indentSize={20}
-                      //defaultExpandAllRows={true}
-                      //size="small"
-                      columns={columns}
-                      dataSource={sourceData}
-                      tableLayout="unset"
-                      rowKey={(record) => record.rowKey}
-                      getPopupContainer={() => document.getElementById("srcContainer") || document.body}
-                    />
-                  </div>}
+                    {
+                      sourceFormat === "xml" ?
+                        <div>
+                          <div id="upperTableXML">
+                            <Table
+                              pagination={false}
+                              expandIcon={(props) => customExpandIcon(props)}
+                              onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                              expandedRowKeys={sourceExpandedKeys}
+                              className={styles.sourceTable}
+                              rowClassName={() => styles.sourceTableRows}
+                              scroll={{x: 300}}
+                              indentSize={20}
+                              //defaultExpandAllRows={true}
+                              //size="small"
+                              columns={columns}
+                              dataSource={[{rowKey: 1, key: sourceData[0]?.key}]}
+                              tableLayout="unset"
+                              rowKey={(record:any) => record.rowKey}
+                              getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                            />
+                          </div>
+                          <div id="lowerTableXML">
+                            {srcPropertiesXML.length > 0 ?
+                              <Table
+                                pagination={paginationMapping}
+                                expandIcon={(props) => customExpandIcon(props)}
+                                onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                                expandedRowKeys={sourceExpandedKeys}
+                                className={styles.sourceTable}
+                                rowClassName={() => styles.sourceTableRows}
+                                scroll={{x: 300}}
+                                indentSize={20}
+                                showHeader={false}
+                                //defaultExpandAllRows={true}
+                                //size="small"
+                                columns={columns}
+                                dataSource={srcPropertiesXML}
+                                tableLayout="unset"
+                                rowKey={(record:any) => record.rowKey}
+                                getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                              />
+                              : null
+                            }
+                          </div>
+                        </div>
+                        :
+                        <div id="jsonTable">
+                          <Table
+                            pagination={paginationMapping}
+                            expandIcon={(props) => customExpandIcon(props)}
+                            onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                            expandedRowKeys={sourceExpandedKeys}
+                            className={styles.sourceTable}
+                            rowClassName={() => styles.sourceTableRows}
+                            scroll={{x: 300}}
+                            indentSize={20}
+                            //defaultExpandAllRows={true}
+                            //size="small"
+                            columns={columns}
+                            dataSource={sourceData}
+                            tableLayout="unset"
+                            rowKey={(record) => record.rowKey}
+                            getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                          />
+                        </div>
+                    }
+
+                  </div> }
             </div>
             <div
               id="entityContainer"
