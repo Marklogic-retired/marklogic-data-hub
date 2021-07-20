@@ -179,7 +179,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   });
   it("verify record view of the XML document in non-entity detail page", () => {
     browsePage.selectEntity("All Data");
-    cy.waitUntil(() => browsePage.getNavigationIconForDocument("/dictionary/first-names.xml")).click();
+    cy.waitUntil(() => browsePage.getNavigationIconForDocument("/dictionary/first-names.xml")).click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getRecordView().should("exist");
     detailPage.getDocumentXML().should("exist");
