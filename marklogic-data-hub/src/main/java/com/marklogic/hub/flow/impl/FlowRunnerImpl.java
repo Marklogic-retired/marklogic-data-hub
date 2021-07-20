@@ -254,7 +254,8 @@ public class FlowRunnerImpl implements FlowRunner {
         FlowContext flowContext = flowContextMap.get(jobId);
 
         if (flowContext.jobOutputIsEnabled) {
-            flowContext.jobService.startJob(jobId, runningFlow.getName());
+            Queue<String> stepsQueue = stepsMap.get(jobId);
+            flowContext.jobService.startJob(jobId, runningFlow.getName(), stepsQueue.peek());
         }
 
         if(threadPool == null || threadPool.isTerminated()) {
