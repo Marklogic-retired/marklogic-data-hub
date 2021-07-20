@@ -2,7 +2,6 @@ plugins {
     id "java-library"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
-    id 'maven-publish'
 }
 
 group = 'com.marklogic'
@@ -53,28 +52,6 @@ task installDhfIntoDhs(type: Exec) {
     ]
 }
 installDhfIntoDhs.dependsOn jar
-
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact("build/libs/marklogic-data-hub-$version-installer"+".jar")
-            artifactId = 'installer-for-dhs'
-        }
-    }
-    repositories {
-        maven {
-            if (project.hasProperty("mavenUser")) {
-                credentials {
-                    username mavenUser
-                    password mavenPassword
-                }
-            }
-            url publishUrl
-        }
-    }
-
-}
 
 
 
