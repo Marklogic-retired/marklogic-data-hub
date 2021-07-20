@@ -207,8 +207,7 @@ def runCypressE2e(){
 
         def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
         if(output.contains("npm ERR!")){
-           // currentBuild.result='UNSTABLE';
-           error 'cypress test failed. Tests might run succesfully or with some failures.'
+            println("WARNING: cypress test run has errors in its log. Tests might run succesfully or with some failures.")
         }
 
         junit '**/e2e/**/*.xml'
