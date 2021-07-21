@@ -67,18 +67,30 @@
     text-overflow: inherit;
   }
 
-  .matchCombinationsContainer {
-    padding: 10px;
-    margin-left: 2%;
-    margin-bottom: 35px;
-    border-radius: 5px;
-    background-color: #E5E7F0;
-    min-height: 20em;
+  .matchCombinationsExpandedContainer {
+      padding: 10px;
+      margin-left: 2%;
+      margin-bottom: 35px;
+      border-radius: 5px;
+      background-color: #E5E7F0;
+      min-height: 20em;
+  }
+
+  .matchCombinationsCollapsedContainer {
+      padding: 10px;
+      margin-left: 2%;
+      margin-bottom: 35px;
+      border-radius: 5px;
+      background-color: #E5E7F0;
+      overflow: auto;
+      height: 20em;
+    }
 
     .matchCombinationsHeading {
       font-size: 16px;
       font-weight: bold;
       padding-bottom: 17px;
+      margin-left: 0.7vw;
     }
 
     .matchCombinationsColsContainer {
@@ -121,7 +133,6 @@
       }
     }
   }
-}
 
 .footer {
   display: flex;
@@ -292,6 +303,13 @@
     font-size: 11px;
     margin-left: 96%;
     margin-bottom: 2vh;
+}
+
+.expandCollapseRulesIcon {
+    font-size: 11px;
+    float: right;
+    margin-top: -4.5vh;
+    margin-right: 0.5vw;
 }
 
 .modalTitleLegend {
