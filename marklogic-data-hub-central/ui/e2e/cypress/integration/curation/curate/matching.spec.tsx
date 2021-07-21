@@ -83,6 +83,27 @@ describe("Matching", () => {
   it("Open matching step details", () => {
     curatePage.openStepDetails(matchStep);
     cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
+
+    cy.findByText("Expand All").should("have.length.lt", 1);
+    cy.findByText("Collapse All").should("have.length.lt", 1);
+    // To test when user click on Expand all icon
+    cy.get(".matching-step-detail_expandCollapseRulesIcon__37swU").within(() => {
+      cy.findByLabelText("expand-collapse").within(() => {
+        cy.get(".ant-radio-group").within(() => {
+          cy.get("label:first").click();
+        });
+      });
+    });
+    cy.findByText("Expand All").should("be.visible");
+    // To test when user click on Collapse all icon
+    cy.get(".matching-step-detail_expandCollapseRulesIcon__37swU").within(() => {
+      cy.findByLabelText("expand-collapse").within(() => {
+        cy.get(".ant-radio-group").within(() => {
+          cy.get("label:last").click();
+        });
+      });
+    });
+    cy.findByText("Collapse All").should("be.visible");
     matchingStepDetail.showThresholdTextMore().should("have.length.lt", 1);
     matchingStepDetail.showThresholdTextLess().should("have.length.gt", 0);
     multiSlider.getRulesetSliderOptions().trigger("mouseover");
