@@ -104,6 +104,7 @@ const MatchingStepDetail: React.FC = () => {
   const [urisCompared, setUrisCompared] = useState<string[]>([]);
   const [uris, setUris] = useState<string[]>([]);
   const [previewMatchedData, setPreviewMatchedData] = useState(-1);
+  const [expandRuleset, setExpandRuleset] = useState(false);
 
   const menu = (
     <Menu>
@@ -569,6 +570,14 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
+  const handleExpandCollapseRulesIcon = async (option) => {
+    if (option === "collapse") {
+      setExpandRuleset(false);
+    } else {
+      setExpandRuleset(true);
+    }
+  };
+
   const handleRulesetCollapseChange = async   (keys) => {
     Array.isArray(keys) ? setActiveMatchedRuleset(keys):setActiveMatchedRuleset([keys]);
     let arr=activeMatchedUri;
@@ -613,9 +622,9 @@ const MatchingStepDetail: React.FC = () => {
 
       <div className={styles.matchingDetailContainer}>
 
-        <div className={styles.matchCombinationsContainer}>
+        <div className={expandRuleset ? styles.matchCombinationsExpandedContainer : styles.matchCombinationsCollapsedContainer}>
           <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
-
+          <span className={styles.expandCollapseRulesIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapseRulesIcon(id)} currentSelection={"collapse"} aria-label="expandCollapseRulesetIcon"/></span>
           {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
             <Row gutter={[24, 24]} type="flex">
               {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
