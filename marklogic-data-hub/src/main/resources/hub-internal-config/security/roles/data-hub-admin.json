@@ -1,6 +1,6 @@
 {
   "role-name": "data-hub-admin",
-  "description": "5.5-SNAPSHOT: Permits actions pertaining to administering a Data Hub application",
+  "description": "5.5.2: Permits actions pertaining to administering a Data Hub application",
   "role": [
     "data-hub-developer"
   ],
