@@ -29,7 +29,6 @@ plugins {
     id "groovy"
     id "java-gradle-plugin"
     id "maven-publish"
-    id "com.jfrog.bintray" version "1.7.3"
 
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
@@ -108,20 +107,6 @@ publishing {
           }
           url publishUrl
         }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['main']
-    pkg {
-        repo = 'maven'
-        name = 'ml-data-hub'
-        desc = 'A gradle plugin for Data Hub tasks'
-        licenses = ['Apache-2.0']
-        websiteUrl = 'https://github.com/marklogic/marklogic-data-hub'
-        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
 }
 

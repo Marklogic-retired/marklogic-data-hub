@@ -3,7 +3,6 @@ plugins {
     id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
-    id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
     id 'com.marklogic.ml-development-tools' version '5.4.0'
@@ -26,9 +25,7 @@ snyk {
 }
 
 repositories {
-    //maven { url 'https://repo.spring.io/milestone' }
-
-    // Needed for marklogic-junit
+    // Needed for marklogic-junit5; will go away once we upgrade to 1.1.0
     maven { url 'https://dl.bintray.com/marklogic-community/Maven/' }
 }
 
@@ -280,22 +277,6 @@ publishing {
             }
             url publishUrl
         }
-    }
-}
-
-bintray {
-    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
-    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
-    publications = ['main']
-    pkg {
-        repo = 'maven'
-        name = project.name
-        userOrg = 'marklogic'
-        desc = pomCustomizations.textdescription.text()
-        licenses = ['Apache-2.0']
-        websiteUrl = pomCustomizations.url
-        vcsUrl = pomCustomizations.scm.url
-        issueTrackerUrl = 'https://github.com/marklogic/marklogic-data-hub/issues'
     }
 }
 
