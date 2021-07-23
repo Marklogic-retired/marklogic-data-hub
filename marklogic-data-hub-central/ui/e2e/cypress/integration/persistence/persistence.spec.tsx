@@ -42,12 +42,12 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
-    cy.findByTestId("shipping-shipping-span").should("be.visible");
+    cy.findByTestId("shipping-shipping-span").should("exist");
     cy.findByTestId("mltable-expand-shipping").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
-    cy.findByTestId("shipping-street-span").should("be.visible");
+    cy.findByTestId("shipping-street-span").should("exist");
   });
 
   // Persistence of mapping step details is disabled temporarily. DHFPROD-7466

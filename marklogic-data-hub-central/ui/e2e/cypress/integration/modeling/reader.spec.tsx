@@ -122,6 +122,15 @@ describe("Entity Modeling: Reader Role", () => {
     modelPage.selectView("table");
     entityTypeTable.viewEntityInGraphView("Person").click({force: true});
     graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
+
+    //Verify Pan and Zoom in buttons are rendered properly
+    cy.get(".vis-zoomOut").should("be.visible");
+    cy.get(".vis-zoomIn").should("be.visible");
+    cy.get(".vis-up").should("be.visible");
+    cy.get(".vis-down").should("be.visible");
+    cy.get(".vis-zoomExtends").should("be.visible");
+    cy.get(".vis-right").should("be.visible");
+    cy.get(".vis-left").should("be.visible");
   });
 
   it("can view and edit Entity Type tab in side panel", () => {

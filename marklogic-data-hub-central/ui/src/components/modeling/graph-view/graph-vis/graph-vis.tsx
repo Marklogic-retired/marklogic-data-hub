@@ -54,6 +54,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const initNetworkInstance = (networkInstance) => {
     setNetwork(networkInstance);
   };
+  const vis = require("vis-network/standalone/umd/vis-network"); //eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Initialize or update graph
   useEffect(() => {
@@ -178,6 +179,10 @@ const GraphVis: React.FC<Props> = (props) => {
         springLength: 160,
         avoidOverlap: 0.4
       }
+    },
+    interaction: {
+      navigationButtons: true,
+      hover: true,
     },
     manipulation: {
       enabled: false,
