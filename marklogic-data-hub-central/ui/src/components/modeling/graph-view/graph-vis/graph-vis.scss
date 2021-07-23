@@ -15,3 +15,102 @@ div.vis-tooltip {
     pointer-events: none;
     z-index: 5;
   }
+
+div.vis-network div.vis-navigation div.vis-button.vis-up,
+div.vis-network div.vis-navigation div.vis-button.vis-down,
+div.vis-network div.vis-navigation div.vis-button.vis-left,
+div.vis-network div.vis-navigation div.vis-button.vis-right,
+div.vis-network div.vis-navigation div.vis-button.vis-zoomIn,
+div.vis-network div.vis-navigation div.vis-button.vis-zoomOut,
+div.vis-network div.vis-navigation div.vis-button.vis-zoomExtends {
+    position: absolute;
+    background-position: 0;
+    width: 28px;
+}
+
+div.vis-zoomExtends {
+    margin-right: 99.5vw;
+    top: 5vh;
+    border-radius: 0vh !important;
+    padding-right: -40px;
+    display: inline-flex;
+    left: 56px;
+}
+
+div.vis-down {
+    margin-right: 85vw;
+    top: 9.3vh;
+}
+
+div.vis-right {
+    margin-right: 85vw;
+    top: 5vh;
+    left: 90px !important;
+}
+
+div.vis-left {
+    margin-right: 85vw;
+    top: 5vh;
+    left: 20px !important;
+}
+
+div.vis-up {
+    margin-right: 80vw;
+    top: 0.7vh;
+    border-radius: 0vh !important;
+}
+
+div.vis-zoomIn {
+    margin-right: 93.6vw;
+    top: 13.5vh;
+    color: #D9D9D9 !important;
+    left: 35px;
+}
+
+div.vis-zoomOut {
+    margin-right: 88vw;
+    top: 13.5vh;
+    left: 82px;
+}
+
+div.vis-network div.vis-navigation div.vis-button:hover {
+    box-shadow: none !important;
+}
+
+.vis-button:after {
+    font-size: 2em;
+    color: gray;
+}
+
+.vis-button:hover:after {
+    font-size: 2em;
+    color: lightgray;
+}
+
+.vis-button.vis-up {
+    background-image: url("../../../../assets/chevron-circle-up-solid.svg") !important;
+}
+
+.vis-button.vis-down {
+    background-image: url("../../../../assets/chevron-circle-down-solid.svg") !important;
+}
+
+.vis-button.vis-left {
+    background-image: url("../../../../assets/chevron-circle-left-solid.svg") !important;
+}
+
+.vis-button.vis-right {
+    background-image: url("../../../../assets/chevron-circle-right-solid.svg") !important;
+}
+
+.vis-button.vis-zoomIn {
+    background-image: url("../../../../assets/plus-circle-solid.svg") !important;
+}
+
+.vis-button.vis-zoomOut {
+    background-image: url("../../../../assets/minus-circle-solid.svg") !important;
+}
+
+.vis-button.vis-zoomExtends {
+    background-image: url("../../../../assets/expand-arrows-alt-solid.svg") !important;
+}

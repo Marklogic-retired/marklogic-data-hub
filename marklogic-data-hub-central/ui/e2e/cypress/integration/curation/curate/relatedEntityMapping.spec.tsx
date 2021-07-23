@@ -128,32 +128,6 @@ describe("Mapping", () => {
     cy.findAllByText("URI").should("have.length.gt", 1);
   });
 
-  it("Edit advanced settings for each entity", () => {
-    mappingStepDetail.getEntitySettings("Person").click();
-    mappingStepDetail.targetCollection().should("exist");
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").focus().clear());
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").type("data-hub-common,read"));
-    mappingStepDetail.getValidationError("Person").should("exist");
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").focus().clear());
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").type("data-hub-common,read,data-hub-common,update"));
-    mappingStepDetail.getValidationError("Person").should("not.be.visible");
-    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person").click({force: true}));
-
-    mappingStepDetail.getEntitySettings("Relation").click();
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read,data-hub-common"));
-    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
-    mappingStepDetail.getValidationError("Relation").should("exist");
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read"));
-    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
-    mappingStepDetail.getValidationError("Relation").should("not.be.visible");
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
-    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read,data-hub-common,update"));
-    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
-    browsePage.waitForSpinnerToDisappear();
-  });
-
   it("Verify more/less functionality on filtering by name for structured properties", () => {
     mappingStepDetail.goBackToCurateHomePage();
     mappingStepDetail.customerEntity().click();
@@ -166,7 +140,6 @@ describe("Mapping", () => {
     cy.findAllByText("more").first().click();
     cy.findByText("less").should("be.visible");
   });
-
   it("Switch views and return to mapping details, verify persistence of expressions", () => {
     mappingStepDetail.goBackToCurateHomePage();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
@@ -213,6 +186,37 @@ describe("Mapping", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 21);
     browsePage.selectEntity("Relation");
     browsePage.getTotalDocuments().should("be.greaterThan", 7);
+  });
+  it("Edit advanced settings for each entity", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
+    curatePage.toggleEntityTypeId("Person");
+    curatePage.openMappingStepDetail("Person", "mapRelation");
+    curatePage.verifyStepDetailsOpen("mapRelation");
+    browsePage.waitForSpinnerToDisappear();
+    mappingStepDetail.getEntitySettings("Person").click();
+    mappingStepDetail.targetCollection().should("exist");
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").focus().clear());
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").type("data-hub-common,read"));
+    mappingStepDetail.getValidationError("Person").should("exist");
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").focus().clear());
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person").type("data-hub-common,read,data-hub-common,update"));
+    mappingStepDetail.getValidationError("Person").should("not.be.visible");
+    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person").click({force: true}));
+
+    mappingStepDetail.getEntitySettings("Relation").click();
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read,data-hub-common"));
+    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
+    mappingStepDetail.getValidationError("Relation").should("exist");
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read"));
+    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
+    mappingStepDetail.getValidationError("Relation").should("not.be.visible");
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").focus().clear());
+    cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation").type("data-hub-common,read,data-hub-common,update"));
+    cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation").click({force: true}));
+    browsePage.waitForSpinnerToDisappear();
   });
   it("Delete related entity from mapping via filter", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
