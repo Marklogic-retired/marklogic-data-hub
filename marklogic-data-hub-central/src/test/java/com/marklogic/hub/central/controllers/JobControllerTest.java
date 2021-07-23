@@ -19,11 +19,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.AppDeployer;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.central.AbstractMvcTest;
+import com.marklogic.hub.deploy.commands.FinishHubDeploymentCommand;
 import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -35,6 +47,21 @@ public class JobControllerTest extends AbstractMvcTest {
 
     private final static String STEP_RESPONSES_PATH = "/api/jobs/stepResponses";
     private final static String GET_MATCHING_VALUES_PATH = "/api/jobs/stepResponses/facetValues";
+
+    private static boolean initialized = false;
+
+    @BeforeEach
+    public void setupJobs() {
+        // Ensure that TDEs are installed as part as finish deployment.
+        if (!initialized) {
+            runAsAdmin();
+            HubConfig hubConfig = getHubConfig();
+            SimpleAppDeployer appDeployer = new SimpleAppDeployer();
+            appDeployer.setCommands(Arrays.asList(new FinishHubDeploymentCommand(hubConfig)));
+            appDeployer.deploy(hubConfig.getAppConfig());
+            initialized = true;
+        }
+    }
 
     @Test
     public void testProcessedTargetDatabase() throws JsonProcessingException {
