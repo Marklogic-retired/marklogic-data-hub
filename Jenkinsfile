@@ -205,12 +205,12 @@ def runCypressE2e(){
         '''
         )
 
+        junit '**/e2e/**/*.xml'
+
         def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
         if(output.contains("npm ERR!")){
-            println("WARNING: cypress test run has errors in its log. Tests might run succesfully or with some failures.")
+           error "${STAGE_NAME} stage run with errors. Tests results can be all success or with some failures."
         }
-
-        junit '**/e2e/**/*.xml'
     }
 }
 
@@ -288,12 +288,8 @@ void RTLTests(String type,String mlVersion){
     cobertura coberturaReportFile: '**/cobertura-coverage.xml'
 
     def output=readFile 'data-hub/console.log'
-    def result=false;
     if(output.contains("npm ERR!")){
-        result=true;
-    }
-    if(result){
-        currentBuild.result='UNSTABLE'
+      error "${STAGE_NAME} tests failed but failures possibly was not reported with junit report. Please look at console to find failures"
     }
 
     if(env.CHANGE_TITLE){
@@ -806,7 +802,9 @@ pipeline{
             beforeAgent true
         }
 		agent { label 'dhfLinuxAgent'}
-		steps{runCypressE2e()}
+        steps{timeout(time: 3,  unit: 'HOURS'){
+            catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {runCypressE2e()}
+        }}
         post{
 				  always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -854,7 +852,7 @@ pipeline{
         agent { label 'dhfLinuxAgent'}
         steps {
            timeout(time: 3,  unit: 'HOURS'){
-             catchError(catchInterruptions: true) { RTLTests('Release','10.0-6') }
+           catchError(buildResult: 'SUCCESS',catchInterruptions: true, stageResult: 'UNSTABLE') { RTLTests('Release','10.0-6') }
         }}
         post{
            success {
