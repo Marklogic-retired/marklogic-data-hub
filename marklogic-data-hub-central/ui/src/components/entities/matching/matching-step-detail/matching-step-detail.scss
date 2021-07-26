@@ -58,3 +58,96 @@
 #uriMatchedDataTable th:nth-child(1) {
     text-align-last: left;
 }
+
+/*Vis-timeline styles*/
+
+.highlightText{
+    font-style: italic;
+    padding: 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.vis-item{
+    background-color: #444 !important;
+    color: #f0f0f0 !important;
+    opacity: 0.8 !important;
+    cursor: pointer;
+}
+
+.vis-item .vis-item-content {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.vis-item.vis-box{
+    border-style: none !important;
+    border-radius:8px !important;
+}
+
+.vis-major{
+    display: none;
+}
+
+.vis-item.vis-dot {
+    background-color: #5B69AF;
+    border-color: #5B69Af;
+}
+
+.vis-timeline.vis-bottom{
+    visibility: visible!important;
+}
+
+.itemValue{
+    display: inline-block;
+    background-color: white;
+    border-color: #5B69AF;
+    width: 22px;
+    height: 18px;
+    border-radius: 12px;
+    position: relative;
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left:11px;
+}
+
+.itemReduceValue{
+    display: inline-block;
+    background-color: white;
+    border-color: #5B69AF;
+    width: 26px;
+    height: 18px;
+    border-radius: 12px;
+    position: relative;
+    color: #B32424 ;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left:11px;
+}
+
+.timelineEditIcon{
+    display: inline-block;
+    margin-left: 7px;
+}
+
+.vis-item.vis-selected {
+    border-color: #5B69AF !important;
+    background-color: #E9F7FE !important;
+    color: #5B69AF !important;
+    opacity: 1 !important;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3) !important;
+}
+.vis-item .vis-delete:after{
+    color: #B32424 !important;
+    font-size: 24px !important;
+    font-weight: 500 !important;
+}
+
+.vis-delete:hover {
+  background-color: #f1f1f1 !important;
+}

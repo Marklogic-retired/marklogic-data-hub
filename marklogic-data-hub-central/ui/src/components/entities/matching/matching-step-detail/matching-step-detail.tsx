@@ -25,6 +25,9 @@ import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "..
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import CompareValuesModal from "../compare-values-modal/compare-values-modal";
+import Timeline from "react-visjs-timeline";
+import moment from "moment";
+
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -194,22 +197,6 @@ const MatchingStepDetail: React.FC = () => {
     return allKeys;
   };
 
-  const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
-    const rulesetCategory = i.rulesetType && i.rulesetType === "multiple" ? i.rulesetType : "single";
-    const firstMatchRule = i.matchRules[0];
-    const firstMatchRuleType = firstMatchRule ? firstMatchRule.matchType : "";
-    const rulesetType = firstMatchRuleType;
-    const matchRuleOptionsObject = {
-      props: [{
-        prop: i.name.split(" -")[0],
-        type: rulesetType,
-        rulesetCategory: rulesetCategory
-      }],
-      value: i.weight
-    };
-    return matchRuleOptionsObject;
-  });
-
   const matchThresholdOptions = matchingStep.thresholds && matchingStep.thresholds.map((i) => {
     const matchThresholdOptionsObject = {
       props: [{
@@ -240,10 +227,8 @@ const MatchingStepDetail: React.FC = () => {
       let stepArtifact = curationOptions.activeStep.stepArtifact;
       let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
       let index = parseInt(options["index"]);
-
       stepArtifactRulesets[index]["weight"] = parseInt(values[index]["value"]);
       stepArtifact["matchRulesets"] = stepArtifactRulesets;
-
       await updateMatchingArtifact(stepArtifact);
       updateActiveStepArtifact(stepArtifact);
     }
@@ -289,10 +274,8 @@ const MatchingStepDetail: React.FC = () => {
       let stepArtifact = curationOptions.activeStep.stepArtifact;
       let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
       let index = parseInt(deleteOptions["index"]);
-
       stepArtifactRulesets.splice(index, 1);
       stepArtifact.matchRulesets = stepArtifactRulesets;
-
       await updateMatchingArtifact(stepArtifact);
       updateActiveStepArtifact(stepArtifact);
       toggleShowDeleteModal(false);
@@ -319,7 +302,7 @@ const MatchingStepDetail: React.FC = () => {
       maskClosable={false}
       footer={null}
     >
-      <p aria-label="delete-slider-text" className={styles.deleteMessage}>Are you sure you want to delete a {deleteOptions["sliderType"] === "threshold" ? "threshold" : "ruleset"} <b>{deleteOptions["prop"]} - {deleteOptions["type"]}</b>?</p>
+      <p aria-label="delete-slider-text" className={styles.deleteMessage}>Are you sure you want to delete a {deleteOptions["sliderType"] === "threshold" ? "threshold" : "ruleset"} <b>{deleteOptions["prop"]}</b>{deleteOptions["type"] ? <b> - {deleteOptions["type"]}</b> : ""} ?</p>
       <div className={styles.footer}>
         <MLButton
           aria-label={`delete-slider-no`}
@@ -527,10 +510,6 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  // const handleTestMatchTab = (event) => {
-  //   setTestMatchTab(event.key);
-  // };
-
   const handleUriInputSelected = (event) => {
     setInputUriDisabled(false);
     setTestUrisOnlySelected(true);
@@ -607,6 +586,109 @@ const MatchingStepDetail: React.FC = () => {
     }
     setCompareModalVisible(true);
     setUrisCompared(uris);
+  };
+
+  const rulesetItems = matchingStep.matchRulesets.map((item, id) => ({
+    id: id,
+    start: item.weight,
+    reduce: item.reduce ? item.reduce : false,
+    value: item.name+ ":" + item.weight.toString()
+  }));
+
+  const updateRulesetItems = async(id, newvalue) => {
+    let stepArtifact = curationOptions.activeStep.stepArtifact;
+    let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+    let updateRuleset = stepArtifactRulesets[id];
+    updateRuleset["weight"] = parseInt(newvalue);
+    stepArtifactRulesets[id] = updateRuleset;
+    stepArtifact["matchRulesets"] = stepArtifactRulesets;
+    await updateMatchingArtifact(stepArtifact);
+    updateActiveStepArtifact(stepArtifact);
+  };
+
+
+  const rulesetOptions:any = {
+    max: 120,
+    min: -20,
+    start: -20,
+    end: 120,
+    width: "100%",
+    itemsAlwaysDraggable: {
+      item: true,
+      range: true
+    },
+    selectable: true,
+    editable: {
+      remove:true,
+      updateTime:true
+    },
+    moveable: false,
+    timeAxis: {
+      scale: "millisecond",
+      step: 5
+    },
+    onMove: function(item, callback) {
+      if (item.start >= 0  && item.start <= 100) {
+        item.value = item.start.getMilliseconds().toString();
+        callback(item);
+        updateRulesetItems(item.id, item.start.getMilliseconds().toString());
+      } else {
+        if (item.start < 1) {
+          item.start = 1;
+          item.value = "1";
+        } else {
+          item.start = 100;
+          item.value = "100";
+        }
+        callback(item);
+        updateRulesetItems(item.id, item.value);
+      }
+
+    },
+    onRemove: function (item, callback) {
+      handleSliderDelete({index: item.id, sliderType: "ruleSet", prop: item.value.split(":")[0], type: ""});
+    },
+    format: {
+      minorLabels: function (date, scale, step) {
+        let time;
+        if (date >= 0 && date <= 100) {
+          time = date.format("SSS");
+          return moment.duration(time).asMilliseconds();
+        } else {
+          return "";
+        }
+      },
+    },
+    template: function(item) {
+      if (item && item.hasOwnProperty("value")) {
+        if (item.reduce === false) {
+          return "<div>" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div><div class=\"timelineEditIcon\"><i id=\"editTimeline_"+item.id+"\" class=\"fas fa-pencil-alt\"></i></div></div>";
+        } else {
+          return "<div>" + item.value.split(":")[0] + "<div class=\"itemReduceValue\">" + - item.value.split(":")[1] + "</div><div class=\"timelineEditIcon\"><i id=\"editTimeline_"+item.id+"\" class=\"fas fa-pencil-alt\"></i></div></div>";
+        }
+      }
+    },
+    maxMinorChars: 4
+  };
+
+  const onRuleSetTimelineItemClicked = (event) => {
+    if (event.item === null) return;
+    let editElementId:null|HTMLElement = document.getElementById("editTimeline_"+event.item);
+    if (editElementId) {
+      editElementId.onclick=() => {
+        let updateStepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+        let index = event.item;
+        let editMatchRuleset = updateStepArtifactRulesets[index];
+        setEditRuleset({...editMatchRuleset, index});
+        if (editMatchRuleset) {
+          if (editMatchRuleset.hasOwnProperty("rulesetType") && editMatchRuleset["rulesetType"] === "multiple") {
+            toggleShowRulesetMultipleModal(true);
+          } else {
+            toggleShowRulesetSingleModal(true);
+          }
+        }
+      };
+    }
   };
 
   return (
@@ -720,8 +802,10 @@ const MatchingStepDetail: React.FC = () => {
                     <DownOutlined /></MLButton>
                 </div></Dropdown></div>
           </div>
-          <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
+          <div className="highlightText"><span style={{color: "#B32424", marginRight: "2px"}}>*</span><span>Click anywhere on a ruleset to select it. Once the ruleset is selected, you can choose to edit or delete.</span></div>
+          <div><Timeline items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked}></Timeline></div>
         </div>
+
 
         <div className={styles.stepNumberContainer}>
           <NumberIcon value={3} />
