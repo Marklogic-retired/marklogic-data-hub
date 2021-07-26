@@ -24,11 +24,6 @@ snyk {
     autoUpdate = true
 }
 
-repositories {
-    // Needed for marklogic-junit5; will go away once we upgrade to 1.1.0
-    maven { url 'https://dl.bintray.com/marklogic-community/Maven/' }
-}
-
 group = 'com.marklogic'
 
 ext {
@@ -41,56 +36,54 @@ ext {
 dependencies {
     api project(":marklogic-data-hub-api")
 
-    // Now that Java Client 5.4.0 is using api/implementation separation, we need to bring some of its former
-    // "compile" dependencies over
-    implementation "com.squareup.okhttp3:okhttp:4.7.2"
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+    implementation "org.apache.httpcomponents:httpclient:4.5.13"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.11.1"
-    implementation "org.slf4j:slf4j-api:1.7.30"
+    implementation "org.slf4j:slf4j-api:1.7.31"
+    implementation "org.jdom:jdom2:2.0.6"
 
-    implementation ('com.marklogic:mlcp-util:0.9.0') {
-        // mlcp-util depends on 4.2.5, but Gradle forces this up to 5.x based on other Spring dependencies.
-        // But the Palamida security tool thinks 4.2.5 is still being used and reports it as a vulnerability.
-        // So it's forcibly exclude here to avoid confusing Palamida.
-        exclude module: "spring-beans"
-        exclude module: "spring-core"
-    }
+    // Required for some code that accesses OkHttp APIs directly; intended to match the version of
+    // OkHttp that the Java Client brings in
+    implementation "com.squareup.okhttp3:okhttp:4.7.2"
 
-    implementation 'com.marklogic:marklogic-data-movement-components:2.2.1'
+    implementation 'com.marklogic:mlcp-util:1.0'
+    implementation 'com.marklogic:marklogic-data-movement-components:2.4.0'
 
-    implementation 'commons-io:commons-io:2.4'
+    implementation 'commons-io:commons-io:2.11.0'
 
     testFixturesApi(testImplementation(project(":marklogic-data-hub-test")))
-    testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.1"
-    testFixturesImplementation 'commons-io:commons-io:2.4'
+    testFixturesApi "com.fasterxml.jackson.core:jackson-databind:2.11.1"
+    testFixturesApi "org.junit.jupiter:junit-jupiter:5.7.2"
+    testFixturesImplementation 'commons-io:commons-io:2.11.0'
 
     // Projects that depend on this project's testFixtures will have access to these resources.
     // But this project apparently needs to use testImplementation to reference them in tests.
     testImplementation files("src/testFixtures/resources")
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
-    testImplementation "org.springframework:spring-test:5.2.15.RELEASE"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
+    testImplementation "org.springframework:spring-test:5.3.9"
 
     // For managing a pool of HubConfigImpl objects
-    testFixturesApi "org.apache.commons:commons-pool2:2.8.1"
+    testFixturesApi "org.apache.commons:commons-pool2:2.10.0"
 
-    testFixturesApi 'xmlunit:xmlunit:1.3'
+    testFixturesApi 'xmlunit:xmlunit:1.6'
 
     testImplementation 'org.skyscreamer:jsonassert:1.5.0'
     testImplementation 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testImplementation 'org.easymock:easymock:3.4'
-    testImplementation 'ch.qos.logback:logback-classic:1.2.3'
-    testImplementation 'org.slf4j:log4j-over-slf4j:1.7.13'
+    testImplementation 'ch.qos.logback:logback-classic:1.2.4'
+    testImplementation 'org.slf4j:log4j-over-slf4j:1.7.31'
+
+    // How MLCP handles errors in a transform changed between 10.0.4.2 and 10.0.5, such that these errors do not result
+    // in records counting as "failures". This seems like a bug with MLCP. For now, 10.0.4.2 is still used for testing
+    // as RunConnectedStepsWithMlcpTest expects transform errors to be counted as failures. 
     testImplementation("com.marklogic:mlcp:10.0.4.2") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
     }
 
-    // Provides support for invoking marklogic-unit-test tests via JUnit
-    testImplementation ("com.marklogic:marklogic-junit5:1.0.0") {
-        // prefer the version declared above
-        exclude group: 'com.marklogic', module: 'marklogic-client-api'
-    }
-    mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.0"
+    testImplementation "com.marklogic:marklogic-junit5:1.1.0"
+    mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
 }
 
 configurations.all {

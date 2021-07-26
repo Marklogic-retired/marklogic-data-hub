@@ -16,16 +16,10 @@ snyk {
 }
 
 dependencies {
-    // ml-app-deployer is not yet on Java Client 5.4.0, so exclude it
-    api ("com.marklogic:ml-app-deployer:4.1.1") {
-        exclude module: "marklogic-client-api"
-    }
+    api "com.marklogic:ml-app-deployer:4.3.0"
 
-    api "com.marklogic:marklogic-client-api:5.4.0"
-
-    // This was previously an API dependency of Java Client 5.3.x, but it no longer is in 5.4.0. And it
-    // shouldn't be an API dependency in this project either, as it's not part of any public APIs in the project.
-    implementation "org.slf4j:slf4j-api:1.7.30"
+    implementation "org.apache.commons:commons-lang3:3.12.0"
+    implementation "org.slf4j:slf4j-api:1.7.31"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -91,10 +85,7 @@ publishing {
         sourcesJava(MavenPublication) {
             from components.java
             artifact sourcesJar
-
-
         }
-
     }
     repositories {
         maven {

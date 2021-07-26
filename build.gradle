@@ -14,7 +14,6 @@ subprojects {
     targetCompatibility = "8"
 
     repositories {
-        jcenter()
         mavenCentral()
         mavenLocal()
     }

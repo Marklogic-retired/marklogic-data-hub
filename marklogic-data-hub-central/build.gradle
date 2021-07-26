@@ -4,15 +4,17 @@ buildscript {
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.11.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
 		classpath "com.github.node-gradle:gradle-node-plugin:2.2.4"
-        classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.0.2'
+        classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.1.1'
 	}
 }
 
 plugins {
     id "net.saliman.properties"
     id "application"
+
+    // Used for packaging HC as an rpm file
     id "nebula.ospackage" version "8.4.1"
 
     id "io.snyk.gradle.plugin.snykplugin" version "0.4"
@@ -56,26 +58,30 @@ bootRun.doFirst {
 }
 
 dependencies {
-    // No idea why this is necessary, but when Gradle brings the core project over, it bumps the okhttp3 dependency
+    // No idea why, but when Gradle brings the core project over, it bumps the okhttp3 dependency
     // down from 4.x to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
     // then explicitly depending on the desired versions.
     implementation (project(":marklogic-data-hub")) {
         exclude group: "com.squareup.okhttp3", module: "okhttp"
         exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
     }
-
-    // Depend on the versions that ML Java Client 5.4.0 depends on
+    // Depend on the versions that ML Java Client 5.5.0 depends on
     implementation "com.squareup.okhttp3:okhttp:4.7.2"
     implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
+
+    implementation "org.apache.commons:commons-lang3:3.12.0"
 
     implementation 'com.azure:azure-identity:1.2.5'
     implementation 'com.azure:azure-security-keyvault-secrets:4.2.8'
     implementation 'com.azure:azure-storage-blob:12.8.0'
-    implementation 'com.amazonaws:aws-java-sdk-s3:1.11.1031'
-    implementation 'com.amazonaws:aws-java-sdk-ssm:1.11.1031'
+
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.30'
+    implementation 'com.amazonaws:aws-java-sdk-ssm:1.12.30'
+
     constraints {
-        implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.11.4') {
-            because 'gradle automatically ups the version to 2.11.4 but Palamida scan still thinks that version 2.6.7 ' +
+        // Using 2.12.4 to match Spring Boot
+        implementation('com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.12.4') {
+            because 'gradle automatically ups the version to 2.12.4 but Palamida scan still thinks that version 2.6.7 ' +
                     'is being used so setting the version forcibly here to avoid confusing Palamida'
         }
     }
@@ -87,8 +93,8 @@ dependencies {
     // Main dependency for a Spring Boot web application
     implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
 
-    // Dependency to serialize and deserialize XML. The default version for the current springBootVersion is referenced.
-    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
+    // Dependency to serialize and deserialize XML; using 2.12.4 to match Spring Boot
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.4"
 
     // Used for hosting static resources when running as an executable jar/war
     implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
