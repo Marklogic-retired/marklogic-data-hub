@@ -39,7 +39,7 @@ dependencies {
     // Depends on the test plumbing classes in the test project
     testImplementation(project(":marklogic-data-hub-test"))
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.7.1"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.7.2"
 
     // Need to declare the Spark dependencies here too so they're available for tests
     testImplementation "org.apache.spark:spark-sql_2.11:${sparkVersion}"

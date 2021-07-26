@@ -37,6 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Need to set allowed origins to * on websocket request for the sake of CORS compliance
         // See https://stackoverflow.com/a/32927818/535924
-        registry.addEndpoint("/websocket").setAllowedOrigins("*").withSockJS();
+        // As of Spring Boot 2.4, must use setAllowedOriginPatterns instead of setAllowedOrigins
+        registry.addEndpoint("/websocket").setAllowedOriginPatterns("*").withSockJS();
     }
 }

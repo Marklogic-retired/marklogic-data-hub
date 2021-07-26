@@ -1,20 +1,17 @@
 package com.marklogic.hub.central.controllers.steps;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.FailedRequestException;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -128,8 +125,8 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
             .andDo(result -> {
                 JsonNode response = parseJsonResponse(result);
                 assertNotNull(response.get("onMerge"));
-                Assert.assertEquals(response.get("onMerge").size(), 2);
-                Assert.assertTrue(response.get("onMerge").get(0).asText().startsWith("sm-Customer-"));
+                assertEquals(response.get("onMerge").size(), 2);
+                assertTrue(response.get("onMerge").get(0).asText().startsWith("sm-Customer-"));
                 assertNotNull(response.get("onNoMatch"));
                 assertNotNull(response.get("onArchive"));
                 assertNotNull(response.get("onNotification"));
