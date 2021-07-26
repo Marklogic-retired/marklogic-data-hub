@@ -44,7 +44,9 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.error.*;
+import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.hub.error.InvalidDBOperationError;
+import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
@@ -71,7 +73,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -604,27 +605,15 @@ public class DataHubImpl implements DataHub, InitializingBean {
         eval.xquery(xqy).eval().close();
     }
 
-    public void deployToReplicaClusterOnPremise() {
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
-        deployer.setCommands(buildCommandsForDeployingToReplica());
-        deployer.deploy(hubConfig.getAppConfig());
-    }
-
     /**
      *
      * @return a list of commands that equate to what a full deployment will run, minus any commands that can write to
      * any of the 8 DHF databases (staging, final, jobs, modules, and then the 4 triggers and schemas databases)
      */
     public List<Command> buildCommandsForDeployingToReplica() {
-        Map<String, List<Command>> commandMap = buildCommandMap();
-        Stream.of(
-            "mlModuleCommands", "mlAlertCommands", "mlCpfCommands", "mlDataCommands", "mlSchemaCommands", "mlFlexrepCommands",
-            "mlTemporalCommands", "mlTriggerCommands", "mlViewCommands", "finishHubDeploymentCommands"
-        ).forEach(groupName -> commandMap.remove(groupName));
-
-        List<Command> commands = new ArrayList<>();
-        commandMap.values().forEach(commandList -> commands.addAll(commandList));
-        return commands;
+        Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMapForReplicaCluster();
+        applyDataHubChangesToCommands(commandMap, true);
+        return commandMap.values().stream().reduce(new ArrayList<>(), (a, b) -> { a.addAll(b); return a;});
     }
 
     /**
@@ -634,16 +623,20 @@ public class DataHubImpl implements DataHub, InitializingBean {
      */
     public Map<String, List<Command>> buildCommandMap() {
         Map<String, List<Command>> commandMap = new CommandMapBuilder().buildCommandMap();
+        applyDataHubChangesToCommands(commandMap, false);
+        return commandMap;
+    }
 
+    /**
+     *
+     * @param commandMap
+     * @param isDeployingToReplica if true, then certain changes won't be made because they involve commands that
+     *                             write to a database, which isn't allowed when deploying to a replica cluster
+     */
+    private void applyDataHubChangesToCommands(Map<String, List<Command>> commandMap, boolean isDeployingToReplica) {
         updateSecurityCommandList(commandMap);
-
         updateDatabaseCommandList(commandMap);
-
         updateServerCommandList(commandMap);
-
-        updateTriggersCommandList(commandMap);
-
-        updateModuleCommandList(commandMap);
 
         // DHF has no use case for the "deploy REST API server" commands provided by ml-gradle
         commandMap.remove("mlRestApiCommands");
@@ -657,11 +650,14 @@ public class DataHubImpl implements DataHub, InitializingBean {
         granularPrivilegeCommands.add(new CreateGranularPrivilegesCommand(hubConfig));
         commandMap.put("hubGranularPrivilegeCommands", granularPrivilegeCommands);
 
-        List<Command> finishHubDeploymentCommands = new ArrayList<>();
-        finishHubDeploymentCommands.add(new FinishHubDeploymentCommand(hubConfig));
-        commandMap.put("finishHubDeploymentCommands", finishHubDeploymentCommands);
+        if (!isDeployingToReplica) {
+            updateTriggersCommandList(commandMap);
+            updateModuleCommandList(commandMap);
 
-        return commandMap;
+            List<Command> finishHubDeploymentCommands = new ArrayList<>();
+            finishHubDeploymentCommands.add(new FinishHubDeploymentCommand(hubConfig));
+            commandMap.put("finishHubDeploymentCommands", finishHubDeploymentCommands);
+        }
     }
 
     /**
@@ -1028,11 +1024,11 @@ public class DataHubImpl implements DataHub, InitializingBean {
         logger.info("Clearing user schemas as user: " + hubClientToUse.getUsername());
 
         String xquery = "cts:not-query(" +
-                "cts:collection-query((" +
-                "'http://marklogic.com/xdmp/temporal/axis', " +
-                "'http://marklogic.com/xdmp/temporal/collection', 'http://marklogic.com/xdmp/view'" +
-                "))" +
-                ")";
+            "cts:collection-query((" +
+            "'http://marklogic.com/xdmp/temporal/axis', " +
+            "'http://marklogic.com/xdmp/temporal/collection', 'http://marklogic.com/xdmp/view'" +
+            "))" +
+            ")";
 
         String fullQuery = "cts:uris((), (), " + xquery + ") ! xdmp:document-delete(.)";
 
