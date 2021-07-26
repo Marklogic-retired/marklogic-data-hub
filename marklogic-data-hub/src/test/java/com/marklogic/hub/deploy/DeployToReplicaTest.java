@@ -33,6 +33,7 @@ import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsComma
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsLSQTCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.appdeployer.command.viewschemas.DeployViewSchemasCommand;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
@@ -56,10 +57,10 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
-        installReferenceModelProject();
+        installProjectInFolder("test-projects/simple-custom-step");
 
         // Run a flow to generate a doc in jobs database
-        runSuccessfulFlow(new FlowInputs("echoFlow"));
+        runSuccessfulFlow(new FlowInputs("simpleCustomStepFlow"));
     }
 
     @AfterEach
@@ -76,7 +77,7 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
         // For on-premise, it's reasonable to deploy as an admin user
-        new DataHubImpl(getHubConfig()).deployToReplicaClusterOnPremise();
+        new SimpleAppDeployer(new DataHubImpl(getHubConfig()).buildCommandsForDeployingToReplica()).deploy(getHubConfig().getAppConfig());
 
         verifyLatestTimestampsAreUnchanged(initialLatestTimestamps);
     }
