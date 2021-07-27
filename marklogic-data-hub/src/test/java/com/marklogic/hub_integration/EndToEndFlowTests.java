@@ -846,9 +846,12 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         }
         logger.error(mlcpRunner.getProcessOutput());
 
+        final DatabaseClient stagingClient = getHubClient().getStagingClient();
+
         for (int i = 0; i < 10; i++) {
             Thread.sleep(1000);
-            if (getStagingDocCount() == finalCounts.stagingCount + existingStagingCount) {
+            String count = stagingClient.newServerEval().javascript("cts.estimate(cts.trueQuery())").evalAs(String.class);
+            if (Integer.parseInt(count) == finalCounts.stagingCount + existingStagingCount) {
                 break;
             }
         }
@@ -871,7 +874,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             	}
             }
 
-            GenericDocumentManager stagingDocMgr = getHubClient().getStagingClient().newDocumentManager();
+            GenericDocumentManager stagingDocMgr = stagingClient.newDocumentManager();
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
