@@ -3,6 +3,7 @@ package com.marklogic.hub.central.schemas;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "stack",
     "uri"
 })
+@Generated("jsonschema2pojo")
 public class CompleteError {
 
     @JsonProperty("name")

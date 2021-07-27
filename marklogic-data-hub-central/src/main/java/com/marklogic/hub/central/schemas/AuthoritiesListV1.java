@@ -4,6 +4,7 @@ package com.marklogic.hub.central.schemas;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * List describing the autorites a given user has.
  * 
  */
+@Generated("jsonschema2pojo")
 public enum AuthoritiesListV1 {
 
     LOGIN_TO_HUB_CENTRAL(null),
@@ -38,7 +40,7 @@ public enum AuthoritiesListV1 {
         }
     }
 
-    private AuthoritiesListV1(List<String> value) {
+    AuthoritiesListV1(List<String> value) {
         this.value = value;
     }
 

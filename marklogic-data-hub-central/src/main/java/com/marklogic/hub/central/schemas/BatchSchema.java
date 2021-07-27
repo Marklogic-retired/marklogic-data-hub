@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -48,6 +49,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "completeError",
     "stepResults"
 })
+@Generated("jsonschema2pojo")
 public class BatchSchema {
 
     @JsonProperty("jobId")
@@ -702,6 +704,7 @@ public class BatchSchema {
      * The status is 'started' when processing begins on a batch and then is updated to be one of the other values when processing finishes
      * 
      */
+    @Generated("jsonschema2pojo")
     public enum BatchStatus {
 
         STARTED("started"),
@@ -717,7 +720,7 @@ public class BatchSchema {
             }
         }
 
-        private BatchStatus(String value) {
+        BatchStatus(String value) {
             this.value = value;
         }
 
