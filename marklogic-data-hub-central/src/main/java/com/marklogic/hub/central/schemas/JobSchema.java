@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Generated;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -36,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "stepResponses",
     "flowErrors"
 })
+@Generated("jsonschema2pojo")
 public class JobSchema {
 
     /**
@@ -421,6 +423,7 @@ public class JobSchema {
      * The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed
      * 
      */
+    @Generated("jsonschema2pojo")
     public enum JobStatus {
 
         CANCELED("canceled"),
@@ -439,7 +442,7 @@ public class JobSchema {
             }
         }
 
-        private JobStatus(String value) {
+        JobStatus(String value) {
             this.value = value;
         }
 
