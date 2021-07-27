@@ -7,15 +7,19 @@ import module namespace test = "http://marklogic.com/test" at "/test/test-helper
 declare namespace prov = "http://www.w3.org/ns/prov#";
 
 declare function verify-new-provenance-record($record as node(), $job-id as xs:string) {
-  test:assert-equal(fn:concat("job:", $job-id), xs:string($record//prov:activity/@prov:id/string())),
-  test:assert-equal($job-id, xs:string($record//prov:activity/prov:label)),
-  test:assert-equal("dh:Job", xs:string($record//prov:activity/prov:type)),
-  test:assert-false(fn:empty($record//prov:activity/prov:startTime)),
-  test:assert-equal("user:test-data-hub-developer", xs:string($record//prov:agent/@prov:id)),
-  test:assert-equal("test-data-hub-developer", xs:string($record//prov:agent/prov:label)),
-  test:assert-equal("dh:User", xs:string($record//prov:agent/prov:type)),
-  test:assert-equal(fn:concat("job:", $job-id), xs:string($record//prov:wasAssociatedWith/prov:activity/@prov:ref)),
-  test:assert-equal("user:test-data-hub-developer", xs:string($record//prov:wasAssociatedWith/prov:agent/@prov:ref))
+
+  let $current-user := xdmp:get-current-user()
+  return (
+    test:assert-equal(fn:concat("job:", $job-id), xs:string($record//prov:activity/@prov:id/string())),
+    test:assert-equal($job-id, xs:string($record//prov:activity/prov:label)),
+    test:assert-equal("dh:Job", xs:string($record//prov:activity/prov:type)),
+    test:assert-false(fn:empty($record//prov:activity/prov:startTime)),
+    test:assert-equal(fn:concat("user:", $current-user), xs:string($record//prov:agent/@prov:id)),
+    test:assert-equal($current-user, xs:string($record//prov:agent/prov:label)),
+    test:assert-equal("dh:User", xs:string($record//prov:agent/prov:type)),
+    test:assert-equal(fn:concat("job:", $job-id), xs:string($record//prov:wasAssociatedWith/prov:activity/@prov:ref)),
+    test:assert-equal(fn:concat("user:", $current-user), xs:string($record//prov:wasAssociatedWith/prov:agent/@prov:ref))
+  )
 };
 
 declare function verify-end-time-in-provenance-record($record as node()) {
