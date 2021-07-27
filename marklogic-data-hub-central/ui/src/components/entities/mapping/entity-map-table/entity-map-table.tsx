@@ -848,6 +848,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else if (prop && prop["output"]) {
           return prop["output"];
         }
+      } else if (props.mapResp && props.mapResp.relatedEntityMappings && propName === "Context" && !isProperty && props.mapResp.relatedEntityMappings[index] && props.mapResp.relatedEntityMappings[index].expressionContext) {
+        let prop = props.mapResp.relatedEntityMappings[index].expressionContext;
+        if (prop && prop["output"]) {
+          return <b>{prop["output"]}</b>;
+        }
       } else if (index > -1 && props.mapResp && props.mapResp.relatedEntityMappings && props.mapResp.relatedEntityMappings[index].properties) {
         let field = props.mapResp.relatedEntityMappings[index].properties;
         let prop = getValue(field, finalProp);

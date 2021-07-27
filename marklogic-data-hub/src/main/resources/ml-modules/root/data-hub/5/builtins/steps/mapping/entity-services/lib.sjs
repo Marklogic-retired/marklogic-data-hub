@@ -115,6 +115,20 @@ function fetchNamespacesFromMappingStep(mappingStep){
   return namespaces;
 }
 
+function getMappingNamespacesObject(mappingStep){
+  let namespaces = {};
+  if (mappingStep.namespaces) {
+    for (const prefix of Object.keys(mappingStep.namespaces).sort()) {
+      if (mappingStep.namespaces.hasOwnProperty(prefix)) {
+        if (!reservedNamespaces.includes(prefix)) {
+          namespaces[prefix]=mappingStep.namespaces[prefix];
+        }
+      }
+    }
+  }
+  return namespaces;
+}
+
 /**
  * Makes parameter elements for the XML mapping template, which are then converted into XSLT parameter elements.
  *
@@ -401,7 +415,8 @@ function validateAndTestMapping(mapping, uri) {
   const mappingsArray = createMappingsArray(mapping);
   const validatedMappingsArray = validateMappings(mappingsArray, userParameterNames);
   let validatedAndTestedMapping =  testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
-  return validateAndTestUriExpressions(validatedAndTestedMapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
+  let validatedAndTestedMappingWithUri = validateAndTestUriExpressions(validatedAndTestedMapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
+  return validatedMappingsArray.length > 1 ? calculateInstanceCount(validatedAndTestedMappingWithUri, validatedMappingsArray,sourceInstance) : validatedAndTestedMappingWithUri;
 }
 
 function validateMappings(mappingsArray, userParameterNames){
@@ -505,6 +520,21 @@ function validateAndTestUriExpressions(mapping, validatedMappingsArray, sourceIn
       }
       else{
         mapping.relatedEntityMappings[mappingIndex - 1].uriExpression.output = response;
+      }
+    }
+  });
+  return mapping;
+}
+
+function calculateInstanceCount(mapping, validatedMappingsArray, sourceInstance){
+  const namespaces = getMappingNamespacesObject(mapping);
+  const sourceDocument = fn.head(xdmp.unquote(xdmp.quote(sourceInstance)));
+  validatedMappingsArray.forEach((entityMapping, mappingIndex) => {
+    if(mappingIndex != 0){
+      const instanceCount = fn.count(sourceDocument.xpath(entityMapping.expressionContext, namespaces));
+      if(instanceCount > 1){
+        mapping.relatedEntityMappings[mappingIndex - 1].expressionContext = {};
+        mapping.relatedEntityMappings[mappingIndex - 1].expressionContext.output = `${instanceCount} instances(1 shown)`;
       }
     }
   });
