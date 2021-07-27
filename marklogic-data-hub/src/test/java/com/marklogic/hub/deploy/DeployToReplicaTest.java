@@ -42,6 +42,7 @@ import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.impl.DataHubImpl;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -52,11 +53,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
+        assumeTrue(isVersionCompatibleWith520Roles());
+
         installProjectInFolder("test-projects/simple-custom-step");
 
         // Run a flow to generate a doc in jobs database
@@ -65,12 +69,16 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @AfterEach
     void afterEach() {
+        assumeTrue(isVersionCompatibleWith520Roles());
+
         // Deploying will remove the test-specific database settings, so gotta restore them
         applyDatabasePropertiesForTests(getHubConfig());
     }
 
     @Test
     void deployToReplicaOnPremise() {
+        assumeTrue(isVersionCompatibleWith520Roles());
+
         verifyCommandListForDeployingToReplicaOnPremise();
 
         runAsAdmin();
@@ -84,6 +92,8 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
     @Test
     void deployToReplicaInDHS() {
+        assumeTrue(isVersionCompatibleWith520Roles());
+
         runAsAdmin();
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
