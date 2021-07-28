@@ -43,6 +43,17 @@ ext {
     taskGroup = "Spring Boot UI"
 }
 
+// Starting in Spring Boot 5.5, Spring Boot will generate "plain" archives by default. We don't want these, as we have
+// a "non-plain" war configured below. Disabling these results in a single war file being created when running "build"
+// or "buildRpm", which ensures that the rpm contains the correct war file.
+// See https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives .
+jar {
+    enabled = false
+}
+war {
+    enabled = false
+}
+
 bootWar {
     archiveBaseName = springBootJarName
     // Used for running hub-central as a system service
