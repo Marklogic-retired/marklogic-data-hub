@@ -5,8 +5,11 @@ import styles from "./job-response.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {MLButton, MLSpin} from "@marklogic/design-system";
-import {getMappingArtifactByStepName} from "../../api/mapping";
-import {useHistory} from "react-router-dom";
+
+/* uncomment when implementing explore data link */
+// import {getMappingArtifactByStepName} from "../../api/mapping";
+// import {useHistory} from "react-router-dom";
+
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
@@ -22,11 +25,14 @@ type Props = {
 const JobResponse: React.FC<Props> = (props) => {
   const [durationInterval, setDurationInterval]  = useState<any>(null);
   const [jobResponse, setJobResponse]  = useState<any>({});
-  const [lastSuccessfulStep, setLastSuccessfulStep]  = useState<any>(null);
+
+  /* uncomment when implementing explore data link */
+  const [lastSuccessfulStep, setLastSuccessfulStep]  = useState<any>(null); // eslint-disable-line @typescript-eslint/no-unused-vars
+  // const history: any = useHistory();
+
   const [isLoading, setIsLoading]  = useState<boolean>(true);
   const {handleError} = useContext(UserContext);
 
-  const history: any = useHistory();
 
   useEffect(() => {
     if (props.jobId) {
@@ -110,16 +116,38 @@ const JobResponse: React.FC<Props> = (props) => {
             Error {index+1}
     </span>
   );
+
+  const responsesHeader =
+  <div>
+    <div className={styles.headerRow}>
+      <strong className={styles.headerItem}>Step</strong>
+      <strong className={styles.headerItem}>Documents Written</strong>
+      <strong className={styles.headerItem}>Action</strong>
+    </div>
+    <Divider className={styles.divider}/>
+  </div>;
+
+
   const renderStepResponses = (jobResponse) => {
     if (jobResponse && jobResponse.stepResponses) {
       return Object.values(jobResponse.stepResponses).map((stepResponse: any, index: number) => {
         const stepIsFinished = stepResponse.stepEndTime && stepResponse.stepEndTime !== "N/A";
         if (stepIsFinished) {
           if (stepResponse.success) {
-            return <div  className={styles.stepResponse} key={"success-" + index}><Icon type="check-circle" className={styles.successfulRun} theme="filled"/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>;
+            return <div>
+              <div className={styles.stepRow}>
+                <div  className={styles.stepResponse} key={"success-" + index}><Icon type="check-circle" className={styles.successfulRun} theme="filled"/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
+                <div className={styles.documentsWritten}>{stepResponse.successfulEvents}</div>
+                <MLButton data-testid="explorer-link" size="small" type="primary" onClick={() => {}} className={styles.exploreCuratedData}>
+                  <span className={styles.exploreActionIcon}></span>
+                  <span className={styles.exploreActionText}>Explore Data</span>
+                </MLButton>
+              </div>
+              <Divider className={styles.divider}/>
+            </div>;
           } else {
             const errors = getErrors(stepResponse);
-            return <div className={styles.stepResponse} key={"failed-" + index}>
+            return <div className={styles.errorStepResponse} key={"failed-" + index}>
               <div><Icon type="exclamation-circle" className={styles.unSuccessfulRun} theme="filled"/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
               <Collapse defaultActiveKey={[]} bordered={false}>
                 <Panel header={<span className={styles.errorSummary}>{getErrorsSummary(stepResponse)}</span>} key={stepResponse.stepName + "-errors"}>
@@ -143,69 +171,71 @@ const JobResponse: React.FC<Props> = (props) => {
     }
   };
 
-  const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
-    if (stepType === "mapping") {
-      let mapArtifacts = await getMappingArtifactByStepName(stepName);
-      history.push(
-        {pathname: "/tiles/explore",
-          state: {entityName: mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName, targetDatabase: targetDatabase, jobId: jobId}
-        });
-    } else if (stepType === "merging") {
-      history.push({
-        pathname: "/tiles/explore",
-        state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
-      });
-    } else if (entityName) {
-      history.push({
-        pathname: "/tiles/explore",
-        state: {targetDatabase: targetDatabase, entityName: entityName, jobId: jobId}
-      });
-    } else {
-      history.push({
-        pathname: "/tiles/explore",
-        state: {targetDatabase: targetDatabase, jobId: jobId}
-      });
-    }
-    Modal.destroyAll();
-  };
+  /**** Reference below functions when implementing explore data function ****/
 
-  const renderExploreButton = (stepResponse) => {
-    if (stepResponse) {
-      const stepName = stepResponse.stepName;
-      const stepType = stepResponse.stepDefinitionType;
-      const targetDatabase = stepResponse.targetDatabase;
-      let entityName;
-      const targetEntityType = stepResponse.targetEntityType;
-      if (targetEntityType) {
-        let splitTargetEntity = targetEntityType.split("/");
-        entityName = splitTargetEntity[splitTargetEntity.length - 1];
-      }
-      return ((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging" || stepType.toLowerCase() === "custom") && entityName ?
-        <div className={styles.exploreDataContainer}>
-          <MLButton data-testid="explorer-link" size="large" type="primary"
-            onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
-            className={styles.exploreCuratedData}>
-            <span className={styles.exploreIcon}></span>
-            <span className={styles.exploreText}>Explore Curated Data</span>
-          </MLButton>
-        </div> : (stepType.toLowerCase() === "ingestion" || stepType.toLowerCase() === "custom")?
-          <div className={styles.exploreDataContainer}>
-            <MLButton data-testid="explorer-link" size="large" type="primary"
-              onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
-              className={styles.exploreLoadedData}>
-              <span className={styles.exploreIcon}></span>
-              <span className={styles.exploreText}>Explore Loaded Data</span>
-            </MLButton>
-          </div> : "");
-    } else {
-      return (<div className={styles.closeContainer}>
-        <MLButton data-testid="close-link" size="large" type="primary"
-          onClick={() => props.setOpenJobResponse(false)}
-          className={styles.closeButton}><span>Close</span>
-        </MLButton>
-      </div>);
-    }
-  };
+  // const goToExplorer = async (entityName, targetDatabase, jobId, stepType, stepName) => {
+  //   if (stepType === "mapping") {
+  //     let mapArtifacts = await getMappingArtifactByStepName(stepName);
+  //     history.push(
+  //       {pathname: "/tiles/explore",
+  //         state: {entityName: mapArtifacts?.relatedEntityMappings?.length > 0 ? "All Entities" : entityName, targetDatabase: targetDatabase, jobId: jobId}
+  //       });
+  //   } else if (stepType === "merging") {
+  //     history.push({
+  //       pathname: "/tiles/explore",
+  //       state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
+  //     });
+  //   } else if (entityName) {
+  //     history.push({
+  //       pathname: "/tiles/explore",
+  //       state: {targetDatabase: targetDatabase, entityName: entityName, jobId: jobId}
+  //     });
+  //   } else {
+  //     history.push({
+  //       pathname: "/tiles/explore",
+  //       state: {targetDatabase: targetDatabase, jobId: jobId}
+  //     });
+  //   }
+  //   Modal.destroyAll();
+  // };
+
+  // const renderExploreButton = (stepResponse) => {
+  //   if (stepResponse) {
+  //     const stepName = stepResponse.stepName;
+  //     const stepType = stepResponse.stepDefinitionType;
+  //     const targetDatabase = stepResponse.targetDatabase;
+  //     let entityName;
+  //     const targetEntityType = stepResponse.targetEntityType;
+  //     if (targetEntityType) {
+  //       let splitTargetEntity = targetEntityType.split("/");
+  //       entityName = splitTargetEntity[splitTargetEntity.length - 1];
+  //     }
+  //     return ((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging" || stepType.toLowerCase() === "custom") && entityName ?
+  //       <div className={styles.exploreDataContainer}>
+  //         <MLButton data-testid="explorer-link" size="large" type="primary"
+  //           onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
+  //           className={styles.exploreCuratedData}>
+  //           <span className={styles.exploreIcon}></span>
+  //           <span className={styles.exploreText}>Explore Curated Data</span>
+  //         </MLButton>
+  //       </div> : (stepType.toLowerCase() === "ingestion" || stepType.toLowerCase() === "custom")?
+  //         <div className={styles.exploreDataContainer}>
+  //           <MLButton data-testid="explorer-link" size="large" type="primary"
+  //             onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
+  //             className={styles.exploreLoadedData}>
+  //             <span className={styles.exploreIcon}></span>
+  //             <span className={styles.exploreText}>Explore Loaded Data</span>
+  //           </MLButton>
+  //         </div> : "");
+  //   } else {
+  //     return (<div className={styles.closeContainer}>
+  //       <MLButton data-testid="close-link" size="large" type="primary"
+  //         onClick={() => props.setOpenJobResponse(false)}
+  //         className={styles.closeButton}><span>Close</span>
+  //       </MLButton>
+  //     </div>);
+  //   }
+  // };
 
   return (<Modal
     visible={props.openJobResponse}
@@ -216,9 +246,9 @@ const JobResponse: React.FC<Props> = (props) => {
     maskClosable={false}
     destroyOnClose={true}
   >
-    <div aria-label="jobResponse" id="jobResponse" style={ isLoading ? {display: "none"}: {}} className={styles.jobResponseContainer} >
+    <div aria-label="jobResponse" id="jobResponse" data-testid={`job-response-modal`} style={ isLoading ? {display: "none"}: {}} className={styles.jobResponseContainer} >
       <header>
-        { isRunning(jobResponse) ? <span className={styles.title}>The flow <strong>{jobResponse.flow}</strong> is running <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a></span> : <span className={styles.title}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
+        { isRunning(jobResponse) ? <span className={styles.title} aria-label={`${jobResponse.flow}-running`}>The flow <strong>{jobResponse.flow}</strong> is running <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a></span> : <span className={styles.title} aria-label={`${jobResponse.flow}-completed`}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
       </header>
       <div>
         <Descriptions column={1} colon={false}>
@@ -228,11 +258,10 @@ const JobResponse: React.FC<Props> = (props) => {
         </Descriptions>
         { jobResponse.flowOrStepsUpdatedSinceRun ? <div className={styles.flowOrStepsUpdatedSinceRun}>* The flow or steps are updated since the previous flow run.</div>:""}
       </div>
-      <Divider />
+      {responsesHeader}
       <div>
         {renderStepResponses(jobResponse)}
       </div>
-      {renderExploreButton(lastSuccessfulStep)}
     </div>
   </Modal>);
 

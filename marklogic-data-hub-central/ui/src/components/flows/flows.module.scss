@@ -31,6 +31,16 @@
     color: var(--hoverColor);
   }
 
+
+  .infoIcon {
+    vertical-align: middle;
+    margin-left: 8px;
+    color: #7F86B5;
+    cursor: pointer;
+    &:hover {
+      color: var(--hoverColor);
+    }  }
+
   .disabledDeleteIcon {
     color: rgba(0, 0, 0, 0.65);
     opacity: 0.5;

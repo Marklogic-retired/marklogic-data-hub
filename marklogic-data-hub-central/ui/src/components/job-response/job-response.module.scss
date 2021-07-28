@@ -33,13 +33,57 @@
   }
 
   .stepResponse {
+    width: 35%;
     padding-right: 15px;
     padding-left: 1px;
-    padding-bottom: 15px;
-
+    // padding-bottom: 15px;
+    
     .stepName {
       vertical-align: center;
     }
+  }
+
+  .errorStepResponse {
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 1px;
+    // padding-bottom: 15px;
+    
+    .stepName {
+      vertical-align: center;
+    }
+  }
+
+
+  .divider {
+    margin: 10px 0px !important;
+  }
+
+  .stepRow{
+    display: flex;
+    flex-direction: row;
+  }
+
+  .headerRow {
+    display: flex;
+    flex-direction: row;
+    padding-top: 25px;
+    margin-left: 25px;
+  }
+
+  .headerItem {
+    width: 25%;
+    margin-right: 75px;
+    padding-left: 1px;
+    text-align: left;
+  }
+
+  .documentsWritten {
+    width: 25%;
+    padding-right: 15px;
+    text-align: left;
+    margin-right: 12%;
+    margin-left: 8%;
   }
 
   .running {
@@ -87,6 +131,20 @@
   format('truetype');
 }
 
+.exploreActionIcon:before {
+  content: "\68";
+  font-family: ExploreIcon;
+  font-size: 15px;
+  padding-right: 6px;
+  vertical-align: middle;
+  color: #ffffff;
+}
+
+.exploreActionText{
+  font-size: 15px;
+  padding-right: 5px;
+}
+
 .exploreDataContainer {
   margin: auto;
   width: 50%;
@@ -102,7 +160,7 @@
   cursor: pointer;
   border-radius: 4px;
   padding: 0px 7px;
-  margin-right: -3px;
+  margin-right: 12%;
 }
 
 .exploreText{

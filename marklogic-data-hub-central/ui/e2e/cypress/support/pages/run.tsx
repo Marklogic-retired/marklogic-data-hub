@@ -48,6 +48,26 @@ class RunPage {
     cy.findAllByText(stepName).first().should("be.visible");
   }
 
+  getFlowStatusModal() {
+    return cy.get("[data-testid=job-response-modal]");
+  }
+
+  verifyFlowModalRunning(flowName: string) {
+    cy.findByLabelText(`${flowName}-running`).should("be.visible");
+  }
+
+  verifyFlowModalCompleted(flowName: string) {
+    cy.findByLabelText(`${flowName}-completed`).should("be.visible");
+  }
+
+  openFlowStatusModal(flowName: string) {
+    cy.findByTestId(`${flowName}-StatusIcon`).click();
+  }
+
+  closeFlowStatusModal() {
+    return cy.get("[aria-label=\"icon: close\"]").click();
+  }
+
   runStep(stepName: string) {
     cy.waitUntil(() => cy.findByLabelText(`runStep-${stepName}`)).click({force: true});
     cy.waitForAsyncRequest();
