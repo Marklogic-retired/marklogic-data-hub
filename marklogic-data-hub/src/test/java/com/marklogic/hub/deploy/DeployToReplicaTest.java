@@ -57,9 +57,13 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class DeployToReplicaTest extends AbstractHubCoreTest {
 
+    String initialHost;
+
     @BeforeEach
     void beforeEach() {
         assumeTrue(isVersionCompatibleWith520Roles());
+
+        initialHost = getHubConfig().getHost();
 
         installProjectInFolder("test-projects/simple-custom-step");
 
@@ -70,6 +74,10 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
     @AfterEach
     void afterEach() {
         assumeTrue(isVersionCompatibleWith520Roles());
+
+        // Setting this back to the original value; this test is failing when the suite runs against multiple hosts,
+        // as host is getting set back to "localhost"
+        getHubConfig().setHost(initialHost);
 
         // Deploying will remove the test-specific database settings, so gotta restore them
         applyDatabasePropertiesForTests(getHubConfig());
