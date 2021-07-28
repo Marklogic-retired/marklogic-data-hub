@@ -9,8 +9,9 @@ import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
-import {MLButton, MLSpin} from "@marklogic/design-system";
+import {MLButton} from "@marklogic/design-system";
 import {getMappingArtifactByStepName} from "../api/mapping";
+import JobResponse from "../../src/components/job-response/job-response";
 
 const {Panel} = Collapse;
 
@@ -38,7 +39,8 @@ const Run = (props) => {
   const [runEnded, setRunEnded] = useState<any>({});
   const [running, setRunning] = useState<any[]>([]);
   const [uploadError, setUploadError] = useState("");
-  const [isStepRunning, setIsStepRunning] = useState(false);
+  const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
+  const [jobId, setJobId] = useState<string>("");
 
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -244,16 +246,9 @@ const Run = (props) => {
     }
   }
 
-  function showStepsRunSuccess(flowName) {
-    Modal.success({
-      title: <div><p style={{fontWeight: 400}}>The selected steps in <strong>{flowName}</strong> flow completed successfully</p></div>,
-      icon: <Icon type="check-circle" theme="filled"/>,
-      okText: "Close",
-      mask: false,
-      width: 650,
-    });
-    setIsStepRunning(false);
-  }
+  const handleCloseJobResponse = () => {
+    setOpenJobResponse(false);
+  };
 
   function showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber) {
     Modal.success({
@@ -403,7 +398,6 @@ const Run = (props) => {
     return new Promise(checkStatus);
   }
   const runFlowSteps = async (flowName, stepNumbers, formData) => {
-    setIsStepRunning(true);
     let stepNumber=[{}];
     for (let i=0; i<stepNumbers.length;i++) {
       stepNumber.push(stepNumbers[i].stepNumber);
@@ -436,7 +430,6 @@ const Run = (props) => {
                 setRunEnded({flowId: flowName, stepId: stepNumbers[i].stepNumber});
                 // showStepRunResponse(stepNumbers[i], jobId, response);
               }
-              showStepsRunSuccess(flowName);
             }).catch(function(error) {
               console.error("Flow timeout", error);
               for (let i=0; i<stepNumbers.length;i++) {
@@ -444,7 +437,9 @@ const Run = (props) => {
               }
             });
         }, pollConfig.interval);
+        setOpenJobResponse(true);
         setIsLoading(false);
+        setJobId(jobId);
       }
     } catch (error) {
       console.error("Error running step", error);
@@ -516,10 +511,6 @@ const Run = (props) => {
             [
               <div className={styles.intro} key={"run-intro"}>
                 <p>{tiles.run.intro}</p>
-                <div className={styles.running} style={{display: isStepRunning ? "block" : "none"}}>
-                  <div><MLSpin data-testid="spinner" /></div>
-                  <div className={styles.runningLabel}>Running...</div>
-                </div>
               </div>,
               <Flows
                 key={"run-flows-list"}
@@ -542,13 +533,15 @@ const Run = (props) => {
                 showStepRunResponse={showStepRunResponse}
                 runEnded={runEnded}
                 onReorderFlow={onReorderFlow}
-                isStepRunning={isStepRunning}
+                setJobId={setJobId}
+                setOpenJobResponse={setOpenJobResponse}
               />
             ]
             :
             <p>{MissingPagePermission}</p>
         }
       </div>
+      <JobResponse jobId={jobId} openJobResponse={openJobResponse} setOpenJobResponse={handleCloseJobResponse}/>
     </div>
   );
 };

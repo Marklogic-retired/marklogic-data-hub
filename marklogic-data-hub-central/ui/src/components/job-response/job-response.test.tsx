@@ -9,6 +9,15 @@ import {curationContextMock} from "../../assets/mock-data/curation/curation-cont
 
 jest.mock("axios");
 
+const getSubElements=(content, node, title) => {
+  const hasText = node => node.textContent === title;
+  const nodeHasText = hasText(node);
+  const childrenDontHaveText = Array.from(node.children).every(
+    child => !hasText(child)
+  );
+  return nodeHasText && childrenDontHaveText;
+};
+
 describe("Job response modal", () => {
 
   beforeEach(() => {
@@ -37,8 +46,16 @@ describe("Job response modal", () => {
       ));
     });
 
-    // check that
-    await (waitForElement(() => (getByText("testFlow"))));
+    // verify modal text and headers
+    expect(await(waitForElement(() => getByText((content, node) => {
+      return getSubElements(content, node, "The flow testFlow completed");
+    })))).toBeInTheDocument();
+
+    expect(getByText("Job ID:")).toBeInTheDocument();
+    expect(getByText("Start Time:")).toBeInTheDocument();
+    expect(getByText("Duration:")).toBeInTheDocument();
+
+    expect(getByText("e4590649-8c4b-419c-b6a1-473069186592")).toBeInTheDocument();
     expect(getByText("2020-04-24 14:05")).toBeInTheDocument();
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
@@ -48,9 +65,6 @@ describe("Job response modal", () => {
     expect(getByText("merge-customer")).toBeInTheDocument();
     expect(getByText("master-customer")).toBeInTheDocument();
     expect(getByText("Ingestion1")).toBeInTheDocument();
-
-    expect(getByText("Close")).toBeInTheDocument();
-
   });
 
   test("Verify failed job response information displays", async () => {

@@ -44,8 +44,9 @@ interface Props {
   flowsDefaultActiveKey: any;
   showStepRunResponse: any;
   runEnded: any;
-  onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void;
-  isStepRunning: boolean
+  onReorderFlow: (flowIndex: number, newSteps: Array<any>) => void
+  setJobId: any;
+  setOpenJobResponse: any;
 }
 
 const StepDefinitionTypeTitles = {
@@ -147,9 +148,8 @@ const Flows: React.FC<Props> = (props) => {
       return;
     }
 
-    // Shows job data for steps in a flow that is expanded in session storage
-    Array.from(openFlows).forEach(flowKey => {
-      getFlowWithJobInfo(Number(flowKey));
+    props.flows.map((flow, i) => {
+      getFlowWithJobInfo(i);
     });
 
     setHasQueriedInitialJobData(true);
@@ -237,7 +237,6 @@ const Flows: React.FC<Props> = (props) => {
       setStartRun(true);
     }
   }, [props.newStepToFlowOptions]);
-
 
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -650,12 +649,30 @@ const Flows: React.FC<Props> = (props) => {
   );
 
   const flowHeader = (name, index) => (
-    <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="right">
-      <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-        {name}
-      </span>
-    </MLTooltip>
+    <span>
+      <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="bottom">
+        <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+          {name}
+        </span>
+      </MLTooltip>
+      {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
+        <MLTooltip title={"Flow Status"} placement="bottom">
+          <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon}>
+            <Icon type="info-circle" theme="filled" data-testid={name + "-StatusIcon"} />
+          </span>
+        </MLTooltip>
+        : ""
+      }
+    </span>
   );
+
+  const OpenFlowJobStatus = (e, index, name) => {
+    e.stopPropagation();
+    e.preventDefault();
+    let jobIdIndex = latestJobData[name].findIndex(step => step.hasOwnProperty("jobId"));
+    props.setJobId(latestJobData[name][jobIdIndex].jobId);
+    props.setOpenJobResponse(true);
+  };
 
   const OpenEditFlowDialog = (e, index) => {
     e.stopPropagation();

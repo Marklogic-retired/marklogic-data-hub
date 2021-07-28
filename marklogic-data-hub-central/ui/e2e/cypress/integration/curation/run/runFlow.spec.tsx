@@ -59,7 +59,9 @@ describe("Run Tile tests", () => {
     cy.get("#merge-xml-person").click();
     cy.get("#master-person").click();
     runPage.runFlow("testPersonXML");
-    tiles.closeRunMessage();
+    runPage.verifyFlowModalRunning("testPersonXML");
+    cy.waitForAsyncRequest();
+    runPage.getFlowStatusModal().type("{esc}");
     runPage.clickSuccessCircleIcon("mapPersonXML");
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
@@ -69,17 +71,24 @@ describe("Run Tile tests", () => {
     runPage.clickSuccessCircleIcon("merge-xml-person");
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
     tiles.closeRunMessage();
+    runPage.openFlowStatusModal("testPersonXML");
+    runPage.verifyFlowModalCompleted("testPersonXML");
+    runPage.getFlowStatusModal().type("{esc}");
 
     //Verify if no step is selected in run flow dropdown; all steps are executed
     runPage.expandFlow("testCustomFlow");
     runPage.runFlow("testCustomFlow");
     cy.uploadFile("input/test-1.zip");
     cy.waitForAsyncRequest();
-    tiles.closeRunMessage();
+    runPage.verifyFlowModalRunning("testCustomFlow");
+    runPage.getFlowStatusModal().type("{esc}");
     runPage.expandFlow("testCustomFlow");
     runPage.clickSuccessCircleIcon("mapping-step");
     cy.verifyStepRunResult("success", "Custom", "mapping-step");
     tiles.closeRunMessage();
+    runPage.openFlowStatusModal("testCustomFlow");
+    runPage.verifyFlowModalCompleted("testCustomFlow");
+    runPage.getFlowStatusModal().type("{esc}");
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML");
