@@ -2,29 +2,58 @@ import React, {useState, useEffect, useLayoutEffect} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import ReactDOMServer from "react-dom/server";
-import {faFileExport, faTrashAlt, faAddressBook, faAmbulance} from "@fortawesome/free-solid-svg-icons";
+import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NodeSvg from "./node-svg";
+import graphConfig from "../../../../config/graph-vis.config";
 
 type Props = {
   entityTypes: any;
   handleEntitySelection: any;
 };
 
+// TODO temp hardcoded node data, remove when retrieved from db
+let entityMetadata = {
+  BabyRegistry: {
+    color: "#e3ebbc",
+    instances: 5
+  },
+  Customer: {
+    color: "#ecf7fd",
+    instances: 63
+  },
+  Product: {
+    color: "#ded2da",
+    instances: 252
+  },
+  Order: {
+    color: "#cfe3e8",
+    instances: 50123
+  },
+  NamespacedCustomer: {
+    color: "#dfe2ec",
+    instances: 75
+  },
+  Person: {
+    color: "#dfe2ec",
+    instances: 75
+  }
+};
+
 const GraphVis: React.FC<Props> = (props) => {
 
-  //const [nodePositions, setNodePositions] = useState({});
+  const graphType = "shape";
+
+  // const [nodePositions, setNodePositions] = useState({});
   const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   let testingMode = true; // Should be used further to handle testing only in non-production environment
 
-  //Initializing network instance
+  // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
   const initNetworkInstance = (networkInstance) => {
     setNetwork(networkInstance);
   };
-  const [hoveringNode, setHoveringNode] = useState<string | undefined>(undefined);
-  const hoverColor: string = "#E9F7FE";
 
   // Initialize or update graph
   useEffect(() => {
@@ -32,7 +61,7 @@ const GraphVis: React.FC<Props> = (props) => {
       nodes: getNodes(),
       edges: getEdges()
     });
-  }, [props.entityTypes, hoveringNode]);
+  }, [props.entityTypes]);
 
   useLayoutEffect(() => {
     if (testingMode && network) {
@@ -43,58 +72,22 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [network]);
 
-
-  let entityMetadata = {
-    BabyRegistry: {
-      color: "#e3ebbc",
-      instances: 5,
-      icon: <FontAwesomeIcon icon={faFileExport} aria-label="BabyRegistry-icon" />
-    },
-    Customer: {
-      color: "#ecf7fd",
-      instances: 63,
-      icon: <FontAwesomeIcon icon={faTrashAlt} aria-label="graph-export" />
-    },
-    Product: {
-      color: "#ded2da",
-      instances: 252,
-      icon: <FontAwesomeIcon icon={faTrashAlt} aria-label="graph-export" />
-    },
-    Order: {
-      color: "#cfe3e8",
-      instances: 50123,
-      icon: <FontAwesomeIcon icon={faTrashAlt} aria-label="graph-export" />
-    },
-    NamespacedCustomer: {
-      color: "#dfe2ec",
-      instances: 75,
-      icon: <FontAwesomeIcon icon={faAddressBook} aria-label="graph-export" />
-    },
-    Person: {
-      color: "#dfe2ec",
-      instances: 75,
-      icon: <FontAwesomeIcon icon={faAmbulance} aria-label="graph-export" />
-    }
-  };
-
+  // TODO update when icons are implemented
   const getIcon = (entityName) => {
     let icon = <FontAwesomeIcon icon={faFileExport} aria-label="node-icon" />;
-    if (entityMetadata[entityName] && entityMetadata[entityName].icon) {
-      icon = entityMetadata[entityName].icon;
-    }
     return ReactDOMServer.renderToString(icon);
   };
 
+  // TODO remove when color is retrieved from db
   const getColor = (entityName) => {
     let color = "#cfe3e8";
-    if (hoveringNode === entityName) {
-      color = hoverColor;
-    } else if (entityMetadata[entityName] && entityMetadata[entityName].color) {
+    if (entityMetadata[entityName] && entityMetadata[entityName].color) {
       color = entityMetadata[entityName].color;
     }
     return color;
   };
 
+  // TODO remove when num instances is retrieved from db
   const getNumInstances = (entityName) => {
     let num = 123;
     if (entityMetadata[entityName] && entityMetadata[entityName].instances) {
@@ -104,16 +97,52 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const getNodes = () => {
-    let nodes = props.entityTypes && props.entityTypes?.map((e) => {
-      const node = new NodeSvg(e.entityName, getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
-      return {
-        id: e.entityName,
-        label: "",
-        title: e.model.definitions[e.entityName].description ? e.model.definitions[e.entityName].description : "Description is not available for the entity",
-        image: "data:image/svg+xml;charset=utf-8," + node.getSvg(),
-        shape: "image"
-      };
-    });
+    let nodes;
+    if (graphType === "shape") {
+      nodes = props.entityTypes && props.entityTypes?.map((e) => {
+        let label = "";
+        return {
+          ...graphConfig.defaultNodeProps,
+          id: e.entityName,
+          label: label.concat(
+            "<b>", e.entityName, "</b>\n",
+            "<code>", getNumInstances(e.entityName).toString(), "</code>"
+          ),
+          title: e.entityName + " tooltip text", // TODO use entity description
+          color: {
+            background: getColor(e.entityName),
+            border: getColor(e.entityName),
+          },
+          chosen: {
+            node: function(values, id, selected, hovering) {
+              if (selected && hovering) {
+                values.color = graphConfig.nodeStyles.hoverColor;
+                values.borderColor = graphConfig.nodeStyles.selectColor;
+                values.borderWidth = 3;
+              } else if (selected) {
+                values.color = getColor(id);
+                values.borderColor = graphConfig.nodeStyles.selectColor;
+                values.borderWidth = 3;
+              } else if (hovering) {
+                values.color = graphConfig.nodeStyles.hoverColor;
+                values.borderWidth = 0;
+              }
+            }
+          }
+        };
+      });
+    } else if (graphType === "image") { // TODO for custom SVG node, not currently used
+      nodes = props.entityTypes && props.entityTypes?.map((e) => {
+        const node = new NodeSvg(e.entityName, getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
+        return {
+          id: e.entityName,
+          label: "",
+          title: e.entityName + " tooltip text",
+          image: "data:image/svg+xml;charset=utf-8," + node.getSvg(),
+          shape: "image"
+        };
+      });
+    }
     return nodes;
   };
 
@@ -122,15 +151,14 @@ const GraphVis: React.FC<Props> = (props) => {
     props.entityTypes.forEach((e, i) => {
       let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
       properties.forEach((p, i) => {
-        if (e.model.definitions[e.entityName].properties[p].relatedEntityType) {
-          let parts = e.model.definitions[e.entityName].properties[p].relatedEntityType.split("/");
+        let pObj = e.model.definitions[e.entityName].properties[p];
+        if (pObj.relatedEntityType) {
+          let parts = pObj.relatedEntityType.split("/");
           edges.push({
+            ...graphConfig.defaultEdgeProps,
             from: e.entityName,
             to: parts[parts.length - 1],
-            label: e.model.definitions[e.entityName].properties[p].joinPropertyName,
-            arrows: "to",
-            color: "#666",
-            font: {align: "top"}
+            label: pObj.joinPropertyName
           });
         }
       });
@@ -139,23 +167,17 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const options = {
+    ...graphConfig.defaultOptions,
     layout: {
       //hierarchical: true
       //randomSeed: "0.7696:1625099255200",
     },
-    edges: {
-      color: "#000000"
-    },
-    height: "500px",
     physics: {
       enabled: physicsEnabled,
       barnesHut: {
         springLength: 160,
         avoidOverlap: 0.4
       }
-    },
-    interaction: {
-      hover: true
     },
     manipulation: {
       enabled: false,
@@ -166,6 +188,7 @@ const GraphVis: React.FC<Props> = (props) => {
         // filling in the popup DOM elements
       },
       addEdge: function (data, callback) {
+        // filling in the popup DOM elements
       }
     }
   };
@@ -187,11 +210,9 @@ const GraphVis: React.FC<Props> = (props) => {
     },
     hoverNode: (event) => {
       event.event.target.style.cursor = "pointer";
-      setHoveringNode(event.node);
     },
     blurNode: (event) => {
       event.event.target.style.cursor = "";
-      setHoveringNode(undefined);
     },
     hoverEdge: (event) => {
       event.event.target.style.cursor = "pointer";
