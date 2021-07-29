@@ -19,7 +19,7 @@ ospackage {
     user 'hc-runner'
     permissionGroup 'hc-runner'
 
-    from(war.outputs.files) {
+    from(bootWar.outputs.files) {
         rename { String fileName ->
             fileName.replace("marklogic-data-hub-central-${project.version}", "hub-central")
         }
