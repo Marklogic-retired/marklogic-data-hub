@@ -14,10 +14,6 @@ class GraphView {
   getExportGraphIcon() {
     return cy.findByLabelText("graph-export");
   }
-
-  getGraphVisContainer() {
-    return cy.get("#graphVis");
-  }
 }
 
 const graphView = new GraphView();

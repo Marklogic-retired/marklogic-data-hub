@@ -66,8 +66,8 @@ const GraphVis: React.FC<Props> = (props) => {
   useLayoutEffect(() => {
     if (testingMode && network) {
       window.graphVisApi = {
-        getGraphNodes: (nodeId) => { return network.getPosition(nodeId); },
-        canvasToDOM: (x, y) => { return network.canvasToDOM({x: x, y: y}); },
+        getNodePositions: (nodeIds?: any) => { return !nodeIds ? network.getPositions() : network.getPositions(nodeIds); },
+        canvasToDOM: (xCoordinate, yCoordinate) => { return network.canvasToDOM({x: xCoordinate, y: yCoordinate}); },
       };
     }
   }, [network]);
@@ -223,6 +223,7 @@ const GraphVis: React.FC<Props> = (props) => {
     doubleClick: (event) => {
     }
   };
+
 
   return (
     <div id="graphVis">

@@ -13,6 +13,7 @@ import {confirmationModal, toolbar} from "../../support/components/common/index"
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
+import graphVis from "../../support/components/model/graph-vis";
 
 describe("Entity Modeling: Reader Role", () => {
   //login with valid account
@@ -126,8 +127,6 @@ describe("Entity Modeling: Reader Role", () => {
   it("can view and edit Entity Type tab in side panel", () => {
     cy.loginAsDeveloper().withRequest();
     entityTypeTable.viewEntityInGraphView("Person").click({force: true});
-    let coordinates:any  = cy.getGraphNodePositions("Person");
-    graphView.getGraphVisContainer().trigger("mousemove", {clientX: coordinates.x, clientY: coordinates.y});
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getPersonEntityDescription().should("be.visible");
     graphViewSidePanel.getPersonEntityDescription().clear();
@@ -148,5 +147,38 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getPersonEntityNamespace().type("http://example.org/test");
     graphViewSidePanel.getPersonEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
+  });
+
+  //Below is just an example test to showcase how to use the graph library functional library in cypress
+  it("can select required entity nodes and edges, within the graph view", () => {
+    cy.loginAsDeveloper().withRequest();
+    entityTypeTable.viewEntityInGraphView("Person").click({force: true});
+    //Select an entity node from within the graph view and ensure that side panel opens up
+    graphVis.getPositionsOfNodes("Order").then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions["Order"];
+      graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y);
+    });
+    //Verifying the content of side panel
+    graphViewSidePanel.getSelectedEntityHeading("Order").should("be.visible");
+    graphViewSidePanel.getPropertiesTab().should("be.visible");
+    graphViewSidePanel.getEntityTypeTab().should("be.visible");
+    graphViewSidePanel.getDeleteIcon("Order").should("be.visible");
+
+
+    //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().trigger("mousemove", edgePosition.x, edgePosition.y));
+    });
+
+    //Fetch coordinates of all the nodes in the canvas and then use the response to perform an action (in this case, a click)
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let babyRegistryCoordinates: any = nodePositions["BabyRegistry"];
+      graphVis.getGraphVisCanvas().click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
+    });
+
+    graphViewSidePanel.getSelectedEntityHeading("BabyRegistry").should("be.visible");
+    graphViewSidePanel.getPropertiesTab().should("be.visible");
+    graphViewSidePanel.getEntityTypeTab().should("be.visible");
+    graphViewSidePanel.getDeleteIcon("BabyRegistry").should("be.visible");
   });
 });
