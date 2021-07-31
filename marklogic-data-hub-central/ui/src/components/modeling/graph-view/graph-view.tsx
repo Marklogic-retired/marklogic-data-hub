@@ -1,4 +1,4 @@
-import React, {CSSProperties, useContext} from "react";
+import React, {CSSProperties, useContext, useState} from "react";
 import {AutoComplete, Dropdown, Icon, Menu} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
@@ -22,6 +22,9 @@ type Props = {
 const GraphView: React.FC<Props> = (props) => {
 
   const {modelingOptions, setSelectedEntity, closeSidePanelInGraphView} = useContext(ModelingContext);
+  const [filterMenuSuggestions, setFilterMenuSuggestions] = useState(["a"]);
+  const [entityFiltered, setEntityFiltered] = useState("");
+  const [isEntityFiltered, setIsEntityFiltered] = useState(false);
 
   const publishIconStyle: CSSProperties = {
     width: "20px",
@@ -29,9 +32,40 @@ const GraphView: React.FC<Props> = (props) => {
     fill: "currentColor",
   };
 
+  const handleFocus = () => {
+    setFilterMenuSuggestions([]);
+  };
+
+  const handleTypeaheadChange = (value: any) => {
+    setEntityFiltered(value);
+    setIsEntityFiltered(false);
+    if (value.length > 2) {
+      Object.keys(props.entityTypes).map((key) => {
+        let obj=filterMenuSuggestions;
+        if (value && !filterMenuSuggestions.includes(props.entityTypes[key]["entityName"]) && props.entityTypes[key]["entityName"].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
+          obj.push(props.entityTypes[key]["entityName"]);
+        }
+        setFilterMenuSuggestions(obj);
+      });
+    } else {
+      setFilterMenuSuggestions([]);
+    }
+  };
+
+  const handleFilterSelect = (value : any) => {
+    setFilterMenuSuggestions([]);
+    setIsEntityFiltered(true);
+    setSelectedEntity(value);
+  };
+
+
   const filter = <AutoComplete
     className={styles.filterInput}
-    dataSource={[]}
+    dataSource={filterMenuSuggestions}
+    value={entityFiltered}
+    onFocus= {handleFocus}
+    onChange={handleTypeaheadChange}
+    onSelect={handleFilterSelect}
     aria-label="graph-view-filter-autoComplete"
     placeholder={"Filter"}
   >
@@ -111,6 +145,9 @@ const GraphView: React.FC<Props> = (props) => {
         <GraphVis
           entityTypes={props.entityTypes}
           handleEntitySelection={handleEntitySelection}
+          filteredEntityTypes={filterMenuSuggestions}
+          entitySelected={entityFiltered}
+          isEntitySelected={isEntityFiltered}
         />
       </div>
     </div>;
