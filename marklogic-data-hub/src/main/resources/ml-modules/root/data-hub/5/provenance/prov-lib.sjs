@@ -86,8 +86,57 @@ function installProvTemplates() {
     '          <name>id</name>\n' +
     '          <val>sem:iri(@prov:id)</val>\n' +
     '        </var>\n' +
-    '      </vars>\n' +
+    '        <var>\n' +
+    '          <name>rdfType</name>\n' +
+    '          <val>sem:iri("http://www.w3.org/ns/prov#" || fn:substring(fn:upper-case(fn:local-name()), 1, 1) || fn:substring(fn:local-name(), 2))</val>\n' +
+    '        </var>\n' +
+    '      </vars>' +
+    '      <triples>' +
+    '        <triple>\n' +
+    '          <subject>\n' +
+    '            <val>$id</val>\n' +
+    '          </subject>\n' +
+    '          <predicate>\n' +
+    '            <val>sem:iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")</val>\n' +
+    '          </predicate>\n' +
+    '          <object>\n' +
+    '            <val>$rdfType</val>\n' +
+    '          </object>\n' +
+    '        </triple>\n' +
+    '      </triples>' +
     '      <templates>\n' +
+    '        <template>\n' +
+    '          <context>prov:startTime</context>\n' +
+    '          <triples>\n' +
+    '            <triple>\n' +
+    '              <subject>\n' +
+    '                <val>$id</val>\n' +
+    '              </subject>\n' +
+    '              <predicate>\n' +
+    '                <val>sem:iri("http://www.w3.org/ns/prov#startedAtTime")</val>\n' +
+    '              </predicate>\n' +
+    '              <object>\n' +
+    '                <val>fn:string(.)</val>\n' +
+    '              </object>\n' +
+    '            </triple>\n' +
+    '          </triples>\n' +
+    '        </template>\n' +
+    '        <template>\n' +
+    '          <context>prov:endTime</context>\n' +
+    '          <triples>\n' +
+    '            <triple>\n' +
+    '              <subject>\n' +
+    '                <val>$id</val>\n' +
+    '              </subject>\n' +
+    '              <predicate>\n' +
+    '                <val>sem:iri("http://www.w3.org/ns/prov#endedAtTime")</val>\n' +
+    '              </predicate>\n' +
+    '              <object>\n' +
+    '                <val>fn:string(.)</val>\n' +
+    '              </object>\n' +
+    '            </triple>\n' +
+    '          </triples>\n' +
+    '        </template>\n' +
     '        <template>\n' +
     '          <context>prov:type</context>\n' +
     '          <vars>\n' +
@@ -127,6 +176,32 @@ function installProvTemplates() {
     '          </triples>\n' +
     '        </template>\n' +
     '      </templates>\n' +
+    '    </template>\n' +
+    '    <template>\n' +
+    '      <context>prov:entity</context>\n' +
+    '      <vars>\n' +
+    '        <var>\n' +
+    '          <name>id</name>\n' +
+    '          <val>sem:iri(@prov:id)</val>\n' +
+    '        </var>\n' +
+    '        <var>\n' +
+    '          <name>rdfType</name>\n' +
+    '          <val>sem:iri("http://www.w3.org/ns/prov#Entity")</val>\n' +
+    '        </var>\n' +
+    '      </vars>' +
+    '      <triples>' +
+    '        <triple>\n' +
+    '          <subject>\n' +
+    '            <val>$id</val>\n' +
+    '          </subject>\n' +
+    '          <predicate>\n' +
+    '            <val>sem:iri("http://www.w3.org/1999/02/22-rdf-syntax-ns#type")</val>\n' +
+    '          </predicate>\n' +
+    '          <object>\n' +
+    '            <val>$rdfType</val>\n' +
+    '          </object>\n' +
+    '        </triple>\n' +
+    '      </triples>' +
     '    </template>\n' +
     '    <template>\n' +
     '      <context>prov:used</context>\n' +
@@ -191,7 +266,181 @@ function installProvTemplates() {
   hubUtils.writeDocument(templateUri, recordProvenanceTemplate, permissions, collections, config.FINALSCHEMASDATABASE);
 }
 
+// BEGIN document specific PROV queries
+function provIRIsToCtsQuery(provIRIs) {
+  return cts.elementAttributeValueQuery(Sequence.from([fn.QName("http://www.w3.org/ns/prov#", "activity"),fn.QName("http://www.w3.org/ns/prov#", "entity")]), fn.QName("http://www.w3.org/ns/prov#", "id"), provIRIs.map((id) => String(id)));
+}
+
+/* allAssociatedProvEntities returns all the associated provenance IDs and the generation time
+ * given a document URI across databases.
+ */
+function allAssociatedProvEntities(documentURI, database = config.FINALDATABASE) {
+  // Query is used to get PROV information from the document URI.
+  const documentUriSparql = `PREFIX prov:<http://www.w3.org/ns/prov#>
+    PREFIX xs:<http://www.w3.org/2001/XMLSchema>
+
+    SELECT DISTINCT * WHERE {
+      # Using a union of two SELECT statements to get ancestor and self. The * transitive causes a binding error.
+      {
+        # SELECT statement to return self information about document URI
+        SELECT ?ancestorOrSelfProvID ?generatedAtTime ?activityID WHERE {
+          $provID <documentURI> $documentURI;
+                    prov:generatedAtTime ?generatedAtTime;
+                prov:wasGeneratedBy ?activityID.
+          BIND($provID AS ?ancestorOrSelfProvID)
+        }
+      } UNION {
+        # SELECT statement to return ancestor/derivedFrom information about document URI
+        SELECT ?ancestorOrSelfProvID ?generatedAtTime ?activityID WHERE {
+          $provID <documentURI> $documentURI;
+                  # Using + transitive instead of * transitive to avoid binding error
+                  prov:wasDerivedFrom+ ?ancestorOrSelfProvID.
+          OPTIONAL {
+            ?ancestorOrSelfProvID prov:generatedAtTime ?generatedAtTime.
+          }
+          OPTIONAL {
+            ?ancestorOrSelfProvID prov:wasGeneratedBy ?activityID.
+          }
+        }
+      }
+    }
+    ORDER BY DESC(?generatedAtTime)`;
+  // This query is for the case where the initial query is done in the FINAL DB and we need to gather additional information from staging
+  const provIdQuery = `PREFIX prov:<http://www.w3.org/ns/prov#>
+    PREFIX xs:<http://www.w3.org/2001/XMLSchema>
+
+    SELECT DISTINCT * WHERE {
+      # Using a union of two SELECT statements to get ancestor and self. The * transitive causes a binding error.
+      {
+        # SELECT statement to return self information about document URI
+        SELECT ?ancestorOrSelfProvID ?generatedAtTime ?activityID WHERE {
+          $provID prov:generatedAtTime ?generatedAtTime;
+                prov:wasGeneratedBy ?activityID.
+          BIND($provID AS ?ancestorOrSelfProvID)
+        }
+      } UNION {
+        # SELECT statement to return ancestor/derivedFrom information about document URI
+        SELECT ?ancestorOrSelfProvID ?generatedAtTime ?activityID WHERE {
+          # Using + transitive instead of * transitive to avoid binding error
+          $provID prov:wasDerivedFrom+ ?ancestorOrSelfProvID.
+          OPTIONAL {
+            ?ancestorOrSelfProvID prov:generatedAtTime ?generatedAtTime.
+          }
+          OPTIONAL {
+            ?ancestorOrSelfProvID prov:wasGeneratedBy ?activityID.
+          }
+        }
+      }
+    }
+    ORDER BY DESC(?generatedAtTime)`;
+  const ancestorOrSelfProvIDs = [];
+  const retrieveProvEntities = function() {
+    const currentDatabase = xdmp.databaseName(xdmp.database());
+    const isInitialQuery = database === config.STAGINGDATABASE || currentDatabase === config.FINALDATABASE;
+    if (isInitialQuery) {
+      const bindings = { documentURI };
+      return sem.sparql(documentUriSparql, bindings);
+    } else {
+      return sem.sparql(provIdQuery, null, null, provIRIsToCtsQuery(ancestorOrSelfProvIDs));
+    }
+  };
+  let finalProvEntities = null;
+  const currentDatabase = xdmp.databaseName(xdmp.database());
+  if (database === config.FINALDATABASE) {
+    finalProvEntities = config.FINALDATABASE === currentDatabase ? retrieveProvEntities(): hubUtils.invokeFunction(retrieveProvEntities, config.FINALDATABASE);
+    for (let finalProvEntity of finalProvEntities) {
+      ancestorOrSelfProvIDs.push(finalProvEntity.ancestorOrSelfProvID);
+      if (finalProvEntity.activityID && !ancestorOrSelfProvIDs.includes(finalProvEntity.activityID)) {
+        ancestorOrSelfProvIDs.push(finalProvEntity.activityID);
+      }
+    }
+  }
+  let stagingProvEntities = null;
+  stagingProvEntities = config.STAGINGDATABASE === currentDatabase ? retrieveProvEntities(): hubUtils.invokeFunction(retrieveProvEntities, config.STAGINGDATABASE);
+  for (let stagingProvEntity of stagingProvEntities) {
+    if (!ancestorOrSelfProvIDs.includes(stagingProvEntity.ancestorOrSelfProvID)) {
+      ancestorOrSelfProvIDs.push(stagingProvEntity.ancestorOrSelfProvID);
+    }
+    if (stagingProvEntity.activityID && !ancestorOrSelfProvIDs.includes(stagingProvEntity.activityID)) {
+      ancestorOrSelfProvIDs.push(stagingProvEntity.activityID);
+    }
+  }
+  return ancestorOrSelfProvIDs;
+};
+
+function sourceInformationForDocument(documentURI, database = config.FINALDATABASE) {
+  const allAssociatedProvIDs = allAssociatedProvEntities(documentURI, database);
+  const sparql = `PREFIX prov:<http://www.w3.org/ns/prov#>
+  SELECT ?dataSourceName ?dataSourceType WHERE {
+    $provID a prov:Entity;
+              <dataSourceName> ?dataSourceName;
+              <dataSourceType> ?dataSourceType.
+  }`;
+  const currentDatabase = xdmp.databaseName(xdmp.database());
+  const sparqlFun = function() { return sem.sparql(sparql, { provID: allAssociatedProvIDs}) };
+  let sourceInformation = config.STAGINGDATABASE === currentDatabase ? sparqlFun(): hubUtils.invokeFunction(sparqlFun, config.STAGINGDATABASE);
+  return sourceInformation.toArray();
+}
+
+/* This function provides an abstraction for retrieving information about a document URI across databases and requires SPARQL that has
+*   has a provID variable that is bound to.
+* */
+function runCrossDatabaseSparqlForDocumentURI(sparql, documentURI, database = config.FINALDATABASE) {
+  const allAssociatedProvIDs = allAssociatedProvEntities(documentURI, database);
+  const sparqlFun = function() { return sem.sparql(sparql, null, null, provIRIsToCtsQuery(allAssociatedProvIDs.map((id) => String(id)))); };
+  const currentDatabase = xdmp.databaseName(xdmp.database());
+  let stagingResults = config.STAGINGDATABASE === currentDatabase ? sparqlFun(): hubUtils.invokeFunction(sparqlFun, config.STAGINGDATABASE);
+  let finalResults = null;
+  if (database === config.FINALDATABASE) {
+    finalResults = config.FINALDATABASE === currentDatabase ? sparqlFun(): hubUtils.invokeFunction(sparqlFun, config.FINALDATABASE);
+  }
+  return Sequence.from([
+    finalResults,
+    stagingResults
+  ]).toArray();
+}
+
+function stepsRunAgainstDocument(documentURI, database = config.FINALDATABASE) {
+  const sparql = `PREFIX prov:<http://www.w3.org/ns/prov#>
+  SELECT DISTINCT ?stepName WHERE {
+    $provID <stepName> ?stepName;
+            prov:wasGeneratedBy ?activityID.
+    ?activityID prov:startedAtTime ?activityStartTime.
+  }
+  ORDER BY DESC(?activityStartTime)`;
+  return runCrossDatabaseSparqlForDocumentURI(sparql, documentURI, database);
+}
+
+function derivedFromDocuments(documentURI, database = config.FINALDATABASE) {
+  const sparql = `PREFIX prov:<http://www.w3.org/ns/prov#>
+  SELECT ?derivedFromDocument ?database ?generatedAtTime WHERE {
+    $provID <documentURI> ?derivedFromDocument.
+    $provID <database> ?database.
+    $provID prov:generatedAtTime ?generatedAtTime.
+  }
+  ORDER BY DESC(?generatedAtTime) ?derivedFromDocument`;
+  return runCrossDatabaseSparqlForDocumentURI(sparql, documentURI, database);
+}
+
+function documentActivities(documentURI, database = config.FINALDATABASE) {
+  const sparql = `PREFIX prov:<http://www.w3.org/ns/prov#>
+  SELECT DISTINCT ?activityID ?activityLabel ?activityStartTime ?activityEndTime WHERE {
+    $provID a prov:Entity;
+              prov:wasGeneratedBy ?activityID.
+    ?activityID prov:label ?activityLabel;
+                prov:startedAtTime ?activityStartTime;
+                prov:endedAtTime ?activityEndTime.
+  }
+  ORDER BY DESC(?activityStartTime)`;
+  return runCrossDatabaseSparqlForDocumentURI(sparql, documentURI, database);
+}
+
 module.exports = {
   deleteProvenance: module.amp(deleteProvenance),
-  installProvTemplates
+  installProvTemplates,
+  allAssociatedProvEntities,
+  sourceInformationForDocument,
+  stepsRunAgainstDocument,
+  derivedFromDocuments,
+  documentActivities
 };

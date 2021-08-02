@@ -2,6 +2,7 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const provLib = require("/data-hub/5/impl/prov.sjs");
 
 function transform(context, params, content) {
   let flowName = params['flow-name'] ? xdmp.urlDecode(params['flow-name']) : "default-ingestion";
@@ -64,6 +65,7 @@ function transform(context, params, content) {
         docs.push(doc.value);
       }
     }
+   provLib.getProvenanceWriteQueue().persist();
    return Sequence.from(docs);
 }
 

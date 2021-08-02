@@ -244,7 +244,14 @@ function generateProtectedPathConfig(models) {
 function getEntityInfoFromRecord(record) {
   if (record instanceof Node) {
     const infoNode = fn.head(record.xpath("/*:envelope/*:instance/*:info"));
-    return (infoNode instanceof ObjectNode) ? infoNode.toObject(): { title: fn.string(infoNode.xpath("./*:title")), version: fn.string(infoNode.xpath("./*:version"))};
+    if (infoNode) {
+      return (infoNode instanceof ObjectNode) ? infoNode.toObject() : {
+        title: fn.string(infoNode.xpath("./*:title")),
+        version: fn.string(infoNode.xpath("./*:version"))
+      };
+    } else {
+      return null;
+    }
   }
   return record.envelope && record.envelope.instance && record.envelope.instance.info;
 }

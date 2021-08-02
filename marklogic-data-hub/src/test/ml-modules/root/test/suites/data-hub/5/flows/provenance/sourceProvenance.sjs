@@ -22,6 +22,9 @@ function assertValidRecordProvenance(provDocument) {
   assertions.push(test.assertEqual(`user:${xdmp.getCurrentUser()}`, fn.string(provDocument.xpath("/*:document/*:wasAttributedTo/*:agent/@*:ref")),
     `The document should have wasAttributedTo 'user:${xdmp.getCurrentUser()}'.`
   ));
+  assertions.push(test.assertEqual(1, fn.count(provDocument.xpath("/*:document/*:wasDerivedFrom/*:usedEntity/@*:ref")),
+    `The document should have 1 wasDerivedFrom. Has ${fn.distinctValues(provDocument.xpath("/*:document/*:wasDerivedFrom/*:usedEntity/@*:ref")).toArray().join()}`
+  ));
   assertions.push(test.assertEqual('external:customers.csv', fn.substringBefore(fn.string(provDocument.xpath("/*:document/*:wasDerivedFrom/*:usedEntity/@*:ref")), "#"),
     `The document should have wasDerivedFrom 'external:customers.csv'.`
   ));
