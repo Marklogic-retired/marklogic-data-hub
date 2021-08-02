@@ -13,8 +13,8 @@ class ConvertProjectForHubCentralTaskTest extends BaseTest {
         createGradleFiles()
         runTask('hubInit')
         //hubInit doesn't create mappings dir any more.
-        if(! new File(BaseTest.testProjectDir.getRoot(),'mappings').exists()){
-            BaseTest.testProjectDir.newFolder("mappings")
+        if(! new File(BaseTest.testProjectDir,'mappings').exists()){
+            new File(BaseTest.testProjectDir,"mappings")
         }
     }
 

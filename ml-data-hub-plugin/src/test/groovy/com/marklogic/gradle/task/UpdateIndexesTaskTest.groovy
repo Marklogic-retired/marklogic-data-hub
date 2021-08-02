@@ -42,7 +42,7 @@ class UpdateIndexesTaskTest extends BaseTest {
             }
         """
 		runTask('hubCreateEntity')
-		File entityDir = Paths.get(testProjectDir.root.toString(), "entities").toFile()
+		File entityDir = Paths.get(testProjectDir.toString(), "entities").toFile()
 		entityDir.isDirectory() == true
 
 		// Copying Order.entity.json file to plugins/entities/my-unique-order-entity directory

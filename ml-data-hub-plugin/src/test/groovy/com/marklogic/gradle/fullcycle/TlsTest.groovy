@@ -36,7 +36,7 @@ class TlsTest extends BaseTest {
 
     def setupSpec() {
         createFullPropertiesFile()
-        BaseTest.buildFile = BaseTest.testProjectDir.newFile('build.gradle')
+        BaseTest.buildFile = new File(BaseTest.testProjectDir, 'build.gradle')
         BaseTest.buildFile << '''
             plugins {
                 id 'com.marklogic.ml-data-hub'
@@ -218,11 +218,11 @@ class TlsTest extends BaseTest {
 
         def result = runTask("hubInit")
         runTask("hubDeploySecurity")
-        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/ml-config/servers/final-server.json"),
+        writeSSLFiles(new File(BaseTest.testProjectDir, "src/main/ml-config/servers/final-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
-        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/job-server.json"),
+        writeSSLFiles(new File(BaseTest.testProjectDir, "src/main/hub-internal-config/servers/job-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
-        writeSSLFiles(new File(BaseTest.testProjectDir.root, "src/main/hub-internal-config/servers/staging-server.json"),
+        writeSSLFiles(new File(BaseTest.testProjectDir, "src/main/hub-internal-config/servers/staging-server.json"),
             new File("src/test/resources/tls-test/ssl-server.json"))
 
         createProperties()
@@ -240,7 +240,7 @@ class TlsTest extends BaseTest {
     }
 
     void createProperties() {
-        BaseTest.propertiesFile = new File(BaseTest.testProjectDir.root, 'gradle.properties')
+        BaseTest.propertiesFile = new File(BaseTest.testProjectDir, 'gradle.properties')
         BaseTest.propertiesFile << """
         mlAdminScheme=https
         mlManageScheme=https

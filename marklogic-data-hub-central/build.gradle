@@ -161,7 +161,9 @@ node {
     npmVersion = '6.14.10'
 
     download = true
-    distBaseUrl = "${nodeDistributionBaseUrl}"
+
+    // distBaseUrl is not set here; this instead relies on the nodeDistributionBaseUrl repository
+    // that is configured in the root build.gradle file
 
     // Set the work directory for unpacking node
     workDir = file("${project.buildDir}/nodejs")

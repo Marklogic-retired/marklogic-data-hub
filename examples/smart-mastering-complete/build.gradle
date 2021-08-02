@@ -2,7 +2,7 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url "https://plugins.gradle.org/m2/" }
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -19,8 +19,8 @@ apply plugin: "net.saliman.properties"
 apply plugin: "com.marklogic.ml-data-hub"
 
 repositories {
-    jcenter()
-    maven { url "http://developer.marklogic.com/maven2/" }
+    mavenCentral()
+    maven { url "https://developer.marklogic.com/maven2/" }
 }
 
 configurations {
@@ -28,7 +28,7 @@ configurations {
 }
 
 dependencies {
-    mlcp "com.marklogic:mlcp:10.0.6.1"
+    mlcp "com.marklogic:mlcp:10.0.6.2"
     mlcp files("lib")
 }
 

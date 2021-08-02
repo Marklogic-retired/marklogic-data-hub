@@ -3,9 +3,10 @@ package com.marklogic.gradle.task
 import com.marklogic.hub.HubConfig
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
-import org.junit.Assert
 
 import java.nio.file.Paths
+
+import static org.junit.jupiter.api.Assertions.assertEquals
 
 class ManualMergeUnmergeTaskTest extends BaseTest{
 
@@ -15,12 +16,12 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        copyResourceToFile("master-test/person.entity.json", Paths.get(testProjectDir.root.toString(),"entities", "person.entity.json").toFile())
-        copyResourceToFile("master-test/myNewFlow.flow.json", Paths.get(testProjectDir.root.toString(),"flows","myNewFlow.flow.json").toFile())
-        copyResourceToFile("master-test/person-1.json", Paths.get(testProjectDir.root.toString(),"input","person-1.json").toFile())
-        copyResourceToFile("master-test/person-1-1.json", Paths.get(testProjectDir.root.toString(),"input","person-1-1.json").toFile())
-        copyResourceToFile("master-test/person-1-2.json", Paths.get(testProjectDir.root.toString(),"input","person-1-2.json").toFile())
-        copyResourceToFile("master-test/person-1.mapping.json", Paths.get(testProjectDir.root.toString(),"mappings","person","person-1.mapping.json").toFile())
+        copyResourceToFile("master-test/person.entity.json", Paths.get(testProjectDir.toString(),"entities", "person.entity.json").toFile())
+        copyResourceToFile("master-test/myNewFlow.flow.json", Paths.get(testProjectDir.toString(),"flows","myNewFlow.flow.json").toFile())
+        copyResourceToFile("master-test/person-1.json", Paths.get(testProjectDir.toString(),"input","person-1.json").toFile())
+        copyResourceToFile("master-test/person-1-1.json", Paths.get(testProjectDir.toString(),"input","person-1-1.json").toFile())
+        copyResourceToFile("master-test/person-1-2.json", Paths.get(testProjectDir.toString(),"input","person-1-2.json").toFile())
+        copyResourceToFile("master-test/person-1.mapping.json", Paths.get(testProjectDir.toString(),"mappings","person","person-1.mapping.json").toFile())
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         runTask('hubDeployUserArtifacts')
         runTask('hubDeployUserModules')
@@ -135,11 +136,11 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
 
         def result = runTask('hubMergeEntities', '-PmergeURIs='+URIs, '-PflowName=myNewFlow', '-PstepNumber=3')
 
-        Assert.assertEquals(TaskOutcome.SUCCESS, result.task(':hubMergeEntities').outcome)
-        Assert.assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived"))
-        Assert.assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing"))
+        assertEquals(TaskOutcome.SUCCESS, result.task(':hubMergeEntities').outcome)
+        assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived"))
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing"))
         //1 document with collections mastered and merged
-        Assert.assertEquals(1, runInDatabase("fn:count("+query+")", HubConfig.DEFAULT_FINAL_NAME).next().getNumber())
+        assertEquals(1, runInDatabase("fn:count("+query+")", HubConfig.DEFAULT_FINAL_NAME).next().getNumber())
     }
 
     def manualMergeUnmerge() {
@@ -148,13 +149,13 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
 
         def result = runTask('hubUnmergeEntities', "-PmergeURI="+mergeURI, "-PretainAuditTrail=true", "-PblockFutureMerges=true")
 
-        Assert.assertEquals(TaskOutcome.SUCCESS, result.task(':hubUnmergeEntities').outcome)
+        assertEquals(TaskOutcome.SUCCESS, result.task(':hubUnmergeEntities').outcome)
         //After unmerge, the 1 merged document will be archived
-        Assert.assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived"))
-        Assert.assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-merged"))
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived"))
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-merged"))
         //auditing doc is created for as many unmerged documents. So 1(from merge) + 3(from unmerge)
-        Assert.assertEquals(4, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing"))
+        assertEquals(4, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing"))
         //3 original documents will get mastered collection
-        Assert.assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-mastered"))
+        assertEquals(3, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-mastered"))
     }
 }

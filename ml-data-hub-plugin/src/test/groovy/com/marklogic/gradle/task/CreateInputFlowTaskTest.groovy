@@ -76,7 +76,7 @@ class CreateInputFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateInputFlow").outcome == SUCCESS
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "input", "my-new-harmonize-flow").toFile()
+        File entityDir = Paths.get(testProjectDir.toString(), "plugins", "entities", "my-new-entity", "input", "my-new-harmonize-flow").toFile()
         entityDir.isDirectory() == true
     }
 }

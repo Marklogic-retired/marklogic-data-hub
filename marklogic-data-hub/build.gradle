@@ -3,9 +3,9 @@ plugins {
     id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
-    id 'com.marklogic.ml-gradle' version '4.1.1'
+    id 'com.marklogic.ml-gradle' version '4.3.1'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'com.marklogic.ml-development-tools' version '5.4.0'
+    id 'com.marklogic.ml-development-tools' version '5.5.0'
 
     // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
     // not being able to resolve its "dataFiles" configuration
@@ -76,7 +76,7 @@ dependencies {
 
     // How MLCP handles errors in a transform changed between 10.0.4.2 and 10.0.5, such that these errors do not result
     // in records counting as "failures". This seems like a bug with MLCP. For now, 10.0.4.2 is still used for testing
-    // as RunConnectedStepsWithMlcpTest expects transform errors to be counted as failures. 
+    // as RunConnectedStepsWithMlcpTest expects transform errors to be counted as failures.
     testImplementation("com.marklogic:mlcp:10.0.4.2") {
       exclude group: 'org.apache.avro', module: 'avro-tools'
       exclude group: 'org.apache.commons', module: 'commons-csv'
@@ -104,20 +104,19 @@ task extractFastXmlParserZip(type: Copy) {
 processResources.dependsOn extractFastXmlParserZip
 
 node {
-  // Version of node to use.
-  version = '14.15.4'
+    version = '14.15.4'
+    npmVersion = '6.14.10'
 
-  // // Version of npm to use.
-  npmVersion = '6.14.10'
+    download = true
 
-  download = true
-  distBaseUrl = "${nodeDistributionBaseUrl}"
+    // distBaseUrl is not set here; this instead relies on the nodeDistributionBaseUrl repository
+    // that is configured in the root build.gradle file
 
-  // Set the work directory for unpacking node
-  workDir = file("${project.buildDir}/nodejs")
+    // Set the work directory for unpacking node
+    workDir = file("${project.buildDir}/nodejs")
 
-  // Set the work directory where node_modules should be located
-  nodeModulesDir = file("${project.projectDir}/src/trace-ui")
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.projectDir}/src/trace-ui")
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {

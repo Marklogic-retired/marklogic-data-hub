@@ -9,7 +9,7 @@ buildscript {
         // When connected to the Internet, download plugin dependencies from the following repositories
         repositories {
             maven { url "https://plugins.gradle.org/m2/" }
-            jcenter()
+            mavenCentral()
         }
         dependencies {
             classpath "net.saliman:gradle-properties-plugin:1.5.1"
@@ -38,7 +38,7 @@ if (project.hasProperty("disconnected")) {
 else {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
-        jcenter()
+        mavenCentral()
     }
 
     configurations { gradlePlugins }

@@ -41,7 +41,6 @@ import org.apache.commons.io.FilenameUtils
 import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.rules.TemporaryFolder
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
@@ -64,7 +63,9 @@ class BaseTest extends Specification {
     // 2 additional modules have been added for triggers
     // 5.x modules added
     static final int MOD_COUNT_NO_OPTIONS_NO_TRACES = 220
-    static final TemporaryFolder testProjectDir = new TemporaryFolder()
+
+    static final File testProjectDir = new File("build/test-project")
+
     static File buildFile
     static File propertiesFile
     static String TEST_USER_FILENAME = "test-flow-developer.json"
@@ -80,7 +81,7 @@ class BaseTest extends Specification {
 
     static BuildResult runTask(String... task) {
         return GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
+            .withProjectDir(testProjectDir)
             .withArguments(task)
             .withDebug(true)
             .withPluginClasspath()
@@ -89,7 +90,7 @@ class BaseTest extends Specification {
 
     BuildResult runFailTask(String... task) {
         return GradleRunner.create()
-            .withProjectDir(testProjectDir.root)
+            .withProjectDir(testProjectDir)
             .withArguments(task)
             .withDebug(true)
             .withPluginClasspath().buildAndFail()
@@ -245,7 +246,7 @@ class BaseTest extends Specification {
     }
 
     static void createBuildFile() {
-        buildFile = testProjectDir.newFile('build.gradle')
+        buildFile = new File(testProjectDir,'build.gradle')
         buildFile << """
             plugins {
                 id 'com.marklogic.ml-data-hub'
@@ -256,7 +257,7 @@ class BaseTest extends Specification {
     static void createFullPropertiesFile() {
         try {
             def props = Paths.get(".").resolve("gradle.properties")
-            propertiesFile = testProjectDir.newFile("gradle.properties")
+            propertiesFile = new File(testProjectDir, "gradle.properties")
             def dst = propertiesFile.toPath()
             Files.copy(props, dst, StandardCopyOption.REPLACE_EXISTING)
         }
@@ -267,7 +268,7 @@ class BaseTest extends Specification {
 
     // Instead of depending on running bootstrap task before each test we just create the required user to save time
     static void createTestUser() {
-        Path userFilePath = testProjectDir.root.toPath().resolve(Paths.get("src/main/ml-config/security/users/" + TEST_USER_FILENAME))
+        Path userFilePath = testProjectDir.toPath().resolve(Paths.get("src/main/ml-config/security/users/" + TEST_USER_FILENAME))
         Files.createDirectories(userFilePath.getParent())
         File userFile = Files.createFile(userFilePath).toFile()
         userFile << """
@@ -322,13 +323,17 @@ class BaseTest extends Specification {
 
     def setupSpec() {
         XMLUnit.setIgnoreWhitespace(true)
-        testProjectDir.create()
+        if (testProjectDir.exists()) {
+            FileUtils.forceDelete(testProjectDir)
+        }
+        Files.createDirectories(testProjectDir.toPath())
+        new File(testProjectDir, "settings.gradle").createNewFile()
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext()
         ctx.register(ApplicationConfig.class)
         ctx.refresh()
         _hubConfig = ctx.getBean(HubConfigImpl.class)
         createFullPropertiesFile()
-        _hubConfig.createProject(testProjectDir.root.getAbsolutePath())
+        _hubConfig.createProject(testProjectDir.getAbsolutePath())
         createTestUser()
         _hubConfig.refreshProject()
     }

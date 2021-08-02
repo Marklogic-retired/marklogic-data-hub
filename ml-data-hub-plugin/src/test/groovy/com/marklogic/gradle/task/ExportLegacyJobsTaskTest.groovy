@@ -62,7 +62,7 @@ class ExportLegacyJobsTaskTest extends BaseTest {
     }
 
     def cleanup() {
-        def exportFile = testProjectDir.newFile(FILENAME)
+        def exportFile = new File(testProjectDir, FILENAME)
         if (exportFile.exists()) {
             exportFile.delete()
         }
@@ -88,7 +88,7 @@ class ExportLegacyJobsTaskTest extends BaseTest {
         result.output.contains(jobId)
         result.output.contains(FILENAME)
         result.task(":hubExportLegacyJobs").outcome == SUCCESS
-        def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
+        def zipFile = testProjectDir.toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
     }
@@ -101,7 +101,7 @@ class ExportLegacyJobsTaskTest extends BaseTest {
         result.output.contains("all jobs")
         result.output.contains(FILENAME)
         result.task(":hubExportLegacyJobs").outcome == SUCCESS
-        def zipFile = testProjectDir.getRoot().toPath().resolve(FILENAME).toFile()
+        def zipFile = testProjectDir.toPath().resolve(FILENAME).toFile()
         zipFile.exists()
         zipFile.delete()
     }
