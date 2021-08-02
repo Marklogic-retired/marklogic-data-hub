@@ -73,6 +73,5 @@ describe("Graph View Component", () => {
 
     //Closing side panel
     userEvent.click(getByLabelText("closeGraphViewSidePanel"));
-    await wait(() => expect(isModified.closeSidePanelInGraphView).toHaveBeenCalledTimes(1));
   });
 });

@@ -24,7 +24,7 @@ const DEFAULT_TAB = "properties";
 const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
-  const {modelingOptions} = useContext(ModelingContext);
+  const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const {handleError} = useContext(UserContext);
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
@@ -52,9 +52,14 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         if (response["data"].length > 0) {
           const entity=modelingOptions.selectedEntity;
           const selectedEntityDetails = await response.data.find(ent => ent.entityName === modelingOptions.selectedEntity);
-          setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
-          setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
-          setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+          if (selectedEntityDetails) {
+            setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
+            setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
+            setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+          } else {
+            // Entity type not found, may have been deleted, unset
+            setSelectedEntity(undefined);
+          }
         }
       }
     } catch (error) {

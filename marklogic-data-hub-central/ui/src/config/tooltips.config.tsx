@@ -10,6 +10,7 @@ const ModelingIntros = {
 const ModelingTooltips = {
   /* Buttons */
   addNewEntity: 'Add a new entity type.',
+  addNewEntityGraph: 'Add a new entity type or relationship.',
   saveAll: 'Save all changes to all entity types.',
   revertAll: 'Discard unsaved changes made to all entity types.',
   addProperty: 'Add properties to this entity type.',

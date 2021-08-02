@@ -26,7 +26,7 @@ import {defaultModelingView} from "../config/modeling.config";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
-  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, closeSidePanelInGraphView} = useContext(ModelingContext);
+  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, setSelectedEntity} = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
@@ -126,6 +126,9 @@ const Modeling: React.FC = () => {
     }
     toggleShowEntityModal(false);
     await setEntityTypesFromServer();
+    if (!isEditModal && modelingOptions.view === "graph") {
+      setSelectedEntity(entityName);
+    }
   };
 
   const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string) => {
@@ -205,8 +208,8 @@ const Modeling: React.FC = () => {
       handleError(error);
     } finally {
       toggleConfirmModal(false);
-      if (modelingOptions.openSidePanelInGraphView && modelingOptions.selectedEntity === entityName) {
-        closeSidePanelInGraphView();
+      if (modelingOptions.selectedEntity && modelingOptions.selectedEntity === entityName) {
+        setSelectedEntity(undefined);
       }
     }
   };
@@ -224,8 +227,11 @@ const Modeling: React.FC = () => {
           await setEntityTypesFromServer();
           clearEntityModified();
           toggleConfirmModal(false);
-          if (modelingOptions.openSidePanelInGraphView && modelingOptions.selectedEntity === entityName) {
-            closeSidePanelInGraphView();
+          // if (modelingOptions.openSidePanelInGraphView && modelingOptions.selectedEntity === entityName) {
+          //   closeSidePanelInGraphView();
+          // }
+          if (modelingOptions.selectedEntity && modelingOptions.selectedEntity === entityName) {
+            setSelectedEntity(undefined);
           }
         }
       }
@@ -409,6 +415,8 @@ const Modeling: React.FC = () => {
               updateSavedEntity={saveAllEntitiesToServer}
               relationshipModalVisible={showRelationshipModal}
               toggleRelationshipModal={toggleRelationshipModal}
+              toggleShowEntityModal={toggleShowEntityModal}
+              toggleIsEditModal={toggleIsEditModal}
             />
           </>
         }

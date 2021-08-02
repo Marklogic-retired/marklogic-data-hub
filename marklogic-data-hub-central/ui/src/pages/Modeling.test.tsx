@@ -242,7 +242,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalled());
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
@@ -252,8 +252,8 @@ describe("Graph view page", () => {
     expect(getByLabelText("graph-view-filter-input")).toBeInTheDocument();
     userEvent.click(getByLabelText("add-entity-type-relationship"));
     await waitFor(() => {
-      expect(getByLabelText("addNewEntityTypeOption")).toBeInTheDocument();
-      expect(getByLabelText("addNewRelationshipOption")).toBeInTheDocument();
+      expect(getByLabelText("add-entity-type")).toBeInTheDocument();
+      expect(getByLabelText("add-relationship")).toBeInTheDocument();
     });
 
     userEvent.hover(getByLabelText("publish-to-database"));
@@ -276,7 +276,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalled());
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 

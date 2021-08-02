@@ -99,7 +99,7 @@ describe("Entity Modeling: Reader Role", () => {
     // Should be updated once the dummy entity links are replaced by actual graph nodes.
     entityTypeTable.viewEntityInGraphView("Customer").click({force: true});
     graphView.getFilterInput().should("be.visible");
-    graphView.getAddEntityButton().should("be.visible");
+    graphView.getAddButton().should("be.disabled");
     graphView.getPublishToDatabaseButton().should("be.visible");
     graphView.getExportGraphIcon().should("be.visible");
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("be.visible");
