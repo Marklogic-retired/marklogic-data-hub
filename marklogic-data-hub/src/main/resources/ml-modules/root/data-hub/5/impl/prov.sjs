@@ -665,31 +665,41 @@ function findProvenance(docUri, relations) {
 }
 
 function urisToLatestProvIDs(sourceURIs, database) {
-  return fn.head(hubUtils.invokeFunction(() => {
-      return sourceURIs.map((sourceURI) => {
-        const match = {
-          attributes: {
-            documentURI: sourceURI,
-            database
-          }
-        };
-        const output = {
-          dateTime: '?'
-        };
-        const kvPattern = ps.opTriplePattern(match, output);
-        //get latest dateTime
-        const result = fn.head(op.fromTriples(kvPattern)
-          .select(['dateTime'])
-          .orderBy(op.desc('dateTime'))
-          .limit(1).result());
-        return result ? `${database}:${sourceURI}#${result.dateTime}`: sourceURI;
-      });
-    },
-    config.JOBDATABASE));
+  let sourceMapFunction = (sourceURIs) => {
+    return sourceURIs.map((sourceURI) => {
+      const match = {
+        attributes: {
+          documentURI: sourceURI
+        }
+      };
+      const output = {
+        dateTime: '?'
+      };
+      const kvPattern = ps.opTriplePattern(match, output);
+      //get latest dateTime
+      const result = fn.head(op.fromTriples(kvPattern)
+        .select(['provID','dateTime'])
+        .orderBy(op.desc('dateTime'))
+        .limit(1).result());
+      return result ? fn.string(result.provID): sourceURI;
+    });
+  };
+  const currentDatabase = xdmp.databaseName(xdmp.database());
+  let finalProvEntities = [];
+  if (database === config.FINALDATABASE) {
+    finalProvEntities = config.FINALDATABASE === currentDatabase ? sourceMapFunction(sourceURIs): fn.head(hubUtils.invokeFunction(() => sourceMapFunction(sourceURIs), config.FINALDATABASE));
+  }
+  let stagingProvEntities = [];
+  let sourcesToSearchForInStaging = sourceURIs.filter((sourceURI) => !finalProvEntities.includes(sourceURI));
+  if (sourcesToSearchForInStaging.length) {
+    stagingProvEntities = config.STAGINGDATABASE === currentDatabase ? sourceMapFunction(sourcesToSearchForInStaging) : fn.head(hubUtils.invokeFunction(() => sourceMapFunction(sourcesToSearchForInStaging), config.STAGINGDATABASE));
+  }
+  finalProvEntities = finalProvEntities.filter((sourceURI) => !sourceURIs.includes(sourceURI));
+  return finalProvEntities.concat(stagingProvEntities);
 }
 
 function queueSourceProvenance(sourceLabel, stepExecutionContext, sourceProvIDs) {
-  const sourceProvID = `external:${sourceLabel}#%%dateTime%%`;
+  const sourceProvID = `external:${sourceLabel}#${fn.currentDateTime().add(xdmp.elapsedTime())}`;
   const sourceRecordOptions = {
     provTypes: ["dh:Source","ps:Application"],
     label: sourceLabel,
@@ -707,10 +717,11 @@ function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info)
   let resp = [];
   const jobId = stepExecutionContext.jobId;
   const stepName = stepExecutionContext.flowStep.name;
+  const sourceDatabase = stepExecutionContext.getSourceDatabase();
   const targetDatabase = stepExecutionContext.getTargetDatabase();
   const entityInfo = hubES.getEntityInfoFromRecord(contentObject.value);
-  const sourceProvIDs = contentObject.previousUri ? urisToLatestProvIDs(hubUtils.normalizeToArray(contentObject.previousUri)): [];
-  let provId = `${targetDatabase}:${contentObject.uri}#%%dateTime%%`
+  let sourceProvIDs = urisToLatestProvIDs(info.derivedFrom, sourceDatabase);
+  let provId = `${targetDatabase}:${contentObject.uri}#%%dateTime%%`;
   let attributes = {
       documentURI: contentObject.uri,
       database: targetDatabase,
@@ -722,6 +733,7 @@ function buildRecordEntity(stepExecutionContext, contentObject, hadMember, info)
     const sourceLabel = stepExecutionContext.combinedOptions.file || stepExecutionContext.combinedOptions.sourceName;
     if (info.status === "created" && sourceLabel) {
       queueSourceProvenance(sourceLabel, stepExecutionContext, sourceProvIDs);
+      sourceProvIDs = sourceProvIDs.filter((srcProvId) => srcProvId !== contentObject.uri);
     }
   }
   if (entityInfo) {

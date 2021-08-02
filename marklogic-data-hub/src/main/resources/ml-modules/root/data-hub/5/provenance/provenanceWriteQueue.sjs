@@ -17,6 +17,7 @@
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const ps = require('/MarkLogic/provenance');
+const persistedIDs = [];
 
 const provenanceNamespaces = {
   dhf:"http://marklogic.com/dhf",
@@ -50,10 +51,15 @@ class ProvenanceWriteQueue {
       recordQueue = [];
       this.databaseToRecordQueue[databaseName] = recordQueue;
     }
-    let existingForId = recordQueue.find((recordDetails) => recordDetails.id === provenanceRecord.id);
+    let existingForId = recordQueue.find((recordDetails) => fn.string(recordDetails.id) === fn.string(provenanceRecord.id));
     if (existingForId) {
       Object.assign(existingForId, provenanceRecord);
-    } else {
+    /* The persistedIDs check below is primarily for the mlRunIngestTransform.
+     *  Due to multiple transforms running in the same transaction, there could be
+     *  multiple attempts to write the same data source provenance causing XDMP-CONFLICTINGUPDATE
+     */
+    } else if (!persistedIDs.includes(provenanceRecord.id)) {
+      persistedIDs.push(provenanceRecord.id);
       recordQueue.push(provenanceRecord);
     }
   }
@@ -92,7 +98,7 @@ class ProvenanceWriteQueue {
     }
     for (let recordDetails of recordsQueue) {
       let options = recordDetails.options || {};
-      options.dateTime = String(fn.currentDateTime());
+      options.dateTime = String(fn.currentDateTime().add(xdmp.elapsedTime()));
       // namespaces for user defined provenance types
       options.namespaces = provenanceNamespaces;
 

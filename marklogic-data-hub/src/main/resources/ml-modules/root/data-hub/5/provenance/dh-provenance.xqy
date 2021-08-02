@@ -89,6 +89,7 @@ declare private function job-record-activity($map as map:map, $id as xs:string, 
       <prov:label>{$id}</prov:label>
       <prov:type xsi:type="xsd:QName">dh:Job</prov:type>
       <prov:startTime>{map-get($options, "startDateTime")}</prov:startTime>
+      { if (map:contains($options, "endDateTime")) then <prov:endTime>{map-get($options, "startDateTime")}</prov:endTime> else () }
     </prov:activity>
   let $_ := map:put($map, "activity", $rec)
   return $map
