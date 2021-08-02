@@ -9,10 +9,6 @@
         {
             "name": "flowName",
             "datatype": "string"
-        },
-        {
-            "name": "stepNumber",
-            "datatype": "string"
         }
     ],
     "return": {

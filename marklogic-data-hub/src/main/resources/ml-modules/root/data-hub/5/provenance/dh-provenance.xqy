@@ -35,16 +35,57 @@ declare function new-provenance-record($id as xs:anyURI, $options as map:map) as
   return $record
 };
 
-declare function insert-provenance-record($doc as node(), $target-database as xs:string) as empty-sequence() {
+declare function insert-provenance-record($doc as node(), $target-database as xs:string) as xs:string {
   let $uri := record-uri(fn:head($doc/prov:activity/@prov:id))
   let $permissions := (xdmp:permission($internal-role,"update"), xdmp:permission($user-role,"read"))
-  return dhps-document-insert($uri, $doc, $permissions, $dhps-collection, $target-database)
+  let $_ := dhps-document-insert($uri, $doc, $permissions, $dhps-collection, $target-database)
+  return $uri
 };
 
 declare function update-endTime-in-provenance-record($uri as xs:string, $options as map:map*, $target-database as xs:string) as empty-sequence() {
   let $path := "prov:document/prov:activity"
   let $child-node := <prov:endTime>{map-get($options, "endTime")}</prov:endTime>
   return dhps-document-update($uri, $child-node, $path, $target-database)
+};
+
+declare function update-step-in-provenance-record($uri as xs:string, $options as map:map*, $target-database as xs:string) as empty-sequence() {
+  let $path := "prov:document"
+  let $step-name := map-get($options, "stepName")
+  let $job-id := map-get($options, "jobId")
+
+  let $prov-id := fn:concat("step:", $step-name)
+  let $activity-ref := fn:concat("job:", $job-id)
+
+  let $_ := job-record-step-entity($prov-id, "dh:Step", $step-name, $uri, $path, $target-database)
+  let $_ := job-record-step-used($activity-ref, $step-name, "", $uri, $path, $target-database)
+  return ()
+};
+
+declare function update-entity-in-provenance-record($uri as xs:string, $options as map:map*, $target-database as xs:string) as empty-sequence() {
+  let $path := "prov:document"
+  let $target-entity-type := map-get($options, "targetEntityType")
+  let $label := fn:tokenize($target-entity-type, "/")[last()]
+  let $job-id := map-get($options, "jobId")
+
+  let $prov-id := $target-entity-type
+  let $activity-ref := fn:concat("job:", $job-id)
+
+  let $node-exists := xdmp:invoke-function(
+    function() {
+      let $doc := fn:doc($uri)
+      return $doc/prov:document/prov:entity/@prov:id=$prov-id
+    },
+    <options xmlns="xdmp:eval">
+      <database>{xdmp:database($target-database)}</database>
+    </options>
+  )
+
+  return
+    if ($node-exists = fn:false()) then
+      let $_ := job-record-step-entity($prov-id, "dh:EntityType", $label, $uri, $path, $target-database)
+      let $_ := job-record-step-used($activity-ref, $target-entity-type, "dh:TargetEntityType", $uri, $path, $target-database)
+      return ()
+    else ()
 };
 
 declare private function build($map as map:map) as node(){
@@ -58,7 +99,6 @@ declare private function build-components($map as map:map) as node()*{
     map:get($map,"wasAssociatedWith")
   )
 };
-
 
 declare private function dhps-document-insert($uri as xs:string, $doc as node(), $permissions as item()*, $collections as xs:string*, $target-database as xs:string) as empty-sequence(){
   xdmp:invoke-function(
@@ -116,6 +156,36 @@ declare private function job-record-associatedWith($map as map:map, $id as xs:st
     </prov:wasAssociatedWith>
   let $_ := map:put($map, "wasAssociatedWith", $rec)
   return $map
+};
+
+declare private function job-record-step-entity($prov-id as xs:string, $prov-type as xs:string, $label as xs:string,
+  $uri as xs:string, $path as xs:string, $target-database as xs:string) as empty-sequence() {
+
+  let $child-node :=
+    <prov:entity prov:id="{$prov-id}">
+      <prov:type xsi:type="xsd:QName">{$prov-type}</prov:type>
+      <prov:label>{$label}</prov:label>
+    </prov:entity>
+  return dhps-document-update($uri, $child-node, $path, $target-database)
+};
+
+declare private function job-record-step-used($activity-ref as xs:string, $entity-ref as xs:string, $prov-type as xs:string,
+  $uri as xs:string, $path as xs:string, $target-database as xs:string) as empty-sequence() {
+
+  let $child-node :=
+    if(fn:not(fn:empty($prov-type)) and fn:compare($prov-type, "dh:TargetEntityType") = 0) then
+      <prov:used>
+        <prov:activity prov:ref="{$activity-ref}" />
+        <prov:entity prov:ref="{$entity-ref}" />
+        <prov:type xsi:type="xsd:QName">{$prov-type}</prov:type>
+      </prov:used>
+    else
+      <prov:used>
+        <prov:activity prov:ref="{$activity-ref}" />
+        <prov:entity prov:ref="{$entity-ref}" />
+      </prov:used>
+
+  return dhps-document-update($uri, $child-node, $path, $target-database)
 };
 
 declare private function map-get($map as map:map, $key as xs:string){

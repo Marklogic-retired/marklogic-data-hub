@@ -9,6 +9,18 @@
         {
             "name": "stepNumber",
             "datatype": "string"
+        },
+        {
+            "name": "flowName",
+            "datatype": "string"
+        }
+        ,
+        {
+            "name": "runTimeOptions",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true,
+            "$javaClass":"com.fasterxml.jackson.databind.JsonNode"
         }
     ]
 }

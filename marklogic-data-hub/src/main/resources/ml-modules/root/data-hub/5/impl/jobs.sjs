@@ -258,7 +258,7 @@ function saveNewJob(job) {
    * @param stepNumber
    * @param {object} stepResponse
    * @param {array} outputContentArray optional; will be passed to jobReport function
-   * @param {object} writeQueue optional; if not null, the job report is added to this; otherwise, the job report is 
+   * @param {object} writeQueue optional; if not null, the job report is added to this; otherwise, the job report is
    * written to the jobs database by this function
    */
   function createJobReport(jobId, stepNumber, stepResponse, outputContentArray, writeQueue) {
@@ -299,10 +299,23 @@ function saveNewJob(job) {
           } else {
             hubUtils.hubTrace(consts.TRACE_FLOW, `Inserting job report with URI: ${reportUri}`);
             hubUtils.writeDocument(reportUri, jobReport, permissions, collections, config.JOBDATABASE);
-          }  
+          }
         }
       }
     }
+  }
+
+  function findProvenanceRecordUriFromJobId(jobId, targetDatabase) {
+    const provCollectionQuery = cts.collectionQuery("http://marklogic.com/provenance-services/record");
+    const provIdAttributeQuery = cts.elementAttributeValueQuery(fn.QName("http://www.w3.org/ns/prov#", "activity"),
+        fn.QName("http://www.w3.org/ns/prov#", "id"), fn.concat("job:", jobId));
+    const jobProvQuery = cts.andQuery([provCollectionQuery, provIdAttributeQuery]);
+    const provRecordUri = fn.head(
+        hubUtils.invokeFunction(function () {
+          return cts.uris("", null, jobProvQuery);
+        }, targetDatabase)
+    );
+    return provRecordUri;
   }
 
 module.exports = {
@@ -310,6 +323,7 @@ module.exports = {
   buildNewJob,
   createJob,
   createJobReport,
+  findProvenanceRecordUriFromJobId,
   getJob,
   getJobWithDetails,
   getJobDocs,
