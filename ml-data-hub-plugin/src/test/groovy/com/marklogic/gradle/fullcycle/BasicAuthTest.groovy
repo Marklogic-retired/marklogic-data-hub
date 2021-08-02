@@ -28,7 +28,7 @@ class BasicAuthTest extends BaseTest {
         createGradleFiles()
         runTask("hubInit")
         runTask("hubDeploySecurity")
-        println(BaseTest.testProjectDir.getRoot().getAbsolutePath());
+        println(BaseTest.testProjectDir.getAbsolutePath());
         createProperties()
     }
 
@@ -37,7 +37,7 @@ class BasicAuthTest extends BaseTest {
     }
 
     void createProperties() {
-        BaseTest.propertiesFile = new File(BaseTest.testProjectDir.root, 'gradle.properties')
+        BaseTest.propertiesFile = new File(BaseTest.testProjectDir, 'gradle.properties')
         BaseTest.propertiesFile << """
             mlStagingAuth=basic
             mlFinalAuth=basic

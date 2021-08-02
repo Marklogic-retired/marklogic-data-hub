@@ -33,99 +33,51 @@ class RunFlowTask extends HubTask {
 
     @Input
     @Optional
-    public String flowName
+    String flowName
 
     @Input
     @Optional
-    public Integer batchSize
+    Integer batchSize
 
     @Input
     @Optional
-    public Integer threadCount
+    Integer threadCount
 
     @Input
     @Optional
-    public String inputFilePath
+    String inputFilePath
 
     @Input
     @Optional
-    public String inputFileType
+    String inputFileType
 
     @Input
     @Optional
-    public String outputURIReplacement
+    String outputURIReplacement
 
     @Input
     @Optional
-    public String outputURIPrefix
+    String outputURIPrefix
 
     @Input
     @Optional
-    public String separator
+    String separator
 
     @Input
     @Optional
-    public Boolean showOptions
+    Boolean showOptions
 
     @Input
     @Optional
-    public Boolean failHard
+    Boolean failHard
 
     @Input
     @Optional
-    public List<String> steps
+    List<String> steps
 
     @Input
     @Optional
-    public String jobId
-
-    String getFlowName() {
-        return flowName
-    }
-
-    Integer getBatchSize() {
-        return batchSize
-    }
-
-    Integer getThreadCount() {
-        return threadCount
-    }
-
-    String getInputFilePath() {
-        return inputFilePath
-    }
-
-    String getInputFileType() {
-        return inputFileType
-    }
-
-    String getOutputURIReplacement() {
-        return outputURIReplacement
-    }
-
-    String getOutputURIPrefix() {
-        return outputURIPrefix
-    }
-
-    String getSeparator() {
-        return separator
-    }
-
-    Boolean getShowOptions() {
-        return showOptions
-    }
-
-    Boolean getFailHard() {
-        return failHard
-    }
-
-    List<String> getSteps() {
-        return steps
-    }
-
-    String getJobId() {
-        return jobId
-    }
+    String jobId
 
     @TaskAction
     void runFlow() {

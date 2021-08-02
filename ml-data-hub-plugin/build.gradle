@@ -38,7 +38,7 @@ snyk {
 dependencies {
     implementation gradleApi()
     implementation (project(':marklogic-data-hub'))
-    implementation 'com.marklogic:ml-gradle:4.3.0'
+    implementation 'com.marklogic:ml-gradle:4.3.1'
     implementation "org.apache.commons:commons-lang3:3.12.0"
     implementation "com.fasterxml.jackson.core:jackson-databind:2.11.1"
     implementation 'commons-io:commons-io:2.11.0'
@@ -46,15 +46,20 @@ dependencies {
     testImplementation localGroovy()
     testImplementation gradleTestKit()
     testImplementation 'xmlunit:xmlunit:1.6'
-    testImplementation('org.spockframework:spock-spring:1.2-groovy-2.5') {
+    testImplementation('org.spockframework:spock-spring:2.0-groovy-3.0') {
         exclude module: 'groovy-all'
     }
 
-    testImplementation('org.spockframework:spock-core:1.2-groovy-2.5') {
+    testImplementation('org.spockframework:spock-core:2.0-groovy-3.0') {
         exclude module: 'groovy-all'
     }
     testImplementation 'org.springframework:spring-test:5.3.9'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.2'
     testImplementation 'org.jdom:jdom2:2.0.6'
+
+    // Confusingly, junit4 is needed on the classpath, even though JUnit 5 is used for all tests / assertions.
+    // Without it, running "test" will throw a class-not-found exception for junit.framework.Assert
+    testImplementation 'junit:junit:4.12'
 }
 
 test {
@@ -70,6 +75,7 @@ test {
     include 'com/marklogic/gradle/task/**'
     include 'com/marklogic/hub/gradle/task/**'
     classpath = project.sourceSets.main.runtimeClasspath + project.sourceSets.test.runtimeClasspath
+    useJUnitPlatform()
 }
 
 task testFullCycle(type: Test) {

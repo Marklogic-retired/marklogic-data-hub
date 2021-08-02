@@ -18,6 +18,7 @@
 package com.marklogic.gradle.task
 
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
@@ -25,13 +26,11 @@ class ExportLegacyJobsTask extends HubTask {
 
     @Input
     @Optional
-    public String[] jobIds
+    String[] jobIds
 
-    public String filename
-
-    String[] getJobIds() {
-        return jobIds
-    }
+    @Input
+    @Optional
+    String filename
 
     @TaskAction
     void exportJobs() {
@@ -45,13 +44,11 @@ class ExportLegacyJobsTask extends HubTask {
         }
         if (jobIds == null) {
             println("Exporting all jobs to " + filename)
-        }
-        else {
+        } else {
             println("Exporting jobs: " + jobIds + " to " + filename)
         }
 
         def jobManager = getJobManager()
-        def dh = getDataHub()
         if (!isHubInstalled()) {
             println("Data Hub is not installed.")
             return

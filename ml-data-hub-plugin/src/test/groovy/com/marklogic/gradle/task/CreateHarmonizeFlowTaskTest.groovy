@@ -82,7 +82,7 @@ class CreateHarmonizeFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
 
-        File entityDir = Paths.get(BaseTest.testProjectDir.root.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
+        File entityDir = Paths.get(BaseTest.testProjectDir.toString(), "plugins", "entities", "my-new-entity", "harmonize", "my-new-harmonize-flow").toFile()
         entityDir.isDirectory() == true
     }
 

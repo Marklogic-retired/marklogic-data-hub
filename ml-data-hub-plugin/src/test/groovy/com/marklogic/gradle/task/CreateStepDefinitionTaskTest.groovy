@@ -59,11 +59,11 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         result.task(":hubCreateStepDefinition").outcome == SUCCESS
 
         // It should default to "CUSTOM" type when none specified
-        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "custom", "my-test-step").toFile()
+        File stepDir = Paths.get(testProjectDir.toString(), "step-definitions", "custom", "my-test-step").toFile()
         println stepDir.toString()
         stepDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "custom", "my-test-step", "my-test-step.step.json").toFile());
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.toString(), "step-definitions", "custom", "my-test-step", "my-test-step.step.json").toFile());
         data.options.permissions == "data-hub-common,read,data-hub-common,update";
     }
 
@@ -83,10 +83,10 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateStepDefinition").outcome == SUCCESS
 
-        File stepDir = Paths.get(testProjectDir.root.toString(), "step-definitions", "ingestion", "my-new-step").toFile()
+        File stepDir = Paths.get(testProjectDir.toString(), "step-definitions", "ingestion", "my-new-step").toFile()
         stepDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "ingestion", "my-new-step", "my-new-step.step.json").toFile());
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.toString(), "step-definitions", "ingestion", "my-new-step", "my-new-step.step.json").toFile());
         data.options.permissions == "data-hub-common,read,data-hub-common,update";
     }
 
@@ -128,7 +128,7 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         notThrown(UnexpectedBuildSuccess)
         failedResult.output.contains("Invalid name: 'my^StepDef';")
         failedResult.task(":hubCreateStepDefinition").outcome == FAILED
-        !Paths.get(testProjectDir.root.toString(), "step-definitions", "my^StepDef.flow.json").toFile().exists()
+        !Paths.get(testProjectDir.toString(), "step-definitions", "my^StepDef.flow.json").toFile().exists()
     }
 
     def "duplicate step definition exists"() {

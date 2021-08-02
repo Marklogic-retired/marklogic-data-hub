@@ -27,11 +27,7 @@ class DeleteLegacyJobsTask extends HubTask {
 
     @Input
     @Optional
-    public String jobIds
-
-    String getJobIds() {
-        return jobIds
-    }
+    String jobIds
 
     @TaskAction
     void deleteJobs() {

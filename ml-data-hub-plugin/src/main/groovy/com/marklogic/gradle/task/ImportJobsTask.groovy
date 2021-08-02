@@ -24,14 +24,10 @@ import org.gradle.api.tasks.TaskAction
 class ImportJobsTask extends HubTask {
     @Input
     @Optional
-    public String filename
-
-    String getFilename() {
-        return filename
-    }
+    String filename
 
     @TaskAction
-    void exportJobs() {
+    void importJobs() {
         if (filename == null) {
             filename = project.hasProperty("filename") ? project.property("filename") : "jobexport.zip"
         }

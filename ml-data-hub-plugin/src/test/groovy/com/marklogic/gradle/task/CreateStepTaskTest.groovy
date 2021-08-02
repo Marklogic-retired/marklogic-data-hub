@@ -66,7 +66,7 @@ class CreateStepTaskTest extends BaseTest {
         notThrown(UnexpectedBuildSuccess)
         failedResult.output.contains("Invalid name: 'my^Step';")
         failedResult.task(":hubCreateStep").outcome == FAILED
-        !Paths.get(testProjectDir.root.toString(), "steps", "ingestion", "my^Step.step.json").toFile().exists()
+        !Paths.get(testProjectDir.toString(), "steps", "ingestion", "my^Step.step.json").toFile().exists()
     }
 
     def "missing name"() {

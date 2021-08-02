@@ -12,7 +12,7 @@
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
- *  
+ *
  */
 
 package com.marklogic.gradle.task
@@ -42,7 +42,7 @@ class SaveIndexesTaskTest extends BaseTest {
             }
         """
         runTask('hubCreateEntity')
-        File entityDir = Paths.get(testProjectDir.root.toString(), "entities").toFile()
+        File entityDir = Paths.get(testProjectDir.toString(), "entities").toFile()
         entityDir.isDirectory() == true
 
         // Copying my-unique-save-index-entity-1.entity.json file to plugins/entities/my-unique-save-index-entity-1 directory
@@ -57,7 +57,7 @@ class SaveIndexesTaskTest extends BaseTest {
             }
         """
         runTask('hubCreateEntity')
-        entityDir = Paths.get(testProjectDir.root.toString(), "entities").toFile()
+        entityDir = Paths.get(testProjectDir.toString(), "entities").toFile()
         entityDir.isDirectory() == true
 
         // Copying my-unique-save-index-entity-2.entity.json file to plugins/entities/my-unique-save-index-entity-2 directory

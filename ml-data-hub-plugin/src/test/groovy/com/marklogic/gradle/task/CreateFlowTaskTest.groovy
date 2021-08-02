@@ -51,10 +51,10 @@ class CreateFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateFlow").outcome == SUCCESS
 
-        File flowDir = Paths.get(testProjectDir.root.toString(), "flows").toFile()
+        File flowDir = Paths.get(testProjectDir.toString(), "flows").toFile()
         flowDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "flows", "mySimpleFlow.flow.json").toFile());
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.toString(), "flows", "mySimpleFlow.flow.json").toFile());
         data.name == "mySimpleFlow"
         data.description == "Flow description"
         stagingClient.newServerEval().javascript("fn.head(cts.doc(\"/flows/mySimpleFlow.flow.json\"))").eval().hasNext()
@@ -76,10 +76,10 @@ class CreateFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateFlow").outcome == SUCCESS
 
-        File flowDir = Paths.get(testProjectDir.root.toString(), "flows").toFile()
+        File flowDir = Paths.get(testProjectDir.toString(), "flows").toFile()
         flowDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
-        def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "flows", "myTestFlow.flow.json").toFile());
+        def data = jsonSlurper.parse(Paths.get(testProjectDir.toString(), "flows", "myTestFlow.flow.json").toFile());
         def expectedPermissions = 'data-hub-common,read,data-hub-common,update'
         data.steps.'1'.name == 'ingestion-step'
         data.steps.'1'.options.permissions == expectedPermissions
@@ -107,7 +107,7 @@ class CreateFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildSuccess)
         failedResult.output.contains("Invalid name: 'my^Flow';")
         failedResult.task(":hubCreateFlow").outcome == FAILED
-        !Paths.get(testProjectDir.root.toString(), "flows", "my^Flow.flow.json").toFile().exists()
+        !Paths.get(testProjectDir.toString(), "flows", "my^Flow.flow.json").toFile().exists()
     }
 
     def "create flow with inline steps and invalid name"() {
@@ -126,7 +126,7 @@ class CreateFlowTaskTest extends BaseTest {
         notThrown(UnexpectedBuildSuccess)
         failedResult.output.contains("Invalid name: 'my^Flow';")
         failedResult.task(":hubCreateFlow").outcome == FAILED
-        !Paths.get(testProjectDir.root.toString(), "flows", "my^Flow.flow.json").toFile().exists()
+        !Paths.get(testProjectDir.toString(), "flows", "my^Flow.flow.json").toFile().exists()
     }
 
     def "create flow with existing name"() {

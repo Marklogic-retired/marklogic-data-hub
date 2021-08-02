@@ -26,7 +26,7 @@ class ExportProjectTaskTest extends BaseTest {
     def "export a hub project"() {
 
         when: "we begin"
-            File exportFile = new File(testProjectDir.root, "build"+File.separator+"datahub-project.zip")
+            File exportFile = new File(testProjectDir, "build"+File.separator+"datahub-project.zip")
 
         then:
             exportFile.exists() == false;

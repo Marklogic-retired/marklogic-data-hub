@@ -166,7 +166,7 @@ class InstalledTests extends BaseTest {
         when:
         runTask('hubUpdate')
         runTask('hubCreateEntity')
-        copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.root.toString(),"entities", "Employee.entity.json").toFile())
+        copyResourceToFile("employee.entity.json", Paths.get(testProjectDir.toString(),"entities", "Employee.entity.json").toFile())
         runTask('hubDeployUserModules')
         def result = runTask('hubCreateHarmonizeFlow')
 
@@ -174,9 +174,9 @@ class InstalledTests extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateHarmonizeFlow").outcome == SUCCESS
 
-        File entityDir = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow").toFile()
+        File entityDir = Paths.get(testProjectDir.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow").toFile()
         entityDir.isDirectory() == true
-        File contentPlugin = Paths.get(testProjectDir.root.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
+        File contentPlugin = Paths.get(testProjectDir.toString(), "plugins", "entities", "Employee", "harmonize", "my-new-harmonize-flow", "content.sjs").toFile()
         contentPlugin.text.contains("extractInstanceEmployee")
     }
 
