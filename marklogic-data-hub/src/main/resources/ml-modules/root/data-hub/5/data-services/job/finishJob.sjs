@@ -20,7 +20,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execut
 const Job = require("/data-hub/5/flow/job.sjs");
 const dhProv = require('/data-hub/5/provenance/dh-provenance.xqy');
 const config = require("/com.marklogic.hub/config.sjs");
-const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const jobs = require("/data-hub/5/impl/jobs.sjs");
 
 var jobId;
 var jobStatus;
@@ -29,22 +29,8 @@ function updateJobProvenance(jobId, jobEndTime) {
   const options = {
     "endTime": jobEndTime
   }
-  const provCollectionQuery = cts.collectionQuery("http://marklogic.com/provenance-services/record");
-  const provIdAttributeQuery = cts.elementAttributeValueQuery(fn.QName("http://www.w3.org/ns/prov#", "activity"),
-    fn.QName("http://www.w3.org/ns/prov#", "id"), fn.concat("job:", jobId));
-  const jobProvQuery = cts.andQuery([provCollectionQuery, provIdAttributeQuery]);
-
-  const stagingJobProvRecordUri = fn.head(
-    hubUtils.invokeFunction(function () {
-      return cts.uris("", null, jobProvQuery);
-    }, config.STAGINGDATABASE)
-  );
-
-  let finalJobProvRecordUri = fn.head(
-    hubUtils.invokeFunction(function () {
-      return cts.uris("", null, jobProvQuery);
-    }, config.FINALDATABASE)
-  );
+  const stagingJobProvRecordUri = jobs.findProvenanceRecordUriFromJobId(jobId, config.STAGINGDATABASE);
+  const finalJobProvRecordUri = jobs.findProvenanceRecordUriFromJobId(jobId, config.FINALDATABASE);
 
   if(stagingJobProvRecordUri) {
     dhProv.updateEndTimeInProvenanceRecord(stagingJobProvRecordUri, options, config.STAGINGDATABASE);

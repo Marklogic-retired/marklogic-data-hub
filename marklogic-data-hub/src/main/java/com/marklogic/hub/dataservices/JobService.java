@@ -61,7 +61,7 @@ public interface JobService {
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/job/", servDecl);
 
                 this.req_startStep = this.baseProxy.request(
-                    "startStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "startStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_finishStep = this.baseProxy.request(
                     "finishStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_getJob = this.baseProxy.request(
@@ -79,16 +79,18 @@ public interface JobService {
             }
 
             @Override
-            public void startStep(String jobId, String stepNumber) {
+            public void startStep(String jobId, String stepNumber, String flowName, com.fasterxml.jackson.databind.JsonNode runTimeOptions) {
                 startStep(
-                    this.req_startStep.on(this.dbClient), jobId, stepNumber
+                    this.req_startStep.on(this.dbClient), jobId, stepNumber, flowName, runTimeOptions
                     );
             }
-            private void startStep(BaseProxy.DBFunctionRequest request, String jobId, String stepNumber) {
+            private void startStep(BaseProxy.DBFunctionRequest request, String jobId, String stepNumber, String flowName, com.fasterxml.jackson.databind.JsonNode runTimeOptions) {
               request
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
-                          BaseProxy.atomicParam("stepNumber", false, BaseProxy.StringType.fromString(stepNumber))
+                          BaseProxy.atomicParam("stepNumber", false, BaseProxy.StringType.fromString(stepNumber)),
+                          BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName)),
+                          BaseProxy.documentParam("runTimeOptions", true, BaseProxy.JsonDocumentType.fromJsonNode(runTimeOptions))
                           ).responseNone();
             }
 
@@ -126,18 +128,17 @@ public interface JobService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName, String stepNumber) {
+            public com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName) {
                 return startJob(
-                    this.req_startJob.on(this.dbClient), jobId, flowName, stepNumber
+                    this.req_startJob.on(this.dbClient), jobId, flowName
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode startJob(BaseProxy.DBFunctionRequest request, String jobId, String flowName, String stepNumber) {
+            private com.fasterxml.jackson.databind.JsonNode startJob(BaseProxy.DBFunctionRequest request, String jobId, String flowName) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
-                          BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName)),
-                          BaseProxy.atomicParam("stepNumber", false, BaseProxy.StringType.fromString(stepNumber))
+                          BaseProxy.atomicParam("flowName", false, BaseProxy.StringType.fromString(flowName))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -210,9 +211,11 @@ public interface JobService {
    *
    * @param jobId	provides input
    * @param stepNumber	provides input
+   * @param flowName	provides input
+   * @param runTimeOptions	provides input
    * 
    */
-    void startStep(String jobId, String stepNumber);
+    void startStep(String jobId, String stepNumber, String flowName, com.fasterxml.jackson.databind.JsonNode runTimeOptions);
 
   /**
    * Updates the associated Job document after all batches have been processed for a step
@@ -238,10 +241,9 @@ public interface JobService {
    *
    * @param jobId	provides input
    * @param flowName	provides input
-   * @param stepNumber	provides input
    * @return	The created Job document
    */
-    com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName, String stepNumber);
+    com.fasterxml.jackson.databind.JsonNode startJob(String jobId, String flowName);
 
   /**
    * Get the Job document associated with the given job ID and additional metadata

@@ -224,9 +224,12 @@ function generateArtifactKey(artifactType, artifactName, artifactVersion = 'late
     return `${artifactType}:${artifactName}:${artifactVersion}`;
 }
 
-function getFullFlow(flowName, artifactVersion = 'latest') {
+function getFullFlow(flowName, stepNumber) {
   const flow = getArtifact('flow', flowName);
-  const steps = flow["steps"];
+  let steps = flow["steps"];
+  if(stepNumber && flow["steps"] && flow["steps"]["stepNumber"]) {
+    steps = flow["steps"]["stepNumber"];
+  }
   Object.keys(steps).forEach(stepNumber => {
     if (steps[stepNumber].stepId) {
       steps[stepNumber] = convertStepReferenceToInlineStep(steps[stepNumber].stepId, flowName);
@@ -247,8 +250,8 @@ function removeNullProperties(obj) {
 }
 
 /**
- * 
- * @param stepId 
+ *
+ * @param stepId
  * @param flowNameForError optional; if included, will be added to the error message if the step cannot be found
  */
 function convertStepReferenceToInlineStep(stepId, flowNameForError) {

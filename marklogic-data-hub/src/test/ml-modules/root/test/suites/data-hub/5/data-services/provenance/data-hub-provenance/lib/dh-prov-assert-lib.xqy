@@ -22,6 +22,27 @@ declare function verify-new-provenance-record($record as node(), $job-id as xs:s
   )
 };
 
+declare function verify-step-and-entity-in-provenance-record($record as node(), $job-id as xs:string, $step-name as xs:string,
+  $target-entity-type as xs:string) {
+
+  let $entity-name := fn:tokenize($target-entity-type, "/")[last()]
+  return (
+    test:assert-true($record//prov:entity/@prov:id=fn:concat("step:", $step-name)),
+    test:assert-equal("dh:Step", xs:string($record//prov:entity[@prov:id=fn:concat("step:", $step-name)]/prov:type)),
+    test:assert-equal($step-name, xs:string($record//prov:entity[@prov:id=fn:concat("step:", $step-name)]/prov:label)),
+    test:assert-true($record//prov:used/prov:activity/@prov:ref=fn:concat("job:", $job-id)),
+    test:assert-true($record//prov:used/prov:entity/@prov:ref=$step-name),
+
+    test:assert-true($record//prov:entity/@prov:id=$target-entity-type),
+    test:assert-equal("dh:EntityType", xs:string($record//prov:entity[@prov:id=$target-entity-type]/prov:type)),
+    test:assert-equal($entity-name, xs:string($record//prov:entity[@prov:id=$target-entity-type]/prov:label)),
+    test:assert-true($record//prov:used/prov:activity/@prov:ref=fn:concat("job:", $job-id)),
+    test:assert-true($record//prov:used/prov:entity/@prov:ref=$target-entity-type),
+    test:assert-equal("dh:TargetEntityType", xs:string($record//prov:used/prov:type))
+  )
+};
+
+
 declare function verify-end-time-in-provenance-record($record as node()) {
   test:assert-false(fn:empty($record//prov:activity/prov:endTime))
 };

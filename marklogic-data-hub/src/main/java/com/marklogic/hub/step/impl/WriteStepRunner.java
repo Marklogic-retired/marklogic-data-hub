@@ -219,7 +219,7 @@ public class WriteStepRunner implements StepRunner {
         combinedOptions.put("flow", this.flow.getName());
 
         if (jobOutputIsEnabled()) {
-            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
         }
 
         Collection<String> uris;
@@ -250,7 +250,7 @@ public class WriteStepRunner implements StepRunner {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         if (jobOutputIsEnabled()) {
-            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
         }
         return this.runIngester(runStepResponse,uris);
     }

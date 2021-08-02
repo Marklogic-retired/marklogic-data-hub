@@ -188,7 +188,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
         combinedOptions.put("jobId", jobId);
 
         if (jobOutputIsEnabled()) {
-            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
         }
 
         DiskQueue<String> uris;
@@ -230,7 +230,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
         if (jobOutputIsEnabled()) {
-            JobService.on(hubClient.getJobsClient()).startStep(jobId, step);
+            JobService.on(hubClient.getJobsClient()).startStep(jobId, step, flow.getName(), new ObjectMapper().valueToTree(this.combinedOptions));
         }
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         return this.runHarmonizer(runStepResponse,uris);
