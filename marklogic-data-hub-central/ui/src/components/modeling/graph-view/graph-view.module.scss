@@ -19,28 +19,21 @@
 
           .addButtonContainer {
             padding-right: 10px;
-
-            .addButtonText {
-              font-size: 16px;
-            }
-
-            .downArrowIcon {
-              font-size: 16px;
-            }
           }
+          
           .publishButtonContainer {
             display: inline-flex;
             vertical-align: middle;
-
+            margin-top: 2px;
+            
             .publishButtonText {
               margin-left: 4px;
-              font-size: 16px;
             }
           }
 
           .graphExportIcon{
             cursor: pointer;
-            font-size: 24px;
+            font-size: 21px;
             margin-left: 8px;
             margin-top: 2px;
             color: #777777;
@@ -81,3 +74,10 @@
   display: inline-block;
 }
 
+.disabledPointerEvents{
+  pointer-events: none;
+}
+
+.disabledCursor{
+  cursor: not-allowed;
+}

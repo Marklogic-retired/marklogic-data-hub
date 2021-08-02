@@ -18,6 +18,12 @@ class GraphViewSidePanel {
   getEntityTypeTab() {
     return cy.findByLabelText("entityTypeTabInSidePanel");
   }
+  getEntityTypeName(entityName: string) {
+    return cy.findByTestId(`${entityName}`);
+  }
+  getEntityTypeDescription() {
+    return cy.findByTestId("description");
+  }
 
   getPropertyTableHeader(headerName: string) {
     return cy.findByLabelText(`${headerName}-header`);
@@ -28,7 +34,7 @@ class GraphViewSidePanel {
   }
 
   getPersonEntityNode() {
-    return cy.findByTestId("Person-entityNode").click();
+    return cy.findByTestId("Person-entityNode");
   }
 
   getPersonEntityDescription() {

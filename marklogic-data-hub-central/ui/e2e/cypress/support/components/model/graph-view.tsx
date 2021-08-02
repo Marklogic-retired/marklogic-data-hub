@@ -3,8 +3,16 @@ class GraphView {
     return cy.findByLabelText("graph-view-filter-input");
   }
 
-  getAddEntityButton() {
+  getAddButton() {
     return cy.findByLabelText("add-entity-type-relationship");
+  }
+
+  getAddEntityTypeOption() {
+    return cy.findByLabelText("add-entity-type");
+  }
+
+  getAddRelationshipOption() {
+    return cy.findByLabelText("add-relationship");
   }
 
   getPublishToDatabaseButton() {

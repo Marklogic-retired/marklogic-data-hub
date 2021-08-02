@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useLayoutEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useLayoutEffect} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import {ModelingContext} from "../../../../util/modeling-context";
@@ -83,9 +83,9 @@ const GraphVis: React.FC<Props> = (props) => {
   const graphType = "shape";
 
   // const [nodePositions, setNodePositions] = useState({});
+  const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
-  const {modelingOptions} = useContext(ModelingContext);
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
@@ -114,6 +114,18 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [network, props.isEntitySelected]);
 
+  // React to node selection from outside (e.g. new node created)
+  useEffect(() => {
+    if (network && modelingOptions.selectedEntity) {
+      // Ensure entity exists
+      if (props.entityTypes.some(e => e.entityName === modelingOptions.selectedEntity)) {
+        network.selectNodes([modelingOptions.selectedEntity]);
+      } else {
+        // Entity type not found, unset in context
+        setSelectedEntity(undefined);
+      }
+    }
+  }, [network, modelingOptions.selectedEntity]);
 
   useLayoutEffect(() => {
     if (testingMode && network) {
@@ -275,7 +287,8 @@ const GraphVis: React.FC<Props> = (props) => {
       barnesHut: {
         springLength: 160,
         avoidOverlap: 0.4
-      }
+      },
+      stabilization: false
     },
     interaction: {
       navigationButtons: true,
@@ -347,6 +360,11 @@ const GraphVis: React.FC<Props> = (props) => {
       event.event.target.style.cursor = "";
     },
     doubleClick: (event) => {
+    },
+    stabilized: (event) => {
+      if (network && modelingOptions.selectedEntity) {
+        network.selectNodes([modelingOptions.selectedEntity]);
+      }
     }
   };
 

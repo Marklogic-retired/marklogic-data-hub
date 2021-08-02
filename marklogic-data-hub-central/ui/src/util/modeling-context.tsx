@@ -87,8 +87,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   const setSelectedEntity = (selectedEntity: string | undefined) => {
     setModelingOptions({
       ...modelingOptions,
-      selectedEntity: selectedEntity,
-      openSidePanelInGraphView: true
+      selectedEntity: selectedEntity
+      //openSidePanelInGraphView: true
     });
   };
 
@@ -97,7 +97,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
       ...modelingOptions,
       view: graphViewOptions.view,
       selectedEntity: graphViewOptions.selectedEntity,
-      openSidePanelInGraphView: true,
+      //openSidePanelInGraphView: true,
     });
   };
 
@@ -105,7 +105,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
     setModelingOptions({
       ...modelingOptions,
       selectedEntity: undefined,
-      openSidePanelInGraphView: false,
+      //openSidePanelInGraphView: false,
     });
   };
 

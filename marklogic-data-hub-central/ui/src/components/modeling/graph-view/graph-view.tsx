@@ -20,19 +20,21 @@ type Props = {
   updateSavedEntity: any;
   relationshipModalVisible: any;
   toggleRelationshipModal: any;
+  toggleShowEntityModal: any;
+  toggleIsEditModal: any;
 };
 
 const GraphView: React.FC<Props> = (props) => {
 
-  const {modelingOptions, setSelectedEntity, closeSidePanelInGraphView} = useContext(ModelingContext);
+  const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const [filterMenuSuggestions, setFilterMenuSuggestions] = useState(["a"]);
   const [entityFiltered, setEntityFiltered] = useState("");
   const [isEntityFiltered, setIsEntityFiltered] = useState(false);
 
   const publishIconStyle: CSSProperties = {
-    width: "20px",
-    height: "20px",
-    fill: "currentColor",
+    width: "18px",
+    height: "18px",
+    fill: "currentColor"
   };
 
   const handleFocus = () => {
@@ -75,35 +77,65 @@ const GraphView: React.FC<Props> = (props) => {
     <MLInput aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined" />} size="small"></MLInput>
   </AutoComplete>;
 
-  const menu = (
-    <Menu>
+  const handleAddMenu = (event) => {
+    if (event.key === "addNewEntityType") {
+      props.toggleShowEntityModal(true);
+      props.toggleIsEditModal(false);
+    } else if (event.key === "addNewRelationship") {
+      // TODO open Add Relationship dialog
+      // console.log("addNewRelationship", event);
+    }
+  };
+
+  const addMenu = (
+    <Menu onClick={handleAddMenu}>
       <Menu.Item key="addNewEntityType">
-        <span aria-label={"addNewEntityTypeOption"}>Add new entity type</span>
+        <span aria-label={"add-entity-type"}>Add new entity type</span>
       </Menu.Item>
       <Menu.Item key="addNewRelationship">
-        <span aria-label={"addNewRelationshipOption"}>Add new relationship</span>
+        <span aria-label={"add-relationship"}>Add new relationship</span>
       </Menu.Item>
     </Menu>
   );
 
+  const addButton = (
+    <Dropdown
+      overlay={addMenu}
+      trigger={["click"]}
+      overlayClassName={styles.stepMenu}
+      placement="bottomRight"
+      disabled={!props.canWriteEntityModel}
+    >
+      <div className={styles.addButtonContainer}>
+        <MLButton
+          aria-label="add-entity-type-relationship"
+          size="small"
+          type="primary"
+          disabled={!props.canWriteEntityModel}
+          className={!props.canWriteEntityModel && styles.disabledPointerEvents}>
+          <span className={styles.addButtonText}>Add</span>
+          <DownOutlined className={styles.downArrowIcon} />
+        </MLButton>
+      </div>
+    </Dropdown>
+  );
+
   const headerButtons = <span className={styles.buttons}>
     <span>
-      <Dropdown
-        overlay={menu}
-        trigger={["click"]}
-        overlayClassName={styles.stepMenu}
-        placement="bottomRight"
-      >
-        <div className={styles.addButtonContainer}>
-          <MLButton aria-label="add-entity-type-relationship" size="default" type="primary">
-            <span className={styles.addButtonText}>Add</span>
-            <DownOutlined className={styles.downArrowIcon} />
-          </MLButton>
-        </div>
-      </Dropdown>
+      {props.canWriteEntityModel ?
+        <span>
+          {addButton}
+        </span>
+        :
+        <MLTooltip
+          title={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess}
+          placement="top" overlayStyle={{maxWidth: "175px"}}>
+          <span className={styles.disabledCursor}>{addButton}</span>
+        </MLTooltip>
+      }
     </span>
     <MLTooltip title={ModelingTooltips.publish}>
-      <MLButton aria-label="publish-to-database" size="default" type="secondary">
+      <MLButton aria-label="publish-to-database" size="small" type="secondary">
         <span className={styles.publishButtonContainer}>
           <PublishToDatabaseIcon style={publishIconStyle} />
           <span className={styles.publishButtonText}>Publish</span>
@@ -111,7 +143,7 @@ const GraphView: React.FC<Props> = (props) => {
       </MLButton>
     </MLTooltip>
     <MLTooltip title={ModelingTooltips.exportGraph} placement="topLeft">
-      <FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} size="2x" aria-label="graph-export" />
+      <FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/>
     </MLTooltip>
   </span>;
 
@@ -131,7 +163,8 @@ const GraphView: React.FC<Props> = (props) => {
   };
 
   const onCloseSidePanel = async () => {
-    closeSidePanelInGraphView();
+    //closeSidePanelInGraphView();
+    setSelectedEntity(undefined);
   };
 
   const deleteEntityClicked = (selectedEntity) => {
@@ -158,38 +191,39 @@ const GraphView: React.FC<Props> = (props) => {
       </div>
     </div>;
 
-  const entityTypeExistsInDatabase = (entityName, entityTypesArray) => {
-    let entityValidation = entityTypesArray.find((obj) => obj.name === entityName);
-    return !entityValidation ? false : true;
-  };
+  // const entityTypeExistsInDatabase = (entityName, entityTypesArray) => {
+  //   let entityValidation = entityTypesArray.find((obj) => obj.name === entityName);
+  //   return !entityValidation ? false : true;
+  // };
 
-  const isSelectedEntityTypeValid = () => {
-    return modelingOptions.selectedEntity && entityTypeExistsInDatabase(modelingOptions.selectedEntity, modelingOptions.entityTypeNamesArray);
-  };
+  // const isSelectedEntityTypeValid = () => {
+  //   return modelingOptions.selectedEntity && entityTypeExistsInDatabase(modelingOptions.selectedEntity, modelingOptions.entityTypeNamesArray);
+  // };
 
   return (
-    !modelingOptions.openSidePanelInGraphView ? graphViewMainPanel :
-      (isSelectedEntityTypeValid() ?
-        <SplitPane
-          style={splitStyle}
-          paneStyle={splitPaneStyles.pane}
-          allowResize={true}
-          resizerClassName={styles.resizerStyle}
-          pane1Style={splitPaneStyles.pane1}
-          pane2Style={splitPaneStyles.pane2}
-          split="vertical"
-          primary="first"
-          defaultSize="70%"
-        >
-          {graphViewMainPanel}
-          <GraphViewSidePanel
-            entityTypes={props.entityTypes}
-            onCloseSidePanel={onCloseSidePanel}
-            deleteEntityClicked={deleteEntityClicked}
-            canReadEntityModel={props.canReadEntityModel}
-            canWriteEntityModel={props.canWriteEntityModel}
-          />
-        </SplitPane> : graphViewMainPanel)
+    !modelingOptions.selectedEntity ? graphViewMainPanel :
+      // (isSelectedEntityTypeValid() ?
+      <SplitPane
+        style={splitStyle}
+        paneStyle={splitPaneStyles.pane}
+        allowResize={true}
+        resizerClassName={styles.resizerStyle}
+        pane1Style={splitPaneStyles.pane1}
+        pane2Style={splitPaneStyles.pane2}
+        split="vertical"
+        primary="first"
+        defaultSize="70%"
+      >
+        {graphViewMainPanel}
+        <GraphViewSidePanel
+          entityTypes={props.entityTypes}
+          onCloseSidePanel={onCloseSidePanel}
+          deleteEntityClicked={deleteEntityClicked}
+          canReadEntityModel={props.canReadEntityModel}
+          canWriteEntityModel={props.canWriteEntityModel}
+        />
+      </SplitPane> //: graphViewMainPanel
+  //)
   );
 };
 
