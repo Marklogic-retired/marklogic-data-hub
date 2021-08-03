@@ -69,6 +69,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
     void testCreateNamespacedModel() {
         runAsTestUserWithRoles("hub-central-entity-model-writer");
         createNamespacedModel();
+        updateModelWithGraphConfig();
     }
 
     @Test
@@ -91,6 +92,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         ObjectNode input = objectMapper.createObjectNode();
         input.put("name", MODEL_NAME);
         input.put("namespace", "http://example.org/");
+        input.set("hubCentral", createGraphConfig());
 
         FailedRequestException ex = assertThrows(FailedRequestException.class, () -> controller.createModel(input));
         assertTrue(ex.getMessage().contains("Since you entered a namespace, you must specify a prefix"));
@@ -110,6 +112,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         input.put("namespacePrefix", "ex");
         JsonNode model = controller.createModel(input).getBody();
 
+        verifyGraphConfig(model);
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
         assertEquals("ex", model.get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
         assertEquals("http://example.org/", model.get("definitions").get(MODEL_NAME).get("namespace").asText());
@@ -139,6 +142,56 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
 
     }
 
+    private ObjectNode createGraphConfig(){
+        ObjectNode hubCentral = objectMapper.createObjectNode();
+        ObjectNode modeling = objectMapper.createObjectNode();
+
+        modeling.put("graphY", 13.5);
+        modeling.put("graphX", 23.4);
+        modeling.put("color", "#e3ebbc");
+        modeling.put("icon", "faTrashAlt");
+
+        hubCentral.set("modeling", modeling);
+        return hubCentral;
+    }
+
+    private void verifyGraphConfig(JsonNode model){
+        assertEquals(13.5, model.get("hubCentral").get("modeling").get("graphY").asDouble());
+        assertEquals(23.4, model.get("hubCentral").get("modeling").get("graphX").asDouble());
+        assertEquals("#e3ebbc", model.get("hubCentral").get("modeling").get("color").asText());
+        assertEquals("faTrashAlt", model.get("hubCentral").get("modeling").get("icon").asText());
+    }
+
+    private void updateModelWithGraphConfig(){
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+        String entityTypes = "[\n" +
+            "{\n" +
+            "\"entityName\": \"Customer\", \n" +
+            "\"hubCentral\": {\n" +
+            "\"modeling\": {\n" +
+            "\"graphX\": 25.1, \n" +
+            "\"graphY\": 20.1\n" +
+            "}\n" +
+            "}, \n" +
+            "\"modelDefinition\": {\n" +
+            "\"Customer\": {\n" +
+            "\"properties\": {\n" +
+            "\"someProperty\": {\n" +
+            "\"datatype\": \"integer\"\n" +
+            "}\n" +
+            "}\n" +
+            "}\n" +
+            "}\n" +
+            "}\n" +
+            "]";
+
+        controller.updateModelEntityTypes(readJsonArray(entityTypes));
+
+        JsonNode model = loadModel(getHubClient().getFinalClient());
+        assertEquals(20.1, model.get("hubCentral").get("modeling").get("graphY").asDouble());
+        assertEquals(25.1, model.get("hubCentral").get("modeling").get("graphX").asDouble());
+    }
+
     private void updateModelInfo() {
         ObjectNode input = objectMapper.createObjectNode();
         input.put("name", MODEL_NAME);
@@ -162,19 +215,29 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         input.put("namespace" , "http://example.org/");
         input.put("namespacePrefix", "ex");
         input.put("description", "Updated description");
+
+        input.set("hubCentral", createGraphConfig());
+
         controller.updateModelInfo(MODEL_NAME, input);
-        assertEquals("http://example.org/", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespace").asText());
-        assertEquals("ex", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
-        assertEquals("Updated description", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
+        JsonNode model = loadModel(getHubClient().getFinalClient());
+        assertEquals("http://example.org/", model.get("definitions").get(MODEL_NAME).get("namespace").asText());
+        assertEquals("ex", model.get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
+        assertEquals("Updated description", model.get("definitions").get(MODEL_NAME).get("description").asText());
+
+        verifyGraphConfig(model);
 
         //Remove namespace and namespacePrefix from entity model
         input.put("description", "Description updated again");
         input.remove("namespace");
         input.remove("namespacePrefix");
         controller.updateModelInfo(MODEL_NAME, input);
-        assertEquals("Description updated again", loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("description").asText());
-        assertNull(loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespace"));
-        assertNull(loadModel(getHubClient().getFinalClient()).get("definitions").get(MODEL_NAME).get("namespacePrefix"));
+
+        model = loadModel(getHubClient().getFinalClient());
+        assertEquals("Description updated again", model.get("definitions").get(MODEL_NAME).get("description").asText());
+        assertNull(model.get("definitions").get(MODEL_NAME).get("namespace"));
+        assertNull(model.get("definitions").get(MODEL_NAME).get("namespacePrefix"));
+
+        verifyGraphConfig(model);
     }
 
     private void updateModelEntityTypes() {

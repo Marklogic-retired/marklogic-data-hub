@@ -39,6 +39,8 @@ input.forEach(entry => {
     httpUtils.throwBadRequest(`Must specify a model definition for entity: ${entityName}`);
   }
 
+  const hubCentralConfig = entry["hubCentral"];
+
   const uri = entityLib.getModelUri(entityName);
   if (!fn.docAvailable(uri)) {
     httpUtils.throwBadRequest("Could not find model with name: " + entityName);
@@ -46,5 +48,8 @@ input.forEach(entry => {
 
   const model = cts.doc(uri).toObject();
   model.definitions = modelDefinition;
+  if(hubCentralConfig){
+    model.hubCentral = hubCentralConfig;
+  }
   entityLib.writeModel(entityName, model);
 });
