@@ -134,7 +134,7 @@ describe("EntityTypeModal Component", () => {
     );
 
     let url = "/api/models/ModelName/info";
-    let payload = {"description": "Updated Description", "namespace": "http://example.org/updated", "namespacePrefix": "updated"};
+    let payload = {"description": "Updated Description", "hubCentral": {"modeling": {}}, "namespace": "http://example.org/updated", "namespacePrefix": "updated"};
 
     userEvent.clear(getByPlaceholderText(placeholders.description));
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);

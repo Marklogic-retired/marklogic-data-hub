@@ -417,6 +417,7 @@ const Modeling: React.FC = () => {
               toggleRelationshipModal={toggleRelationshipModal}
               toggleShowEntityModal={toggleShowEntityModal}
               toggleIsEditModal={toggleIsEditModal}
+              setEntityTypesFromServer={setEntityTypesFromServer}
             />
           </>
         }

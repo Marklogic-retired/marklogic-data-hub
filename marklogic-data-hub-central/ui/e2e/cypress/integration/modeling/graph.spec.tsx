@@ -7,6 +7,7 @@ import {
   graphView,
   graphViewSidePanel,
 } from "../../support/components/model/index";
+import graphVis from "../../support/components/model/graph-vis";
 import {toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
@@ -36,7 +37,21 @@ describe("Entity Modeling: Graph View", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it.only("can create a new entity in graph view, showing its details in side panel", () => {
+  it("can view graph view and select a node", () => {
+    cy.loginAsDeveloper().withRequest();
+    entityTypeTable.viewEntityInGraphView("Person");
+    // Allow graph to stabilize
+    cy.wait(3000);
+
+    // Click entity node
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      graphVis.getGraphVisCanvas().click(nodePositions["Person"].x, nodePositions["Person"].y);
+    });
+    // Verify entity is shown in side panel
+    graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
+
+  });
+  it("can create a new entity in graph view, showing its details in side panel", () => {
     cy.loginAsDeveloper().withRequest();
     entityTypeTable.viewEntityInGraphView("Person");
 
