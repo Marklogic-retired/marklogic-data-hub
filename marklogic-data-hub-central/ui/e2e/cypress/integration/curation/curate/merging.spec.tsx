@@ -151,6 +151,7 @@ describe("Merging", () => {
     cy.waitForAsyncRequest();
     mergeRuleModal.cancelButton().click();
     cy.waitForAsyncRequest();
+    cy.wait(1000);
     cy.findByLabelText("Yes").click();
   });
   it("Cancel merge rule deletion ", () => {
