@@ -390,12 +390,13 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
     result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
   });
   addPrimaryKeyToResult(result, entityInstance, entityDef);
-  try {
-    result.createdOn = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
-    result.createdBy = xdmp.documentGetMetadata(result.uri).datahubCreatedBy;
-  } catch (error) {
-    console.log(`Unable to obtain document with URI '${result.uri}'; will not add document metadata to its search result`);
+
+  const metadata = xdmp.documentGetMetadata(result.uri);
+  if (metadata) {
+    result.createdOn = metadata.datahubCreatedOn;
+    result.createdBy = metadata.datahubCreatedBy;
   }
+
   result.entityInstance = entityInstance;
   result.sources = getEntitySources(result.uri);
   result.entityName = entityTitle;
