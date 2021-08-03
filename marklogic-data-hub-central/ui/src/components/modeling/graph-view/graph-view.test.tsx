@@ -34,6 +34,7 @@ describe("Graph View Component", () => {
         relationshipModalVisible={false}
         toggleRelationshipModal={jest.fn()}
         updateSavedEntity={jest.fn()}
+        setEntityTypesFromServer={jest.fn()}
       />
     </ModelingContext.Provider>
     );
@@ -53,6 +54,7 @@ describe("Graph View Component", () => {
           relationshipModalVisible={false}
           toggleRelationshipModal={jest.fn()}
           updateSavedEntity={jest.fn()}
+          setEntityTypesFromServer={jest.fn()}
         />
       </ModelingContext.Provider>
     );

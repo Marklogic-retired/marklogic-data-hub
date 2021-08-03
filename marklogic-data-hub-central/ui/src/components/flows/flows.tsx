@@ -133,7 +133,7 @@ const Flows: React.FC<Props> = (props) => {
       setAddFlowDirty({...addFlowDirty, [flowName]: currentFlow?.steps?.length});
     } else {
       // if step is added from external view
-      const {state = {}} = location;
+      let state: any = location.state || {};
       const externalDirty = (state ? state["addFlowDirty"] : false) && addExternalFlowDirty;
       const thisFlow = state ? state["flowName"] : null;
       if (externalDirty) {

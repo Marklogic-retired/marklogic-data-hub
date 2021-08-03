@@ -23,79 +23,20 @@ type Props = {
   canWriteEntityModel: any;
   graphEditMode: any;
   setGraphEditMode: any;
+  saveEntityCoords: any;
 };
 
+let entityMetadata = {};
 // TODO temp hardcoded node data, remove when retrieved from db
-let entityMetadata = {
-  BabyRegistry: {
-    color: "#e3ebbc",
-    instances: 5,
-    x: 10,
-    y: -100
-  },
-  Customer: {
-    color: "#ecf7fd",
-    instances: 63,
-    x: 10,
-    y: 50
-  },
-  Product: {
-    color: "#ded2da",
-    instances: 252,
-    x: -10,
-    y: -100
-  },
-  Order: {
-    color: "#cfe3e8",
-    instances: 50123,
-    x: -300,
-    y: 50
-  },
-  NamespacedCustomer: {
-    color: "#dfe2ec",
-    instances: 75,
-    x: -600,
-    y: -100
-  },
-  Person: {
-    color: "#dfe2ec",
-    instances: 75,
-    x: -150,
-    y: -100
-  },
-  Client: {
-    color: "#dfe2ec",
-    instances: 75,
-    x: -300,
-    y: -100
-  },
-  Relation: {
-    color: "#ded2da",
-    instances: 75,
-    x: -400,
-    y: -100
-  },
-  Concept: {
-    color: "#ded2da",
-    instances: 75,
-    x: -300,
-    y: -200
-  },
-  Patients: {
-    color: "#ded2da",
-    instances: 75,
-    x: -200,
-    y: -200
-  }
-};
+// entityMetadata = graphConfig.sampleMetadata;
 
 const GraphVis: React.FC<Props> = (props) => {
 
   const graphType = "shape";
 
-  // const [nodePositions, setNodePositions] = useState({});
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const [physicsEnabled, setPhysicsEnabled] = useState(true);
+  //const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
@@ -105,6 +46,10 @@ const GraphVis: React.FC<Props> = (props) => {
   const [menuPosition, setMenuPosition] = useState({});
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
+  //const [saveAllCoords, setSaveAllCoords] = useState(false);
+  const [coordsLoaded, setCoordsLoaded] = useState(false);
+  const [coords, setCoords] = useState<any>({});
+  const [hasStabilized, setHasStabilized] = useState(false);
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
@@ -113,18 +58,94 @@ const GraphVis: React.FC<Props> = (props) => {
   };
   const vis = require("vis-network/standalone/umd/vis-network"); //eslint-disable-line @typescript-eslint/no-unused-vars
 
+  // Load coords *once* on init
+  useEffect(() => {
+    if (!coordsLoaded && props.entityTypes.length > 0) {
+      let newCoords = {};
+      props.entityTypes.forEach(e => {
+        if (e.model.hubCentral) {
+          let opts = e.model.hubCentral.modeling;
+          if (opts.graphX && opts.graphY) {
+            newCoords[e.entityName] = {graphX: opts.graphX, graphY: opts.graphY};
+          }
+        }
+      });
+      setCoords(newCoords);
+      setCoordsLoaded(true);
+    }
+  }, [props.entityTypes]);
+
   // Initialize or update graph
   useEffect(() => {
-    setGraphData({
-      nodes: getNodes(),
-      edges: getEdges()
-    });
-    return () => {
-      setClickedNode(undefined);
-      setMenuPosition({});
-      setContextMenuVisible(false);
-    };
-  }, [props.entityTypes, props.filteredEntityTypes.length]);
+    if (props.entityTypes) { // && coordsLoaded) {
+      // let counter = 0;
+      props.entityTypes.forEach(e => {
+        // counter++;
+        if (e.model.hubCentral) {
+          let opts = e.model.hubCentral.modeling;
+          if (opts.graphX && opts.graphY) {
+            if (physicsEnabled) {
+              setPhysicsEnabled(false);
+              // if(counter === props.entityTypes.length) {
+              //   setGraphData({
+              //     nodes: getNodes(),
+              //     edges: getEdges()
+              //   });
+              // }
+              return false;
+            }
+          }
+        }
+      });
+
+      setGraphData({
+        nodes: getNodes(),
+        edges: getEdges()
+      });
+
+      //setSaveAllCoords(true);
+      return () => {
+        setClickedNode(undefined);
+        setMenuPosition({});
+        setContextMenuVisible(false);
+      };
+    }
+  }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
+
+  const coordsExist = (entityName) => {
+    let result = false;
+    const index = props.entityTypes.map(e => e.entityName).indexOf(entityName);
+    if (index >= 0 && props.entityTypes[index].model.hubCentral) {
+      if (props.entityTypes[index].model.hubCentral.modeling.graphX &&
+          props.entityTypes[index].model.hubCentral.modeling.graphY) {
+        result = true;
+      }
+    }
+    return result;
+  };
+
+  const saveUnsavedCoords = () => {
+    // TODO use endpoint that saves entire updated model at once
+    if (props.entityTypes) {
+      let newCoords = {...coords};
+      props.entityTypes.forEach(ent => {
+        if (!coordsExist(ent.entityName)) {
+          let positions = network.getPositions([ent.entityName])[ent.entityName];
+          newCoords[ent.entityName] = {graphX: positions.x, graphY: positions.y};
+          props.saveEntityCoords(ent.entityName, positions.x, positions.y);
+        }
+      });
+      setCoords(newCoords);
+    }
+  };
+
+  // Save all unsaved coords
+  // useEffect(() => {
+  //   if (saveAllCoords && network) {
+  //     saveUnsavedCoords();
+  //   }
+  //   setSaveAllCoords(false);
+  // }, [saveAllCoords]);
 
   const escFunction = useCallback((event) => {
     if (event.keyCode === 27) {
@@ -169,10 +190,8 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Focus on the selected nodes in filter input
   useEffect(() => {
-    {
-      if (network) {
-        network.focus(props.entitySelected);
-      }
+    if (network) {
+      network.focus(props.entitySelected);
     }
   }, [network, props.isEntitySelected]);
 
@@ -181,7 +200,9 @@ const GraphVis: React.FC<Props> = (props) => {
     if (network && modelingOptions.selectedEntity) {
       // Ensure entity exists
       if (props.entityTypes.some(e => e.entityName === modelingOptions.selectedEntity)) {
+        // Persist selection and coords
         network.selectNodes([modelingOptions.selectedEntity]);
+        saveUnsavedCoords();
       } else {
         // Entity type not found, unset in context
         setSelectedEntity(undefined);
@@ -221,7 +242,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // TODO remove when num instances is retrieved from db
   const getNumInstances = (entityName) => {
-    let num = 123;
+    let num = -123;
     if (entityMetadata[entityName] && entityMetadata[entityName].instances) {
       num = entityMetadata[entityName].instances;
     }
@@ -233,7 +254,7 @@ const GraphVis: React.FC<Props> = (props) => {
     if (graphType === "shape") {
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
         let label = "";
-        return {
+        let tmp = {
           ...graphConfig.defaultNodeProps,
           id: e.entityName,
           label: label.concat(
@@ -245,12 +266,10 @@ const GraphVis: React.FC<Props> = (props) => {
             background: getColor(e.entityName),
             border: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : getColor(e.entityName),
           },
-          x: entityMetadata[e.entityName] !== undefined ? entityMetadata[e.entityName].x : getRandomArbitrary(-300, 300),
-          y: entityMetadata[e.entityName] !== undefined ? entityMetadata[e.entityName].y : getRandomArbitrary(-300, 300),
           borderWidth: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? 3 : 0,
-          physics: {
-            enabled: false
-          },
+          // physics: {
+          //   enabled: true
+          // },
           chosen: {
             node: function (values, id, selected, hovering) {
               if (selected && hovering) {
@@ -266,8 +285,14 @@ const GraphVis: React.FC<Props> = (props) => {
                 values.borderWidth = 0;
               }
             }
-          }
+          },
         };
+        if (coords[e.entityName] && coords[e.entityName].graphX && coords[e.entityName].graphY) {
+          //tmp.physics.enabled = false;
+          tmp.x = coords[e.entityName].graphX;
+          tmp.y = coords[e.entityName].graphY;
+        }
+        return tmp;
       });
     } else if (graphType === "image") { // TODO for custom SVG node, not currently used
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
@@ -392,12 +417,15 @@ const GraphVis: React.FC<Props> = (props) => {
       //randomSeed: "0.7696:1625099255200",
     },
     physics: {
-      enabled: false,
+      enabled: physicsEnabled,
       barnesHut: {
         springLength: 160,
         avoidOverlap: 0.4
       },
-      stabilization: false
+      stabilization: {
+        enabled: true,
+        iterations: 1,
+      }
     },
     interaction: {
       navigationButtons: true,
@@ -424,10 +452,6 @@ const GraphVis: React.FC<Props> = (props) => {
         setOpenRelationshipModal(true);
       }
     },
-  };
-
-  const getRandomArbitrary = (min, max) => {
-    return Math.random() * (max - min) + min;
   };
 
   const menuClick = (event) => {
@@ -476,6 +500,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const events = {
     select: (event) => {
       if (!props.graphEditMode) {
+        // console.info("SELECT", event);
         let {nodes} = event;
         if (nodes.length > 0) {
           props.handleEntitySelection(nodes[0]);
@@ -483,6 +508,7 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     },
     click: (event) => {
+      // console.info("CLICK", event);
       //if click is on an edge
       if (event.edges.length > 0 && event.nodes.length < 1 && props.canWriteEntityModel) {
         let connectedNodes = network.getConnectedNodes(event.edges[0]);
@@ -504,7 +530,35 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     },
     dragEnd: (event) => {
-      //setNodePositions({[event.nodes[0]]: event.pointer.canvas});
+      let {nodes} = event;
+      if (nodes.length > 0) {
+        let positions = network.getPositions([nodes[0]])[nodes[0]];
+        // console.info("NODE dragged", event, positions);
+        if (positions && positions.x && positions.y) {
+          let newCoords = {...coords};
+          newCoords[nodes[0]] = {graphX: positions.x, graphY: positions.y};
+          setCoords(newCoords);
+          props.saveEntityCoords(nodes[0], positions.x, positions.y);
+        }
+      }
+      // TODO Handle canvas (all nodes, edges) drag
+      // else {
+      //   // On a canvas drag, getPositions() returns old positions so useless
+      //   let positions = network.getPositions();
+      //   console.log("CANVAS dragged", event, positions);
+      //   let ids = Object.keys(coords);
+      //   let newCoords = {};
+      //   // Take current positions and update with drag deltas
+      //   ids.forEach(id => {
+      //     // TODO This gives the wrong results most of the time, unclear why
+      //     let newX = coords[id].graphX + event.event.deltaX;
+      //     let newY = coords[id].graphY + event.event.deltaY;
+      //     newCoords[id] = {graphX: newX, graphY: newY};
+      //     props.saveEntityCoords(id, newX, newY); // Save to db
+      //   });
+      //   setCoords(newCoords);
+      //   // TODO handle zooming, nav button clicks
+      // }
     },
     hoverNode: (event) => {
       event.event.target.style.cursor = "pointer";
@@ -521,8 +575,24 @@ const GraphVis: React.FC<Props> = (props) => {
     doubleClick: (event) => {
     },
     stabilized: (event) => {
-      if (network && modelingOptions.selectedEntity) {
-        network.selectNodes([modelingOptions.selectedEntity]);
+      // NOTE if user doesn't manipulate graph on load, stabilize event
+      // fires forever. This avoids reacting to infinite events
+      if (hasStabilized) return;
+      if (network) {
+        let positions = network.getPositions();
+        // console.info("STABILIZED", event, positions);
+        // When graph is stabilized, nodePositions no longer empty
+        if (positions && Object.keys(positions).length) {
+          saveUnsavedCoords();
+          setHasStabilized(true);
+        }
+        if (modelingOptions.selectedEntity) {
+          try { // Visjs might not have new entity yet, catch error
+            network.selectNodes([modelingOptions.selectedEntity]);
+          } catch (err) {
+            console.error(err);
+          }
+        }
       }
     },
     oncontext: (event) => {

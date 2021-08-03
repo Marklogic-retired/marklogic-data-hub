@@ -61,10 +61,69 @@ const customEdgeSVG: any = {
   oneToOneHover: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxMyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGxpbmUgeDE9IjEiIHkxPSI5LjUiIHgyPSIxMiIgeTI9IjkuNSIgc3Ryb2tlPSIjN0ZBREUzIi8+Cjwvc3ZnPgo="
 }
 
+// TODO temp hardcoded node data, remove when retrieved from db
+let sampleMetadata = {
+  BabyRegistry: {
+    color: "#e3ebbc",
+    instances: 5,
+    x: 10,
+    y: -100
+  },
+  Customer: {
+    color: "#ecf7fd",
+    instances: 63,
+    x: 10,
+    y: 50
+  },
+  Product: {
+    color: "#ded2da",
+    instances: 252,
+    x: -10,
+    y: -100
+  },
+  Order: {
+    color: "#cfe3e8",
+    instances: 50123,
+    x: -300,
+    y: 50
+  },
+  NamespacedCustomer: {
+    color: "#dfe2ec",
+    instances: 75,
+    x: -600,
+    y: -100
+  },
+  Person: {
+    color: "#dfe2ec",
+    instances: 75,
+    x: -150,
+    y: -100
+  },
+  Client: {
+    color: "#dfe2ec",
+    instances: 75,
+    x: -300,
+    y: -100
+  },
+  Relation: {
+    color: "#ded2da",
+    instances: 75,
+    x: -400,
+    y: -100
+  },
+  Concept: {
+    color: "#ded2da",
+    instances: 75,
+    x: -300,
+    y: -200
+  }
+};
+
 export default {
     defaultOptions,
     defaultNodeProps,
     defaultEdgeProps,
     nodeStyles,
-    customEdgeSVG
+    customEdgeSVG,
+    sampleMetadata
 };
