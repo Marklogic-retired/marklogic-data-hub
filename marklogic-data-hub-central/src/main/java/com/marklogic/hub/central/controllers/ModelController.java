@@ -264,6 +264,18 @@ public class ModelController extends BaseController {
         public String description;
         public String namespace;
         public String namespacePrefix;
+        public HubCentralConfig hubCentral;
+    }
+
+    public static class HubCentralConfig {
+        public static Modeling modeling;
+    }
+
+    public static class Modeling{
+        public double graphX;
+        public double graphY;
+        public String icon;
+        public String color;
     }
 
     public static class UpdateModelInfoInput {
@@ -271,6 +283,7 @@ public class ModelController extends BaseController {
         public String description;
         public String namespace;
         public String namespacePrefix;
+        public HubCentralConfig hubCentral;
     }
 
     public static class ModelReferencesInfo {

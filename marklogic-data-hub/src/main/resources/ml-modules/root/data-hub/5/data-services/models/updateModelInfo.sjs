@@ -29,6 +29,7 @@ var input = fn.head(xdmp.fromJSON(input));
 const description = input.description ? input.description : "";
 const namespace = input.namespace;
 const namespacePrefix = input.namespacePrefix;
+const hubCentralConfig = input.hubCentral;
 
 const uri = entityLib.getModelUri(name);
 if (!fn.docAvailable(uri)) {
@@ -63,6 +64,10 @@ if(!namespace){
 else{
   model.definitions[name].namespace = namespace;
   model.definitions[name].namespacePrefix = namespacePrefix;
+}
+
+if(hubCentralConfig){
+  model.hubCentral = hubCentralConfig;
 }
 
 try{

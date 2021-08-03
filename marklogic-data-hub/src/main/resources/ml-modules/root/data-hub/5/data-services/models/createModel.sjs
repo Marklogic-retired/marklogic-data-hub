@@ -29,6 +29,7 @@ const name = input.name;
 const description = input.description;
 const namespace = input.namespace ? input.namespace : null;
 const namespacePrefix = input.namespacePrefix ? input.namespacePrefix : null;
+const hubCentralConfig = input.hubCentral ? input.hubCentral : null;
 
 if (name == null) {
   httpUtils.throwBadRequest("The model must have an info object with a title property");
@@ -62,6 +63,10 @@ if(namespace || namespacePrefix){
 
 if (input.description) {
   model.definitions[name].description = description;
+}
+
+if(hubCentralConfig){
+  model.hubCentral = hubCentralConfig;
 }
 
 try{

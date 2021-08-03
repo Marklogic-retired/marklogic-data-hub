@@ -43,6 +43,30 @@
     },
     "definitions": {
       "$ref": "./ModelDefinitions.json"
+    },
+    "hubCentral": {
+      "type": "object",
+      "description": "Captures model configuration specific to the HubCentral application",
+      "properties": {
+        "modeling": {
+          "type": "object",
+          "description": "Captures the location of an entity model on the modeling graph in HubCentral",
+          "properties": {
+            "graphX": {
+              "type": "number"
+            },
+            "graphY": {
+              "type": "number"
+            },
+            "icon": {
+              "type": "string"
+            },
+            "color": {
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   }
 }
