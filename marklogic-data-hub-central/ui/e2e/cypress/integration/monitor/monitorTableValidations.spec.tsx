@@ -74,8 +74,8 @@ describe("Monitor Tile", () => {
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
     browsePage.getShowMoreLink("step").click();
     cy.wait(1000);
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    cy.findByTestId("step-loadCustomersJSON-checkbox").scrollIntoView();
+    cy.get("[id=\"date-select\"]").scrollIntoView();
+    cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
     cy.wait(500);
     cy.findByTestId("step-loadCustomersJSON-checkbox").trigger("mousemove", {force: true});
     browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").click();

@@ -46,15 +46,15 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
-    browsePage.getSaveQueryName().type("new-query");
+    browsePage.getSaveQueryName().type("newQuery");
     browsePage.getSaveQueryDescription().should("be.visible");
-    browsePage.getSaveQueryDescription().type("new-query description");
+    browsePage.getSaveQueryDescription().type("newQuery description");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
     // Creating another query
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().clear();
-    browsePage.getSaveQueryName().type("new-query-1");
+    browsePage.getSaveQueryName().type("newQuery-1");
     browsePage.getSaveQueryButton().click();
   });
   it("manage queries, edit, apply, delete query", () => {
@@ -67,12 +67,12 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQuery().click();
     queryComponent.getEditQueryName().clear();
-    queryComponent.getEditQueryName().type("edited-query");
+    queryComponent.getEditQueryName().type("editedQuery");
     queryComponent.getSubmitButton().click();
     //apply query
-    queryComponent.getQueryByName("edited-query").click();
+    queryComponent.getQueryByName("editedQuery").click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getSelectedQuery().should("contain", "edited-query");
+    browsePage.getSelectedQuery().should("contain", "editedQuery");
     //remove query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
@@ -85,7 +85,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getResetQueryButton().should("be.visible");
 
     browsePage.getSaveQueriesDropdown().click();
-    browsePage.getQueryOption("edited-query").should("not.exist");
+    browsePage.getQueryOption("editedQuery").should("not.exist");
     browsePage.getSaveQueriesDropdown().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.selectEntity("Person");
@@ -114,17 +114,17 @@ describe("manage queries modal scenarios, developer role", () => {
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQuery().click();
     queryComponent.getEditQueryName().clear();
-    queryComponent.getEditQueryName().type("edited-query");
+    queryComponent.getEditQueryName().type("editedQuery");
     queryComponent.getEditQueryDescription().clear();
-    queryComponent.getEditQueryDescription().type("edited-query-description");
+    queryComponent.getEditQueryDescription().type("editedQuery-description");
     queryComponent.getSubmitButton().click();
     // apply query and verify discard/apply icons are not shown after applying
-    queryComponent.getQueryByName("edited-query").click();
+    queryComponent.getQueryByName("editedQuery").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getClearGreyFacets().should("not.exist");
     browsePage.getFacetApplyButton().should("not.exist");
-    browsePage.getSelectedQuery().should("contain", "edited-query");
-    browsePage.getSelectedQueryDescription().should("contain", "edited-query-description");
+    browsePage.getSelectedQuery().should("contain", "editedQuery");
+    browsePage.getSelectedQueryDescription().should("contain", "editedQuery-description");
     //remove query
     browsePage.getResetQueryButton().click();
     browsePage.getManageQueriesModalOpened();
@@ -145,7 +145,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
-    browsePage.getSaveQueryName().type("person-query-detail");
+    browsePage.getSaveQueryName().type("personQuery-detail");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getManageQueryCloseIcon().click();
@@ -194,7 +194,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
-    browsePage.getSaveQueryName().type("person-query-test");
+    browsePage.getSaveQueryName().type("personQuery-test");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
 
@@ -205,7 +205,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //Open the manage query modal to apply the recently created query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getQueryByName("person-query-test").click();
+    queryComponent.getQueryByName("personQuery-test").click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
 
@@ -235,7 +235,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
-    browsePage.getSaveQueryName().type("person-query");
+    browsePage.getSaveQueryName().type("personQuery");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getManageQueryCloseIcon().click();
@@ -253,7 +253,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //open manage queries modal dialog and apply previosly saved query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getQueryByName("person-query").first().click();
+    queryComponent.getQueryByName("personQuery").first().click();
     queryComponent.getManageQueryModal().should("not.exist");
 
     //verify the applied query details on Browse page
@@ -263,7 +263,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getFacetItemCheckbox("fname", "Alice").should("be.checked");
     browsePage.getAppliedFacets("Alice").should("exist");
-    browsePage.getSelectedQuery().should("contain", "person-query");
+    browsePage.getSelectedQuery().should("contain", "personQuery");
   });
 
   it("verify editing previously saved query, updates the currently applied query name in browse page", () => {
@@ -273,13 +273,13 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForTableToLoad();
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getSaveQueriesDropdown().should("be.visible");
-    browsePage.selectQuery("person-query");
+    browsePage.selectQuery("personQuery");
 
     //verify the applied query details on Browse page
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.getSelectedQuery().should("contain", "person-query");
+    browsePage.getSelectedQuery().should("contain", "personQuery");
 
     //verify the manage queries modal button is visible
     browsePage.getManageQueriesButton().should("be.visible");
@@ -291,13 +291,13 @@ describe("manage queries modal scenarios, developer role", () => {
     //Editing the query
     queryComponent.getEditQuery().click();
     queryComponent.getEditQueryName().clear();
-    queryComponent.getEditQueryName().type("edited-person-query");
+    queryComponent.getEditQueryName().type("edited-personQuery");
     queryComponent.getSubmitButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => browsePage.getManageQueryCloseIcon().should("be.visible")).click();
     queryComponent.getManageQueryModal().should("not.exist");
 
     //Check if the current query name is updated in browse page or not
-    browsePage.getSelectedQuery().should("contain", "edited-person-query");
+    browsePage.getSelectedQuery().should("contain", "edited-personQuery");
   });
 });
