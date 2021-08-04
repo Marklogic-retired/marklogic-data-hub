@@ -7,6 +7,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.test.Customer;
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CreateAndUpdateModelTest extends AbstractModelTest {
+public class CreateAndUpdateModelTest extends AbstractHubCentralTest {
 
     private final static String MODEL_NAME = "Customer";
     private final static String ENTITY_PROPERTY_1 = "someProperty";
@@ -116,7 +117,6 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
         assertEquals("ex", model.get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
         assertEquals("http://example.org/", model.get("definitions").get(MODEL_NAME).get("namespace").asText());
-        assertSearchOptions(MODEL_NAME, Assertions::assertTrue, true);
     }
 
     private void createModel() {
@@ -127,7 +127,6 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         input.put("name", MODEL_NAME);
         JsonNode model = controller.createModel(input).getBody();
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
-        assertSearchOptions(MODEL_NAME, Assertions::assertTrue, true);
 
         // Create a customer in final so we have a way to verify the entity instance count
         new ReferenceModelProject(getHubClient()).createCustomerInstance(new Customer(1, "Jane"));
@@ -276,7 +275,6 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
 
         controller.updateModelEntityTypes(readJsonArray(entityTypes));
 
-        assertSearchOptions(MODEL_NAME, Assertions::assertTrue, true);
         assertPIIFilesDeployment();
         assertIndexDeployment();
 

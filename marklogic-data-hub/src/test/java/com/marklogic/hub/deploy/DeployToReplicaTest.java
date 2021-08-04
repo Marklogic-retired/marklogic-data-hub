@@ -1,5 +1,6 @@
 package com.marklogic.hub.deploy;
 
+import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
@@ -91,6 +92,14 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
         runAsAdmin();
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
+
+        // This is failing intermittently with the following error:
+        // I/O error on POST request for "http://localhost:8002/manage/v3": Connect to localhost:8002 [localhost/127.0.0.1, localhost/0:0:0:0:0:0:0:1] failed: Connection refused
+        // This occurs at the beginning of the deployment when a check is made to see if /manage/v3 exists
+        // The problem is 1 of 2 things - either "localhost" is wrong, or it's correct but ML is restarting somehow
+        // So trying to prevent either of those from being a problem here
+        getHubConfig().setHost(initialHost);
+        getHubConfig().getAdminManager().waitForRestart();
 
         // For on-premise, it's reasonable to deploy as an admin user
         new SimpleAppDeployer(new DataHubImpl(getHubConfig()).buildCommandsForDeployingToReplica()).deploy(getHubConfig().getAppConfig());

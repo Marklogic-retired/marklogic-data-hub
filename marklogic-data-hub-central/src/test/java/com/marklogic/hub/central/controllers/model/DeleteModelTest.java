@@ -5,6 +5,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DeleteModelTest extends AbstractModelTest {
+public class DeleteModelTest extends AbstractHubCentralTest {
 
     @Autowired
     ModelController controller;
@@ -74,12 +75,10 @@ public class DeleteModelTest extends AbstractModelTest {
     }
 
     private void verifyEntity2BasedArtifactsDontExist() {
-        assertSearchOptions("Entity2", Assertions::assertFalse, false);
         assertSchemasAndTDE(Assertions::assertNull);
     }
 
     private void verifyEntity2BasedArtifactsExist() {
-        assertSearchOptions("Entity2", Assertions::assertTrue, true);
         assertSchemasAndTDE(Assertions::assertNotNull);
     }
 

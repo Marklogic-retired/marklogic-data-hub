@@ -76,9 +76,6 @@ function generateExplorerOptionsWithElementRangeIndex() {
     test.assertExists(expOptions.xpath("/*:values[@name = 'Book']/*:range/*:element[@name = 'title']")),
     test.assertNotExists(expOptions.xpath("/*:values[@name = 'Book']/*:range/*:facet-option"),
         "A facet option does not need to be set on the values element"),
-    test.assertEqual("/*:envelope/*:headers", xs.string(fn.head(expOptions.xpath("/*:extract-document-data/*:extract-path[2]/text()"))),
-        "To see the sourced From, created on and created by information on the search snippet"
-    ),
     test.assertExists(expOptions.xpath("/*:transform-results"), "Enabling the snippet information by applying snippet")
   ];
 }

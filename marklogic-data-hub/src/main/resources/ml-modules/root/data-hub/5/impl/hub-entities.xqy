@@ -206,12 +206,8 @@ declare %private function hent:fix-options-for-explorer(
           }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
-      case element(search:extract-document-data) return
-        element { fn:node-name($n) } {
-         $n/namespace::node(),
-         $n/@*,
-         hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map),
-         <search:extract-path xmlns:es="http://marklogic.com/entity-services">/*:envelope/*:headers</search:extract-path>}
+      (: HubCentral doesn't have any need for extracted data :)
+      case element(search:extract-document-data) return ()
       case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
       case element(search:path-index) return fix-path-index($n)
       case element() return
@@ -513,7 +509,7 @@ declare private function hent:remove-duplicate-range-indexes($database-config as
 {
   let $indexes := map:get($database-config, "range-element-index")
   where (fn:exists($indexes))
-  return 
+  return
       let $index-map := map:map()
       let $_ :=
         for $index in json:array-values($indexes)
@@ -624,7 +620,7 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
 
       case element(tde:context) return
         fix-tde-context($n, $entity-model-contexts, $uber-model, $entity-name)
-      
+
       case element(tde:column) return
         element { fn:node-name($n) } {
           $n/namespace::node(),
@@ -702,21 +698,21 @@ Fixes the ES-generated TDE context path by:
 - Replacing the use of wildcards, which lead to false positives
 - Checking the entity namespacePrefix to determine if the context only needs to support XML
 
-False positives in the context path won't lead to incorrect results when querying via the TDE, but they will 
+False positives in the context path won't lead to incorrect results when querying via the TDE, but they will
 lead to unnecessary reindexing, per DHFPROD-6954.
 
 Example of an ES-generated path: //*:instance[*:info/*:version = "1.0"]
 :)
 declare private function fix-tde-context(
-  $context as element(tde:context), 
-  $entity-model-contexts as xs:string*, 
-  $uber-model as map:map, 
+  $context as element(tde:context),
+  $entity-model-contexts as xs:string*,
+  $uber-model as map:map,
   $entity-name as xs:string?
 ) as element(tde:context)
 {
   element tde:context {
     $context/namespace::node(),
-    
+
     (: This appears to be for the 'non-root' context elements in a TDE :)
     if ($context = $entity-model-contexts) then
       fn:replace(fn:replace(fn:string($context),"^\./", ".//"), "(.)$", "$1[node()]")
@@ -724,21 +720,21 @@ declare private function fix-tde-context(
     else if ($entity-name) then
       let $version := get-version-from-uber-model($uber-model)
       let $ns-prefix := get-namespace-prefix($uber-model, $entity-name)
-      return 
-        if ($ns-prefix) then 
+      return
+        if ($ns-prefix) then
           let $entity-predicate := "[" || $ns-prefix || ":" || $entity-name || "]"
-          return 
-            if ($version) then 
+          return
+            if ($version) then
               "/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '" || $version || "']" || $entity-predicate
-            else 
+            else
               replace-context-wildcards($context/text()) || $entity-predicate
-        else 
+        else
           let $entity-predicate := "[" || $entity-name || "]"
-          return 
-            if ($version) then 
+          return
+            if ($version) then
               (: An 'or' clause is used to further avoid false positives :)
               "/(es:envelope|envelope)/(es:instance|instance)[es:info/es:version = '" || $version || "' or info/version = '" || $version || "']" || $entity-predicate
-            else 
+            else
               replace-context-wildcards($context/text()) || $entity-predicate
 
       else
@@ -758,16 +754,16 @@ declare private function get-namespace-prefix($uber-model as map:map, $entity-na
 {
   let $uber-definitions := $uber-model => map:get("definitions")
   where fn:exists($uber-definitions)
-  return 
+  return
     let $def := map:get($uber-definitions, $entity-name)
     where fn:exists($def)
     return map:get($def, "namespacePrefix")
 };
 
 (:
-Replacing wildcards in the ES-generated context path eliminates many false positives, per DHFPROD-6954. 
-This function should also only be used when the entity def does not have a namespace prefix, as the path it 
-returns is intended to support JSON entity instances and XML entity instances that do not have a namespace (but still 
+Replacing wildcards in the ES-generated context path eliminates many false positives, per DHFPROD-6954.
+This function should also only be used when the entity def does not have a namespace prefix, as the path it
+returns is intended to support JSON entity instances and XML entity instances that do not have a namespace (but still
 use the es namespace for envelope/instance/info/version).
 :)
 declare private function replace-context-wildcards($path as xs:string) as xs:string
