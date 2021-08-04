@@ -17,39 +17,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:36.479997-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/customers/customers.csv"
-          }
-        },
-        {
-          "Customer": {
-            "id": "876",
-            "first_name": "Marco",
-            "last_name": "SMITH",
-            "gender": "M",
-            "billing_address": "68636 Todd Squares Suite 177 South Kimberlyview, Florida 29597",
-            "shipping_address": "68636 Todd Squares Suite 177 South Kimberlyview, Florida 29597",
-            "credit_score": "713",
-            "sales_region": "Florida",
-            "activity_tier": "1.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "customerId",
       "propertyValue": 876
@@ -83,38 +50,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:37.037324-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/products/games/board_games.csv"
-          }
-        },
-        {
-          "Product": {
-            "id": "1000204",
-            "sku": "122231313553",
-            "title": "african tail",
-            "players": "2–4",
-            "category": "Board Game|Strategic thought",
-            "popularity_tier": "2",
-            "playing_time": "60–90 minutes",
-            "probability_accessories": "0.75"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "uri",
       "propertyValue": "/Users/ban/Documents/Projects/dhf-files/store-data/products/games/92a95902-ee18-49b1-bb16-6c4320b02da5.json"
@@ -148,39 +83,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:35.318739-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/customers/customers.csv"
-          }
-        },
-        {
-          "Customer": {
-            "id": "209",
-            "first_name": "Hudson",
-            "last_name": "DILLON",
-            "gender": "M",
-            "billing_address": "33224 Greer Ports Apt. 263 Lake Angelica, Oregon 96096",
-            "shipping_address": "33224 Greer Ports Apt. 263 Lake Angelica, Oregon 96096",
-            "credit_score": "389",
-            "sales_region": "Oregon",
-            "activity_tier": "1.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "customerId",
       "propertyValue": 209
@@ -214,40 +116,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:37.863841-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/orders/orders.csv"
-          }
-        },
-        {
-          "Order": {
-            "id": "335",
-            "customer": "404",
-            "order_date": "06/18/2017",
-            "ship_date": "06/23/2017",
-            "product_id": "1000111",
-            "sku": "132362551004",
-            "price": "10.0",
-            "title": "alert doubling",
-            "quantity": "1.0",
-            "discounted_price": "7.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "orderId",
       "propertyValue": "335"
@@ -281,40 +149,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:38.303424-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/orders/orders.csv"
-          }
-        },
-        {
-          "Order": {
-            "id": "544",
-            "customer": "398",
-            "order_date": "07/27/2017",
-            "ship_date": "08/06/2017",
-            "product_id": "1000066",
-            "sku": "118675935929",
-            "price": "33.99",
-            "title": "stingy sharon",
-            "quantity": "1.0",
-            "discounted_price": "29.62"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "orderId",
       "propertyValue": "544"
@@ -348,39 +182,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:35.976585-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/customers/customers.csv"
-          }
-        },
-        {
-          "Customer": {
-            "id": "721",
-            "first_name": "Nathan",
-            "last_name": "SILVA",
-            "gender": "M",
-            "billing_address": "5348 Robert Skyway Suite 805 Serranohaven, North Dakota 67524",
-            "shipping_address": "5348 Robert Skyway Suite 805 Serranohaven, North Dakota 67524",
-            "credit_score": "501",
-            "sales_region": "North Dakota",
-            "activity_tier": "2.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "customerId",
       "propertyValue": 721
@@ -414,40 +215,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:37.865345-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/orders/orders.csv"
-          }
-        },
-        {
-          "Order": {
-            "id": "417",
-            "customer": "59",
-            "order_date": "07/05/2017",
-            "ship_date": "07/16/2017",
-            "product_id": "1000258",
-            "sku": "167784852301",
-            "price": "35.0",
-            "title": "big steamroller",
-            "quantity": "1.0",
-            "discounted_price": "24.5"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "orderId",
       "propertyValue": "417"
@@ -481,39 +248,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:36.488802-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/customers/customers.csv"
-          }
-        },
-        {
-          "Customer": {
-            "id": "957",
-            "first_name": "Isabel",
-            "last_name": "GUTIERREZ",
-            "gender": "F",
-            "billing_address": "903 Roberts Mountain South Natalieview, New Mexico 74425",
-            "shipping_address": "903 Roberts Mountain South Natalieview, New Mexico 74425",
-            "credit_score": "740",
-            "sales_region": "New Mexico",
-            "activity_tier": "4.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "customerId",
       "propertyValue": 957
@@ -547,39 +281,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:35.320741-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/customers/customers.csv"
-          }
-        },
-        {
-          "Customer": {
-            "id": "36",
-            "first_name": "Elizabeth",
-            "last_name": "BENTLEY",
-            "gender": "F",
-            "billing_address": "51057 Hernandez Garden Suite 488 New Melissaview, Minnesota 68819",
-            "shipping_address": "51057 Hernandez Garden Suite 488 New Melissaview, Minnesota 68819",
-            "credit_score": "510",
-            "sales_region": "Minnesota",
-            "activity_tier": "4.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "customerId",
       "propertyValue": 36
@@ -613,39 +314,6 @@ const searchPayloadResults = [
         ]
       }
     ],
-    "extracted": {
-      "kind": "array",
-      "content": [
-        {
-          "headers": {
-            "sources": [
-              {
-                "name": "Ingest"
-              },
-              {
-                "datahubSourceName": "Ingest"
-              }
-            ],
-            "createdOn": "2019-10-02T12:11:35.317848-07:00",
-            "createdBy": "admin",
-            "createdUsingFile": "/Users/ban/Documents/Projects/dhf-files/store-data/customers/customers.csv"
-          }
-        },
-        {
-          "Customer": {
-            "id": "357",
-            "first_name": "Michelle",
-            "last_name": "CHARLES",
-            "gender": "F",
-            "billing_address": "172 Lisa Brooks Apt. 967 Johntown, South Dakota 77675",
-            "shipping_address": "172 Lisa Brooks Apt. 967 Johntown, South Dakota 77675",
-            "credit_score": "338",
-            "sales_region": "South Dakota",
-            "activity_tier": "2.0"
-          }
-        }
-      ]
-    },
     "primaryKey": {
       "propertyPath": "customerId",
       "propertyValue": 357

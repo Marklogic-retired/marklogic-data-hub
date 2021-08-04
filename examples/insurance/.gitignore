@@ -1,3 +1,4 @@
 src/main/ml-config
-src/main/entity-config/exp*
+src/main/entity-config
+
 
