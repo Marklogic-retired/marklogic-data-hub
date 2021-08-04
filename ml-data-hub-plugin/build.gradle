@@ -54,6 +54,7 @@ dependencies {
         exclude module: 'groovy-all'
     }
     testImplementation 'org.springframework:spring-test:5.3.9'
+    testImplementation 'org.jdom:jdom2:2.0.6'
 }
 
 test {
