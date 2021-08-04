@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
+import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -90,8 +92,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<JsonNode> handleExceptionRequest(Exception exception) {
-        logger.error(exception.getMessage(), exception);
+        if (isClientAbortExceptionDueToBrokenPipe(exception)) {
+            logger.warn("Caught ClientAbortException due to broken pipe; returning null, as this indicates that the server " +
+                "can no longer communicate with the client; exception message: " + exception.getMessage());
+            return null;
+        }
 
+        logger.error(exception.getMessage(), exception);
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 500);
         errJson.put("message", exception.getMessage());
@@ -99,6 +106,17 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    protected boolean isClientAbortExceptionDueToBrokenPipe(Exception exception) {
+        Throwable cause = exception;
+        while (cause != null) {
+            if (cause instanceof ClientAbortException) {
+                Throwable childCause = cause.getCause();
+                return childCause instanceof IOException && "Broken pipe".equals(childCause.getMessage());
+            }
+            cause = cause.getCause();
+        }
+        return false;
+    }
 
     private String httpStatusSuggestion(HttpStatus httpStatus) {
         switch (httpStatus) {
