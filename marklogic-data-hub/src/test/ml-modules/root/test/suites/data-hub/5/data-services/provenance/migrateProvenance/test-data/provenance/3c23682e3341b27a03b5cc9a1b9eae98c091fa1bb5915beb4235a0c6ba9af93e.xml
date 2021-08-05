@@ -1,0 +1,46 @@
+<prov:document xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:ps="http://marklogic.com/provenance-services" xmlns:dhf="http://marklogic.com/dhf"
+               xmlns:job="http://marklogic.com/data-hub/job#" xmlns:step="http://marklogic.com/data-hub/step#"
+               xmlns:user="http://marklogic.com/data-hub/user#" xmlns:dh="http://marklogic.com/data-hub/provenance#">
+    <prov:entity
+            prov:id="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e">
+        <prov:type xsi:type="xsd:QName">ps:Flow</prov:type>
+        <prov:type xsi:type="xsd:QName">ps:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:IngestionStep</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:IngestionStepEntity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:DocCreated</prov:type>
+        <location>/Customer/CustXMLDoc1.xml</location>
+    </prov:entity>
+    <prov:wasGeneratedBy>
+        <prov:entity
+                prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e"/>
+        <prov:activity prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207d"/>
+        <prov:time>2021-08-02T23:18:27.226861Z</prov:time>
+    </prov:wasGeneratedBy>
+    <prov:wasDerivedFrom>
+        <prov:generatedEntity
+                prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e"/>
+        <prov:usedEntity prov:ref="/Customer/CustXMLDoc1.xml"/>
+    </prov:wasDerivedFrom>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e"/>
+        <prov:agent prov:ref="CurateCustomerXML"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e"/>
+        <prov:agent prov:ref="loadCustomersXML"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e"/>
+        <prov:agent prov:ref="default-ingestion"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAttributedTo>
+        <prov:entity
+                prov:ref="4bb8de87-01d6-45de-9b86-3d2ba2be207dCurateCustomerXMLingestion/Customer/CustXMLDoc1.xml_7ca230be-065b-47ab-ae47-8007f72ad17e"/>
+        <prov:agent prov:ref="admin"/>
+    </prov:wasAttributedTo>
+</prov:document>

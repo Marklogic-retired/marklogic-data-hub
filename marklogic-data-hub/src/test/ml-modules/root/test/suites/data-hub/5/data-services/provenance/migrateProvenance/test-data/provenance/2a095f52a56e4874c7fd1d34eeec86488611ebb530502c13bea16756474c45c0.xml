@@ -1,0 +1,51 @@
+<prov:document xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:ps="http://marklogic.com/provenance-services" xmlns:dhf="http://marklogic.com/dhf"
+               xmlns:job="http://marklogic.com/data-hub/job#" xmlns:step="http://marklogic.com/data-hub/step#"
+               xmlns:user="http://marklogic.com/data-hub/user#" xmlns:dh="http://marklogic.com/data-hub/provenance#">
+    <prov:entity
+            prov:id="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa">
+        <prov:type xsi:type="xsd:QName">ps:Flow</prov:type>
+        <prov:type xsi:type="xsd:QName">ps:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:MappingStep</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:MappingStepEntity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:DocUpdated</prov:type>
+        <location>/Product/120.xml</location>
+    </prov:entity>
+    <prov:wasGeneratedBy>
+        <prov:entity
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:activity prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003b"/>
+        <prov:time>2021-08-02T23:18:26.836096Z</prov:time>
+    </prov:wasGeneratedBy>
+    <prov:wasInfluencedBy>
+        <prov:influencee
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:influencer prov:ref="mapCustomersWithRelatedEntitiesXML"/>
+    </prov:wasInfluencedBy>
+    <prov:wasDerivedFrom>
+        <prov:generatedEntity
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:usedEntity prov:ref="/Product/120.xml"/>
+    </prov:wasDerivedFrom>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:agent prov:ref="CurateCustomerWithRelatedEntitiesXML"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:agent prov:ref="mapCustomersWithRelatedEntitiesXML"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:agent prov:ref="entity-services-mapping"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAttributedTo>
+        <prov:entity
+                prov:ref="73d85c83-39c0-4ea3-8935-c6ea39ca003bCurateCustomerWithRelatedEntitiesXMLmapping/Product/120.xml_02ae42ac-e434-49c1-a82d-640fad7b85fa"/>
+        <prov:agent prov:ref="admin"/>
+    </prov:wasAttributedTo>
+</prov:document>

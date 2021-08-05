@@ -1,0 +1,25 @@
+{
+  "functionName": "migrateProvenance",
+  "endpoint": "/data-hub/5/data-services/provenance/migrateProvenance.sjs",
+  "desc": "Migrates provenance to provenance format starting in DH 5.7.",
+  "params": [
+    {
+      "name": "endpointState",
+      "datatype": "jsonDocument",
+      "multiple": false,
+      "nullable": true
+    },
+    {
+      "name":     "endpointConstants",
+      "datatype": "jsonDocument",
+      "multiple": false,
+      "nullable": false
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "multiple": false,
+    "nullable": true,
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

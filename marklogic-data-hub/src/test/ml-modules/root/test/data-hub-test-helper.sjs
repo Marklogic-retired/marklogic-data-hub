@@ -146,10 +146,10 @@ function documentExists(uri, databaseName) {
  * For many scenarios, it'll be sufficient to just verify the count of provenance docs - i.e. was the expected number
  * created, or were no docs created.
  */
-function getProvenanceCount() {
+function getProvenanceCount(database = config.JOBDATABASE) {
   return fn.head(xdmp.invokeFunction(function() {
     return cts.estimate(cts.collectionQuery("http://marklogic.com/provenance-services/record"));
-  }, {database: xdmp.database(config.JOBDATABASE)}));
+  }, {database: xdmp.database(database)}));
 }
 
 /**

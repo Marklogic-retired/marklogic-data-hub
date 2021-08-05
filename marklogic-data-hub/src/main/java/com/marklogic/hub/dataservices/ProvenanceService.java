@@ -48,14 +48,33 @@ public interface ProvenanceService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_migrateProvenance;
             private BaseProxy.DBFunctionRequest req_deleteProvenance;
 
             private ProvenanceServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/provenance/", servDecl);
 
+                this.req_migrateProvenance = this.baseProxy.request(
+                    "migrateProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_deleteProvenance = this.baseProxy.request(
                     "deleteProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode migrateProvenance(Reader endpointState, Reader endpointConstants) {
+                return migrateProvenance(
+                    this.req_migrateProvenance.on(this.dbClient), endpointState, endpointConstants
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode migrateProvenance(BaseProxy.DBFunctionRequest request, Reader endpointState, Reader endpointConstants) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("endpointState", true, BaseProxy.JsonDocumentType.fromReader(endpointState)),
+                          BaseProxy.documentParam("endpointConstants", false, BaseProxy.JsonDocumentType.fromReader(endpointConstants))
+                          ).responseSingle(true, Format.JSON)
+                );
             }
 
             @Override
@@ -77,6 +96,15 @@ public interface ProvenanceService {
 
         return new ProvenanceServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Migrates provenance to provenance format starting in DH 5.7.
+   *
+   * @param endpointState	provides input
+   * @param endpointConstants	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode migrateProvenance(Reader endpointState, Reader endpointConstants);
 
   /**
    * Deletes provenance according to the retainDuration property provided in endpointConstants.

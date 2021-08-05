@@ -23,25 +23,29 @@ public class BulkUtil {
                 "retainDuration must be a duration in the format of PnYnM or PnDTnHnMnS");
         }
 
+        ObjectNode endpointConstants = objectMapper.createObjectNode().put("batchSize", 250).put("retainDuration",
+                retainDuration);
+        runExecCaller(databaseClient, apiPath, endpointConstants, "Unable to delete data, cause: ");
+    }
+
+    public static void runExecCaller(DatabaseClient databaseClient, String apiPath, ObjectNode endpointConstants, String errorPrefix) {
         try (InputStreamReader apiReader = new InputStreamReader(BulkUtil.class.getClassLoader().getResourceAsStream(apiPath))) {
             ObjectNode apiNode = objectMapper.readValue(apiReader, ObjectNode.class);
             ExecCaller caller = ExecCaller.on(databaseClient, new JacksonHandle(apiNode));
             CapturingErrorListener errorListener = new CapturingErrorListener();
-            ObjectNode endpointConstants = objectMapper.createObjectNode().put("batchSize", 250).put("retainDuration",
-                retainDuration);
 
             ExecCaller.BulkExecCaller bulkCaller = caller.bulkCaller(caller.newCallContext()
-                .withEndpointConstantsAs(endpointConstants));
+                    .withEndpointConstantsAs(endpointConstants));
             bulkCaller.setErrorListener(errorListener);
             bulkCaller.awaitCompletion();
 
             Throwable throwable = errorListener.throwable;
             if (throwable != null) {
-                throw new RuntimeException("Unable to delete data, cause: " + throwable.getMessage(), throwable);
+                throw new RuntimeException(errorPrefix + throwable.getMessage(), throwable);
             }
         } catch (IOException e) {
             throw new RuntimeException(
-                "Unable to find API module " + apiPath + " on classpath; cause: " + e.getMessage(), e);
+                    "Unable to find API module " + apiPath + " on classpath; cause: " + e.getMessage(), e);
         }
     }
 

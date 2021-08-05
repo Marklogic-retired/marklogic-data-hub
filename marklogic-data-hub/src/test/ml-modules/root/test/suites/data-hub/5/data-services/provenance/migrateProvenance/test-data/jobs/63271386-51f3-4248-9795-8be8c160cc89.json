@@ -1,0 +1,17 @@
+{
+  "job": {
+    "jobId": "63271386-51f3-4248-9795-8be8c160cc89",
+    "stepResponses": {
+      "1": {
+        "stepName": "loadNamespacedCustomers",
+        "stepDefinitionType": "ingestion",
+        "targetDatabase": "data-hub-STAGING"
+      },
+      "2": {
+        "stepName": "mapNamespacedCustomers",
+        "stepDefinitionType": "mapping",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}

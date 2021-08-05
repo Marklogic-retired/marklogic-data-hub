@@ -183,7 +183,7 @@ function queueForCommit(databaseName = config.JOBDATABASE, id, options, metadata
  * @param {string} info.influencedBy - the ingestion step the document was modified by
  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
  *   Ingest document from outside source
- *    provTypes: [ "ps:Flow", "ps:File" ],
+ *    provTypes: [ "ps:File" ],
  *    relations:
  *      - generatedBy (job id)
  *      - derivedFrom (file)
@@ -195,7 +195,7 @@ function queueForCommit(databaseName = config.JOBDATABASE, id, options, metadata
  */
 function createIngestionStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
   let provId = newProvId(jobId, flowId, 'ingestion', docURI);
-  let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:IngestionStep', 'dhf:IngestionStepEntity'];
+  let provTypes = ['ps:Document', 'ps:Entity', 'dhf:Entity', 'dhf:IngestionStep', 'dhf:IngestionStepEntity'];
   if (info && info.status)
     provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -205,6 +205,7 @@ function createIngestionStepRecord(jobId, flowId, stepName, stepDefinitionName, 
       associatedWith: [flowId, stepName, stepDefinitionName],
       generatedBy: jobId,
       derivedFrom: info && info.derivedFrom,
+      influencedBy: [stepName]
     },
     attributes: { location: docURI }
   };
@@ -224,7 +225,7 @@ function createIngestionStepRecord(jobId, flowId, stepName, stepDefinitionName, 
  * @param {string} info.influencedBy - the mapping step the document was modified by
  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
  *   Map Source document property to Entity Instance property
- *    provTypes: [ "ps:Flow", "ps:EntityProperty", "ps:Mapping", "dhf:ModelToModelMapping" ],
+ *    provTypes: [ "ps:EntityProperty", "ps:Mapping", "dhf:ModelToModelMapping" ],
  *    relations:
  *      - generatedBy (job id)
  *      - derivedFrom (uri)
@@ -237,7 +238,7 @@ function createIngestionStepRecord(jobId, flowId, stepName, stepDefinitionName, 
  */
 function createMappingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
   let provId = newProvId(jobId, flowId, 'mapping', docURI);
-  let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MappingStep', 'dhf:MappingStepEntity'];
+  let provTypes = ['ps:Entity', 'dhf:Entity', 'dhf:MappingStep', 'dhf:MappingStepEntity'];
   if (info && info.status)
     provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -267,7 +268,7 @@ function createMappingStepRecord(jobId, flowId, stepName, stepDefinitionName, do
  * @param {string} info.influencedBy - the mastering step the document was modified by
  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
  *   Master Source doc property to Entity Instance property
- *    provTypes: [ "ps:Flow", "ps:EntityProperty", "dhf:Mastering" ],
+ *    provTypes: [ "ps:EntityProperty", "dhf:Mastering" ],
  *    relations:
  *      - generatedBy (job id)
  *      - derivedFrom (uri)
@@ -280,7 +281,7 @@ function createMappingStepRecord(jobId, flowId, stepName, stepDefinitionName, do
  */
 function createMasteringStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
   let provId = newProvId(jobId, flowId, 'mastering', docURI);
-  let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MasteringStep', 'dhf:MasteringStepEntity'];
+  let provTypes = ['ps:Entity', 'dhf:Entity', 'dhf:MasteringStep', 'dhf:MasteringStepEntity'];
   if (info && info.status)
     provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -310,7 +311,7 @@ function createMasteringStepRecord(jobId, flowId, stepName, stepDefinitionName, 
  * @param {string} info.influencedBy - the mastering step the document was modified by
  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
  *   Master Source doc property to Entity Instance property
- *    provTypes: [ "ps:Flow", "ps:EntityProperty", "dhf:Matching" ],
+ *    provTypes: [ "ps:EntityProperty", "dhf:Matching" ],
  *    relations:
  *      - generatedBy (job id)
  *      - derivedFrom (uri)
@@ -323,7 +324,7 @@ function createMasteringStepRecord(jobId, flowId, stepName, stepDefinitionName, 
  */
 function createMatchingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
   let provId = newProvId(jobId, flowId, 'matching', docURI);
-  let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MatchingStep', 'dhf:MatchingStepEntity'];
+  let provTypes = ['ps:Entity', 'dhf:Entity', 'dhf:MatchingStep', 'dhf:MatchingStepEntity'];
   if (info && info.status)
     provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -353,7 +354,7 @@ function createMatchingStepRecord(jobId, flowId, stepName, stepDefinitionName, d
  * @param {string} info.influencedBy - the mastering step the document was modified by
  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
  *   Master Source doc property to Entity Instance property
- *    provTypes: [ "ps:Flow", "ps:EntityProperty", "dhf:Merging" ],
+ *    provTypes: [ "ps:EntityProperty", "dhf:Merging" ],
  *    relations:
  *      - generatedBy (job id)
  *      - derivedFrom (uri)
@@ -366,7 +367,7 @@ function createMatchingStepRecord(jobId, flowId, stepName, stepDefinitionName, d
  */
 function createMergingStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
   let provId = newProvId(jobId, flowId, 'merging', docURI);
-  let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:MergingStep', 'dhf:MergingStepEntity'];
+  let provTypes = ['ps:Entity', 'dhf:Entity', 'dhf:MergingStep', 'dhf:MergingStepEntity'];
   if (info && info.status)
     provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -396,7 +397,7 @@ function createMergingStepRecord(jobId, flowId, stepName, stepDefinitionName, do
  * @param {string} info.influencedBy - the custom step the document was modified by
  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
  * Custom code transformations of source doc (prior to mapping/mastering) or Entity Instance (after mapping/mastering)
- *  provTypes: [ "ps:Flow", "ps:Entity", "dhf:Custom" ],
+ *  provTypes: [ "ps:Entity", "dhf:Custom" ],
  *  relations:
  *    - generatedBy (job id)
  *    - derivedFrom (uri)
@@ -408,7 +409,7 @@ function createMergingStepRecord(jobId, flowId, stepName, stepDefinitionName, do
  */
 function createCustomStepRecord(jobId, flowId, stepName, stepDefinitionName, docURI, info) {
   let provId = newProvId(jobId, flowId, 'custom', docURI);
-  let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', 'dhf:CustomStep', 'dhf:CustomStepEntity'];
+  let provTypes = ['ps:Entity', 'dhf:Entity', 'dhf:CustomStep', 'dhf:CustomStepEntity'];
   if (info && info.status)
     provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
@@ -494,7 +495,7 @@ function createStepPropertyRecords(jobId, flowId, stepName, stepDefinitionName, 
         }
         let docPropProvId = `${jobId + flowId + stepDefinitionType + docURI}_${property}`
         let docPropProvOptions = {
-          provTypes: ['ps:Flow', 'ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', encodedPropertyName],
+          provTypes: ['ps:EntityProperty', `dhf:${capitalizedStepType}`, 'dhf:EntityProperty', encodedPropertyName],
           relations: {
             associatedWith: [flowId, stepName, stepDefinitionName],
             generatedBy: jobId,
@@ -510,7 +511,7 @@ function createStepPropertyRecords(jobId, flowId, stepName, stepDefinitionName, 
 
       // create document record
       docProvId = `${jobId + flowId + stepDefinitionType + docURI}`;
-      let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:Entity', `dhf:${capitalizedStepType}Entity`];
+      let provTypes = ['ps:Entity', 'dhf:Entity', `dhf:${capitalizedStepType}Entity`];
       let recordOpts = {
         provTypes,
         relations: {
@@ -568,7 +569,7 @@ function createStepPropertyAlterationRecord(jobId, flowId, stepName, stepDefinit
       if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
         encodedPropertyName = xdmp.encodeForNCName(encodedPropertyName);
       }
-      let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:AlteredEntityProperty', `dhf:${capitalizedStepType}AlteredEntityProperty`, encodedPropertyName];
+      let provTypes = ['ps:EntityProperty', 'dhf:AlteredEntityProperty', `dhf:${capitalizedStepType}AlteredEntityProperty`, encodedPropertyName];
       let recordOpts = {
         provTypes,
         relations: {
@@ -612,7 +613,7 @@ function createStepDocumentAlterationRecord(jobId, flowId, stepName, stepDefinit
       alteredPropertyProvIds && alteredPropertyProvIds.length > 0) {
       let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
       let provId = newProvId(jobId, flowId, stepDefinitionType, newDocURI);
-      let provTypes = ['ps:Flow', 'ps:Entity', 'dhf:AlteredEntity', `dhf:${capitalizedStepType}AlteredEntity`];
+      let provTypes = ['ps:Entity', 'dhf:AlteredEntity', `dhf:${capitalizedStepType}AlteredEntity`];
       let recordOpts = {
         provTypes,
         relations: {

@@ -46,14 +46,20 @@ declare function load-artifacts($caller-path as xs:string) as xs:string*
 
 declare function load-jobs($caller-path as xs:string) as xs:string*
 {
-  load-jobs("jobs", $caller-path, "/", ("Job", "Jobs")),
-  load-jobs("batches", $caller-path, "/jobs/", ("Batch", "Jobs"))
+  let $job-permissions := (xdmp:permission("data-hub-job-internal", "update"),xdmp:permission("data-hub-job-reader", "read"))
+  let $prov-permissions := (xdmp:permission("ps-internal", "update"),xdmp:permission("ps-user", "read"))
+  return (
+    load-jobs("jobs", $caller-path, "/", $job-permissions,  ("Job", "Jobs")),
+    load-jobs("batches", $caller-path, "/jobs/", $job-permissions, ("Batch", "Jobs")),
+    load-jobs("provenance", $caller-path, "/", $prov-permissions, ("http://marklogic.com/provenance-services/record"))
+  )
 };
 
 declare private function load-jobs(
   $doc-type as xs:string,
   $caller-path as xs:string,
   $uri-prefix as xs:string,
+  $permissions as item()*,
   $collections as item()*
 ) as xs:string*
 {
@@ -62,7 +68,7 @@ declare private function load-jobs(
   let $path := fn:replace($uri, $test-data-path, "")
   let $content := test:get-test-file($path)
   let $_ := invoke-in-db(function() {
-    xdmp:document-insert($uri-prefix || $path, $content, xdmp:default-permissions(), $collections)
+    xdmp:document-insert($uri-prefix || $path, $content, $permissions, $collections)
   }, $config:JOB-DATABASE)
   return ()
 };

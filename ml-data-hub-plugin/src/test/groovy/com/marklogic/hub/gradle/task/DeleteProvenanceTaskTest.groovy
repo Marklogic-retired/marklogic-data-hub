@@ -16,7 +16,7 @@ class DeleteProvenanceTaskTest extends BaseTest {
     def "simple smoke test"() {
         when:
         def result
-        result = runTask("hubDeleteProvenance", '-PretainDuration=P30D')
+        result = runTask("hubDeleteProvenance", '-PretainDuration=P30D', '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildFailure)
@@ -25,7 +25,7 @@ class DeleteProvenanceTaskTest extends BaseTest {
 
     def "no duration specified"() {
         when:
-        def result = runFailTask('hubDeleteProvenance')
+        def result = runFailTask('hubDeleteProvenance', '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildSuccess)
