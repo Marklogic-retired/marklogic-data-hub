@@ -1,8 +1,10 @@
 const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
 const test = require("/test/test-helper.xqy");
+const serverTimezone = sem.timezoneString(fn.currentDateTime());
 
 function testParseDate() {
-  const expectedDate = "2014-01-06";
+  const expectedDate = xs.string(xs.date(`2014-01-06${serverTimezone}`));
+
   return [
     test.assertEqual(expectedDate, core.parseDate("01/06/2014", "MM/DD/YYYY")),
     test.assertEqual(expectedDate, core.parseDate("06/01/2014","DD/MM/YYYY")),
@@ -19,8 +21,8 @@ function testParseDate() {
 }
 
 function testMoreParseDate() {
-  const expectedDate2018 = "2018-01-02";
-  const expectedDate1996 = "1996-07-16";
+  const expectedDate2018 = xs.string(xs.date(`2018-01-02${serverTimezone}`));
+  const expectedDate1996 = xs.string(xs.date(`1996-07-16${serverTimezone}`));
   return [
     test.assertEqual(expectedDate2018, core.parseDate("01-02-2018", "MM-DD-YYYY")),
     test.assertEqual(expectedDate1996, core.parseDate("Jul 16, 1996", "Mon DD, YYYY")),

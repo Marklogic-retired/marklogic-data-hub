@@ -132,18 +132,18 @@ public class MappingTest extends AbstractHubCoreTest {
             "\"DateTimeFormat5\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
             "\"DateTimeFormat2\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
             "\"DateTimeFormat3\": \"1996-07-04T14:25:55"+ timezoneStr + "\", " +
-            "\"RequiredDate5\": \"1996-08-01\", " +
-            "\"ShippedDate3\": \"1996-07-16\", " +
-            "\"RequiredDate4\": \"1996-08-01\", " +
-            "\"ShippedDate4\": \"1996-07-16\", " +
-            "\"RequiredDate3\": \"1996-08-01\", " +
-            "\"ShippedDate1\": \"1996-08-01\", " +
-            "\"RequiredDate2\": \"1996-08-01\", " +
+            "\"RequiredDate5\": \"1996-08-01"+ timezoneStr + "\", " +
+            "\"ShippedDate3\": \"1996-07-16"+ timezoneStr + "\", " +
+            "\"RequiredDate4\": \"1996-08-01"+ timezoneStr + "\", " +
+            "\"ShippedDate4\": \"1996-07-16"+ timezoneStr + "\", " +
+            "\"RequiredDate3\": \"1996-08-01"+ timezoneStr + "\", " +
+            "\"ShippedDate1\": \"1996-08-01"+ timezoneStr + "\", " +
+            "\"RequiredDate2\": \"1996-08-01"+ timezoneStr + "\", " +
             "\"CustomerID\": \"VINET\", " +
-            "\"ShippedDate2\": \"1996-08-01\", " +
-            "\"RequiredDate1\": \"1996-08-01\", " +
+            "\"ShippedDate2\": \"1996-08-01"+ timezoneStr + "\", " +
+            "\"RequiredDate1\": \"1996-08-01"+ timezoneStr + "\", " +
             "\"OrderID\": \"10249\", " +
-            "\"ShippedDate5\": \"1996-08-01\", " +
+            "\"ShippedDate5\": \"1996-08-01"+ timezoneStr + "\", " +
             "\"DateTimeFormat1\": \"1996-07-04T14:25:55"+ timezoneStr + "\"" +
         "}";
         JsonNode actual = getQueryResults("cts:search(fn:doc('/input/json/order1.json')/envelope/instance/Order, cts:collection-query('OrderJSONMapping'))", HubConfig.DEFAULT_FINAL_NAME);
