@@ -1,0 +1,17 @@
+{
+  "job": {
+    "jobId": "4bb8de87-01d6-45de-9b86-3d2ba2be207d",
+    "stepResponses": {
+      "1": {
+        "stepName": "loadCustomersXML",
+        "stepDefinitionType": "ingestion",
+        "targetDatabase": "data-hub-STAGING"
+      },
+      "2": {
+        "stepName": "mapCustomersXML",
+        "stepDefinitionType": "mapping",
+        "targetDatabase": "data-hub-FINAL"
+      }
+    }
+  }
+}

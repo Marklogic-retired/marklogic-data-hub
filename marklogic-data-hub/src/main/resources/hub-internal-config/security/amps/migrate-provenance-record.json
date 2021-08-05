@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/datahub/migrate-prov",
+  "local-name" : "migrate-provenance",
+  "document-uri" : "/data-hub/5/provenance/migrate-provenance.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "ps-internal" ]
+}

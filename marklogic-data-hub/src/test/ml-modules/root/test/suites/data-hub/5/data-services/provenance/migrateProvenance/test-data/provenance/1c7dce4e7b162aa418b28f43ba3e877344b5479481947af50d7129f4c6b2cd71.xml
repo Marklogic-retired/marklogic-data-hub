@@ -1,0 +1,46 @@
+<prov:document xmlns:prov="http://www.w3.org/ns/prov#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:ps="http://marklogic.com/provenance-services" xmlns:dhf="http://marklogic.com/dhf"
+               xmlns:job="http://marklogic.com/data-hub/job#" xmlns:step="http://marklogic.com/data-hub/step#"
+               xmlns:user="http://marklogic.com/data-hub/user#" xmlns:dh="http://marklogic.com/data-hub/provenance#">
+    <prov:entity
+            prov:id="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002">
+        <prov:type xsi:type="xsd:QName">ps:Flow</prov:type>
+        <prov:type xsi:type="xsd:QName">ps:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:Entity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:IngestionStep</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:IngestionStepEntity</prov:type>
+        <prov:type xsi:type="xsd:QName">dhf:DocCreated</prov:type>
+        <location>/NamespacedCustomer/namespacedCustomer1.xml</location>
+    </prov:entity>
+    <prov:wasGeneratedBy>
+        <prov:entity
+                prov:ref="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002"/>
+        <prov:activity prov:ref="63271386-51f3-4248-9795-8be8c160cc89"/>
+        <prov:time>2021-08-02T23:18:27.716113Z</prov:time>
+    </prov:wasGeneratedBy>
+    <prov:wasDerivedFrom>
+        <prov:generatedEntity
+                prov:ref="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002"/>
+        <prov:usedEntity prov:ref="/NamespacedCustomer/namespacedCustomer1.xml"/>
+    </prov:wasDerivedFrom>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002"/>
+        <prov:agent prov:ref="CurateNamespacedCustomers"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002"/>
+        <prov:agent prov:ref="loadNamespacedCustomers"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAssociatedWith>
+        <prov:activity
+                prov:ref="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002"/>
+        <prov:agent prov:ref="default-ingestion"/>
+    </prov:wasAssociatedWith>
+    <prov:wasAttributedTo>
+        <prov:entity
+                prov:ref="63271386-51f3-4248-9795-8be8c160cc89CurateNamespacedCustomersingestion/NamespacedCustomer/namespacedCustomer1.xml_b2484cac-31dc-4a87-a283-61ebf46d5002"/>
+        <prov:agent prov:ref="admin"/>
+    </prov:wasAttributedTo>
+</prov:document>

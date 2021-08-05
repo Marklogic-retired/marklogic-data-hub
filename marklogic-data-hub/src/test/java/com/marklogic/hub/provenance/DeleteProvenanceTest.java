@@ -1,14 +1,10 @@
 package com.marklogic.hub.provenance;
 
-import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.flow.FlowInputs;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DeleteProvenanceTest extends AbstractHubCoreTest {
-
-    String provenanceCollection = "http://marklogic.com/provenance-services/record";
+public class DeleteProvenanceTest extends ProvenanceTest {
 
     @Test
     void deleteAllProvenanceRecords() {
@@ -36,14 +32,5 @@ public class DeleteProvenanceTest extends AbstractHubCoreTest {
         runAsTestUserWithRoles("data-hub-common");
         ProvenanceManager provenanceManager = new ProvenanceManager(getHubClient());
         assertThrows(RuntimeException.class, () -> provenanceManager.deleteProvenanceRecords("PT0S"));
-    }
-
-    private void installProjectAndRunFlow() {
-        installProjectInFolder("test-projects/provenance-test" );
-        String path = "test-projects/provenance-test/data/customers";
-        FlowInputs flowInputs = new FlowInputs();
-        flowInputs.setFlowName("referenced");
-        flowInputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
-        runSuccessfulFlow(flowInputs);
     }
 }

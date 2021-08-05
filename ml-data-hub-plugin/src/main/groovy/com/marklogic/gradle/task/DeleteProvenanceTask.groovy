@@ -21,13 +21,19 @@ import com.marklogic.hub.provenance.ProvenanceManager
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-class DeleteProvenanceTask extends HubTask {
-    @TaskAction
-    void cleanProvenanceData() {
+class DeleteProvenanceTask extends AbstractConfirmableHubTask {
+    @Override
+    void executeIfConfirmed() {
         def propName = "retainDuration"
+        def database = "provenanceDatabase"
         if (!project.hasProperty(propName)) {
             throw new GradleException("Please specify a duration via -PretainDuration=(value in format of PnYnM or PnDTnHnMnS)")
         }
-        new ProvenanceManager(getHubConfig().newHubClient()).deleteProvenanceRecords(project.property(propName))
+        def provManager = new ProvenanceManager(getHubConfig().newHubClient());
+        if (project.hasProperty(database)) {
+            provManager.deleteProvenanceRecords(project.property(propName), project.property(database))
+        } else {
+            provManager.deleteProvenanceRecords(project.property(propName))
+        }
     }
 }

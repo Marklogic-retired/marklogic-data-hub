@@ -198,7 +198,7 @@ declare private function map-get($map as map:map, $key as xs:string){
       $items
 };
 
-declare private function record-uri($provID as xs:string) as xs:string {
+declare function record-uri($provID as xs:string) as xs:string {
   let $uri := $ps-dir||xdmp:sha256($provID)||".xml"
   return $uri
 };
