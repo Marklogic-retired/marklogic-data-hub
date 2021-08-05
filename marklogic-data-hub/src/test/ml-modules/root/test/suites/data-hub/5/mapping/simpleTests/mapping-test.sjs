@@ -77,7 +77,7 @@ function mapsJSONasExpected() {
     test.assertEqual("Bob Cratchit", mappedInstance.stringJoin, message),
     test.assertEqual("Customer-123", mappedInstance.stringRemove, message),
     test.assertEqual(expectedDateTime, mappedInstance.currentDateTime, message),
-    test.assertEqual("2014-01-06", mappedInstance.currentDate, message)
+    test.assertEqual(xs.string(xs.date(`2014-01-06${serverTimezone}`)), mappedInstance.currentDate, message)
   ];
 }
 

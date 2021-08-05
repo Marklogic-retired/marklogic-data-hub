@@ -162,7 +162,7 @@ declare private function parse-standard-date($value as xs:string?, $pattern as x
     else $pattern
 
   let $picture := fn:tokenize(fn:replace($pattern, "YYYY", "yyyy"), "T")[1]
-  return fn:substring(fn:string(xdmp:parse-yymmdd($picture, $value)), 1, 10)
+  return xs:string(xs:date(xdmp:parse-yymmdd($picture, $value)))
 };
 
 declare private function parse-non-standard-date($value as xs:string?, $pattern as xs:string?) as xs:string?
@@ -174,10 +174,10 @@ declare private function parse-non-standard-date($value as xs:string?, $pattern 
       let $month := map:get($MONTH-MAP, fn:upper-case(fn:substring($value, 1, 3)))
       let $day := fn:substring($value, 5, 2)
       let $year := fn:substring($value, 8, 4)
-      return fn:string-join(($year, $month, $day), "-")
+      return xs:string(xs:date(xdmp:parse-yymmdd("yyyy-MM-dd", fn:string-join(($year, $month, $day), "-"))))
     else
       let $month := map:get($MONTH-MAP, fn:upper-case(fn:substring($value, 4, 3)))
       let $day := fn:substring($value, 1, 2)
       let $year := fn:substring($value, 8, 4)
-      return fn:string-join(($year, $month, $day), "-")
+      return xs:string(xs:date(xdmp:parse-yymmdd("yyyy-MM-dd", fn:string-join(($year, $month, $day), "-"))))
 };
