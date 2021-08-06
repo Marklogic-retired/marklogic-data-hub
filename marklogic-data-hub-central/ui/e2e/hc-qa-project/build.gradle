@@ -1,11 +1,8 @@
-import com.marklogic.gradle.task.HubTask;
-import com.marklogic.client.DatabaseClient;
-
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
-        jcenter()
     }
     dependencies {
         if (project.hasProperty("testing")) {
@@ -23,8 +20,8 @@ plugins {
 apply plugin: "com.marklogic.ml-data-hub"
 
 repositories {
-    jcenter()
-    maven { url "http://developer.marklogic.com/maven2/" }
+    mavenCentral()
+    maven { url "https://developer.marklogic.com/maven2/" }
 }
 
 configurations {
@@ -32,7 +29,7 @@ configurations {
 }
 
 dependencies {
-    mlcp "com.marklogic:mlcp:10.0.2"
+    mlcp "com.marklogic:mlcp:10.0.6.2"
     mlcp files("lib")
 }
 
@@ -53,12 +50,13 @@ task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
 
 hubDeployAsDeveloper.finalizedBy("loadThesaurus")
 
-class DocCount extends HubTask {
-    DatabaseClient client
-    String script
-    int expected
+class DocCount extends com.marklogic.gradle.task.HubTask {
+    @Internal com.marklogic.client.DatabaseClient client
+    @Input String script
+    @Input int expected
+
     @TaskAction
-    def getDocCount() {
+    def calculateDocCount() {
         try {
             int result = Integer.parseInt(client.newServerEval().javascript(script).evalAs(String.class));
             if(result != expected) {
