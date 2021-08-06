@@ -676,7 +676,13 @@ void postStage(String status){
        def author = env.CHANGE_AUTHOR.toString().trim().toLowerCase()
        email = getEmailFromGITUser author
      } else {email = Email}
-     sendMail email, "<h3>All the ${STAGE_NAME} " + status + " on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>", false, "${STAGE_NAME} for  $BRANCH_NAME " + status
+
+    if(env.CHANGE_URL){
+      sendMail email, "<h3>All the ${STAGE_NAME} " + status + " on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>", false, "${STAGE_NAME} for  $BRANCH_NAME " + status
+    }
+    else {
+      sendMail email, "<h3>All the ${STAGE_NAME} " + status + " the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>", false, "${STAGE_NAME} for  $BRANCH_NAME " + status
+    }
 }
 
 pipeline{
