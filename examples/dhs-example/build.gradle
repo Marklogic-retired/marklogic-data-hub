@@ -2,11 +2,11 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url "https://plugins.gradle.org/m2/" }
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         if (project.hasProperty("testing")) {
-            classpath "com.marklogic:ml-data-hub:5.2-SNAPSHOT"
+            classpath "com.marklogic:ml-data-hub:5.5-SNAPSHOT"
         } else {
             classpath "com.marklogic:ml-data-hub:5.5.0"
         }

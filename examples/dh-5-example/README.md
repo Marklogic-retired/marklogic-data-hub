@@ -74,7 +74,6 @@ plugins {
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 dependencies {

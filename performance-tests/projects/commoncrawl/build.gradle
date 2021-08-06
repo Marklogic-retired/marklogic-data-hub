@@ -2,14 +2,14 @@ buildscript {
 	repositories {
 		mavenLocal()
 		maven { url "https://plugins.gradle.org/m2/" }
-		jcenter()
+		mavenCentral()
 	}
 	dependencies {
 		if (project.hasProperty("testing")) {
 			classpath "com.marklogic:ml-data-hub:5.5-SNAPSHOT"
 
 		} else {
-			classpath "com.marklogic:ml-data-hub:5.4.0"
+			classpath "com.marklogic:ml-data-hub:5.5.0"
 		}
 	}
 }
@@ -41,11 +41,11 @@ task clearFinalDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseT
 }
 
 repositories {
-    jcenter()
-    maven { url "http://developer.marklogic.com/maven2/" }
+    mavenCentral()
+    maven { url "https://developer.marklogic.com/maven2/" }
 }
 dependencies {
-    mlcp "com.marklogic:mlcp:10.0.5"
+    mlcp "com.marklogic:mlcp:10.0.6.2"
     mlcp files("lib")
 }
 
@@ -86,7 +86,7 @@ task loadIpViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
 task runMapping (type: com.marklogic.gradle.task.RunFlowTask) {
     description = "Run mapping step"
     flowName = "mapping"
-    showOptions = "true"                    
+    showOptions = "true"
 }
 
 task runMastering (type: com.marklogic.gradle.task.RunFlowTask) {
