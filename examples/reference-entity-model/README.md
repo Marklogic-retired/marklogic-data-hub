@@ -98,7 +98,7 @@ library available in the DHF 5.5.0 release. This support is enabled via the foll
 build.gradle file:
 
 - The "java" plugin is applied so that Gradle's support for compiling and running JUnit5 tests can be used
-- In the "repositories" block, mavenCentral() and jcenter() are both included to satisfy the dependencies for test support
+- In the "repositories" block, mavenCentral() is included to satisfy the dependencies for test support
 - In the "dependencies" block, marklogic-unit-test-modules is included so that the modules associated with this library will be 
 loaded into the modules database, and marklogic-data-hub-junit5 is included to support JUnit5 testing
 - The "test" block includes "useJUnitPlatform()" to tell Gradle to use the platform support in JUnit5
