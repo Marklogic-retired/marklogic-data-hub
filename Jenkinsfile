@@ -665,6 +665,23 @@ void singleNodeTestOnLinux(String type,String mlVersion){
         }
 }
 
+void fullCycleSingleNodeTestOnLinux(String type,String mlVersion){
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+    props = readProperties file:'data-hub/pipeline.properties';
+    copyRPM type,mlVersion
+    setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+    sh 'export JAVA_HOME="$JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean ml-data-hub:testFullCycle -i --stacktrace'
+    junit '**/TEST-*.xml'
+}
+
+void invokeDhsTestJob(){
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+
+    sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
+    build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
+
+}
+
 pipeline{
 	agent none;
 	options {
@@ -938,10 +955,14 @@ pipeline{
         stage('dhs-test'){
             when { expression {return params.regressions} }
             agent { label 'dhfLinuxAgent' }
-            steps {
-                sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
-                build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
-            }
+            steps{timeout(time: 1,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhsTestJob()}
+            }}
+            post {
+                failure{
+                    println("${STAGE_NAME} failed")
+                    sendMail Email,'<h3>${STAGE_NAME} Failed </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch Failed'
+                }}
         }
 
         stage('rh7-singlenode'){
@@ -968,13 +989,7 @@ pipeline{
                 stage('fullCycle-rh7-singlenode-9.0-11') {
                     agent { label 'dhfLinuxAgent' }
                     steps {timeout(time: 3, unit: 'HOURS') {
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {
-                            cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
-                            copyRPM 'Release', '9.0-11'
-                            setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-                            sh 'export JAVA_HOME="$JAVA_HOME_DIR";export M2_HOME="$MAVEN_HOME";export PATH="$JAVA_HOME/bin:$MAVEN_HOME/bin:$PATH";cd $WORKSPACE/data-hub;./gradlew -g ./cache-build clean ml-data-hub:testFullCycle -i --stacktrace'
-                            junit '**/TEST-*.xml'
-                        }
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') { fullCycleSingleNodeTestOnLinux('Release', '9.0-11') }
                     }}
                     post {
                         success {
