@@ -9,7 +9,7 @@ import EntityTypeModal from "../components/modeling/entity-type-modal/entity-typ
 import EntityTypeTable from "../components/modeling/entity-type-table/entity-type-table";
 import styles from "./Modeling.module.scss";
 
-import {primaryEntityTypes, updateEntityModels} from "../api/modeling";
+import {deleteEntity, entityReferences, primaryEntityTypes, updateEntityModels} from "../api/modeling";
 import {UserContext} from "../util/user-context";
 import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
@@ -26,7 +26,7 @@ import {defaultModelingView} from "../config/modeling.config";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
-  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView} = useContext(ModelingContext);
+  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified, setView, closeSidePanelInGraphView} = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
@@ -46,6 +46,11 @@ const Modeling: React.FC = () => {
   const canReadEntityModel = authorityService.canReadEntityModel();
   const canWriteEntityModel = authorityService.canWriteEntityModel();
   const canAccessModel = authorityService.canAccessModel();
+
+  //Delete Entity
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [arrayValues, setArrayValues] = useState<string[]>([]);
+
 
   useEffect(() => {
     if (canReadEntityModel && modelingOptions.view === "table") {
@@ -131,6 +136,10 @@ const Modeling: React.FC = () => {
       saveAllEntitiesToServer();
     } else if (confirmType === ConfirmationType.RevertAll) {
       resetAllEntityTypes();
+    } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn) {
+      saveAllEntitiesThenDeleteFromServer();
+    } else if (confirmType === ConfirmationType.DeleteEntity) {
+      deleteEntityFromServer();
     }
   };
 
@@ -140,6 +149,83 @@ const Modeling: React.FC = () => {
     toggleRevertAllEntity(true);
     toggleConfirmModal(false);
   };
+
+  /* Deleting an entity type */
+  const getEntityReferences = async (entityName: string) => {
+    try {
+      const response = await entityReferences(entityName);
+      if (response["status"] === 200) {
+        let newConfirmType = ConfirmationType.DeleteEntity;
+
+        if (modelingOptions.isModified) {
+          newConfirmType = ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn;
+          setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
+        }
+
+        if (response["data"]["stepNames"].length > 0) {
+          newConfirmType = ConfirmationType.DeleteEntityStepWarn;
+          setArrayValues(response["data"]["stepNames"]);
+        } else if (response["data"]["entityNamesWithForeignKeyReferences"].length > 0) {
+          newConfirmType = ConfirmationType.DeleteEntityWithForeignKeyReferences;
+          setArrayValues(response["data"]["entityNamesWithForeignKeyReferences"]);
+        } else if (response["data"]["entityNames"].length > 0) {
+          if (modelingOptions.isModified) {
+            newConfirmType = ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn;
+            setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
+          } else {
+            newConfirmType = ConfirmationType.DeleteEntityRelationshipWarn;
+          }
+        }
+
+        setConfirmBoldTextArray([entityName]);
+        setConfirmType(newConfirmType);
+        toggleConfirmModal(true);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const deleteEntityFromServer = async () => {
+    let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
+    try {
+      const response = await deleteEntity(entityName);
+      if (response["status"] === 200) {
+        setEntityTypesFromServer();
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      toggleConfirmModal(false);
+      if (modelingOptions.openSidePanelInGraphView && modelingOptions.selectedEntity === entityName) {
+        closeSidePanelInGraphView();
+      }
+    }
+  };
+
+  const saveAllEntitiesThenDeleteFromServer = async () => {
+    try {
+      const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
+      if (response["status"] === 200) {
+        let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
+        try {
+          await deleteEntity(entityName);
+        } catch (error) {
+          handleError(error);
+        } finally {
+          await setEntityTypesFromServer();
+          clearEntityModified();
+          toggleConfirmModal(false);
+          if (modelingOptions.openSidePanelInGraphView && modelingOptions.selectedEntity === entityName) {
+            closeSidePanelInGraphView();
+          }
+        }
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
 
   const addButton = <MLButton
     type="primary"
@@ -311,6 +397,7 @@ const Modeling: React.FC = () => {
               canReadEntityModel={canReadEntityModel}
               canWriteEntityModel={canWriteEntityModel}
               entityTypes={entityTypes}
+              deleteEntityType={getEntityReferences}
             />
           </>
         }
@@ -331,8 +418,8 @@ const Modeling: React.FC = () => {
         <ConfirmationModal
           isVisible={showConfirmModal}
           type={confirmType}
-          boldTextArray={[]}
-          arrayValues={[]}
+          boldTextArray={![ConfirmationType.SaveAll, ConfirmationType.RevertAll].includes(confirmType) ? confirmBoldTextArray : []}
+          arrayValues={![ConfirmationType.SaveAll, ConfirmationType.RevertAll].includes(confirmType) ? arrayValues : []}
           toggleModal={toggleConfirmModal}
           confirmAction={confirmAction}
         />

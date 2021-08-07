@@ -242,7 +242,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
@@ -276,7 +276,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 

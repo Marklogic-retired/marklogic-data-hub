@@ -13,7 +13,8 @@ const DEFAULT_MODELING_OPTIONS = {
   modifiedEntitiesArray: [],
   entityPropertiesNamesArray: [],
   view: defaultModelingView,
-  selectedEntity: undefined
+  selectedEntity: undefined,
+  openSidePanelInGraphView: false
 };
 
 export const ModelingContext = React.createContext<ModelingContextInterface>({
@@ -26,7 +27,8 @@ export const ModelingContext = React.createContext<ModelingContextInterface>({
   setEntityPropertiesNamesArray: () => {},
   setView: () => {},
   setSelectedEntity: () => {},
-  setGraphViewOptions: () => {}
+  setGraphViewOptions: () => {},
+  closeSidePanelInGraphView: () => {}
 });
 
 const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
@@ -83,14 +85,27 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const setSelectedEntity = (selectedEntity: string | undefined) => {
-    setModelingOptions({...modelingOptions, selectedEntity: selectedEntity});
+    setModelingOptions({
+      ...modelingOptions,
+      selectedEntity: selectedEntity,
+      openSidePanelInGraphView: true
+    });
   };
 
   const setGraphViewOptions = (graphViewOptions: graphViewOptions) => {
     setModelingOptions({
       ...modelingOptions,
       view: graphViewOptions.view,
-      selectedEntity: graphViewOptions.selectedEntity
+      selectedEntity: graphViewOptions.selectedEntity,
+      openSidePanelInGraphView: true,
+    });
+  };
+
+  const closeSidePanelInGraphView = () => {
+    setModelingOptions({
+      ...modelingOptions,
+      selectedEntity: undefined,
+      openSidePanelInGraphView: false,
     });
   };
 
@@ -105,7 +120,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
       setEntityPropertiesNamesArray,
       setView,
       setSelectedEntity,
-      setGraphViewOptions
+      setGraphViewOptions,
+      closeSidePanelInGraphView
     }}>
       {children}
     </ModelingContext.Provider>

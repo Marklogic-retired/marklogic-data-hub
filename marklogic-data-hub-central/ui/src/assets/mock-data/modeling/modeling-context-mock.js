@@ -37,7 +37,8 @@ export const isModified = {
       }
     ],
     view: "graph",
-    selectedEntity: "Order"
+    selectedEntity: "Order",
+    openSidePanelInGraphView: true
   },
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn(),
@@ -46,7 +47,8 @@ export const isModified = {
   clearEntityModified: jest.fn(),
   setView: jest.fn(),
   setSelectedEntity: jest.fn(),
-  setGraphViewOptions: jest.fn()
+  setGraphViewOptions: jest.fn(),
+  closeSidePanelInGraphView: jest.fn()
 };
 
 export const isModifiedTableView = {
@@ -87,7 +89,8 @@ export const isModifiedTableView = {
       }
     ],
     view: "table",
-    selectedEntity: "Order"
+    selectedEntity: "Order",
+    openSidePanelInGraphView: true
   },
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn(),
@@ -96,7 +99,8 @@ export const isModifiedTableView = {
   clearEntityModified: jest.fn(),
   setView: jest.fn(),
   setSelectedEntity: jest.fn(),
-  setGraphViewOptions: jest.fn()
+  setGraphViewOptions: jest.fn(),
+  closeSidePanelInGraphView: jest.fn()
 };
 
 export const notModified = {
@@ -108,7 +112,8 @@ export const notModified = {
   setEntityTypeNamesArray: jest.fn(),
   setView: jest.fn(),
   setSelectedEntity: jest.fn(),
-  setGraphViewOptions: jest.fn()
+  setGraphViewOptions: jest.fn(),
+  closeSidePanelInGraphView: jest.fn()
 };
 
 export const notModifiedTableView = {

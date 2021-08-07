@@ -113,9 +113,12 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    setErrorServer("");
-    getEntityInfo();
+    if (modelingOptions.selectedEntity) {
+      setErrorServer("");
+      getEntityInfo();
+    }
   }, [modelingOptions.selectedEntity]);
+
 
   const displayPanelContent = () => {
     return currentTab === "entityType" ? <div>
@@ -209,7 +212,13 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       <div>
         <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>{modelingOptions.selectedEntity}</span>
         <span><MLTooltip title={ModelingTooltips.deleteIcon} placement="top">
-          <i key="last" role="delete-entity button" data-testid={modelingOptions.selectedEntity + "-delete"} onClick={() => props.deleteEntityClicked(modelingOptions.selectedEntity)}>
+          <i key="last" role="delete-entity button" data-testid={modelingOptions.selectedEntity + "-delete"} onClick={(event) => {
+            if (!props.canWriteEntityModel && props.canReadEntityModel) {
+              return event.preventDefault();
+            } else {
+              props.deleteEntityClicked(modelingOptions.selectedEntity);
+            }
+          }}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" />
           </i>
         </MLTooltip></span>
