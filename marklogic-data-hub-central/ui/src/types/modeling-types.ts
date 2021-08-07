@@ -9,6 +9,7 @@ export interface ModelingContextInterface {
   setView: (view: string) => void;
   setSelectedEntity: (entityName: string | undefined) => void;
   setGraphViewOptions: (graphViewOptions: graphViewOptions) => void;
+  closeSidePanelInGraphView: () => void;
 }
 
 export interface ModelingOptionsInterface {
@@ -17,9 +18,9 @@ export interface ModelingOptionsInterface {
   modifiedEntitiesArray:  any[],
   entityPropertiesNamesArray: string[],
   view: string,
-  selectedEntity?: string
+  selectedEntity?: string | undefined,
+  openSidePanelInGraphView: boolean
 }
-
 export interface Definition {
   name: string,
   primaryKey?: string,

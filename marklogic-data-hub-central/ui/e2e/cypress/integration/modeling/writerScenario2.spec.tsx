@@ -4,6 +4,7 @@ import modelPage from "../../support/pages/model";
 import {
   entityTypeModal,
   entityTypeTable,
+  graphViewSidePanel,
   propertyModal,
   propertyTable,
   structuredTypeModal
@@ -371,5 +372,18 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
     confirmationModal.getDeleteEntityRelationshipText().should("not.exist");
     entityTypeTable.getEntity("Concept").should("not.exist");
+  });
+
+  it("Delete an entity from graph view", {defaultCommandTimeout: 120000}, () => {
+    modelPage.getAddEntityButton().should("exist").click();
+    entityTypeModal.newEntityName("TestEntity");
+    entityTypeModal.newEntityDescription("An test entity for User");
+    entityTypeModal.getAddButton().click();
+    entityTypeTable.viewEntityInGraphView("TestEntity").click({force: true});
+
+    graphViewSidePanel.getDeleteIcon("TestEntity").click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    confirmationModal.getDeleteEntityText().should("not.exist");
+    graphViewSidePanel.getSelectedEntityHeading("TestEntity").should("not.exist");
   });
 });

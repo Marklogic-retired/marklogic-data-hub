@@ -18,12 +18,19 @@ describe("Graph View Component", () => {
   });
 
   const withEntityAs = (entityName) => {
-    let isModifiedUpdated = {...isModified, modelingOptions: {... isModified.modelingOptions, selectedEntity: entityName}};
+    let entityTypeNamesArrayUpdated = [...isModified.modelingOptions.entityTypeNamesArray,
+      {
+        name: entityName,
+        entityTypeId: `http://marklogic.com/example/${entityName}-0.0.1/${entityName}`
+      }
+    ];
+    let isModifiedUpdated = {...isModified, modelingOptions: {...isModified.modelingOptions, selectedEntity: entityName, entityTypeNamesArray: entityTypeNamesArrayUpdated}};
     return (<ModelingContext.Provider value={isModifiedUpdated}>
       <GraphView
         entityTypes={getEntityTypes}
         canReadEntityModel={true}
         canWriteEntityModel={true}
+        deleteEntityType={jest.fn()}
       />
     </ModelingContext.Provider>
     );
@@ -31,29 +38,25 @@ describe("Graph View Component", () => {
 
   test("can view and close side panel for a selected entity within graph view", async () => {
 
-    const {getByTestId, getByLabelText, queryByLabelText, queryByTestId, rerender} =  render(
+    const mockDeleteEntity = jest.fn();
+
+    const {getByTestId, getByLabelText, queryByLabelText, rerender} =  render(
       <ModelingContext.Provider value={isModified}>
         <GraphView
           entityTypes={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
+          deleteEntityType={mockDeleteEntity}
         />
       </ModelingContext.Provider>
     );
 
     expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
 
-    //Trying to locate nodes and edges within canvas
-    //let productEntityPositions = window.graphVisApi.getNodePositions("Product");
-    //let canvas: any = document.getElementById("graphVis");
-    //userEvent.click(canvas, { clientX: productEntityPositions["Product"].x, clientY: productEntityPositions["Product"].y });
-    //let productEntity = getByTestId("Product-entityNode");
-    //expect(isModified.setSelectedEntity).toBeCalledWith("Product");
-
     rerender(withEntityAs("Product"));
+    await wait(() => expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument());
 
     //Verify side panel content
-    expect(getByLabelText("Product-selectedEntity")).toBeInTheDocument();
 
     userEvent.hover(getByTestId("Product-delete"));
     await wait(() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
@@ -64,10 +67,6 @@ describe("Graph View Component", () => {
 
     //Closing side panel
     userEvent.click(getByLabelText("closeGraphViewSidePanel"));
-    expect(queryByLabelText("Product-selectedEntity")).not.toBeInTheDocument();
-    expect(queryByTestId("Product-delete")).not.toBeInTheDocument();
-    expect(queryByLabelText("closeGraphViewSidePanel")).not.toBeInTheDocument();
-    expect(queryByLabelText("propertiesTabInSidePanel")).not.toBeInTheDocument();
-    expect(queryByLabelText("entityTypeTabInSidePanel")).not.toBeInTheDocument();
+    await wait(() => expect(isModified.closeSidePanelInGraphView).toHaveBeenCalledTimes(1));
   });
 });

@@ -1,4 +1,4 @@
-import React, {CSSProperties, useContext, useEffect, useState} from "react";
+import React, {CSSProperties, useContext} from "react";
 import {AutoComplete, Dropdown, Icon, Menu} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
@@ -10,27 +10,18 @@ import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import SplitPane from "react-split-pane";
 import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
-import {defaultModelingView} from "../../../config/modeling.config";
 import GraphVis from "./graph-vis/graph-vis";
 
 type Props = {
   entityTypes: any;
   canReadEntityModel: any;
   canWriteEntityModel: any;
+  deleteEntityType: (entityName: string) => void;
 };
 
 const GraphView: React.FC<Props> = (props) => {
 
-  const [viewSidePanel, setViewSidePanel] = useState(false);
-  const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
-
-  useEffect(() => {
-    if (modelingOptions.view === defaultModelingView && modelingOptions.selectedEntity) {
-      if (!viewSidePanel) {
-        setViewSidePanel(true);
-      }
-    }
-  }, [modelingOptions.selectedEntity]);
+  const {modelingOptions, setSelectedEntity, closeSidePanelInGraphView} = useContext(ModelingContext);
 
   const publishIconStyle: CSSProperties = {
     width: "20px",
@@ -102,13 +93,12 @@ const GraphView: React.FC<Props> = (props) => {
     setSelectedEntity(entityName);
   };
 
-  const onCloseSidePanel = () => {
-    setViewSidePanel(false);
-    setSelectedEntity(undefined);
+  const onCloseSidePanel = async () => {
+    closeSidePanelInGraphView();
   };
 
   const deleteEntityClicked = (selectedEntity) => {
-    //Logic will be added here for deletion of entity.
+    props.deleteEntityType(selectedEntity);
   };
 
   const graphViewMainPanel =
@@ -118,13 +108,6 @@ const GraphView: React.FC<Props> = (props) => {
         {headerButtons}
       </div>
       <div>
-        {//Just a placeholder for actual graph view. Below code should be removed.
-          // <ul>{props.entityTypes && props.entityTypes?.map((el) => <li data-testid={`${el.entityName}-entityNode`} key={el.entityName} style={{ color: "blue", cursor: "pointer" }} onClick={(e) => handleEntitySelection(el.entityName)}>{el.entityName}</li>)}
-          // </ul>
-          //--------------//
-        }
-      </div>
-      <div>
         <GraphVis
           entityTypes={props.entityTypes}
           handleEntitySelection={handleEntitySelection}
@@ -132,30 +115,38 @@ const GraphView: React.FC<Props> = (props) => {
       </div>
     </div>;
 
+  const entityTypeExistsInDatabase = (entityName, entityTypesArray) => {
+    let entityValidation = entityTypesArray.find((obj) => obj.name === entityName);
+    return !entityValidation ? false : true;
+  };
 
+  const isSelectedEntityTypeValid = () => {
+    return modelingOptions.selectedEntity && entityTypeExistsInDatabase(modelingOptions.selectedEntity, modelingOptions.entityTypeNamesArray);
+  };
 
   return (
-    !viewSidePanel ? graphViewMainPanel :
-      <SplitPane
-        style={splitStyle}
-        paneStyle={splitPaneStyles.pane}
-        allowResize={true}
-        resizerClassName={styles.resizerStyle}
-        pane1Style={splitPaneStyles.pane1}
-        pane2Style={splitPaneStyles.pane2}
-        split="vertical"
-        primary="first"
-        defaultSize="70%"
-      >
-        {graphViewMainPanel}
-        <GraphViewSidePanel
-          entityTypes={props.entityTypes}
-          onCloseSidePanel={onCloseSidePanel}
-          deleteEntityClicked={deleteEntityClicked}
-          canReadEntityModel={props.canReadEntityModel}
-          canWriteEntityModel={props.canWriteEntityModel}
-        />
-      </SplitPane>
+    !modelingOptions.openSidePanelInGraphView ? graphViewMainPanel :
+      (isSelectedEntityTypeValid() ?
+        <SplitPane
+          style={splitStyle}
+          paneStyle={splitPaneStyles.pane}
+          allowResize={true}
+          resizerClassName={styles.resizerStyle}
+          pane1Style={splitPaneStyles.pane1}
+          pane2Style={splitPaneStyles.pane2}
+          split="vertical"
+          primary="first"
+          defaultSize="70%"
+        >
+          {graphViewMainPanel}
+          <GraphViewSidePanel
+            entityTypes={props.entityTypes}
+            onCloseSidePanel={onCloseSidePanel}
+            deleteEntityClicked={deleteEntityClicked}
+            canReadEntityModel={props.canReadEntityModel}
+            canWriteEntityModel={props.canWriteEntityModel}
+          />
+        </SplitPane> : graphViewMainPanel)
   );
 };
 
