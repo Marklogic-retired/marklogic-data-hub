@@ -320,7 +320,7 @@ void BuildDatahub(){
 }
 
 void dh5Example() {
-    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle; '
     copyRPM 'Release','10.0-6'
     script{
         props = readProperties file:'data-hub/pipeline.properties';
@@ -344,7 +344,7 @@ void dh5Example() {
 }
 
 void dhCustomHook() {
-                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -367,7 +367,7 @@ void dhCustomHook() {
 }
 
 void mappingExample() {
-                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -392,7 +392,7 @@ void mappingExample() {
 }
 
 void smartMastering() {
-                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
