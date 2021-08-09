@@ -90,10 +90,36 @@ public class HubClientConfig {
     // Defines functions for consuming properties from a PropertySource
     private Map<String, Consumer<String>> propertyConsumerMap;
 
+    /**
+     * Constructor that applies this class's default property values, though that notably does not include values for
+     * username and password.
+     */
     public HubClientConfig() {
         applyDefaultPropertyValues();
     }
 
+    /**
+     * Convenience constructor for the common scenario of connecting to a DHF instance that requires a username and
+     * password for authentication.
+     *
+     * @param host
+     * @param username
+     * @param password
+     */
+    public HubClientConfig(String host, String username, String password) {
+        this();
+        Properties props = new Properties();
+        if (host != null) {
+            props.setProperty("mlHost", host);
+        }
+        props.setProperty("mlUsername", username);
+        props.setProperty("mlPassword", password);
+        applyProperties(props);
+    }
+
+    /**
+     * @param props defines a set of properties that will override that default values of this class's properties
+     */
     public HubClientConfig(Properties props) {
         this();
         applyProperties(props);
