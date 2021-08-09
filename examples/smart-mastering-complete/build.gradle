@@ -8,7 +8,7 @@ buildscript {
     dependencies {
         classpath "net.saliman:gradle-properties-plugin:1.5.1"
         if (project.hasProperty("testing")) {
-            classpath "com.marklogic:ml-data-hub:5.5-SNAPSHOT"
+            classpath "com.marklogic:ml-data-hub:5.6-SNAPSHOT"
         } else {
             classpath "com.marklogic:ml-data-hub:5.5.0"
         }

@@ -22,7 +22,11 @@ subprojects {
         // in the ./marklogic-data-hub and ./marklogic-data-hub-central projects. So we have to specify this
         // repository here so we can make use of allowInsecureProtocol.
         maven {
-            url nodeDistributionBaseUrl
+            url nodeDistributionBaseUrl;
+            allowInsecureProtocol = true
+        }
+        maven {
+            url publishUrl;
             allowInsecureProtocol = true
         }
     }
