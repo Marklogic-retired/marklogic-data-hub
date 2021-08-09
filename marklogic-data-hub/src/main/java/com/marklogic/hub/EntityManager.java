@@ -55,21 +55,4 @@ public interface EntityManager {
      * @return - true if successfully saved, false if it did not
      */
     boolean savePii();
-
-    HubEntity getEntityFromProject(String entityName);
-
-    HubEntity getEntityFromProject(String entityName, String version);
-
-    HubEntity getEntityFromProject(String entityName, Boolean extendSubEntities);
-
-    HubEntity getEntityFromProject(String entityName, String version, Boolean extendSubEntities);
-
-    List<HubEntity> getEntities();
-
-    List<HubEntity> getEntities(Boolean extendSubEntities);
-
-    @Deprecated // since DHF 5.3.0; use ModelsService instead
-    HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException;
-
-    void deleteEntity(String entity) throws IOException;
 }

@@ -88,25 +88,6 @@ public class MappingManagerTest extends AbstractHubCoreTest {
     }
 
     @Test
-    public void getMappingFromJSON() {
-        copyTestMap();
-        //Now let's get the same mapping, but out of band off disk as JSON
-        String json = mappingManager.getMappingAsJSON(mappingName);
-
-        logger.debug(json);
-        // is this appropriate, a length check on the json?
-        //assertTrue(json.length() == 253);
-        //now let's see if this parses properly
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode node = mapper.readTree(json);
-            assertTrue(node.get("name").asText().equalsIgnoreCase(mappingName));
-        } catch (IOException e) {
-            fail("Can not parse json response.");
-        }
-    }
-
-    @Test
     public void updateMapping() {
         copyTestMap();
         //Get the mapping, update it, and save the new version back

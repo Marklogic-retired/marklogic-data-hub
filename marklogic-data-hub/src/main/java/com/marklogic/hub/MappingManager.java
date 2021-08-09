@@ -32,36 +32,11 @@ public interface MappingManager {
     String MAPPING_FILE_EXTENSION = ".mapping.json";
 
     /**
-     * Grabs the Mapping Manager instance and uses the given hubConfig
-     * @param hubConfig - a hubConfig object for the mappingmanager to use
-     * @return A mapping manager instance
-     */
-    //static MappingManager getMappingManager(HubConfig hubConfig) {
-        //return MappingManagerImpl.getInstance(hubConfig);
-    //};
-
-    /**
      * Creates a mapping given a string name
      * @param mappingName - the base name of the mapping you want to create
      * @return - a Mapping object
      */
     Mapping createMapping(String mappingName);
-
-    /**
-     * Creates a mapping given a string name
-     * @param mappingName - the base name of the mapping you want to create
-     * @param entityName - the name of the entity being mapped to
-     * @return - a Mapping object
-     */
-    Mapping createMapping(String mappingName, String entityName);
-
-     /**
-     * Creates a mapping from a given JSON string
-     * @param json - string representation of json
-     * @return - a Mapping object
-     * @throws IOException - thrown if mapping file cannot be found/read off disk
-     */
-    Mapping createMappingFromJSON(String json) throws IOException;
 
     /**
      * Creates a mapping from a given JsonNode
@@ -118,21 +93,4 @@ public interface MappingManager {
      * @return Mapping object for the defined map
      */
     Mapping getMapping(String mappingName, int version, boolean createIfNotExisted);
-
-    /**
-     * Returns a mapping based on the provided name as JSON string
-     * @param mappingName - name of the mapping
-     * @return string json respresentation of the mapping object
-     */
-    String getMappingAsJSON(String mappingName);
-
-    /**
-     * Returns a mapping based on the provided name as JSON string
-     * @param mappingName - name of the mapping
-     * @param version - the version number of the mapping
-     * @param createIfNotExisted - create mapping object if true, otherwise throws exception
-     * @return string json respresentation of the mapping object
-     */
-    String getMappingAsJSON(String mappingName, int version, boolean createIfNotExisted);
-
 }

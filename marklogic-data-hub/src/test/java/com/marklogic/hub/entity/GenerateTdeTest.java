@@ -4,7 +4,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.expression.PlanBuilder;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.row.RowManager;
@@ -20,7 +19,7 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
+public class GenerateTdeTest extends AbstractHubCoreTest {
 
     private static final String TDE_COLLECTION = "http://marklogic.com/xdmp/tde";
 
@@ -56,11 +55,11 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
         GenericDocumentManager docMgr = finalClient.newDocumentManager();
         DocumentWriteSet writeSet = docMgr.newWriteSet();
-        byte[] doc1Bytes = Files.readAllBytes(Paths.get(EntityServicesAlignmentTest.class.getClassLoader()
+        byte[] doc1Bytes = Files.readAllBytes(Paths.get(GenerateTdeTest.class.getClassLoader()
             .getResource("es-alignment-test/Order.instance.xml").toURI()));
         String doc1Str = new String(doc1Bytes, StandardCharsets.UTF_8);
         writeSet.add("/Order.instance.xml", new StringHandle(doc1Str).withFormat(Format.XML));
-        byte[] doc2Bytes = Files.readAllBytes(Paths.get(EntityServicesAlignmentTest.class.getClassLoader()
+        byte[] doc2Bytes = Files.readAllBytes(Paths.get(GenerateTdeTest.class.getClassLoader()
             .getResource("es-alignment-test/Order.instance.json").toURI()));
         String doc2Str = new String(doc2Bytes, StandardCharsets.UTF_8);
         writeSet.add("/Order.instance.json", new StringHandle(doc2Str).withFormat(Format.JSON));

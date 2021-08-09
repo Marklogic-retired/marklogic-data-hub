@@ -20,13 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
@@ -50,40 +47,22 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
     protected HubConfig hubConfig;
     @Autowired
     private Scaffolding scaffolding;
-    @Autowired
-    private EntityManager entityManager;
 
     public MappingManagerImpl() {}
 
     public MappingManagerImpl(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.entityManager = new EntityManagerImpl(this.hubConfig);
         this.scaffolding = new ScaffoldingImpl(this.hubConfig);
     }
 
     @Override public Mapping createMapping(String mappingName) {
-        return createMapping(mappingName, null);
-    }
-
-    @Override public Mapping createMapping(String mappingName, String entityName) {
         try {
             getMapping(mappingName);
             throw new DataHubProjectException("Mapping with that name already exists");
         }
         catch (Exception e) {
-            if (entityName != null) {
-                HubEntity entity = entityManager.getEntityFromProject(entityName);
-                return Mapping.create(mappingName, entity);
-            } else {
-                return Mapping.create(mappingName);
-            }
+            return Mapping.create(mappingName);
         }
-    }
-
-    @Override public Mapping createMappingFromJSON(String json) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readValue(json, JsonNode.class);
-        return mapper.treeToValue(node, MappingImpl.class);
     }
 
     @Override public Mapping createMappingFromJSON(JsonNode json) {
@@ -216,25 +195,6 @@ public class MappingManagerImpl extends LoggingObject implements MappingManager 
         } else {
             throw new DataHubProjectException("Mapping not found in project: " + mappingName);
         }
-    }
-
-
-    @Override public String getMappingAsJSON(String mappingName) {
-        Mapping mapping = getMapping(mappingName);
-        String jsonMap = null;
-        if(mapping != null){
-            jsonMap = mapping.serialize();
-        }
-        return jsonMap;
-    }
-
-    @Override public String getMappingAsJSON(String mappingName, int version, boolean createIfNotExisted) {
-        Mapping mapping = getMapping(mappingName, version, createIfNotExisted);
-        String jsonMap = null;
-        if(mapping != null){
-            jsonMap = mapping.serialize();
-        }
-        return jsonMap;
     }
 
     private Path getMappingDirPath(String mappingName){

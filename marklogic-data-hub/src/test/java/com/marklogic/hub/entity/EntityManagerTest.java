@@ -31,11 +31,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EntityManagerTest extends AbstractHubCoreTest {
 
@@ -135,23 +133,6 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         assertJsonEqual(getResource("entity-manager-test/db-config2.json"), FileUtils.readFileToString(dir.resolve("final-database.json").toFile()), true);
         assertJsonEqual(getResource("entity-manager-test/db-config2.json"), FileUtils.readFileToString(dir.resolve("staging-database.json").toFile()), true);
-    }
-
-    @Test
-    public void doNotReturnExternalReferencesInExpandedEntities() {
-        installEntities();
-        Path entitiesDir = getHubProject().getHubEntitiesDir();
-        FileUtil.copy(getResourceStream("scaffolding-test/ManagerWithEmployeeRef.entity.json"), entitiesDir.resolve("ManagerWithEmployeeRef.entity.json").toFile());
-
-        HubEntity hubEntity = entityManager.getEntityFromProject("ManagerWithEmployeeRef", true);
-
-        AtomicBoolean employeesFound = new AtomicBoolean(false);
-        hubEntity.getDefinitions().getDefinitions().get("ManagerWithEmployeeRef").getProperties().forEach((propType) -> {
-            if ("employees".equals(propType.getName())) {
-                employeesFound.set(true);
-            }
-        });
-        assertFalse(employeesFound.get(), "Employees property should not exist");
     }
 
     @Test
