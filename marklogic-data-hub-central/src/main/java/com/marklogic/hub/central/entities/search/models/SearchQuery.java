@@ -16,6 +16,8 @@
  */
 package com.marklogic.hub.central.entities.search.models;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +33,34 @@ public class SearchQuery {
     public SearchQuery() {
         this.query = new DocSearchQueryInfo();
         this.propertiesToDisplay = new ArrayList<>();
+    }
+
+    /**
+     * @return combination of the user's search text plus custom constraints plus sort operators
+     */
+    public String calculateSearchCriteriaWithSortOperator() {
+        final StringBuilder builder = new StringBuilder(this.query.calculateSearchCriteria());
+
+        final Optional<List<SortOrder>> sortOrders = getSortOrder();
+
+        // When sorting on a property, it is assumed there's one and only one entity type selected
+        final String selectedEntityType = this.query.getSingleSelectedEntityType();
+        if (selectedEntityType != null) {
+            sortOrders.ifPresent(sortOrderList -> sortOrderList.forEach(sortOrder -> {
+                String sortOperator = "sort";
+                String stateName = selectedEntityType + "_" + sortOrder.getPropertyName().concat(StringUtils.capitalize(sortOrder.getSortDirection()));
+                builder.append(" ").append(sortOperator).append(":").append(stateName);
+            }));
+        }
+
+        return StringUtils.trim(builder.toString());
+    }
+
+    public void addSortOrder(String propertyName, String direction) {
+        if (this.sortOrder == null) {
+            this.sortOrder = new ArrayList<>();
+        }
+        this.sortOrder.add(new SortOrder(propertyName, direction));
     }
 
     public DocSearchQueryInfo getQuery() {
@@ -77,6 +107,14 @@ public class SearchQuery {
 
         private String propertyName;
         private String sortDirection;
+
+        public SortOrder() {
+        }
+
+        public SortOrder(String propertyName, String sortDirection) {
+            this.propertyName = propertyName;
+            this.sortDirection = sortDirection;
+        }
 
         public String getPropertyName() {
             return propertyName;

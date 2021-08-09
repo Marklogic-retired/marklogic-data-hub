@@ -103,56 +103,6 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         assertNull(new EntitySearchManager(getHubClient()).search(searchQuery), "Entity Model with name Some-entityType doesn't exist ");
     }
 
-    @Test
-    public void testSortCriteria() {
-        EntitySearchManager entitySearchManager = new EntitySearchManager(getHubClient());
-        SearchQuery query = new SearchQuery();
-        DocSearchQueryInfo info = new DocSearchQueryInfo();
-        info.setEntityTypeIds(Arrays.asList("Customer"));
-        query.setQuery(info);
-
-        SearchQuery.SortOrder sortOrder = new SearchQuery.SortOrder();
-        sortOrder.setPropertyName("customerId");
-        sortOrder.setSortDirection("ascending");
-        List<SearchQuery.SortOrder> sortOrderList = new ArrayList<>();
-        sortOrderList.add(sortOrder);
-        query.setSortOrder(sortOrderList);
-
-        entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertEquals("sort:Customer_customerIdAscending", query.getQuery().getSearchText());
-
-        query.getQuery().setSearchText("");
-        sortOrderList.get(0).setSortDirection("descending");
-        entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertEquals("sort:Customer_customerIdDescending", query.getQuery().getSearchText());
-
-        query.getQuery().setSearchText("Jane");
-        sortOrderList.get(0).setSortDirection("descending");
-        entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertEquals("Jane sort:Customer_customerIdDescending", query.getQuery().getSearchText());
-
-        query.getQuery().setSearchText("Jane");
-        sortOrderList.get(0).setSortDirection("someOtherValue");
-        entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertEquals("Jane sort:Customer_customerIdDescending", query.getQuery().getSearchText());
-
-        query.getQuery().setSearchText("Jane");
-        sortOrderList.get(0).setSortDirection("descending");
-        sortOrder = new SearchQuery.SortOrder();
-        sortOrder.setPropertyName("customerId");
-        sortOrder.setSortDirection("ascending");
-        sortOrderList.add(sortOrder);
-        entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertEquals("Jane sort:Customer_customerIdDescending sort:Customer_customerIdAscending", query.getQuery().getSearchText());
-
-        info.setEntityTypeIds(null);
-        query.getQuery().setSearchText("Jane");
-        entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertEquals("Jane sort:_customerIdDescending sort:_customerIdAscending", query.getQuery().getSearchText(),
-            "If there's somehow no entity type specified, then an error shouldn't be thrown; we should just have sort " +
-                "state names that don't correspond to actual states, which will result in no error but no sorting either");
-    }
-
     /**
      * This is using XML instances with namespaces to ensure that path expressions in sort operator states work
      * correctly. Will soon add a JSON test once we have sort operators that are entity-type-specific.

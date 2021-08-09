@@ -238,64 +238,77 @@ declare function is-explorer-constraint-name($name as xs:string) as xs:boolean
 (:
 Defined in a separate function so that these can be referenced when validating entity names.
 :)
-declare private function build-static-explorer-constraints()
+declare private function build-static-explorer-constraints() as element(search:constraint)+
 {
-  (
-    <search:constraint name="Collection">
-      <search:collection>
-        <search:facet-option>limit=25</search:facet-option>
-        <search:facet-option>frequency-order</search:facet-option>
-        <search:facet-option>descending</search:facet-option>
-      </search:collection>
-    </search:constraint>,
-    <search:constraint name="createdByJob">
-      <search:range facet="false">
-        <search:field name="datahubCreatedByJob"/>
-      </search:range>
-    </search:constraint>,
-    <search:constraint name="createdByStep">
-      <search:range>
-        <search:field name="datahubCreatedByStep"/>
-        <search:facet-option>limit=25</search:facet-option>
-        <search:facet-option>frequency-order</search:facet-option>
-        <search:facet-option>descending</search:facet-option>
-      </search:range>
-    </search:constraint>,
-    <search:constraint name="createdByJobWord">
-      <search:word>
-        <search:field name="datahubCreatedByJob"/>
-      </search:word>
-    </search:constraint>,
-    <search:constraint name="createdOnRange">
-      <search:range facet="false">
-        <search:field name="datahubCreatedOn"/>
-      </search:range>
-    </search:constraint>,
-    <search:constraint name="createdInFlowRange">
-      <search:range>
-        <search:field name="datahubCreatedInFlow"/>
-        <search:facet-option>limit=25</search:facet-option>
-        <search:facet-option>frequency-order</search:facet-option>
-        <search:facet-option>descending</search:facet-option>
-      </search:range>
-    </search:constraint>,
-    <search:constraint name="sourceName">
-      <search:range>
-        <search:field name="datahubSourceName"/>
-        <search:facet-option>limit=25</search:facet-option>
-        <search:facet-option>frequency-order</search:facet-option>
-        <search:facet-option>descending</search:facet-option>
-      </search:range>
-    </search:constraint>,
-    <search:constraint name="sourceType">
-      <search:range>
-        <search:field name="datahubSourceType"/>
-        <search:facet-option>limit=25</search:facet-option>
-        <search:facet-option>frequency-order</search:facet-option>
-        <search:facet-option>descending</search:facet-option>
-      </search:range>
-    </search:constraint>
-  )
+  (: This wrapper element is used to avoid repeating the "search:" prefix over and over :)
+  <wrapper xmlns="http://marklogic.com/appservices/search">
+    <constraint name="Collection">
+      <collection>
+        <facet-option>limit=25</facet-option>
+        <facet-option>frequency-order</facet-option>
+        <facet-option>descending</facet-option>
+      </collection>
+    </constraint>
+    <constraint name="entityType">
+      <custom facet="false">
+        <parse apply="parse" ns="http://marklogic.com/data-hub/entities/constraint/entityType"
+          at="/data-hub/5/entities/constraint/entityType.xqy" />
+      </custom>
+    </constraint>
+    <constraint name="hideHubArtifacts">
+      <custom facet="false">
+        <parse apply="parse" ns="http://marklogic.com/data-hub/entities/constraint/hideHubArtifacts"
+          at="/data-hub/5/entities/constraint/hideHubArtifacts.xqy" />
+      </custom>
+    </constraint>
+    <constraint name="createdByJob">
+      <range facet="false">
+        <field name="datahubCreatedByJob"/>
+      </range>
+    </constraint>
+    <constraint name="createdByStep">
+      <range>
+        <field name="datahubCreatedByStep"/>
+        <facet-option>limit=25</facet-option>
+        <facet-option>frequency-order</facet-option>
+        <facet-option>descending</facet-option>
+      </range>
+    </constraint>
+    <constraint name="createdByJobWord">
+      <word>
+        <field name="datahubCreatedByJob"/>
+      </word>
+    </constraint>
+    <constraint name="createdOnRange">
+      <range facet="false">
+        <field name="datahubCreatedOn"/>
+      </range>
+    </constraint>
+    <constraint name="createdInFlowRange">
+      <range>
+        <field name="datahubCreatedInFlow"/>
+        <facet-option>limit=25</facet-option>
+        <facet-option>frequency-order</facet-option>
+        <facet-option>descending</facet-option>
+      </range>
+    </constraint>
+    <constraint name="sourceName">
+      <range>
+        <field name="datahubSourceName"/>
+        <facet-option>limit=25</facet-option>
+        <facet-option>frequency-order</facet-option>
+        <facet-option>descending</facet-option>
+      </range>
+    </constraint>
+    <constraint name="sourceType">
+      <range>
+        <field name="datahubSourceType"/>
+        <facet-option>limit=25</facet-option>
+        <facet-option>frequency-order</facet-option>
+        <facet-option>descending</facet-option>
+      </range>
+    </constraint>
+  </wrapper>/element()
 };
 
 declare %private function hent:build-sort-operator(

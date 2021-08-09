@@ -38,7 +38,6 @@ import com.marklogic.hub.central.entities.search.impl.JobRangeFacetHandler;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
-import com.marklogic.hub.central.managers.ModelManager;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -52,24 +51,10 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class EntitySearchManager {
-
-    private static final String MASTERING_AUDIT_COLLECTION_NAME = "mdm-auditing";
-    private static final String[] IGNORED_SM_COLLECTION_SUFFIX = {"auditing", "notification"};
-    private static final List<String> ARTIFACT_COLLECTION_NAMES = Arrays.asList(
-            "http://marklogic.com/data-hub/flow",
-            "http://marklogic.com/data-hub/step-definition",
-            "http://marklogic.com/data-hub/steps",
-            "http://marklogic.com/entity-services/models",
-            "http://marklogic.com/data-hub/mappings"
-    );
 
     private static final String CSV_CONTENT_TYPE = "text/csv";
     private static final String CSV_FILE_EXTENSION = ".csv";
@@ -109,17 +94,13 @@ public class EntitySearchManager {
         try {
             //buildQuery includes datetime conversion which could cause DateTimeException or DateTimeParseException
             StructuredQueryDefinition queryDefinition = buildQuery(queryMgr, searchQuery);
-            buildSearchTextWithSortOperator(searchQuery);
-            queryDefinition.setCriteria(searchQuery.getQuery().getSearchText());
+            queryDefinition.setCriteria(searchQuery.calculateSearchCriteriaWithSortOperator());
 
-            // If an entity has been selected, then apply this transform
-            String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
-            if (entityTypeCollections != null && entityTypeCollections.length > 0) {
-                // We have some awkwardness here where the input is 'entityName', but as of 5.3.0, the "entityTypeIds"
-                // property is capturing entity names, which are expected to double as collection names as well
+            List<String> selectedEntityTypes = searchQuery.getQuery().getSelectedEntityTypes();
+            if (!selectedEntityTypes.isEmpty()) {
                 ServerTransform searchResultsTransform = new ServerTransform("hubEntitySearchTransform");
-                if (entityTypeCollections.length == 1) {
-                    searchResultsTransform.put("entityName", entityTypeCollections);
+                if (selectedEntityTypes.size() == 1) {
+                    searchResultsTransform.put("entityName", selectedEntityTypes.get(0));
                 }
                 searchResultsTransform.put("propertiesToDisplay", searchQuery.getPropertiesToDisplay());
                 queryDefinition.setResponseTransform(searchResultsTransform);
@@ -150,21 +131,7 @@ public class EntitySearchManager {
         queryMgr.setPageLength(searchQuery.getPageLength());
         StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
 
-        // Creating queries object
         List<StructuredQueryDefinition> queries = new ArrayList<>();
-
-        final String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
-        // Filtering search results for docs related to an entity
-        String[] excludedCollections = getExcludedCollections(searchQuery);
-        StructuredQueryDefinition finalCollQuery;
-        if (entityTypeCollections != null && entityTypeCollections.length > 0) {
-            finalCollQuery = queryBuilder.andNot(queryBuilder.collection(entityTypeCollections), queryBuilder.collection(excludedCollections));
-        } else {
-            finalCollQuery = queryBuilder.not(queryBuilder.collection(excludedCollections));
-        }
-        queries.add(finalCollQuery);
-
-        // Filtering by facets
         searchQuery.getQuery().getSelectedFacets().forEach((facetType, data) -> {
             // If a property is not a Hub property, then it is an Entity Property
             StructuredQueryDefinition facetDef = facetHandlerMap.getOrDefault(facetType, new EntityPropertyFacetHandler(facetType))
@@ -186,24 +153,6 @@ public class EntitySearchManager {
         facetHandlerMap.put(Constants.CREATED_ON_CONSTRAINT_NAME, new CreatedOnFacetHandler());
     }
 
-    private String[] getExcludedCollections(SearchQuery searchQuery) {
-        List<String> excludedCol = new ArrayList<>();
-        String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
-        if (entityTypeCollections != null && entityTypeCollections.length > 0) {
-            searchQuery.getQuery().getEntityTypeIds().forEach(name -> {
-                for (String suffix : IGNORED_SM_COLLECTION_SUFFIX) {
-                    excludedCol.add(String.format("sm-%s-%s", name, suffix));
-                }
-            });
-            excludedCol.add(MASTERING_AUDIT_COLLECTION_NAME);
-        }
-
-        if (searchQuery.getQuery().isHideHubArtifacts()) {
-            excludedCol.addAll(ARTIFACT_COLLECTION_NAMES);
-        }
-        return excludedCol.toArray(new String[0]);
-    }
-
     public void exportById(String queryId, String fileType, Long limit, OutputStream out, HttpServletResponse response) {
         JsonNode queryDocument = EntitySearchService.on(savedQueryDatabaseClient).getSavedQuery(queryId);
         exportByQuery(queryDocument, fileType, limit, out, response);
@@ -223,17 +172,17 @@ public class EntitySearchManager {
         SearchQuery searchQuery = transformToSearchQuery(queryDocument);
         StructuredQueryDefinition structuredQueryDefinition = buildQuery(queryMgr, searchQuery);
 
-        String structuredQuery = structuredQueryDefinition.serialize();
-        String searchText = searchQuery.getQuery().getSearchText();
-        String queryOptions = getQueryOptions(QUERY_OPTIONS);
-        String entityTypeId = getEntityTypeIdForRowExport(queryDocument);
-        List<String> columns = getColumnNamesForRowExport(queryDocument);
-        List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
-        ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
+        final String structuredQuery = structuredQueryDefinition.serialize();
+        final String searchText = searchQuery.getQuery().calculateSearchCriteria();
+        final String queryOptions = getQueryOptions(QUERY_OPTIONS);
+        final String entityTypeId = getEntityTypeIdForRowExport(queryDocument);
+        final List<String> columns = getColumnNamesForRowExport(queryDocument);
+        final List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
+        final ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
 
-        EntitySearchService entitySearchService = EntitySearchService.on(searchDatabaseClient);
         // Exporting directly from Data Service to avoid bug https://bugtrack.marklogic.com/55338 related to namespaced path range indexes
-        Reader export = entitySearchService.exportSearchAsCSV(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
+        Reader export = EntitySearchService.on(searchDatabaseClient)
+            .exportSearchAsCSV(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
         try {
             FileCopyUtils.copy(export, new OutputStreamWriter(out));
         } catch (IOException e) {
@@ -344,26 +293,6 @@ public class EntitySearchManager {
         String timestamp = DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(ZonedDateTime.now().withNano(0));
 
         return FILE_PREFIX + queryInfo + SEPARATOR + timestamp + fileExtension;
-    }
-
-    protected void buildSearchTextWithSortOperator(SearchQuery searchQuery) {
-        StringBuilder searchTextBuilder = new StringBuilder(searchQuery.getQuery().getSearchText());
-        Optional<List<SearchQuery.SortOrder>> sortOrders = searchQuery.getSortOrder();
-
-        DocSearchQueryInfo docQuery = searchQuery.getQuery();
-        // When sorting on a property, it is assumed there's one and only one entity type selected. If no type is
-        // provided somehow, then a sort state name will be built, but it's not going to match anything and thus won't sort
-        final String entityName =
-            docQuery != null && docQuery.getEntityTypeIds() != null && !docQuery.getEntityTypeIds().isEmpty() ?
-            docQuery.getEntityTypeIds().get(0) : "";
-
-        sortOrders.ifPresent(sortOrderList -> sortOrderList.forEach(sortOrder -> {
-            String sortOperator = "sort";
-            String stateName = entityName + "_" + sortOrder.getPropertyName().concat(StringUtils.capitalize(sortOrder.getSortDirection()));
-            searchTextBuilder.append(" ").append(sortOperator).append(":").append(stateName);
-        }));
-
-        searchQuery.getQuery().setSearchText(searchTextBuilder.toString().trim());
     }
 
     private ArrayNode sortOrderToArrayNode(List<SearchQuery.SortOrder> sortOrderList) {
