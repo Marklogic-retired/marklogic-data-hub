@@ -39,6 +39,8 @@ const Modeling: React.FC = () => {
   const [width, setWidth] = React.useState(window.innerWidth);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [showRelationshipModal, toggleRelationshipModal] = useState(true);
+
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.SaveAll);
 
   //Role based access
@@ -90,9 +92,14 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const saveAllEntitiesToServer = async () => {
+  const saveAllEntitiesToServer = async (entitiesArray) => {
     try {
-      const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
+      let response;
+      if (entitiesArray.length > 0) {
+        response = await updateEntityModels(entitiesArray);
+      } else {
+        response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
+      }
       if (response["status"] === 200) {
         await setEntityTypesFromServer();
       }
@@ -100,6 +107,7 @@ const Modeling: React.FC = () => {
       handleError(error);
     } finally {
       clearEntityModified();
+      toggleRelationshipModal(false);
       toggleConfirmModal(false);
     }
   };
@@ -133,7 +141,7 @@ const Modeling: React.FC = () => {
 
   const confirmAction = () => {
     if (confirmType === ConfirmationType.SaveAll) {
-      saveAllEntitiesToServer();
+      saveAllEntitiesToServer([]);
     } else if (confirmType === ConfirmationType.RevertAll) {
       resetAllEntityTypes();
     } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn) {
@@ -398,6 +406,9 @@ const Modeling: React.FC = () => {
               canWriteEntityModel={canWriteEntityModel}
               entityTypes={entityTypes}
               deleteEntityType={getEntityReferences}
+              updateSavedEntity={saveAllEntitiesToServer}
+              relationshipModalVisible={showRelationshipModal}
+              toggleRelationshipModal={toggleRelationshipModal}
             />
           </>
         }

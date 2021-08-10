@@ -405,6 +405,156 @@ export const getEntityTypes = [
   }
 ];
 
+export const entityTypesWithRelationship = [{
+  "entityName": "BabyRegistry",
+  "entityTypeId": "http://marklogic.com/example/BabyRegistry-0.0.1/BabyRegistry",
+  "entityInstanceCount": 0,
+  "model": {
+    "info": {
+      "title": "BabyRegistry",
+      "version": "0.0.1",
+      "baseUri": "http://marklogic.com/example/"
+    },
+    "definitions": {
+      "BabyRegistry": {
+        "primaryKey": "babyRegistryId",
+        "properties": {
+          "babyRegistryId": {
+            "datatype": "integer"
+          },
+          "arrivalDate": {
+            "datatype": "date"
+          },
+          "ownedBy": {
+            "datatype": "string",
+            "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+            "joinPropertyName": "customerId"
+          }
+        }
+      }
+    }
+  }
+},
+{
+  "entityName": "Customer",
+  "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
+  "entityInstanceCount": 0,
+  "model": {
+    "info": {
+      "title": "Customer",
+      "version": "0.0.1",
+      "baseUri": "http://example.org/"
+    },
+    "definitions": {
+      "Customer": {
+        "required": ["name"],
+        "pii": ["pin"],
+        "primaryKey": "customerId",
+        "properties": {
+          "customerId": {
+            "datatype": "integer",
+            "sortable": true
+          },
+          "name": {
+            "datatype": "string",
+            "description": "This has a case-insensitive collation for the match queries that use range indexes",
+            "collation": "http://marklogic.com/collation//S2",
+            "facetable": true,
+            "sortable": true
+          },
+          "email": {
+            "datatype": "string",
+            "description": "This has a case-insensitive collation for the match queries that use range indexes",
+            "collation": "http://marklogic.com/collation//S2",
+            "facetable": true
+          },
+          "pin": {
+            "datatype": "integer",
+            "facetable": true,
+            "sortable": true
+          },
+          "nicknames": {
+            "datatype": "array",
+            "description": "Example of a multi-value property of simple values",
+            "items": {
+              "datatype": "string"
+            }
+          },
+          "shipping": {
+            "datatype": "array",
+            "description": "Example of a multi-value property of structured values",
+            "items": {
+              "$ref": "#/definitions/Address"
+            }
+          },
+          "billing": {
+            "description": "Example of a single-value structured property",
+            "$ref": "#/definitions/Address"
+          },
+          "birthDate": {
+            "datatype": "date",
+            "facetable": true
+          },
+          "status": {
+            "datatype": "string"
+          },
+          "customerSince": {
+            "datatype": "date"
+          },
+          "orders": {
+            "datatype": "array",
+            "description": "Example of a relationship to another entity type",
+            "items": {
+              "$ref": "http://example.org/Order-0.0.1/Order"
+            }
+          }
+        }
+      },
+      "Address": {
+        "required": [],
+        "pii": [],
+        "elementRangeIndex": [],
+        "rangeIndex": [],
+        "wordLexicon": [],
+        "properties": {
+          "street": {
+            "datatype": "array",
+            "items": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint"
+            }
+          },
+          "city": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "state": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "zip": {
+            "$ref": "#/definitions/Zip"
+          }
+        }
+      },
+      "Zip": {
+        "required": [],
+        "properties": {
+          "fiveDigit": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          },
+          "plusFour": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          }
+        }
+      }
+    }
+  }
+}];
+
+
 export const editEntityPropertyRequest = {"AnotherModel": {
   "primaryKey": "concept_name",
   "required": [
@@ -726,6 +876,16 @@ export const propertyTableEntities = [
     "latestJobId": "b0ee8653-bf8f-4bbd-956b-9a1471137253"
   }
 ];
+
+export const mockRelationshipInfo = {
+  edgeId: "ownedBy-customerId-edge",
+  sourceNodeName: "BabyRegistry",
+  sourceNodeColor: "#e3ebbc",
+  targetNodeName: "Customer",
+  targetNodeColor: "#ecf7fd",
+  relationshipName: "ownedBy",
+  joinPropertyName: "customerId"
+};
 
 export const entityDefinitionsArray = [
   {

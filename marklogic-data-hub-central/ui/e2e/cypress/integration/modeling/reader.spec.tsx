@@ -8,6 +8,7 @@ import {
   graphViewSidePanel,
   propertyModal,
   propertyTable,
+  relationshipModal
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
@@ -162,6 +163,8 @@ describe("Entity Modeling: Reader Role", () => {
   it("can select required entity nodes and edges, within the graph view", () => {
     cy.loginAsDeveloper().withRequest();
     entityTypeTable.viewEntityInGraphView("Person").click({force: true});
+    cy.wait(3000);
+
     //Select an entity node from within the graph view and ensure that side panel opens up
     graphVis.getPositionsOfNodes("Order").then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions["Order"];
@@ -174,10 +177,40 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getDeleteIcon("Order").should("be.visible");
 
 
+    //Verifying relationship modal
+
     //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().trigger("mousemove", edgePosition.x, edgePosition.y));
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
     });
+
+    relationshipModal.getModalHeader().should("be.visible");
+
+    //edit properties should be populated
+    relationshipModal.verifyRelationshipValue("ownedBy");
+    relationshipModal.verifyJoinPropertyValue("customerId");
+    relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
+
+    //modify properties and save
+    relationshipModal.editRelationshipName("usedBy");
+    relationshipModal.toggleCardinality();
+    relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
+    relationshipModal.editJoinProperty("email");
+
+    relationshipModal.confirmationOptions("Save").click({force: true});
+    cy.waitForAsyncRequest();
+    relationshipModal.getModalHeader().should("not.exist");
+
+    //reopen modal to verify changes were saved and persisted
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+    });
+
+    relationshipModal.verifyRelationshipValue("usedBy");
+    relationshipModal.verifyJoinPropertyValue("email");
+    relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
+
+    relationshipModal.confirmationOptions("Cancel").click({force: true});
 
     //Fetch coordinates of all the nodes in the canvas and then use the response to perform an action (in this case, a click)
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {

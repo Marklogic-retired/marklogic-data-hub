@@ -1,0 +1,112 @@
+.relationshipModalContainer {}
+
+.relationshipDisplay {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8%;
+    justify-content: center;
+    padding-bottom: 8%;
+}
+
+.relationshipInput {
+    margin-top: 30px;
+    height: 24px;
+    width: 100%;
+}
+
+.relationshipInputContainer {
+    display: flex;
+    flex-direction: column;
+    width: 120px;
+}
+
+.joinPropertyDropdownContainer {
+    display: flex;
+    flex-direction: column;
+    width: 140px;
+}
+
+.joinPropertyDropdown {
+    margin-top: 30px;
+    width: 100%;
+}
+
+.horizontalLine {
+    pointer-events: none;
+    width: 185px;
+    color: #333333;
+    border-top: 1px solid #333333;
+    margin-top: 41px;
+    margin-left: 0px;
+    margin-right: -14px;
+    z-index: 999;
+}
+
+.cardinalityButton {
+    margin-top: 30px;
+    min-width: 30px;
+    margin-left: -10px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+
+.questionCircle {
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 6px;
+    color: #7F86B5;
+}
+
+.errorIcon {
+    margin-top: 34px;
+    margin-left: 97px;
+    position: absolute;
+    color: #C00;
+}
+
+.headerWarning {
+    padding-right: 10px;
+    color: #7F86B5;
+}
+
+.headerText {
+    color: #CCCCCC;
+}
+
+.deleteIcon {
+    color: #5B69AF;
+    font-size: 24px;
+}
+
+.deleteTooltip {
+    float: left;
+}
+
+.tooltip {
+    width: 150% !important;
+}
+
+.nodeDisplay {
+    display: flex;
+    flex-direction: column;
+}
+
+.nodeLabel {
+    text-align: center;
+    margin-top: -40px;
+    margin-bottom: 20px;
+    color: #CCCCCC;
+}
+
+.entityName {
+    text-align: center;
+}
+
+.oneToManyIcon {
+    padding-bottom: 3px;
+}
+
+.oneToOneIcon {
+    padding-bottom: 3px;
+    // padding-left: 6px;
+    // padding-right: 6px;
+}

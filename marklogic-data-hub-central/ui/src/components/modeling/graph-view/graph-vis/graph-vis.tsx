@@ -7,6 +7,7 @@ import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NodeSvg from "./node-svg";
 import graphConfig from "../../../../config/graph-vis.config";
+import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 
 type Props = {
   entityTypes: any;
@@ -14,6 +15,9 @@ type Props = {
   filteredEntityTypes: any;
   entitySelected: any;
   isEntitySelected: boolean;
+  updateSavedEntity: any;
+  toggleRelationshipModal: any;
+  relationshipModalVisible: any;
 };
 
 // TODO temp hardcoded node data, remove when retrieved from db
@@ -83,6 +87,8 @@ const GraphVis: React.FC<Props> = (props) => {
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   const {modelingOptions} = useContext(ModelingContext);
   let testingMode = true; // Should be used further to handle testing only in non-production environment
+  const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
+  const [selectedRelationship, setSelectedRelationship] = useState<any>({});
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
@@ -107,6 +113,7 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     }
   }, [network, props.isEntitySelected]);
+
 
   useLayoutEffect(() => {
     if (testingMode && network) {
@@ -203,6 +210,10 @@ const GraphVis: React.FC<Props> = (props) => {
     return nodes;
   };
 
+  const onChosen = (values, id, selected, hovering) => {
+    values.color = "#7FADE3";
+  };
+
   const getEdges = () => {
     let edges: any = [];
     props.entityTypes.forEach((e, i) => {
@@ -215,7 +226,37 @@ const GraphVis: React.FC<Props> = (props) => {
             ...graphConfig.defaultEdgeProps,
             from: e.entityName,
             to: parts[parts.length - 1],
-            label: pObj.joinPropertyName
+            label: p,
+            id: p + "-" + pObj.joinPropertyName + "-edge",
+            title: "Edit Relationship",
+            arrows: "to",
+            color: "#666",
+            font: {
+              align: "top",
+            },
+            chosen: {
+              label: onChosen,
+              edge: onChosen,
+              node: false
+            }
+          });
+        } else if (pObj.items?.relatedEntityType) {
+          let parts = pObj.items.relatedEntityType.split("/");
+          edges.push({
+            ...graphConfig.defaultEdgeProps,
+            from: e.entityName,
+            to: parts[parts.length - 1],
+            label: p,
+            id: p + "-" + pObj.items.joinPropertyName + "-edge",
+            title: "Edit Relationship",
+            arrows: "to",
+            color: "#666",
+            font: {align: "top"},
+            chosen: {
+              label: onChosen,
+              edge: onChosen,
+              node: false
+            }
           });
         }
       });
@@ -265,6 +306,26 @@ const GraphVis: React.FC<Props> = (props) => {
         props.handleEntitySelection(nodes[0]);
       }
     },
+    click: (event) => {
+      //if click is on an edge
+      if (event.edges.length > 0 && event.nodes.length < 1) {
+        let connectedNodes = network.getConnectedNodes(event.edges[0]);
+        let sourceNodeName = connectedNodes[0];
+        let targetNodeName = connectedNodes[1];
+        let relationshipInfo = {
+          edgeId: event.edges[0],
+          sourceNodeName: connectedNodes[0],
+          sourceNodeColor: entityMetadata[sourceNodeName] && entityMetadata[sourceNodeName].color ? entityMetadata[sourceNodeName].color : "#cfe3e8",
+          targetNodeName: connectedNodes[1],
+          targetNodeColor: entityMetadata[targetNodeName] && entityMetadata[targetNodeName].color ? entityMetadata[targetNodeName].color : "#cfe3e8",
+          relationshipName: event.edges[0].split("-")[0],
+          joinPropertyName: event.edges[0].split("-")[1]
+        };
+        setSelectedRelationship(relationshipInfo);
+        setOpenRelationshipModal(true);
+      }
+    },
+
     dragStart: (event) => {
       if (physicsEnabled) {
         setPhysicsEnabled(false);
@@ -297,6 +358,16 @@ const GraphVis: React.FC<Props> = (props) => {
         options={options}
         events={events}
         getNetwork={initNetworkInstance}
+      />
+      <AddEditRelationship
+        openRelationshipModal={openRelationshipModal}
+        setOpenRelationshipModal={setOpenRelationshipModal}
+        isEditing={true}
+        relationshipInfo={selectedRelationship}
+        entityTypes={props.entityTypes}
+        updateSavedEntity={props.updateSavedEntity}
+        relationshipModalVisible={props.relationshipModalVisible}
+        toggleRelationshipModal={props.toggleRelationshipModal}
       />
     </div>
   );
