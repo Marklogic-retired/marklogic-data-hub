@@ -105,7 +105,8 @@ publishing {
             password mavenPassword
             }
           }
-          url publishUrl
+            url publishUrl
+            allowInsecureProtocol = true
         }
     }
 }
