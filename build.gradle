@@ -25,10 +25,6 @@ subprojects {
             url nodeDistributionBaseUrl;
             allowInsecureProtocol = true
         }
-        maven {
-            url publishUrl;
-            allowInsecureProtocol = true
-        }
     }
 
     tasks.withType(Test){

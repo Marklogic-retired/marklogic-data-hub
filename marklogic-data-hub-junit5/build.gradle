@@ -101,6 +101,7 @@ publishing {
                 }
             }
             url publishUrl
+            allowInsecureProtocol = true
         }
     }
 }
