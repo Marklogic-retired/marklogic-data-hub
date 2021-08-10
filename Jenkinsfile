@@ -686,6 +686,11 @@ void invokeDhsTestJob(){
 
 }
 
+void invokeDhcceTestJob(){
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+    build job: 'DHCCE/dhcce-test', parameters: [string(name: 'DHF_BRANCH', value: "${BRANCH_NAME}")], propagate: false, wait: false
+}
+
 void postStage(String status){
     println("${STAGE_NAME} " + status)
     def email;
@@ -976,25 +981,24 @@ pipeline{
             }
         }
 
-        stage('dhs-test'){
-            when {
-                expression {return params.regressions}
-                beforeAgent true
-            }
-            agent { label 'dhfLinuxAgent' }
-            steps{timeout(time: 1,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhsTestJob()}
-            }}
-            post {
-                failure{
-                    println("${STAGE_NAME} failed")
-                    sendMail Email,'<h3>${STAGE_NAME} Failed </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch Failed'
-                }}
-        }
+        stage('invoke-external-jobs'){
+         when {expression {return params.regressions}}
+         parallel {
 
-        stage('rh7-singlenode'){
-            when { expression {return params.regressions} }
-            parallel {
+             stage('dhs-test') {
+                 agent { label 'dhfLinuxAgent' }
+                 steps{invokeDhsTestJob()}
+             }
+
+             stage('dhcce-test') {
+                 agent { label 'dhfLinuxAgent' }
+                 steps{invokeDhcceTestJob()}
+             }
+         }}
+
+         stage('rh7-singlenode'){
+         when { expression {return params.regressions} }
+         parallel {
                 stage('rh7-singlenode-9.0-11') {
                 agent {label 'dhfLinuxAgent'}
                 steps{timeout(time: 3,  unit: 'HOURS'){
