@@ -34,46 +34,7 @@ def dhflinuxTests(String mlVersion,String type){
                 }
 
 }
-def dhfCypressE2ETests(String mlVersion, String type){
-    script{
-        copyRPM type,mlVersion
-        env.mlVersion=mlVersion;
-        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-        copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
-        sh(script:'''#!/bin/bash
-                    export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
-                    export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
-                    export M2_HOME=$MAVEN_HOME/bin;
-                    export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;
-                    cd $WORKSPACE;
-                    WAR_NAME=$(basename *central*.war )
-                    cd $WORKSPACE/data-hub;
-                    rm -rf $GRADLE_USER_HOME/caches;
-                    ./gradlew clean;
-                    cd marklogic-data-hub-central/ui/e2e;
-                    chmod +x setup.sh;
-                    ./setup.sh dhs=false mlHost=localhost;
-                    nohup java -jar $WORKSPACE/$WAR_NAME >> nohup.out &
-                    sleep 10s;
-                    mkdir -p output;
-                    docker build . -t cypresstest;
-                    docker run --name cypresstest --env CYPRESS_BASE_URL=http://$HOSTNAME:8080 --env cypress_mlHost=$HOSTNAME cypresstest |& tee output/console.log;
-                    docker cp cypresstest:results output;
-                    docker cp cypresstest:cypress/videos output
-                    mkdir -p ${mlVersion};
-                    mv output ${mlVersion}/;
-                 ''')
-        junit '**/e2e/**/*.xml'
-        def output=readFile "data-hub/marklogic-data-hub-central/ui/e2e/${mlVersion}/output/console.log"
-        def result=false;
-        if(output.contains("npm ERR!")){
-            result=true;
-        }
-        if(result){
-           currentBuild.result='UNSTABLE'
-        }
-    }
-}
+
 def dhfWinTests(String mlVersion, String type){
     script{
         copyMSI type,mlVersion;
@@ -686,6 +647,19 @@ void invokeDhsTestJob(){
 
 }
 
+/*
+void invokeDhcceTestJob(){
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+    build job: 'DHCCE/dhcce-test', propagate: false, wait: false
+}
+
+void publishing(){
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+    sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
+    build job: 'DHF-Publish-RPM', propagate: false, wait: false
+}
+*/
+
 void postStage(String status){
     println("${STAGE_NAME} " + status)
     def email;
@@ -714,8 +688,8 @@ pipeline{
 	MAVEN_HOME="/usr/local/maven"
 	M2_HOME_REPO="/repository"
 	NODE_HOME_DIR="/home/builder/nodeJs/node-v12.18.3-linux-x64"
-	DMC_USER     = credentials('MLBUILD_USER')
-    DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
+//	DMC_USER     = credentials('MLBUILD_USER')
+//    DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
 	parameters{
 	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,kkanthet@marklogic.com,sbalasub@marklogic.com,nshrivas@marklogic.com,ssambasu@marklogic.com,rrudin@marklogic.com,rdew@marklogic.com,mwooldri@marklogic.com,rvudutal@marklogic.com,asonvane@marklogic.com,ban@marklogic.com,hliu@marklogic.com,tisangul@marklogic.com,Vasu.Gourabathina@marklogic.com,Sanjeevani.Vishaka@marklogic.com,Inder.Sabharwal@marklogic.com,btang@marklogic.com,abajaj@marklogic.com,fsnow@marklogic.com,srahman@marklogic.com,yakov.feldman@marklogic.com' ,description: 'Who should I say send the email to?')
@@ -971,26 +945,25 @@ pipeline{
          }
          agent { label 'dhfLinuxAgent' }
          steps {
-               sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
-               build job: 'DHF-Publish-RPM', propagate: false, wait: false
+             timeout(time: 1, unit: 'HOURS') {
+                 catchError(catchInterruptions: true) { publishing() }
+             }
             }
         }
 
-        stage('dhs-test'){
-            when {
-                expression {return params.regressions}
-                beforeAgent true
-            }
-            agent { label 'dhfLinuxAgent' }
-            steps{timeout(time: 1,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhsTestJob()}
-            }}
-            post {
-                failure{
-                    println("${STAGE_NAME} failed")
-                    sendMail Email,'<h3>${STAGE_NAME} Failed </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch Failed'
-                }}
-        }
+        stage('invoke-external-jobs'){
+        when {expression {return params.regressions}}
+        parallel {
+            stage('dhs-test') {
+              agent { label 'dhfLinuxAgent' }
+              steps {print "TEST"}
+           }
+
+            stage('dhcce-test') {
+              agent { label 'dhfLinuxAgent' }
+              steps {print "TEST"}
+           }
+        }}
 
         stage('rh7-singlenode'){
             when { expression {return params.regressions} }
