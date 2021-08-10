@@ -31,6 +31,9 @@ describe("Graph View Component", () => {
         canReadEntityModel={true}
         canWriteEntityModel={true}
         deleteEntityType={jest.fn()}
+        relationshipModalVisible={false}
+        toggleRelationshipModal={jest.fn()}
+        updateSavedEntity={jest.fn()}
       />
     </ModelingContext.Provider>
     );
@@ -47,6 +50,9 @@ describe("Graph View Component", () => {
           canReadEntityModel={true}
           canWriteEntityModel={true}
           deleteEntityType={mockDeleteEntity}
+          relationshipModalVisible={false}
+          toggleRelationshipModal={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </ModelingContext.Provider>
     );

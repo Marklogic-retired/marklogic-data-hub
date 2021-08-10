@@ -1,4 +1,5 @@
 import React from "react";
+import oneToManyIcon from "../assets/one-to-many-white.svg";
 
 /* --- MODELING --- */
 
@@ -63,6 +64,23 @@ const ModelingTooltips = {
   /* Graph view */
   publish: "Publish to Database",
   exportGraph: "Export graph to PNG",
+  relationshipEmpty: "Relationship name is required",
+  joinPropertyInfo: "This property establishes a foreign key relationship between the two entities. When data is mapped to these entity types, the value of this property and the relationship property should be identical. Structured type properties, arrays, and unsaved properties cannot be used as join properties.",
+  deleteRelationshipIcon: "Delete this relationship",
+  relationshipNameInfo: function (entityName) {
+    return (
+      <span>
+        Relationship name. The relationship is saved as a property on the <b>{entityName}</b> entity type with the same name. Names must start with a letter and can contain letters, numbers, hyphens, and underscores.
+      </span>
+    )
+  },
+  cardinalityButton: function () {
+    return (
+      <span>
+        Click to toggle between one [ | ] and many [ <img src={oneToManyIcon}/> ]
+      </span>
+    )
+  },
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
   nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',

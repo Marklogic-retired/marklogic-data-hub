@@ -17,6 +17,9 @@ type Props = {
   canReadEntityModel: any;
   canWriteEntityModel: any;
   deleteEntityType: (entityName: string) => void;
+  updateSavedEntity: any;
+  relationshipModalVisible: any;
+  toggleRelationshipModal: any;
 };
 
 const GraphView: React.FC<Props> = (props) => {
@@ -148,6 +151,9 @@ const GraphView: React.FC<Props> = (props) => {
           filteredEntityTypes={filterMenuSuggestions}
           entitySelected={entityFiltered}
           isEntitySelected={isEntityFiltered}
+          updateSavedEntity={props.updateSavedEntity}
+          toggleRelationshipModal={props.toggleRelationshipModal}
+          relationshipModalVisible={props.relationshipModalVisible}
         />
       </div>
     </div>;
