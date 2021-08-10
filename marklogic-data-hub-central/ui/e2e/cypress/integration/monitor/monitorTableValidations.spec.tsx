@@ -73,44 +73,49 @@ describe("Monitor Tile", () => {
 
   it("apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked", () => {
     browsePage.getShowMoreLink("step").click();
-    cy.wait(1000);
     cy.get("[id=\"date-select\"]").scrollIntoView();
     cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
-    cy.wait(500);
-    cy.findByTestId("step-loadCustomersJSON-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").click();
-    browsePage.getGreySelectedFacets("loadCustomersJSON").should("exist");
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").should("be.checked");
-    browsePage.getFacetApplyButton().click();
-    cy.wait(1000);
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click();
-    browsePage.getGreySelectedFacets("CurateCustomerJSON").should("exist");
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
-    browsePage.getGreySelectedFacets("ingestion").trigger("mousemove", {force: true});
-    browsePage.getGreySelectedFacets("ingestion").should("exist");
-    browsePage.getFacetApplyButton().click();
-    browsePage.clickClearFacetSearchSelection("CurateCustomerJSON");
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("be.checked");
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").click();
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").should("not.be.checked");
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
-    browsePage.getGreySelectedFacets("loadCustomersJSON").should("not.exist");
-    browsePage.getGreySelectedFacets("ingestion").should("not.exist");
-    cy.waitForAsyncRequest();
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").click();
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").click();
-    cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
-    browsePage.getFacetApplyButton().click();
-    browsePage.clickClearFacetSearchSelection("loadCustomersJSON");
-    browsePage.clickClearFacetSearchSelection("ingestion");
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").should("not.be.checked");
-    browsePage.getFacetItemCheckbox("step-type", "ingestion").should("not.be.checked");
-    browsePage.getGreySelectedFacets("loadCustomersJSON").should("not.exist");
-    browsePage.getGreySelectedFacets("ingestion").should("not.exist");
+    cy.get("[data-testid=\"step-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(stepVal => {
+      browsePage.getFacetItemCheckbox("step", stepVal).click();
+      browsePage.getGreySelectedFacets(stepVal).should("exist");
+      browsePage.getFacetItemCheckbox("step", stepVal).should("be.checked");
+      browsePage.getFacetApplyButton().click();
+      cy.get("[id=\"date-select\"]").scrollIntoView();
+      cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
+      cy.get("[data-testid=\"flow-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(flowVal => {
+        browsePage.getFacetItemCheckbox("flow", flowVal).click();
+        browsePage.getGreySelectedFacets(flowVal).should("exist");
+        cy.get("[id=\"date-select\"]").scrollIntoView();
+        cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
+        cy.get("[data-testid=\"step-type-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(stepTypeVal => {
+          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
+          browsePage.getGreySelectedFacets(stepTypeVal).trigger("mousemove", {force: true});
+          browsePage.getGreySelectedFacets(stepTypeVal).should("exist");
+          browsePage.getFacetApplyButton().click();
+          browsePage.clickClearFacetSearchSelection(flowVal);
+          cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("be.checked");
+          browsePage.getFacetItemCheckbox("step", stepVal).click();
+          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
+          cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+          browsePage.getFacetItemCheckbox("step", stepVal).should("not.be.checked");
+          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("not.be.checked");
+          browsePage.getGreySelectedFacets(stepVal).should("not.exist");
+          browsePage.getGreySelectedFacets(stepTypeVal).should("not.exist");
+          cy.waitForAsyncRequest();
+          browsePage.getFacetItemCheckbox("step", stepVal).click();
+          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
+          cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
+          browsePage.getFacetApplyButton().click();
+          browsePage.clickClearFacetSearchSelection(stepVal);
+          browsePage.clickClearFacetSearchSelection(stepTypeVal);
+          browsePage.getFacetItemCheckbox("step", stepVal).should("not.be.checked");
+          browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("not.be.checked");
+          browsePage.getGreySelectedFacets(stepVal).should("not.exist");
+          browsePage.getGreySelectedFacets(stepTypeVal).should("not.exist");
+        });
+      });
+    });
   });
 
 
@@ -123,26 +128,33 @@ describe("Monitor Tile", () => {
 
   it("Apply facets, unchecking them should not recheck original facets", () => {
     browsePage.getShowMoreLink("step").click();
-    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").click();
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").click();
-    browsePage.getGreySelectedFacets("mapPersonJSON").should("exist");
-    browsePage.getGreySelectedFacets("loadCustomersJSON").should("exist");
-    browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("be.checked");
-    cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
-    cy.findByTestId("step-loadCustomersJSON-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").should("be.checked");
-    browsePage.getFacetItemCheckbox("status", "finished").click();
-    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.findByTestId("step-loadCustomersJSON-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").click({force: true});
-    browsePage.getFacetItemCheckbox("status", "finished").click();
-    cy.findByTestId("step-mapPersonJSON-checkbox").trigger("mousemove", {force: true});
-    browsePage.getFacetItemCheckbox("step", "mapPersonJSON").should("not.be.checked");
-    cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
-    browsePage.getFacetItemCheckbox("step", "loadCustomersJSON").should("not.be.checked");
-    browsePage.getFacetItemCheckbox("status", "finished").should("not.be.checked");
+    cy.get("[id=\"date-select\"]").scrollIntoView();
+    cy.get("[id=\"date-select\"]").trigger("mousemove", {force: true});
+    cy.get("[data-testid=\"step-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(0).invoke("text").then(stepVal1 => {
+      cy.get("[data-testid=\"step-facet\"] [class=\"facet_checkContainer__1pogS\"] [class=\"ml-tooltip-container\"]").eq(1).invoke("text").then(stepVal2 => {
+        cy.findByTestId("step-"+stepVal1+"-checkbox").trigger("mousemove", {force: true});
+        browsePage.getFacetItemCheckbox("step", stepVal1).click();
+        browsePage.getFacetItemCheckbox("step", stepVal2).click();
+        browsePage.getGreySelectedFacets(stepVal1).should("exist");
+        browsePage.getGreySelectedFacets(stepVal2).should("exist");
+        browsePage.getFacetApplyButton().click();
+        browsePage.getFacetItemCheckbox("step", stepVal1).should("be.checked");
+        cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
+        cy.findByTestId("step-"+stepVal2+"-checkbox").trigger("mousemove", {force: true});
+        browsePage.getFacetItemCheckbox("step", stepVal2).should("be.checked");
+        browsePage.getFacetItemCheckbox("status", "finished").click();
+        browsePage.getFacetItemCheckbox("step", stepVal1).click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.findByTestId("step-"+stepVal2+"-checkbox").trigger("mousemove", {force: true});
+        browsePage.getFacetItemCheckbox("step", stepVal2).click({force: true});
+        browsePage.getFacetItemCheckbox("status", "finished").click();
+        cy.findByTestId("step-"+stepVal1+"-checkbox").trigger("mousemove", {force: true});
+        browsePage.getFacetItemCheckbox("step", stepVal1).should("not.be.checked");
+        cy.get("#monitorContent").scrollTo("top", {ensureScrollable: false});
+        browsePage.getFacetItemCheckbox("step", stepVal2).should("not.be.checked");
+        browsePage.getFacetItemCheckbox("status", "finished").should("not.be.checked");
+      });
+    });
   });
 
   it("Verify select, apply, remove grey and applied startTime facet", () => {
