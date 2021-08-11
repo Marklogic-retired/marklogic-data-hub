@@ -645,11 +645,10 @@ def isChangeInUI(){
 }
 
 def isPRMergable(){
-    return env.TESTS_PASSED && env.UNIT_TESTS_PASSED &&
-        (env.NO_UI_TESTS || env.UI_TESTS_PASSED) && (env.NO_UI_TESTS || env.CYPRESSE2E_TESTS_PASSED) &&
-        env.TESTS_PASSED.toBoolean() && env.UNIT_TESTS_PASSED.toBoolean() &&
-        (env.NO_UI_TESTS || (env.UI_TESTS_PASSED && env.UI_TESTS_PASSED.toBoolean())) &&
-        (env.NO_UI_TESTS || (env.CYPRESSE2E_TESTS_PASSED && env.CYPRESSE2E_TESTS_PASSED.toBoolean()))
+    return !params.regressions && env.TESTS_PASSED?.toBoolean() && env.UNIT_TESTS_PASSED?.toBoolean() &&
+        (
+            env.NO_UI_TESTS || (env.UI_TESTS_PASSED?.toBoolean() && env.CYPRESSE2E_TESTS_PASSED?.toBoolean())
+        )
 }
 
 void singleNodeTestOnLinux(String type,String mlVersion){
@@ -684,6 +683,11 @@ void invokeDhsTestJob(){
     sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
     build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
 
+}
+
+void invokeDhcceTestJob(){
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+    build job: 'DHCCE/dhcce-test', parameters: [string(name: 'DHF_BRANCH', value: env.BRANCH_NAME)], propagate: false, wait: false
 }
 
 void postStage(String status){
@@ -976,25 +980,25 @@ pipeline{
             }
         }
 
-        stage('dhs-test'){
-            when {
-                expression {return params.regressions}
-                beforeAgent true
-            }
-            agent { label 'dhfLinuxAgent' }
-            steps{timeout(time: 1,  unit: 'HOURS'){
-                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhsTestJob()}
-            }}
-            post {
-                failure{
-                    println("${STAGE_NAME} failed")
-                    sendMail Email,'<h3>${STAGE_NAME} Failed </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch Failed'
-                }}
-        }
+        stage('invoke-external-jobs'){
+         when {expression {return params.regressions}}
+         parallel {
 
-        stage('rh7-singlenode'){
-            when { expression {return params.regressions} }
-            parallel {
+             stage('dhs-test') {
+                 agent { label 'dhfLinuxAgent' }
+                 steps{invokeDhsTestJob()}
+                 post {failure {postStage('Stage Failed')}}
+             }
+
+             stage('dhcce-test') {
+                 agent { label 'dhfLinuxAgent' }
+                 steps{invokeDhcceTestJob()}
+             }
+         }}
+
+         stage('rh7-singlenode'){
+         when { expression {return params.regressions} }
+         parallel {
                 stage('rh7-singlenode-9.0-11') {
                 agent {label 'dhfLinuxAgent'}
                 steps{timeout(time: 3,  unit: 'HOURS'){
