@@ -184,7 +184,15 @@ describe("Entity Modeling: Reader Role", () => {
       let babyRegistryCoordinates: any = nodePositions["BabyRegistry"];
       graphVis.getGraphVisCanvas().click(babyRegistryCoordinates.x, babyRegistryCoordinates.y);
     });
+  });
 
+  it("can filter and select entity type in graph view", () => {
+    modelPage.selectView("project-diagram");
+    graphViewSidePanel.getSelectedEntityHeading("BabyRegistry").should("not.exist");
+    //Enter First 3+ characters to select option from dropdown
+    graphViewSidePanel.getGraphViewFilterInput().type("Bab");
+    graphViewSidePanel.selectEntityDropdown();
+    //Verify the side panel content for selected entity
     graphViewSidePanel.getSelectedEntityHeading("BabyRegistry").should("be.visible");
     graphViewSidePanel.getPropertiesTab().should("be.visible");
     graphViewSidePanel.getEntityTypeTab().should("be.visible");

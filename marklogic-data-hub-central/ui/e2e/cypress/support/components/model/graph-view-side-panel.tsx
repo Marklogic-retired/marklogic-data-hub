@@ -42,6 +42,15 @@ class GraphViewSidePanel {
   getPersonEntityPrefix() {
     return cy.findByTestId("prefix");
   }
+
+  getGraphViewFilterInput() {
+    return cy.findByLabelText("graph-view-filter-input");
+  }
+
+  selectEntityDropdown() {
+    return cy.get(".ant-select-dropdown--single").click();
+  }
+
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();
