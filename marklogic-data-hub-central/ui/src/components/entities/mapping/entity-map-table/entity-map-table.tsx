@@ -608,22 +608,24 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   /* Insert reference in map expressions */
   const handleRefList = async (name) => {
-    let refArr: any[] = [];
-    props.mapRefs.forEach(element => {
-      refArr.push({"key": element.name, "value": element.name});
-    });
-    setRefPropListForDropDown(refArr);
+    if (props.canReadWrite) {
+      let refArr: any[] = [];
+      props.mapRefs.forEach(element => {
+        refArr.push({"key": element.name, "value": element.name});
+      });
+      setRefPropListForDropDown(refArr);
 
-    setPropName(name);
-    if (!displaySelectList && !displayFuncMenu && !displayRefMenu) {
-      setRefValue("");
-      await setDisplaySelectList(true);
-      await setDisplayFuncMenu(true);
-      await setDisplayRefMenu(true);
-    } else {
-      await setDisplaySelectList(false);
-      await setDisplayFuncMenu(false);
-      await setDisplayRefMenu(false);
+      setPropName(name);
+      if (!displaySelectList && !displayFuncMenu && !displayRefMenu) {
+        setRefValue("");
+        await setDisplaySelectList(true);
+        await setDisplayFuncMenu(true);
+        await setDisplayRefMenu(true);
+      } else {
+        await setDisplaySelectList(false);
+        await setDisplayFuncMenu(false);
+        await setDisplayRefMenu(false);
+      }
     }
   };
 
@@ -741,22 +743,24 @@ const EntityMapTable: React.FC<Props> = (props) => {
   }
 
   const handleSourceList = async (row) => {
-    setSelectedRow(row);
-    let name = row.name;
-    let indentList: any = [];
-    setPropName(name);
-    //flatArray.forEach(element => propList.push(element.key));
-    props.flatArray.forEach(element => indentList.push(20 * (element.key.split("/").length - 1)));
-    setSourcePropListForDropDown(props.flatArray);
-    setSourceIndentForDropDown(indentList);
-    setSourcePropName(name);
-    if (!displaySourceList && !displaySourceMenu) {
-      setSourceValue("");
-      await setDisplaySourceList(true);
-      await setDisplaySourceMenu(true);
-    } else {
-      await setDisplaySourceList(false);
-      await setDisplaySourceMenu(false);
+    if (props.canReadWrite) {
+      setSelectedRow(row);
+      let name = row.name;
+      let indentList: any = [];
+      setPropName(name);
+      //flatArray.forEach(element => propList.push(element.key));
+      props.flatArray.forEach(element => indentList.push(20 * (element.key.split("/").length - 1)));
+      setSourcePropListForDropDown(props.flatArray);
+      setSourceIndentForDropDown(indentList);
+      setSourcePropName(name);
+      if (!displaySourceList && !displaySourceMenu) {
+        setSourceValue("");
+        await setDisplaySourceList(true);
+        await setDisplaySourceMenu(true);
+      } else {
+        await setDisplaySourceList(false);
+        await setDisplaySourceMenu(false);
+      }
     }
   };
 
@@ -936,15 +940,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
       // Context and URI version
       return (
         <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-          <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
-            <FontAwesomeIcon
-              icon={faList}
-              size="lg"
-              data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon`}
-              className={styles.listIcon}
-              onClick={(e) => handleSourceList(row)}
-            />
-          </i>
+          <MLTooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+            <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
+              <FontAwesomeIcon
+                icon={faList}
+                size="lg"
+                data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon`}
+                className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
+                onClick={(e) => handleSourceList(row)}
+              />
+            </i>
+          </MLTooltip>
         </Dropdown>
       );
     } else {
@@ -952,15 +958,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
       // TODO refactor tests to allow consistent testid values across source menus
       return (
         <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-          <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
-            <FontAwesomeIcon
-              icon={faList}
-              size="lg"
-              data-testid={`${row.name.split("/").pop()}-listIcon`}
-              className={styles.listIcon}
-              onClick={(e) => handleSourceList(row)}
-            />
-          </i>
+          <MLTooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+            <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
+              <FontAwesomeIcon
+                icon={faList}
+                size="lg"
+                data-testid={`${row.name.split("/").pop()}-listIcon`}
+                className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
+                onClick={(e) => handleSourceList(row)}
+              />
+            </i>
+          </MLTooltip>
         </Dropdown>
       );
     }
@@ -983,13 +991,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const functionDropdown = (row) => {
     return (
       <Dropdown overlay={functionMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-        <MLButton
-          id="functionIcon"
-          data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
-          className={styles.functionIcon}
-          size="small"
-          onClick={(e) => handleFunctionsList(row.name)}
-        >fx</MLButton>
+        <MLTooltip title={props.canReadWrite && "Function"} placement="bottom">
+          <MLButton
+            id="functionIcon"
+            data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
+            className={styles.functionIcon}
+            size="small"
+            onClick={(e) => handleFunctionsList(row.name)}
+            disabled={!props.canReadWrite}
+          >fx</MLButton>
+        </MLTooltip>
       </Dropdown>
     );
   };
@@ -1011,15 +1022,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const refDropdown = (row) => {
     return (
       <Dropdown overlay={refMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-        <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
-          <FontAwesomeIcon
-            icon={faTerminal}
-            size="lg"
-            data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon`}
-            className={styles.refIcon}
-            onClick={(e) => handleRefList(row.name)}
-          />
-        </i>
+        <MLTooltip title={props.canReadWrite && "Reference"} placement="bottom">
+          <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
+            <FontAwesomeIcon
+              icon={faTerminal}
+              size="lg"
+              data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon`}
+              className={props.canReadWrite ? styles.refIcon : styles.disabledRefIcon}
+              onClick={(e) => handleRefList(row.name)}
+            />
+          </i>
+        </MLTooltip>
       </Dropdown>
     );
   };

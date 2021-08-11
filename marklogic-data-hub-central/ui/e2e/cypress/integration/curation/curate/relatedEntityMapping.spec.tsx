@@ -99,6 +99,14 @@ describe("Mapping", () => {
     mappingStepDetail.validateContextInput("Relation (relatedTo Person)", "/");
     mappingStepDetail.validateURIInput("Person", "$URI");
     mappingStepDetail.validateURIInput("Relation (relatedTo Person)", "hubURI('Relation')");
+
+    // To verify tooltips for mapping property related icons
+    mappingStepDetail.sourceFieldIcon("Person");
+    mappingStepDetail.verifySourceFieldTooltip();
+    mappingStepDetail.propertyFunctionIcon("URI");
+    mappingStepDetail.verifyFunctionTooltip();
+    mappingStepDetail.referenceIcon("Person");
+    mappingStepDetail.verifyReferenceTooltip();
   });
   it("Add and test mapping expressions with related entities", () => {
     mappingStepDetail.setXpathExpressionInput("id", "SSN");

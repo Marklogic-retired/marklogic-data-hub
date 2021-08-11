@@ -166,6 +166,15 @@
   }
 }
 
+.disabledListIcon {
+    color: #F5F5F5;
+    background: transparent;
+    border: none;
+    margin-top: 5px;
+    font-size: 20px;
+    cursor: not-allowed;
+}
+
 .functionIcon {
   color: #394494;
   font-size: 14px;
@@ -193,6 +202,17 @@
   &:hover{
     color: var(--hoverColor);
   }
+}
+
+.disabledRefIcon {
+    color: #e2e0e6;
+    background: #F5F5F5;
+    width: 21px !important;
+    height: 20px;
+    border-radius: 2px;
+    padding: 5px 1px 3px 1px;
+    margin-top: 5px;
+    cursor: not-allowed;
 }
 
 .mapValue {
