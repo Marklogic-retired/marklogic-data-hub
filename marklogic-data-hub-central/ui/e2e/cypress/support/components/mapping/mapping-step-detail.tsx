@@ -269,6 +269,30 @@ class MappingStepDetail {
     return cy.findByTestId("relatedInfoContent");
   }
 
+  sourceFieldIcon(entityName: string) {
+    cy.findByTestId(`${entityName}-URI-listIcon1`).trigger("mouseover");
+  }
+
+  verifySourceFieldTooltip() {
+    cy.findByText("Source Field").should("be.visible");
+  }
+
+  propertyFunctionIcon(propertyName: string) {
+    cy.findByTestId(`${propertyName}-101-functionIcon`).trigger("mouseover");
+  }
+
+  verifyFunctionTooltip() {
+    cy.findByText("Function").should("be.visible");
+  }
+
+  referenceIcon(entityName: string) {
+    cy.findByTestId(`${entityName}-URI-refIcon1`).trigger("mouseover");
+  }
+
+  verifyReferenceTooltip() {
+    cy.findByText("Reference").should("be.visible");
+  }
+
 }
 
 const mappingStepDetail = new MappingStepDetail();

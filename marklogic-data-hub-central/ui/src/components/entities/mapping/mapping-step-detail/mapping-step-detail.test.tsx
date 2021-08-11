@@ -1215,7 +1215,6 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Verify that fx/source-data list is disabled for mapping reader user
     expect(getByTestId("propId-102-functionIcon")).toBeDisabled();
-    expect(getByTestId("propId-listIcon1")).toHaveAttribute("disabled");
   });
 
   test("Verify evaluation of invalid expression for mapping writer user", async () => {
