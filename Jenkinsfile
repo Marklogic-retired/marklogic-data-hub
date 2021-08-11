@@ -902,7 +902,7 @@ pipeline{
 		stage('code-review'){
 		 when {
             expression {return isPRMergable()}
-            allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''}
+            allOf {changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/ant-lib-replacement', title: '', url: ''}
   			beforeAgent true
 		 }
 		 agent {label 'dhmaster'};
@@ -912,7 +912,7 @@ pipeline{
 		stage('Merge-PR'){
 		when {
             expression {return isPRMergable()}
-            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'develop', title: '', url: ''
+            changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: 'feature/ant-lib-replacement', title: '', url: ''
   			beforeAgent true
 		}
 		agent {label 'dhmaster'}
