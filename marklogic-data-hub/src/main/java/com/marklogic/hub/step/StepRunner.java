@@ -103,6 +103,13 @@ public interface StepRunner {
     StepRunner onItemFailed(StepItemFailureListener listener);
 
     /**
+     * Sets the status change listener on the flowrunner object
+     * @param listener - the listener for when the status changes
+     * @return the step runner object
+     */
+    StepRunner onStatusChanged(StepStatusListener listener);
+
+    /**
      * Blocks until the step execution is complete.
      */
     void awaitCompletion();
