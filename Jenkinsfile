@@ -729,39 +729,15 @@ pipeline{
 	    stage('Pre-Build-Check'){
 	    agent { label 'dhfLinuxAgent'}
 	    steps{ PreBuildCheck() }
-	    post{
-	        failure{
-	            script{
-                 def email;
-                 if(env.CHANGE_AUTHOR){
-                   def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                   email=getEmailFromGITUser author
-                  }else{ email=Email  }
+	    post{failure{postStage('Stage Failed')}}
+	    }
 
-                 sendMail email,'<h3>Pipeline Failed possibly because there is no JIRA ID. Please add JIRA ID to the <a href=${CHANGE_URL}>PR Title</a></h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'NO JIRA ID for $BRANCH_NAME | pipeline Failed  '
-	            }
-	        }
-	    }
-	    }
 		stage('Build-datahub'){
 		agent { label 'dhfLinuxAgent'}
 			steps{BuildDatahub()}
-				post{
-                   failure {
-                      println("Datahub Build FAILED")
-                      script{
-                      def email;
-                    if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
-                    }else{
-                    email=Email
-                    }
-                     sendMail email,'<h3>Pipeline Failed at the stage while building datahub. Please fix the issues</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Data Hub Build for $BRANCH_NAME Failed'
-                      }
-                  }
-                  }
+			post{failure {postStage('Stage Failed')}}
 		}
+
 		stage('tests'){
 		parallel{
 		 stage('Core-Unit-Tests'){
@@ -986,14 +962,20 @@ pipeline{
 
              stage('dhs-test') {
                  agent { label 'dhfLinuxAgent' }
-                 steps{invokeDhsTestJob()}
+                 steps{timeout(time: 1,  unit: 'HOURS'){
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhsTestJob()}
+                 }}
                  post {failure {postStage('Stage Failed')}}
              }
 
              stage('dhcce-test') {
                  agent { label 'dhfLinuxAgent' }
-                 steps{invokeDhcceTestJob()}
+                 steps{timeout(time: 1,  unit: 'HOURS'){
+                     catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhcceTestJob()}
+                 }}
+                 post {failure {postStage('Stage Failed')}}
              }
+
          }}
 
          stage('rh7-singlenode'){
