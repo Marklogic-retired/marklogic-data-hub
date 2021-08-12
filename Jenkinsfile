@@ -963,7 +963,9 @@ pipeline{
 
              stage('dhs-test') {
              agent { label 'dhfLinuxAgent' }
-             steps { invokeDhsTestJob() }
+             steps{timeout(time: 1,  unit: 'HOURS'){
+                catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhsTestJob()}
+             }}
              post {
                failure {
                     println("${STAGE_NAME} failed")
@@ -972,7 +974,9 @@ pipeline{
 
              stage('dhcce-test') {
              agent { label 'dhfLinuxAgent' }
-             steps { invokeDhcceTestJob() }
+             steps{timeout(time: 1,  unit: 'HOURS'){
+               catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE') {invokeDhcceTestJob()}
+             }}
              post {
                 failure {
                     println("${STAGE_NAME} failed")
