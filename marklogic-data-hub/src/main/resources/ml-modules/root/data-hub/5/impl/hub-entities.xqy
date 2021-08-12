@@ -61,26 +61,40 @@ declare function hent:get-model($entity-name as xs:string, $used-models as xs:st
     return $model-map
 };
 
+(:
+See the comments on the uber-models(models) functions.
+:)
 declare function hent:uber-model() as map:map
 {
   hent:uber-model(fn:collection($ENTITY-MODEL-COLLECTION)/object-node())
 };
 
+(:
+This concept of an "uber model" dates back to DHF 4. It combines the entity definitions from every model into a single
+entity model. However, this means that if there are two models that have an entity definition - such as "Address" - with
+the same name but different config, only one will be in the returned model. This may lead to bugs, such as DHFPROD-7713.
+
+This approach seems to be based on how QuickStart in DHF 4 and 5 would create a duplicate entity definition in some
+scenarios. For example, if you had a Customer in QS and then added a property of type Address, QS would both add
+Address to the Customer entity model, and it would also create an Address entity model with the same config. So QS was
+already assuming that if you have two entity definitions with the same name in different models, they must have the
+same config, as it was likely QS that did that.
+
+If it turns out that users need to have multiple entity definitions with the same name but different config, this
+function will of course need to be reworked to accomodate that.
+:)
 declare function hent:uber-model($models as object-node()*) as map:map
 {
-  let $uber-model := map:map()
-  let $definitions :=
-    let $m := map:map()
-    let $_ :=
+  map:new((
+    map:entry("definitions", map:new((
       for $model as map:map in $models
-      let $defs := map:get($model, "definitions")
-      for $key in map:keys($defs)
+      let $definitions := map:get($model, "definitions")
+      where fn:exists($definitions)
       return
-        map:put($m, $key, map:get($defs, $key))
-    return
-      map:put($uber-model, "definitions", $m)
-  return
-    $uber-model
+        for $entity-type-name in map:keys($definitions)
+        return map:entry($entity-type-name, map:get($definitions, $entity-type-name))
+    )))
+  ))
 };
 
 declare function hent:is-tde-generation-enabled($entity-def as object-node()) as xs:boolean
