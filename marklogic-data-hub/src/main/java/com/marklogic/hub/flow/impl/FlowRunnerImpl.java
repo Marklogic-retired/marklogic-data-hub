@@ -68,6 +68,8 @@ public class FlowRunnerImpl implements FlowRunner {
 
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
 
+    private List<FlowStatusListener> flowStatusListeners = new ArrayList<>();
+
     private ThreadPoolExecutor threadPool;
 
     public FlowRunnerImpl() {
@@ -115,6 +117,12 @@ public class FlowRunnerImpl implements FlowRunner {
     @Deprecated // since 5.3.0-beta; must be retained because the 5.2 dh-5-example project used it in an example. Should use FlowRunnerImpl(HubClient) instead.
     public FlowRunnerImpl(HubConfig hubConfig) {
         this(hubConfig.newHubClient());
+    }
+
+    @Override
+    public FlowRunner onStatusChanged(FlowStatusListener listener) {
+        this.flowStatusListeners.add(listener);
+        return this;
     }
 
     @Deprecated
@@ -317,6 +325,9 @@ public class FlowRunnerImpl implements FlowRunner {
             Map<String, RunStepResponse> stepOutputs = new HashMap<>();
             String stepNum = null;
 
+            final long[] currSuccessfulEvents = {0};
+            final long[] currFailedEvents = {0};
+            final int[] currPercentComplete = {0};
             while (! stepQueue.isEmpty()) {
                 stepNum = stepQueue.poll();
                 runningStep = runningFlow.getSteps().get(stepNum);
@@ -339,8 +350,16 @@ public class FlowRunnerImpl implements FlowRunner {
                             if(flow.isStopOnError()){
                                 stopJobOnError(jobId);
                             }
+                        })
+                        .onStatusChanged((jobId, percentComplete, jobStatus, successfulEvents, failedEvents, message) ->{
+                            flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                                currSuccessfulEvents[0] = successfulEvents;
+                                currFailedEvents[0] = failedEvents;
+                                currPercentComplete[0] = percentComplete;
+                                listener.onStatusChanged(jobId, runningStep, jobStatus, percentComplete, successfulEvents, failedEvents, runningStep.getName() + " : " + message);
+                            });
                         });
-
+                    //If property values are overriden in UI, use those values over any other.
                     if(flow.getOverrideStepConfig() != null) {
                         stepRunner.withStepConfig(flow.getOverrideStepConfig());
                     }
@@ -371,7 +390,15 @@ public class FlowRunnerImpl implements FlowRunner {
                     else{
                         stepResp.withStatus(JobStatus.FAILED_PREFIX + stepNum);
                     }
-
+                    RunStepResponse finalStepResp = stepResp;
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, JobStatus.FAILED.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0],
+                                runningStep.getName() + " " + Arrays.toString(finalStepResp.stepOutput.toArray()));
+                        });
+                    } catch (Exception ex) {
+                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
+                    }
                     if(runningFlow.isStopOnError()) {
                         stopJobOnError(runningJobId);
                     }
@@ -435,6 +462,24 @@ public class FlowRunnerImpl implements FlowRunner {
                     }
                     catch (Exception e) {
                         logger.error("Unable to copy job data to RunFlowResponse, cause: " + e.getMessage());
+                    }
+                }
+
+                if (!isJobSuccess.get()) {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, jobStatus.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FAILED.toString());
+                        });
+                    } catch (Exception ex) {
+                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
+                    }
+                } else {
+                    try {
+                        flowStatusListeners.forEach((FlowStatusListener listener) -> {
+                            listener.onStatusChanged(jobId, runningStep, jobStatus.toString(), currPercentComplete[0], currSuccessfulEvents[0], currFailedEvents[0], JobStatus.FINISHED.toString());
+                        });
+                    } catch (Exception ex) {
+                        logger.error("Unable to invoke FlowStatusListener: " + ex.getMessage());
                     }
                 }
 
