@@ -129,4 +129,12 @@ public interface FlowRunner {
      * @throws TimeoutException if times out
      */
     void awaitCompletion(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException;
+
+    /**
+     * Sets the status change listener on the flowrunner object
+     * @param listener - the listener for when the status changes
+     * @return the flow runner object
+     */
+    FlowRunner onStatusChanged(FlowStatusListener listener);
+
 }
