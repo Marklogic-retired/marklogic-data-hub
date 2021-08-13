@@ -26,7 +26,7 @@ function testValidJSONMapping(){
 
 
   assertions = assertions.concat([
-    test.assertEqual("3 instances(1 shown)", fn.string(result.relatedEntityMappings[0].expressionContext.output)),
+    test.assertEqual("3 instances (1 shown)", fn.string(result.relatedEntityMappings[0].expressionContext.output)),
     test.assertEqual("/Product/10.json", fn.string(result.relatedEntityMappings[0].uriExpression.output)),
     test.assertEqual(10, fn.number(productProperties.productId.output), productMessage),
     test.assertEqual('New Balance FuelCell Echo V1 Sneaker', fn.string(productProperties.productName.output), productMessage)
@@ -34,7 +34,7 @@ function testValidJSONMapping(){
 
 
   assertions = assertions.concat([
-    test.assertEqual("2 instances(1 shown)", fn.string(result.relatedEntityMappings[1].expressionContext.output)),
+    test.assertEqual("2 instances (1 shown)", fn.string(result.relatedEntityMappings[1].expressionContext.output)),
     test.assertEqual("/Order/2002.json", fn.string(result.relatedEntityMappings[1].uriExpression.output)),
     test.assertEqual(2002, fn.number(orderProperties.orderId.output), orderMessage),
     test.assertEqual(202, fn.number(orderProperties.orderedBy.output), orderMessage),
@@ -66,14 +66,14 @@ function testValidXMLMapping(){
 
 
   assertions = assertions.concat([
-    test.assertEqual("3 instances(1 shown)", fn.string(result.relatedEntityMappings[0].expressionContext.output)),
+    test.assertEqual("3 instances (1 shown)", fn.string(result.relatedEntityMappings[0].expressionContext.output)),
     test.assertEqual(10, fn.number(productProperties.productId.output), productMessage),
     test.assertEqual('New Balance FuelCell Echo V1 Sneaker', fn.string(productProperties.productName.output), productMessage)
   ]);
 
 
   assertions = assertions.concat([
-    test.assertEqual("2 instances(1 shown)", fn.string(result.relatedEntityMappings[1].expressionContext.output)),
+    test.assertEqual("2 instances (1 shown)", fn.string(result.relatedEntityMappings[1].expressionContext.output)),
     test.assertEqual(2002, fn.number(orderProperties.orderId.output), orderMessage),
     test.assertEqual(202, fn.number(orderProperties.orderedBy.output), orderMessage),
     test.assertEqual(303, fn.number(orderProperties.deliveredTo.output), orderMessage),

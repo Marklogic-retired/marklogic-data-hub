@@ -534,7 +534,7 @@ function calculateInstanceCount(mapping, validatedMappingsArray, sourceInstance)
       const instanceCount = fn.count(sourceDocument.xpath(entityMapping.expressionContext, namespaces));
       if(instanceCount > 1){
         mapping.relatedEntityMappings[mappingIndex - 1].expressionContext = {};
-        mapping.relatedEntityMappings[mappingIndex - 1].expressionContext.output = `${instanceCount} instances(1 shown)`;
+        mapping.relatedEntityMappings[mappingIndex - 1].expressionContext.output = `${instanceCount} instances (1 shown)`;
       }
     }
   });
