@@ -93,11 +93,20 @@ describe("Entity Modeling: Reader Role", () => {
 
     propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "zip-fiveDigit").click({force: true});
     confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
+
+    // To verify modeling info is rendered properly in table view
+    modelPage.clickModelingInfoIcon();
+    modelPage.verifyModelingInfo();
   });
 
   it("can navigate to graph view from table view", () => {
     // Should be updated once the dummy entity links are replaced by actual graph nodes.
     entityTypeTable.viewEntityInGraphView("Customer").click({force: true});
+
+    // To verify modeling info is rendered properly in graph view
+    modelPage.clickModelingInfoIcon();
+    modelPage.verifyModelingInfo();
+
     graphView.getFilterInput().should("be.visible");
     graphView.getAddButton().should("be.disabled");
     graphView.getPublishToDatabaseButton().should("be.visible");
