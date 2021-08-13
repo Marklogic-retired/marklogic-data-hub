@@ -22,6 +22,14 @@ class ModelPage {
   getEntityModifiedAlert() {
     return cy.findByLabelText("entity-modified-alert");
   }
+
+  clickModelingInfoIcon() {
+    return cy.findByLabelText("modelInfoIcon").trigger("click");
+  }
+
+  verifyModelingInfo() {
+    return cy.findByLabelText("modelingInfo").should("exist");
+  }
 }
 
 const modelPage = new ModelPage();
