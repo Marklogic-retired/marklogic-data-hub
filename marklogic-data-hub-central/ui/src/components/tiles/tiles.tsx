@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Mosaic, MosaicWindow} from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import {ArrowsAltOutlined, ShrinkOutlined, CloseOutlined} from "@ant-design/icons";
@@ -11,6 +11,10 @@ import {MLTooltip, MLButton} from "@marklogic/design-system";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
+import modelingInfoIcon from "../../assets/modalInfoIcon.png";
+import {Popover} from "antd";
+import {primaryEntityTypes} from "../../api/modeling";
+import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 
 interface Props {
     id: string;
@@ -29,6 +33,7 @@ const Tiles: React.FC<Props> = (props) => {
   const viewId = props.id;
   const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
   const [manageQueryModal, setManageQueryModal]= useState(false);
+  const [modelingInfoVisible, setModelingInfoVisible] = useState(false);
 
   /*** For Manage Queries - Explore tab ****/
   const auth = useContext(AuthoritiesContext);
@@ -44,6 +49,7 @@ const Tiles: React.FC<Props> = (props) => {
   />;
   /******************************************/
 
+  const modelInfo = <div className={styles.modelingInfoPopover} aria-label="modelingInfo">{ToolbarBulbIconInfo.modelingInfo}</div>;
 
   const showControl = (control) => {
     return controls.indexOf(control) !== -1;
@@ -76,6 +82,18 @@ const Tiles: React.FC<Props> = (props) => {
     props.onTileClose();
   };
 
+  const getEntities = async () => {
+    try {
+      const res= await primaryEntityTypes();
+      if (res) {
+        if (res.data.length === 0) setModelingInfoVisible(true);
+      }
+    } catch (error) {
+      let message = error;
+      console.error("Error while getting entities", message);
+    }
+  };
+
   const onMenuClick = () => {
     setManageQueryModal(true);
     props.onMenuClick();
@@ -87,6 +105,16 @@ const Tiles: React.FC<Props> = (props) => {
     }
   };
 
+  useEffect(() => {
+    getEntities();
+  }, []);
+
+  const modelingInfoViewChange = (visible) => {
+    if (visible) setModelingInfoVisible(true);
+    else setModelingInfoVisible(false);
+  };
+
+
   const renderHeader = function (props) {
     return (
       <div
@@ -97,6 +125,17 @@ const Tiles: React.FC<Props> = (props) => {
           {(options["iconType"] === "custom") ? (<>
             <span className={options["icon"] + "Header"} aria-label={"icon-" + viewId} style={{color: options["color"]}}></span>
             <div className={styles.exploreText} aria-label={"title-" + viewId}>{options["title"]}</div>
+            {viewId === "model" && <Popover
+              visible={modelingInfoVisible}
+              content={modelInfo}
+              trigger="click"
+              placement="bottomRight"
+              overlayStyle={{
+                width: "40vw"
+              }}
+              onVisibleChange={modelingInfoViewChange}
+            >
+              <span className={styles.modelingInfoIcon} aria-label="modelInfoIcon"><img src={modelingInfoIcon}/></span></Popover>}
           </>) : (<>
             <i aria-label={"icon-" + viewId}>
               <FontAwesomeIcon style={{color: options["color"]}} icon={options["icon"]} />

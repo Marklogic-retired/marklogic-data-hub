@@ -1,5 +1,8 @@
 import React from "react";
 import oneToManyIcon from "../assets/one-to-many-white.svg";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import styles from "../components/tiles/tiles.module.scss";
 
 /* --- MODELING --- */
 
@@ -641,7 +644,17 @@ const AdvCustomTooltips = {
   viewCustom: 'View'
 };
 
-
+const ToolbarBulbIconInfo = {
+    modelingInfo: <div><strong>Modeling is the first step in effective data curation.</strong><br/><br/>
+    A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br/><br/>
+    Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br/><br/>
+    The entity type is comprised of properties, which can be of any of the following types:<br/><br/>
+  <ul>
+    <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br/>
+    <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br/>
+    <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
+  </ul></div>
+}
 
 /* ===== */
 
@@ -692,6 +705,7 @@ export {
   SecurityTooltips,
   SecurityPlaceholders,
   SecurityMessages,
+  ToolbarBulbIconInfo,
 
   /* ===== TO BE DEPRECATED ===== */
   NewFlowTooltips,
