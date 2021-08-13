@@ -320,7 +320,7 @@ void BuildDatahub(){
 }
 
 void dh5Example() {
-    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle; '
+    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle; '
     copyRPM 'Release','10.0-6'
     script{
         props = readProperties file:'data-hub/pipeline.properties';
@@ -344,7 +344,7 @@ void dh5Example() {
 }
 
 void dhCustomHook() {
-                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
+                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -367,7 +367,7 @@ void dhCustomHook() {
 }
 
 void mappingExample() {
-                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
+                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -392,7 +392,7 @@ void mappingExample() {
 }
 
 void smartMastering() {
-                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle; '
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -679,10 +679,6 @@ void fullCycleSingleNodeTestOnLinux(String type,String mlVersion){
 
 void invokeDhsTestJob(){
     cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
-
-    sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
-    build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
-
 }
 
 void invokeDhcceTestJob(){
@@ -942,17 +938,11 @@ pipeline{
 		}
 
         stage('publishing'){
-         when {
-           expression {
-                 props = readProperties file: 'data-hub/pipeline.properties';
-                 println(props['ExecutionBranch'])
-                 return (env.BRANCH_NAME == props['ExecutionBranch'] && !params.regressions)
-           }
-         }
+         when {expression {return params.regressions}}
          agent { label 'dhfLinuxAgent' }
          steps {
                sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
-               build job: 'DHF-Publish-RPM', propagate: false, wait: false
+               //build job: 'DHF-Publish-RPM', propagate: false, wait: false
             }
         }
 
