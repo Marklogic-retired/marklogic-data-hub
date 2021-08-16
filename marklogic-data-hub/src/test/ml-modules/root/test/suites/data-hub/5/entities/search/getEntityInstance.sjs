@@ -64,7 +64,7 @@ const billingResults = {
 function getInstanceWithoutESInfo() {
   let docUri = "/content/sally.xml";
   const assertions = [];
-  let instance = entitySearchLib.getEntityInstance(docUri);
+  let instance = getEntityInstanceForUri(docUri);
   let results = instance["Customer"];
 
   assertions.concat([
@@ -76,7 +76,7 @@ function getInstanceWithoutESInfo() {
   ]);
 
   docUri = "/content/sally.json";
-  instance = entitySearchLib.getEntityInstance(docUri);
+  instance = getEntityInstanceForUri(docUri);
   results = instance["Customer"];
   assertions.concat([
     test.assertEqual(101, results["customerId"]),
@@ -91,7 +91,7 @@ function getInstanceWithoutESInfo() {
 function getInstanceWithESInfo() {
   let docUri = "/content/jane.xml";
   const assertions = [];
-  let instance = entitySearchLib.getEntityInstance(docUri);
+  let instance = getEntityInstanceForUri(docUri);
   let results = instance["Customer"];
   assertions.concat([
     test.assertEqual(101, results["customerId"]),
@@ -100,7 +100,7 @@ function getInstanceWithESInfo() {
   ]);
 
   docUri = "/content/jane.json";
-  instance = entitySearchLib.getEntityInstance(docUri);
+  instance = getEntityInstanceForUri(docUri);
   results = instance["Customer"];
   assertions.concat([
     test.assertEqual(101, results["customerId"]),
@@ -113,7 +113,7 @@ function getInstanceWithESInfo() {
 
 function getInstanceWithAdditionalProperty() {
   let docUri = "/content/instanceWithAdditionalProperty.xml";
-  const instance = entitySearchLib.getEntityInstance(docUri);
+  const instance = getEntityInstanceForUri(docUri);
   const results = instance["Customer"];
   return [
     test.assertEqual(101, results["customerId"]),
@@ -125,7 +125,7 @@ function getInstanceWithAdditionalProperty() {
 
 function getInstanceWithNonExistentModel() {
   let docUri = "/content/instanceWithNonExistentModel.xml";
-  const instance = entitySearchLib.getEntityInstance(docUri);
+  const instance = getEntityInstanceForUri(docUri);
   const results = instance["TestEntity"];
   return [
     test.assertEqual(101, results["testPropertyId"]),
@@ -135,7 +135,7 @@ function getInstanceWithNonExistentModel() {
 
 function getInstanceWithNamespace() {
   let docUri = "/content/instanceWithNamespace.xml";
-  const instance = entitySearchLib.getEntityInstance(docUri);
+  const instance = getEntityInstanceForUri(docUri);
   const results = instance["Customer"];
   return [
     test.assertEqual(101, results["customerId"]),
@@ -146,7 +146,7 @@ function getInstanceWithNamespace() {
 
 function getInstanceWithNonExistingDocUri() {
     let docUri = "/content/someURI.xml";
-    const instance = entitySearchLib.getEntityInstance(docUri);
+    const instance = getEntityInstanceForUri(docUri);
     return [
       test.assertEqual(null, instance)
     ]
@@ -154,17 +154,20 @@ function getInstanceWithNonExistingDocUri() {
 
 function getInstanceFromTextDocument() {
   let docUri = "/content/textdoc.txt";
-  const instance = entitySearchLib.getEntityInstance(docUri);
+  const instance = getEntityInstanceForUri(docUri);
   return [
     test.assertEqual(null, instance)
   ]
 }
 
 function getInstanceWithInstanceInDifferentXpath() {
-  const assertions = [];
   let docUri = "/content/instanceElementInDifferentXpath.xml";
-  let instance = entitySearchLib.getEntityInstance(docUri);
-  assertions.push(test.assertEqual(null, instance));
+  let instance = getEntityInstanceForUri(docUri);
+  return [test.assertEqual(null, instance)];
+}
+
+function getEntityInstanceForUri(docUri) {
+  return entitySearchLib.getEntityInstance(cts.doc(docUri));
 }
 
 []

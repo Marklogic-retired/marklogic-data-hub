@@ -249,11 +249,13 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
   return finalMetadataProperty;
 }
 
-function getEntityInstance(docUri) {
-  let doc = cts.doc(docUri);
-
-  if(!doc) {
-    console.log(`Unable to obtain entity instance from document with URI '${docUri}'`);
+/**
+ *
+ * @param doc expected to be a document-node
+ * @returns the "instance" portion if the document is an ES envelope; else null
+ */
+function getEntityInstance(doc) {
+  if (!doc) {
     return null;
   }
 
@@ -272,13 +274,26 @@ function getEntityInstance(docUri) {
   return null;
 }
 
-function getEntitySources(docUri) {
-  const doc = cts.doc(docUri);
-  let sourcesArr = [];
+/**
+ *
+ * @param doc expected to be a document-node so that ".xpath()" can be called on it
+ * @returns a JSON object contain the instance properties (expected to be located at
+ * envelope/instance/(entity type name))
+ */
+function getEntityInstanceProperties(doc) {
+  const entityInstance = getEntityInstance(doc);
+  if (entityInstance == null) {
+    return null;
+  }
 
+  const entityTitle = doc.xpath("/*:envelope/*:instance/*:info/*:title/fn:string()");
+  return entityInstance[entityTitle];
+}
+
+function getEntitySources(doc) {
+  let sourcesArray = [];
   if(!doc) {
-    console.log(`Unable to obtain entity instance from document with URI '${docUri}'`);
-    return sourcesArr;
+    return sourcesArray;
   }
 
   if(doc instanceof Element || doc instanceof XMLDocument) {
@@ -286,16 +301,16 @@ function getEntitySources(docUri) {
     if(!fn.empty(sources)) {
       for (var srcDoc of sources) {
         const currNode = new NodeBuilder().startDocument().addNode(srcDoc).endDocument().toNode();
-        sourcesArr.push(esInstance.canonicalJson(currNode).toObject()["sources"]);
+        sourcesArray.push(esInstance.canonicalJson(currNode).toObject()["sources"]);
       }
     }
   }
 
   if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.headers && doc.toObject().envelope.headers.sources) {
     const sources = doc.toObject().envelope.headers.sources;
-    sourcesArr = Array.isArray(sources) ? sources : [sources];
+    sourcesArray = Array.isArray(sources) ? sources : [sources];
   }
-  return sourcesArr.length ? handleDuplicateSources("datahubSourceName",sourcesArr) : sourcesArr;
+  return sourcesArray.length ? handleDuplicateSources("datahubSourceName",sourcesArray) : sourcesArray;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {
@@ -373,7 +388,9 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
   result.sources = [];
   result.entityInstance = {};
 
-  const instance = getEntityInstance(result.uri);
+  const doc = cts.doc(result.uri);
+
+  const instance = getEntityInstance(doc);
   if(!instance) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
@@ -398,7 +415,7 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
   }
 
   result.entityInstance = entityInstance;
-  result.sources = getEntitySources(result.uri);
+  result.sources = getEntitySources(doc);
   result.entityName = entityTitle;
 }
 
@@ -411,7 +428,8 @@ function addGenericEntityProperties(result) {
   result.sources = [];
   result.entityInstance = {};
 
-  const instance = getEntityInstance(result.uri);
+  const doc = cts.doc(result.uri);
+  const instance = getEntityInstance(doc);
   if(!instance) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
@@ -451,7 +469,7 @@ function addGenericEntityProperties(result) {
     "propertyValue": identifierValue
   };
   result.entityInstance = entityInstance;
-  result.sources = getEntitySources(result.uri);
+  result.sources = getEntitySources(doc);
   result.entityName = entityTitle;
 }
 
@@ -480,7 +498,7 @@ function removeEntityNameFromCollection(searchResponse, entityName) {
 }
 
 function handleDuplicateSources (propToValidate, arrayWithDuplicates) {
-  const deDupedArray = Array.from(
+  return Array.from(
     arrayWithDuplicates.reduce(
         (acc, item) => (
           item && item[propToValidate] && acc.set(item[propToValidate], item),
@@ -490,7 +508,6 @@ function handleDuplicateSources (propToValidate, arrayWithDuplicates) {
       )
       .values()
   );
-  return deDupedArray;
 }
 
 function addDocumentMetadataToSearchResults(searchResponse) {
@@ -498,7 +515,7 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     let hubMetadata = {};
     const docUri = result.uri;
     const documentMetadata = xdmp.documentGetMetadata(docUri);
-    const sources = getEntitySources(docUri);
+    const sources = getEntitySources(cts.doc(docUri));
     if(documentMetadata) {
       hubMetadata["lastProcessedByFlow"] = documentMetadata.datahubCreatedInFlow;
       hubMetadata["lastProcessedByStep"] = documentMetadata.datahubCreatedByStep;
@@ -511,44 +528,6 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     result["documentSize"] = getDocumentSize(cts.doc(docUri));
     result["hubMetadata"] = hubMetadata;
   });
-}
-
-function isHubEntityInstance(docUri) {
-  let isHubEntityInstance = false;
-  let doc = cts.doc(docUri);
-  if(doc == null) {
-    return isHubEntityInstance;
-  }
-
-  const nodeKind = xdmp.nodeKind(doc.root);
-
-  if(nodeKind === 'element') {
-    const currNode = new NodeBuilder().startDocument().addNode(doc).endDocument().toNode();
-    doc = esInstance.canonicalJson(currNode).toObject();
-    // Converting instance array generated by canonicalJson into an object
-    if(doc.envelope && doc.envelope.instance && doc.envelope.instance.length) {
-      let instanceObject = {};
-      for(const obj of doc.envelope.instance) {
-        instanceObject = Object.assign(instanceObject, obj);
-      }
-      doc.envelope.instance = instanceObject;
-    }
-  } else {
-    doc = doc.toObject();
-  }
-
-  if((nodeKind === 'object' || nodeKind === 'element') && doc.envelope && doc.envelope.instance && doc.envelope.instance.info
-      && doc.envelope.instance[doc.envelope.instance.info.title]) {
-    const entityModels = fn.collection(entityLib.getModelCollection());
-    const entityModelNames = [];
-    for (const entityModel of entityModels) {
-      entityModelNames.push(JSON.parse(entityModel).info.title);
-    }
-
-    const entityInstanceType = doc.envelope.instance.info.title;
-    isHubEntityInstance = entityModelNames.includes(entityInstanceType);
-  }
-  return isHubEntityInstance;
 }
 
 function getRecordHistory(docUri) {
@@ -680,7 +659,7 @@ module.exports = {
   buildPropertyMetadata,
   getDocumentSize,
   getEntityInstance,
+  getEntityInstanceProperties,
   getEntitySources,
-  getRecordHistory,
-  isHubEntityInstance
+  getRecordHistory
 };
