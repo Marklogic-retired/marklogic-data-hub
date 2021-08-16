@@ -212,6 +212,14 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const onChosen = (values, id, selected, hovering) => {
     values.color = "#7FADE3";
+
+    //change one to many image
+    if (values.arrowStrikethrough === false) {
+      values.toArrowSrc = graphConfig.customEdgeSVG.oneToManyHover;
+    } else {
+    //change one to one image
+      values.toArrowSrc = graphConfig.customEdgeSVG.oneToOneHover;
+    }
   };
 
   const getEdges = () => {
@@ -220,6 +228,7 @@ const GraphVis: React.FC<Props> = (props) => {
       let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
       properties.forEach((p, i) => {
         let pObj = e.model.definitions[e.entityName].properties[p];
+        //for one to one edges
         if (pObj.relatedEntityType) {
           let parts = pObj.relatedEntityType.split("/");
           edges.push({
@@ -229,7 +238,18 @@ const GraphVis: React.FC<Props> = (props) => {
             label: p,
             id: p + "-" + pObj.joinPropertyName + "-edge",
             title: "Edit Relationship",
-            arrows: "to",
+            arrows: {
+              to: {
+                enabled: true,
+                src: graphConfig.customEdgeSVG.oneToOne,
+                type: "image"
+              }
+            },
+            endPointOffset: {
+              from: -500,
+              to: -500
+            },
+            arrowStrikethrough: true,
             color: "#666",
             font: {
               align: "top",
@@ -240,6 +260,7 @@ const GraphVis: React.FC<Props> = (props) => {
               node: false
             }
           });
+        //for one to many edges
         } else if (pObj.items?.relatedEntityType) {
           let parts = pObj.items.relatedEntityType.split("/");
           edges.push({
@@ -249,7 +270,14 @@ const GraphVis: React.FC<Props> = (props) => {
             label: p,
             id: p + "-" + pObj.items.joinPropertyName + "-edge",
             title: "Edit Relationship",
-            arrows: "to",
+            arrowStrikethrough: false,
+            arrows: {
+              to: {
+                enabled: true,
+                src: graphConfig.customEdgeSVG.oneToMany,
+                type: "image"
+              }
+            },
             color: "#666",
             font: {align: "top"},
             chosen: {
