@@ -85,34 +85,30 @@ const Detail: React.FC<Props> = ({history, location}) => {
         }
 
         if (componentIsMounted.current) {
-          setIsEntityInstanceDocument(result.data.isHubEntityInstance);
-          const content = result.data.recordType;
-          // TODO handle exception if document type is json -> XML
-          if (content === "json") {
+          if (result.data.entityInstanceProperties !== null) {
+            setIsEntityInstanceDocument(true);
+            setIsEntityInstance(true);
+            setEntityInstance(result.data.entityInstanceProperties);
+          } else {
+            setIsEntityInstanceDocument(false);
+            setIsEntityInstance(false);
+          }
+
+          const recordType = result.data.recordType;
+          if (recordType === "json") {
             setContentType("json");
             setData(result.data.data);
-            if (result.data.isHubEntityInstance) {
-              initializeEntityInstance(result.data.data);
-            }
-            setEntityInstanceFlag(result.data.data);
-          } else if (content === "xml") {
+          } else if (recordType === "xml") {
             setContentType("xml");
-            let decodedXml = xmlDecoder(result.data.data);
-            let document = xmlParser(decodedXml);
+            const decodedXml = xmlDecoder(result.data.data);
+            const document = xmlParser(decodedXml);
             setData(document);
             setXml(result.data.data);
-            setEntityInstanceFlag(document);
-            if (result.data.isHubEntityInstance) {
-              initializeEntityInstance(document);
-            }
-          } else if (content === "text") {
+          } else if (recordType === "text") {
             setContentType("text");
             setData(result.data.data);
-            setEntityInstanceFlag(result.data.data);
-            if (result.data.isHubEntityInstance) {
-              initializeEntityInstance(document);
-            }
           }
+
           //Setting the data for sources metadata table
           setSources(result.data.sources);
           setSourcesTableData(generateSourcesData(result.data.sources));
@@ -153,26 +149,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
       handleUserPreferences();
     }
   }, [entityInstanceDocument === true || entityInstanceDocument === false]);
-
-  const initializeEntityInstance = (document) => {
-    let title = "";
-    if (document.envelope) {
-      let instance = document.envelope.instance;
-      if (instance.hasOwnProperty("info")) {
-        title = instance.info.hasOwnProperty("title") && instance.info.title;
-      }
-      setEntityInstance(instance[title]);
-    } else {
-      let esEnvelope = document["es:envelope"];
-      if (esEnvelope) {
-        let esInstance = esEnvelope["es:instance"];
-        if (esInstance.hasOwnProperty("es:info")) {
-          title = esInstance["es:info"].hasOwnProperty("es:title") && esInstance["es:info"]["es:title"];
-        }
-        setEntityInstance(esInstance[title]);
-      }
-    }
-  };
 
   const generateSourcesData = (sourceData) => {
     let parsedData: any[] = [];
@@ -287,16 +263,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
       };
       updateUserPreferences(user.name, preferencesObject);
     }
-  };
-
-  const setEntityInstanceFlag = (content) => {
-    let instance = {};
-    let info = {};
-    if (content.envelope && content.envelope.instance) {
-      instance = content.envelope.instance;
-      info = instance["info"] ? instance["info"] : info;
-    }
-    setIsEntityInstance(info ? true : (Object.keys(instance).length > 1 ? false : true));
   };
 
   const handleClick = (event) => {

@@ -36,12 +36,12 @@ if (!doc) {
 
 const record = {
   "data": doc,
+  "entityInstanceProperties": entitySearchLib.getEntityInstanceProperties(doc),
   "recordType": getDocumentType(xdmp.nodeKind(doc.root)),
   "recordMetadata": xdmp.documentGetMetadata(docUri),
-  "isHubEntityInstance": entitySearchLib.isHubEntityInstance(docUri),
-  "sources": entitySearchLib.getEntitySources(docUri),
+  "sources": entitySearchLib.getEntitySources(doc),
   "history": entitySearchLib.getRecordHistory(docUri),
-  "documentSize": entitySearchLib.getDocumentSize(cts.doc(docUri))
+  "documentSize": entitySearchLib.getDocumentSize(doc)
 };
 
 record;
