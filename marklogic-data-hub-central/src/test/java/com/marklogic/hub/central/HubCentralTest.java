@@ -34,13 +34,6 @@ public class HubCentralTest {
         newHubConfigForDhs();
     }
 
-    @Test
-    void testNewHubConfigForDhsOnAzure() throws IOException {
-        setupEnvironment("application-azure.properties");
-        verifyPropertiesForSslAndAuthenticationOnDhs();
-        newHubConfigForDhs();
-    }
-
     void newDefaultHubConfig() {
         Properties customProps = new Properties();
         customProps.setProperty("mlHost", "somehost");

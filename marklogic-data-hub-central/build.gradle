@@ -82,10 +82,6 @@ dependencies {
 
     implementation "org.apache.commons:commons-lang3:3.12.0"
 
-    implementation 'com.azure:azure-identity:1.2.5'
-    implementation 'com.azure:azure-security-keyvault-secrets:4.2.8'
-    implementation 'com.azure:azure-storage-blob:12.8.0'
-
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.30'
     implementation 'com.amazonaws:aws-java-sdk-ssm:1.12.30'
 
