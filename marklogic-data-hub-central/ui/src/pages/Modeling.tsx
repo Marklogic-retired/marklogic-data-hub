@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Alert, Button, Radio, Tooltip} from "antd";
+import {Button, Radio, Tooltip} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -12,7 +12,7 @@ import styles from "./Modeling.module.scss";
 import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
 import {UserContext} from "../util/user-context";
 import {ModelingContext} from "../util/modeling-context";
-import {ModelingMessages, ModelingTooltips} from "../config/tooltips.config";
+import {ModelingTooltips} from "../config/tooltips.config";
 import {AuthoritiesContext} from "../util/authorities";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
@@ -22,6 +22,7 @@ import arrayIcon from "../assets/icon_array.png";
 import GraphView from "../components/modeling/graph-view/graph-view";
 import {defaultModelingView} from "../config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
+import HCAlert from "../components/common/hc-alert/hc-alert";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
@@ -297,13 +298,13 @@ const Modeling: React.FC = () => {
       onChange={e => handleViewChange(e.target.value)}
       size="large"
       style={mlRadioStyle}
-      // tabIndex={0} // TODO confirm we can make React Bootstrap element tab-able
+    // tabIndex={0} // TODO confirm we can make React Bootstrap element tab-able
     >
       <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
-        <i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i>
+        <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
       </Radio.Button>
       <Radio.Button aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
-        <i>{<FontAwesomeIcon icon={faTable}/>}</i>
+        <i>{<FontAwesomeIcon icon={faTable} />}</i>
       </Radio.Button>
     </Radio.Group>
   </div>;
@@ -318,9 +319,13 @@ const Modeling: React.FC = () => {
               {viewSwitch}
             </div>
             {modelingOptions.isModified && (
-              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><Alert
-                type="info" aria-label="entity-modified-alert" showIcon
-                message={ModelingMessages.entityEditedAlert}/></div>
+              <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
+                <HCAlert
+                  variant="info"
+                  aria-label="entity-modified-alert"
+                  showIcon
+                >{ModelingTooltips.entityEditedAlert}</HCAlert>
+              </div>
             )}
             <div>
               <div className={styles.header}>
@@ -328,15 +333,15 @@ const Modeling: React.FC = () => {
                 <div className={styles.buttonContainer}>
                   <div className={styles.legend}>
                     <div data-testid="foreignKeyIconLegend" className={styles.legendText}>
-                      <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign
-                                            Key Relationship
+                      <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} /> Foreign
+                      Key Relationship
                     </div>
                     <div data-testid="multipleIconLegend" className={styles.legendText}><img
-                      className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple
+                      className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple
                     </div>
                     <div data-testid="structuredIconLegend" className={styles.legendText}>
                       <FontAwesomeIcon className={styles.structuredIcon}
-                        icon={faLayerGroup}/> Structured Type
+                        icon={faLayerGroup} /> Structured Type
                     </div>
                   </div>
                   <div style={{float: "right"}}>
@@ -374,9 +379,13 @@ const Modeling: React.FC = () => {
               {viewSwitch}
             </div>
             {modelingOptions.isModified && (
-              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><Alert
-                type="info" aria-label="entity-modified-alert" showIcon
-                message={ModelingMessages.entityEditedAlert}/></div>
+              <div className={modelingOptions.isModified ? styles.alertContainer : ""}>
+                <HCAlert
+                  variant="info"
+                  aria-label="entity-modified-alert"
+                  showIcon
+                >{ModelingTooltips.entityEditedAlert}</HCAlert>
+              </div>
             )}
             <h1>Entity Types</h1>
             <div className={styles.borderBelowHeader}></div>

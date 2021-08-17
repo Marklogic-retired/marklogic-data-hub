@@ -1,9 +1,10 @@
 import React, {useContext, useState} from "react";
-import {Form, Icon, Input, Alert, Button} from "antd";
+import {Form, Icon, Input, Button} from "antd";
 import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
-import Spinner from "react-bootstrap/Spinner";
+import HCAlert from "../common/hc-alert/hc-alert";
+import {Spinner} from "react-bootstrap";
 
 const LoginForm: React.FC = () => {
 
@@ -67,7 +68,7 @@ const LoginForm: React.FC = () => {
   return (
     <>
       <div className={styles.unauthorized} style={message.show ? {display: "block"} : {display: "none"}}>
-        <Alert message={message.text} type="error" showIcon />
+        <HCAlert variant="danger" showIcon >{message.text}</HCAlert>
       </div>
 
       <div className={styles.loginForm}>
