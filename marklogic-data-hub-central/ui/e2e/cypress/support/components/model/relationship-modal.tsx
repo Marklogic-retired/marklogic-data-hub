@@ -22,7 +22,7 @@ class RelationshipModal {
   }
 
   toggleCardinality() {
-    cy.findByTestId("cardinalityButton").click();
+    cy.findByTestId("cardinalityButton").click({force: true});
   }
 
   editJoinProperty(joinPropertyName: string) {

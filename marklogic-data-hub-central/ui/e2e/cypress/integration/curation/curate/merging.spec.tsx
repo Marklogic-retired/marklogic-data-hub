@@ -139,7 +139,7 @@ describe("Merging", () => {
     mergeRuleModal.selectMergeTypeDropdown("Custom");
     mergeRuleModal.setUriText("/custom/merge/strategy.sjs");
     mergeRuleModal.setFunctionText("customMergeFunction");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
     cy.findByText("orderId").should("exist");
@@ -147,12 +147,13 @@ describe("Merging", () => {
   });
   it("Edit merge rule of type custom ", () => {
     mergeRuleModal.setFunctionText("customMergeFunctionEdited");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
+    cy.wait(3000);
     cy.waitForAsyncRequest();
     mergeRuleModal.cancelButton().click();
     cy.waitForAsyncRequest();
-    cy.wait(1000);
-    cy.findByLabelText("Yes").click();
+    //cy.wait(1000);
+    //cy.findByLabelText("Yes").click();
   });
   it("Cancel merge rule deletion ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("orderId").click();
@@ -182,7 +183,7 @@ describe("Merging", () => {
     mergeRuleModal.selectPropertyToMerge("shipRegion");
     mergeRuleModal.selectMergeTypeDropdown("Strategy");
     mergeRuleModal.selectStrategyName("myFavouriteStrategy");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
@@ -190,7 +191,8 @@ describe("Merging", () => {
   it("Edit merge rule of type strategy ", () => {
     cy.findByText("shipRegion").click();
     mergeRuleModal.selectPropertyToMerge("orderId");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
+    cy.wait(3000);
     cy.waitForAsyncRequest();
     mergeRuleModal.cancelButton().click();
     cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
@@ -216,7 +218,7 @@ describe("Merging", () => {
     mergeRuleModal.selectStructuredPropertyToMerge("address", "address > city");
     mergeRuleModal.selectMergeTypeDropdown("Strategy");
     mergeRuleModal.selectStrategyName("myFavouriteStrategy");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("address > city").should("have.length.gt", 0));
     cy.findByText("address > city").should("exist");
@@ -235,7 +237,7 @@ describe("Merging", () => {
     mergeRuleModal.selectMergeTypeDropdown("Property-specific");
     mergeRuleModal.addSliderOptionsButton().click();
     multiSlider.getHandleName("Length").should("be.visible");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("shippedDate").should("have.length.gt", 0));
     cy.findByText("shippedDate").should("exist");
@@ -243,10 +245,11 @@ describe("Merging", () => {
   it("Edit merge rule of type property-specific ", () => {
     cy.findByText("shippedDate").click();
     mergeRuleModal.selectPropertyToMerge("shipRegion");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
+    cy.wait(3000);
     cy.waitForAsyncRequest();
-    mergeRuleModal.cancelButton().click();
-    cy.waitForAsyncRequest();
+    //mergeRuleModal.cancelButton().click();
+    //cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
   });

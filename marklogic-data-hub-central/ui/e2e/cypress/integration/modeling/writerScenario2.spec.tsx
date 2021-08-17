@@ -379,7 +379,7 @@ describe("Entity Modeling: Writer Role", () => {
     entityTypeModal.newEntityName("TestEntity");
     entityTypeModal.newEntityDescription("An test entity for User");
     entityTypeModal.getAddButton().click();
-    entityTypeTable.viewEntityInGraphView("TestEntity").click({force: true});
+    entityTypeTable.viewEntityInGraphView("TestEntity");
 
     graphViewSidePanel.getDeleteIcon("TestEntity").click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();

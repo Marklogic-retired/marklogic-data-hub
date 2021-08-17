@@ -15,6 +15,7 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
+    cy.deleteSavedQueries();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
@@ -76,8 +77,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //remove query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getDeleteQuery().first().click();
-    queryComponent.getDeleteQueryYesButton().click({force: true});
+    queryComponent.getDeleteQuery();
     browsePage.getManageQueryCloseIcon().click();
     queryComponent.getManageQueryModal().should("not.exist");
     browsePage.getSelectedQuery().should("contain", "select a query");
@@ -129,8 +129,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getResetQueryButton().click();
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getDeleteQuery().first().click();
-    queryComponent.getDeleteQueryYesButton().click({force: true});
+    queryComponent.getDeleteQuery();
     // browsePage.getManageQueryCloseIcon().click();
     queryComponent.getManageQueryModal().should("not.exist");
   });
@@ -171,9 +170,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //open manage queries modal dialog and remove previosly saved query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getDeleteQuery().first().click();
-    cy.waitUntil(() => queryComponent.getDeleteQueryYesButton().should("have.length.gt", 0));
-    queryComponent.getDeleteQueryYesButton().click({force: true});
+    queryComponent.getDeleteQuery();
     queryComponent.getManageQueryModal().should("not.exist");
     //return back to explore page and verify data display
     detailPage.clickBackButton();
@@ -219,8 +216,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //open manage queries modal dialog and remove previously saved query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
-    queryComponent.getDeleteQuery().first().click();
-    queryComponent.getDeleteQueryYesButton().click({force: true});
+    queryComponent.getDeleteQuery();
     queryComponent.getManageQueryModal().should("not.exist");
   });
 

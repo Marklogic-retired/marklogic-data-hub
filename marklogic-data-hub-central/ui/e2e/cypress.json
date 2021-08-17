@@ -5,6 +5,7 @@
     "viewportHeight": 1050,
     "numTestsKeptInMemory": 1,
     "defaultCommandTimeout": 12000,
+    "firefoxGcInterval": { "runMode": 1, "openMode": 1 },
     "reporter": "junit",
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",
