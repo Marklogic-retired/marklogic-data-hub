@@ -64,16 +64,26 @@ Cypress.Commands.add("withRequest", {prevSubject: "optional"}, (subject) => {
         url: "/api/login",
         body: {username, password}
       }).then(response => {
-        window.localStorage.setItem("dataHubUser", username);
-        window.localStorage.setItem("loginResp", JSON.stringify(response.body));
+        try {
+          localStorage.setItem("dataHubUser", username);
+          localStorage.setItem("loginResp", JSON.stringify(response.body));
+          return true;
+        } catch (e) {
+          return false;
+        }
       });
 
       cy.request({
         method: "GET",
         url: "/api/environment/systemInfo"
       }).then(response => {
-        window.localStorage.setItem("environment", JSON.stringify(response.body));
-        window.localStorage.setItem("serviceName", response.body.serviceName);
+        try {
+          localStorage.setItem("environment", JSON.stringify(response.body));
+          localStorage.setItem("serviceName", response.body.serviceName);
+          return true;
+        } catch (e) {
+          return false;
+        }
       });
     });
   }

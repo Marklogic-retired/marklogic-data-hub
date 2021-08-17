@@ -9,7 +9,9 @@ class ManageQuery {
   }
 
   getDeleteQuery() {
-    return cy.get(`[data-testid=delete]`).first();
+    cy.get(`[data-testid=delete]`).first().click({force: true});
+    cy.waitUntil(() => queryComponent.getDeleteQueryYesButton().should("have.length.gt", 0));
+    cy.get(".ant-btn-primary").contains("Yes").click({force: true});
   }
 
   getEditQueryName() {

@@ -50,7 +50,7 @@ class EntityTypeTable {
   }
 
   viewEntityInGraphView(entityName: string) {
-    return cy.findByTestId(`${entityName}-graphView-icon`);
+    cy.findByTestId(`${entityName}-graphView-icon`).click({force: true});
   }
 }
 

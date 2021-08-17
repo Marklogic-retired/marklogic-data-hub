@@ -26,6 +26,7 @@ describe("Entity Modeling: Graph View", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     cy.waitForAsyncRequest();
     modelPage.selectView("table");
+    cy.wait(1000);
     entityTypeTable.waitForTableToLoad();
   });
   afterEach(() => {});
@@ -37,7 +38,7 @@ describe("Entity Modeling: Graph View", () => {
   });
   it.only("can create a new entity in graph view, showing its details in side panel", () => {
     cy.loginAsDeveloper().withRequest();
-    entityTypeTable.viewEntityInGraphView("Person").click({force: true});
+    entityTypeTable.viewEntityInGraphView("Person");
 
     // Create new entity from graph view
     graphView.getAddButton().click();

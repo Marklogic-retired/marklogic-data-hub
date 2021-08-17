@@ -113,39 +113,39 @@ describe("Validate Merge warnings", () => {
   it("Click on merge rule Address and validate warnings", () => {
     cy.findAllByText("Address").first().click();
     cy.get("[name=\"maxValues\"]").first().check();
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties Address allows only a single value.\nIn every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");
     mergeRuleModal.ruleMaxValuesInput("1");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     curatePage.alertMessage().should("not.exist");
     cy.findAllByText("Address").first().click();
     cy.get("[name=\"maxValues\"]").first().check();
     mergeRuleModal.ruleMaxValuesInput("0");
     mergeRuleModal.ruleMaxScoreInput("1");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     curatePage.alertMessage().should("not.exist");
     cy.findAllByText("Address").first().click();
     cy.get("[name=\"maxValues\"]").first().check();
     mergeRuleModal.ruleMaxScoreInput("0");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties Address allows only a single value.\nIn every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");
     mergeRuleModal.ruleMaxValuesInput("1");
     mergeRuleModal.ruleMaxScoreInput("2");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     curatePage.alertMessage().should("not.exist");
     cy.findAllByText("Address").first().click();
     cy.get("[name=\"maxValues\"]").first().check();
     mergeRuleModal.ruleMaxValuesInput("2");
     mergeRuleModal.ruleMaxScoreInput("2");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties Address allows only a single value.\nIn every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");
     //Will uncomment once DHFPROD-7452 is fixed
     /* mergeRuleModal.selectMergeTypeDropdown("Strategy");
     mergeRuleModal.selectStrategyName("retain-single-value");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties DateOfBirth, ZipCode, id, SSN, lname, desc, fname allows only a single value.\nIn every merge rule for the property DateOfBirth, ZipCode, id, SSN, lname, desc, fname set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");*/
     mergeRuleModal.cancelButton().click();
@@ -162,7 +162,7 @@ describe("Validate Merge warnings", () => {
     mergeStrategyModal.saveButton().click();
     cy.findByText("Address").click();
     mergeRuleModal.alertMessage().should("not.exist");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties Address allows only a single value.\nIn every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");
     mergeRuleModal.cancelButton().click();
@@ -172,7 +172,7 @@ describe("Validate Merge warnings", () => {
     mergeStrategyModal.saveButton().click();
     cy.wait(1000);
     cy.findByText("Address").click();
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
     mergeRuleModal.alertMessage().should("have.text", "Warning: The current merge settings might produce merged documents that are inconsistent with the entity type\nIn the entity type Person, the property or properties Address allows only a single value.\nIn every merge rule for the property Address set Max Values or Max Sources to 1.");
     mergeRuleModal.alertDescription().should("have.text", "Please set max values for property to 1 on merge to avoid an invalid entity instance.");
     mergeRuleModal.cancelButton().click();
@@ -186,6 +186,6 @@ describe("Validate Merge warnings", () => {
     mergeRuleModal.selectMergeTypeDropdown("Property-specific");
     mergeRuleModal.ruleMaxValuesInput("1");
     mergeRuleModal.ruleMaxScoreInput("0");
-    mergeRuleModal.saveButton().click();
+    mergeRuleModal.saveButton();
   });
 });

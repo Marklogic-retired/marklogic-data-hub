@@ -92,7 +92,7 @@ describe("Monitor Tile", () => {
           browsePage.getGreySelectedFacets(stepTypeVal).trigger("mousemove", {force: true});
           browsePage.getGreySelectedFacets(stepTypeVal).should("exist");
           browsePage.getFacetApplyButton().click();
-          browsePage.clickClearFacetSearchSelection(flowVal);
+          monitorPage.clearFacetSearchSelection(flowVal);
           cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
           browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("be.checked");
           browsePage.getFacetItemCheckbox("step", stepVal).click();
@@ -107,8 +107,8 @@ describe("Monitor Tile", () => {
           browsePage.getFacetItemCheckbox("step-type", stepTypeVal).click();
           cy.get("#monitorContent").scrollTo("top",  {ensureScrollable: false});
           browsePage.getFacetApplyButton().click();
-          browsePage.clickClearFacetSearchSelection(stepVal);
-          browsePage.clickClearFacetSearchSelection(stepTypeVal);
+          monitorPage.clearFacetSearchSelection(stepVal);
+          monitorPage.clearFacetSearchSelection(stepTypeVal);
           browsePage.getFacetItemCheckbox("step", stepVal).should("not.be.checked");
           browsePage.getFacetItemCheckbox("step-type", stepTypeVal).should("not.be.checked");
           browsePage.getGreySelectedFacets(stepVal).should("not.exist");
@@ -175,7 +175,7 @@ describe("Monitor Tile", () => {
     monitorPage.getSelectedTime().should("contain", "Today");
 
     // Remove applied startTime facet
-    browsePage.clickClearFacetSearchSelection("Today");
+    monitorPage.clearFacetSearchSelection("Today");
     browsePage.getSelectedFacet("Today").should("not.exist");
     browsePage.getClearAllFacetsButton().click();
   });

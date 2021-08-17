@@ -75,6 +75,13 @@ class MonitorPage {
     return this.getStartTimeDropDown().invoke("text");
   }
 
+  clearFacetSearchSelection(facet: string) {
+    cy.get("[data-testid=\"start-time-facet\"]").scrollIntoView();
+    cy.get("[data-testid=\"start-time-facet\"]").trigger("mousemove", {force: true});
+    cy.findByTestId(`clear-${facet}`).scrollIntoView();
+    cy.findByTestId(`clear-${facet}`).trigger("mousemove", {force: true}).dblclick({force: true});
+    cy.waitUntil(() => cy.findByTestId("spinner").should("have.length", 0));
+  }
 
 }
 const monitorPage = new MonitorPage();

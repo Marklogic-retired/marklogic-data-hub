@@ -49,7 +49,7 @@ class MergeRuleModal {
   }
 
   saveButton() {
-    return cy.findByLabelText("confirm-merge-rule");
+    cy.findByLabelText("confirm-merge-rule").click();
   }
 
   selectStrategyName(strategyName: string) {

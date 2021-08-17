@@ -15,6 +15,7 @@ describe("save/manage queries scenarios, developer role", () => {
     LoginPage.postLogin();
     cy.runStep("personJSON", "2");
     cy.waitForAsyncRequest();
+    cy.deleteSavedQueries();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();
@@ -454,7 +455,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getStructuredDataCancel().click();
     browsePage.getStructuredDataWarning().should("not.exist");
   });
-  it("Apply facet,save query using save as is option,verify facets checked on sidebar", () => {
+  it("Apply facet,save query using save as is option", () => {
     browsePage.selectEntity("Person");
     browsePage.getFacetItemCheckbox("lname", "Bates").click();
     browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
@@ -477,6 +478,12 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getEntityConfirmationNoClick().click();
     cy.waitForModalToDisappear();
     cy.wait(1000);
+  });
+  it("Verify facets checked on sidebar", () => {
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
     browsePage.getFacetItemCheckbox("collection", "Person").click();
     browsePage.getFacetItemCheckbox("collection", "Person").should("be.checked");
     browsePage.getGreySelectedFacets("Person").should("exist");
