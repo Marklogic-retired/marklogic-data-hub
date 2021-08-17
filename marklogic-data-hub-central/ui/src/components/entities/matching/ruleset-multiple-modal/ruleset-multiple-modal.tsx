@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Alert, Table, Tag, Button, Select, Tooltip} from "antd";
+import {Modal, Form, Input, Icon, Switch, Table, Tag, Button, Select, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -13,6 +13,7 @@ import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
+import HCAlert from "../../../common/hc-alert/hc-alert";
 
 type Props = {
   editRuleset: any;
@@ -1105,14 +1106,16 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     setSaveClicked(false);
   };
 
-  const noPropertyCheckedErrorMessage = <span id="noPropertyCheckedErrorMessage"><Alert
-    type="error"
-    message="You must select at least one property for the ruleset to be created"
-    aria-label="noPropertyCheckedErrorMessage"
-    className={styles.noPropertyCheckedErrorMessage} showIcon
-    closable
-    onClose={onAlertClose}
-    icon={<Icon type="exclamation-circle" className={styles.exclamationCircle} theme="filled" />} /></span>;
+  const noPropertyCheckedErrorMessage = <span id="noPropertyCheckedErrorMessage">
+    <HCAlert
+      variant="danger"
+      aria-label="noPropertyCheckedErrorMessage"
+      className={styles.noPropertyCheckedErrorMessage} showIcon
+      dismissible
+      onClose={onAlertClose}>
+      {"You must select at least one property for the ruleset to be created"}
+    </HCAlert>
+  </span>;
 
   const paginationOptions = {
     defaultCurrent: 1,

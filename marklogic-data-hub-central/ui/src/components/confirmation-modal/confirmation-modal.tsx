@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
-import {Modal, Alert, Button} from "antd";
+import {Modal, Button} from "antd";
 import styles from "./confirmation-modal.module.scss";
 import {ModelingMessages} from "../../config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
+import HCAlert from "../common/hc-alert/hc-alert";
 
 type Props = {
   isVisible: boolean;
@@ -93,14 +94,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeleteEntityRelationshipWarn && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"Existing entity type relationships."}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"Existing entity type relationships."}</HCAlert>
+
             <p aria-label="delete-relationship-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
             those relationships to be removed from all involved entity types.</p>
             <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> entity type?</p>
@@ -109,14 +108,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {/* {props.type === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"There are existing entity type relationships, and outstanding edits that need to be saved."}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"There are existing entity type relationships, and outstanding edits that need to be saved."}</HCAlert>
+
             <p aria-label="delete-relationship-edit-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or
               more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
               those relationships to be removed from all involved entity types.</p>
@@ -132,14 +129,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeleteEntityStepWarn && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"Entity type is used in one or more steps."}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"Entity type is used in one or more steps."}</HCAlert>
+
             <p aria-label="delete-step-text">Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this property.</p>
             <p
               aria-label="toggle-steps"
@@ -156,14 +151,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         )}
         {props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"Entity type appears in foreign key relationship in 1 or more other entity types."}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"Entity type appears in foreign key relationship in 1 or more other entity types."}</HCAlert>
+
             <p aria-label="delete-entity-foreign-key-text">Edit the foreign key relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.</p>
             <p
               aria-label="toggle-entities"
@@ -186,14 +179,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"Deleting this property may affect some entities."}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"Deleting this property may affect some entities."}</HCAlert>
+
             <p aria-label="delete-property-foreign-key-text">The property <b>{props.boldTextArray[0]}</b> appears in foreign key relationships in one or more other entity types.</p>
             <p
               aria-label="toggle-entities"
@@ -212,14 +203,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeletePropertyStepWarn && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"Deleting this property may affect some steps."}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"Deleting this property may affect some steps."}</HCAlert>
+
             <p aria-label="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> entity type is used in one or more steps,
             so deleting this property may require editing the steps to make sure this deletion doesn't affect those steps.</p>
             <p
@@ -253,14 +242,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.NavigationWarn && (
           <>
-            <Alert
+            <HCAlert
               className={styles.alert}
-              closable={false}
-              description={"Unpublished Changes"}
               showIcon
-              type="warning"
-              message=""
-            />
+              variant="warning"
+            >{"Unpublished Changes"}</HCAlert>
+
             <p aria-label="navigation-warn-text">You have made changes to the properties of one or more entity types.
             If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.
             </p>
