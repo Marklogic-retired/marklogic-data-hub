@@ -1,0 +1,34 @@
+.alert {
+    &.hcAlert {
+        width: auto;
+        padding: 0.5rem 1rem;
+        display: flex;        
+
+        .iconContainer {
+            font-size: 0.875rem;
+            padding-right: 0.5rem;
+            svg {
+                margin-top: -2px;
+            }
+        }
+        .iconHeading {
+            font-size: 1.5rem;
+            svg {
+                vertical-align: baseline;
+                margin-top: 0;
+            }
+        }
+        .content {
+            text-align: left;
+            white-space: normal;
+            font-size: 0.875rem;
+        }
+        & > button {
+            padding: 0.9rem 1rem 0.85rem 0.5rem;
+            font-size: 0.7rem;
+            ~ .content {
+                padding-right: 1.5rem;
+            }
+        }
+    }
+}
