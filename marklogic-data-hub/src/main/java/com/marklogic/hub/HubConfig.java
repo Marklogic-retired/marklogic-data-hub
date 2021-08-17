@@ -91,6 +91,13 @@ public interface HubConfig {
     HubClient newHubClient();
 
     /**
+     * @return a DatabaseClient that connects to the DHF modules database via the app server identified by
+     * mlAppServicesPort. The use case for this is when it's necessary to perform operations against the modules
+     * database, but it's not known whether one of the DHF app servers has been created.
+     */
+    DatabaseClient newAppServicesModulesClient();
+
+    /**
      * Gets the hostname of the AppConfig
      * @return name of host
      */

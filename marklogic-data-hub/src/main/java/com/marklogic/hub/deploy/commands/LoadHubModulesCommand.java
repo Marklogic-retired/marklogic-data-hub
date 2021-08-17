@@ -15,18 +15,24 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.file.*;
-import com.marklogic.client.ext.modulesloader.impl.*;
+import com.marklogic.client.ext.modulesloader.ModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.SystemService;
-
+import com.marklogic.mgmt.resource.appservers.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +45,7 @@ import java.util.Properties;
 @Component
 public class LoadHubModulesCommand extends AbstractCommand {
 
+    private final static String CUSTOM_REWRITER_URI = "/data-hub/5/rest-api/staging-rewriter.xml";
 
     @Autowired
     private HubConfig hubConfig;
@@ -67,12 +74,98 @@ public class LoadHubModulesCommand extends AbstractCommand {
     @Override
     public void execute(CommandContext context) {
         DatabaseClient modulesClient = hubConfig.newModulesDbClient();
+        ModulesLoader modulesLoader = newModulesLoader(context, modulesClient);
 
-        AssetFileLoader assetFileLoader = new AssetFileLoader(modulesClient);
+        final boolean switchToDefaultRewriter = needToSwitchToDefaultRewriter();
+        if (switchToDefaultRewriter) {
+            switchSingleAppserverToDefaultRewriter();
+        }
+
+        try {
+            if (caughtException == null) {
+                logger.info("Loading DHF modules");
+                modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
+
+                createCustomRewriters();
+
+                logger.info("Loading REST search options for staging server");
+                modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
+            }
+        } finally {
+            if (switchToDefaultRewriter) {
+                switchSingleAppServerToCustomRewriter();
+            }
+        }
+
+        if (caughtException == null) {
+            loadJobsSearchOptions(modulesLoader);
+        }
+
+        if (caughtException != null) {
+            throw new RuntimeException(caughtException);
+        }
+    }
+
+    /**
+     * @return true if the staging and final app server are the same, and the custom rewriter doesn't exist. In this
+     * scenario, modules can't be loaded via the single app server because its custom rewriter doesn't exist yet. So
+     * we need to temporarily switch to the default REST rewriter, load the modules and generate the custom rewriter,
+     * and then switch back to the custom rewriter.
+     */
+    protected boolean needToSwitchToDefaultRewriter() {
+        Integer stagingPort = hubConfig.getPort(DatabaseKind.STAGING);
+        if (stagingPort != null && stagingPort.equals(hubConfig.getPort(DatabaseKind.FINAL))) {
+            logger.info("Staging and final app servers use the same port, so checking to see if custom rewriter exists");
+            DatabaseClient client = hubConfig.newAppServicesModulesClient();
+            boolean exists = client.newDocumentManager().exists(CUSTOM_REWRITER_URI) != null;
+            if (!exists) {
+                logger.info("Custom rewriter does not exist, so will switch app server to use the default rewriter so modules can be loaded");
+                return true;
+            } else {
+                logger.info("Custom rewriter exists, so will not switch app server to use the default rewriter");
+            }
+        }
+        return false;
+    }
+
+    private void switchSingleAppserverToDefaultRewriter() {
+        final String uri = "/MarkLogic/rest-api/rewriter.xml";
+        logger.info("Switching single appserver to use default rewriter: " + uri);
+        updateStagingRewriter(uri);
+    }
+
+    private void switchSingleAppServerToCustomRewriter() {
+        logger.info("Switching single appserver to use custom rewriter: " + CUSTOM_REWRITER_URI);
+        updateStagingRewriter(CUSTOM_REWRITER_URI);
+    }
+
+    private void updateStagingRewriter(String rewriterUrl) {
+        try {
+            new ServerManager(hubConfig.getManageClient()).save(new ObjectMapper().createObjectNode()
+                .put("server-name", hubConfig.getHttpName(DatabaseKind.STAGING))
+                .put("url-rewriter", rewriterUrl)
+                .toString());
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to update url-rewriter property on staging app server; please ensure you " +
+                "are using a user with privilege to do this, such as a user with the manage-admin or admin role; error: " + ex.getMessage(), ex);
+        }
+    }
+
+    private void loadJobsSearchOptions(ModulesLoader modulesLoader) {
+        logger.info("Loading REST search options for jobs server");
+        DatabaseClient jobsClient = hubConfig.newJobDbClient();
+        modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), jobsClient);
+        if (caughtException == null) {
+            modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), jobsClient);
+        }
+    }
+    
+    private ModulesLoader newModulesLoader(CommandContext context, DatabaseClient client) {
+        AssetFileLoader assetFileLoader = new AssetFileLoader(client);
         prepareAssetFileLoader(assetFileLoader, context);
 
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
-        modulesLoader.addFailureListener((throwable, client) -> {
+        modulesLoader.addFailureListener((throwable, dbClient) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
                 caughtException = throwable;
@@ -82,28 +175,7 @@ public class LoadHubModulesCommand extends AbstractCommand {
         // When this command is run, should always load all modules
         modulesLoader.setModulesManager(null);
 
-        if (caughtException == null) {
-            logger.info("Loading non-REST modules");
-            modulesLoader.loadModules("classpath*:/ml-modules", new DefaultModulesFinder(), modulesClient);
-
-            createCustomRewriters();
-
-            logger.info("Loading REST options for staging server");
-            modulesLoader.loadModules("classpath*:/ml-modules-staging", new SearchOptionsFinder(), hubConfig.newStagingClient());
-        }
-
-        if (caughtException == null) {
-            logger.info("Loading REST options for jobs server");
-            DatabaseClient jobsClient = hubConfig.newJobDbClient();
-            modulesLoader.loadModules("classpath*:/ml-modules-traces", new SearchOptionsFinder(), jobsClient);
-            if (caughtException == null) {
-                modulesLoader.loadModules("classpath*:/ml-modules-jobs", new SearchOptionsFinder(), jobsClient);
-            }
-        }
-
-        if (caughtException != null) {
-            throw new RuntimeException(caughtException);
-        }
+        return modulesLoader;
     }
 
     protected void createCustomRewriters() {
