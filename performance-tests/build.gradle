@@ -75,3 +75,24 @@ task runPerformanceTests {
     }
 }
 
+// Testing true / false for disableJobOutput. Can be tested alone ex - ../gradlew testDisableJobOutputfalse or ../gradlew testDisableJobOutputtrue
+[
+    "true": true,
+    "false": false
+].each { key, value ->
+    task "testDisableJobOutput${key}"(type: Exec, group: taskGroup) {
+        commandLine jmeterHome + "/bin/jmeter"
+            args = [
+            "-n", // no GUI
+            "-l", "build/jmeter-output.txt",
+            "-j", "build/jmeter.log",
+            "-Jhost=" + mlHost,
+            "-Jusername=" + mlUsername,
+            "-Jpassword=" + mlPassword,
+            "-t", "src/main/jmeter/disable-job-output.jmx",
+            "-JsourceDocumentCount=" + sourceDocumentCount,
+            "-JdisableJobOutput=${value}"
+        ]
+    }
+}
+
