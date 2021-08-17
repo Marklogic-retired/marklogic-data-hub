@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Form, Input, Icon, Radio, AutoComplete, Alert, Button, Tooltip, Popover} from "antd";
+import {Form, Input, Icon, Radio, AutoComplete, Button, Tooltip, Popover} from "antd";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
@@ -7,6 +7,7 @@ import {UserContext} from "../../../util/user-context";
 import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {StepType} from "../../../types/curation-types";
 import {CurationContext} from "../../../util/curation-context";
+import HCAlert from "../../common/hc-alert/hc-alert";
 
 type Props = {
   tabKey: string;
@@ -46,7 +47,7 @@ const srcTypeOptions = [
 
 const {TextArea} = Input;
 
-const CreateEditStep: React.FC<Props>  = (props) => {
+const CreateEditStep: React.FC<Props> = (props) => {
   // TODO use steps.config.ts for default values
   const {handleError} = useContext(UserContext);
   const {curationOptions, setActiveStepWarning, validateCalled, setValidateMatchCalled, setValidateMergeCalled, validateMerge} = useContext(CurationContext);
@@ -229,7 +230,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     } else {
       props.updateStepArtifact(getPayload());
     }
-    ((props.stepType === StepType.Matching) || (props.stepType === StepType.Merging))? setIsSubmit(true):setIsSubmit(false);
+    ((props.stepType === StepType.Matching) || (props.stepType === StepType.Merging)) ? setIsSubmit(true) : setIsSubmit(false);
     if (props.stepType !== StepType.Matching && props.stepType !== StepType.Merging) {
       props.setOpenStepSettings(false);
       props.resetTabs();
@@ -432,33 +433,34 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           if (warning["message"].includes("target entity type")) {
             description = "Please remove target entity type from target collections";
           } else if (warning["message"].includes("source collection")) {
-            description= "Please remove source collection from target collections";
+            description = "Please remove source collection from target collections";
           } else if (warning["message"].includes("temporal collection")) {
-            description= "Please remove temporal collection from target collections";
+            description = "Please remove temporal collection from target collections";
           } else {
             description = "";
           }
           return (
-            <Alert
+            <HCAlert
               className={styles.alert}
-              type="warning"
+              variant="warning"
               showIcon
               key={warning["level"] + index}
-              message={<div className={styles.alertMessage}>{warning["message"]}</div>}
-              description={description}
-            />
+              heading={warning["message"]}
+            >
+              {description}
+            </HCAlert>
           );
         })
       ) : null : null}
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
-            Name:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
+          Name:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
         </span>} labelAlign="left"
         validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
         help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          { tobeDisabled?<Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
+          {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -466,7 +468,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
             onBlur={sendPayload}
-          /></Tooltip>:<Input
+          /></Tooltip> : <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -475,19 +477,19 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />}&nbsp;&nbsp;
-          { props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.name} placement={"right"}>
+          {props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>: props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.name} placement={"right"}>
+          </Tooltip> : props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>:
+          </Tooltip> :
             <Tooltip title={NewMergeTooltips.name} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
           }
         </Form.Item>
         <Form.Item label={<span>
-            Description:
-            &nbsp;
+          Description:
+          &nbsp;
         </span>} labelAlign="left">
           <Input
             id="description"
@@ -498,11 +500,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />&nbsp;&nbsp;
-          { props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.description} placement={"right"}>
+          {props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>: props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.description} placement={"right"}>
+          </Tooltip> : props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>:
+          </Tooltip> :
             <Tooltip title={NewMergeTooltips.description} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </Tooltip>
@@ -510,8 +512,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         </Form.Item>
 
         <Form.Item label={<span>
-            Source Query:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
+          Source Query:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
         </span>} labelAlign="left"
         validateStatus={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "error"}
         help={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "Collection or Query is required"}
@@ -536,7 +538,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             </Popover></span>
 
           <Tooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
-            <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>
+            <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip" />
           </Tooltip>
 
           {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
@@ -545,16 +547,16 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             dataSource={collectionOptions}
             aria-label="collection-input"
-            placeholder= {<span>Enter collection name<Icon className={styles.searchIcon} type="search" theme="outlined"/></span>}
+            placeholder={<span>Enter collection name<Icon className={styles.searchIcon} type="search" theme="outlined" /></span>}
             value={collections}
             disabled={!props.canReadWrite}
             onSearch={handleSearch}
-            onFocus= {handleFocus}
+            onFocus={handleFocus}
             onChange={handleTypeaheadChange}
             onBlur={sendPayload}
           >
             {/* {collectionsList} */}
-          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}</span></div> : <span><TextArea
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined" /> : ""}</span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter source query"
             value={srcQuery}
@@ -566,8 +568,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         </Form.Item>
         {props.stepType === StepType.Merging ?
           <Form.Item label={<span>
-                Timestamp Path:
-                &nbsp;
+            Timestamp Path:
+            &nbsp;
           </span>} labelAlign="left"
           className={styles.timestamp}>
             <Input
@@ -587,10 +589,10 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <Button data-testid={`${props.stepType}-dialog-cancel`} onClick={() => onCancel()}>Cancel</Button>
-              &nbsp;&nbsp;
-            {!props.canReadWrite?<Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
+            &nbsp;&nbsp;
+            {!props.canReadWrite ? <Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
               <Button className={styles.disabledSaveButton} type="primary" htmlType="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</Button></span></Tooltip>
-              :<Button type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</Button>}
+              : <Button type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</Button>}
           </div>
         </Form.Item>
       </Form>
