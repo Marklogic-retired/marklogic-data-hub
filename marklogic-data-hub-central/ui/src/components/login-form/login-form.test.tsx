@@ -68,7 +68,7 @@ describe("Login page test", () => {
     let payload = {"password": "pass", "username": "validUser"};
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
-    expect(container.querySelector("div .ant-alert-message")).not.toHaveValue();
+    expect(container.querySelector("div .alert")).not.toHaveValue();
   });
 
   test("Verify login with error status 401", async () => {
