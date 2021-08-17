@@ -10,6 +10,7 @@ import {Application} from "../../config/application.config";
 import SystemInfo from "./system-info";
 import ConfirmationModal from "../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../types/common-types";
+import {Image} from "react-bootstrap";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -254,7 +255,7 @@ const Header:React.FC<Props> = (props) => {
         <div className={styles.logoContainer} aria-label="header-logo">
           <Link to="/tiles" aria-label="logo-link" className={styles.logo} tabIndex={1} ref={logoRef}
             onKeyDown={logoKeyDownHandler} onMouseDown={logoClickHandler}>
-            <Avatar className={styles.logo} src={logo} />
+            <Image className={styles.logo} src={logo} />
           </Link>
           <div className={styles.vertical}></div>
         </div>
