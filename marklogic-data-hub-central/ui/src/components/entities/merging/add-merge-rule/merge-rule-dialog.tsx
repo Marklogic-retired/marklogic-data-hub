@@ -1,7 +1,7 @@
 import {
   Modal,
   Form,
-  Icon, Radio, Input, Alert, Button, Select, Tooltip
+  Icon, Radio, Input, Button, Select, Tooltip
 } from "antd";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
@@ -17,14 +17,15 @@ import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/cu
 import {updateMergingArtifact, getMergingRulesWarnings} from "../../../../api/merging";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
+import HCAlert from "../../../common/hc-alert/hc-alert";
 
 type Props = {
-    sourceNames: string[];
-    createEditMergeRuleDialog: boolean;
-    setOpenMergeRuleDialog: (createEditMergeRuleDialog: boolean) => void;
-    isEditRule: boolean;
-    propertyName: string;
-    toggleEditRule: (isEditRule: boolean) => void;
+  sourceNames: string[];
+  createEditMergeRuleDialog: boolean;
+  setOpenMergeRuleDialog: (createEditMergeRuleDialog: boolean) => void;
+  isEditRule: boolean;
+  propertyName: string;
+  toggleEditRule: (isEditRule: boolean) => void;
 };
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
@@ -51,7 +52,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [uriTouched, setUriTouched] = useState(false);
   const [functionValue, setFunctionValue] = useState("");
   const [functionValueTouched, setFunctionValueTouched] = useState(false);
-  const [strategyValue, setStrategyValue] = useState<string|undefined>(undefined);
+  const [strategyValue, setStrategyValue] = useState<string | undefined>(undefined);
   const [strategyValueTouched, setStrategyValueTouched] = useState(false);
   const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState("");
   const [namespace, setNamespace] = useState("");
@@ -68,8 +69,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [handleSave, setHandleSave] = useState(false);
 
   const titleLegend = <div className={styles.titleLegend}>
-    <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
-    <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured</div>
+    <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""} /> Multiple</div>
+    <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured</div>
   </div>;
 
   const mergeTypes = ["Custom", "Strategy", "Property-specific"];
@@ -206,7 +207,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const hasFormChanged = () => {
-    if (mergeType ===  "Custom") {
+    if (mergeType === "Custom") {
       let checkCustomValues = hasCustomFormValuesChanged();
       if (!propertyTouched && !mergeTypeTouched && !checkCustomValues) {
         return false;
@@ -238,8 +239,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const hasCustomFormValuesChanged = () => {
     if (!uriTouched
-        && !functionValueTouched
-        && !namespaceTouched
+      && !functionValueTouched
+      && !namespaceTouched
     ) {
       return false;
     } else {
@@ -257,8 +258,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const hasPropertySpecificFormValuesChanged = () => {
     if (!dropdownOptionTouched
-        && (!maxSourcesRuleInputTouched || maxSourcesRuleInput.length === 0)
-        && !maxValueRuleInputTouched || maxValueRuleInput.length === 0
+      && (!maxSourcesRuleInputTouched || maxSourcesRuleInput.length === 0)
+      && !maxValueRuleInputTouched || maxValueRuleInput.length === 0
     ) {
       return false;
     } else {
@@ -375,7 +376,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSubmit =  (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     let propertyErrorMessage = "";
     let mergeTypeErrorMessage = "";
@@ -396,14 +397,14 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         if (uri && functionValue && property && mergeType) {
           setHandleSave(true);
           newMergeRules =
-                        {
-                          "entityPropertyPath": selectedProperty,
-                          "mergeType": "custom",
-                          "mergeModulePath": uri,
-                          "mergeModuleNamespace": namespace,
-                          "mergeModuleFunction": functionValue,
-                          "options": {}
-                        };
+          {
+            "entityPropertyPath": selectedProperty,
+            "mergeType": "custom",
+            "mergeModulePath": uri,
+            "mergeModuleNamespace": namespace,
+            "mergeModuleFunction": functionValue,
+            "options": {}
+          };
           onSave(newMergeRules);
         } else {
           setUriTouched(true);
@@ -443,7 +444,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     setStrategyNameErrorMessage(strategyNameErrorMessage);
   };
 
-  const onAddOptions =  () => {
+  const onAddOptions = () => {
     setPriorityOrderOptions(addSliderOptions(priorityOrderOptions, dropdownOption));
   };
 
@@ -468,7 +469,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       newStepArtifact.mergeRules[index] = newMergeRules;
       await updateMergingArtifact(newStepArtifact);
       updateActiveStepArtifact(newStepArtifact);
-      let warnings= await getMergingRulesWarnings(newStepArtifact, newMergeRules);
+      let warnings = await getMergingRulesWarnings(newStepArtifact, newMergeRules);
       if (warnings !== undefined) { setValidationWarnings(warnings.data); }
     }
   };
@@ -520,14 +521,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         validationWarnings.map((warning, index) => {
           let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
           return (
-            <Alert
+            <HCAlert
               className={styles.alert}
-              type="warning"
+              variant="warning"
               showIcon
               key={warning["level"] + index}
-              message={<div className={styles.alertMessage}>{warning["message"]}</div>}
-              description={description}
-            />
+              heading={warning["message"]}
+            >
+              {description}
+            </HCAlert>
           );
         })
       ) : null}
@@ -663,7 +665,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 label="Max Values:"
                 labelAlign="left"
               >
-                <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
+                <Radio.Group value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
                 </Radio.Group>
@@ -676,9 +678,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 label="Max Sources:"
                 labelAlign="left"
               >
-                <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
+                <Radio.Group value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
                   <Radio value={1} > All</Radio>
-                  <Radio value={2} ><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
+                  <Radio value={2} ><Input id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
                 </Radio.Group>
                 <Tooltip title={MergeRuleTooltips.maxSources}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -704,7 +706,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <Button aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</Button>
                 </div>
                 <div>
-                  <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging}/>
+                  <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging} />
                 </div>
               </div>
             </> : ""

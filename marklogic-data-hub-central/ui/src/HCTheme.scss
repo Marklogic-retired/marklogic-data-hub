@@ -8,6 +8,7 @@ $light: #f8f9fa;
 $dark: #343a40;
 
 $text-color: #333;
+$alert-text-color: #333;
 
 // this is used to map colors. change accordingly.
 $theme-colors: (
@@ -24,16 +25,16 @@ $theme-colors: (
 //fonts
 $body-color: $text-color !default;
 $font-size-base: 0.875rem !default;
-$font-family-sans-serif: "Helvetica Neue", system-ui, -apple-system, "Segoe UI",
-    Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif,
+$font-family-sans-serif: "Helvetica Neue",Helvetica, Arial, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Noto Sans", "Liberation Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
 
 // Alert
 $alert-padding-y: 0.7rem;
 $alert-padding-x: 0.7rem;
 $alert-bg-scale: -90% !default;
-$alert-border-scale: 30% !default;
-$alert-color-scale: 50% !default;
+$alert-border-scale: -50% !default;
+$alert-color-scale: 70.9 !default;
 
 // Tooltip
 $tooltip-bg: #373737 !default;
@@ -45,7 +46,7 @@ $accordion-icon-width: 0.875rem;
 $accordion-icon-transform: rotate(0deg) !default;
 
 //Form
-$input-btn-focus-width: .05rem;
+$input-btn-focus-width: 0.05rem;
 $input-border-color: #ccc;
 $input-border-width: 1px;
 $input-border-radius: 2px;
@@ -80,4 +81,8 @@ $input-border-radius: 2px;
 
 .tooltip-inner {
     text-align: left;
+}
+
+.alert {
+    color: $alert-text-color;
 }
