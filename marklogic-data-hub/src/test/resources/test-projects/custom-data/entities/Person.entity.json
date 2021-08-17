@@ -1,0 +1,18 @@
+{
+  "info": {
+    "title": "Person",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/",
+    "searchOptionsPostProcessor": "/custom-data-modules/my-options-post-processor.xqy"
+  },
+  "definitions": {
+    "Person": {
+      "properties": {
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
