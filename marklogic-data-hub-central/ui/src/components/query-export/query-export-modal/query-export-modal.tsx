@@ -1,11 +1,10 @@
 import React, {useState, useContext} from "react";
-import {Modal, Form, Input, Radio, Table, Collapse, Alert} from "antd";
+import {Modal, Form, Input, Radio, Table, Collapse} from "antd";
 import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "../../../util/search-context";
 import {UserContext} from "../../../util/user-context";
 import {exportQuery, exportSavedQuery} from "../../../api/queries";
-import {Icon} from "@iconify/react";
-import exclamationTriangle from "@iconify/icons-fa/exclamation-triangle";
+import HCAlert from "../../common/hc-alert/hc-alert";
 
 const QueryExportModal = (props) => {
   const {Panel} = Collapse;
@@ -87,11 +86,19 @@ const QueryExportModal = (props) => {
         name="basic"
         data-testid="query-export-form"
       >
-        {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && <div><Alert data-testid="export-warning" className={styles.warning}
-          message="One or more structured properties are included in this query. The
-                                       data for those properties will not be included in the export file.
-                                       Check the Preview to see what will be exported." type="warning" icon={<Icon icon={exclamationTriangle} color="#CE8406" />} showIcon />
-        <br /></div>}
+        {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
+
+        <div>
+          <HCAlert
+            data-testid="export-warning"
+            variant="warning"
+            className={styles.dataWarning}
+            showIcon
+          >
+            {"One or more structured properties are included in this query. The data for those properties will not be included in the export file. to see what will be exported."}
+          </HCAlert>
+          <br />
+        </div>}
 
         <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
 
@@ -126,7 +133,16 @@ const QueryExportModal = (props) => {
       {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && <div>
         <Collapse bordered={false} className={styles.collapseCustomPanel} style={{border: "0px", color: "blue"}}>
           <Panel id="export-panel" header="Show Preview" key="1" style={{border: "0px", color: "blue"}}>
-            <Alert data-testid="export-data-warning" className={styles.dataWarning} message="Preview may improperly render new lines in property values" type="warning" icon={<Icon icon={exclamationTriangle} color="#CE8406" />} showIcon /><br />
+
+            <HCAlert
+              data-testid="export-data-warning"
+              variant="warning"
+              className={styles.dataWarning}
+              showIcon
+            >{"Preview may improperly render new lines in property values"}</HCAlert>
+
+            <br />
+
             <Table data-testid="export-preview-table" className={styles.exportTable} dataSource={props.tableData} columns={props.tableColumns} pagination={false} size="small" scroll={{x: 500}} bordered />
           </Panel>
         </Collapse>
