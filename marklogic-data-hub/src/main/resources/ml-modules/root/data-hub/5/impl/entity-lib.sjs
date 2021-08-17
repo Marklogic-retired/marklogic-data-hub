@@ -306,7 +306,8 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
 
   // This does not reuse writeModel because we do not want to hit the xdmp.documentInsert line. This requires the
   // deleteModel.sjs endpoint to then have declareUpdate. But when that is added, the call to deleteDocument then hangs.
-  const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
+  // Applying a Set in case both constants point to the same database.
+  const databases = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   [...affectedModels].forEach(model => {
     databases.forEach(db => {
       const entityName = getModelName(model);
@@ -335,6 +336,8 @@ function writeModel(entityName, model) {
  * @param databases
  */
 function writeModelToDatabases(entityName, model, databases) {
+  databases = [...new Set(databases)];
+
   if (model.info) {
     if (!model.info.version) {
       model.info.version = "1.0.0";

@@ -174,6 +174,16 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     }
 
     /**
+     * @return a DatabaseClient that connects to the DHF modules database via the app server identified by
+     * mlAppServicesPort. The use case for this is when it's necessary to perform operations against the modules
+     * database, but it's not known whether one of the DHF app servers has been created.
+     */
+    @Override
+    public DatabaseClient newAppServicesModulesClient() {
+        return appConfig.newAppServicesDatabaseClient(getDbName(DatabaseKind.MODULES));
+    }
+
+    /**
      * Applies properties in the given properties to this instance. Will create new AppConfig, ManageConfig, and
      * AdminConfig objects based on these properties.
      *
