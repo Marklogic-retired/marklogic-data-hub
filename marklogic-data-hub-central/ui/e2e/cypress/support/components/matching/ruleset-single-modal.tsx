@@ -1,7 +1,7 @@
 class RulesetSingleModal {
 
   selectPropertyToMatch(property: string) {
-    cy.get(".entity-property-tree-select_matchTypeSelect__2OGab > .ant-select-selection").trigger("mouseover").click();
+    cy.get("[class^=\"entity-property-tree-select_matchTypeSelect\"] > .ant-select-selection").trigger("mouseover").click();
     cy.findByLabelText(`${property}-option`).then($option => {
       $option[0].click();
     });
@@ -9,7 +9,7 @@ class RulesetSingleModal {
   }
 
   selectStructuredPropertyToMatch(parent: string, property: string) {
-    cy.get(".entity-property-tree-select_matchTypeSelect__2OGab > .ant-select-selection").trigger("mouseover").click();
+    cy.get("[class^=\"entity-property-tree-select_matchTypeSelect\"] > .ant-select-selection").trigger("mouseover").click();
     cy.findByLabelText(`${parent}-option`).within(() => {
       cy.findByLabelText("icon: caret-down").then($option => {
         $option[0].click();

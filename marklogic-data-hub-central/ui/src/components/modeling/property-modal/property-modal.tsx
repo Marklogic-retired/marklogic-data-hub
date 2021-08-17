@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Icon, Radio, Cascader, Select, Alert, Checkbox, Button, Tooltip} from "antd";
+import {Modal, Form, Input, Icon, Radio, Cascader, Select, Checkbox, Button, Tooltip} from "antd";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -27,6 +27,7 @@ import {
   MORE_DATE_TYPES,
   DROPDOWN_PLACEHOLDER
 } from "../../../config/modeling.config";
+import HCAlert from "../../common/hc-alert/hc-alert";
 
 const {Option} = Select;
 
@@ -796,14 +797,11 @@ const PropertyModal: React.FC<Props> = (props) => {
     >
       {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 &&
         <div className={styles.warningContainer}>
-          <Alert
+          <HCAlert
             className={styles.alert}
-            closable={false}
-            description={"Entity type is used in one or more steps."}
             showIcon
-            type="warning"
-            message="Blah"
-          />
+            variant="warning"
+          >{"Entity type is used in one or more steps."}</HCAlert>
           <p className={styles.stepWarning}>
             The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this property,
             you may need to modify these steps to correlate with your changes to this property.

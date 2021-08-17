@@ -204,12 +204,8 @@ class CuratePage {
     cy.get(".ant-select-dropdown").eq(0).click();
   }
 
-  alertMessage() {
-    return cy.get("[class*=\"advanced-settings_alert__dBHmT\"] span[class=\"ant-alert-message\"] div");
-  }
-
-  alertDescription() {
-    return cy.get("[class*=\"advanced-settings_alert__dBHmT\"] span[class=\"ant-alert-description\"]");
+  alertContent() {
+    return cy.get(`[id="hc-alert-component-content"]`);
   }
 
   removeTargetCollection(collection: string) {
@@ -225,7 +221,7 @@ class CuratePage {
   }
 
   mergeTargetCollection(collection: string) {
-    return cy.get(`[data-row-key=${collection}] [class="advanced-target-collections_preWrap__3Dwhq"]`);
+    return cy.get(`[data-row-key=${collection}] [class^="advanced-target-collections_preWrap"]`);
   }
 }
 
