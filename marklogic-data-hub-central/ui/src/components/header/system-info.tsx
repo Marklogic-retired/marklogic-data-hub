@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
-import {Card, Modal, Alert, Button, Tooltip} from "antd";
+import {Card, Modal, Button, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axios from "axios";
@@ -12,6 +12,7 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
+import HCAlert from "../common/hc-alert/hc-alert";
 
 
 const SystemInfo = (props) => {
@@ -80,11 +81,11 @@ const SystemInfo = (props) => {
     }
   };
 
-  const clear =async () => {
+  const clear = async () => {
     try {
       setMessage({show: false});
       setIsLoading(true);
-      let response =await Axios.post("/api/environment/clearUserData");
+      let response = await Axios.post("/api/environment/clearUserData");
       if (response.status === 200) {
         setIsLoading(false);
         setMessage({show: true});
@@ -126,7 +127,7 @@ const SystemInfo = (props) => {
     closable={false}
     destroyOnClose={true}
   >
-    <div style = {{display: "flex"}}><div style={{padding: "24px 0px 0px 15px"}}><FontAwesomeIcon icon={faExclamationTriangle} size = "lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon></div><div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.</div></div>
+    <div style={{display: "flex"}}><div style={{padding: "24px 0px 0px 15px"}}><FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon></div><div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.</div></div>
   </Modal>;
 
   return (
@@ -141,9 +142,9 @@ const SystemInfo = (props) => {
     >
       <div className={styles.systemContainer}>
         <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
-          <Alert message={<span><b>Clear All User Data </b>completed successfully</span>} type="success" showIcon />
+          <HCAlert variant="success" showIcon>{<span><b>Clear All User Data </b>completed successfully</span>}</HCAlert>
         </div>
-        <div className={styles.serviceName}>{serviceName}<Tooltip title="Copy to clipboard" placement={"bottom"}><FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/></Tooltip></div>
+        <div className={styles.serviceName}>{serviceName}<Tooltip title="Copy to clipboard" placement={"bottom"}><FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)} /></Tooltip></div>
         <div className={styles.version}>
           <div className={styles.label}>Data Hub Version:</div>
           <div className={styles.value}>{dataHubVersion}</div>
@@ -155,7 +156,7 @@ const SystemInfo = (props) => {
         <div className={styles.cardsContainer}>
           <div className={styles.cards}>
             <Row>
-              { !authorityService.canDownloadProjectFiles() ? <Col>
+              {!authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
                   <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
@@ -169,7 +170,7 @@ const SystemInfo = (props) => {
                     </div>
                   </Tooltip>
                 </Card>
-              </Col>:
+              </Col> :
                 <Col>
                   <Card size="small" className={styles.download} >
                     <div className={styles.title}>Download Hub Central Files</div>
@@ -186,7 +187,7 @@ const SystemInfo = (props) => {
                 </Col>
               }
 
-              { !authorityService.canDownloadProjectFiles() ? <Col>
+              {!authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Project Files</div>
                   <p>{SystemInfoMessages.downloadProjectFiles}</p>
@@ -200,7 +201,7 @@ const SystemInfo = (props) => {
                     </div>
                   </Tooltip>
                 </Card>
-              </Col>:
+              </Col> :
                 <Col>
                   <Card size="small" className={styles.download} >
                     <div className={styles.title}>Download Project Files</div>
@@ -217,11 +218,11 @@ const SystemInfo = (props) => {
                 </Col>
               }
 
-              { !authorityService.canClearUserData() ? <Col>
+              {!authorityService.canClearUserData() ? <Col>
                 <Card size="small" className={styles.clearAll}>
                   {isLoading === true ? <div className={styles.spinRunning}>
-                    <Spinner animation="border" variant="primary"/>
-                  </div>: ""}
+                    <Spinner animation="border" variant="primary" />
+                  </div> : ""}
                   <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                   <p>{SystemInfoMessages.clearAllUserData}</p>
                   <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
@@ -234,12 +235,12 @@ const SystemInfo = (props) => {
                     </div>
                   </Tooltip>
                 </Card>
-              </Col>:
+              </Col> :
                 <Col>
                   <Card size="small" className={styles.clearAll}>
                     {isLoading === true ? <div className={styles.spinRunning}>
-                      <Spinner animation="border" variant="primary"/>
-                    </div>: ""}
+                      <Spinner animation="border" variant="primary" />
+                    </div> : ""}
                     <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                     <p>{SystemInfoMessages.clearAllUserData}</p>
                     <div className={styles.buttonContainer}>
