@@ -1,7 +1,7 @@
 class MergeRuleModal {
 
   selectPropertyToMerge(property: string) {
-    cy.get(".entity-property-tree-select_matchTypeSelect__2OGab > .ant-select-selection").trigger("mouseover").click();
+    cy.get("[class^=\"entity-property-tree-select_matchTypeSelect\"] > .ant-select-selection").trigger("mouseover").click();
     cy.findByLabelText(`${property}-option`).then($option => {
       $option[0].click();
     });
@@ -9,7 +9,7 @@ class MergeRuleModal {
   }
 
   selectStructuredPropertyToMerge(parent: string, property: string) {
-    cy.get(".entity-property-tree-select_matchTypeSelect__2OGab > .ant-select-selection").trigger("mouseover").click();
+    cy.get("[class^=\"entity-property-tree-select_matchTypeSelect\"] > .ant-select-selection").trigger("mouseover").click();
     cy.findByLabelText(`${parent}-option`).within(() => {
       cy.findByLabelText("icon: caret-down").then($option => {
         $option[0].click();
@@ -57,12 +57,8 @@ class MergeRuleModal {
     cy.waitUntil(() => cy.findByTestId(`strategyNameOptions-${strategyName}`).should("be.visible")).click({force: true});
   }
 
-  alertMessage() {
-    return cy.get(".merge-rule-dialog_alertMessage__28dTa");
-  }
-
-  alertDescription() {
-    return cy.get(".ant-alert-description");
+  alertContent() {
+    return cy.get(`[id="hc-alert-component-content"]`);
   }
 
   ruleMaxValuesInput(value: string) {
