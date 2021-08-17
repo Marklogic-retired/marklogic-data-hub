@@ -1,12 +1,13 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout, Icon, Avatar, Menu, Dropdown, Button, Tooltip} from "antd";
+import {Layout, Icon, Menu, Dropdown, Button, Tooltip} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
 import SystemInfo from "./system-info";
+import {Image} from "react-bootstrap";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -239,7 +240,7 @@ const Header:React.FC<Props> = (props) => {
         <div className={styles.logoContainer} aria-label="header-logo">
           <Link to="/tiles" aria-label="logo-link" className={styles.logo} tabIndex={1} ref={logoRef}
             onKeyDown={logoKeyDownHandler} onMouseDown={logoClickHandler}>
-            <Avatar className={styles.logo} src={logo} />
+            <Image className={styles.logo} src={logo} />
           </Link>
           <div className={styles.vertical}></div>
         </div>
