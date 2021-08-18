@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Modal} from "antd";
-import {MLAlert, MLButton} from "@marklogic/design-system";
+import {Modal, Alert, Button} from "antd";
 import styles from "./confirmation-modal.module.scss";
 import {ModelingMessages} from "../../config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
@@ -36,12 +35,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
   const renderArrayValues = props.arrayValues?.map((item, index) => <li key={item + index}>{item}</li>);
 
   const modalFooter = <div className={styles.modalFooter}>
-    <MLButton
+    <Button
       aria-label={`confirm-${props.type}-no`}
       size="default"
       onClick={closeModal}
-    >No</MLButton>
-    <MLButton
+    >No</Button>
+    <Button
       aria-label={`confirm-${props.type}-yes`}
       type="primary"
       size="default"
@@ -58,15 +57,15 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         }
         props.confirmAction();
       }}
-    >Yes</MLButton>
+    >Yes</Button>
   </div>;
 
-  const modalFooterClose = <MLButton
+  const modalFooterClose = <Button
     aria-label={`confirm-${props.type}-close`}
     type="primary"
     size="default"
     onClick={closeModal}
-  >Close</MLButton>;
+  >Close</Button>;
 
   return (
     <Modal
@@ -94,12 +93,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeleteEntityRelationshipWarn && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"Existing entity type relationships."}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="delete-relationship-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
             those relationships to be removed from all involved entity types.</p>
@@ -109,12 +109,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {/* {props.type === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"There are existing entity type relationships, and outstanding edits that need to be saved."}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="delete-relationship-edit-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or
               more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
@@ -131,12 +132,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeleteEntityStepWarn && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"Entity type is used in one or more steps."}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="delete-step-text">Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this property.</p>
             <p
@@ -154,12 +156,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         )}
         {props.type === ConfirmationType.DeleteEntityWithForeignKeyReferences && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"Entity type appears in foreign key relationship in 1 or more other entity types."}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="delete-entity-foreign-key-text">Edit the foreign key relationship of these entity types before deleting <b>{props.boldTextArray[0]}</b>.</p>
             <p
@@ -183,12 +186,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"Deleting this property may affect some entities."}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="delete-property-foreign-key-text">The property <b>{props.boldTextArray[0]}</b> appears in foreign key relationships in one or more other entity types.</p>
             <p
@@ -208,12 +212,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.DeletePropertyStepWarn && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"Deleting this property may affect some steps."}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> entity type is used in one or more steps,
             so deleting this property may require editing the steps to make sure this deletion doesn't affect those steps.</p>
@@ -248,12 +253,13 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
         {props.type === ConfirmationType.NavigationWarn && (
           <>
-            <MLAlert
+            <Alert
               className={styles.alert}
               closable={false}
               description={"Unpublished Changes"}
               showIcon
               type="warning"
+              message=""
             />
             <p aria-label="navigation-warn-text">You have made changes to the properties of one or more entity types.
             If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.

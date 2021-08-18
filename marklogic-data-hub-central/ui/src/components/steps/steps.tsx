@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Modal, Tabs} from "antd";
+import {Modal, Tabs, Tooltip} from "antd";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
@@ -7,7 +7,6 @@ import ConfirmYesNo from "../common/confirm-yes-no/confirm-yes-no";
 import styles from "./steps.module.scss";
 import "./steps.scss";
 import {StepType} from "../../types/curation-types";
-import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ErrorTooltips} from "../../config/tooltips.config";
@@ -234,16 +233,16 @@ const Steps: React.FC<Props> = (props) => {
         <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
 
           <TabPane tab={(
-            <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
-              id="basicTooltip" style={ {wordBreak: "break-all"} }
-              title={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Basic</MLTooltip>
+            <Tooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+              className={"basicTooltip"} style={ {wordBreak: "break-all"} }
+              title={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Basic</Tooltip>
           )} key="1" disabled={!isValid && currentTab !== "1"}>
             {getCreateEditStep(props.activityType)}
           </TabPane>
           <TabPane tab={(
-            <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
-              id="advTooltip" style={ {wordBreak: "break-all"} }
-              title={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Advanced</MLTooltip>
+            <Tooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+              className={"advTooltip"} style={ {wordBreak: "break-all"} }
+              title={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Advanced</Tooltip>
           )} key="2" disabled={!isValid && currentTab !== "2"} forceRender={true}>
             <AdvancedSettings
               tabKey="2"

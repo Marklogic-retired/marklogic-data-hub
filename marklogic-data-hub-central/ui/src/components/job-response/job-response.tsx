@@ -1,12 +1,16 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Descriptions, Divider, Modal, Icon, Collapse} from "antd";
+import {Descriptions, Divider, Modal, Icon, Collapse, Spin, Button} from "antd";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
-import {MLButton, MLSpin} from "@marklogic/design-system";
 import {getMappingArtifactByStepName} from "../../api/mapping";
 import {useHistory} from "react-router-dom";
+
+/* uncomment when implementing explore data link */
+// import {getMappingArtifactByStepName} from "../../api/mapping";
+// import {useHistory} from "react-router-dom";
+
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
@@ -136,7 +140,7 @@ const JobResponse: React.FC<Props> = (props) => {
           }
         } else {
           return <div  className={styles.stepResponse} key={"running-" + index}>&nbsp;&nbsp;<strong className={styles.stepName}>{stepResponse.stepName || stepResponse.status}</strong> <span className={styles.running}>
-            <MLSpin data-testid="spinner" /> <span className={styles.runningLabel}>Running...</span>
+            <Spin data-testid="spinner" /> <span className={styles.runningLabel}>Running...</span>
           </span></div>;
         }
       });
@@ -182,27 +186,27 @@ const JobResponse: React.FC<Props> = (props) => {
       }
       return ((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging" || stepType.toLowerCase() === "custom") && entityName ?
         <div className={styles.exploreDataContainer}>
-          <MLButton data-testid="explorer-link" size="large" type="primary"
+          <Button data-testid="explorer-link" size="large" type="primary"
             onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
             className={styles.exploreCuratedData}>
             <span className={styles.exploreIcon}></span>
             <span className={styles.exploreText}>Explore Curated Data</span>
-          </MLButton>
+          </Button>
         </div> : (stepType.toLowerCase() === "ingestion" || stepType.toLowerCase() === "custom")?
           <div className={styles.exploreDataContainer}>
-            <MLButton data-testid="explorer-link" size="large" type="primary"
+            <Button data-testid="explorer-link" size="large" type="primary"
               onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
               className={styles.exploreLoadedData}>
               <span className={styles.exploreIcon}></span>
               <span className={styles.exploreText}>Explore Loaded Data</span>
-            </MLButton>
+            </Button>
           </div> : "");
     } else {
       return (<div className={styles.closeContainer}>
-        <MLButton data-testid="close-link" size="large" type="primary"
+        <Button data-testid="close-link" size="large" type="primary"
           onClick={() => props.setOpenJobResponse(false)}
           className={styles.closeButton}><span>Close</span>
-        </MLButton>
+        </Button>
       </div>);
     }
   };

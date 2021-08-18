@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Icon, Select} from "antd";
+import {Form, Input, Icon, Select, Button, Tooltip} from "antd";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
 import StepsConfig from "../../../config/steps.config";
 import {NewLoadTooltips} from "../../../config/tooltips.config";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
 
 interface Props {
   tabKey: string;
@@ -426,7 +425,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
         help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          { tobeDisabled?<MLTooltip title={NewLoadTooltips.nameField} placement={"bottom"}> <Input
+          { tobeDisabled?<Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -434,7 +433,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
             onBlur={sendPayload}
-          /></MLTooltip>:<Input
+          /></Tooltip>:<Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -443,9 +442,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />}
-        &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={"right"}>
+        &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
@@ -458,9 +457,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description} placement={"right"}>
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -478,9 +477,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat} placement={"right"}>
+          &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceFormat} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
         {srcFormat === "csv" ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -506,11 +505,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             style={{width: 75}}
             disabled={props.canReadOnly && !props.canReadWrite}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator} placement={"right"}>
+          </Tooltip></span> : <span>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip></span>}</span>
+          </Tooltip></span>}</span>
         </Form.Item> : ""}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -525,9 +524,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onBlur={sendPayload}>
             {toptions}
           </Select>&nbsp;&nbsp;
-          <MLTooltip title={NewLoadTooltips.targetFormat} placement={"right"}>
+          <Tooltip title={NewLoadTooltips.targetFormat} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
         {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
           Source Name:&nbsp;
@@ -540,9 +539,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName} placement={"right"}>
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceName} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>}
         {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
           Source Type:&nbsp;
@@ -555,9 +554,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType} placement={"right"}>
+          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceType} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>}
         <Form.Item label={<span>
           Target URI Prefix:&nbsp;
@@ -571,31 +570,31 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewLoadTooltips.outputURIPrefix} placement={"right"}>
+          <Tooltip title={NewLoadTooltips.outputURIPrefix} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
+            <Button aria-label="Cancel" onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            {!props.canReadWrite?<MLTooltip title={NewLoadTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}><MLButton
+            {!props.canReadWrite?<Tooltip title={NewLoadTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}><Button
               className={styles.disabledSaveButton}
               aria-label="Save"
               type="primary"
               htmlType="submit"
               disabled={true}
               onClick={handleSubmit}
-            >Save</MLButton></span></MLTooltip>:
-              <MLButton
+            >Save</Button></span></Tooltip>:
+              <Button
                 aria-label="Save"
                 type="primary"
                 htmlType="submit"
                 disabled={false}
                 onClick={handleSubmit}
                 onFocus={sendPayload}
-              >Save</MLButton>}
+              >Save</Button>}
           </div>
         </Form.Item>
       </Form>
