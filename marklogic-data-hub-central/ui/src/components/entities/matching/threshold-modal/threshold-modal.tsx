@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Icon} from "antd";
-import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
+import {Modal, Form, Input, Icon, Button, Select, Tooltip} from "antd";
 import styles from "./threshold-modal.module.scss";
 
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
@@ -30,7 +29,7 @@ const THRESHOLD_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
-const {MLOption} = MLSelect;
+const {Option} = Select;
 
 const ThresholdModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -341,7 +340,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
   />;
 
   const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => {
-    return <MLOption key={index} value={matchType.value} aria-label={`${matchType.name}-option`}>{matchType.name}</MLOption>;
+    return <Option key={index} value={matchType.value} aria-label={`${matchType.name}-option`}>{matchType.name}</Option>;
   });
 
   const renderCustomOptions = (
@@ -366,9 +365,9 @@ const ThresholdModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.uri}>
+        <Tooltip title={NewMatchTooltips.uri}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </Form.Item>
       <Form.Item
         className={styles.formItem}
@@ -390,9 +389,9 @@ const ThresholdModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.function}>
+        <Tooltip title={NewMatchTooltips.function}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </Form.Item>
       <Form.Item
         className={styles.formItem}
@@ -409,30 +408,30 @@ const ThresholdModal: React.FC<Props> = (props) => {
           onChange={handleInputChange}
           onBlur={handleInputChange}
         />
-        <MLTooltip title={NewMatchTooltips.namespace}>
+        <Tooltip title={NewMatchTooltips.namespace}>
           <Icon type="question-circle" className={styles.icon} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </Form.Item>
     </>
   );
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <MLButton type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
-      </MLButton>
-      <div className={styles.footer}>
-        <MLButton
-          aria-label={`cancel-threshold-modal`}
-          onClick={closeModal}
-        >Cancel</MLButton>
-        <MLButton
-          className={styles.saveButton}
-          aria-label={`confirm-threshold-modal`}
-          type="primary"
-          onClick={(e) => onSubmit(e)}
-        >Save</MLButton>
-      </div>
+    <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+    <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+    </Button>
+    <div className={styles.footer}>
+      <Button
+        aria-label={`cancel-threshold-modal`}
+        onClick={closeModal}
+      >Cancel</Button>
+      <Button
+        className={styles.saveButton}
+        aria-label={`confirm-threshold-modal`}
+        type="primary"
+        onClick={(e) => onSubmit(e)}
+      >Save</Button>
+    </div>
     </div>
   );
 
@@ -491,7 +490,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
           validateStatus={actionTypeErrorMessage ? "error" : ""}
           help={actionTypeErrorMessage}
         >
-          <MLSelect
+          <Select
             aria-label={"threshold-select"}
             className={styles.matchTypeSelect}
             size="default"
@@ -501,7 +500,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
             value={actionType}
           >
             {renderThresholdOptions}
-          </MLSelect>
+          </Select>
         </Form.Item>
 
         {actionType === "custom" && renderCustomOptions}

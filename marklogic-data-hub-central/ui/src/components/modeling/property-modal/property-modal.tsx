@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Icon, Radio, Cascader, Select} from "antd";
-import {MLButton, MLAlert} from "@marklogic/design-system";
+import {Modal, Form, Input, Icon, Radio, Cascader, Select, Alert, Checkbox, Button, Tooltip} from "antd";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -11,7 +10,6 @@ import {UserContext} from "../../../util/user-context";
 import {ModelingContext} from "../../../util/modeling-context";
 import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {MLTooltip, MLCheckbox} from "@marklogic/design-system";
 import {getSystemInfo} from "../../../api/environment";
 
 import {
@@ -725,9 +723,9 @@ const PropertyModal: React.FC<Props> = (props) => {
           <Radio aria-label={radio.value + "-yes"} value={"yes"}>Yes</Radio>
           <Radio aria-label={radio.value + "-no"} value={"no"}>No</Radio>
         </Radio.Group>
-        <MLTooltip title={radio.tooltip}>
+        <Tooltip title={radio.tooltip}>
           <Icon type="question-circle" className={styles.radioQuestionIcon} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </Form.Item>
     );
   });
@@ -741,14 +739,14 @@ const PropertyModal: React.FC<Props> = (props) => {
         labelAlign="left"
         colon={false}
       >
-        <MLCheckbox
+        <Checkbox
           id={checkbox.value}
           checked={selectedPropertyOptions[checkbox.value]}
           onChange={(event) => onCheckboxChange(event, checkbox.value)}
-        >{checkbox.label}</MLCheckbox>
-        <MLTooltip title={checkbox.tooltip}>
+        >{checkbox.label}</Checkbox>
+        <Tooltip title={checkbox.tooltip}>
           <Icon type="question-circle" className={styles.checkboxQuestionIcon} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </Form.Item>
     );
   });
@@ -757,29 +755,29 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
     { props.editPropertyOptions.isEdit &&
-      <MLButton type="link" onClick={async () => {
+      <Button type="link" onClick={async () => {
         if (confirmType === ConfirmationType.Identifer) {
           await getEntityReferences();
         }
         toggleConfirmModal(true);
       }}>
         <FontAwesomeIcon data-testid={"delete-" + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
-      </MLButton>
+      </Button>
     }
     <div>
-      <MLButton
+      <Button
         aria-label="property-modal-cancel"
         size="default"
         onClick={onCancel}
-      >Cancel</MLButton>
-      <MLButton
+      >Cancel</Button>
+      <Button
         aria-label="property-modal-submit"
         form="property-form"
         type="primary"
         htmlType="submit"
         size="default"
         onClick={onSubmit}
-      >{props.editPropertyOptions.isEdit ? "OK" : "Add"}</MLButton>
+      >{props.editPropertyOptions.isEdit ? "OK" : "Add"}</Button>
     </div>
   </div>;
 
@@ -798,12 +796,13 @@ const PropertyModal: React.FC<Props> = (props) => {
     >
       {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 &&
         <div className={styles.warningContainer}>
-          <MLAlert
+          <Alert
             className={styles.alert}
             closable={false}
             description={"Entity type is used in one or more steps."}
             showIcon
             type="warning"
+            message="Blah"
           />
           <p className={styles.stepWarning}>
             The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this property,
@@ -869,9 +868,9 @@ const PropertyModal: React.FC<Props> = (props) => {
             onChange={handleInputChange}
             onBlur={handleInputChange}
           />
-          <MLTooltip title={ModelingTooltips.nameEntityProperty}>
+          <Tooltip title={ModelingTooltips.nameEntityProperty}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
 
         <Form.Item
@@ -919,9 +918,9 @@ const PropertyModal: React.FC<Props> = (props) => {
                 <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
               ))}
             </Select>
-            <MLTooltip title={ModelingTooltips.joinProperty}>
+            <Tooltip title={ModelingTooltips.joinProperty}>
               <Icon type="question-circle" className={styles.icon} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           </Form.Item>
         ) }
 

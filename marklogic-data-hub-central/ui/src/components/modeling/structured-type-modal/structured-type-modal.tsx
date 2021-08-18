@@ -1,11 +1,9 @@
 import React, {useEffect, useState, useContext} from "react";
-import {Form, Icon, Input, Modal} from "antd";
-import {MLButton} from "@marklogic/design-system";
+import {Form, Icon, Input, Modal, Button, Tooltip} from "antd";
 import styles from "./structured-type-modal.module.scss";
 
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {MLTooltip} from "@marklogic/design-system";
 
 
 type Props = {
@@ -77,19 +75,19 @@ A structured type cannot use the same name as an existing structured type.</span
   };
 
   const modalFooter = <div className={styles.modalFooter}>
-    <MLButton
+    <Button
       aria-label="structured-type-modal-cancel"
       size="default"
       onClick={onCancel}
-    >Cancel</MLButton>
-    <MLButton
+    >Cancel</Button>
+    <Button
       aria-label="structured-type-modal-submit"
       form="pstructured-type-form"
       type="primary"
       htmlType="submit"
       size="default"
       onClick={onSubmit}
-    >Add</MLButton>
+    >Add</Button>
   </div>;
 
   return (
@@ -127,9 +125,9 @@ A structured type cannot use the same name as an existing structured type.</span
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <MLTooltip title={ModelingTooltips.nameRegex}>
+          <Tooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
       </Form>
     </Modal>

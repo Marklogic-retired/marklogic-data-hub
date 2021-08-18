@@ -1,12 +1,10 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
-import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
 import {ClockCircleFilled, CheckCircleFilled, CloseCircleFilled} from "@ant-design/icons";
-import {Menu, Popover} from "antd";
+import {Menu, Popover, Checkbox, Divider, Button, Tooltip, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
-import {MLCheckbox, MLButton, MLDivider} from "@marklogic/design-system";
 import "./job-results-table-view.scss";
 import {MonitorContext} from "../../util/monitor-context";
 import JobResponse from "../job-response/job-response";
@@ -70,22 +68,22 @@ const JobResultsTableView = (props) => {
       render: (status) => {
         if (status === "running" || /^running/.test(status)) {
           return <>
-            <MLTooltip title={"Running"} placement={"bottom"}>
+            <Tooltip title={"Running"} placement={"bottom"}>
               <ClockCircleFilled data-testid= "progress" style={{color: "#5B69AF"}}/>
-            </MLTooltip>
+            </Tooltip>
           </>;
 
         } else if (status === "finished") {
           return <>
-            <MLTooltip title={"Completed Successfully"} placement={"bottom"}>
+            <Tooltip title={"Completed Successfully"} placement={"bottom"}>
               <CheckCircleFilled data-testid= "success" style={{color: "#389E0D"}}/>
-            </MLTooltip>
+            </Tooltip>
           </>;
         } else {
           return <>
-            <MLTooltip title={"Completed With Errors"} placement={"bottom"}>
+            <Tooltip title={"Completed With Errors"} placement={"bottom"}>
               <CloseCircleFilled data-testid= "error" style={{color: "#B32424"}}/>
-            </MLTooltip>
+            </Tooltip>
           </>;
         }
       }
@@ -146,6 +144,7 @@ const JobResultsTableView = (props) => {
       setMonitorSortOrder(item.dataIndex, sortOrder);
       sorting = false;
     }
+    return a-b; // DHFPROD-7711 MLTable -> Table
   }}: {...item}));
 
   const [currentColumnHeaders, setCurrentColumnHeaders] = useState(allColumnHeaders);
@@ -183,7 +182,7 @@ const JobResultsTableView = (props) => {
       <div className={styles.content}>
         <Menu>
           {Object.keys(checkedAttributes).map(attribute => (
-            <Menu.Item key={attribute} className={styles.DropdownMenuItem}><MLCheckbox
+            <Menu.Item key={attribute} className={styles.DropdownMenuItem}><Checkbox
               data-testid={`columnOptionsCheckBox-${attribute}`}
               key={attribute}
               value={attribute}
@@ -191,17 +190,17 @@ const JobResultsTableView = (props) => {
               defaultChecked={true}
               className={styles.checkBoxItem}
               checked={checkedAttributes[attribute]}
-            >{columnOptionsLabel[attribute]}</MLCheckbox></Menu.Item>
+            >{columnOptionsLabel[attribute]}</Checkbox></Menu.Item>
           ))}
         </Menu>
       </div>
       <footer>
-        <MLDivider className={styles.divider} />
+        <Divider className={styles.divider} />
         <div className={styles.footer}>
           <div>
-            <MLButton size="small" onClick={onCancel} >Cancel</MLButton>
+            <Button size="small" onClick={onCancel} >Cancel</Button>
             <span>  </span>
-            <MLButton type="primary" size="small" onClick={onApply} disabled={false} >Apply</MLButton>
+            <Button type="primary" size="small" onClick={onApply} disabled={false} >Apply</Button>
           </div>
         </div>
       </footer>
@@ -213,15 +212,15 @@ const JobResultsTableView = (props) => {
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup}>
-          <MLTooltip title="Select the columns to display." placement="topRight">
+          <Tooltip title="Select the columns to display." placement="topRight">
             <Popover placement="leftTop" content={content} trigger="click" visible={popoverVisibility} className={styles.fixedPopup}>
               <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
             </Popover>
-          </MLTooltip>
+          </Tooltip>
         </div>
       </div>
       <div className={styles.tabular}>
-        <MLTable bordered
+        <Table bordered
           data-testid="job-result-table"
           rowKey="startTime"
           dataSource={props.data}

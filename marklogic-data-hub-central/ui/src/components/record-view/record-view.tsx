@@ -1,6 +1,6 @@
 import React, {CSSProperties, useContext} from "react";
 import styles from "./record-view.module.scss";
-import {Card, Icon, Row, Col} from "antd";
+import {Card, Icon, Row, Col, Popover, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {AuthoritiesContext} from "../../util/authorities";
@@ -8,7 +8,6 @@ import {formatCardUri} from "../../util/conversionFunctions";
 import sourceFormatOptions from "../../config/formats.config";
 import ReactHtmlParser from "react-html-parser";
 import {FileOutlined} from "@ant-design/icons";
-import {MLTooltip, MLPopover} from "@marklogic/design-system";
 import {CardViewDateConverter} from "../../util/date-conversion";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
@@ -91,13 +90,25 @@ const RecordCardView = (props) => {
         </div>
         <div className={styles.colValue}>
           {item.hubMetadata?.sources?.length > 0 ? <span className={styles.valText} data-testid={item.uri + "-sources"}>
-            <MLTooltip title={displayRecordSources(item)} placement="bottom" width={"200px"}>{displayRecordSources(item).substring(0, 28)}</MLTooltip>
+            <Tooltip
+              title={displayRecordSources(item)}
+              placement="bottom"
+              //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+            >{displayRecordSources(item).substring(0, 28)}</Tooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
-            <MLTooltip title={item.hubMetadata?.lastProcessedByFlow} placement="bottom" width={"200px"}>{item.hubMetadata?.lastProcessedByFlow}</MLTooltip>
+            <Tooltip
+              title={item.hubMetadata?.lastProcessedByFlow}
+              placement="bottom"
+              //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+            >{item.hubMetadata?.lastProcessedByFlow}</Tooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
-            <MLTooltip title={item.hubMetadata.lastProcessedByStep} placement="bottom" width={"200px"}>{item.hubMetadata.lastProcessedByStep}</MLTooltip>
+            <Tooltip
+              title={item.hubMetadata.lastProcessedByStep}
+              placement="bottom"
+              //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+            >{item.hubMetadata.lastProcessedByStep}</Tooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
             {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
@@ -169,15 +180,15 @@ const RecordCardView = (props) => {
               >
                 <div className={styles.cardMetadataContainer}>
                   <span className={styles.uriContainer} data-testid={elem.uri + "-URI"}>URI: <span className={styles.uri}>
-                    <MLTooltip title={elem.uri} placement="bottom">{displayUri(elem.uri)}</MLTooltip></span></span>
+                    <Tooltip title={elem.uri} placement="bottom">{displayUri(elem.uri)}</Tooltip></span></span>
                   <span className={styles.cardIcons}>
-                    <MLPopover getPopupContainer={trigger => trigger.parentElement} content={displayRecordMetadata(elem)} placement="bottomRight" trigger="click">
+                    <Popover getPopupContainer={trigger => trigger.parentElement || document.body} content={displayRecordMetadata(elem)} placement="bottomRight" trigger="click">
                       <span>
-                        <MLTooltip title={"View info"} placement="bottom">
+                        <Tooltip title={"View info"} placement="bottom">
                           <span className={styles.infoIcon}><Icon type="info-circle" theme="filled" data-testid={elem.uri + "-InfoIcon"} /></span>
-                        </MLTooltip>
+                        </Tooltip>
                       </span>
-                    </MLPopover>
+                    </Popover>
                     <span className={styles.sourceFormat}
                       style={sourceFormatStyle(elem.format)}
                       data-testid={elem.uri + "-sourceFormat"}
@@ -185,16 +196,16 @@ const RecordCardView = (props) => {
                     {elem.format === "binary" ?
                       <span id={"instance"}
                         data-cy="instance">
-                        <MLTooltip title={"Detail view"} placement="bottom"
+                        <Tooltip title={"Detail view"} placement="bottom"
                         ><i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIconDisabled} size="lg" /></i>
-                        </MLTooltip>
+                        </Tooltip>
                       </span>
                       :
                       <Link to={getLinkProperties(elem)} id={"instance"}
                         data-cy="instance">
-                        <MLTooltip title={"Detail view"} placement="bottom"
+                        <Tooltip title={"Detail view"} placement="bottom"
                         ><i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIcon} size="lg" /></i>
-                        </MLTooltip>
+                        </Tooltip>
                       </Link>
                     }
                   </span>
@@ -204,9 +215,9 @@ const RecordCardView = (props) => {
                 </div>
               </Card>
               <span className={styles.downloadIcon}>
-                <MLTooltip title={displayFileSize(elem)} placement="bottom" >
+                <Tooltip title={displayFileSize(elem)} placement="bottom" >
                   <span><Icon type="download" onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"} /></span>
-                </MLTooltip>
+                </Tooltip>
               </span>
             </div>
           </Col>)) : <span></span>}

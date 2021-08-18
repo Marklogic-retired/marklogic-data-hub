@@ -1,11 +1,10 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Modal, Form, Input, Radio} from "antd";
+import {Modal, Form, Input, Radio, Button} from "antd";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
-import {MLButton} from "@marklogic/design-system";
 
 
 interface Props {
@@ -228,13 +227,13 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         </Form.Item>}
         <Form.Item>
           <div className={styles.submitButtons}>
-            <MLButton id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</MLButton>
+            <Button id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
-            <MLButton type="primary"
+            <Button type="primary"
               htmlType="submit"
               disabled={queryName.length === 0}
               onClick={() => onOk(queryName, queryDescription, props.currentQuery)} id="edit-save-changes-button">Save
-            </MLButton>
+            </Button>
           </div>
         </Form.Item>
       </Form>
