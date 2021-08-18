@@ -1,9 +1,8 @@
 import React, {useContext} from "react";
 import styles from "../selected-facets/selected-facets.module.scss";
-import {Icon} from "antd";
+import {Icon, Button, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
-import {MLTooltip, MLButton} from "@marklogic/design-system";
 import {MonitorContext} from "../../util/monitor-context";
 
 interface Props {
@@ -71,7 +70,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
         let displayName = item.constraint !== "startTime" ? facetName + ": " + item.facet : item.facet;
         return (
-          <MLButton
+          <Button
             size="small"
             className={styles.facetButton}
             key={index}
@@ -81,7 +80,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
           >
             {displayName}
             <Icon type="close"/>
-          </MLButton>
+          </Button>
         );
       })}
       {props.greyFacets.map((item, index) => {
@@ -89,11 +88,11 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
         let displayName = item.constraint !== "startTime" ? facetName + ": " + item.facet : item.facet;
         return (
           (unCheckRest(item.constraint, item.facet)) &&
-          <MLTooltip
+          <Tooltip
             key={index + "-" + item.facet}
             title={"Not yet applied"}
           >
-            <MLButton
+            <Button
               size="small"
               className={styles.facetGreyButton}
               key={index}
@@ -103,12 +102,12 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
             >
               {displayName}
               <Icon type="close"/>
-            </MLButton>
-          </MLTooltip>
+            </Button>
+          </Tooltip>
         );
       })}
       {props.greyFacets.length > 0 &&
-            <MLTooltip title={"Clear unapplied facets"}>
+            <Tooltip title={"Clear unapplied facets"}>
               <FontAwesomeIcon
                 icon={faWindowClose}
                 onClick={clearGreyFacets}
@@ -116,10 +115,10 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
                 data-testid="clear-all-grey-button"
                 className={styles.closeIcon}
                 size="lg" />
-            </MLTooltip>
+            </Tooltip>
       }
       {props.greyFacets.length > 0 &&
-            <MLTooltip title={"Apply facets"}>
+            <Tooltip title={"Apply facets"}>
               <FontAwesomeIcon
                 icon={faCheckSquare}
                 onClick={() => applyFacet()}
@@ -128,7 +127,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
                 data-cy="facet-apply-button"
                 data-testid="facet-apply-button"
               />
-            </MLTooltip>
+            </Tooltip>
       }
     </div>
   );

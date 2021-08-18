@@ -1,10 +1,9 @@
 import React, {useState, useContext} from "react";
-import {Row, Col, Card, Select, Input, Divider} from "antd";
+import {Row, Col, Card, Select, Input, Divider, Button, Radio, Tooltip} from "antd";
 import styles from "./zero-state-explorer.module.scss";
 import {SearchContext} from "../../util/search-context";
 import graphic from "./explore_visual_big.png";
 import {QueryOptions} from "../../types/query-types";
-import {MLButton, MLRadio, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faThLarge} from "@fortawesome/free-solid-svg-icons";
 import tiles from "../../config/tiles.config";
@@ -155,22 +154,22 @@ const ZeroStateExplorer = (props) => {
                   <Col span={24}>
                     <div className={styles.database}>
                       <p className={styles.databaseLabel}>Database:</p>
-                      <MLRadio.MLGroup
+                      <Radio.Group
                         className={styles.databaseSelector}
                         buttonStyle="solid"
                         defaultValue={props.zeroStatePageDatabase}
                         name="radiogroup"
                         onChange={e => onDatabaseChange(e.target.value)}
-                        size="medium"
+                        // size="medium"
                         id="database-switch"
                       >
-                        <MLRadio.MLButton aria-label="switch-database-final" value={"final"} className={styles.button}>
+                        <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
                           Final
-                        </MLRadio.MLButton>
-                        <MLRadio.MLButton aria-label="switch-database-staging" value={"staging"} className={styles.button}>
+                        </Radio.Button>
+                        <Radio.Button aria-label="switch-database-staging" value={"staging"} className={styles.button}>
                           Staging
-                        </MLRadio.MLButton>
-                      </MLRadio.MLGroup>
+                        </Radio.Button>
+                      </Radio.Group>
                     </div>
                   </Col>
                 </Row>
@@ -195,38 +194,38 @@ const ZeroStateExplorer = (props) => {
                   <Col span={24}>
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
-                      <MLRadio.MLGroup
+                      <Radio.Group
                         style={{}}
                         buttonStyle="solid"
                         value={view}
                         name="radiogroup"
                         onChange={e => onViewChange(e.target.value)}
-                        size="medium"
+                        // size="medium"
                       >
-                        <MLTooltip
+                        <Tooltip
                           title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
-                        ><MLRadio.MLButton aria-label="switch-view-table" value={"table"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                        ><Radio.Button aria-label="switch-view-table" value={"table"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
                             <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
-                          </MLRadio.MLButton>
-                        </MLTooltip>
-                        <MLTooltip
+                          </Radio.Button>
+                        </Tooltip>
+                        <Tooltip
                           title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
-                        ><MLRadio.MLButton aria-label="switch-view-snippet" value={"snippet"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                        ><Radio.Button aria-label="switch-view-snippet" value={"snippet"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
                             <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
-                          </MLRadio.MLButton>
-                        </MLTooltip>
+                          </Radio.Button>
+                        </Tooltip>
                         <span id="viewAsCard" className={styles.viewAsCard}>
-                          <MLTooltip
+                          <Tooltip
                             title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
                             placement="bottom"
-                          ><MLRadio.MLButton  aria-label="switch-view-card" value={"card"} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
+                          ><Radio.Button  aria-label="switch-view-card" value={"card"} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
                               <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
-                            </MLRadio.MLButton>
-                          </MLTooltip>
+                            </Radio.Button>
+                          </Tooltip>
                         </span>
-                      </MLRadio.MLGroup>
+                      </Radio.Group>
                     </div>
                   </Col>
                 </Row>
@@ -234,7 +233,7 @@ const ZeroStateExplorer = (props) => {
                   <br />
                   <Col span={24}>
                     <div className={styles.exploreButton}>
-                      <MLButton type="primary" data-cy="explore" className={styles.button} onClick={onClickExplore} >Explore</MLButton>
+                      <Button type="primary" data-cy="explore" className={styles.button} onClick={onClickExplore} >Explore</Button>
                     </div>
                   </Col>
                 </Row>
