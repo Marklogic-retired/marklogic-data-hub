@@ -7,11 +7,10 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Layout, Menu, PageHeader} from "antd";
+import {Layout, Menu, PageHeader, Tooltip} from "antd";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
-import {MLTooltip} from "@marklogic/design-system";
 import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import DetailPageNonEntity from "../components/detail-page-non-entity/detail-page-non-entity";
 import {SearchContext} from "../util/search-context";
@@ -319,20 +318,20 @@ const Detail: React.FC<Props> = ({history, location}) => {
               <div id="menu" className={styles.menu}>
                 <Menu id="subMenu" onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
                   <Menu.Item key="instance" id="instance" data-cy="instance-view">
-                    <MLTooltip title={"Show the processed data"}>
+                    <Tooltip title={"Show the processed data"}>
                       <FontAwesomeIcon icon={faThList} size="lg" />
                       <span className={styles.subMenu}>Instance</span>
-                    </MLTooltip>
+                    </Tooltip>
                   </Menu.Item>
                   <Menu.Item key="full" id="full" data-cy="source-view">
-                    <MLTooltip title={"Show the complete " + contentType.toUpperCase()} >
+                    <Tooltip title={"Show the complete " + contentType.toUpperCase()} >
                       {contentType.toUpperCase() === "XML" ?
                         <FontAwesomeIcon icon={faCode} size="lg" />
                         :
                         <span className={styles.jsonIcon}></span>
                       }
                       <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
-                    </MLTooltip>
+                    </Tooltip>
                   </Menu.Item>
                 </Menu>
               </div>

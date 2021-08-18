@@ -1,11 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Form, Input, Icon, Radio, AutoComplete, Popover} from "antd";
+import {Form, Input, Icon, Radio, AutoComplete, Alert, Button, Tooltip, Popover} from "antd";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
 import {UserContext} from "../../../util/user-context";
 import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
-import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
 import {StepType} from "../../../types/curation-types";
 import {CurationContext} from "../../../util/curation-context";
 
@@ -440,8 +439,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             description = "";
           }
           return (
-            <MLAlert
-              id="step-warn"
+            <Alert
               className={styles.alert}
               type="warning"
               showIcon
@@ -460,7 +458,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
         help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          { tobeDisabled?<MLTooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
+          { tobeDisabled?<Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -468,7 +466,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
             onBlur={sendPayload}
-          /></MLTooltip>:<Input
+          /></Tooltip>:<Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -477,14 +475,14 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />}&nbsp;&nbsp;
-          { props.stepType === StepType.Mapping ? <MLTooltip title={NewMapTooltips.name} placement={"right"}>
+          { props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>: props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
+          </Tooltip>: props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>:
-            <MLTooltip title={NewMergeTooltips.name} placement={"right"}>
+          </Tooltip>:
+            <Tooltip title={NewMergeTooltips.name} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           }
         </Form.Item>
         <Form.Item label={<span>
@@ -500,14 +498,14 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />&nbsp;&nbsp;
-          { props.stepType === StepType.Mapping ? <MLTooltip title={NewMapTooltips.description} placement={"right"}>
+          { props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>: props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.description} placement={"right"}>
+          </Tooltip>: props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>:
-            <MLTooltip title={NewMergeTooltips.description} placement={"right"}>
+          </Tooltip>:
+            <Tooltip title={NewMergeTooltips.description} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           }
         </Form.Item>
 
@@ -537,9 +535,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
               <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
             </Popover></span>
 
-          <MLTooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
+          <Tooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
             <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>
-          </MLTooltip>
+          </Tooltip>
 
           {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
@@ -581,18 +579,18 @@ const CreateEditStep: React.FC<Props>  = (props) => {
               className={styles.input}
               onBlur={sendPayload}
             />&nbsp;&nbsp;
-            <MLTooltip title={NewMergeTooltips.timestampPath} placement={"right"}>
+            <Tooltip title={NewMergeTooltips.timestampPath} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           </Form.Item> : ""}
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <MLButton data-testid={`${props.stepType}-dialog-cancel`} onClick={() => onCancel()}>Cancel</MLButton>
+            <Button data-testid={`${props.stepType}-dialog-cancel`} onClick={() => onCancel()}>Cancel</Button>
               &nbsp;&nbsp;
-            {!props.canReadWrite?<MLTooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
-              <MLButton className={styles.disabledSaveButton} type="primary" htmlType="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton></span></MLTooltip>
-              :<MLButton type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</MLButton>}
+            {!props.canReadWrite?<Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
+              <Button className={styles.disabledSaveButton} type="primary" htmlType="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</Button></span></Tooltip>
+              :<Button type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</Button>}
           </div>
         </Form.Item>
       </Form>

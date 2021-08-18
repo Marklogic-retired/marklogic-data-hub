@@ -1,22 +1,20 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Collapse, Icon, Card, Modal, Menu, Dropdown} from "antd";
+import {Collapse, Icon, Card, Modal, Menu, Dropdown, Spin, Button, Tooltip} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
-import {MLButton} from "@marklogic/design-system";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
 import "./flows.scss";
 import styles from "./flows.module.scss";
-import {MLTooltip, MLSpin, MLCheckbox} from "@marklogic/design-system";   // eslint-disable-line @typescript-eslint/no-unused-vars
 import {useDropzone} from "react-dropzone";
 import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
 import axios from "axios";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
 
 
 enum ReorderFlowOrderDirection {
@@ -606,30 +604,30 @@ const Flows: React.FC<Props> = (props) => {
         overlayClassName="stepMenu"
       >
         {props.canWriteFlow ?
-          <MLButton
+          <Button
             className={styles.addStep}
             size="default"
             aria-label={`addStep-${name}`}
             style={{}}
-          >Add Step <DownOutlined /></MLButton>
+          >Add Step <DownOutlined /></Button>
           :
-          <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}} placement="bottom">
+          <Tooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}} placement="bottom">
             <span className={styles.disabledCursor}>
-              <MLButton
+              <Button
                 className={styles.addStep}
                 size="default"
                 aria-label={"addStepDisabled-" + i}
                 style={{backgroundColor: "#f5f5f5", borderColor: "#f5f5f5", pointerEvents: "none"}}
                 type="primary"
                 disabled={!props.canWriteFlow}
-              >Add Step <DownOutlined /></MLButton>
+              >Add Step <DownOutlined /></Button>
             </span>
-          </MLTooltip>
+          </Tooltip>
         }
       </Dropdown>
       <span className={styles.deleteFlow}>
         {props.canWriteFlow ?
-          <MLTooltip title={"Delete Flow"} placement="bottom">
+          <Tooltip title={"Delete Flow"} placement="bottom">
             <i aria-label={`deleteFlow-${name}`}>
               <FontAwesomeIcon
                 icon={faTrashAlt}
@@ -638,9 +636,9 @@ const Flows: React.FC<Props> = (props) => {
                 className={styles.deleteIcon}
                 size="lg" />
             </i>
-          </MLTooltip>
+          </Tooltip>
           :
-          <MLTooltip title={"Delete Flow: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}} placement="bottom">
+          <Tooltip title={"Delete Flow: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}} placement="bottom">
             <i aria-label={`deleteFlowDisabled-${name}`}>
               <FontAwesomeIcon
                 icon={faTrashAlt}
@@ -648,17 +646,17 @@ const Flows: React.FC<Props> = (props) => {
                 className={styles.disabledDeleteIcon}
                 size="lg" />
             </i>
-          </MLTooltip>}
+          </Tooltip>}
       </span>
     </div>
   );
 
   const flowHeader = (name, index) => (
-    <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="right">
+    <Tooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="right">
       <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
         {name}
       </span>
-    </MLTooltip>
+    </Tooltip>
 
     /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6, replace above with below later
     // <span>
@@ -764,27 +762,30 @@ const Flows: React.FC<Props> = (props) => {
     } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
       tooltipText = "Step last ran successfully on " + stepEndTime;
       return (
-        <MLTooltip overlayStyle={{maxWidth: "200px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
-          onClick={(e) => showStepRunResponse(step)}>
-          <Icon type="check-circle" theme="filled" className={styles.successfulRun} data-testid={`check-circle-${step.stepName}`}/>
-        </MLTooltip>
+        <Tooltip overlayStyle={{maxWidth: "200px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+          <span onClick={(e) => showStepRunResponse(step)}>
+            <Icon type="check-circle" theme="filled" className={styles.successfulRun} data-testid={`check-circle-${step.stepName}`}/>
+          </span>
+        </Tooltip>
       );
 
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
       tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
-        <MLTooltip overlayStyle={{maxWidth: "190px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
-          onClick={(e) => showStepRunResponse(step)}>
-          <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
-        </MLTooltip>
+        <Tooltip overlayStyle={{maxWidth: "190px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+          <span onClick={(e) => showStepRunResponse(step)}>
+            <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
+          </span>
+        </Tooltip>
       );
     } else {
       tooltipText = "Step last failed on " + stepEndTime;
       return (
-        <MLTooltip overlayStyle={{maxWidth: "175px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}
-          onClick={(e) => showStepRunResponse(step)}>
-          <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
-        </MLTooltip>
+        <Tooltip overlayStyle={{maxWidth: "175px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+          <span onClick={(e) => showStepRunResponse(step)}>
+            <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
+          </span>
+        </Tooltip>
       );
     }
   };
@@ -884,7 +885,7 @@ const Flows: React.FC<Props> = (props) => {
                 <div className={styles.reorder}>
                   {index !== 0 && props.canWriteFlow &&
                     <div className={styles.reorderLeft}>
-                      <MLTooltip title={"Move left"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+                      <Tooltip title={"Move left"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
                         <FontAwesomeIcon
                           aria-label={`leftArrow-${step.stepName}`}
                           icon={faArrowAltCircleLeft}
@@ -893,7 +894,7 @@ const Flows: React.FC<Props> = (props) => {
                           onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)}
                           onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.LEFT)}
                           tabIndex={0}/>
-                      </MLTooltip>
+                      </Tooltip>
                     </div>
                   }
                   <div className={styles.reorderRight}>
@@ -904,7 +905,7 @@ const Flows: React.FC<Props> = (props) => {
                       }
                     </div>
                     {index < flow.steps.length - 1 && props.canWriteFlow &&
-                      <MLTooltip title={"Move right"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+                      <Tooltip title={"Move right"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
                         <FontAwesomeIcon
                           aria-label={`rightArrow-${step.stepName}`}
                           icon={faArrowAltCircleRight}
@@ -913,7 +914,7 @@ const Flows: React.FC<Props> = (props) => {
                           onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)}
                           onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.RIGHT)}
                           tabIndex={0}/>
-                      </MLTooltip>
+                      </Tooltip>
                     }
                   </div>
                 </div>
@@ -935,9 +936,9 @@ const Flows: React.FC<Props> = (props) => {
                             openFilePicker();
                           }}
                         >
-                          <MLTooltip title={RunToolTips.ingestionStep} placement="bottom">
+                          <Tooltip title={RunToolTips.ingestionStep} placement="bottom">
                             <Icon type="play-circle" theme="filled" />
-                          </MLTooltip>
+                          </Tooltip>
                         </div>
                       </div>
                       :
@@ -950,9 +951,9 @@ const Flows: React.FC<Props> = (props) => {
                         aria-label={`runStep-${step.stepName}`}
                         data-testid={"runStep-" + stepNumber}
                       >
-                        <MLTooltip title={RunToolTips.otherSteps} placement="bottom">
+                        <Tooltip title={RunToolTips.otherSteps} placement="bottom">
                           <Icon type="play-circle" theme="filled" />
-                        </MLTooltip>
+                        </Tooltip>
                       </div>
                     :
                     <div
@@ -965,12 +966,12 @@ const Flows: React.FC<Props> = (props) => {
                     </div>
                   }
                   {props.canWriteFlow ?
-                    <MLTooltip title={RunToolTips.removeStep} placement="bottom">
+                    <Tooltip title={RunToolTips.removeStep} placement="bottom">
                       <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
-                    </MLTooltip> :
-                    <MLTooltip title={RunToolTips.removeStep} placement="bottom">
+                    </Tooltip> :
+                    <Tooltip title={RunToolTips.removeStep} placement="bottom">
                       <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
-                    </MLTooltip>
+                    </Tooltip>
                   }
                 </div>
               }
@@ -1004,7 +1005,7 @@ const Flows: React.FC<Props> = (props) => {
                 {showUploadError && flowName === runningFlow && stepNumber === runningStep.stepNumber ? props.uploadError : ""}
               </div>
               <div className={styles.running} style={{display: isRunning(flowName, stepNumber) ? "block" : "none"}}>
-                <div><MLSpin data-testid="spinner" /></div>
+                <div><Spin data-testid="spinner" /></div>
                 <div className={styles.runningLabel}>Running...</div>
               </div>
             </Card>
@@ -1053,33 +1054,34 @@ const Flows: React.FC<Props> = (props) => {
           <div className={styles.createContainer}>
             {
               props.canWriteFlow ?
-                <span> 
-                  <Button 
+                <span>
+                  {/* //Bootstrap Button
+                  <Button
                     variant="primary"
                     onClick={OpenAddNewDialog}
                     onKeyDown={createFlowKeyDownHandler}
                     aria-label={"create-flow"}
                     tabIndex={0}
+                  >Create Flow</Button> */}
+                  <Button
+                    className={styles.createButton} size="default"
+                    type="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
+                    aria-label={"create-flow"}
+                    tabIndex={0}
                   >Create Flow</Button>
-                {/* <MLButton
-                  className={styles.createButton} size="default"
-                  type="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
-                  aria-label={"create-flow"}
-                  tabIndex={0}
-                >Create Flow</MLButton> */}
                 </span>
                 :
-                <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}}>
+                <Tooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}}>
                   <span className={styles.disabledCursor}>
-                    <MLButton
+                    <Button
                       className={styles.createButtonDisabled} size="default"
                       type="primary"
                       disabled={true}
                       aria-label={"create-flow-disabled"}
                       tabIndex={-1}
-                    >Create Flow</MLButton>
+                    >Create Flow</Button>
                   </span>
-                </MLTooltip>
+                </Tooltip>
             }
           </div>
           <Collapse

@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Modal, Input, Select, Icon, Card, Dropdown} from "antd";
+import {Modal, Input, Select, Icon, Card, Dropdown, Button, Tooltip} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
@@ -505,7 +504,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
   const modalFooter = <div className={styles.modalFooter}>
     <div className={styles.deleteTooltip}>
-      <MLTooltip title={ModelingTooltips.deleteRelationshipIcon} placement="top">
+      <Tooltip title={ModelingTooltips.deleteRelationshipIcon} placement="top">
         <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
           <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
             icon={faTrashAlt}
@@ -517,14 +516,14 @@ const AddEditRelationship: React.FC<Props> = (props) => {
               }
             }} />
         </i>
-      </MLTooltip>
+      </Tooltip>
     </div>
-    <MLButton
+    <Button
       aria-label="relationship-modal-cancel"
       size="default"
       onClick={onCancel}
-    >Cancel</MLButton>
-    <MLButton
+    >Cancel</Button>
+    <Button
       aria-label="relationship-modal-submit"
       form="property-form"
       type="primary"
@@ -532,7 +531,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       size="default"
       loading={loading}
       onClick={onSubmit}
-    >{props.isEditing ? "Save" : "Add"}</MLButton>
+    >{props.isEditing ? "Save" : "Add"}</Button>
   </div>;
 
   const confirmAction = async () => {
@@ -576,22 +575,22 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             aria-label="relationship-textarea"
             style={errorMessage && submitClicked? {border: "solid 1px #C00"} : {}}
           />
-          {errorMessage && submitClicked? <MLTooltip title={errorMessage} placement={"bottom"}><Icon aria-label="error-circle" type="exclamation-circle" theme="filled" className={styles.errorIcon}/></MLTooltip> : ""}
-          <MLTooltip title={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"}>
+          {errorMessage && submitClicked? <Tooltip title={errorMessage} placement={"bottom"}><Icon aria-label="error-circle" type="exclamation-circle" theme="filled" className={styles.errorIcon}/></Tooltip> : ""}
+          <Tooltip title={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </MLTooltip>
+          </Tooltip>
         </div>
         <hr className={styles.horizontalLine}></hr>
-        <MLTooltip title={ModelingTooltips.cardinalityButton} placement={"bottom"}>
-          <MLButton className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
+        <Tooltip title={ModelingTooltips.cardinalityButton} placement={"bottom"}>
+          <Button className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
             {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
-          </MLButton>
-        </MLTooltip>
+          </Button>
+        </Tooltip>
         <div className={styles.joinPropertyDropdownContainer}>
           {joinPropertyDropdown}
-          <MLTooltip title={ModelingTooltips.joinPropertyInfo} placement={"bottom"}>
+          <Tooltip title={ModelingTooltips.joinPropertyInfo} placement={"bottom"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </MLTooltip>
+          </Tooltip>
         </div>
         <div className={styles.nodeDisplay}>
           <span className={styles.nodeLabel}>TARGET</span>

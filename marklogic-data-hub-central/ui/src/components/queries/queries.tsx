@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Button, Modal, Tooltip} from "antd";
+import {Modal, Tooltip, Button} from "antd";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import SelectedFacets from "../../components/selected-facets/selected-facets";
@@ -13,7 +13,6 @@ import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import {QueryOptions} from "../../types/query-types";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {getUserPreferences} from "../../services/user-preferences";
 
 interface Props {
@@ -410,7 +409,7 @@ const Query: React.FC<Props> = (props) => {
                 || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
                 showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === "select a query" &&
                 <div>
-                  <MLTooltip title={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"}>
+                  <Tooltip title={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"}>
                     <FontAwesomeIcon
                       icon={faSave}
                       onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
@@ -419,7 +418,7 @@ const Query: React.FC<Props> = (props) => {
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
                     />
-                  </MLTooltip>
+                  </Tooltip>
                   <div id={"savedQueries"}>
                     {openSaveModal &&
                       <SaveQueryModal
@@ -441,7 +440,7 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
               {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
                 <div>
-                  <MLTooltip title={"Save changes"}>
+                  <Tooltip title={"Save changes"}>
                     <FontAwesomeIcon
                       icon={faSave}
                       className={styles.iconHover}
@@ -451,7 +450,7 @@ const Query: React.FC<Props> = (props) => {
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
                     />
-                  </MLTooltip>
+                  </Tooltip>
                   <div id={"saveChangedQueries"}>
                     {openSaveChangesModal &&
                       <SaveChangesModal
@@ -478,7 +477,7 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
               {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
                 <div>
-                  <MLTooltip title={"Discard changes"}>
+                  <Tooltip title={"Discard changes"}>
                     <FontAwesomeIcon
                       icon={faUndo}
                       className={styles.iconHover}
@@ -487,7 +486,7 @@ const Query: React.FC<Props> = (props) => {
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
                     />
-                  </MLTooltip>
+                  </Tooltip>
                   <div>
                     {openDiscardChangesModal &&
                       <DiscardChangesModal
@@ -500,7 +499,7 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
 
               {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div>
-                <MLTooltip title={"Edit query details"}>
+                <Tooltip title={"Edit query details"}>
                   {hoverOverDropdown && <FontAwesomeIcon
                     icon={faPencilAlt}
                     className={styles.iconHover}
@@ -509,7 +508,7 @@ const Query: React.FC<Props> = (props) => {
                     onClick={() => setOpenEditDetail(true)}
                     style={{width: "16px", color: "#5b69af", cursor: "pointer"}}
                   />}
-                </MLTooltip>
+                </Tooltip>
                 {openEditDetail &&
                   <EditQueryDetails
                     setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
@@ -523,7 +522,7 @@ const Query: React.FC<Props> = (props) => {
               </div>}
               {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
                 <div>
-                  <MLTooltip title={"Save a copy"}>
+                  <Tooltip title={"Save a copy"}>
                     {hoverOverDropdown && <FontAwesomeIcon
                       icon={faCopy}
                       className={styles.iconHover}
@@ -531,7 +530,7 @@ const Query: React.FC<Props> = (props) => {
                       onClick={() => setOpenSaveCopyModal(true)}
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
                     />}
-                  </MLTooltip>
+                  </Tooltip>
                   {openSaveCopyModal &&
                     <SaveQueryModal
                       setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
@@ -588,12 +587,12 @@ const Query: React.FC<Props> = (props) => {
 
           <div id="selected-query-description" style={props.isSavedQueryUser ? {marginTop: "10px"} : {marginTop: "-36px"}}
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
-            <MLTooltip title={currentQueryDescription}>
+            <Tooltip title={currentQueryDescription}>
               {
                 searchOptions.selectedQuery === "select a query" ? "" : searchOptions.selectedQuery && searchOptions.selectedQuery !== "select a query" &&
                   currentQueryDescription.length > 50 ? currentQueryDescription.substring(0, 50).concat("...") : currentQueryDescription
               }
-            </MLTooltip>
+            </Tooltip>
           </div>
         </div>}
         <div className={styles.selectedFacets}>
@@ -611,13 +610,13 @@ const Query: React.FC<Props> = (props) => {
           title={"Existing Query"}
           onCancel={() => onCancel()}
           footer={[
-            <MLButton key="cancel" id="entity-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</MLButton>,
-            <MLButton key="back" id="entity-confirmation-no-button" onClick={() => onNoClick()}>
+            <Button key="cancel" id="entity-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</Button>,
+            <Button key="back" id="entity-confirmation-no-button" onClick={() => onNoClick()}>
               No
-            </MLButton>,
-            <MLButton key="submit" id="entity-confirmation-yes-button" type="primary" onClick={() => onOk()}>
+            </Button>,
+            <Button key="submit" id="entity-confirmation-yes-button" type="primary" onClick={() => onOk()}>
               Yes
-            </MLButton>
+            </Button>
           ]}>
           <p>Changing the entity selection starts a new query. Would you like to save the existing query before changing the selection?</p>
         </Modal>

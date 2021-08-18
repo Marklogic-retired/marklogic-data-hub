@@ -1,9 +1,8 @@
 import React from "react";
-import {Progress} from "antd";
+import {Progress, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./expandable-table-view.module.scss";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
-import {MLTable} from "@marklogic/design-system";
 
 interface Props {
     rowData: any;
@@ -178,13 +177,13 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     }
 
   });
-  return <div className={styles.expandedTableView}><MLTable
+  return <div className={styles.expandedTableView}><Table
     columns={testMatchedUriTableColumns}
     dataSource={actionPreviewData}
     pagination={false}
     rowKey="key"
-    id="uriMatchedDataTable">
-  </MLTable>
+    // id="uriMatchedDataTable"
+  ></Table>
   <div className={styles.boldTextDisplay}> Total Score: {props.rowData.score}</div></div>;
 };
 export default ExpandableTableView;

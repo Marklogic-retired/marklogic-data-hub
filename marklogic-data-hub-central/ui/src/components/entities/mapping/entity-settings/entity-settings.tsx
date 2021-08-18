@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Icon, Select, Popover} from "antd";
+import {Form, Input, Icon, Select, Popover, Button, Tooltip} from "antd";
 import styles from "./entity-settings.module.scss";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {AdvancedSettingsTooltips} from "../../../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../../../config/messages.config";
 import StepsConfig from "../../../../config/steps.config";
@@ -190,9 +189,9 @@ const EntitySettings: React.FC<Props> = (props) => {
               })}
             </Select>
             <div className={styles.inputTooltip}>
-              <MLTooltip title={tooltips.additionalCollections} placement={"right"}>
+              <Tooltip title={tooltips.additionalCollections} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </MLTooltip>
+              </Tooltip>
             </div>
           </Form.Item>
           <Form.Item
@@ -219,9 +218,9 @@ const EntitySettings: React.FC<Props> = (props) => {
               onPressEnter={(e) => e.key === "Enter" && e.preventDefault()}
             />
             <div className={styles.inputTooltip}>
-              <MLTooltip title={tooltips.targetPermissions} placement={"right"}>
+              <Tooltip title={tooltips.targetPermissions} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </MLTooltip>
+              </Tooltip>
             </div>
             <div className={styles.validationError} aria-label={`${props.entityTitle}-validationError`} data-testid="validationError">
               {permissionValidationError}
@@ -229,12 +228,12 @@ const EntitySettings: React.FC<Props> = (props) => {
           </Form.Item>
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
-              <MLButton data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
-              {!canReadWrite || !targetPermissionsValid ? <MLTooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+              <Button data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;
+              {!canReadWrite || !targetPermissionsValid ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
                 <span className={styles.disabledCursor}>
-                  <MLButton id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</MLButton>
+                  <Button id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</Button>
                 </span>
-              </MLTooltip> : <MLButton id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</MLButton>}
+              </Tooltip> : <Button id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</Button>}
             </div>
           </Form.Item>
         </Form>

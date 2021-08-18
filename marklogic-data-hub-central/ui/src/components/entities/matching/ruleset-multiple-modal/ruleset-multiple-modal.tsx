@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Alert, Table} from "antd";
+import {Modal, Form, Input, Icon, Switch, Alert, Table, Tag, Button, Select, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {MLButton, MLTooltip, MLSelect, MLTag} from "@marklogic/design-system";
 import "./ruleset-multiple-modal.scss";
 import styles from "./ruleset-multiple-modal.module.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
@@ -38,7 +37,7 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Custom", value: "custom"},
 ];
 
-const {MLOption} = MLSelect;
+const {Option} = Select;
 
 const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -674,7 +673,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => {
-    return <MLOption key={index} value={matchType.value} aria-label={`${matchType.value}-option`}>{matchType.name}</MLOption>;
+    return <Option key={index} value={matchType.value} aria-label={`${matchType.value}-option`}>{matchType.name}</Option>;
   });
 
   const inputUriStyle = (propertyPath, fieldType) => {
@@ -715,9 +714,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     <span>
       <div className={styles.asterisk}>*</div>
       <div>
-        <MLTooltip title={title} placement={title === MatchingStepTooltips.distanceThreshold ? "bottomLeft" : "top"}>
+        <Tooltip title={title} placement={title === MatchingStepTooltips.distanceThreshold ? "bottomLeft" : "top"}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </div>
     </span>
   );
@@ -749,9 +748,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <MLTooltip title={MatchingStepTooltips.filter} placement="bottomLeft">
+        <Tooltip title={MatchingStepTooltips.filter} placement="bottomLeft">
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </span>
     </div>;
   };
@@ -833,9 +832,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <MLTooltip title={MatchingStepTooltips.namespace}>
+        <Tooltip title={MatchingStepTooltips.namespace}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+        </Tooltip>
       </span>
     </div>;
   };
@@ -849,21 +848,21 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <MLButton type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
-      </MLButton>
-      <div className={styles.footer}>
-        <MLButton
-          aria-label={`cancel-multiple-ruleset`}
-          onClick={closeModal}
-        >Cancel</MLButton>
-        <MLButton
-          className={styles.saveButton}
-          aria-label={`confirm-multiple-ruleset`}
-          type="primary"
-          onClick={(e) => onSubmit(e)}
-        >Save</MLButton>
-      </div>
+    <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+    <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+    </Button>
+    <div className={styles.footer}>
+      <Button
+        aria-label={`cancel-multiple-ruleset`}
+        onClick={closeModal}
+      >Cancel</Button>
+      <Button
+        className={styles.saveButton}
+        aria-label={`confirm-multiple-ruleset`}
+        type="primary"
+        onClick={(e) => onSubmit(e)}
+      >Save</Button>
+    </div>
     </div>
   );
 
@@ -892,7 +891,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       width: "15%",
       render: (text, row) => {
         return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
-          <MLSelect
+          <Select
             aria-label={`${row.propertyPath}-match-type-dropdown`}
             style={matchTypeCSS(row.propertyPath)}
             size="default"
@@ -901,7 +900,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             value={matchTypes[row.propertyPath]}
           >
             {renderMatchOptions}
-          </MLSelect>
+          </Select>
           {checkFieldInErrors(row.propertyPath, "match-type-input") ? <div id="errorInMatchType" data-testid={row.propertyPath + "-match-type-err"} style={validationErrorStyle("match-type-input")}>{!matchTypes[row.propertyPath] ? "A match type is required" : ""}</div> : ""}
         </div> : null;
       }
@@ -1065,9 +1064,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const displayMatchOnTags = () => {
-    return Object.keys(matchOnTags).map((prop) => <MLTag key={prop} aria-label={`${prop}-matchOn-tag`} className={styles.matchOnTags} closable onClose={() => closeMatchOnTag(prop)}>
+    return Object.keys(matchOnTags).map((prop) => <Tag key={prop} aria-label={`${prop}-matchOn-tag`} className={styles.matchOnTags} closable onClose={() => closeMatchOnTag(prop)}>
       {matchOnTags[prop]}
-    </MLTag>);
+    </Tag>);
   };
 
   const toggleRowExpanded = (expanded, record) => {
@@ -1184,9 +1183,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         <Form.Item>
           <span className={styles.reduceWeightText}>Reduce Weight</span>
           <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={curationRuleset.reduce} aria-label="reduceToggle"></Switch>
-          <MLTooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
+          <Tooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
 
         <Form.Item>
