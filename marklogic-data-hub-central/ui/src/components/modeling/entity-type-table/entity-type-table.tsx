@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
-import {MLTable, MLTooltip} from "@marklogic/design-system";
+import {Tooltip, Table} from "antd";
 import {faTrashAlt, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
@@ -148,7 +148,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <>
             {props.canWriteEntityModel && props.canReadEntityModel ? (
-              <MLTooltip title={ModelingTooltips.entityTypeName}>
+              <Tooltip title={ModelingTooltips.entityTypeName}>
                 <span data-testid={entityName + "-span"} className={styles.link}
                   onClick={() => {
                     props.editEntityTypeDescription(
@@ -160,12 +160,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                     );
                   }}>
                   {entityName}</span>
-              </MLTooltip>
+              </Tooltip>
             ) : <span data-testid={entityName + "-span"}>{entityName}</span>}
           </>
         );
       },
-      sortDirections: ["ascend", "descend", "ascend"],
+      //sortDirections: ["ascend", "descend", "ascend"], // DHFPROD-7711 MLTable -> Table
       sorter: (a, b) => {
         return a["entityName"].localeCompare(b["entityName"]);
       }
@@ -182,7 +182,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <>
             {instanceCount === "0" ? <span data-testid={parseText[0] + "-instance-count"}>{instanceCount}</span> : (
-              <MLTooltip title={ModelingTooltips.instanceNumber}>
+              <Tooltip title={ModelingTooltips.instanceNumber}>
                 <Link
                   to={{
                     pathname: "/tiles/explore",
@@ -193,13 +193,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 >
                   {instanceCount}
                 </Link>
-              </MLTooltip>
+              </Tooltip>
             )
             }
           </>
         );
       },
-      sortDirections: ["ascend", "descend", "ascend"],
+      // sortDirections: ["ascend", "descend", "ascend"], // DHFPROD-7711 MLTable -> Table
       sorter: (a, b) => {
         let splitA = a["instances"].split(",");
         let aCount = parseInt(splitA[1]);
@@ -221,7 +221,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         } else {
           let displayDate = relativeTimeConverter(parseText[2]);
           return (
-            <MLTooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
+            <Tooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
               <Link
                 to={{
                   pathname: "/tiles/explore",
@@ -232,13 +232,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               >
                 {displayDate}
               </Link>
-            </MLTooltip>
+            </Tooltip>
 
           );
         }
       },
-      sortDirections: ["ascend", "descend", "ascend"],
-      defaultSortOrder: "descend",
+      //sortDirections: ["ascend", "descend", "ascend"], // DHFPROD-7711 MLTable -> Table
+      //defaultSortOrder: "descend", // DHFPROD-7711 MLTable -> Table
       sorter: (a, b) => {
         let splitA = a["lastProcessed"].split(",");
         let splitB = b["lastProcessed"].split(",");
@@ -269,15 +269,15 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       render: text => {
         return (
           <div className={styles.iconContainer}>
-            <MLTooltip title={ModelingTooltips.viewGraph} overlayStyle={{maxWidth: "225px"}}>
+            <Tooltip title={ModelingTooltips.viewGraph} overlayStyle={{maxWidth: "225px"}}>
               <FontAwesomeIcon
                 data-testid={text + "-graphView-icon"}
                 className={styles.iconViewGraph}
                 icon={faProjectDiagram}
                 onClick={() => navigateToGraphView(text)}
               />
-            </MLTooltip>
-            <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}}>
+            </Tooltip>
+            <Tooltip title={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}}>
               <FontAwesomeIcon
                 data-testid={text + "-trash-icon"}
                 className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
@@ -291,7 +291,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 }}
                 size="2x"
               />
-            </MLTooltip>
+            </Tooltip>
           </div>
         );
       }
@@ -357,7 +357,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-      <MLTable
+      <Table
         rowKey="entityName"
         locale={{emptyText: " "}}
         className={styles.table}
@@ -369,6 +369,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         pagination={{defaultPageSize: 20, size: "small", hideOnSinglePage: renderTableData.length <= 20}}
         size="middle"
       />
+      {/* sortDirections: ["ascend", "descend", "ascend"], */}
     </>
   );
 };

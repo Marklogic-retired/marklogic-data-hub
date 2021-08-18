@@ -1,9 +1,8 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Popover, Input, Icon} from "antd";
+import {Popover, Input, Icon, Checkbox} from "antd";
 import styles from "./pop-over-search.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
-import {MLCheckbox} from "@marklogic/design-system";
 import {SearchContext} from "../../util/search-context";
 
 interface Props {
@@ -94,13 +93,13 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const renderCheckBoxGroup = options.map((value, index) =>
     <div  key={index} >
-      <MLCheckbox
+      <Checkbox
         value={value}
         onClick={(e) => onSelectCheckboxes(e)}
         checked={checkedValues.includes(value)}
         data-testid={`${value}-popover-checkbox`}
       >{value}
-      </MLCheckbox>
+      </Checkbox>
     </div>
   );
 

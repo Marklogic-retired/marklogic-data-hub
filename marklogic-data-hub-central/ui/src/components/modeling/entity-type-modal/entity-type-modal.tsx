@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
 import axios from "axios";
-import {Form, Icon, Input, Modal} from "antd";
+import {Form, Icon, Input, Modal, Tooltip} from "antd";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -251,9 +251,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />}
-          {props.isEditModal ? null : <MLTooltip title={ModelingTooltips.nameRegex}>
+          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>}
+          </Tooltip>}
         </Form.Item>
 
         <Form.Item
@@ -271,9 +271,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <MLTooltip title={ModelingTooltips.entityDescription}>
+          <Tooltip title={ModelingTooltips.entityDescription}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
 
         <Form.Item
@@ -312,9 +312,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               onBlur={handleChange}
               style={{width: "120px"}}
             />
-            <MLTooltip title={ModelingTooltips.namespace}>
+            <Tooltip title={ModelingTooltips.namespace}>
               <Icon type="question-circle" className={styles.icon} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           </Form.Item>
           { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
         </Form.Item>
