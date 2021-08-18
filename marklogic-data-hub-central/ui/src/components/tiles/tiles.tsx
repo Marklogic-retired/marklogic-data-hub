@@ -7,12 +7,11 @@ import {faExternalLinkAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import styles from "./tiles.module.scss";
 import "./tiles.scss";
 import Run from "../../pages/Run";
-import {MLTooltip, MLButton} from "@marklogic/design-system";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import modelingInfoIcon from "../../assets/icon_helpInfo.png";
-import {Popover} from "antd";
+import {Popover, Button, Tooltip} from "antd";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 
@@ -149,9 +148,9 @@ const Tiles: React.FC<Props> = (props) => {
               <>
                 <div>
                   <i className={styles.faCog} aria-label={"menu"} style={{color: options["color"]}}>
-                    <MLButton id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
+                    <Button id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
                       <FontAwesomeIcon icon={faCog} style={{color: "#394494", fontSize: "14px", paddingRight: "4px", paddingTop: "1px"}} /> Manage Queries
-                    </MLButton>
+                    </Button>
                   </i>
                 </div>
                 {manageQueryModal && queryModal}
@@ -160,28 +159,28 @@ const Tiles: React.FC<Props> = (props) => {
           ) : null}
           {showControl("newTab") ? (
             <i className={styles.fa} aria-label={"newTab"} style={{color: options["controlColor"]}} onClick={onClickNewTab}>
-              <MLTooltip title={"Open in New Tab"} placement="top">
+              <Tooltip title={"Open in New Tab"} placement="top">
                 <FontAwesomeIcon icon={faExternalLinkAlt} />
-              </MLTooltip>
+              </Tooltip>
             </i>) : null}
           {showControl("maximize") ? (
             <i className={styles.ant} aria-label={"maximize"} style={{color: options["controlColor"]}} onClick={onClickMaximize}>
-              <MLTooltip title={"Maximize"} placement="top">
+              <Tooltip title={"Maximize"} placement="top">
                 <ArrowsAltOutlined />
-              </MLTooltip>
+              </Tooltip>
             </i>) : null}
           {showControl("minimize") ? (
             <i className={styles.ant} aria-label={"minimize"} style={{color: options["controlColor"]}} onClick={onClickMinimize}>
-              <MLTooltip title={"Minimize"} placement="top">
+              <Tooltip title={"Minimize"} placement="top">
                 <ShrinkOutlined />
-              </MLTooltip>
+              </Tooltip>
             </i>) : null}
           {showControl("close") ? (
             <i className={styles.close} aria-label={"close"} style={{color: options["controlColor"]}} tabIndex={0}
               onClick={onClickClose} onMouseDown={onClickClose} onKeyDown={onKeyDownClose}>
-              <MLTooltip title={"Close"} placement="top">
+              <Tooltip title={"Close"} placement="top">
                 <CloseOutlined />
-              </MLTooltip>
+              </Tooltip>
             </i>
           ) : null}
         </div>
