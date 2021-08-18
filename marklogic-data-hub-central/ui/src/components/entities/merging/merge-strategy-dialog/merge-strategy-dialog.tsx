@@ -1,11 +1,10 @@
 import {
   Modal,
   Form,
-  Icon, Input, Radio
+  Icon, Input, Radio, Button, Select, Tooltip
 } from "antd";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
-import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import {CurationContext} from "../../../../util/curation-context";
 import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
@@ -23,7 +22,7 @@ type Props = {
     toggleIsEditStrategy: (isEditStrategy:boolean) => void;
 };
 
-const {MLOption} = MLSelect;
+const {Option} = Select;
 
 const MergeStrategyDialog: React.FC<Props> = (props) => {
 
@@ -46,7 +45,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
   const dropdownTypes = ["Length"].concat(props.sourceNames);
-  const dropdownTypeOptions = dropdownTypes.map(elem => <MLOption data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
+  const dropdownTypeOptions = dropdownTypes.map(elem => <Option data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</Option>);
 
   const layout = {
     labelCol: {span: 4},
@@ -368,9 +367,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange}  name={"maxValues"}>
             <Radio value={1} > All</Radio>
             <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
-              <MLTooltip title={MergeRuleTooltips.maxValues}>
+              <Tooltip title={MergeRuleTooltips.maxValues}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </MLTooltip>
+              </Tooltip>
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -382,9 +381,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange}  name={"maxSources"}>
             <Radio value={1} > All</Radio>
             <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
-              <MLTooltip title={MergeRuleTooltips.maxSources}>
+              <Tooltip title={MergeRuleTooltips.maxSources}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </MLTooltip>
+              </Tooltip>
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -401,11 +400,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           </Radio.Group>
         </Form.Item>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
-          <div><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
+          <div><p className={styles.priorityText}>Priority Order<Tooltip title={multiSliderTooltips.priorityOrder} placement="right">
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip></p></div>
+          </Tooltip></p></div>
           <div className={styles.addButtonContainer}>
-            <MLSelect
+            <Select
               id="dropdownOptions"
               placeholder=""
               size="default"
@@ -416,8 +415,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               aria-label="dropdownOptions-select"
             >
               {dropdownTypeOptions}
-            </MLSelect>
-            <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</MLButton>
+            </Select>
+            <Button aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</Button>
           </div>
           <div>
             <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging}/>
@@ -425,8 +424,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         </div>}
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <MLButton aria-label={"cancel-merge-strategy"} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
-            <MLButton aria-label={"confirm-merge-strategy"} id={"saveButton"} type="primary" onClick={handleSubmit} >Save</MLButton>
+            <Button aria-label={"cancel-merge-strategy"} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;
+            <Button aria-label={"confirm-merge-strategy"} id={"saveButton"} type="primary" onClick={handleSubmit} >Save</Button>
           </div>
         </Form.Item>
       </Form>

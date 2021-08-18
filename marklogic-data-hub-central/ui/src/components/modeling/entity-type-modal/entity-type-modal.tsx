@@ -1,12 +1,11 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Form, Icon, Input, Modal} from "antd";
+import {Form, Icon, Input, Modal, Tooltip} from "antd";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../../util/user-context";
 import {ModelingTooltips, ErrorTooltips} from "../../../config/tooltips.config";
 import {createEntityType, updateModelInfo} from "../../../api/modeling";
-import {MLTooltip} from "@marklogic/design-system";
 import {TwitterPicker} from "react-color";
 import graphConfig from "../../../config/graph-vis.config";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
@@ -309,9 +308,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           />}
           { errorServer === "name-error" ? <p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>
             : errorServer !== "" ? <p className={styles.errorServer}>{errorServer}</p> : null}
-          {props.isEditModal ? null : <MLTooltip title={ModelingTooltips.nameRegex}>
+          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>}
+          </Tooltip>}
         </Form.Item>
         <Form.Item
           label={<span className={styles.label}>Description:</span>}
@@ -328,9 +327,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <MLTooltip title={ModelingTooltips.entityDescription}>
+          <Tooltip title={ModelingTooltips.entityDescription}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
 
         <Form.Item
@@ -369,9 +368,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               onBlur={handleChange}
               style={{width: "120px"}}
             />
-            <MLTooltip title={ModelingTooltips.namespace}>
+            <Tooltip title={ModelingTooltips.namespace}>
               <Icon type="question-circle" className={styles.icon} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           </Form.Item>
         </Form.Item>
         <Form.Item
@@ -383,9 +382,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           <div className={styles.colorContainer}>
             <div data-testid={`${name}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
             <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
-            <MLTooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
+            <Tooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item>
       </Form>
