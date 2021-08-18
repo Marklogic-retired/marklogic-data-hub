@@ -1,11 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import {useHistory} from "react-router-dom";
-import {MLButton} from "@marklogic/design-system";
 import styles from "./merging-step-detail.module.scss";
 import "./merging-step-detail.scss";
 import NumberIcon from "../../../number-icon/number-icon";
-import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {CurationContext} from "../../../../util/curation-context";
 import {
   MergingStep, StepType, defaultPriorityOption
@@ -17,7 +15,7 @@ import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {RightOutlined, DownOutlined} from "@ant-design/icons";
-import {Icon, Modal, Table} from "antd";
+import {Icon, Modal, Table, Button, Tooltip} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
@@ -244,14 +242,14 @@ const MergingStepDetail: React.FC = () => {
         maxSources: i["maxSources"],
         default: i["default"] === true ? <FontAwesomeIcon className={styles.defaultIcon} icon={faCheck} data-testid={"default-" + i["strategyName"] + "-icon"} /> : null,
         priorityOrder: i.hasOwnProperty("priorityOrder") ? true : false,
-        delete: <MLTooltip title={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? MergeStrategyTooltips.delete : ""}>
+        delete: <Tooltip title={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? MergeStrategyTooltips.delete : ""}>
           <FontAwesomeIcon
             icon={faTrashAlt}
             size="lg"
             className={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
             data-testid={`mergestrategy-${i.strategyName}`}
             onClick={() => onDelete(i)}/>
-        </MLTooltip>
+        </Tooltip>
       }
     );
   });
@@ -308,12 +306,12 @@ const MergingStepDetail: React.FC = () => {
       }
     }
     return <>
-      <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
+      <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<Tooltip title={multiSliderTooltips.priorityOrder} placement="right">
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </MLTooltip></p>
-      <div id="strategyText"><MLTooltip title={multiSliderTooltips.viewOnlyTooltip}><div style={{opacity: "60%"}}>
+      </Tooltip></p>
+      <div id="strategyText"><Tooltip title={multiSliderTooltips.viewOnlyTooltip}><div style={{opacity: "60%"}}>
         <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
-      </div></MLTooltip></div>
+      </div></Tooltip></div>
       </div>
     </>;
   };
@@ -331,18 +329,18 @@ const MergingStepDetail: React.FC = () => {
       {currentMergeObj.hasOwnProperty("entityPropertyPath") ? <p aria-label="delete-merge-rule-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.entityPropertyPath} - {currentMergeObj.mergeType}</b> merge rule ?</p> :
         <p aria-label="delete-merge-strategy-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.strategyName}</b> merge strategy ?</p>}
       <div className={styles.footer}>
-        <MLButton
+        <Button
           aria-label={`delete-merge-modal-discard`}
           size="default"
           onClick={() => setDeleteModalVisibility(false)}
-        >No</MLButton>
-        <MLButton
+        >No</Button>
+        <Button
           className={styles.saveButton}
           aria-label={`delete-merge-modal-confirm`}
           type="primary"
           size="default"
           onClick={() => deleteConfirm()}
-        >Yes</MLButton>
+        >Yes</Button>
       </div>
     </Modal>
   );
@@ -394,12 +392,12 @@ const MergingStepDetail: React.FC = () => {
                             A merge strategy can be assigned to multiple merge rules.</span>
             </p></div>
             <div className={styles.addStrategyButtonContainer}>
-              <MLButton aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
+              <Button aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
                 toggleCreateEditStrategyModal(true);
                 toggleIsEditStrategy(false);
                 setCurrentStrategyName("");
               }
-              }>Add</MLButton>
+              }>Add</Button>
             </div>
           </div>
           <div>
@@ -432,15 +430,15 @@ const MergingStepDetail: React.FC = () => {
           <div className={styles.textContainer}>
             <div className={styles.mergeDefinition}><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
             </p></div>
-            <div>
-              <MLButton aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
+            <div className={styles.addRuleButtonContainer}>
+              <Button aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
                 toggleCreateEditRuleModal(true);
                 toggleIsEditRule(false);
                 setCurrentPropertyName("");
-              }}>Add</MLButton>
+              }}>Add</Button>
             </div>
           </div>
-          <MLTable
+          <Table
             rowKey="property"
             className={styles.table}
             columns={mergeRuleColumns}

@@ -1,8 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Icon, Table, Popover, Input, Select, Dropdown, Modal} from "antd";
-import {MLButton, MLTooltip, MLSpin} from "@marklogic/design-system";
+import {Icon, Table, Popover, Input, Select, Dropdown, Modal, Spin, Button, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
@@ -415,10 +414,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
           onPressEnter={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
           className={styles.searchInput}
         />
-        <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
+        <Button data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
           Reset
-        </MLButton>
-        <MLButton
+        </Button>
+        <Button
           data-testid={`submitSearch-${dataIndex}`}
           type="primary"
           onClick={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
@@ -426,7 +425,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           className={styles.searchSubmitButton}
         >
           <Icon type="search" theme="outlined" /> Search
-        </MLButton>
+        </Button>
       </div>
     ),
     filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={filtered ? "active" : "inactive"} /></i>,
@@ -941,7 +940,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       // Context and URI version
       return (
         <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-          <MLTooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+          <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
             <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
               <FontAwesomeIcon
                 icon={faList}
@@ -951,7 +950,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 onClick={(e) => handleSourceList(row)}
               />
             </i>
-          </MLTooltip>
+          </Tooltip>
         </Dropdown>
       );
     } else {
@@ -959,7 +958,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       // TODO refactor tests to allow consistent testid values across source menus
       return (
         <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-          <MLTooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+          <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
             <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
               <FontAwesomeIcon
                 icon={faList}
@@ -969,7 +968,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 onClick={(e) => handleSourceList(row)}
               />
             </i>
-          </MLTooltip>
+          </Tooltip>
         </Dropdown>
       );
     }
@@ -992,16 +991,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const functionDropdown = (row) => {
     return (
       <Dropdown overlay={functionMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-        <MLTooltip title={props.canReadWrite && "Function"} placement="bottom">
-          <MLButton
+        <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
+          <Button
             id="functionIcon"
             data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
             className={styles.functionIcon}
             size="small"
             onClick={(e) => handleFunctionsList(row.name)}
             disabled={!props.canReadWrite}
-          >fx</MLButton>
-        </MLTooltip>
+          >fx</Button>
+        </Tooltip>
       </Dropdown>
     );
   };
@@ -1023,7 +1022,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const refDropdown = (row) => {
     return (
       <Dropdown overlay={refMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-        <MLTooltip title={props.canReadWrite && "Reference"} placement="bottom">
+        <Tooltip title={props.canReadWrite && "Reference"} placement="bottom">
           <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
             <FontAwesomeIcon
               icon={faTerminal}
@@ -1033,7 +1032,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
               onClick={(e) => handleRefList(row.name)}
             />
           </i>
-        </MLTooltip>
+        </Tooltip>
       </Dropdown>
     );
   };
@@ -1235,16 +1234,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
             <span><span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
-                  <MLTooltip title={"Multiple"}>
+                  <Tooltip title={"Multiple"}>
                     <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
-                  </MLTooltip>
+                  </Tooltip>
                 </span>
               }
               {row.key > 100 && row.children &&
                 <span>
-                  <MLTooltip title={"Structured Type"}>
+                  <Tooltip title={"Structured Type"}>
                     <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
-                  </MLTooltip>
+                  </Tooltip>
                 </span>
               }
               {row.key > 100 && row.name === "Context" && !row.isProperty &&
@@ -1309,19 +1308,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
             {row.joinPropertyName !== "" ?
               //icons if relationship is complete with a foreign key
               <div className={styles.dualIconsContainer}>
-                <MLTooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
+                <Tooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
                   <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name}/>
-                </MLTooltip>
-                <MLTooltip title={ModelingTooltips.foreignKeyMapping(relatedEntityName, row.joinPropertyName, props.entityTypeTitle, row.name)} id={"tooltip-" + row.name} >
+                </Tooltip>
+                <Tooltip title={ModelingTooltips.foreignKeyMapping(relatedEntityName, row.joinPropertyName, props.entityTypeTitle, row.name)} id={"tooltip-" + row.name} >
                   <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name}/>
-                </MLTooltip>
+                </Tooltip>
               </div>
               :
               //icon if relationship but no foreign key
               <div className={styles.singleIconContainer}>
-                <MLTooltip className={styles.relationshipTooltip} title={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
+                <Tooltip className={styles.relationshipTooltip} title={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
                   <span className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle} data-testid={"relationship-" + row.name}/>
-                </MLTooltip>
+                </Tooltip>
               </div>
             }
           </span>;
@@ -1424,7 +1423,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           return {
             children:
               <div data-testid={`${props.entityTypeTitle}-`+ row.name.split("/").pop() + "-value"} className={styles.mapValue}>
-                <MLTooltip title={getTextForTooltip(row.name, row.isProperty)}>{getTextForValueField(row, row.isProperty)}</MLTooltip>
+                <Tooltip title={getTextForTooltip(row.name, row.isProperty)}>{getTextForValueField(row, row.isProperty)}</Tooltip>
               </div>,
             props: {colSpan: 1}
           };
@@ -1497,7 +1496,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       : null
     }
     {deleteConfirmation}
-  </div>) : null : !props.isRelatedEntity ? <MLSpin size={"large"} data-testid="spinner"/> : null);
+  </div>) : null : !props.isRelatedEntity ? <Spin size={"large"} data-testid="spinner"/> : null);
 };
 
 export default EntityMapTable;

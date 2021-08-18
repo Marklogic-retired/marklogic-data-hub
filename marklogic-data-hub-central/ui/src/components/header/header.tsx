@@ -1,12 +1,11 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout, Icon, Avatar, Menu, Dropdown} from "antd";
+import {Layout, Icon, Avatar, Menu, Dropdown, Button, Tooltip} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
 import SystemInfo from "./system-info";
 
 interface Props extends RouteComponentProps<any> {
@@ -89,10 +88,10 @@ const Header:React.FC<Props> = (props) => {
   let userMenu = <div className={styles.userMenu}>
     <div className={styles.username}>{localStorage.getItem("dataHubUser")}</div>
     <div className={styles.logout}>
-      <MLButton id="logOut" type="primary" size="default"
+      <Button id="logOut" type="primary" size="default"
         onClick={confirmLogout} onKeyDown={logoutKeyDownHandler} tabIndex={1}>
         Log Out
-      </MLButton>
+      </Button>
     </div>
   </div>;
 
@@ -147,29 +146,29 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <MLTooltip title={infoContainer} placement={"bottomLeft"} overlayClassName={styles.infoTooltip}>
+          <Tooltip title={infoContainer} placement={"bottomLeft"} overlayClassName={styles.infoTooltip}>
             <i id="service-name" aria-label="service-details" className={styles.serviceName} tabIndex={1} ref={serviceNameRef}
               onMouseDown={serviceNameClickHandler} onKeyDown={serviceNameKeyDownHandler}>
               <Icon type="info-circle" className={styles.infoIcon}/>
             </i>
-          </MLTooltip>
+          </Tooltip>
         </Menu.Item>
         <div className={styles.vertical}></div>
         {/* <Menu.Item>
-          <MLTooltip title="Search"><Icon type="search"/></MLTooltip>
+          <Tooltip title="Search"><Icon type="search"/></Tooltip>
         </Menu.Item> */}
         <Menu.Item>
-          <MLTooltip title="Help" overlayClassName={styles.infoTooltip}>
+          <Tooltip title="Help" overlayClassName={styles.infoTooltip}>
             <div className={styles.helpIconContainer}>
               <a id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
                 tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler}>
                 <Icon type="question-circle" className={styles.helpIcon}/>
               </a>
             </div>
-          </MLTooltip>
+          </Tooltip>
         </Menu.Item>
         {/* <Menu.Item>
-          <MLTooltip title="Settings"><Icon type="setting"/></MLTooltip>
+          <Tooltip title="Settings"><Icon type="setting"/></Tooltip>
         </Menu.Item> */}
         <Dropdown overlay={userMenu} className={styles.userDropDown} visible={showUserDropdown}>
           {/*
@@ -186,7 +185,7 @@ const Header:React.FC<Props> = (props) => {
                 hover: onMouseOver={toggleUserDropdown(true)}  not used; makes dropdown feel clunky
                 un-hover: onMouseOut={toggleUserDropdown(false)}  DO NOT USE: impossible to click on the logout button
             */}
-            <MLTooltip title="User" overlayClassName={styles.infoTooltip}><Icon type="user" className={styles.userIcon}/></MLTooltip>
+            <Tooltip title="User" overlayClassName={styles.infoTooltip}><Icon type="user" className={styles.userIcon}/></Tooltip>
           </span>
         </Dropdown>
       </Menu>
@@ -201,13 +200,13 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <MLTooltip title="Help">
+          <Tooltip title="Help">
             <div className={styles.helpIconContainer}>
               <a id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>
                 <Icon type="question-circle" className={styles.helpIcon}/>
               </a>
             </div>
-          </MLTooltip>
+          </Tooltip>
         </Menu.Item>
       </Menu>
     </div>;
