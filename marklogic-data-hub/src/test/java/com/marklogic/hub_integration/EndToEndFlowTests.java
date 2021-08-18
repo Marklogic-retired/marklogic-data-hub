@@ -40,6 +40,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -803,7 +804,12 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         String optionString;
         JsonNode mlcpOptions;
         try {
-            optionString = toJsonString(options).replace("\"", "\\\"");
+            if (OS.WINDOWS.isCurrentOs()) {
+                optionString = toJsonString(options).replace("\"", "\\\\\\\"");
+            }
+            else {
+                optionString = toJsonString(options).replace("\"", "\\\"");
+            }
             String optionsJson =
                 "{" +
                     "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
