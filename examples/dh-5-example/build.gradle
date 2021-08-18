@@ -26,9 +26,9 @@ repositories {
 
 dependencies {
     if (project.hasProperty("testing")) {
-        compile "com.marklogic:marklogic-data-hub:5.6-SNAPSHOT"
+        implementation "com.marklogic:marklogic-data-hub:5.6-SNAPSHOT"
     } else {
-        compile "com.marklogic:marklogic-data-hub:5.5.0"
+        implementation "com.marklogic:marklogic-data-hub:5.5.0"
     }
 }
 
