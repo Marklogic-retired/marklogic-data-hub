@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
 import styles from "./load-card.module.scss";
 import {useHistory} from "react-router-dom";
-import {Card, Icon, Row, Col, Divider, Modal, Select} from "antd";
+import {Card, Icon, Row, Col, Divider, Modal, Select, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -10,7 +10,6 @@ import {convertDateFromISO} from "../../util/conversionFunctions";
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {Link} from "react-router-dom";
-import {MLTooltip} from "@marklogic/design-system";
 
 const {Option} = Select;
 
@@ -349,14 +348,14 @@ const LoadCard: React.FC<Props> = (props) => {
             <p className={styles.addNewContent}>Add New</p>
           </Card>
         </Col> : <Col>
-          <MLTooltip title={"Load: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><Card
+          <Tooltip title={"Load: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><Card
             size="small"
             className={styles.addNewCardDisabled}
             data-testid="disabledAddNewCard">
             <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
             <br />
             <p className={styles.addNewContentDisabled}>Add New</p>
-          </Card></MLTooltip>
+          </Card></Tooltip>
         </Col>}{ props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col key={index}>
             <div
@@ -365,9 +364,9 @@ const LoadCard: React.FC<Props> = (props) => {
             >
               <Card
                 actions={[
-                  <MLTooltip title={"Step Settings"} placement="bottom"><i key="edit" className={styles.editIcon}><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
-                  props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"} onClick={() => handleStepRun(elem.name)}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>,
-                  props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i data-testid={elem.name+"-disabled-delete"}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
+                  <Tooltip title={"Step Settings"} placement="bottom"><i key="edit" className={styles.editIcon}><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></Tooltip>,
+                  props.canReadWrite ? <Tooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"} onClick={() => handleStepRun(elem.name)}/></i></Tooltip> : <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></Tooltip>,
+                  props.canReadWrite ? <Tooltip title={"Delete"} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <Tooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i data-testid={elem.name+"-disabled-delete"}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/></i></Tooltip>,
                 ]}
                 className={styles.cardStyle}
                 size="small"
@@ -389,7 +388,7 @@ const LoadCard: React.FC<Props> = (props) => {
                     <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>:<div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
                   <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
-                    {selectVisible ? <MLTooltip title={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
+                    {selectVisible ? <Tooltip title={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
                       <Select
                         style={{width: "100%"}}
                         value={selected[elem.name] ? selected[elem.name] : undefined}
@@ -403,7 +402,7 @@ const LoadCard: React.FC<Props> = (props) => {
                           <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                         )) : null}
                       </Select>
-                    </div></div></MLTooltip> : null}
+                    </div></div></Tooltip> : null}
                   </div>
                 </div>
               </Card>

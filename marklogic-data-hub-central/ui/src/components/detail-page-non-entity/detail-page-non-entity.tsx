@@ -1,8 +1,7 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Layout, PageHeader, Menu, Icon} from "antd";
+import {Layout, PageHeader, Menu, Icon, Table, Tooltip} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
-import {MLTooltip, MLTable} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleRight, faAngleDoubleLeft, faCode} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../util/user-context";
@@ -71,11 +70,11 @@ const DetailPageNonEntity = (props) => {
         };
       },
       sorter: (a: any, b: any) => a.flow?.localeCompare(b.flow),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
+      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <Tooltip
         key={text}
         title={text}>
         <div style={{color: "#333333", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
-      </MLTooltip>
+      </Tooltip>
     },
     {
       title: "Step",
@@ -90,11 +89,11 @@ const DetailPageNonEntity = (props) => {
         };
       },
       sorter: (a: any, b: any) => a.step?.localeCompare(b.step),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
+      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <Tooltip
         key={text}
         title={text}>
         <div style={{color: "#333333", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
-      </MLTooltip>
+      </Tooltip>
     },
     {
       title: "User",
@@ -109,11 +108,11 @@ const DetailPageNonEntity = (props) => {
         };
       },
       sorter: (a: any, b: any) => a.user?.localeCompare(b.user),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
+      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <Tooltip
         key={text}
         title={text}>
         <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
-      </MLTooltip>
+      </Tooltip>
     }
   ];
 
@@ -147,10 +146,10 @@ const DetailPageNonEntity = (props) => {
   const viewSelector = <div id="menu" className={styles.menu}>
     <Menu id="subMenu" onClick={(event) => handleMenuSelect(event)} mode="horizontal" selectedKeys={["record"]}>
       <Menu.Item key="record" id="record" data-testid="record-view">
-        <MLTooltip title={"Show the complete record"} >
+        <Tooltip title={"Show the complete record"} >
           <FontAwesomeIcon icon={faCode} size="lg" />
           <span className={styles.subMenu}>Record</span>
-        </MLTooltip>
+        </Tooltip>
       </Menu.Item>
     </Menu>
   </div>;
@@ -158,10 +157,10 @@ const DetailPageNonEntity = (props) => {
   const textViewSelector = <div id="menu" className={styles.menuText}>
     <Menu id="subMenu" mode="horizontal" selectedKeys={["record"]}>
       <Menu.Item key="record" id="record" data-cy="source-view">
-        <MLTooltip title={"Show the complete record"} >
+        <Tooltip title={"Show the complete record"} >
           <FontAwesomeIcon icon={faCode} size="lg" />
           <span className={styles.subMenu}>Record</span>
-        </MLTooltip>
+        </Tooltip>
       </Menu.Item>
     </Menu>
   </div>;
@@ -237,7 +236,7 @@ const DetailPageNonEntity = (props) => {
             <div>URI: <span className={styles.uri} data-testid="non-entity-document-uri">{props.uri}</span></div>
             <div className={styles.sourcesMetadataTableContainer}>
               <div className={styles.metadataTableLabel} data-testid="non-entity-sources-label">Sources</div>
-              <MLTable
+              <Table
                 bordered
                 className={styles.sourcesMetadataTable}
                 rowKey="key"
@@ -249,7 +248,7 @@ const DetailPageNonEntity = (props) => {
             </div>
             <div className={styles.historyMetadataTableContainer}>
               <div className={styles.metadataTableLabel} data-testid="non-entity-history-label">History</div>
-              <MLTable
+              <Table
                 bordered
                 className={styles.historyMetadataTable}
                 rowKey="key"

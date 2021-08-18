@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faSave, faTable, faUndo} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {MLButton, MLTooltip, MLAlert, MLRadio} from "@marklogic/design-system";
+import {Alert, Button, Radio, Tooltip} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -241,7 +241,7 @@ const Modeling: React.FC = () => {
   };
 
 
-  const addButton = <MLButton
+  const addButton = <Button
     type="primary"
     aria-label="add-entity"
     onClick={() => {
@@ -249,10 +249,10 @@ const Modeling: React.FC = () => {
       toggleShowEntityModal(true);
     }}
     disabled={!canWriteEntityModel}
-    className={!canWriteEntityModel && styles.disabledPointerEvents}
-  >Add</MLButton>;
+    className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
+  >Add</Button>;
 
-  const saveAllButton = <MLButton
+  const saveAllButton = <Button
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
     aria-label="save-all"
@@ -267,9 +267,9 @@ const Modeling: React.FC = () => {
       size="sm"
     />
         Save All
-  </MLButton>;
+  </Button>;
 
-  const revertAllButton = <MLButton
+  const revertAllButton = <Button
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
     aria-label="revert-all"
@@ -284,7 +284,7 @@ const Modeling: React.FC = () => {
       size="sm"
     />
         Revert All
-  </MLButton>;
+  </Button>;
 
   const handleViewChange = (view) => {
     if (view === "table") {
@@ -299,7 +299,7 @@ const Modeling: React.FC = () => {
   };
 
   const viewSwitch = <div id="switch-view" aria-label="switch-view">
-    <MLRadio.MLGroup
+    <Radio.Group
       buttonStyle="outline"
       className={"radioGroupView"}
       defaultValue={modelingOptions.view}
@@ -307,15 +307,15 @@ const Modeling: React.FC = () => {
       onChange={e => handleViewChange(e.target.value)}
       size="large"
       style={mlRadioStyle}
-      tabIndex={0}
+      // tabIndex={0} // TODO confirm we can make React Bootstrap element tab-able
     >
-      <MLRadio.MLButton aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
+      <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
         <i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i>
-      </MLRadio.MLButton>
-      <MLRadio.MLButton aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
+      </Radio.Button>
+      <Radio.Button aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
         <i>{<FontAwesomeIcon icon={faTable}/>}</i>
-      </MLRadio.MLButton>
-    </MLRadio.MLGroup>
+      </Radio.Button>
+    </Radio.Group>
   </div>;
 
   if (canAccessModel) {
@@ -328,7 +328,7 @@ const Modeling: React.FC = () => {
               {viewSwitch}
             </div>
             {modelingOptions.isModified && (
-              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
+              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><Alert
                 type="info" aria-label="entity-modified-alert" showIcon
                 message={ModelingTooltips.entityEditedAlert}/></div>
             )}
@@ -355,41 +355,41 @@ const Modeling: React.FC = () => {
                   </div>
                   <div style={{float: "right"}}>
                     {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.addNewEntity}>
+                      <Tooltip title={ModelingTooltips.addNewEntity}>
                         {addButton}
-                      </MLTooltip>
+                      </Tooltip>
                       :
-                      <MLTooltip
+                      <Tooltip
                         title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess}
                         placement="top" overlayStyle={{maxWidth: "175px"}}>
                         <span className={styles.disabledCursor}>{addButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                     }
                     {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.saveAll}
+                      <Tooltip title={ModelingTooltips.saveAll}
                         overlayStyle={{maxWidth: "175px"}}>
                         <span
                           className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{saveAllButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                       :
-                      <MLTooltip
+                      <Tooltip
                         title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess}
                         placement="top" overlayStyle={{maxWidth: "225px"}}>
                         <span className={styles.disabledCursor}>{saveAllButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                     }
                     {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.revertAll}
+                      <Tooltip title={ModelingTooltips.revertAll}
                         overlayStyle={{maxWidth: "175px"}}>
                         <span
                           className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{revertAllButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                       :
-                      <MLTooltip
+                      <Tooltip
                         title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess}
                         placement="left" overlayStyle={{maxWidth: "250px"}}>
                         <span className={styles.disabledCursor}>{revertAllButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                     }
                   </div>
                 </div>
@@ -401,7 +401,7 @@ const Modeling: React.FC = () => {
               {viewSwitch}
             </div>
             {modelingOptions.isModified && (
-              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
+              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><Alert
                 type="info" aria-label="entity-modified-alert" showIcon
                 message={ModelingTooltips.entityEditedAlert}/></div>
             )}
