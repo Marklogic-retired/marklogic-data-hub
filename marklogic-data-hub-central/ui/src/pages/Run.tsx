@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
 import Flows from "../components/flows/flows";
-import {Modal, Collapse, Icon} from "antd";
+import {Modal, Collapse, Icon, Button} from "antd";
 import axios from "axios";
 import {AuthoritiesContext} from "../util/authorities";
 import {UserContext} from "../util/user-context";
@@ -9,7 +9,6 @@ import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
-import {MLButton} from "@marklogic/design-system";
 import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "../../src/components/job-response/job-response";
 
@@ -260,16 +259,16 @@ const Run = (props) => {
       width: 650,
       content: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ?
         <div className={styles.exploreDataContainer}>
-          <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
+          <Button data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
             <span className={styles.exploreIcon}></span>
             <span className={styles.exploreText}>Explore Curated Data</span>
-          </MLButton>
+          </Button>
         </div> : stepType.toLowerCase() === "ingestion" ?
           <div className={styles.exploreDataContainer}>
-            <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
+            <Button data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
               <span className={styles.exploreIcon}></span>
               <span className={styles.exploreText}>Explore Loaded Data</span>
-            </MLButton>
+            </Button>
           </div> : ""
     });
   }
@@ -309,15 +308,15 @@ const Run = (props) => {
         <div id="error-list">
           {((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName) ?
             <div className={styles.exploreDataContainer}>
-              <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
+              <Button size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
                 <span className={styles.exploreIcon}></span>
                 <span className={styles.exploreText}>Explore Curated Data</span>
-              </MLButton></div> : stepType.toLowerCase() === "ingestion" ?
+              </Button></div> : stepType.toLowerCase() === "ingestion" ?
               <div className={styles.exploreDataContainer}>
-                <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
+                <Button size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
                   <span className={styles.exploreIcon}></span>
                   <span className={styles.exploreText}>Explore Loaded Data</span>
-                </MLButton></div> : ""}
+                </Button></div> : ""}
           <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
           <Collapse defaultActiveKey={["0"]} bordered={false}>
             {errors.map((e, i) => {

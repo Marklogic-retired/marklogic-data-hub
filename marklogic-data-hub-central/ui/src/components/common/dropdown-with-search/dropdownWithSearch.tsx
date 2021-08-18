@@ -1,8 +1,7 @@
-import {Select} from "antd";
+import {Select, Tooltip} from "antd";
 import React, {useState, useEffect, useRef, useCallback, CSSProperties} from "react";
 import styles from "./dropdownWithSearch.module.scss";
 import arrayIcon from "../../../assets/icon_array.png";
-import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
@@ -114,9 +113,9 @@ const DropDownWithSearch = (props) => {
             key={element.key}
           >
             {formatDropdownText(element.value, index)}
-            {<MLTooltip title="Multiple">
+            {<Tooltip title="Multiple">
               <img data-testid={element.value + "-optionIcon"} src={element.struct ? arrayIcon : "" } alt={""}/>
-            </MLTooltip>}
+            </Tooltip>}
           </Select.Option>
         )}
       </Select>  }

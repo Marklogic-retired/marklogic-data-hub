@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {MLRadio} from "@marklogic/design-system";
+import {Radio} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThLarge, faTable} from "@fortawesome/free-solid-svg-icons";
 import "./switch-view.scss";
@@ -52,7 +52,7 @@ const SwitchView: React.FC<Props> = (props) => {
 
   return (
     <div id="switch-view" aria-label="switch-view" onKeyDown={radioKeyDownHandler}>
-      <MLRadio.MLGroup
+      <Radio.Group
         buttonStyle="outline"
         className={"radioGroupView"}
         defaultValue={view}
@@ -60,15 +60,15 @@ const SwitchView: React.FC<Props> = (props) => {
         onChange={e => onChange(e.target.value)}
         size="large"
         style={{color: "#999"}}
-        tabIndex={0}
+        // tabIndex={0}
       >
-        <MLRadio.MLButton aria-label="switch-view-card" value={"card"} checked={view === "card"}>
+        <Radio.Button aria-label="switch-view-card" value={"card"} checked={view === "card"}>
           <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
-        </MLRadio.MLButton>
-        <MLRadio.MLButton aria-label="switch-view-list" value={"list"} checked={view === "list"}>
+        </Radio.Button>
+        <Radio.Button aria-label="switch-view-list" value={"list"} checked={view === "list"}>
           <i>{<FontAwesomeIcon icon={faTable} />}</i>
-        </MLRadio.MLButton>
-      </MLRadio.MLGroup>
+        </Radio.Button>
+      </Radio.Group>
     </div>
 
   );

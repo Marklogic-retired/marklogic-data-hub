@@ -1,10 +1,9 @@
 import React, {useState, useContext} from "react";
-import {Modal, Form, Input, Radio} from "antd";
+import {Modal, Form, Input, Radio, Button} from "antd";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "./save-query-modal.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
-import {MLButton} from "@marklogic/design-system";
 
 
 interface Props {
@@ -185,13 +184,13 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         </Form.Item>}
         <Form.Item>
           <div className={styles.submitButtons}>
-            <MLButton id="save-query-cancel-button" onClick={() => onCancel()}>Cancel</MLButton>
+            <Button id="save-query-cancel-button" onClick={() => onCancel()}>Cancel</Button>
                         &nbsp;&nbsp;
-            <MLButton type="primary"
+            <Button type="primary"
               htmlType="submit"
               disabled={queryName.length === 0}
               onClick={() => onOk()} id="save-query-button">Save
-            </MLButton>
+            </Button>
           </div>
         </Form.Item>
       </Form>
