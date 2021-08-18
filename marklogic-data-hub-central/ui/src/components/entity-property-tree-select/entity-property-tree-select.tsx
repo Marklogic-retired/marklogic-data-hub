@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
+import {TreeSelect} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
-import {MLTreeSelect} from "@marklogic/design-system";
 import styles from "./entity-property-tree-select.module.scss";
 import arrayIcon from "../../assets/icon_array.png";
 import {CurationContext} from "../../util/curation-context";
@@ -14,7 +14,7 @@ type Props = {
   onValueSelected: (value: string | undefined) => void;
 };
 
-const {MLTreeNode} = MLTreeSelect;
+const {TreeNode} = TreeSelect;
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
@@ -71,7 +71,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
         } else {
           let keys = parentKeys.join(" > ");
           return (
-            <MLTreeNode
+            <TreeNode
               key={`${entityPropertyName}-${property.name}-${structProperty.name}-${index}`}
               value={`${keys} > ${structProperty.name}`}
               title={renderBasicPropertyTitle(structProperty)}
@@ -87,7 +87,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
         label = `${entityPropertyName} > ${property.name}-option`;
       }
       return (
-        <MLTreeNode
+        <TreeNode
           selectable={false}
           key={`${entityPropertyName}-${property.name}-parent`}
           value={`${entityPropertyName} > ${property.name}`}
@@ -95,7 +95,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
           aria-label={label}
         >
           {structuredProperties}
-        </MLTreeNode>
+        </TreeNode>
       );
     }
   };
@@ -104,14 +104,14 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     if (property.datatype === "structured") {
       return renderStructuredPropertyOption(property, property.name, []);
     } else if (curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && newMergeRuleOptions.indexOf(property.name)!==-1) {
-      return <MLTreeNode key={index} value={property.name} disabled title={renderBasicPropertyTitle(property)}/>;
+      return <TreeNode key={index} value={property.name} disabled title={renderBasicPropertyTitle(property)}/>;
     } else {
-      return <MLTreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)}/>;
+      return <TreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)}/>;
     }
   });
 
   const dropdownStyle = {
-    zIndex: "1000",
+    zIndex: 1000,
     maxHeight: "350px",
     overflow: "auto"
   };
@@ -121,7 +121,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   };
 
   return (
-    <MLTreeSelect
+    <TreeSelect
       aria-label="property-to-match-dropdown"
       className={styles.matchTypeSelect}
       placeholder="Select property"
@@ -134,7 +134,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       dropdownStyle={dropdownStyle}
     >
       {renderPropertyOptions}
-    </MLTreeSelect>
+    </TreeSelect>
   );
 };
 

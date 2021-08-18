@@ -1,11 +1,10 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
-import {Card, Col, Row, Modal, Alert} from "antd";
+import {Card, Col, Row, Modal, Alert, Spin, Button, Tooltip} from "antd";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import Axios from "axios";
-import {MLButton, MLSpin, MLTooltip} from "@marklogic/design-system";
 import {SecurityTooltips} from "../../config/tooltips.config";
 import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -141,7 +140,7 @@ const SystemInfo = (props) => {
         <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
           <Alert message={<span><b>Clear All User Data </b>completed successfully</span>} type="success" showIcon />
         </div>
-        <div className={styles.serviceName}>{serviceName}<MLTooltip title="Copy to clipboard" placement={"bottom"}><FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/></MLTooltip></div>
+        <div className={styles.serviceName}>{serviceName}<Tooltip title="Copy to clipboard" placement={"bottom"}><FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/></Tooltip></div>
         <div className={styles.version}>
           <div className={styles.label}>Data Hub Version:</div>
           <div className={styles.value}>{dataHubVersion}</div>
@@ -158,15 +157,15 @@ const SystemInfo = (props) => {
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
                   <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
-                  <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                  <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
-                      <MLButton
+                      <Button
                         aria-label="Download"
                         data-testid="downloadHubCentralFiles"
                         disabled
-                      >Download</MLButton>
+                      >Download</Button>
                     </div>
-                  </MLTooltip>
+                  </Tooltip>
                 </Card>
               </Col>:
                 <Col>
@@ -174,12 +173,12 @@ const SystemInfo = (props) => {
                     <div className={styles.title}>Download Hub Central Files</div>
                     <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
                     <div className={styles.buttonContainer}>
-                      <MLButton
+                      <Button
                         type="primary"
                         aria-label="Download"
                         data-testid="downloadHubCentralFiles"
                         onClick={downloadHubCentralFiles}
-                      >Download</MLButton>
+                      >Download</Button>
                     </div>
                   </Card>
                 </Col>
@@ -189,15 +188,15 @@ const SystemInfo = (props) => {
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Project Files</div>
                   <p>{SystemInfoMessages.downloadProjectFiles}</p>
-                  <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                  <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
-                      <MLButton
+                      <Button
                         aria-label="Download"
                         data-testid="downloadProjectFiles"
                         disabled
-                      >Download</MLButton>
+                      >Download</Button>
                     </div>
-                  </MLTooltip>
+                  </Tooltip>
                 </Card>
               </Col>:
                 <Col>
@@ -205,12 +204,12 @@ const SystemInfo = (props) => {
                     <div className={styles.title}>Download Project Files</div>
                     <p>{SystemInfoMessages.downloadProjectFiles}</p>
                     <div className={styles.buttonContainer}>
-                      <MLButton
+                      <Button
                         type="primary"
                         aria-label="Download"
                         data-testid="downloadProjectFiles"
                         onClick={downloadProjectFiles}
-                      >Download</MLButton>
+                      >Download</Button>
                     </div>
                   </Card>
                 </Col>
@@ -219,35 +218,35 @@ const SystemInfo = (props) => {
               { !authorityService.canClearUserData() ? <Col>
                 <Card size="small" className={styles.clearAll}>
                   {isLoading === true ? <div className={styles.spinRunning}>
-                    <MLSpin size={"large"} />
+                    <Spin size={"large"} />
                   </div>: ""}
                   <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                   <p>{SystemInfoMessages.clearAllUserData}</p>
-                  <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                  <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
-                      <MLButton
+                      <Button
                         aria-label="Clear"
                         data-testid="clearUserData"
                         disabled
-                      >Clear</MLButton>
+                      >Clear</Button>
                     </div>
-                  </MLTooltip>
+                  </Tooltip>
                 </Card>
               </Col>:
                 <Col>
                   <Card size="small" className={styles.clearAll}>
                     {isLoading === true ? <div className={styles.spinRunning}>
-                      <MLSpin size={"large"} />
+                      <Spin size={"large"} />
                     </div>: ""}
                     <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                     <p>{SystemInfoMessages.clearAllUserData}</p>
                     <div className={styles.buttonContainer}>
-                      <MLButton
+                      <Button
                         type="primary"
                         aria-label="Clear"
                         data-testid="clearUserData"
                         onClick={handleClearData}
-                      >Clear</MLButton>
+                      >Clear</Button>
                     </div>
                   </Card>
                 </Col>

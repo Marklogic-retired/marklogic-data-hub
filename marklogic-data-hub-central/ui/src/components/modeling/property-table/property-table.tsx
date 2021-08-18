@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {MLButton, MLTable, MLTooltip} from "@marklogic/design-system";
+import {Button, Table, Tooltip} from "antd";
 import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
@@ -163,9 +163,12 @@ const PropertyTable: React.FC<Props> = (props) => {
           renderText =
           <span>
             {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-            <MLTooltip title={tooltip} id={"tooltip-" + record.propertyName} >
+            <Tooltip
+              title={tooltip}
+              //id={"tooltip-" + record.propertyName} // DHFPROD-7711 MLTooltip -> Tooltip
+            >
               <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/>
-            </MLTooltip>
+            </Tooltip>
           </span>;
         }
         return renderText;
@@ -173,9 +176,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <MLTooltip title={ModelingTooltips.identifier}>
+        <Tooltip title={ModelingTooltips.identifier}>
           <span aria-label="identifier-header">Identifier</span>
-        </MLTooltip>
+        </Tooltip>
       ),
       dataIndex: "identifier",
       width: 100,
@@ -185,9 +188,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <MLTooltip title={ModelingTooltips.multiple}>
+        <Tooltip title={ModelingTooltips.multiple}>
           <span aria-label="multiple-header">Multiple</span>
-        </MLTooltip>
+        </Tooltip>
       ),
       dataIndex: "multiple",
       width: 100,
@@ -197,9 +200,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <MLTooltip title={ModelingTooltips.sort}>
+        <Tooltip title={ModelingTooltips.sort}>
           <span aria-label="sort-header">Sort</span>
-        </MLTooltip>
+        </Tooltip>
       ),
       dataIndex: "sortable",
       width: 75,
@@ -209,9 +212,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <MLTooltip title={ModelingTooltips.facet}>
+        <Tooltip title={ModelingTooltips.facet}>
           <span aria-label="facet-header">Facet</span>
-        </MLTooltip>
+        </Tooltip>
       ),
       dataIndex: "facetable",
       width: 100,
@@ -221,9 +224,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     // {
     //   title: (
-    //     <MLTooltip title={ModelingTooltips.wildcard}>
+    //     <Tooltip title={ModelingTooltips.wildcard}>
     //       <span aria-label="wildcard-header">Wildcard Search</span>
-    //     </MLTooltip>
+    //     </Tooltip>
     //   ),
     //   dataIndex: 'wildcard',
     //   width: 150,
@@ -233,9 +236,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     // },
     {
       title: (
-        <MLTooltip title={ModelingTooltips.pii}>
+        <Tooltip title={ModelingTooltips.pii}>
           <span aria-label="pii-header">PII</span>
-        </MLTooltip>
+        </Tooltip>
       ),
       dataIndex: "pii",
       width: 75,
@@ -289,7 +292,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
 
         const addIcon = props.canWriteEntityModel ? (
-          <MLTooltip title={ModelingTooltips.addStructuredProperty} placement="topRight">
+          <Tooltip title={ModelingTooltips.addStructuredProperty} placement="topRight">
             <FontAwesomeIcon
               data-testid={"add-struct-" + structuredTypeName}
               className={styles.addIcon}
@@ -304,14 +307,14 @@ const PropertyTable: React.FC<Props> = (props) => {
                 toggleShowPropertyModal(true);
               }}
             />
-          </MLTooltip>
+          </Tooltip>
         ) : (
-          <MLTooltip title={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} placement="topRight" overlayStyle={{maxWidth: "175px"}}>
+          <Tooltip title={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} placement="topRight" overlayStyle={{maxWidth: "175px"}}>
             <FontAwesomeIcon
               data-testid={"add-struct-" + structuredTypeName} className={styles.addIconReadOnly}
               icon={faPlusSquare}
             />
-          </MLTooltip>
+          </Tooltip>
         );
 
         return text && addIcon;
@@ -835,13 +838,13 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   };
 
-  const addPropertyButton = <MLButton
+  const addPropertyButton = <Button
     type="primary"
     aria-label={props.entityName + "-add-property"}
     disabled={!props.canWriteEntityModel}
-    className={!props.canWriteEntityModel && styles.disabledButton}
+    className={!props.canWriteEntityModel ? styles.disabledButton : undefined}
     onClick={() => addPropertyButtonClicked()}
-  >Add Property</MLButton>;
+  >Add Property</Button>;
 
   return (
     <div>
@@ -850,13 +853,13 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
         }
         {props.canWriteEntityModel ?
-          <MLTooltip title={ModelingTooltips.addProperty}>
+          <Tooltip title={ModelingTooltips.addProperty}>
             <span>{addPropertyButton}</span>
-          </MLTooltip>
+          </Tooltip>
           :
-          <MLTooltip title={ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess}>
+          <Tooltip title={ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess}>
             <span>{addPropertyButton}</span>
-          </MLTooltip>
+          </Tooltip>
         }
       </div>
       <PropertyModal
@@ -879,7 +882,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-      <MLTable
+      <Table
         rowClassName={(record) => {
           let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
           return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
