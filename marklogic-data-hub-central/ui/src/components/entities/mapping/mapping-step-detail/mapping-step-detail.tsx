@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Card, Table, Icon, Input, Alert, Dropdown, Menu} from "antd";
+import {Card, Table, Icon, Input, Alert, Dropdown, Menu, Checkbox, Spin, Button, Tooltip} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -10,7 +10,6 @@ import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFrom
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
-import {MLButton, MLTooltip, MLCheckbox, MLSpin} from "@marklogic/design-system";
 import SourceNavigation from "../source-navigation/source-navigation";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {useHistory} from "react-router-dom";
@@ -857,8 +856,8 @@ const MappingStepDetail: React.FC = () => {
           onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
           className={styles.searchInput}
         />
-        <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>Reset</MLButton>
-        <MLButton
+        <Button data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>Reset</Button>
+        <Button
           data-testid={`submitSearch-${dataIndex}`}
           type="primary"
           onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
@@ -866,7 +865,7 @@ const MappingStepDetail: React.FC = () => {
           className={styles.searchSubmitButton}
         >
           <Icon type="search" theme="outlined" /> Search
-        </MLButton>
+        </Button>
       </div>
     ),
     filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={ filtered ? "active" : "inactive" }  /></i>,
@@ -953,7 +952,7 @@ const MappingStepDetail: React.FC = () => {
       defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
       render: (text, row) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0]+": "+text?.split(":")[1] : text;
-        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div><span className={styles.tableExpandIcon}>{expandTableIcon}</span><span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><MLTooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></MLTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div><span className={styles.tableExpandIcon}>{expandTableIcon}</span><span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><Tooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></Tooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><Tooltip title={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""}><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></Tooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
       }
     },
@@ -1002,7 +1001,7 @@ const MappingStepDetail: React.FC = () => {
       requiresToolTip = text.length > stringLenWithoutEllipsis;
       response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
-    return requiresToolTip ?  <MLTooltip placement="bottom" title={text}>{response}</MLTooltip> : response;
+    return requiresToolTip ?  <Tooltip placement="bottom" title={text}>{response}</Tooltip> : response;
   };
 
   const customExpandIcon = (props) => {
@@ -1238,14 +1237,14 @@ const MappingStepDetail: React.FC = () => {
       <Menu onClick={handleColOptMenuClick}>
         {Object.keys(checkedEntityColumns).map(entLabel => (
           <Menu.Item key={entLabel}
-            className={styles.DropdownMenuItem}><MLCheckbox
+            className={styles.DropdownMenuItem}><Checkbox
               data-testid={`columnOptionsCheckBox-${entLabel}`}
               key={entLabel}
               value={entLabel}
               onChange={handleColOptionsChecked}
               defaultChecked={true}
               className={styles.checkBoxItem}
-            >{columnOptionsLabel[entLabel]}</MLCheckbox></Menu.Item>
+            >{columnOptionsLabel[entLabel]}</Checkbox></Menu.Item>
         ))}
       </Menu>
     </div>
@@ -1373,13 +1372,13 @@ const MappingStepDetail: React.FC = () => {
             <span className={styles.stepSettingsLabel}>Step Settings</span>
           </div>
           <span className={styles.clearTestIcons} id="ClearTestButtons">
-            <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+            <Button id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
                                 Clear
-            </MLButton>
+            </Button>
                         &nbsp;&nbsp;
-            <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
+            <Button className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
                                 Test
-            </MLButton>
+            </Button>
           </span>
           <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key Relationship</i></div>
           <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
@@ -1416,7 +1415,7 @@ const MappingStepDetail: React.FC = () => {
                   <span className={styles.srcDetails}>{srcDetails}</span></div>
               </div>
               {isLoading === true ? <div className={styles.spinRunning}>
-                <MLSpin size={"large"} data-testid="spinTest"/>
+                <Spin size={"large"} data-testid="spinTest"/>
               </div>:
                 emptyData ?
                   <div id="noData">

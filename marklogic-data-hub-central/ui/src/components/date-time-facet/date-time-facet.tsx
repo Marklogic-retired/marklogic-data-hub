@@ -1,9 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
-import {DatePicker} from "antd";
+import {DatePicker, Tooltip} from "antd";
 import {SearchContext} from "../../util/search-context";
 import moment from "moment";
 import styles from "./date-time-facet.module.scss";
-import {MLTooltip} from "@marklogic/design-system";
 
 const {RangePicker} = DatePicker;
 
@@ -68,7 +67,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.name} data-testid="facet-date-time-picker">
-      <p className={styles.facetName}><MLTooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</MLTooltip></p>
+      <p className={styles.facetName}><Tooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</Tooltip></p>
       <RangePicker
         showTime={{format: "HH:mm:ss"}}
         format="YYYY-MM-DD HH:mm:ss"

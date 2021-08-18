@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
 import axios from "axios";
-import {Layout} from "antd";
+import {Layout, Spin, Radio, Tooltip} from "antd";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
@@ -20,7 +20,6 @@ import {AuthoritiesContext} from "../util/authorities";
 import ZeroStateExplorer from "../components/zero-state-explorer/zero-state-explorer";
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import {QueryOptions} from "../types/query-types";
-import {MLTooltip, MLSpin, MLRadio} from "@marklogic/design-system";
 import RecordCardView from "../components/record-view/record-view";
 import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 
@@ -214,7 +213,7 @@ const Browse: React.FC<Props> = ({location}) => {
         state["query"],
         state["sortOrder"],
         state["targetDatabase"]);
-        state["tableView"] ? toggleTableView(true) : toggleTableView(false);
+      state["tableView"] ? toggleTableView(true) : toggleTableView(false);
     } else if (state
       && state.hasOwnProperty("entityName")
       && state.hasOwnProperty("targetDatabase")
@@ -472,26 +471,26 @@ const Browse: React.FC<Props> = ({location}) => {
 
                   <div className={styles.spinViews}>
                     <div className={styles.switchViews}>
-                      {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
+                      {isLoading && <Spin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
                       {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
-                        <MLRadio.MLGroup
+                        <Radio.Group
                           buttonStyle="outline"
                           name="radiogroup"
                           size="large"
                           defaultValue={tableView ? "table" : "snippet"}
                           onChange={e => handleViewChange(e.target.value)}
                         >
-                          <MLRadio.MLButton aria-label="switch-view-table" value={"table"} >
-                            <i data-cy="table-view" id={"tableView"}><MLTooltip title={"Table View"}>
+                          <Radio.Button aria-label="switch-view-table" value={"table"} >
+                            <i data-cy="table-view" id={"tableView"}><Tooltip title={"Table View"}>
                               {<FontAwesomeIcon icon={faTable} />}
-                            </MLTooltip></i>
-                          </MLRadio.MLButton>
-                          <MLRadio.MLButton aria-label="switch-view-snippet" value={"snippet"} >
-                            <i data-cy="facet-view" id={"snippetView"}><MLTooltip title={"Snippet View"}>
+                            </Tooltip></i>
+                          </Radio.Button>
+                          <Radio.Button aria-label="switch-view-snippet" value={"snippet"} >
+                            <i data-cy="facet-view" id={"snippetView"}><Tooltip title={"Snippet View"}>
                               {<FontAwesomeIcon icon={faStream} />}
-                            </MLTooltip></i>
-                          </MLRadio.MLButton>
-                        </MLRadio.MLGroup>
+                            </Tooltip></i>
+                          </Radio.Button>
+                        </Radio.Group>
                       </div> : ""}
                     </div>
                   </div>

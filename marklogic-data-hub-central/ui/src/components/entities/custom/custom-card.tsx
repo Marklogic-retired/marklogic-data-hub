@@ -1,9 +1,8 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Card, Row, Col, Modal, Select} from "antd";
+import {Card, Row, Col, Modal, Select, Tooltip} from "antd";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {CustomStepTooltips} from "../../../config/tooltips.config";
-import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Steps from "../../steps/steps";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
@@ -152,9 +151,9 @@ const CustomCard: React.FC<Props> = (props) => {
               >
                 <Card
                   actions={[
-                    <MLTooltip title={CustomStepTooltips.viewCustom} placement="bottom">
+                    <Tooltip title={CustomStepTooltips.viewCustom} placement="bottom">
                       <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(elem.name)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faCog}/> Edit Step Settings</span>
-                    </MLTooltip>,
+                    </Tooltip>,
                   ]}
                   className={styles.cardStyle}
                   size="small"
@@ -193,7 +192,7 @@ const CustomCard: React.FC<Props> = (props) => {
                       {
                         /** dropdown of flow names to add this custom step to */
                         selectVisible ?
-                          <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}>
+                          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}>
                             <div className={styles.cardLinkSelect} data-testid={`add-${elem.name}-select`}>
                               <Select
                                 style={{width: "100%"}}
@@ -214,7 +213,7 @@ const CustomCard: React.FC<Props> = (props) => {
                                 }
                               </Select>
                             </div>
-                          </MLTooltip>
+                          </Tooltip>
                           :
                           null
                       }

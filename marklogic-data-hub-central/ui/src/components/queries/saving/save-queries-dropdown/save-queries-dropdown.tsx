@@ -1,8 +1,7 @@
-import {Select, Modal} from "antd";
+import {Select, Modal, Button} from "antd";
 import React, {useContext, useState} from "react";
 import styles from "./save-queries-dropdown.module.scss";
 import {SearchContext} from "../../../../util/search-context";
-import {MLButton} from "@marklogic/design-system";
 
 interface Props {
     savedQueryList: any[];
@@ -100,13 +99,13 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         title={"Confirmation"}
         onCancel={() => onCancel()}
         footer={[
-          <MLButton key="cancel" id="query-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</MLButton>,
-          <MLButton key="back" id="query-confirmation-no-button" onClick={() => onNoClick()}>
+          <Button key="cancel" id="query-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</Button>,
+          <Button key="back" id="query-confirmation-no-button" onClick={() => onNoClick()}>
                         No
-          </MLButton>,
-          <MLButton key="submit" id="query-confirmation-yes-button" type="primary"  onClick={() => onOk()}>
+          </Button>,
+          <Button key="submit" id="query-confirmation-yes-button" type="primary"  onClick={() => onOk()}>
                         Yes
-          </MLButton>
+          </Button>
         ]}>
         <p><strong>{props.currentQueryName}</strong> has been edited since it was last saved.</p>
         <br/>

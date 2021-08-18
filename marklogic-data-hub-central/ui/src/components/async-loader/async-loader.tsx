@@ -1,8 +1,7 @@
 import React, {useContext} from "react";
-import {Alert} from "antd";
+import {Alert, Spin} from "antd";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
-import {MLSpin} from "@marklogic/design-system";
 
 const AsyncLoader: React.FC = () => {
   const {user, clearErrorMessage} = useContext(UserContext);
@@ -26,7 +25,7 @@ const AsyncLoader: React.FC = () => {
           onClose={onClose}
         />
         :
-        <MLSpin data-testid="spinner" tip="Loading..." style={{margin: "100px auto", width: "100%"}} />
+        <Spin data-testid="spinner" tip="Loading..." style={{margin: "100px auto", width: "100%"}} />
       }
     </>
   );
