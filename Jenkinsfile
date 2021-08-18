@@ -317,7 +317,7 @@ void BuildDatahub(){
 }
 
 void dh5Example() {
-    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'https://neuxs.marklogic.com/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;'
     copyRPM 'Release','10.0-6'
     script{
         props = readProperties file:'data-hub/pipeline.properties';
@@ -341,7 +341,7 @@ void dh5Example() {
 }
 
 void dhCustomHook() {
-                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'https://nexus.marklogic.com/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -364,7 +364,7 @@ void dhCustomHook() {
 }
 
 void mappingExample() {
-                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'https://nexus.marklogic.com/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -389,7 +389,7 @@ void mappingExample() {
 }
 
 void smartMastering() {
-                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'https://nexus.marklogic.com/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
