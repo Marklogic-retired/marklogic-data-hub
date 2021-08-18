@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {MLButton, MLTooltip, MLAlert, MLRadio} from "@marklogic/design-system";
+import {Alert, Button, Radio, Tooltip} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -251,7 +251,7 @@ const Modeling: React.FC = () => {
   };
 
 
-  const addButton = <MLButton
+  const addButton = <Button
     type="primary"
     aria-label="add-entity"
     onClick={() => {
@@ -259,8 +259,8 @@ const Modeling: React.FC = () => {
       toggleShowEntityModal(true);
     }}
     disabled={!canWriteEntityModel}
-    className={!canWriteEntityModel && styles.disabledPointerEvents}
-  >Add</MLButton>;
+    className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
+  >Add</Button>;
 
   const publishIconStyle: CSSProperties = {
     width: "18px",
@@ -268,7 +268,7 @@ const Modeling: React.FC = () => {
     fill: "currentColor"
   };
 
-  const publishButton = <span className={styles.publishButtonParent}><MLButton
+  const publishButton = <span className={styles.publishButtonParent}><Button
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
     aria-label="publish-to-database"
@@ -282,7 +282,7 @@ const Modeling: React.FC = () => {
       <PublishToDatabaseIcon style={publishIconStyle} />
       <span className={styles.publishButtonText}>Publish</span>
     </span>
-  </MLButton>
+  </Button>
   </span>;
 
   const handleViewChange = (view) => {
@@ -298,7 +298,7 @@ const Modeling: React.FC = () => {
   };
 
   const viewSwitch = <div id="switch-view" aria-label="switch-view">
-    <MLRadio.MLGroup
+    <Radio.Group
       buttonStyle="outline"
       className={"radioGroupView"}
       defaultValue={modelingOptions.view}
@@ -306,15 +306,15 @@ const Modeling: React.FC = () => {
       onChange={e => handleViewChange(e.target.value)}
       size="large"
       style={mlRadioStyle}
-      tabIndex={0}
+      // tabIndex={0} // TODO confirm we can make React Bootstrap element tab-able
     >
-      <MLRadio.MLButton aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
-        <MLTooltip title={"Graph View"}><i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i></MLTooltip>
-      </MLRadio.MLButton>
-      <MLRadio.MLButton aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
-        <MLTooltip title={"Table View"}><i>{<FontAwesomeIcon icon={faTable}/>}</i></MLTooltip>
-      </MLRadio.MLButton>
-    </MLRadio.MLGroup>
+      <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
+        <i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i>
+      </Radio.Button>
+      <Radio.Button aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
+        <i>{<FontAwesomeIcon icon={faTable}/>}</i>
+      </Radio.Button>
+    </Radio.Group>
   </div>;
 
   if (canAccessModel) {
@@ -326,8 +326,8 @@ const Modeling: React.FC = () => {
               <p>{tiles.model.intro}</p>
               {viewSwitch}
             </div>
-            {modelingOptions.isModified ? (
-              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
+            {modelingOptions.isModified && (
+              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><Alert
                 type="info" aria-label="entity-modified-alert" showIcon
                 message={ModelingMessages.entityEditedAlert}/></div>
             ) : ""}
@@ -338,28 +338,28 @@ const Modeling: React.FC = () => {
                   <ModelingLegend/>
                   <div style={{float: "right"}}>
                     {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.addNewEntity}>
+                      <Tooltip title={ModelingTooltips.addNewEntity}>
                         {addButton}
-                      </MLTooltip>
+                      </Tooltip>
                       :
-                      <MLTooltip
+                      <Tooltip
                         title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess}
                         placement="top" overlayStyle={{maxWidth: "175px"}}>
                         <span className={styles.disabledCursor}>{addButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                     }
                     {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.publish}
+                      <Tooltip title={ModelingTooltips.publish}
                         overlayStyle={{maxWidth: "175px"}}>
                         <span
                           className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{publishButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                       :
-                      <MLTooltip
+                      <Tooltip
                         title={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess}
                         placement="top" overlayStyle={{maxWidth: "225px"}}>
                         <span className={styles.disabledCursor}>{publishButton}</span>
-                      </MLTooltip>
+                      </Tooltip>
                     }
                   </div>
                 </div>
@@ -371,7 +371,7 @@ const Modeling: React.FC = () => {
               {viewSwitch}
             </div>
             {modelingOptions.isModified && (
-              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
+              <div className={modelingOptions.isModified ? styles.alertContainer : ""}><Alert
                 type="info" aria-label="entity-modified-alert" showIcon
                 message={ModelingMessages.entityEditedAlert}/></div>
             )}
