@@ -7,7 +7,7 @@ import ExportQueryModal from "./query-export-modal/query-export-modal";
 import {UserContext} from "../../util/user-context";
 import {getExportPreview} from "../query-export/export-preview/export-preview";
 import {getExportQueryPreview} from "../../api/queries";
-import {MLTooltip} from "@marklogic/design-system";
+import {Tooltip} from "antd";
 
 
 const QueryExport = (props) => {
@@ -68,9 +68,9 @@ const QueryExport = (props) => {
   return (
     <div>
       <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
-      <MLTooltip title="Export results with the displayed columns to CSV." placement="topRight">
+      <Tooltip title="Export results with the displayed columns to CSV." placement="topRight">
         <FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" />
-      </MLTooltip>
+      </Tooltip>
     </div>
   );
 };

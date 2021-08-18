@@ -1,11 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Form, Input, Icon, Select, Radio} from "antd";
+import {Form, Input, Icon, Select, Radio, Alert, Button, Tooltip} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
 import StepsConfig from "../../config/steps.config";
-import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
 import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
 import {CurationContext} from "../../util/curation-context";
@@ -557,8 +556,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             description = "";
           }
           return (
-            <MLAlert
-              id="step-warn"
+            <Alert
               className={styles.alert}
               type="warning"
               showIcon
@@ -594,9 +592,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {sourceDbOptions}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.sourceDatabase} placement={"right"}>
+            <Tooltip title={tooltips.sourceDatabase} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item> : null
         }<Form.Item
@@ -617,9 +615,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {targetDbOptions}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.targetDatabase} placement={"right"}>
+            <Tooltip title={tooltips.targetDatabase} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item>
         {usesAdvancedTargetCollections ? <Form.Item
@@ -660,9 +658,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               })}
             </Select>
             <div className={styles.inputTooltip}>
-              <MLTooltip title={tooltips.additionalCollections} placement={"right"}>
+              <Tooltip title={tooltips.additionalCollections} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </MLTooltip>
+              </Tooltip>
             </div>
           </Form.Item>}
         {usesAdvancedTargetCollections ? null : <Form.Item
@@ -687,9 +685,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             className={styles.inputWithTooltip}
           />
           <div className={styles.inputTooltip}>
-            <MLTooltip title={tooltips.targetPermissions} placement={"right"}>
+            <Tooltip title={tooltips.targetPermissions} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
           <div className={styles.validationError} data-testid="validationError">
             {permissionValidationError}
@@ -713,9 +711,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {targetFormatOptions}
           </Select>
           <div className={styles.inputTooltip}>
-            <MLTooltip title={tooltips.targetFormat} placement={"right"}>
+            <Tooltip title={tooltips.targetFormat} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item> : null }
         <Form.Item
@@ -736,9 +734,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {provGranOpts}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.provGranularity} placement={"right"}>
+            <Tooltip title={tooltips.provGranularity} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item>
         {   stepType === "mapping" ? <Form.Item
@@ -759,9 +757,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {valEntityOpts}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.validateEntity} placement={"right"}>
+            <Tooltip title={tooltips.validateEntity} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item> : ""}
         {   stepType === "mapping" ? <Form.Item
@@ -773,9 +771,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Radio value={true} data-testid="attachmentTrue">Yes</Radio>
             <Radio value={false} data-testid="attachmentFalse">No</Radio>
           </Radio.Group>
-          <MLTooltip title={tooltips.attachSourceDocument} placement={"right"}>
+          <Tooltip title={tooltips.attachSourceDocument} placement={"right"}>
             <Icon type="question-circle" className={styles.centerCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>: ""}
         <Form.Item
           label={<span>Batch Size</span>}
@@ -792,9 +790,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             onBlur={sendPayload}
           />
           <div className={styles.inputTooltip}>
-            <MLTooltip title={tooltips.batchSize} placement={"right"}>
+            <Tooltip title={tooltips.batchSize} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
         </Form.Item>
         { usesHeaders ?
@@ -818,9 +816,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               />
               { !headersValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
               <div className={styles.textareaTooltip}>
-                <MLTooltip title={tooltips.headers} placement={"right"}>
+                <Tooltip title={tooltips.headers} placement={"right"}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-                </MLTooltip>
+                </Tooltip>
               </div>
             </Form.Item>
           </>
@@ -842,9 +840,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         />
         { interceptorsExpanded ? <div className={styles.expandContainer}>
           <div className={styles.textareaExpandTooltip}>
-            <MLTooltip title={tooltips.interceptors} placement={"right"}>
+            <Tooltip title={tooltips.interceptors} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
           <TextArea
             id="interceptors"
@@ -869,7 +867,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               rotate={customHookExpanded ? 90 : 0}
             />
             <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
-            <MLTooltip title={tooltips.customHookDeprecated} placement={"right"}><span className={styles.deprecatedLabel}>DEPRECATED</span></MLTooltip>
+            <Tooltip title={tooltips.customHookDeprecated} placement={"right"}><span className={styles.deprecatedLabel}>DEPRECATED</span></Tooltip>
           </span>}
           labelAlign="left"
           className={styles.formItem}
@@ -877,9 +875,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         />
         { customHookExpanded ? <div className={styles.expandContainer}>
           <div className={styles.textareaExpandTooltip}>
-            <MLTooltip title={tooltips.customHook} placement={"right"}>
+            <Tooltip title={tooltips.customHook} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
           <TextArea
             id="customHook"
@@ -914,20 +912,20 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             />
             { !additionalSettingsValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
             <div className={styles.selectTooltip}>
-              <MLTooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
+              <Tooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </MLTooltip>
+              </Tooltip>
             </div>
           </Form.Item> : null
         }
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <MLButton data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
-            {!canReadWrite || !isFormValid()? <MLTooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+            <Button data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;
+            {!canReadWrite || !isFormValid()? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
               <span className={styles.disabledCursor}>
-                <MLButton id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</MLButton>
+                <Button id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</Button>
               </span>
-            </MLTooltip>:<MLButton id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</MLButton>}
+            </Tooltip>:<Button id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</Button>}
           </div>
         </Form.Item>
       </Form>
