@@ -7,11 +7,10 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Layout, Menu, PageHeader} from "antd";
+import {Layout, Menu, PageHeader, Tooltip, Table} from "antd";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {MLTooltip, MLTable} from "@marklogic/design-system";
 import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import DetailPageNonEntity from "../components/detail-page-non-entity/detail-page-non-entity";
 import {SearchContext} from "../util/search-context";
@@ -404,26 +403,26 @@ const Detail: React.FC<Props> = ({history, location}) => {
               <div id="menu" className={styles.menu}>
                 <Menu id="subMenu" onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
                   <Menu.Item key="instance" id="instance" data-cy="instance-view">
-                    <MLTooltip title={"Show the processed data"}>
+                    <Tooltip title={"Show the processed data"}>
                       <FontAwesomeIcon icon={faThList} size="lg" />
                       <span className={styles.subMenu}>Instance</span>
-                    </MLTooltip>
+                    </Tooltip>
                   </Menu.Item>
                   <Menu.Item key="full" id="full" data-cy="source-view">
-                    <MLTooltip title={"Show the complete " + contentType.toUpperCase()} >
+                    <Tooltip title={"Show the complete " + contentType.toUpperCase()} >
                       {contentType.toUpperCase() === "XML" ?
                         <FontAwesomeIcon icon={faCode} size="lg" />
                         :
                         <span className={styles.jsonIcon}></span>
                       }
                       <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
-                    </MLTooltip>
+                    </Tooltip>
                   </Menu.Item>
                   <Menu.Item key="metadata" id="metadata" data-cy="metadata-view">
-                    <MLTooltip title={"Show the metadata"}>
+                    <Tooltip title={"Show the metadata"}>
                       <FontAwesomeIcon icon={faInfoCircle} size="lg" />
                       <span className={styles.subMenu}>Metadata</span>
-                    </MLTooltip>
+                    </Tooltip>
                   </Menu.Item>
 
                 </Menu>
@@ -458,21 +457,21 @@ const Detail: React.FC<Props> = ({history, location}) => {
                                         (collections) &&
                                           <div className={styles.collectionsTableContainer}>
                                             <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                                            <MLTable bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
+                                            <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
                                           </div>
                                       }
                                       {
                                         (recordPermissions) &&
                                           <div className={styles.recordPermissionsTableContainer}>
                                             <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                                            <MLTable bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
+                                            <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
                                           </div>
                                       }
                                       {
                                         (recordMetadata) &&
                                           <div className={styles.recordMetadataTableContainer}>
                                             <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                                            <MLTable bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
+                                            <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
                                           </div>
                                       }
                                       <div className={styles.documentPropertiesContainer}>

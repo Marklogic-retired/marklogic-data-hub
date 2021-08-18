@@ -1,16 +1,14 @@
 import React, {useContext, useState, useEffect} from "react";
-import {MLTable} from "@marklogic/design-system";
 import QueryExport from "../query-export/query-export";
 import {AuthoritiesContext} from "../../util/authorities";
 import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "../../components/column-selector/column-selector";
-import {Tooltip} from "antd";
+import {Tooltip, Table} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {Link} from "react-router-dom";
 import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
-import {MLTooltip} from "@marklogic/design-system";
 
 /* eslint-disable */
 interface Props {
@@ -131,11 +129,11 @@ const ResultsTabularView = (props) => {
                   let title = val.toString();
                   if (title) {
                     values.push(
-                      <MLTooltip
+                      <Tooltip
                         key={title}
                         title={title}>
                         <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{title}</div>
-                      </MLTooltip>
+                      </Tooltip>
                     );
                   }
                 }
@@ -147,10 +145,10 @@ const ResultsTabularView = (props) => {
               if (value) {
                 return {
                   children: (
-                    <MLTooltip
+                    <Tooltip
                       title={value}>
                       <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{value}</div>
-                    </MLTooltip>
+                    </Tooltip>
                   )
                 };
               }
@@ -401,7 +399,7 @@ const ResultsTabularView = (props) => {
 
     nestedData = parseJson(props.data[index]?.entityInstance);
 
-    return <MLTable
+    return <Table
       rowKey="key"
       columns={nestedColumns}
       dataSource={nestedData}
@@ -421,15 +419,15 @@ const ResultsTabularView = (props) => {
         </div> : ""}
       </div>
       <div className={styles.tabular}>
-        <MLTable bordered
+        <Table bordered
           data-testid="result-table"
           rowKey="uri"
           dataSource={props.isLoading ? [] : dataSource}
           columns={tableHeaders}
           onChange={handleChange}
-          expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : null}
+          expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : undefined}
           pagination={false}
-          defaultShowEmbeddedTableBodies={true}
+          // defaultShowEmbeddedTableBodies={true}
           loading={props.isLoading}
         />
       </div>

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {MLRadio, MLTooltip} from "@marklogic/design-system";
+import {Radio, Tooltip} from "antd";
 import styles from "./expand-collapse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleDown, faAngleDoubleUp} from "@fortawesome/free-solid-svg-icons";
@@ -44,34 +44,34 @@ const ExpandCollapse: React.FC<Props> = (props) => {
 
   return (
     <span id="expand-collapse" aria-label="expand-collapse" onKeyDown={radioKeyDownHandler}>
-      <MLRadio.MLGroup
+      <Radio.Group
         buttonStyle="outline"
         className={"radioGroupView"}
         name="radiogroup"
         onChange={e => onSelect(e.target.value)}
         size="small"
-        tabIndex={0}
+        // tabIndex={0}
         value={""}
       >
-        <MLRadio.MLButton id="expandBtn" data-testid="expandBtn" aria-label="radio-button-expand" value={"expand"} checked={enabled === "expand"} >
-          <MLTooltip title={"Expand All"}>
+        <Radio.Button id="expandBtn" data-testid="expandBtn" aria-label="radio-button-expand" value={"expand"} checked={enabled === "expand"} >
+          <Tooltip title={"Expand All"}>
             {<FontAwesomeIcon
               id="expandIcon"
               icon={faAngleDoubleDown}
               className={styles.icon}
               size="sm" />}
-          </MLTooltip>
-        </MLRadio.MLButton>
-        <MLRadio.MLButton id="collapseBtn" data-testid="collapseBtn" aria-label="radio-button-collapse" value={"collapse"} checked={enabled === "collapse"} >
-          <MLTooltip title={"Collapse All"}>
+          </Tooltip>
+        </Radio.Button>
+        <Radio.Button id="collapseBtn" data-testid="collapseBtn" aria-label="radio-button-collapse" value={"collapse"} checked={enabled === "collapse"} >
+          <Tooltip title={"Collapse All"}>
             {<FontAwesomeIcon
               id="collapseIcon"
               icon={faAngleDoubleUp}
               className={styles.icon}
               size="sm" />}
-          </MLTooltip>
-        </MLRadio.MLButton>
-      </MLRadio.MLGroup>
+          </Tooltip>
+        </Radio.Button>
+      </Radio.Group>
     </span>
   );
 };

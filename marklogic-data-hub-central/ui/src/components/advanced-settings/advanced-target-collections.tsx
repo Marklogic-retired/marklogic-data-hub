@@ -1,11 +1,10 @@
 import {
   Icon,
   Select,
-  Table,
+  Table, Tooltip
 } from "antd";
 import React, {useState, useEffect} from "react";
 import styles from "./advanced-target-collections.module.scss";
-import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCheck, faTimes, faSquare} from "@fortawesome/free-solid-svg-icons";
 
@@ -23,13 +22,13 @@ const defaultTargetCollectionHeaders = [
     render: eventPropertyName => eventLabels[eventPropertyName]
   },
   {
-    title: <span>Default Collections <MLTooltip title={"Collection tags that are added to the resulting records by default."}><Icon type="question-circle" className={styles.questionCircle} theme="filled"/></MLTooltip></span>,
+    title: <span>Default Collections <Tooltip title={"Collection tags that are added to the resulting records by default."}><Icon type="question-circle" className={styles.questionCircle} theme="filled"/></Tooltip></span>,
     dataIndex: "defaultCollections",
     visible: true,
     render: collectionArray => <div className={styles.preWrap}>{collectionArray.join(breakLine)}</div>
   },
   {
-    title: <span>Additional Collections <MLTooltip title={"Collection tags that you specify to be added to the resulting records."}><Icon type="question-circle" className={styles.questionCircle} theme="filled"/></MLTooltip></span>,
+    title: <span>Additional Collections <Tooltip title={"Collection tags that you specify to be added to the resulting records."}><Icon type="question-circle" className={styles.questionCircle} theme="filled"/></Tooltip></span>,
     dataIndex: "additionalCollectionsField",
     visible: true,
     render: additionalCollectionsField => additionalCollectionsField.mode === "edit" ? <Select
@@ -69,11 +68,11 @@ const defaultTargetCollectionHeaders = [
             </span>
           </div>;
         } else {
-          return <MLTooltip title={"Edit"} placement="bottom">
+          return <Tooltip title={"Edit"} placement="bottom">
             <i role="edit-collections button" key="last">
               <FontAwesomeIcon className={styles.iconLink} size={"lg"} icon={faPencilAlt} data-testid={action.event+"-edit"} onClick={action.toggle}/>
             </i>
-          </MLTooltip>;
+          </Tooltip>;
         }
       }
     }
