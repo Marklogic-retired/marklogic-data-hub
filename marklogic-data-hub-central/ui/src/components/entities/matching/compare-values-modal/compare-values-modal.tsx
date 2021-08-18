@@ -1,8 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Modal} from "antd";
+import {Modal, Table} from "antd";
 import "./compare-values-modal.scss";
 import styles from "./compare-values-modal.module.scss";
-import {MLTable} from "@marklogic/design-system";
 import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "../../../../util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
@@ -354,14 +353,14 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
       <span className={styles.matchIconText}>Match</span>
     </div>
-    <MLTable
+    <Table
       dataSource={compareValuesTableData}
       className={styles.compareValuesTable}
       columns={columns}
       rowKey="key"
-      id="compareValuesTable"
+      //id="compareValuesTable"
     >
-    </MLTable>
+    </Table>
   </Modal>;
 };
 

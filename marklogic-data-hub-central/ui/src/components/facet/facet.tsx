@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Icon} from "antd";
+import {Icon, Tooltip} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {FacetName} from "./facet-element";
 import styles from "./facet.module.scss";
@@ -7,7 +7,6 @@ import {stringConverter} from "../../util/string-conversion";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
-import {MLTooltip} from "@marklogic/design-system";
 
 interface Props {
   name: string;
@@ -153,12 +152,12 @@ const Facet: React.FC<Props> = (props) => {
           data-cy={stringConverter(props.name) + "-facet"}
           data-testid={stringConverter(props.name) + "-facet"}
         >
-          <MLTooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</MLTooltip>
-          <MLTooltip
+          <Tooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</Tooltip>
+          <Tooltip
             title={props.tooltip} placement="topLeft">
             {props.tooltip ?
               <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /> : ""}
-          </MLTooltip>
+          </Tooltip>
         </div>
         <div className={styles.summary}>
           {checked.length > 0 ? <div className={styles.selected}

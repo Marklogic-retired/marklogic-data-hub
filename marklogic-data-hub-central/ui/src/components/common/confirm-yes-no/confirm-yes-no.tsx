@@ -1,6 +1,5 @@
 import React from "react";
-import {Modal} from "antd";
-import {MLButton} from "@marklogic/design-system";
+import {Modal, Button} from "antd";
 import styles from "./confirm-yes-no.module.scss";
 import {ConfirmYesNoMessages} from "../../../config/messages.config";
 
@@ -28,14 +27,14 @@ const ConfirmYesNo: React.FC<Props> = (props) => {
       <div className={styles.body} aria-label="confirm-body">{ConfirmYesNoMessages[props.type]}</div>
       <div>
         <div className={styles.buttonNo}>
-          <MLButton aria-label={props.labelNo ? props.labelNo : "No"} onClick={props.onNo}>
+          <Button aria-label={props.labelNo ? props.labelNo : "No"} onClick={props.onNo}>
             {props.labelNo ? props.labelNo : "No"}
-          </MLButton>
+          </Button>
         </div>
         <div className={styles.buttonYes}>
-          <MLButton aria-label={props.labelYes ? props.labelYes : "Yes"} type="primary" htmlType="submit" onClick={props.onYes}>
+          <Button aria-label={props.labelYes ? props.labelYes : "Yes"} type="primary" htmlType="submit" onClick={props.onYes}>
             {props.labelYes ? props.labelYes : "Yes"}
-          </MLButton>
+          </Button>
         </div>
       </div>
     </Modal>

@@ -1,11 +1,10 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./side-panel.module.scss";
-import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
 import {CloseOutlined} from "@ant-design/icons";
-import {Menu, Form, Input, Icon} from "antd";
+import {Menu, Form, Input, Icon, Tooltip} from "antd";
 import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
@@ -155,9 +154,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           onChange={handlePropertyChange}
           onBlur={handlePropertyUpdate}
         />
-        <MLTooltip title={ModelingTooltips.entityDescription} placement={"topLeft"}>
+        <Tooltip title={ModelingTooltips.entityDescription} placement={"topLeft"}>
           <Icon type="question-circle" className={styles.icon} theme="filled" data-testid="entityDescriptionTooltip"/>
-        </MLTooltip>
+        </Tooltip>
       </Form.Item>
       <Form.Item
         label="Namespace URI:"
@@ -197,9 +196,9 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               onBlur={handlePropertyUpdate}
               style={{width: "96px", verticalAlign: "text-bottom"}}
             />
-            <MLTooltip title={ModelingTooltips.namespace} placement={"right"}>
+            <Tooltip title={ModelingTooltips.namespace} placement={"right"}>
               <Icon type="question-circle" className={styles.prefixTooltipIcon} theme="filled" data-testid="entityPrefixTooltip"/>
-            </MLTooltip>
+            </Tooltip>
           </Form.Item></span>
         { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
       </Form.Item>
@@ -216,7 +215,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     <div id="sidePanel" className={styles.sidePanel}>
       <div>
         <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>{modelingOptions.selectedEntity}</span>
-        <span><MLTooltip title={ModelingTooltips.deleteIcon} placement="top">
+        <span><Tooltip title={ModelingTooltips.deleteIcon} placement="top">
           <i key="last" role="delete-entity button" data-testid={modelingOptions.selectedEntity + "-delete"} onClick={(event) => {
             if (!props.canWriteEntityModel && props.canReadEntityModel) {
               return event.preventDefault();
@@ -226,7 +225,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           }}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" />
           </i>
-        </MLTooltip></span>
+        </Tooltip></span>
         <span><i className={styles.close} aria-label={"closeGraphViewSidePanel"}
           onClick={props.onCloseSidePanel}>
           <CloseOutlined />
