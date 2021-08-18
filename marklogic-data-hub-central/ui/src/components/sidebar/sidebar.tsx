@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Collapse, Icon, DatePicker, Select} from "antd";
+import {Collapse, Icon, DatePicker, Select, Switch, Radio, Tooltip} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -12,7 +12,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NumericFacet from "../numeric-facet/numeric-facet";
 import DateFacet from "../date-facet/date-facet";
 import DateTimeFacet from "../date-time-facet/date-time-facet";
-import {MLTooltip, MLRadio, MLSwitch} from "@marklogic/design-system";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 
@@ -504,28 +503,28 @@ const Sidebar: React.FC<Props> = (props) => {
         onChange={setActive}
       >
         <Panel id="database" header={<div className={styles.title}>Database</div>} key="database" style={facetPanelStyle}>
-          <MLRadio.MLGroup
+          <Radio.Group
             style={{}}
             buttonStyle="solid"
             defaultValue={searchOptions.database}
             name="radiogroup"
             onChange={e => props.setDatabasePreferences(e.target.value)}
-            size="medium"
+            // size="medium"
           >
-            <MLRadio.MLButton aria-label="switch-database-final" value={"final"} className={styles.button}>
+            <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
               Final
-            </MLRadio.MLButton>
-            <MLRadio.MLButton aria-label="switch-database-staging" value={"staging"} className={styles.button}>
+            </Radio.Button>
+            <Radio.Button aria-label="switch-database-staging" value={"staging"} className={styles.button}>
               Staging
-            </MLRadio.MLButton>
-          </MLRadio.MLGroup>
+            </Radio.Button>
+          </Radio.Group>
         </Panel>
 
         {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-          <MLSwitch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/> Include Data Hub artifacts<MLTooltip
+          <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/> Include Data Hub artifacts<Tooltip
             title={tooltips.includingDataHubArtifacts}>
             <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" />
-          </MLTooltip>
+          </Tooltip>
         </div> : ""}
 
         {props.selectedEntities.length === 1 && (
@@ -642,8 +641,8 @@ const Sidebar: React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={facetPanelStyle}>
-          <div className={styles.facetName} data-cy="created-on-facet">Created On<MLTooltip title={tooltips.createdOn} placement="topLeft">
-            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip></div>
+          <div className={styles.facetName} data-cy="created-on-facet">Created On<Tooltip title={tooltips.createdOn} placement="topLeft">
+            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip></div>
           <div>
             <Select
               style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}

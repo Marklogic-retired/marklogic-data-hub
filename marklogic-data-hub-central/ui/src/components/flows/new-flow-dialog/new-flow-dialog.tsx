@@ -1,8 +1,7 @@
-import {Modal, Form, Input, Icon} from "antd";
+import {Modal, Form, Input, Icon, Button, Tooltip} from "antd";
 import React, {useState, useEffect} from "react";
 import styles from "./new-flow-dialog.module.scss";
 import {NewFlowTooltips} from "../../../config/tooltips.config";
-import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {useHistory} from "react-router-dom";
 
 
@@ -149,14 +148,14 @@ const NewFlowDialog = (props) => {
         validateStatus={(flowName || !isFlowNameTouched) ? (invalidChars ? "error" : "") : "error"}
         help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (flowName || !isFlowNameTouched) ? "" : "Name is required"}
         >
-          { tobeDisabled?<MLTooltip title={NewFlowTooltips.nameField} placement={"bottom"} > <Input
+          { tobeDisabled?<Tooltip title={NewFlowTooltips.nameField} placement={"bottom"} > <Input
             id="name"
             placeholder="Enter name"
             value={flowName}
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          /></MLTooltip>:<Input
+          /></Tooltip>:<Input
             id="name"
             placeholder="Enter name"
             value={flowName}
@@ -164,9 +163,9 @@ const NewFlowDialog = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           />} &nbsp;
-          <MLTooltip title={NewFlowTooltips.name}>
+          <Tooltip title={NewFlowTooltips.name}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
@@ -179,16 +178,16 @@ const NewFlowDialog = (props) => {
             disabled={!props.canWriteFlow}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewFlowTooltips.description}>
+          <Tooltip title={NewFlowTooltips.description}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+          </Tooltip>
         </Form.Item>
         <br /><br />
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <><MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
+            <><Button aria-label="Cancel" onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-              <MLButton
+              <Button
                 aria-label="Save"
                 type="primary"
                 htmlType="submit"
@@ -196,7 +195,7 @@ const NewFlowDialog = (props) => {
                 onClick={handleSubmit}
               >
               Save
-              </MLButton></>
+              </Button></>
           </div>
         </Form.Item>
       </Form>

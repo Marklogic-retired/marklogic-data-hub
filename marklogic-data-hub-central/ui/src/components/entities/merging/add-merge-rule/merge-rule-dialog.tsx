@@ -1,11 +1,10 @@
 import {
   Modal,
   Form,
-  Icon, Radio, Input,
+  Icon, Radio, Input, Alert, Button, Select, Tooltip
 } from "antd";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
-import {MLButton, MLTooltip, MLInput, MLSelect, MLAlert} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
@@ -33,7 +32,7 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
   properties: []
 };
 
-const {MLOption} = MLSelect;
+const {Option} = Select;
 
 const MergeRuleDialog: React.FC<Props> = (props) => {
 
@@ -74,9 +73,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   </div>;
 
   const mergeTypes = ["Custom", "Strategy", "Property-specific"];
-  const mergeTypeOptions = mergeTypes.map(elem => <MLOption data-testid={`mergeTypeOptions-${elem}`} value={elem} key={elem}>{elem}</MLOption>);
+  const mergeTypeOptions = mergeTypes.map(elem => <Option data-testid={`mergeTypeOptions-${elem}`} value={elem} key={elem}>{elem}</Option>);
   const dropdownTypes = ["Length"].concat(props.sourceNames);
-  const dropdownTypeOptions = dropdownTypes.map(elem => <MLOption data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
+  const dropdownTypeOptions = dropdownTypes.map(elem => <Option data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</Option>);
 
   useEffect(() => {
     if (!props.isEditRule && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
@@ -521,8 +520,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         validationWarnings.map((warning, index) => {
           let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
           return (
-            <MLAlert
-              id="step-warn"
+            <Alert
               className={styles.alert}
               type="warning"
               showIcon
@@ -550,9 +548,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               value={property}
               onValueSelected={handleProperty}
             />
-            <MLTooltip title={MergeRuleTooltips.disabledProperties}>
+            <Tooltip title={MergeRuleTooltips.disabledProperties}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </MLTooltip>
+            </Tooltip>
           </Form.Item>
           <Form.Item
             label={<span aria-label="formItem-MergeType">Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
@@ -560,7 +558,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
             validateStatus={mergeTypeErrorMessage ? "error" : ""}
             help={mergeTypeErrorMessage}
           >
-            <MLSelect
+            <Select
               id="mergeType"
               placeholder="Select merge type"
               size="default"
@@ -571,7 +569,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               aria-label="mergeType-select"
             >
               {mergeTypeOptions}
-            </MLSelect>
+            </Select>
           </Form.Item>
           {mergeType === "Custom" ?
             <>
@@ -582,7 +580,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 help={(uri || !uriTouched) ? "" : "URI is required"}
               >
                 <div className={styles.inputWithHelperIcon}>
-                  <MLInput
+                  <Input
                     id="uri"
                     placeholder="Enter URI"
                     size="default"
@@ -592,9 +590,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     className={styles.input}
                     aria-label="uri-input"
                   />&nbsp;&nbsp;
-                  <MLTooltip title={MergeRuleTooltips.uri}>
+                  <Tooltip title={MergeRuleTooltips.uri}>
                     <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                  </MLTooltip>
+                  </Tooltip>
                 </div>
               </Form.Item>
               <Form.Item
@@ -603,7 +601,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 validateStatus={(functionValue || !functionValueTouched) ? "" : "error"}
                 help={(functionValue || !functionValueTouched) ? "" : "Function is required"}
               >
-                <MLInput
+                <Input
                   id="function"
                   placeholder="Enter function"
                   size="default"
@@ -613,15 +611,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   className={styles.input}
                   aria-label="function-input"
                 />&nbsp;&nbsp;
-                <MLTooltip title={MergeRuleTooltips.function}>
+                <Tooltip title={MergeRuleTooltips.function}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </MLTooltip>
+                </Tooltip>
               </Form.Item>
               <Form.Item
                 label={<span aria-label="formItem-namespace">Namespace:</span>}
                 labelAlign="left"
               >
-                <MLInput
+                <Input
                   id="namespace"
                   placeholder="Enter namespace"
                   size="default"
@@ -631,9 +629,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   className={styles.input}
                   aria-label="namespace-input"
                 />&nbsp;&nbsp;
-                <MLTooltip title={MergeRuleTooltips.namespace}>
+                <Tooltip title={MergeRuleTooltips.namespace}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </MLTooltip>
+                </Tooltip>
               </Form.Item>
             </> : ""
           }
@@ -644,7 +642,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               validateStatus={strategyNameErrorMessage ? "error" : ""}
               help={strategyNameErrorMessage ? strategyNameErrorMessage : ""}
             >
-              <MLSelect
+              <Select
                 id="strategyName"
                 placeholder="Select strategy name"
                 size="default"
@@ -653,8 +651,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 className={styles.mergeTypeSelect}
                 aria-label="strategy-name-select"
               >
-                {mergeStrategyNames.map((strategyName) => <MLOption data-testid={`strategyNameOptions-${strategyName}`} key={strategyName}>{strategyName}</MLOption>)}
-              </MLSelect>
+                {mergeStrategyNames.map((strategyName) => <Option data-testid={`strategyNameOptions-${strategyName}`} key={strategyName}>{strategyName}</Option>)}
+              </Select>
             </Form.Item>
             : ""
           }
@@ -669,9 +667,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
                 </Radio.Group>
-                <MLTooltip title={MergeRuleTooltips.maxValues}>
+                <Tooltip title={MergeRuleTooltips.maxValues}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </MLTooltip>
+                </Tooltip>
               </Form.Item>
               <Form.Item
                 colon={false}
@@ -682,16 +680,16 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
                 </Radio.Group>
-                <MLTooltip title={MergeRuleTooltips.maxSources}>
+                <Tooltip title={MergeRuleTooltips.maxSources}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </MLTooltip>
+                </Tooltip>
               </Form.Item>
               <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
-                <div><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
+                <div><p className={styles.priorityText}>Priority Order<Tooltip title={multiSliderTooltips.priorityOrder} placement="right">
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </MLTooltip></p></div>
+                </Tooltip></p></div>
                 <div className={styles.addButtonContainer}>
-                  <MLSelect
+                  <Select
                     id="dropdownOptions"
                     placeholder=""
                     size="default"
@@ -702,8 +700,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     aria-label="dropdownOptions-select"
                   >
                     {dropdownTypeOptions}
-                  </MLSelect>
-                  <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</MLButton>
+                  </Select>
+                  <Button aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</Button>
                 </div>
                 <div>
                   <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging}/>
@@ -713,8 +711,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
           }
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
-              <MLButton aria-label={"cancel-merge-rule"} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
-              <MLButton aria-label={"confirm-merge-rule"} id={"saveButton"} type="primary" onClick={handleSubmit} >Save</MLButton>
+              <Button aria-label={"cancel-merge-rule"} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;
+              <Button aria-label={"confirm-merge-rule"} id={"saveButton"} type="primary" onClick={handleSubmit} >Save</Button>
             </div>
           </Form.Item>
         </Form>
