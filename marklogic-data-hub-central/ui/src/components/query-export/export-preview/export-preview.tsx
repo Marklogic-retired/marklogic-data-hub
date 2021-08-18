@@ -1,5 +1,5 @@
 import React from "react";
-import {MLTooltip} from "@marklogic/design-system";
+import {Tooltip} from "antd";
 
 export const getExportPreview = (response) => {
   const tableColumns: Object[] = [];
@@ -24,7 +24,7 @@ export const getExportPreview = (response) => {
                     textOverflow: "ellipsis"}
                 };
               },
-              render: (text) => <MLTooltip title={text}>{text}</MLTooltip>
+              render: (text) => <Tooltip title={text}>{text}</Tooltip>
             }
           );
         });

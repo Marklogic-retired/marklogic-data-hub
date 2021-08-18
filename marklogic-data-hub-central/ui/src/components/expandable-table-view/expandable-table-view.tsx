@@ -1,9 +1,8 @@
 import React, {useContext} from "react";
-import {Table} from "antd";
+import {Table, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
-import {MLTooltip} from "@marklogic/design-system";
 import {SearchContext} from "../../util/search-context";
 
 interface Props {
@@ -51,8 +50,8 @@ const ExpandableTableView: React.FC<Props> = (props) => {
             entityInstance: props.item.entityInstance,
             targetDatabase: searchOptions.database
           }}} data-cy="nested-instance">
-            <MLTooltip title={"Show nested detail on a separate page"}><FontAwesomeIcon icon={faExternalLinkAlt}
-              size="sm"/></MLTooltip>
+            <Tooltip title={"Show nested detail on a separate page"}><FontAwesomeIcon icon={faExternalLinkAlt}
+              size="sm"/></Tooltip>
           </Link>
         });
       } else {

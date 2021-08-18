@@ -1,10 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown, Collapse, Icon} from "antd";
+import {Modal, Row, Col, Card, Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {useHistory} from "react-router-dom";
-import {MLButton, MLTable, MLInput, MLRadio, MLTooltip} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
 import "./matching-step-detail.scss";
 import {MatchingStepTooltips} from "../../../../config/tooltips.config";
@@ -321,18 +320,18 @@ const MatchingStepDetail: React.FC = () => {
     >
       <p aria-label="delete-slider-text" className={styles.deleteMessage}>Are you sure you want to delete a {deleteOptions["sliderType"] === "threshold" ? "threshold" : "ruleset"} <b>{deleteOptions["prop"]} - {deleteOptions["type"]}</b>?</p>
       <div className={styles.footer}>
-        <MLButton
+        <Button
           aria-label={`delete-slider-no`}
           size="default"
           onClick={() => toggleShowDeleteModal(false)}
-        >No</MLButton>
-        <MLButton
+        >No</Button>
+        <Button
           className={styles.saveButton}
           aria-label={`delete-slider-yes`}
           type="primary"
           size="default"
           onClick={() => deleteConfirm()}
-        >Yes</MLButton>
+        >Yes</Button>
       </div>
     </Modal>
   );
@@ -671,7 +670,7 @@ const MatchingStepDetail: React.FC = () => {
               {!moreThresholdText && <span aria-label="threshold-more" className={styles.link} onClick={() => toggleMoreThresholdText(!moreThresholdText)}>more</span> }
             </div>
             <div className={styles.addButtonContainer}>
-              <MLButton
+              <Button
                 aria-label="add-threshold"
                 type="primary"
                 size="default"
@@ -680,7 +679,7 @@ const MatchingStepDetail: React.FC = () => {
                   setEditThreshold({});
                   toggleShowThresholdModal(true);
                 }}
-              >Add</MLButton>
+              >Add</Button>
             </div>
           </div>
           <MultiSlider options={matchingStep.thresholds && matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"threshold"}/>
@@ -715,9 +714,9 @@ const MatchingStepDetail: React.FC = () => {
                 overlayClassName="stepMenu"
               >
                 <div className={styles.addButtonContainer}>
-                  <MLButton aria-label="add-ruleset" size="default" type="primary">
+                  <Button aria-label="add-ruleset" size="default" type="primary">
                 Add{" "}
-                    <DownOutlined /></MLButton>
+                    <DownOutlined /></Button>
                 </div></Dropdown></div>
           </div>
           <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
@@ -728,16 +727,22 @@ const MatchingStepDetail: React.FC = () => {
           <div className={styles.stepText}>Test and review matched entities</div>
         </div>
         <div className={styles.testMatch} aria-label="testMatch">
-          <MLRadio.MLGroup onChange={onTestMatchRadioChange} value={value}  id="addDataRadio" className={styles.testMatchedRadioGroup}>
+          <Radio.Group onChange={onTestMatchRadioChange} value={value}  id="addDataRadio" className={styles.testMatchedRadioGroup}>
             <span className={styles.borders}>
-              <MLRadio className={styles.urisData} value={1} aria-label="inputUriOnlyRadio" onClick={handleUriInputSelected} validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}>
+              <Radio
+                className={styles.urisData}
+                value={1}
+                aria-label="inputUriOnlyRadio"
+                onClick={handleUriInputSelected}
+                // validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}
+              >
                 <span className={styles.radioTitle}>Test URIs</span>
                 <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
-                  <MLTooltip title={MatchingStepTooltips.testUris} placement={"right"}>
+                  <Tooltip title={MatchingStepTooltips.testUris} placement={"right"}>
                     <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-                  </MLTooltip><br />
+                  </Tooltip><br />
                 </span>
-                <MLInput
+                <Input
                   placeholder="Enter URI or Paste URIs"
                   className={styles.uriInput}
                   value={uriContent}
@@ -749,22 +754,28 @@ const MatchingStepDetail: React.FC = () => {
                 {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
                 {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
                 <div className={styles.UriTable}>
-                  {UriTableData.length > 0 ? <MLTable
+                  {UriTableData.length > 0 ? <Table
                     columns={UriColumns}
                     className={styles.tableContent}
                     dataSource={renderUriTableData}
                     rowKey="key"
-                    id="uriData"
+                    // id="uriData"
                     pagination={false}
                   />:""}
                 </div>
-              </MLRadio></span>
-            <MLRadio value={2} className={styles.allDataUris} aria-label="inputUriRadio" onClick={handleUriInputSelected2} validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}>
+              </Radio></span>
+            <Radio
+              value={2}
+              className={styles.allDataUris}
+              aria-label="inputUriRadio"
+              onClick={handleUriInputSelected2}
+              // validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""} // TODO handle vvalidation in React Bootstrap components
+            >
               <span className={styles.radioTitle}>Test URIs with All Data</span>
-              <span aria-label="testUriTooltip"><MLTooltip title={MatchingStepTooltips.testUrisAllData} placement={"right"}>
+              <span aria-label="testUriTooltip"><Tooltip title={MatchingStepTooltips.testUrisAllData} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </MLTooltip></span><br />
-              <MLInput
+              </Tooltip></span><br />
+              <Input
                 placeholder="Enter URI or Paste URIs"
                 className={styles.uriInput}
                 value={uriContent2}
@@ -776,28 +787,28 @@ const MatchingStepDetail: React.FC = () => {
               {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
               {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
               <div className={styles.UriTable}>
-                {UriTableData2.length > 0 ? <MLTable
+                {UriTableData2.length > 0 ? <Table
                   columns={UriColumns2}
                   className={styles.tableContent}
                   dataSource={renderUriTableData2}
                   rowKey="key"
-                  id="uriData"
+                  // id="uriData"
                   pagination={false}
                 />:""}
               </div>
-            </MLRadio>
-            <MLRadio value={3} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
+            </Radio>
+            <Radio value={3} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
               <span>Test All Data</span>
-              <span aria-label={"allDataTooltip"}><MLTooltip title={MatchingStepTooltips.testAllData} placement={"right"}>
+              <span aria-label={"allDataTooltip"}><Tooltip title={MatchingStepTooltips.testAllData} placement={"right"}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </MLTooltip></span>
+              </Tooltip></span>
               <div aria-label="allDataContent"><br />
                   Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
               </div>
-            </MLRadio>
-          </MLRadio.MLGroup>
+            </Radio>
+          </Radio.Group>
           <div className={styles.testButton}>
-            <MLButton type="primary" htmlType="submit" size="default" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</MLButton>
+            <Button type="primary" htmlType="submit" size="default" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</Button>
           </div>
         </div>
         {/*<div className={styles.matchedTab}>*/}
@@ -831,7 +842,7 @@ const MatchingStepDetail: React.FC = () => {
                       {rulesetDataList.actionPreviewData.map((actionPreviewData, index) => (
                         <Panel id="testMatchedUriDataPanel" key={actionPreviewData.name.concat(" - ") + actionPreviewData.action.concat("/") + index} header={
                           <span onClick={e => e.stopPropagation()}><div className={styles.uri1Position}>{actionPreviewData.uris[0]}<span className={styles.scoreDisplay}>  (Score: {actionPreviewData.score})</span>
-                            <span className={styles.compareButton}><MLButton type={"primary"} onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</MLButton></span>
+                            <span className={styles.compareButton}><Button type={"primary"} onClick={() => { handleCompareButton([actionPreviewData.uris[0], actionPreviewData.uris[1]]); }} aria-label={actionPreviewData.uris[0].substr(0, 41) + " compareButton"}>Compare</Button></span>
                           </div>
                           <div className={styles.uri2Position}>{actionPreviewData.uris[1]}</div></span>
                         }>

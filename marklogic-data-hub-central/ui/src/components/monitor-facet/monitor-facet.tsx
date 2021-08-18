@@ -1,8 +1,7 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Icon} from "antd";
+import {Icon, Checkbox, Tooltip} from "antd";
 import styles from "../facet/facet.module.scss";
 import {stringConverter} from "../../util/string-conversion";
-import {MLTooltip, MLCheckbox} from "@marklogic/design-system";
 import {MonitorContext} from "../../util/monitor-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
@@ -117,17 +116,17 @@ const MonitorFacet: React.FC<Props> = (props) => {
   const checkBoxRender =  checkedFacets.slice(0, showFacets).map((facet, index) => {
     return (
       <div key={"facet" + index} className={styles.checkContainer}>
-        <MLCheckbox
+        <Checkbox
           value={facet.value}
           onChange={(e) => handleClick(e)}
           checked={checked.includes(facet.value)}
           className={styles.value}
-          index={index}
+          //index={index}
           key={index}
           data-testid={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
         >
-          <MLTooltip title={facet.value} >{facet.value}</MLTooltip>
-        </MLCheckbox>
+          <Tooltip title={facet.value} >{facet.value}</Tooltip>
+        </Checkbox>
       </div>
     );
   });
@@ -143,12 +142,12 @@ const MonitorFacet: React.FC<Props> = (props) => {
           className={styles.name}
           data-testid={stringConverter(props.displayName) + "-facet"}
         >
-          <MLTooltip title={props.displayName}>{props.displayName}</MLTooltip>
-          <MLTooltip
+          <Tooltip title={props.displayName}>{props.displayName}</Tooltip>
+          <Tooltip
             title={props.tooltip} placement="topLeft">
             {props.tooltip ?
               <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /> : ""}
-          </MLTooltip>
+          </Tooltip>
         </div>
         <div className={styles.summary}>
           {checked.length > 0 ?
