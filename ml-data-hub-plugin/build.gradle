@@ -79,7 +79,7 @@ test {
 }
 
 task testFullCycle(type: Test) {
-    useJUnit {
+    useJUnitPlatform {
         include 'com/marklogic/gradle/fullcycle/**'
     }
 }
