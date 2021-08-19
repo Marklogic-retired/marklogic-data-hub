@@ -632,41 +632,6 @@ describe("Matching Multiple Rulesets Modal component", () => {
     });
   });
 
-  it("can view modal for existing ruleset with multiple properties", () => {
-    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const toggleModalMock = jest.fn();
-    const synonymRulesetMultiple = {
-      ...customerMatchingStep.curationOptions.activeStep.stepArtifact.matchRulesets[4],
-      index: 0
-    };
-
-    const {queryByText, getByText, getByLabelText} =  render(
-      <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetMultipleModal
-          isVisible={true}
-          toggleModal={toggleModalMock}
-          editRuleset={synonymRulesetMultiple}
-        />
-      </CurationContext.Provider>
-    );
-
-    expect(queryByText("Edit Match Ruleset for Multiple Properties")).toBeInTheDocument();
-    expect(getByLabelText("titleDescription")).toBeInTheDocument();
-    expect(getByLabelText("rulesetName-input")).toHaveValue("MultipleRuleset-Customer");
-    expect(getByLabelText("reduceToggle")).toBeChecked();
-
-    expect(getByText("Match on:")).toBeInTheDocument();
-    expect(getByLabelText("modalTitleLegend")).toBeInTheDocument();
-
-    let customerIdRow: any = document.querySelector(`[data-row-key="customerId"]`);
-    let customerIdSelectionCheckbox: any =  document.querySelector(`[name="customerId"]`);
-
-    expect(customerIdSelectionCheckbox).toBeChecked();
-    expect(within(customerIdRow).getByTitle("Synonym")).toBeInTheDocument();
-    expect(getByLabelText("customerId-thesaurus-uri-input")).toHaveValue("/thesaurus/uri/input.json");
-    expect(getByLabelText("customerId-filter-input")).toHaveValue("");
-  });
-
   it("can expand all/collapse all entity structured properties using the expand all/collase all buttons", async () => {
     mockMatchingUpdate.mockResolvedValue({status: 200, data: {}});
     const toggleModalMock = jest.fn();

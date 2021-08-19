@@ -122,7 +122,7 @@ margin-bottom: 40px;
 .matchTypeDetailsContainer{
   width: 100%;
   display: flex;
-  
+
   .mandatoryFieldContainer {
     display: flex
   }
@@ -158,4 +158,17 @@ margin-bottom: 40px;
   text-align: left;
   font-size: 13px;
   position: absolute;
+}
+
+.trashIcon {
+    font-size: 20px;
+    color: #B32424;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
+.editFooter{
+    display: flex;
+    justify-content: space-between;
 }
