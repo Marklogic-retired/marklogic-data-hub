@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./mapping-card.module.scss";
-import {Card, Icon, Modal, Select, Tooltip} from "antd";
+import {Icon, Modal, Select, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,12 +8,13 @@ import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
 import {Link, useHistory} from "react-router-dom";
-import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
-import Steps from "../../steps/steps";
-import {CurationContext} from "../../../util/curation-context";
 import {StepType} from "../../../types/curation-types";
+import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import {CurationContext} from "../../../util/curation-context";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
 import HCDivider from "../../common/hc-divider/hc-divider";
+import HCCard from "../../common/hc-card/hc-card";
+import Steps from "../../steps/steps";
 
 const {Option} = Select;
 
@@ -119,7 +120,7 @@ const MappingCard: React.FC<Props> = (props) => {
     setSelectVisible(true);
     setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
-      (e.target.className === "ant-card-body" ||
+      (e.target.className === "card-body" ||
         e.target.className.startsWith("mapping-card_cardContainer") ||
         e.target.className.startsWith("mapping-card_formatFileContainer") ||
         e.target.className.startsWith("mapping-card_sourceQuery") ||
@@ -371,21 +372,19 @@ const MappingCard: React.FC<Props> = (props) => {
     <div className={styles.loadContainer}>
       <Row>
         {props.canReadWrite ?<Col xs={"auto"}>
-          <Card
-            size="small"
+          <HCCard
             className={styles.addNewCard}>
             <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew} /></div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
-          </Card>
+          </HCCard>
         </Col> : <Col xs={"auto"}>
-          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><Card
-            size="small"
+          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><HCCard
             className={styles.addNewCardDisabled}>
             <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled" /></div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
-          </Card></Tooltip>
+          </HCCard></Tooltip>
         </Col>}
         {
           props.data && props.data.length > 0 ?
@@ -396,7 +395,7 @@ const MappingCard: React.FC<Props> = (props) => {
                   onMouseOver={(e) => handleMouseOver(e, elem.name)}
                   onMouseLeave={(e) => handleMouseLeave()}
                 >
-                  <Card
+                  <HCCard
                     actions={[
                       <Tooltip title={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openMapStepDetails(elem.name, index)} data-testid={`${elem.name}-stepDetails`} /></i></Tooltip>,
                       <Tooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name + "-edit"} onClick={() => OpenStepSettings(index)} /></i></Tooltip>,
@@ -404,7 +403,6 @@ const MappingCard: React.FC<Props> = (props) => {
                       props.canReadWrite ? <Tooltip title={"Delete"} placement="bottom"><i key="last" role="delete-mapping button" data-testid={elem.name + "-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" /></i></Tooltip> : <Tooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-delete-mapping button" data-testid={elem.name + "-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg" /></i></Tooltip>,
                     ]}
                     className={styles.cardStyle}
-                    size="small"
                   >
                     <div className={styles.formatFileContainer}>
                       <span aria-label={`${elem.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
@@ -465,7 +463,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         }
                       </div>
                     </div>
-                  </Card>
+                  </HCCard>
                 </div>
               </Col>
             ))
