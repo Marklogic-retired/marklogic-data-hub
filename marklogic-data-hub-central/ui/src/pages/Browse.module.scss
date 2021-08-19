@@ -69,6 +69,12 @@
   justify-content: flex-end;
 }
 
+.spinnerContainer {
+  flex-grow: 1;
+  display:flex;
+  justify-content: center;
+}
+
 .sideBarExpanded {
   position: absolute;
   margin-left: auto;
