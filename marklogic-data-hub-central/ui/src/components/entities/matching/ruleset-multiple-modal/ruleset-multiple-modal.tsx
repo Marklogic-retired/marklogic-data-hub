@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {Modal, Form, Input, Icon, Switch, Alert, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {MLButton, MLTooltip, MLSelect, MLTag} from "@marklogic/design-system";
 import "./ruleset-multiple-modal.scss";
 import styles from "./ruleset-multiple-modal.module.scss";
@@ -13,6 +13,7 @@ import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {updateMatchingArtifact} from "../../../../api/matching";
+import DeleteModal from "../delete-modal/delete-modal";
 
 type Props = {
   editRuleset: any;
@@ -87,11 +88,18 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const [multipleRulesetsData, setMultipleRulesetsData] = useState<any []>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<any []>([]);
   const [checkTableUpdates, setCheckTableUpdates] = useState("");
+  const [showDeleteConfirmModal, toggleDeleteConfirmModal] = useState(false);
 
   const [saveClicked, setSaveClicked] = useState(false);
 
   //For expand-collapse
   const [expandedRowKeys, setExpandedRowKeys] = useState<any []>([]);
+
+  let curationRuleset = props.editRuleset ;
+  if (props.editRuleset.hasOwnProperty("index")) {
+    let index = props.editRuleset.index;
+    curationRuleset = ({...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index});
+  }
 
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
@@ -101,8 +109,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       setExpandedRowKeys([...initialKeysToExpand]);
     }
 
-    if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
-      let editRuleset = props.editRuleset;
+    if (Object.keys(curationRuleset).length !== 0 && props.isVisible) {
+      let editRuleset = curationRuleset;
       if (editRuleset.reduce) {
         setReduceValue(true);
       }
@@ -368,9 +376,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     // avoid triggering update of active step prior to persisting the database
     let updateStep: MatchingStep = {...curationOptions.activeStep.stepArtifact};
     updateStep.matchRulesets = [...updateStep.matchRulesets];
-    if (Object.keys(props.editRuleset).length !== 0) {
+    if (Object.keys(curationRuleset).length !== 0) {
       // edit match step
-      updateStep.matchRulesets[props.editRuleset["index"]] = matchRuleset;
+      updateStep.matchRulesets[curationRuleset["index"]] = matchRuleset;
     } else {
       // add match step
       if (updateStep.matchRulesets) { updateStep.matchRulesets.push(matchRuleset); }
@@ -525,7 +533,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           && !errorInUri && !errorInFunction) {
           let matchRuleset: MatchRuleset = {
             name: rulesetName,
-            weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+            weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
             ...({reduce: reduceValue}),
             matchRules: matchRules,
             rulesetType: "multiple"
@@ -636,8 +644,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const discardOk = () => {
-    resetModal();
     props.toggleModal(false);
+    resetModal();
   };
 
   const discardCancel = () => {
@@ -834,23 +842,28 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const modalTitle = (
     <div className={styles.modalTitleContainer}>
-      <div className={styles.modalTitle}>{Object.keys(props.editRuleset).length !== 0 ? "Edit Match Ruleset for Multiple Properties" : "Add Match Ruleset for Multiple Properties"}</div>
+      <div className={styles.modalTitle}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Multiple Properties" : "Add Match Ruleset for Multiple Properties"}</div>
       <p className={styles.titleDescription} aria-label="titleDescription">Select all the properties to include in the ruleset, and specify a match type for each property.</p>
     </div>
   );
 
   const modalFooter = (
-    <div className={styles.footer}>
-      <MLButton
-        aria-label={`cancel-multiple-ruleset`}
-        onClick={closeModal}
-      >Cancel</MLButton>
-      <MLButton
-        className={styles.saveButton}
-        aria-label={`confirm-multiple-ruleset`}
-        type="primary"
-        onClick={(e) => onSubmit(e)}
-      >Save</MLButton>
+    <div className={styles.editFooter}>
+      <MLButton type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+      </MLButton>
+      <div className={styles.footer}>
+        <MLButton
+          aria-label={`cancel-multiple-ruleset`}
+          onClick={closeModal}
+        >Cancel</MLButton>
+        <MLButton
+          className={styles.saveButton}
+          aria-label={`confirm-multiple-ruleset`}
+          type="primary"
+          onClick={(e) => onSubmit(e)}
+        >Save</MLButton>
+      </div>
     </div>
   );
 
@@ -1123,6 +1136,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
+  const confirmAction = () => {
+    props.toggleModal(false);
+    resetModal();
+  };
+
   return (
     <Modal
       visible={props.isVisible}
@@ -1165,7 +1183,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         </Form.Item>
         <Form.Item>
           <span className={styles.reduceWeightText}>Reduce Weight</span>
-          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={curationRuleset.reduce} aria-label="reduceToggle"></Switch>
           <MLTooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
@@ -1203,6 +1221,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         {modalFooter}
       </Form>
       {discardChanges}
+      <DeleteModal
+        isVisible={showDeleteConfirmModal}
+        toggleModal={toggleDeleteConfirmModal}
+        editRuleset={curationRuleset}
+        confirmAction={confirmAction}
+      />
     </Modal>
   );
 };
