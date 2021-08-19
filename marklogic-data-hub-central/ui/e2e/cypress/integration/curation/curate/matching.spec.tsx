@@ -106,7 +106,7 @@ describe("Matching", () => {
     cy.findByText("Collapse All").should("be.visible");
     matchingStepDetail.showThresholdTextMore().should("have.length.lt", 1);
     matchingStepDetail.showThresholdTextLess().should("have.length.gt", 0);
-    multiSlider.getRulesetSliderOptions().trigger("mouseover");
+    multiSlider.getRulesetSliderOptions().scrollIntoView().trigger("mouseover");
     matchingStepDetail.showRulesetTextMore().should("have.length.lt", 1);
     matchingStepDetail.showRulesetTextLess().should("have.length.gt", 0);
   });

@@ -85,7 +85,7 @@ describe("Entity Modeling: Reader Role", () => {
     propertyModal.getStructuredTypeName().should("not.exist");
 
     propertyTable.expandStructuredTypeIcon("shipping").click();
-    propertyTable.expandStructuredTypeIcon("zip").click();
+    propertyTable.expandStructuredTypeIcon("zip").scrollIntoView().click();
 
     propertyTable.getAddPropertyToStructureType("Zip").click({force: true});
     propertyModal.getStructuredTypeName().should("not.exist");
