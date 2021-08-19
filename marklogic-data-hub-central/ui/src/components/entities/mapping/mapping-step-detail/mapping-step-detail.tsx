@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Card, Table, Icon, Input, Alert, Dropdown, Menu, Checkbox, Spin, Button, Tooltip} from "antd";
+import {Card, Table, Icon, Input, Alert, Dropdown, Menu, Checkbox, Button, Tooltip} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -10,6 +10,7 @@ import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFrom
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
+import Spinner from "react-bootstrap/Spinner";
 import SourceNavigation from "../source-navigation/source-navigation";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {useHistory} from "react-router-dom";
@@ -1433,7 +1434,7 @@ const MappingStepDetail: React.FC = () => {
                 </div>
               </div>
               {isLoading === true ? <div className={styles.spinRunning}>
-                <Spin size={"large"} data-testid="spinTest"/>
+                <Spinner animation="border" data-testid="spinTest" variant="primary"/>
               </div>:
                 emptyData ?
                   <div id="noData">

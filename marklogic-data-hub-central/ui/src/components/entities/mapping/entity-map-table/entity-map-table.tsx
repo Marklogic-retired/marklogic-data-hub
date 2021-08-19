@@ -1,7 +1,8 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Icon, Table, Popover, Input, Select, Dropdown, Modal, Spin, Button, Tooltip} from "antd";
+import {Icon, Table, Popover, Input, Select, Dropdown, Modal, Button, Tooltip} from "antd";
+import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
@@ -1455,7 +1456,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
       : null
     }
     {deleteConfirmation}
-  </div>) : null : !props.isRelatedEntity ? <Spin size={"large"} data-testid="spinner"/> : null);
+  </div>) : null : !props.isRelatedEntity
+    ? <div className={styles.spinnerContainer}>
+      <Spinner animation="border" variant="primary" data-testid="spinner" />
+    </div>
+    : null);
 };
 
 export default EntityMapTable;
