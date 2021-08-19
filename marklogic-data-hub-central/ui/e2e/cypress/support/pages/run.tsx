@@ -35,10 +35,11 @@ class RunPage {
 
   addStep(stepName: string) {
     cy.waitUntil(() => cy.findByLabelText(`addStep-${stepName}`)).click({force: true});
+    cy.wait(1000);
   }
 
   addStepToFlow(stepName: string) {
-    cy.waitUntil(() => cy.findByLabelText(`${stepName}-to-flow`).should("exist")).click();
+    cy.findByLabelText(`${stepName}-to-flow`).scrollIntoView().click();
     cy.findByLabelText("Yes").click();
   }
 
