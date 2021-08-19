@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Descriptions, Divider, Modal, Icon, Collapse, Spin, Button} from "antd";
+import {Descriptions, Divider, Modal, Icon, Collapse, Button} from "antd";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
+import Spinner from "react-bootstrap/Spinner";
 
 /* uncomment when implementing explore data link */
 // import {getMappingArtifactByStepName} from "../../api/mapping";
@@ -163,7 +164,7 @@ const JobResponse: React.FC<Props> = (props) => {
           }
         } else {
           return <div  className={styles.stepResponse} key={"running-" + index}>&nbsp;&nbsp;<strong className={styles.stepName}>{stepResponse.stepName || stepResponse.status}</strong> <span className={styles.running}>
-            <Spin data-testid="spinner" /> <span className={styles.runningLabel}>Running...</span>
+            <Spinner animation="border" data-testid="spinner" variant="primary" /> <span className={styles.runningLabel}>Running...</span>
           </span></div>;
         }
       });

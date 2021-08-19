@@ -71,7 +71,7 @@ class GraphVis {
   }
 
   getCenterOnEntityTypeOption(entityName: string) {
-    return cy.findByTestId(`centerOnEntityType-${entityName}`);
+    cy.findByTestId(`centerOnEntityType-${entityName}`).click({force: true});
   }
 }
 
