@@ -13,6 +13,10 @@
     border: 1px solid #d7d6d6;
     margin-bottom: 10px;
 }
+ 
+.cardBody {
+    padding: 12px;
+}
 
 .stepNameStyle {
     font-size: 20px;
@@ -53,7 +57,7 @@
 }
 .plusIcon {
     font-size: 80px;
-    margin-top: 16px;
+    margin-top: 9px;
     color: #67749c;
     margin-bottom: 0px;
     cursor: pointer;
@@ -129,6 +133,10 @@
   margin-top: -3px;
 }
 
+.cardContainer {
+    position: relative;
+}
+
 .cardLinks {
     position: absolute;
     top: 0;
@@ -160,7 +168,7 @@
 .cardNonLink {
     color: rgba(0, 0, 0, 0.65);
     background-color: #ecf6fe;
-    padding: 8px 8px 1px 8px;
+    padding: 8px 8px 9px 8px;
     font-size: 14px;
     cursor: default;
 }
