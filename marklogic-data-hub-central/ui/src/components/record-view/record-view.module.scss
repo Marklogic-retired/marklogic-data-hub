@@ -4,9 +4,9 @@
   .cardStyle {
     width: 370px;
     height: 145px;
-    margin-top: 24px;
+    margin-top: 14px;
     text-align: left;
-    align-content: left;
+    align-content: flex-start;
     padding-bottom: 2px;
     border: 1px solid #d7d6d6;
   }
@@ -23,11 +23,14 @@
 
 .cardIcons {
   float: right;
+  position: relative;
+  top: -5px;
 
   .infoIcon {
+    position: relative;
+    top: 4px;
     color: #7f86b5;
     font-size: 20px;
-    vertical-align: middle;
     margin-right: 8px;
     cursor: pointer;
   }
@@ -116,7 +119,7 @@
   font-size: 12px;
   display: flex;
   justify-content: flex-end;
-  position: relative;
-  margin-top: -20px;
-  margin-right: 5px;
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
 }
