@@ -124,7 +124,7 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => 
   cy.wait(1000);
   cy.get("[class=\"ant-collapse-content ant-collapse-content-active\"]").then($body => {
     if ($body.find(`[aria-label="runStep-${stepName}"]`).length > 0) {
-      const text = $body.find("[class=\"ant-card-head-title\"]").text();
+      const text = $body.find("[class^=\"hc-card_title\"]").text();
       expect(text).to.equal(stepType);
     } else {
       cy.reload();
