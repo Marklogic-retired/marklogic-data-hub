@@ -85,7 +85,7 @@
         margin-left: 0px;
         margin-top: -5px;
 
-        .tooltip {
+        .tooltipDisplay {
             position: relative;
             display: block;
             width: 180px;
@@ -112,7 +112,7 @@
                 cursor: pointer;
             }
 
-            .activeTooltipText {
+            .activeTooltipTextDisplay {
                 margin-top: -30px;
                 z-index:3;
                 text-align: center;
@@ -170,6 +170,7 @@
             }
 
             .editText {
+              font-size: 14px;
               display: block;
               text-overflow: ellipsis;
               white-space: nowrap;
