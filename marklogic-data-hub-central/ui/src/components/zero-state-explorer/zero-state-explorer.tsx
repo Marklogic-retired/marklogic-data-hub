@@ -10,6 +10,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faThLarge} from "@fortawesome/free-solid-svg-icons";
 import tiles from "../../config/tiles.config";
 import HCDivider from "../common/hc-divider/hc-divider";
+import HCCard from "../common/hc-card/hc-card";
 
 const ZeroStateExplorer = (props) => {
   const {
@@ -152,7 +153,7 @@ const ZeroStateExplorer = (props) => {
         <Row className={"g-0"}>
           <Col xs={12}>
             <div className={styles.box}>
-              <Card className={styles.largeCard} bordered={false}>
+              <HCCard className={styles.largeCard}>
                 <Row className={"g-0"}>
                   <Col xs={12}>
                     <div className={styles.database}>
@@ -239,7 +240,7 @@ const ZeroStateExplorer = (props) => {
                     </div>
                   </Col>
                 </Row>
-              </Card>
+              </HCCard>
             </div>
           </Col>
         </Row>
@@ -251,7 +252,7 @@ const ZeroStateExplorer = (props) => {
         {props.isSavedQueryUser && <Row className={"g-0"}>
           <Col xs={12}>
             <div className={styles.box}>
-              <Card className={styles.smallCard} bordered={false}>
+              <Card className={styles.smallCard}>
                 <Row>
                   <Col xs={12} >
                     <div id="query-selector" className={styles.query} >
