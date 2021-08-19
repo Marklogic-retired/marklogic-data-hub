@@ -32,6 +32,7 @@ describe("Graph Validations", () => {
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getModelToolbarIcon().should("have.length.gt", 0)).click({force: true});
+    cy.wait(3000);
     cy.waitForAsyncRequest();
     modelPage.selectView("table");
     cy.wait(1000);
@@ -41,7 +42,7 @@ describe("Graph Validations", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it("can view and edit Entity Type tab in side panel", () => {
+  it("can view and edit Entity Type tab in side panel", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getEntityDescription().should("be.visible");
@@ -81,7 +82,7 @@ describe("Graph Validations", () => {
   });
 
   //Below is just an example test to showcase how to use the graph library functional library in cypress
-  it("can select required entity nodes and edges, within the graph view", () => {
+  it("can select required entity nodes and edges, within the graph view", {defaultCommandTimeout: 120000}, () => {
     cy.loginAsDeveloper().withRequest();
     entityTypeTable.viewEntityInGraphView("Person");
     cy.wait(3000);
@@ -119,6 +120,7 @@ describe("Graph Validations", () => {
     relationshipModal.editForeignKey("email");
 
     relationshipModal.confirmationOptions("Save");
+    cy.wait(3000);
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
@@ -140,7 +142,7 @@ describe("Graph Validations", () => {
     });
   });
 
-  it("can filter and select entity type in graph view", () => {
+  it("can filter and select entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     graphViewSidePanel.getSelectedEntityHeading("BabyRegistry").should("not.exist");
     //Enter First 3+ characters to select option from dropdown
@@ -153,7 +155,7 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getDeleteIcon("BabyRegistry").should("be.visible");
   });
 
-  it("reset entity values", () => {
+  it("reset entity values", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
@@ -166,16 +168,17 @@ describe("Graph Validations", () => {
     relationshipModal.toggleCardinality();
 
     relationshipModal.confirmationOptions("Save");
+    cy.wait(3000);
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
   });
 
-  it("can center on entity type in graph view and persist the layout", () => {
+  it("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
-      let personCoordinates: any = nodePositions["Person"];
-      graphVis.getGraphVisCanvas().rightclick(personCoordinates.x, personCoordinates.y);
-      graphVis.getCenterOnEntityTypeOption("Person").trigger("mouseover").click();
+      let orderCoordinates: any = nodePositions["Person"];
+      graphVis.getGraphVisCanvas().rightclick(orderCoordinates.x, orderCoordinates.y);
+      graphVis.getCenterOnEntityTypeOption("Person");
 
       //Clicking on center of the canvas, should click on Person entity node.
       graphVis.getGraphVisCanvas().click();
