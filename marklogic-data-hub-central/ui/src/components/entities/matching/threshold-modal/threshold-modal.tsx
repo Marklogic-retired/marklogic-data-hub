@@ -9,6 +9,9 @@ import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep, Threshold} from "../../../../types/curation-types";
 import {NewMatchTooltips} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact} from "../../../../api/matching";
+import DeleteModal from "../delete-modal/delete-modal";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   isVisible: boolean;
@@ -48,6 +51,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
   const [isFunctionTouched, setIsFunctionTouched] = useState(false);
   const [namespaceValue, setNamespaceValue] = useState("");
   const [isNamespaceTouched, setIsNamespaceTouched] = useState(false);
+  const [showDeleteConfirmModal, toggleDeleteConfirmModal] = useState(false);
 
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
@@ -329,6 +333,11 @@ const ThresholdModal: React.FC<Props> = (props) => {
     resetTouched();
   };
 
+  const confirmAction = () => {
+    props.toggleModal(false);
+    resetModal();
+  };
+
   const discardChanges = <ConfirmYesNo
     visible={discardChangesVisible}
     type="discardChanges"
@@ -413,17 +422,22 @@ const ThresholdModal: React.FC<Props> = (props) => {
   );
 
   const modalFooter = (
-    <div className={styles.footer}>
-      <MLButton
-        aria-label={`cancel-threshold-modal`}
-        onClick={closeModal}
-      >Cancel</MLButton>
-      <MLButton
-        className={styles.saveButton}
-        aria-label={`confirm-threshold-modal`}
-        type="primary"
-        onClick={(e) => onSubmit(e)}
-      >Save</MLButton>
+    <div className={styles.editFooter}>
+      <MLButton type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+      </MLButton>
+      <div className={styles.footer}>
+        <MLButton
+          aria-label={`cancel-threshold-modal`}
+          onClick={closeModal}
+        >Cancel</MLButton>
+        <MLButton
+          className={styles.saveButton}
+          aria-label={`confirm-threshold-modal`}
+          type="primary"
+          onClick={(e) => onSubmit(e)}
+        >Save</MLButton>
+      </div>
     </div>
   );
 
@@ -494,6 +508,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
         {modalFooter}
       </Form>
       {discardChanges}
+      <DeleteModal
+        isVisible={showDeleteConfirmModal}
+        toggleModal={toggleDeleteConfirmModal}
+        editRuleset={props.editThreshold}
+        confirmAction={confirmAction}
+      />
     </Modal>
   );
 };

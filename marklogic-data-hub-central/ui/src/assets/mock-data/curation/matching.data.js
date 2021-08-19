@@ -94,13 +94,13 @@ export const matchingStep = {
       ],
       "thresholds": [
         {
-          "thresholdName": "sameThreshold",
-          "action": "merge",
+          "thresholdName": "Slight Match",
+          "action": "custom",
           "score": 12
         },
         {
-          "thresholdName": "similarThreshold",
-          "action": "notify",
+          "thresholdName": "Match",
+          "action": "merge",
           "score": 6.5
         },
         {

@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Modal, Form, Input, Icon, Switch} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
 import styles from "./ruleset-single-modal.module.scss";
 import "./ruleset-single-modal.scss";
@@ -15,12 +15,17 @@ import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-
 import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact} from "../../../../api/matching";
+import DeleteModal from "../delete-modal/delete-modal";
 
 type Props = {
   editRuleset: any;
   isVisible: boolean;
   toggleModal: (isVisible: boolean) => void;
+
 };
+
+
+
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
   properties: []
@@ -76,13 +81,17 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [functionValue, setFunctionValue] = useState("");
   const [functionErrorMessage, setFunctionErrorMessage] = useState("");
   const [isFunctionTouched, setIsFunctionTouched] = useState(false);
-
+  const [showDeleteConfirmModal, toggleDeleteConfirmModal] = useState(false);
   const [namespaceValue, setNamespaceValue] = useState("");
   const [isNamespaceTouched, setIsNamespaceTouched] = useState(false);
-
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
-
   const [reduceValue, setReduceValue] = useState(false);
+
+  let curationRuleset = props.editRuleset ;
+  if (props.editRuleset.hasOwnProperty("index")) {
+    let index = props.editRuleset.index;
+    curationRuleset = ({...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index});
+  }
 
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
@@ -90,8 +99,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       setEntityTypeDefinition(entityTypeDefinition);
     }
 
-    if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
-      let editRuleset = props.editRuleset;
+    if (Object.keys(curationRuleset).length !== 0 && props.isVisible) {
+      let editRuleset = curationRuleset;
       setSelectedProperty(editRuleset.name.split(" ")[0].split(".").join(" > "));
       let matchType = editRuleset["matchRules"][0]["matchType"];
       if (editRuleset.reduce) {
@@ -263,7 +272,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
-        weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
         matchRules: [matchRule]
       };
@@ -294,7 +303,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
-        weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
         matchRules: [synonymMatchRule]
       };
@@ -333,7 +342,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
-        weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
         matchRules: [doubleMetaphoneMatchRule]
       };
@@ -371,7 +380,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
-        weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        weight: Object.keys(curationRuleset).length !== 0 ? curationRuleset["weight"] : 0,
         ...({reduce: reduceValue}),
         matchRules: [customMatchRule]
       };
@@ -409,9 +418,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     // avoid triggering update of active step prior to persisting the database
     let updateStep: MatchingStep = {...curationOptions.activeStep.stepArtifact};
     updateStep.matchRulesets = [...updateStep.matchRulesets];
-    if (Object.keys(props.editRuleset).length !== 0) {
+    if (Object.keys(curationRuleset).length !== 0) {
       // edit match step
-      updateStep.matchRulesets[props.editRuleset["index"]] = matchRuleset;
+      updateStep.matchRulesets[curationRuleset["index"]] = matchRuleset;
     } else {
       // add match step
       if (updateStep.matchRulesets) { updateStep.matchRulesets.push(matchRuleset); }
@@ -688,7 +697,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const modalTitle = (
     <div>
-      <div style={{fontSize: "18px"}}>{Object.keys(props.editRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
+      <div style={{fontSize: "18px"}}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
       <div className={styles.modalTitleLegend}>
         <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
         <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
@@ -697,17 +706,22 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   );
 
   const modalFooter = (
-    <div className={styles.footer}>
-      <MLButton
-        aria-label={`cancel-single-ruleset`}
-        onClick={closeModal}
-      >Cancel</MLButton>
-      <MLButton
-        className={styles.saveButton}
-        aria-label={`confirm-single-ruleset`}
-        type="primary"
-        onClick={(e) => onSubmit(e)}
-      >Save</MLButton>
+    <div className={styles.editFooter}>
+      <MLButton type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+      </MLButton>
+      <div className={styles.footer}>
+        <MLButton
+          aria-label={`cancel-single-ruleset`}
+          onClick={closeModal}
+        >Cancel</MLButton>
+        <MLButton
+          className={styles.saveButton}
+          aria-label={`confirm-single-ruleset`}
+          type="primary"
+          onClick={(e) => onSubmit(e)}
+        >Save</MLButton>
+      </div>
     </div>
   );
 
@@ -717,6 +731,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     } else {
       setReduceValue(false);
     }
+  };
+
+  const confirmAction = () => {
+    props.toggleModal(false);
+    resetModal();
   };
 
   return (
@@ -737,7 +756,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       >
         <Form.Item>
           <span className={styles.reduceWeightText}>Reduce Weight</span>
-          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={curationRuleset.reduce} aria-label="reduceToggle"></Switch>
           <MLTooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
@@ -790,6 +809,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         {modalFooter}
       </Form>
       {discardChanges}
+      <DeleteModal
+        isVisible={showDeleteConfirmModal}
+        toggleModal={toggleDeleteConfirmModal}
+        editRuleset={curationRuleset}
+        confirmAction={confirmAction}
+      />
     </Modal>
   );
 };

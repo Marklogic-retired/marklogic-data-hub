@@ -29,3 +29,17 @@
   width: 400px;
 }
 
+.trashIcon {
+    font-size: 20px;
+    color: #B32424;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
+.editFooter{
+    display: flex;
+    justify-content: space-between;
+}
+
+

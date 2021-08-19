@@ -56,7 +56,10 @@
     "typescript": "^3.8.0",
     "use-deep-compare-effect": "^1.3.1",
     "use-dynamic-refs": "^1.0.0",
-    "xml-formatter": "^2.4.0"
+    "xml-formatter": "^2.4.0",
+    "react-visjs-timeline": "^1.6.0",
+    "vis": "^4.21.0-EOL",
+    "vis-timeline": "7.3.6"
   },
   "scripts": {
     "start": "react-app-rewired start",
