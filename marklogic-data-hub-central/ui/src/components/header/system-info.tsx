@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
-import {Card, Col, Row, Modal, Alert, Spin, Button, Tooltip} from "antd";
+import {Card, Col, Row, Modal, Alert, Button, Tooltip} from "antd";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import Axios from "axios";
+import Spinner from "react-bootstrap/Spinner";
 import {SecurityTooltips} from "../../config/tooltips.config";
 import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -218,7 +219,7 @@ const SystemInfo = (props) => {
               { !authorityService.canClearUserData() ? <Col>
                 <Card size="small" className={styles.clearAll}>
                   {isLoading === true ? <div className={styles.spinRunning}>
-                    <Spin size={"large"} />
+                    <Spinner animation="border" variant="primary"/>
                   </div>: ""}
                   <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                   <p>{SystemInfoMessages.clearAllUserData}</p>
@@ -236,7 +237,7 @@ const SystemInfo = (props) => {
                 <Col>
                   <Card size="small" className={styles.clearAll}>
                     {isLoading === true ? <div className={styles.spinRunning}>
-                      <Spin size={"large"} />
+                      <Spinner animation="border" variant="primary"/>
                     </div>: ""}
                     <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                     <p>{SystemInfoMessages.clearAllUserData}</p>
