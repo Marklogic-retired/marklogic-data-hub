@@ -1,5 +1,5 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Collapse, Icon, Card, Modal, Menu, Dropdown, Spin, Button, Tooltip} from "antd";
+import {Collapse, Icon, Card, Modal, Menu, Dropdown, Button, Tooltip} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -9,6 +9,7 @@ import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
 import "./flows.scss";
 import styles from "./flows.module.scss";
+import Spinner from "react-bootstrap/Spinner";
 import {useDropzone} from "react-dropzone";
 import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
@@ -1005,7 +1006,7 @@ const Flows: React.FC<Props> = (props) => {
                 {showUploadError && flowName === runningFlow && stepNumber === runningStep.stepNumber ? props.uploadError : ""}
               </div>
               <div className={styles.running} style={{display: isRunning(flowName, stepNumber) ? "block" : "none"}}>
-                <div><Spin data-testid="spinner" /></div>
+                <div><Spinner animation="border" data-testid="spinner" variant="primary" /></div>
                 <div className={styles.runningLabel}>Running...</div>
               </div>
             </Card>
