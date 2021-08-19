@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown, Collapse, Icon} from "antd";
+import {Row, Col, Card, Menu, Dropdown, Collapse, Icon, Switch} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -9,13 +9,10 @@ import styles from "./matching-step-detail.module.scss";
 import "./matching-step-detail.scss";
 import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import CustomPageHeader from "../../page-header/page-header";
-
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import RulesetMultipleModal from "../ruleset-multiple-modal/ruleset-multiple-modal";
-import MultiSlider from "../multi-slider/multi-slider";
 import NumberIcon from "../../../number-icon/number-icon";
 import ThresholdModal from "../threshold-modal/threshold-modal";
-
 import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
 import {MatchingStepDetailText} from "../../../../config/tooltips.config";
@@ -25,6 +22,10 @@ import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "..
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import CompareValuesModal from "../compare-values-modal/compare-values-modal";
+import moment from "moment";
+import TimelineVis from "./timeline-vis/timeline-vis";
+import TimelineVisDefault from "./timeline-vis-default/timeline-vis-default";
+
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -57,22 +58,14 @@ const MatchingStepDetail: React.FC = () => {
 
   const history = useHistory<any>();
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
-
   const [matchingStep, setMatchingStep] = useState<MatchingStep>(DEFAULT_MATCHING_STEP);
-  const [deleteOptions, setDeleteOptions] = useState({});
   const [editThreshold, setEditThreshold] = useState({});
   const [editRuleset, setEditRuleset] = useState({});
-
   const [showThresholdModal, toggleShowThresholdModal] = useState(false);
   const [showRulesetSingleModal, toggleShowRulesetSingleModal] = useState(false);
-
   const [moreThresholdText, toggleMoreThresholdText] = useState(true);
   const [moreRulesetText, toggleMoreRulesetText] = useState(true);
-
-  const [showDeleteModal, toggleShowDeleteModal] = useState(false);
-
   const [matchingActivity, setMatchingActivity] = useState<any>({scale: {}, thresholdActions: []});
-
   const [value, setValue] = React.useState(1);
   const [UriTableData, setUriTableData] = useState<any[]>([]);
   const [UriTableData2, setUriTableData2] = useState<any[]>([]);
@@ -106,6 +99,13 @@ const MatchingStepDetail: React.FC = () => {
   const [previewMatchedData, setPreviewMatchedData] = useState(-1);
   const [expandRuleset, setExpandRuleset] = useState(false);
 
+
+  //To handle timeline display
+  const [rulesetItems, setRulesetItems] = useState<any []>([]);
+  const [thresholdItems, setThresholdItems] = useState<any []>([]);
+  const [displayRulesetTimeline, toggleDisplayRulesetTimeline] = useState(false);
+  const [displayThresholdTimeline, toggleDisplayThresholdTimeline] = useState(false);
+
   const menu = (
     <Menu>
       <Menu.Item key="singlePropertyRuleset">
@@ -122,26 +122,41 @@ const MatchingStepDetail: React.FC = () => {
       const matchingStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
       if (matchingStepArtifact.matchRulesets) {
         if (matchingStepArtifact.matchRulesets.length > 0) {
+          let rulesetItems = matchingStepArtifact.matchRulesets.map((item, id) => ({
+            id: id,
+            start: item.weight,
+            reduce: item.reduce ? item.reduce : false,
+            value: item.name+ ":" + item.weight.toString()
+          }));
+          setRulesetItems(rulesetItems);
           toggleMoreRulesetText(false);
         } else {
           toggleMoreRulesetText(true);
         }
-
       }
       if (matchingStepArtifact.thresholds) {
         if (matchingStepArtifact.thresholds.length > 0) {
+          let thresholdItems = matchingStepArtifact.thresholds.map((item, id) => ({
+            id: id,
+            start: item.score,
+            value: item.thresholdName+ " - " + item.action +":"+ item.score.toString(),
+          }));
+
+          setThresholdItems(thresholdItems);
           toggleMoreThresholdText(false);
         } else {
           toggleMoreThresholdText(true);
         }
       }
-
       setMatchingStep(matchingStepArtifact);
       handleMatchingActivity(matchingStepArtifact.name);
 
     } else {
       history.push("/tiles/curate");
     }
+    /*return () => {
+      toggleDisplayRulesetTimeline(false);
+    }*/
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
 
   const handleMatchingActivity = async (matchStepName) => {
@@ -194,110 +209,6 @@ const MatchingStepDetail: React.FC = () => {
     return allKeys;
   };
 
-  const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
-    const rulesetCategory = i.rulesetType && i.rulesetType === "multiple" ? i.rulesetType : "single";
-    const firstMatchRule = i.matchRules[0];
-    const firstMatchRuleType = firstMatchRule ? firstMatchRule.matchType : "";
-    const rulesetType = firstMatchRuleType;
-    const matchRuleOptionsObject = {
-      props: [{
-        prop: i.name.split(" -")[0],
-        type: rulesetType,
-        rulesetCategory: rulesetCategory
-      }],
-      value: i.weight
-    };
-    return matchRuleOptionsObject;
-  });
-
-  const matchThresholdOptions = matchingStep.thresholds && matchingStep.thresholds.map((i) => {
-    const matchThresholdOptionsObject = {
-      props: [{
-        prop: i.thresholdName,
-        type: i.action,
-      }],
-      value: i.score,
-    };
-    return matchThresholdOptionsObject;
-  });
-
-  const handleSlider = async (values, options) => {
-    if (options["sliderType"] === "threshold") {
-
-      let stepArtifact = curationOptions.activeStep.stepArtifact;
-      let stepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
-      let index = stepArtifactThresholds.findIndex(threshold => threshold.thresholdName === options["prop"]);
-      let updateThreshold = stepArtifactThresholds.find(threshold => threshold.thresholdName === options["prop"]);
-      let changedSlider = values.find(item => item["props"]["prop"] === options["prop"]);
-
-      updateThreshold["score"] = parseInt(changedSlider["value"]);
-      stepArtifactThresholds[index] = updateThreshold;
-      stepArtifact["thresholds"] = stepArtifactThresholds;
-
-      await updateMatchingArtifact(stepArtifact);
-      updateActiveStepArtifact(stepArtifact);
-    } else if (options["sliderType"] === "ruleSet") {
-      let stepArtifact = curationOptions.activeStep.stepArtifact;
-      let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
-      let index = parseInt(options["index"]);
-
-      stepArtifactRulesets[index]["weight"] = parseInt(values[index]["value"]);
-      stepArtifact["matchRulesets"] = stepArtifactRulesets;
-
-      await updateMatchingArtifact(stepArtifact);
-      updateActiveStepArtifact(stepArtifact);
-    }
-  };
-
-  const handleSliderEdit = (options) => {
-    if (options["sliderType"] === "threshold") {
-      let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
-      let index = updateStepArtifactThresholds.findIndex(threshold => threshold.thresholdName === options["prop"]);
-      let editThreshold = updateStepArtifactThresholds[index];
-      setEditThreshold({...editThreshold, index});
-      toggleShowThresholdModal(true);
-    } else if (options["sliderType"] === "ruleSet") {
-      let updateStepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
-      let index = parseInt(options["index"]);
-      let editMatchRuleset = updateStepArtifactRulesets[index];
-
-      setEditRuleset({...editMatchRuleset, index});
-      if (options["rulesetCategory"] === "single") {
-        toggleShowRulesetSingleModal(true);
-      } else {
-        toggleShowRulesetMultipleModal(true);
-      }
-    }
-  };
-
-  const handleSliderDelete = (options) => {
-    setDeleteOptions(options);
-    toggleShowDeleteModal(true);
-  };
-
-  const deleteConfirm = async () => {
-    if (deleteOptions["sliderType"] === "threshold") {
-      let stepArtifact = curationOptions.activeStep.stepArtifact;
-      let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
-      let index = updateStepArtifactThresholds.findIndex(threshold => threshold.thresholdName === deleteOptions["prop"]);
-      updateStepArtifactThresholds.splice(index, 1);
-      stepArtifact.thresholds = updateStepArtifactThresholds;
-      await updateMatchingArtifact(stepArtifact);
-      updateActiveStepArtifact(stepArtifact);
-      toggleShowDeleteModal(false);
-    } else if (deleteOptions["sliderType"] === "ruleSet") {
-      let stepArtifact = curationOptions.activeStep.stepArtifact;
-      let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
-      let index = parseInt(deleteOptions["index"]);
-
-      stepArtifactRulesets.splice(index, 1);
-      stepArtifact.matchRulesets = stepArtifactRulesets;
-
-      await updateMatchingArtifact(stepArtifact);
-      updateActiveStepArtifact(stepArtifact);
-      toggleShowDeleteModal(false);
-    }
-  };
 
   const addNewSingleRuleset = () => {
     setEditRuleset({});
@@ -309,33 +220,6 @@ const MatchingStepDetail: React.FC = () => {
     toggleShowRulesetMultipleModal(true);
   };
 
-  const deleteModal = (
-    <Modal
-      width={500}
-      visible={showDeleteModal}
-      destroyOnClose={true}
-      closable={false}
-      className={styles.confirmModal}
-      maskClosable={false}
-      footer={null}
-    >
-      <p aria-label="delete-slider-text" className={styles.deleteMessage}>Are you sure you want to delete a {deleteOptions["sliderType"] === "threshold" ? "threshold" : "ruleset"} <b>{deleteOptions["prop"]} - {deleteOptions["type"]}</b>?</p>
-      <div className={styles.footer}>
-        <MLButton
-          aria-label={`delete-slider-no`}
-          size="default"
-          onClick={() => toggleShowDeleteModal(false)}
-        >No</MLButton>
-        <MLButton
-          className={styles.saveButton}
-          aria-label={`delete-slider-yes`}
-          type="primary"
-          size="default"
-          onClick={() => deleteConfirm()}
-        >Yes</MLButton>
-      </div>
-    </Modal>
-  );
 
   const getRulesetName = (rulesetComb) => {
     let matchRules = rulesetComb.matchRules;
@@ -609,6 +493,188 @@ const MatchingStepDetail: React.FC = () => {
     setUrisCompared(uris);
   };
 
+
+  const updateRulesetItems = async(id, newvalue) => {
+    let stepArtifact = curationOptions.activeStep.stepArtifact;
+    let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+    let updateRuleset = stepArtifactRulesets[id];
+    updateRuleset["weight"] = parseInt(newvalue);
+    stepArtifactRulesets[id] = updateRuleset;
+    stepArtifact["matchRulesets"] = stepArtifactRulesets;
+    await updateMatchingArtifact(stepArtifact);
+    updateActiveStepArtifact(stepArtifact);
+  };
+
+  const rulesetOptions:any = {
+    max: 120,
+    min: -20,
+    start: -20,
+    end: 120,
+    width: "100%",
+    itemsAlwaysDraggable: {
+      item: displayRulesetTimeline,
+      range: displayRulesetTimeline
+    },
+    selectable: false,
+    editable: {
+      remove: true,
+      updateTime: true
+    },
+    moveable: false,
+    timeAxis: {
+      scale: "millisecond",
+      step: 5
+    },
+    onMove: function(item, callback) {
+      if (item.start >= 0  && item.start <= 100) {
+        item.value = item.start.getMilliseconds().toString();
+        callback(item);
+        updateRulesetItems(item.id, item.start.getMilliseconds().toString());
+      } else {
+        if (item.start < 1) {
+          item.start = 1;
+          item.value = "1";
+        } else {
+          item.start = 100;
+          item.value = "100";
+        }
+        callback(item);
+        updateRulesetItems(item.id, item.value);
+      }
+
+    },
+    format: {
+      minorLabels: function (date, scale, step) {
+        let time;
+        if (date >= 0 && date <= 100) {
+          time = date.format("SSS");
+          return moment.duration(time).asMilliseconds();
+        } else {
+          return "";
+        }
+      },
+    },
+    template: function(item) {
+      if (item && item.hasOwnProperty("value")) {
+        if (item.reduce === false) {
+          return "<div data-testid=\"ruleset"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
+        } else {
+          return "<div data-testid=\"ruleset-reduce"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemReduceValue\">" + - item.value.split(":")[1] + "</div></div>";
+        }
+      }
+    },
+    maxMinorChars: 4
+  };
+
+  const thresholdOptions:any = {
+    max: 120,
+    min: -20,
+    start: -20,
+    end: 120,
+    width: "100%",
+    itemsAlwaysDraggable: {
+      item: displayThresholdTimeline,
+      range: displayThresholdTimeline
+    },
+    selectable: false,
+    editable: {
+      remove: true,
+      updateTime: true
+    },
+    moveable: false,
+    timeAxis: {
+      scale: "millisecond",
+      step: 5
+    },
+    onMove: function(item, callback) {
+      if (item.start >= 0  && item.start <= 100) {
+        item.value = item.start.getMilliseconds().toString();
+        callback(item);
+        updateThresholdItems(item.id, item.start.getMilliseconds().toString());
+      } else {
+        if (item.start < 1) {
+          item.start = 1;
+          item.value = "1";
+        } else {
+          item.start = 100;
+          item.value = "100";
+        }
+        callback(item);
+        updateThresholdItems(item.id, item.value);
+      }
+
+    },
+    format: {
+      minorLabels: function (date, scale, step) {
+        let time;
+        if (date >= 0 && date <= 100) {
+          time = date.format("SSS");
+          return moment.duration(time).asMilliseconds();
+        } else {
+          return "";
+        }
+      },
+    },
+    template: function(item) {
+      if (item && item.hasOwnProperty("value")) {
+        return "<div data-testid=\"threshold"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
+      }
+    },
+    maxMinorChars: 4
+  };
+
+  const renderRulesetTimeline = () => {
+    return <div data-testid={"active-ruleset-timeline"}><TimelineVis items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked} /></div>;
+  };
+
+  const renderDefaultRulesetTimeline = () => {
+    return <div data-testid={"default-ruleset-timeline"}><TimelineVisDefault items={rulesetItems} options={rulesetOptions} /></div>;
+  };
+
+  const renderDefaultThresholdTimeline = () => {
+    return <div data-testid={"default-threshold-timeline"}><TimelineVisDefault items={thresholdItems} options={thresholdOptions} /></div>;
+  };
+
+  const renderThresholdTimeline = () => {
+    return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} /></div>;
+  };
+
+  const updateThresholdItems = async(id, newvalue) => {
+    let stepArtifact = curationOptions.activeStep.stepArtifact;
+    let stepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
+    let updateThreshold = stepArtifactThresholds[id];
+    updateThreshold["score"] = parseInt(newvalue);
+    stepArtifactThresholds[id] = updateThreshold;
+    stepArtifact["thresholds"] = stepArtifactThresholds;
+    await updateMatchingArtifact(stepArtifact);
+    updateActiveStepArtifact(stepArtifact);
+  };
+
+  const onRuleSetTimelineItemClicked = (event) => {
+    let updateStepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+    let index = event.item;
+    let editMatchRuleset = updateStepArtifactRulesets[index];
+    setEditRuleset({...editMatchRuleset, index});
+    if (editMatchRuleset) {
+      if (editMatchRuleset.hasOwnProperty("rulesetType") && editMatchRuleset["rulesetType"] === "multiple") {
+        toggleShowRulesetMultipleModal(true);
+      } else {
+        toggleShowRulesetSingleModal(true);
+      }
+    }
+  };
+
+  const onThresholdTimelineItemClicked = (event) => {
+    let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
+    let index = event.item;
+    let editThreshold = updateStepArtifactThresholds[index];
+    setEditThreshold({...editThreshold, index});
+    if (editThreshold) {
+      toggleShowThresholdModal(true);
+    }
+  };
+
+
   return (
     <>
       <CustomPageHeader
@@ -683,7 +749,13 @@ const MatchingStepDetail: React.FC = () => {
               >Add</MLButton>
             </div>
           </div>
-          <MultiSlider options={matchingStep.thresholds && matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"threshold"}/>
+          <div><span><b>Enable Threshold Scale </b></span><Switch aria-label="threshold-scale-switch" onChange={(e) => toggleDisplayThresholdTimeline(e)} defaultChecked={false} ></Switch>
+            <span>
+              <MLTooltip title={MatchingStepTooltips.thresholdScale} placement={"right"}>
+                <Icon type="question-circle" className={styles.scaleTooltip} theme="filled" data-testid={"info-tooltip-threshold"}/>
+              </MLTooltip><br />
+            </span></div>
+          {displayThresholdTimeline ? renderThresholdTimeline() : renderDefaultThresholdTimeline()}
         </div>
 
         <div className={styles.stepNumberContainer}>
@@ -697,7 +769,7 @@ const MatchingStepDetail: React.FC = () => {
               <p aria-label="ruleset-text" className={`${moreRulesetText ? styles.showText : styles.hideText}`}>A <span className={styles.italic}>ruleset</span> specifies the criteria for determining whether the values of your entities match.
                 The way you define your rulesets, and where you place them on the scale, influences whether the entities are considered a match.
                 Click the <span className={styles.bold}>Add</span> button to create a ruleset. If you want the ruleset to have a major influence over whether entities qualify as a "match",
-                move it higher on the scale. If you want it to only have some influence, then move the ruleset lower.
+                move it higher on the scale. If you want it to only have some influence, then move the ruleset lower.The weight is displayed as an integer on each ruleset. The weight is displayed as a negative integer if Reduce Weight is enabled for a ruleset.
               <span aria-label="ruleset-less" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>less</span>
               </p>
               {!moreRulesetText && <span aria-label="ruleset-more" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>more</span> }
@@ -720,7 +792,13 @@ const MatchingStepDetail: React.FC = () => {
                     <DownOutlined /></MLButton>
                 </div></Dropdown></div>
           </div>
-          <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
+          <div><span><b>Enable Ruleset Scale </b></span><Switch aria-label="ruleset-scale-switch"  onChange={(e) => toggleDisplayRulesetTimeline(e)} defaultChecked={false} ></Switch>
+            <span>
+              <MLTooltip title={MatchingStepTooltips.rulesetScale} placement={"right"}>
+                <Icon type="question-circle" className={styles.scaleTooltip} theme="filled" data-testid={`info-tooltip-ruleset`}/>
+              </MLTooltip><br />
+            </span></div>
+          {displayRulesetTimeline ? renderRulesetTimeline() : renderDefaultRulesetTimeline()}
         </div>
 
         <div className={styles.stepNumberContainer}>
@@ -870,7 +948,6 @@ const MatchingStepDetail: React.FC = () => {
         editThreshold={editThreshold}
         toggleModal={toggleShowThresholdModal}
       />
-      {deleteModal}
     </>
   );
 };

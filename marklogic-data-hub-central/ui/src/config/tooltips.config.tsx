@@ -263,7 +263,9 @@ const MatchingStepTooltips = {
   testUris: 'Tests the configuration on entered URIs with each other (requires at least two URIs)',
   testUrisAllData: 'Tests the configuration on entered URIs with all the data in your source query (a subset of Test All Data)',
   testAllData: 'Tests the configuration on all the URIs in your source query with each other',
-  reduceToggle: 'The Reduce match type reduces the weight of a match and makes the weight negative for the entire ruleset. Use the Reduce match type when a combination of matching properties suggests a match when there should be none. When toggled on, no other match type may be selected.'
+  reduceToggle: 'The Reduce match type reduces the weight of a match and makes the weight negative for the entire ruleset. Use the Reduce match type when a combination of matching properties suggests a match when there should be none. When toggled on, no other match type may be selected.',
+  thresholdScale: 'Enable the scale to position, edit, or delete thresholds.',
+  rulesetScale: 'Enable the scale to position, edit, or delete rulesets.'
 };
 
 const MatchingStepPlaceholders = {

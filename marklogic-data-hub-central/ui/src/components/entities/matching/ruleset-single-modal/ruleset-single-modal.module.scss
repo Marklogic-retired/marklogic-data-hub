@@ -57,3 +57,15 @@
 .reduceToggle {
   margin-left: 12px !important;
 }
+.trashIcon {
+    font-size: 20px;
+    color: #B32424;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
+.editFooter{
+  display: flex;
+  justify-content: space-between;
+}
