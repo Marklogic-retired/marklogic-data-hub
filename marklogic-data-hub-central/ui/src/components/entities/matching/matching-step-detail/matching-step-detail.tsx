@@ -1,22 +1,21 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Card, Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip, Switch} from "antd";
+import {Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip, Switch} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import {useHistory} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {useHistory} from "react-router-dom";
-import styles from "./matching-step-detail.module.scss";
-import "./matching-step-detail.scss";
-import {MatchingStepTooltips} from "../../../../config/tooltips.config";
+import HCCard from "../../../common/hc-card/hc-card";
 import CustomPageHeader from "../../page-header/page-header";
+
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import RulesetMultipleModal from "../ruleset-multiple-modal/ruleset-multiple-modal";
 import NumberIcon from "../../../number-icon/number-icon";
 import ThresholdModal from "../threshold-modal/threshold-modal";
 import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep} from "../../../../types/curation-types";
-import {MatchingStepDetailText} from "../../../../config/tooltips.config";
+import {MatchingStepDetailText, MatchingStepTooltips} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact, calculateMatchingActivity, previewMatchingActivity, getDocFromURI} from "../../../../api/matching";
 import {DownOutlined} from "@ant-design/icons";
 import {getViewSettings, setViewSettings, clearSessionStorageOnRefresh} from "../../../../util/user-context";
@@ -29,6 +28,7 @@ import TimelineVisDefault from "./timeline-vis-default/timeline-vis-default";
 
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import styles from "./matching-step-detail.module.scss";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -698,7 +698,7 @@ const MatchingStepDetail: React.FC = () => {
               {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
                 return <Col xs={4} key={`${combinationsObject["name"]}-${i}`}>
                   <div className={styles.matchCombinationsColsContainer}>
-                    <Card bordered={false} className={styles.matchCombinationsCardStyle}>
+                    <HCCard className={styles.matchCombinationsCardStyle}>
                       <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
                         <div className={styles.combinationlabel} aria-label={`combinationLabel-${combinationsObject.name}`}>Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:</div>
 
@@ -713,7 +713,7 @@ const MatchingStepDetail: React.FC = () => {
 
                         })}
                       </div>
-                    </Card>
+                    </HCCard>
                   </div>
                 </Col>;
               })
