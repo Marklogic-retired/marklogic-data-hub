@@ -50,7 +50,8 @@
   }
 
   .largeCard {
-    background-color: #f8f8f8;
+    background-color: #f8f8f8 !important;
+    border-width: 0 !important;
     display: block;
     width: 760px;
     max-width: 48vw;
@@ -65,7 +66,8 @@
   }
 
   .smallCard {
-    background-color: #f8f8f8;
+    background-color: #f8f8f8 !important;
+    border-width: 0 !important;
     display: block;
     width: 760px;
     max-width: 48vw;
