@@ -1,7 +1,9 @@
 import React, {useContext} from "react";
-import {Alert, Spin} from "antd";
+import {Alert} from "antd";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
+import Spinner from "react-bootstrap/Spinner";
+import styles from "./async-loader.module.scss";
 
 const AsyncLoader: React.FC = () => {
   const {user, clearErrorMessage} = useContext(UserContext);
@@ -25,7 +27,9 @@ const AsyncLoader: React.FC = () => {
           onClose={onClose}
         />
         :
-        <Spin data-testid="spinner" tip="Loading..." style={{margin: "100px auto", width: "100%"}} />
+        <div className={styles.spinnerContainer}>
+          <Spinner animation="border" variant="primary" data-testid="spinner" />
+        </div>
       }
     </>
   );

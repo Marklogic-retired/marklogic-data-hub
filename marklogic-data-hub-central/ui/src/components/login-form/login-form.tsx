@@ -1,8 +1,9 @@
 import React, {useContext, useState} from "react";
-import {Form, Icon, Input, Alert, Spin, Button} from "antd";
+import {Form, Icon, Input, Alert, Button} from "antd";
 import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
+import Spinner from "react-bootstrap/Spinner";
 
 const LoginForm: React.FC = () => {
 
@@ -122,7 +123,7 @@ const LoginForm: React.FC = () => {
             </Button>
           </Form.Item>
         </Form>
-        {isLoading && <div className={styles.loginSpinner}><Spin size="default"/></div>}
+        {isLoading && <div className={styles.loginSpinner}><Spinner animation="border" variant="primary" /></div>}
       </div>
     </>
   );
