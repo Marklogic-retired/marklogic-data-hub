@@ -125,7 +125,7 @@ class RunPage {
   }
 
   clickSuccessCircleIcon(stepName: string) {
-    cy.findByTestId(`check-circle-${stepName}`).click();
+    cy.findByTestId(`check-circle-${stepName}`).scrollIntoView().click();
   }
 
   runFlow(flowName :string) {
