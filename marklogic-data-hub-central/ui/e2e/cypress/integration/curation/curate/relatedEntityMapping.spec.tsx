@@ -272,7 +272,7 @@ describe("Mapping", () => {
     browsePage.getPaginationPageSizeOptions().then(attr => {
       attr[0].click();
     });
-    browsePage.getPageSizeOption("10 / page").click();
+    browsePage.getPageSizeOption("10 / page").click({force: true});
     mappingStepDetail.entityTitle("Person").should("be.visible");
   });
 });

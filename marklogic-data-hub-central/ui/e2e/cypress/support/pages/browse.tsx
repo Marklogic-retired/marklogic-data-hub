@@ -321,7 +321,7 @@ class BrowsePage {
   }
 
   getCard() {
-    return cy.get(".ant-card-body");
+    return cy.get(".card-body");
   }
 
   getTableViewInstanceIcon() {
