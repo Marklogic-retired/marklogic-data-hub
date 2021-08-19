@@ -1,6 +1,6 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Card, Icon, Select, Modal, Tooltip} from "antd";
+import {Icon, Select, Modal, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,9 +13,10 @@ import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from
 import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
 import {ConfirmationType} from "../../../types/common-types";
 import {MergingStep, StepType} from "../../../types/curation-types";
-import Steps from "../../steps/steps";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
 import HCDivider from "../../common/hc-divider/hc-divider";
+import HCCard from "../../common/hc-card/hc-card";
+import Steps from "../../steps/steps";
 
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 interface Props {
@@ -115,7 +116,7 @@ const MergingCard: React.FC<Props> = (props) => {
     setSelectVisible(true);
     setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
-      (e.target.className === "ant-card-body" ||
+      (e.target.className === "card-body" ||
         e.target.className.startsWith("merging-card_cardContainer") ||
         e.target.className.startsWith("merging-card_formatFileContainer") ||
         e.target.className.startsWith("merging-card_sourceQuery") ||
@@ -372,22 +373,20 @@ const MergingCard: React.FC<Props> = (props) => {
       <Row>
         {props.canWriteMatchMerge ? (
           <Col xs={"auto"}>
-            <Card
-              size="small"
+            <HCCard
               className={styles.addNewCard}>
               <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew}/></div>
               <br />
               <p className={styles.addNewContent}>Add New</p>
-            </Card>
+            </HCCard>
           </Col>
-        ) : <Col xs={"auto"}>
-          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
-            size="small"
+        ) : <Col>
+          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><HCCard
             className={styles.addNewCardDisabled}>
             <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
             <br/>
             <p className={styles.addNewContent}>Add New</p>
-          </Card></Tooltip>
+          </HCCard></Tooltip>
         </Col>}
         {props.mergingStepsArray && props.mergingStepsArray.length > 0 ? (
           props.mergingStepsArray.map((step, index) => (
@@ -397,10 +396,9 @@ const MergingCard: React.FC<Props> = (props) => {
                 onMouseOver={(e) => handleMouseOver(e, step.name)}
                 onMouseLeave={(e) => handleMouseLeave()}
               >
-                <Card
+                <HCCard
                   actions={renderCardActions(step, index)}
                   className={styles.cardStyle}
-                  size="small"
                 >
                   <div className={styles.formatFileContainer}>
                     <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(step.name, 27, "...")}</span>
@@ -447,9 +445,10 @@ const MergingCard: React.FC<Props> = (props) => {
                           </Select>
                         </div></HCTooltip>
                       ): null}
+
                     </div>
                   </div>
-                </Card>
+                </HCCard>
               </div>
             </Col>
           ))

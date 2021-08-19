@@ -1,16 +1,16 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Card, Modal, Select} from "antd";
+import {Modal, Select} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
-import {CustomStepTooltips} from "../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import Steps from "../../steps/steps";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {Link, useHistory} from "react-router-dom";
-import {SecurityTooltips} from "../../../config/tooltips.config";
+import {CustomStepTooltips, SecurityTooltips} from "../../../config/tooltips.config";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import HCCard from "../../common/hc-card/hc-card";
+import Steps from "../../steps/steps";
 
 const {Option} = Select;
 
@@ -69,7 +69,7 @@ const CustomCard: React.FC<Props> = (props) => {
     setSelectVisible(true);
     setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
-            (e.target.className === "ant-card-body" ||
+            (e.target.className === "card-body" ||
              e.target.className.startsWith("custom-card_cardContainer") ||
              e.target.className.startsWith("custom-card_formatFileContainer") ||
              e.target.className.startsWith("custom-card_sourceQuery") ||
@@ -152,14 +152,13 @@ const CustomCard: React.FC<Props> = (props) => {
                 onMouseOver={(e) => handleMouseOver(e, elem.name)}
                 onMouseLeave={handleMouseLeave}
               >
-                <Card
+                <HCCard
                   actions={[
                     <HCTooltip text={CustomStepTooltips.viewCustom} id="custom-card-tooltip" placement="bottom">
                       <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(elem.name)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faCog}/> Edit Step Settings</span>
                     </HCTooltip>,
                   ]}
                   className={styles.cardStyle}
-                  size="small"
                 >
                   <div className={styles.formatFileContainer}>
                     <span aria-label={`${elem.name}-step-label`} className={styles.customNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
@@ -182,16 +181,16 @@ const CustomCard: React.FC<Props> = (props) => {
                           }
                         }>
                           <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>
-                          Add step to a new flow
+                            Add step to a new flow
                           </div>
                         </Link>
                         :
                         <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}>
-                        Add step to a new flow
+                          Add step to a new flow
                         </div>
                     }
                     <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
-                      Add step to an existing flow
+                        Add step to an existing flow
                       {
                         /** dropdown of flow names to add this custom step to */
                         selectVisible ?
@@ -222,7 +221,7 @@ const CustomCard: React.FC<Props> = (props) => {
                       }
                     </div>
                   </div>
-                </Card>
+                </HCCard>
               </div>
             </Col>
           ))
