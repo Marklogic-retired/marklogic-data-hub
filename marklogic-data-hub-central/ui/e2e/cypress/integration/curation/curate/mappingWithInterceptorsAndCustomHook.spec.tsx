@@ -160,7 +160,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.validateMapValue("Order", "unitPrice", "70.4");
     mappingStepDetail.validateMapValue("Order", "quantity", "72");
     mappingStepDetail.validateMapValue("Order", "discount", "0");
-    mappingStepDetail.validateMapValue("Order", "shipRegion", "region1\nregion4\n");
+    mappingStepDetail.validateMapValueP("Order", "shipRegion", "region1\nregion4\n");
     mappingStepDetail.validateMapValue("Order", "shippedDate", "1996-07-17T00:28:30");
   });
   it("Verify mapping step filtering for Entity table", () => {
