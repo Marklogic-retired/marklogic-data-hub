@@ -69,6 +69,10 @@ class GraphVis {
       return coordinatesInDOM;
     })));
   }
+
+  getCenterOnEntityTypeOption(entityName: string) {
+    return cy.findByTestId(`centerOnEntityType-${entityName}`);
+  }
 }
 
 const graphVis = new GraphVis();

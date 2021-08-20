@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useLayoutEffect} from "react";
+import React, {useState, useEffect, useContext, useLayoutEffect, CSSProperties} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import {ModelingContext} from "../../../../util/modeling-context";
@@ -8,6 +8,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NodeSvg from "./node-svg";
 import graphConfig from "../../../../config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
+import {Dropdown, Menu} from "antd";
 
 type Props = {
   entityTypes: any;
@@ -89,6 +90,9 @@ const GraphVis: React.FC<Props> = (props) => {
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [clickedNode, setClickedNode] = useState(undefined);
+  const [menuPosition, setMenuPosition] = useState({});
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
@@ -103,6 +107,11 @@ const GraphVis: React.FC<Props> = (props) => {
       nodes: getNodes(),
       edges: getEdges()
     });
+    return () => {
+      setClickedNode(undefined);
+      setMenuPosition({});
+      setContextMenuVisible(false);
+    };
   }, [props.entityTypes, props.filteredEntityTypes.length]);
 
   // Focus on the selected nodes in filter input
@@ -340,6 +349,49 @@ const GraphVis: React.FC<Props> = (props) => {
     return Math.random() * (max - min) + min;
   };
 
+  const menuClick = (event) => {
+    // TODO do something useful
+    setContextMenuVisible(false);
+    if (event.key === "1") {
+      if (network) {
+        network.focus(clickedNode);
+        setClickedNode(undefined);
+      }
+    }
+  };
+
+  const contextMenu: CSSProperties = {
+    top: menuPosition["top"],
+    left: menuPosition["left"]
+  };
+
+  const menu = () => {
+    return (
+      <Menu id="contextMenu" style={contextMenu} onClick={menuClick}>
+        { clickedNode &&
+      <Menu.Item key="1" data-testid={`centerOnEntityType-${clickedNode}`}>
+        Center on entity type
+      </Menu.Item> }
+        {/*{ clickedEdge &&
+      <Menu.Item key="2">
+        {"Edit relationship "}
+      </Menu.Item> }
+        <Menu.Item key="3"> <Link to={{ pathname: "/tiles/explore", state: {entity: clickedNode}}}>
+          {"Explore " + clickedNode + " instances"}
+        </Link> </Menu.Item>
+      <Menu.Item key="4">3rd menu item</Menu.Item>*/}
+      </Menu>
+    );
+  };
+
+  useEffect(() => {
+    if (clickedNode && menuPosition) {
+      setContextMenuVisible(true);
+    } else {
+      setContextMenuVisible(false);
+    }
+  }, [clickedNode]);
+
   const events = {
     select: (event) => {
       let {nodes} = event;
@@ -364,6 +416,9 @@ const GraphVis: React.FC<Props> = (props) => {
         };
         setSelectedRelationship(relationshipInfo);
         setOpenRelationshipModal(true);
+      }
+      if (clickedNode) {
+        setClickedNode(undefined);
       }
     },
 
@@ -393,18 +448,45 @@ const GraphVis: React.FC<Props> = (props) => {
       if (network && modelingOptions.selectedEntity) {
         network.selectNodes([modelingOptions.selectedEntity]);
       }
+    },
+    oncontext: (event) => {
+      let nodeId = network.getNodeAt(event.pointer.DOM);
+      if (nodeId) {
+        event.event.preventDefault();
+        let canvasCoord = network.getPosition(nodeId);
+        let DOMCoordinates = network.canvasToDOM({x: canvasCoord.x, y: canvasCoord.y});
+        //let DOMCoordinates = event.pointer.DOM;
+        setMenuPosition({left: DOMCoordinates.x, top: DOMCoordinates.y + 40});
+        setClickedNode(nodeId);
+      } else {
+        setClickedNode(undefined);
+        setMenuPosition({});
+      }
+    },
+    dragging: (event) => {
+      if (clickedNode) {
+        setClickedNode(undefined);
+        setMenuPosition({});
+      }
     }
   };
 
 
   return (
     <div id="graphVis">
-      <Graph
-        graph={graphData}
-        options={options}
-        events={events}
-        getNetwork={initNetworkInstance}
-      />
+      <Dropdown
+        overlay={menu}
+        trigger={["contextMenu"]}
+        visible={contextMenuVisible}
+        //placement="topRight"
+      >
+        <Graph
+          graph={graphData}
+          options={options}
+          events={events}
+          getNetwork={initNetworkInstance}
+        />
+      </Dropdown>
       <AddEditRelationship
         openRelationshipModal={openRelationshipModal}
         setOpenRelationshipModal={setOpenRelationshipModal}
