@@ -1,5 +1,6 @@
 import React from "react";
-import {Progress, Table} from "antd";
+import ProgressBar from "react-bootstrap/ProgressBar";
+import {Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./expandable-table-view.module.scss";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
@@ -95,7 +96,7 @@ const testMatchedUriTableColumns = [
     key: "matchedRulesetType " + (counter++) + " score",
     width: "15%",
     render: (scores, key) =>  <span key={key}  aria-label={"score " + scores.scores[0]}>
-      {scores.scores[0]>0 && <Progress percent={scores.scores[0]} strokeWidth={20} strokeColor={scores.matchedRule[0] !== "Reduce" ? "#00b300" : "#ff0000"} format={scores.matchedRule[0] !== "Reduce" ? percent => `${percent}` : percent => `-${percent}`} strokeLinecap={"square"}/>}
+      {scores.scores[0]>0 && <ProgressBar now={scores.scores[0]} label={scores.matchedRule[0] !== "Reduce" ? `${scores.scores[0]}` : `-${scores.scores[0]}`} variant={scores.matchedRule[0] !== "Reduce" ? "success" : "danger"}/>}
     </span>
   }
 ];
