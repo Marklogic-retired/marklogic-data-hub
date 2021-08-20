@@ -515,10 +515,23 @@ declare private function fix-path-expression($path as xs:string) as xs:string
     $path
 };
 
-declare function hent:dump-indexes($entities as json:array)
+declare private function get-database-indexes-post-processors($entities as json:array) as xs:string*
 {
-  let $entities := map:get(hent:add-indexes-for-entity-properties($entities), "updated-models")
-  let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
+  let $key := "databaseIndexesPostProcessor"
+  return fn:distinct-values(
+    for $val in json:array-values($entities)
+    let $info := map:get($val, "info")
+    where fn:exists($info) and map:contains($info, $key)
+    return fn:string(map:get($info, $key))
+  )
+};
+
+declare function hent:dump-indexes($entities as json:array) as document-node()
+{
+  let $post-processors := get-database-indexes-post-processors($entities)
+
+  let $updated-models := map:get(hent:add-indexes-for-entity-properties($entities), "updated-models")
+  let $uber-model := hent:uber-model(json:array-values($updated-models) ! xdmp:to-json(.)/object-node())
 
   let $database-config := xdmp:from-json(es:database-properties-generate($uber-model))
 
@@ -535,7 +548,21 @@ declare function hent:dump-indexes($entities as json:array)
     return map:put($index, "path-expression", fix-path-expression($path))
 
   let $_ := remove-duplicate-range-indexes($database-config)
-  return xdmp:to-json($database-config)
+  let $index-config := xdmp:to-json($database-config)
+
+  (:
+  Note that a processor must return a document-node, as this function is required to return a document-node.
+  A processor will typically be an SJS module, where it's easier to modify JSON. But the module will need to call
+  toObject() on the config variable, and then call xdmp.toJSON on the variable that it returns.
+  :)
+  let $_ :=
+    for $processor in $post-processors
+    let $_ := xdmp:trace("hub-entity", "Invoking database indexes post processor: " || $processor)
+    return xdmp:set($index-config, xdmp:invoke($processor, map:new(
+      map:entry("config", $index-config)
+    )))
+
+  return $index-config
 };
 
 (:
