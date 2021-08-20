@@ -182,7 +182,15 @@ class MappingStepDetail {
   }
 
   validateMapValue(entityName: string, propertyName: string, value:string) {
-    cy.findByTestId(`${entityName}-${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
+    cy.get(`[data-testid=${entityName}-${propertyName}-value] > span`).should("have.text", value);
+  }
+
+  validateMapValueP(entityName: string, propertyName: string, value:string) {
+    cy.get(`[data-testid=${entityName}-${propertyName}-value] > p`).should("have.text", value);
+  }
+
+  validateMapValueString(entityName: string, propertyName: string, value:string) {
+    cy.get(`[data-testid="${entityName}-${propertyName}-value"] > span`).should("have.text", value);
   }
 
   validateMapInput(propertyName: string, value:string) {
@@ -194,7 +202,7 @@ class MappingStepDetail {
   }
 
   getURIValue(entityTitle: string) {
-    return cy.findByTestId(`${entityTitle}-URI-value`).find(".ml-tooltip-container");
+    return cy.get(`[data-testid="${entityTitle}-URI-value"]`);
   }
 
   getForeignIcon(propertyName: string) {

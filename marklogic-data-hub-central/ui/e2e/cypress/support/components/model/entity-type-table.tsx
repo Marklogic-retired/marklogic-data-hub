@@ -18,7 +18,7 @@ class EntityTypeTable {
   }
 
   getExpandEntityIcon(entityName: string) {
-    return cy.findByTestId(`mltable-expand-${entityName}`);
+    return cy.get(`[data-row-key=${entityName}] > .ant-table-row-expand-icon-cell > .ant-table-row-expand-icon`);
   }
 
   sortByEntityName() {
