@@ -324,7 +324,8 @@ const ResultsTabularView = (props) => {
 
   const dataSource = props.data.map((item) => {
     return tableDataRender(item);
-  });
+  })
+  ;
 
   useEffect(() => {
     if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
