@@ -392,15 +392,58 @@ declare function build-entity-namespace-map($uber-model)
 
 declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
-  let $updated-models := hent:add-indexes-for-entity-properties($entities)
-  let $sortable-properties := map:get($updated-models, "sortable-properties")
-  let $entities := map:get($updated-models, "updated-models")
-  let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
+  let $post-processors := get-search-options-post-processors($entities)
+
+  let $entity-model-map := hent:add-indexes-for-entity-properties($entities)
+  let $sortable-properties := map:get($entity-model-map, "sortable-properties")
+  let $uber-model :=
+    let $entities := map:get($entity-model-map, "updated-models")
+    return hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
+
   return
     if ($for-explorer = fn:true()) then
-      hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, build-entity-namespace-map($uber-model))
+      let $options := hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, build-entity-namespace-map($uber-model))
+      return apply-search-options-post-processors($options, $post-processors)
     else
       hent:fix-options(es:search-options-generate($uber-model))
+};
+
+(:
+The concept of a module that can post-process DHF's generated search options is not specific to an entity; it's
+generic to a DHF application. But as of 5.6, DHF doesn't have a place in ML to store application-generic information.
+The config.sjs module is close to it, but that cannot be modified within DHS with user-specific config. So as an initial
+location, the "info" block in an entity model is being used as a source for this configuration.
+:)
+declare private function get-search-options-post-processors($entities as json:array) as xs:string*
+{
+  fn:distinct-values(
+    for $val in json:array-values($entities)
+    where $val instance of map:map
+    return
+      let $info := map:get($val, "info")
+      where fn:exists($info) and $info instance of map:map
+      return
+        let $processor := map:get($info, "searchOptionsPostProcessor")
+        where fn:exists($processor)
+        return fn:string($processor)
+  )
+};
+
+declare private function apply-search-options-post-processors(
+  $options as element(search:options),
+  $post-processors as xs:string*
+) as element(search:options)
+{
+  let $updated-options := $options
+
+  let $_ :=
+    for $processor in $post-processors
+    let $_ := xdmp:trace("hub-entity", "Invoking search options post processor: " || $processor)
+    return xdmp:set($updated-options, xdmp:invoke($processor, map:new(
+      map:entry("options", $updated-options)
+    )))
+
+  return $updated-options
 };
 
 declare private function fix-path-index($path-index as element(search:path-index)) as element(search:path-index)
@@ -888,7 +931,7 @@ declare %private function hent:build-indexes-for-structured-entity-properties($e
   the entityModel. All the structured properties are ignored for now even if a property is modeled as facetable as per
   https://project.marklogic.com/jira/browse/DHFPROD-5018
 :)
-declare %private function hent:add-indexes-for-entity-properties($entities as json:array) {
+declare %private function hent:add-indexes-for-entity-properties($entities as json:array) as map:map {
   let $models := json:array-values($entities) ! xdmp:to-json(.)/object-node()
   let $updated-models := json:array()
   let $sortable-properties := map:map()
