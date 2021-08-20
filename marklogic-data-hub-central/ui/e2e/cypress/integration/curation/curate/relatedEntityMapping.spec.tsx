@@ -92,7 +92,7 @@ describe("Mapping", () => {
     cy.waitUntil(() => mappingStepDetail.XPathInfoIcon().trigger("mouseout"));
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");
     cy.waitUntil(() => mappingStepDetail.relatedFilterMenu("Person")).click();
-    cy.waitUntil(() => mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)")).click();
+    cy.waitUntil(() => mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)")).click({force: true});
     mappingStepDetail.relatedInfoIcon().trigger("mouseover");
     mappingStepDetail.relatedInfoContent().should("be.visible");
     cy.waitUntil(() => mappingStepDetail.relatedInfoIcon().trigger("mouseout"));
@@ -128,7 +128,7 @@ describe("Mapping", () => {
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
     mappingStepDetail.testMap().click();
     mappingStepDetail.validateMapValue("Person", "id", "444-44-4440");
-    mappingStepDetail.validateMapValue("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
+    mappingStepDetail.validateMapValueString("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
     mappingStepDetail.getURIValue("Relation (relatedTo Person)").trigger("mouseover");
     cy.contains("/Relation/444-44-4440.json");
     // Search by name for non structured property
@@ -246,7 +246,7 @@ describe("Mapping", () => {
   it("Delete related entity from mapping via close icon", () => {
     // Reselect deleted related entity
     cy.waitUntil(() => mappingStepDetail.relatedFilterMenu("Person")).click();
-    cy.waitUntil(() => mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)")).click();
+    cy.waitUntil(() => mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)")).click({force: true});
     mappingStepDetail.entityTitle("Person").click(); // click outside menu to close it
     // Related entity exists before deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");

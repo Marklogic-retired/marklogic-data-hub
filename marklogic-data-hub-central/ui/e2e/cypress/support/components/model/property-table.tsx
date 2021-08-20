@@ -56,8 +56,8 @@ class PropertyTable {
     });
   }
 
-  expandStructuredTypeIcon(propertyName: string) {
-    return cy.findByTestId(`mltable-expand-${propertyName}`);
+  expandExtraStructuredTypeIcon() {
+    return cy.get(`.scroll-ffc26530ed-cfc97430bf-f0d870-efc97430bf > :nth-child(1) > .ant-table-row-expand-icon`);
   }
 
   getDeletePropertyIcon(entityName: string, propertyName: string) {
