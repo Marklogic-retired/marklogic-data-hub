@@ -143,4 +143,22 @@ describe("Graph Validations", () => {
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
   });
+
+  it("can center on entity type in graph view", () => {
+    modelPage.selectView("project-diagram");
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions["Person"];
+      graphVis.getGraphVisCanvas().rightclick(orderCoordinates.x, orderCoordinates.y);
+      graphVis.getCenterOnEntityTypeOption("Person").trigger("mouseover").click();
+
+      //Clicking on center of the canvas, should click on Person entity node.
+      graphVis.getGraphVisCanvas().click();
+
+      //Verify the side panel content for selected entity
+      graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
+      graphViewSidePanel.getPropertiesTab().should("be.visible");
+      graphViewSidePanel.getEntityTypeTab().should("be.visible");
+      graphViewSidePanel.getDeleteIcon("Person").should("be.visible");
+    });
+  });
 });
