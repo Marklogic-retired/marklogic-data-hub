@@ -5,6 +5,9 @@ import loadPage from "../../support/pages/load";
 import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
 import {ConfirmationType} from "../../support/types/modeling-types";
+import {
+  entityTypeTable,
+} from "../../support/components/model/index";
 
 describe("Validate persistence across Hub Central", () => {
   before(() => {
@@ -39,20 +42,19 @@ describe("Validate persistence across Hub Central", () => {
   it("Go to model tile, expand entity and property tables, and then visit another tile. When returning to the model tile, the expanded rows are persisted.", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
-    cy.findByTestId("mltable-expand-Customer").click();
+    entityTypeTable.getExpandEntityIcon("Customer").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-shipping-span").should("exist");
-    cy.findByTestId("mltable-expand-shipping").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
-    cy.findByTestId("shipping-street-span").should("exist");
+    cy.findByTestId("shipping-shipping-span").should("exist");
   });
 
   // Persistence of mapping step details is disabled temporarily. DHFPROD-7466
