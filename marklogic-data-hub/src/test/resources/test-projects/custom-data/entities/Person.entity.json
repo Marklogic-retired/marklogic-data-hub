@@ -3,7 +3,8 @@
     "title": "Person",
     "version": "0.0.1",
     "baseUri": "http://example.org/",
-    "searchOptionsPostProcessor": "/custom-data-modules/my-options-post-processor.xqy"
+    "searchOptionsPostProcessor": "/custom-data-modules/my-options-post-processor.xqy",
+    "databaseIndexesPostProcessor": "/custom-data-modules/my-indexes-post-processor.sjs"
   },
   "definitions": {
     "Person": {
@@ -11,6 +12,15 @@
         "name": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "status": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "birthYear": {
+          "datatype": "integer",
+          "sortable": true
         }
       }
     }
