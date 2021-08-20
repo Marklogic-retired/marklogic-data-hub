@@ -187,6 +187,8 @@ const GraphView: React.FC<Props> = (props) => {
           updateSavedEntity={props.updateSavedEntity}
           toggleRelationshipModal={props.toggleRelationshipModal}
           relationshipModalVisible={props.relationshipModalVisible}
+          canReadEntityModel={props.canReadEntityModel}
+          canWriteEntityModel={props.canWriteEntityModel}
         />
       </div>
     </div>;

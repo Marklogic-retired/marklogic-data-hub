@@ -9,6 +9,10 @@ import oneToOneIcon from "../../../../assets/one-to-one.svg";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
+import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
+import {ConfirmationType} from "../../../../types/common-types";
+import {getSystemInfo} from "../../../../api/environment";
+import {entityReferences} from "../../../../api/modeling";
 import {
   PropertyOptions,
   PropertyType,
@@ -24,6 +28,8 @@ type Props = {
   relationshipModalVisible: any;
   toggleRelationshipModal: any;
   updateSavedEntity: any;
+  canReadEntityModel: any;
+  canWriteEntityModel: any;
 }
 
 const {Option} = Select;
@@ -43,7 +49,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const [defaultCardinality, setDefaultCardinality] = useState(false);
   const {modelingOptions, updateEntityModified} = useContext(ModelingContext);
   const [loading, toggleLoading] = useState(false);
-
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.Identifer);
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
+  const [modifiedEntity, setModifiedEntity] = useState({entityName: "", modelDefinition: ""});
 
   const initRelationship = (sourceEntityIdx) => {
     let sourceEntityDetails = props.entityTypes[sourceEntityIdx];
@@ -380,11 +390,58 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     </Select>
   );
 
+  const deleteEntityProperty= async () => {
+    let entityName = props.relationshipInfo.sourceNodeName;
+    let propertyName = props.relationshipInfo.relationshipName;
+    const response = await entityReferences(entityName, propertyName);
+    if (response !== undefined && response["status"] === 200) {
+      let newConfirmType = ConfirmationType.DeletePropertyWarn;
+      let boldText: string[] = [propertyName];
+      if (response["data"]["entityNamesWithForeignKeyReferences"].length > 0) {
+        boldText.push(entityName);
+        newConfirmType = ConfirmationType.DeleteEntityPropertyWithForeignKeyReferences;
+        setStepValuesArray(response["data"]["entityNamesWithForeignKeyReferences"]);
+      } else if (response["data"]["stepNames"].length > 0) {
+        boldText.push(entityName);
+        newConfirmType = ConfirmationType.DeletePropertyStepWarn;
+        setStepValuesArray(response["data"]["stepNames"]);
+      }
+      setConfirmBoldTextArray(boldText);
+      setConfirmType(newConfirmType);
+      toggleConfirmModal(true);
+    }
+    let sourceEntityName = props.relationshipInfo.sourceNodeName;
+    let entityTypeDefinition;
+    let updatedDefinitions;
+    for (let i = 0; i < props.entityTypes.length; i++) {
+      if (props.entityTypes[i].entityName === sourceEntityName) {
+        updatedDefinitions = {...props.entityTypes[i].model};
+        entityTypeDefinition = props.entityTypes[i].model.definitions[sourceEntityName];
+      }
+    }
+    delete entityTypeDefinition["properties"][propertyName];
+    updatedDefinitions[sourceEntityName] = entityTypeDefinition;
+    let entityModifiedInfo: EntityModified = {
+      entityName: sourceEntityName,
+      modelDefinition: updatedDefinitions.definitions
+    };
+    setModifiedEntity(entityModifiedInfo);
+    updateEntityModified(modifiedEntity);
+  };
+
   const modalFooter = <div className={styles.modalFooter}>
     <div className={styles.deleteTooltip}>
       <MLTooltip title={ModelingTooltips.deleteRelationshipIcon} placement="top">
         <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
-          <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" />
+          <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.deleteIcon} size="lg"
+            icon={faTrashAlt}
+            onClick={(event) => {
+              if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                return event.preventDefault();
+              } else {
+                deleteEntityProperty();
+              }
+            }} />
         </i>
       </MLTooltip>
     </div>
@@ -404,6 +461,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     >{props.isEditing ? "Save" : "Add"}</MLButton>
   </div>;
 
+  const confirmAction = async () => {
+    await props.updateSavedEntity([modifiedEntity]);
+    await getSystemInfo();
+    toggleConfirmModal(false);
+  };
 
 
   return (<Modal
@@ -465,6 +527,14 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         </div>
       </div>
     </div>
+    <ConfirmationModal
+      isVisible={showConfirmModal}
+      type={confirmType}
+      boldTextArray={confirmBoldTextArray}
+      arrayValues={stepValuesArray}
+      toggleModal={toggleConfirmModal}
+      confirmAction={confirmAction}
+    />
   </Modal>);
 
 };
