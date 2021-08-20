@@ -329,10 +329,10 @@ void dh5Example() {
                             docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/dh-5-example; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            cp ~/.gradle/gradle.properties $GRADLE_USER_HOME; \
+                            rm -rf $WORKSPACE$GRADLE_DIR;/caches; \
+                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
@@ -354,9 +354,10 @@ void dhCustomHook() {
                             docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/dhf5-custom-hook; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
+                            rm -rf $WORKSPACE$GRADLE_DIR;/caches; \
+                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
@@ -377,10 +378,10 @@ void mappingExample() {
                             docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/mapping-example; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            cp ~/.gradle/gradle.properties $GRADLE_USER_HOME; \
+                            rm -rf $WORKSPACE$GRADLE_DIR/caches; \
+                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
@@ -403,10 +404,10 @@ void smartMastering() {
                             docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
                             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
                             export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/smart-mastering-complete; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            cp ~/.gradle/gradle.properties $GRADLE_USER_HOME; \
+                            rm -rf $WORKSPACE$GRADLE_DIR/caches; \
+                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
