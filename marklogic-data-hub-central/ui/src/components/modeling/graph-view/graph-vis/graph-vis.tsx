@@ -19,6 +19,8 @@ type Props = {
   updateSavedEntity: any;
   toggleRelationshipModal: any;
   relationshipModalVisible: any;
+  canReadEntityModel: any;
+  canWriteEntityModel: any;
 };
 
 // TODO temp hardcoded node data, remove when retrieved from db
@@ -75,6 +77,12 @@ let entityMetadata = {
     color: "#ded2da",
     instances: 75,
     x: -300,
+    y: -200
+  },
+  Patients: {
+    color: "#ded2da",
+    instances: 75,
+    x: -200,
     y: -200
   }
 };
@@ -496,6 +504,8 @@ const GraphVis: React.FC<Props> = (props) => {
         updateSavedEntity={props.updateSavedEntity}
         relationshipModalVisible={props.relationshipModalVisible}
         toggleRelationshipModal={props.toggleRelationshipModal}
+        canReadEntityModel={props.canReadEntityModel}
+        canWriteEntityModel={props.canWriteEntityModel}
       />
     </div>
   );

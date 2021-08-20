@@ -75,6 +75,7 @@
 .deleteIcon {
     color: #5B69AF;
     font-size: 24px;
+    cursor: pointer;
 }
 
 .deleteTooltip {
@@ -109,4 +110,11 @@
     padding-bottom: 3px;
     // padding-left: 6px;
     // padding-right: 6px;
+}
+
+.iconTrashReadOnly {
+    cursor: not-allowed;
+    font-size: 21px;
+    margin-left: 11px;
+    color: #cccccc;
 }

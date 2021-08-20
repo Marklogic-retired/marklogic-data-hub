@@ -19,11 +19,9 @@ class ConfirmationModal {
   getSaveAllEntityText() {
     return cy.findByLabelText("save-all-text", {timeout: 30000});
   }
-
   getRevertEntityText() {
     return cy.findByLabelText("revert-text");
   }
-
   getRevertAllEntityText() {
     return cy.findByLabelText("revert-all-text");
   }
@@ -33,15 +31,12 @@ class ConfirmationModal {
   getDeleteEntityRelationshipText() {
     return cy.findByLabelText("delete-relationship-text", {timeout: 30000});
   }
-
   getDeleteEntityRelationshipEditText() {
     return cy.findByLabelText("delete-relationship-edit-text", {timeout: 30000});
   }
-
   getDeleteEntityNoRelationshipEditText() {
     return cy.findByLabelText("delete-no-relationship-edit-text", {timeout: 30000});
   }
-
   getDeleteEntityStepText() {
     return cy.findByLabelText("delete-step-text", {timeout: 30000});
   }
@@ -59,6 +54,12 @@ class ConfirmationModal {
   }
   getDiscardChangesText() {
     return cy.findByLabelText("discard-changes-text");
+  }
+  getCloseConfirmationModelIcon() {
+    return cy.findByLabelText("icon: close");
+  }
+  deleteRelationship() {
+    return cy.findByTestId("delete-relationship").click();
   }
 }
 
