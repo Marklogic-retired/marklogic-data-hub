@@ -41,16 +41,16 @@ const MultiSlider = (props) => {
     return (
       <>
         <div className={"tooltipContainer"} style={{left: `${percent}%`}}>
-          {activeHandleIdOptions.hasOwnProperty("prop") && options[0].prop === activeHandleIdOptions["prop"] && activeHandleIdOptions.hasOwnProperty("type") && options[0].type === activeHandleIdOptions["type"]? <div className={disabled ? "tooltipDisabled" : "tooltip"}>
+          {activeHandleIdOptions.hasOwnProperty("prop") && options[0].prop === activeHandleIdOptions["prop"] && activeHandleIdOptions.hasOwnProperty("type") && options[0].type === activeHandleIdOptions["type"]? <div className={disabled ? "tooltipDisabled" : "tooltipDisplay"}>
             {options.map((opt, i) => (
-              <div className={activeHandleIdOptions["index"] === id.split("-")[1] ? "activeTooltipText": "tooltipText"} data-testid={`${options[0].prop}-active-tooltip`} key={i}>
+              <div className={activeHandleIdOptions["index"] === id.split("-")[1] ? "activeTooltipTextDisplay": "tooltipTextDisplay"} data-testid={`${options[0].prop}-active-tooltip`} key={i}>
                 <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={() => handleEdit({...options[0], sliderType: props.type, index: id.split("-")[1]})}><span>{opt.prop.split(".").join(" > ")}</span> {((opt.rulesetCategory && opt.rulesetCategory === "single") || !opt.rulesetCategory) && opt.type.length ? `-  ${opt.type}` : ""}</span>
                 {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}>X</div>}
               </div>)
             )}
           </div>
             :
-            <div className={disabled ? "tooltipDisabled" : "tooltip"}>
+            <div className={disabled ? "tooltipDisabled" : "tooltipDisplay"}>
               {options.map((opt, i) => (
                 <div className="tooltipText"  data-testid={`${options[0].prop}-tooltip`} key={i}>
                   <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={() => handleEdit({...options[0], sliderType: props.type, index: id.split("-")[1]})}><span aria-label={((opt.rulesetCategory && opt.rulesetCategory === "single") || !opt.rulesetCategory) && opt.type.length ? `${opt.prop}-${opt.type}`: `${opt.prop}` }>{opt.prop.split(".").join(" > ")}</span>  {((opt.rulesetCategory && opt.rulesetCategory === "single") || !opt.rulesetCategory) && opt.type.length ? `-  ${opt.type}` : ""}</span>
