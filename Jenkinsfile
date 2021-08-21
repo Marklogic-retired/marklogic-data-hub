@@ -320,7 +320,7 @@ void BuildDatahub(){
 }
 
 void dh5Example() {
-    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
+    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
     copyRPM 'Release','10.0-6'
     script{
         props = readProperties file:'data-hub/pipeline.properties';
@@ -332,7 +332,6 @@ void dh5Example() {
                             export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/dh-5-example; \
                             rm -rf $WORKSPACE$GRADLE_DIR;/caches; \
-                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
@@ -345,7 +344,7 @@ void dh5Example() {
 }
 
 void dhCustomHook() {
-                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
+                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -357,7 +356,6 @@ void dhCustomHook() {
                             export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/dhf5-custom-hook; \
                             rm -rf $WORKSPACE$GRADLE_DIR;/caches; \
-                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
@@ -369,7 +367,7 @@ void dhCustomHook() {
 }
 
 void mappingExample() {
-                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
+                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -381,7 +379,6 @@ void mappingExample() {
                             export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/mapping-example; \
                             rm -rf $WORKSPACE$GRADLE_DIR/caches; \
-                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
@@ -395,7 +392,7 @@ void mappingExample() {
 }
 
 void smartMastering() {
-                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;'
+                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="maven {";url="url \'https://nexus.marklogic.com/repository/maven-snapshots/\'";protocal="allowInsecureProtocol = true}";cred="credentials {";uname="username mavenUser";pass="password mavenPassword }";sed -i "/repositories {/a$protocal" build.gradle;sed -i "/repositories {/a$url" build.gradle;sed -i "/repositories {/a$pass" build.gradle;sed -i "/repositories {/a$uname" build.gradle;sed -i "/repositories {/a$cred" build.gradle;sed -i "/repositories {/a$repo" build.gradle;mkdir -p $WORKSPACE$GRADLE_DIR;cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR;'
                      copyRPM 'Release','10.0-6'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
@@ -407,7 +404,6 @@ void smartMastering() {
                             export PATH=$JAVA_HOME/bin:$WORKSPACE$GRADLE_DIR:$PATH:$MAVEN_HOME/bin; \
                             cd $WORKSPACE/data-hub/examples/smart-mastering-complete; \
                             rm -rf $WORKSPACE$GRADLE_DIR/caches; \
-                            cp ~/.gradle/gradle.properties $WORKSPACE$GRADLE_DIR; \
                             ./gradlew -i hubInit -Ptesting=true; \
                             cp ../../marklogic-data-hub/gradle.properties .; \
                             ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
