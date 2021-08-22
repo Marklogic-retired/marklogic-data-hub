@@ -5,7 +5,7 @@ Go from nothing to an Operational Data Hub in a matter of minutes.
 MarkLogic Data Hub is a data integration platform and toolset that helps you quickly and efficiently integrate data from many sources into a single MarkLogic database and then expose that data.
 
 
-# Version Support
+# Version Support.  
 
 For Data Hub version 5.2, you need:  
 
