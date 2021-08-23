@@ -3,13 +3,13 @@ import {facetParser} from "../../util/data-conversion";
 import monitorPropertiesConfig from "../../config/monitoring.config";
 import MonitorFacet from "../monitor-facet/monitor-facet";
 import {MonitorContext} from "../../util/monitor-context";
-import {DatePicker, Select} from "antd";
+import {Select} from "antd";
 import styles from "../facet/facet.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-
+import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
 
 interface Props {
     facets: any;
@@ -27,7 +27,6 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     clearMonitorGreyFacet,
     clearMonitorConstraint
   } = useContext(MonitorContext);
-  const {RangePicker} = DatePicker;
   const {Option} = Select;
 
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(monitorOptions.selectedFacets);
@@ -283,12 +282,11 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
         <div className={styles.dateTimeWindow}>
           {timeWindow(dateRangeValue)}
         </div>
-        {dateRangeValue === "Custom" && <RangePicker
-          id="range-picker"
+        {dateRangeValue === "Custom" && <HCDateTimePicker
+          name="range-picker"
           className={styles.datePicker}
-          onChange={onDateChange}
           value={datePickerValue}
-        />}
+          onChange={onDateChange} />}
       </div>
       {facetsList.map(facet => {
         return facet && (
