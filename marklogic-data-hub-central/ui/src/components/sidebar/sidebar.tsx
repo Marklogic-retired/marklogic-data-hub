@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {DatePicker, Select, Switch, Radio} from "antd";
+import {Select, Switch, Radio} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -16,8 +16,8 @@ import {getUserPreferences, updateUserPreferences} from "../../services/user-pre
 import {UserContext} from "../../util/user-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {Accordion} from "react-bootstrap";
+import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
 
-const {RangePicker} = DatePicker;
 const {Option} = Select;
 const tooltips = tooltipsConfig.browseDocuments;
 
@@ -397,9 +397,11 @@ const Sidebar: React.FC<Props> = (props) => {
     return date;
   };
 
-  const onDateChange = (dateVal, dateArray) => {
+  const onDateChange = (startDate, endDate) => {
+    const dateArray = [startDate, endDate];
+
     let updateFacets = {...allSelectedFacets};
-    if (dateVal.length > 1) {
+    if (endDate) {
       updateFacets = {
         ...updateFacets, createdOnRange:
         {
@@ -431,7 +433,7 @@ const Sidebar: React.FC<Props> = (props) => {
   const onDateFacetChange = (datatype, facet, value, isNested) => {
     let updateFacets = {...allSelectedFacets};
     //let facetName = setFacetName(facet, isNested);
-    if (value.length > 1) {
+    if (value.length > 1 && value[0]) {
       updateFacets = {...updateFacets, [facet]: {dataType: datatype, rangeValues: {lowerBound: moment(value[0]).format("YYYY-MM-DD"), upperBound: moment(value[1]).format("YYYY-MM-DD")}}};
       setAllGreyedOptions(updateFacets);
       setAllSelectedFacets(updateFacets);
@@ -675,13 +677,11 @@ const Sidebar: React.FC<Props> = (props) => {
             <div className={styles.dateTimeWindow} >
               {timeWindow(dateRangeValue)}
             </div>
-            {dateRangeValue === "Custom" && <RangePicker
-              id="range-picker"
+            {dateRangeValue === "Custom" && <HCDateTimePicker
+              name="range-picker"
               className={styles.datePicker}
-              onChange={onDateChange}
               value={datePickerValue}
-              getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
-            />}
+              onChange={onDateChange} />}
             {hubFacets.map(facet => {
               return facet && (
                 <Facet

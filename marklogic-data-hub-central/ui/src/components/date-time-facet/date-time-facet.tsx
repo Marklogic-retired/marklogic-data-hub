@@ -1,11 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
-import {DatePicker} from "antd";
 import {SearchContext} from "../../util/search-context";
 import moment from "moment";
 import styles from "./date-time-facet.module.scss";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-
-const {RangePicker} = DatePicker;
+import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
 
 interface Props {
   name: any
@@ -23,13 +21,14 @@ const DateTimeFacet: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
   const [dateTimePickerValue, setDateTimePickerValue] = useState<any[]>([null, null]);
 
-  const onChange = (e) => {
+  const onChange = (element, picker) => {
+    const dateArray = [picker.startDate, picker.endDate];
     let isNested = props.constraint === props.propertyPath ? false : true;
-    if (e.length) {
-      props.onChange(props.datatype, props.constraint, e, isNested);
-      (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format("YYYY-MM-DDTHH:mm:ss")), moment(e[1].format("YYYY-MM-DDTHH:mm:ss"))]);
+    if (dateArray.length) {
+      props.onChange(props.datatype, props.constraint, dateArray, isNested);
+      (dateArray[0] && dateArray[1]) && setDateTimePickerValue([moment(dateArray[0].format("YYYY-MM-DDTHH:mm:ss")), moment(dateArray[1].format("YYYY-MM-DDTHH:mm:ss"))]);
     } else {
-      props.onChange(props.datatype, props.constraint, e, isNested);
+      props.onChange(props.datatype, props.constraint, dateArray, isNested);
     }
   };
 
@@ -69,16 +68,11 @@ const DateTimeFacet: React.FC<Props> = (props) => {
   return (
     <div className={styles.name} data-testid="facet-date-time-picker">
       <p className={styles.facetName}><HCTooltip text={props.name.replace(/\./g, " > ")} id={props.name+"-tooltip"} placement="top">{formatTitle()}</HCTooltip></p>
-      <RangePicker
-        showTime={{format: "HH:mm:ss"}}
-        format="YYYY-MM-DD HH:mm:ss"
+      <HCDateTimePicker key={props.name} name={props.name}
+        time={true}
         placeholder={["Start Date Time", "End Date Time"]}
-        onChange={onChange}
-        //onOk={onOk}
+        onOk={onChange}
         value={dateTimePickerValue}
-        style={{width: "auto"}}
-        key={props.name}
-        getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
       />
     </div>
   );

@@ -28,6 +28,5 @@ test("Verify Custom date picker is rendered", () => {
   expect(getByText("Today")).toBeInTheDocument();
   expect(getByText("This Week")).toBeInTheDocument();
   fireEvent.click(getByText("Custom"));
-  expect(getByPlaceholderText("Start date")).toBeInTheDocument();
-  expect(getByPlaceholderText("End date")).toBeInTheDocument();
+  expect(getByPlaceholderText("Start date ~ End date")).toBeInTheDocument();
 });

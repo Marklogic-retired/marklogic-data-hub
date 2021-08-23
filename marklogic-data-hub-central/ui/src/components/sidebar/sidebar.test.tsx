@@ -37,8 +37,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
     userEvent.click(getByText("select time"));
     expect(getByText("Custom")).toBeInTheDocument();
     fireEvent.click(getByText("Custom"));
-    expect(getByPlaceholderText("Start date")).toBeInTheDocument();
-    expect(getByPlaceholderText("End date")).toBeInTheDocument();
+    expect(getByPlaceholderText("Start date ~ End date")).toBeInTheDocument();
   });
 
   test("Verify that hub properties is expanded by default", () => {
