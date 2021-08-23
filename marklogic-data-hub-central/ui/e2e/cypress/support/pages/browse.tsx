@@ -176,7 +176,7 @@ class BrowsePage {
   }
 
   getDateFacetPicker() {
-    return cy.get(".ant-calendar-picker");
+    return cy.get("[data-testid=\"facet-datetime-picker-date\"]");
   }
 
   getSelectedFacet(facet: string) {
@@ -185,12 +185,12 @@ class BrowsePage {
 
   selectDateRange() {
     this.getDateFacetPicker().click();
-    cy.waitUntil(() => cy.get(".ant-calendar-range-part:first-child .ant-calendar-current-week > td:first-child")).click({force: true});
-    cy.waitUntil(() => cy.get(".ant-calendar-range-part:first-child .ant-calendar-current-week > td:last-child")).click({force: true});
+    cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child")).click({force: true});
+    cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child")).click({force: true});
   }
 
   getDateFacetClearIcon() {
-    return cy.get(".ant-calendar-picker .ant-calendar-picker-clear");
+    return cy.get("[data-testid=\"facet-datetime-picker-date\"] ~ svg[class^=\"hc-datetime-picker_clearIcon\"]");
   }
 
   getDateFacetPickerIcon() {

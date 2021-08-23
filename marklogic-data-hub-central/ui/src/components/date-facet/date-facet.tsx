@@ -1,11 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
-import {DatePicker} from "antd";
 import {SearchContext} from "../../util/search-context";
 import styles from "./date-facet.module.scss";
 import moment from "moment";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-
-const {RangePicker} = DatePicker;
+import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
 
 interface Props {
     name: any
@@ -23,13 +21,15 @@ const DateFacet: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
 
-  const onChange = (e) => {
+  const onChange = (startDate, endDate) => {
+    const dateArray = [startDate, endDate];
     let isNested = props.constraint === props.propertyPath ? false : true;
-    if (e.length) {
-      props.onChange(props.datatype, props.constraint, e, isNested);
-      (e[0] && e[1]) && setDatePickerValue([moment(e[0].format("YYYY-MM-DD")), moment(e[1].format("YYYY-MM-DD"))]);
+
+    if (dateArray.length && dateArray[0]) {
+      props.onChange(props.datatype, props.constraint, dateArray, isNested);
+      (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
     } else {
-      props.onChange(props.datatype, props.constraint, e, isNested);
+      props.onChange(props.datatype, props.constraint, !dateArray[0] ? [] : dateArray, isNested);
     }
   };
 
@@ -69,12 +69,11 @@ const DateFacet: React.FC<Props> = (props) => {
   return (
     <div className={styles.name} data-testid="facet-date-picker">
       <p className={styles.name} ><HCTooltip text={props.name.replace(/\./g, " > ")} id={props.name+"-date-tooltip"} placement="top">{formatTitle()}</HCTooltip></p>
-      <RangePicker
-        // className={styles.datePicker}
+      <HCDateTimePicker
         onChange={onChange}
-        value={datePickerValue}
         key={props.name}
-        getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
+        name="facet-datetime-picker-date"
+        value={datePickerValue}
       />
     </div>
   );
