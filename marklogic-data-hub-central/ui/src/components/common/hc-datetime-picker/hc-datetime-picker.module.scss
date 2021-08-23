@@ -1,0 +1,55 @@
+@import "../../../HCTheme.scss";
+
+.pickerContainer {
+    background-color: white;
+    position: relative;
+    max-width: 265px;
+    
+    &:focus-visible {
+        border: none;
+        outline: none;
+    }
+}
+.input {
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #d9d9d9;
+    color: $text-color;
+    padding: 4px 11px;
+    width: 100%;
+    font-size: $font-size-base;
+    text-align: center;
+    
+    &:focus-visible {
+        border: #808cbd 1px solid;
+        border-radius: 4px;
+        outline: none;
+    }
+
+    &:focus, &:hover {
+        border-color: #808cbd;
+        border-radius: 4px;
+        border-right-width: 1px !important;
+        box-shadow: 0 0 0 2px rgba(128, 140, 189, 0.2);
+    }
+}
+.calendarIcon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: $light;
+    background-color: white;
+    font-size: 12px;
+    cursor: pointer;
+    pointer-events: all;
+}
+.clearIcon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: $light;
+    background-color: white;
+    font-size: 12px;
+    cursor: pointer;
+    pointer-events: all;
+}
