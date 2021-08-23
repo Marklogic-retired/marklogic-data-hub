@@ -49,6 +49,7 @@ public interface ArtifactService {
 
             private BaseProxy.DBFunctionRequest req_getArtifactsWithProjectPaths;
             private BaseProxy.DBFunctionRequest req_setArtifact;
+            private BaseProxy.DBFunctionRequest req_saveUserConfig;
             private BaseProxy.DBFunctionRequest req_clearUserArtifacts;
             private BaseProxy.DBFunctionRequest req_getList;
 
@@ -60,6 +61,8 @@ public interface ArtifactService {
                     "getArtifactsWithProjectPaths.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_setArtifact = this.baseProxy.request(
                     "setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_saveUserConfig = this.baseProxy.request(
+                    "saveUserConfig.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_clearUserArtifacts = this.baseProxy.request(
                     "clearUserArtifacts.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(
@@ -93,6 +96,19 @@ public interface ArtifactService {
                           BaseProxy.documentParam("artifact", false, BaseProxy.JsonDocumentType.fromJsonNode(artifact))
                           ).responseSingle(false, Format.JSON)
                 );
+            }
+
+            @Override
+            public void saveUserConfig(com.fasterxml.jackson.databind.JsonNode userConfig) {
+                saveUserConfig(
+                    this.req_saveUserConfig.on(this.dbClient), userConfig
+                    );
+            }
+            private void saveUserConfig(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode userConfig) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("userConfig", false, BaseProxy.JsonDocumentType.fromJsonNode(userConfig))
+                          ).responseNone();
             }
 
             @Override
@@ -141,6 +157,14 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact);
+
+  /**
+   * Saves user config to the staging and final databases
+   *
+   * @param userConfig	Must be a JSON object
+   * 
+   */
+    void saveUserConfig(com.fasterxml.jackson.databind.JsonNode userConfig);
 
   /**
    * Invokes the clearUserArtifacts operation on the database server

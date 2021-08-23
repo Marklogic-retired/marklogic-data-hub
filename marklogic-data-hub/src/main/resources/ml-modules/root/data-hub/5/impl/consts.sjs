@@ -14,6 +14,7 @@
   limitations under the License.
 */
 
+const USER_CONFIG_COLLECTION = "http://marklogic.com/data-hub/user-config";
 const FLOW_COLLECTION = "http://marklogic.com/data-hub/flow";
 const ENTITY_MODEL_COLLECTION = "http://marklogic.com/entity-services/models";
 const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definition";
@@ -69,12 +70,14 @@ module.exports = {
 
   HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
 
+  USER_CONFIG_COLLECTION,
   FLOW_COLLECTION,
   ENTITY_MODEL_COLLECTION,
   STEP_DEFINITION_COLLECTION,
   STEP_COLLECTION,
 
   USER_ARTIFACT_COLLECTIONS: [
+    USER_CONFIG_COLLECTION,
     FLOW_COLLECTION,
     ENTITY_MODEL_COLLECTION,
     STEP_DEFINITION_COLLECTION,
@@ -84,7 +87,7 @@ module.exports = {
   PROVENANCE_OFF: "off",
   PROVENANCE_COARSE: "coarse",
   PROVENANCE_FINE: "fine",
-  
+
   // Define all DH trace events here
   TRACE_STEP: "hub-step",
   TRACE_FLOW: "hub-flow",

@@ -1,0 +1,12 @@
+{
+    "functionName": "saveUserConfig",
+    "desc": "Saves user config to the staging and final databases",
+    "params": [
+        {
+            "name": "userConfig",
+            "desc": "Must be a JSON object",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ]
+}

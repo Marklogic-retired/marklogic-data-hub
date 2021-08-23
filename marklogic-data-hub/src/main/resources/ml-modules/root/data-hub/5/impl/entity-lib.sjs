@@ -405,6 +405,39 @@ function findEntityIdentifiers(uris, entityType) {
   return fn.head(hent.findEntityIdentifiers(hubUtils.normalizeToSequence(uris), entityType));
 }
 
+function getDatabaseIndexesPostProcessor() {
+  const userConfig = getUserConfig();
+  if (userConfig) {
+    return userConfig.modeling ? userConfig.modeling.databaseIndexesPostProcessor : undefined;
+  }
+  return undefined;
+}
+
+function getEntityDetailsModulePath() {
+  const userConfig = getUserConfig();
+  if (userConfig) {
+    return userConfig.modeling ? userConfig.modeling.entityDetailsModulePath : undefined;
+  }
+  return undefined;
+}
+
+function getSearchOptionsPostProcessor() {
+  const userConfig = getUserConfig();
+  if (userConfig) {
+    return userConfig.modeling ? userConfig.modeling.searchOptionsPostProcessor : undefined;
+  }
+  return undefined;
+}
+
+// If we end up adopting this approach, should move this to a non-entity-specific location
+function getUserConfig() {
+  const userConfig = fn.head(fn.subsequence(
+    cts.search(cts.collectionQuery(consts.USER_CONFIG_COLLECTION)),
+    1, 1
+  ));
+  return userConfig ? userConfig.toObject() : null;
+}
+
 module.exports = {
   deleteModel,
   findForeignKeyReferencesInOtherModels,
@@ -418,11 +451,14 @@ module.exports = {
   findEntityTypesAsMap,
   findModelByEntityName,
   findModelForEntityTypeId,
+  getDatabaseIndexesPostProcessor,
+  getEntityDetailsModulePath,
   getEntityTypeId,
   getEntityTypeIdParts,
   getLatestJobData,
   getModelCollection,
   getModelUri,
+  getSearchOptionsPostProcessor,
   validateModelDefinitions,
   writeModel,
   writeModelToDatabases

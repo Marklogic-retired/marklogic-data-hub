@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,8 +36,9 @@ class DbConfigsManager extends ResourceManager {
             ResourceServices.ServiceResult res = resultItr.next();
             return (ObjectNode) res.getContent(new JacksonHandle()).get();
         } catch (Exception e) {
-            // TODO Rethrow this??
-            e.printStackTrace();
+            // When this was extracted from EntityManagerImpl in 5/2019, printStackTrace was called, nothing more. It
+            // seems arguable that the error should be thrown, but that was not the initial DHF 5.0 behavior.
+            LoggerFactory.getLogger(getClass()).error("Unable to generate indexes: " + e.getMessage(), e);
         }
         return objectMapper.createObjectNode();
     }
