@@ -155,3 +155,16 @@ $input-border-radius: 2px;
 .cursor-pointer {
     cursor: pointer;
 }
+.daterangepicker {
+    font-family: $font-family-sans-serif;
+    
+    td.active, td.active:hover {
+        background-color: $primary;
+    }
+    .cancelBtn {
+        display: none;
+    }
+    .drp-selected {
+        display: none;
+    }
+}
