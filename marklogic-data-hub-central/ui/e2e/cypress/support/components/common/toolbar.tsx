@@ -24,9 +24,16 @@ class Toolbar {
     return cy.findByLabelText("tool-monitor");
   }
 
-
   getToolBarIcon(tile: string) {
     return cy.findByLabelText(`tool-${tile.toLowerCase()}`);
+  }
+
+  getHomePageInfoPopover() {
+    return cy.findByLabelText("homePageInfoPopover");
+  }
+
+  getHomePageInfoIcon() {
+    return cy.findByLabelText("homePageInfoIcon");
   }
 }
 const toolbar = new Toolbar();

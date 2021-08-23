@@ -225,6 +225,12 @@ describe("login", () => {
       .withUI()
       .url().should("include", "/tiles");
 
+    // To verify on click operation works as expected
+    toolbar.getHomePageInfoIcon().click();
+    toolbar.getHomePageInfoPopover().should("be.visible");
+    toolbar.getHomePageInfoIcon().click();
+    toolbar.getHomePageInfoPopover().should("be.not.visible");
+
     toolbar.getModelToolbarIcon().trigger("mouseover").click();
     cy.url().should("include", "/tiles/model");
     tiles.getModelTile().should("exist");
