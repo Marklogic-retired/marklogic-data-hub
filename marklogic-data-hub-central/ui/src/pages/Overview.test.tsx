@@ -10,21 +10,21 @@ describe("Overview component", () => {
 
   it("Verify content display", async () => {
 
-    const {getByText, getByLabelText} = render(<Overview/>);
+    const {getByText, getByLabelText, getAllByText} = render(<Overview/>);
 
     expect(getByLabelText("overview")).toBeInTheDocument();
 
     expect(getByText("Welcome to MarkLogic Data Hub Central")).toBeInTheDocument();
     expect(getByLabelText("introText")).toBeInTheDocument();
-    expect(getByText("Load")).toBeInTheDocument();
+    expect(getAllByText("Load")[0]).toBeInTheDocument();
     expect(getByLabelText("load-icon")).toBeInTheDocument();
-    expect(getByText("Model")).toBeInTheDocument();
+    expect(getAllByText("Model")[0]).toBeInTheDocument();
     expect(getByLabelText("model-icon")).toBeInTheDocument();
-    expect(getByText("Curate")).toBeInTheDocument();
+    expect(getAllByText("Curate")[0]).toBeInTheDocument();
     expect(getByLabelText("curate-icon")).toBeInTheDocument();
-    expect(getByText("Run")).toBeInTheDocument();
+    expect(getAllByText("Run")[0]).toBeInTheDocument();
     expect(getByLabelText("run-icon")).toBeInTheDocument();
-    expect(getByText("Explore")).toBeInTheDocument();
+    expect(getAllByText("Explore")[0]).toBeInTheDocument();
     expect(getByLabelText("explore-icon")).toBeInTheDocument();
 
   });

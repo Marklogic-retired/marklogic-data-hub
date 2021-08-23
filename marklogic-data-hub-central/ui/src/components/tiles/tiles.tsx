@@ -11,7 +11,7 @@ import {MLTooltip, MLButton} from "@marklogic/design-system";
 import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
-import modelingInfoIcon from "../../assets/modalInfoIcon.png";
+import modelingInfoIcon from "../../assets/icon_helpInfo.png";
 import {Popover} from "antd";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";

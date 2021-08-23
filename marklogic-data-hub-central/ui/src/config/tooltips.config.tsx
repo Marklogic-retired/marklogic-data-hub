@@ -3,6 +3,8 @@ import oneToManyIcon from "../assets/one-to-many-white.svg";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
+import modelIcon from "../assets/model-overview-helpInfo.svg";
+import "./tooltips.config.scss";
 
 /* --- MODELING --- */
 
@@ -657,7 +659,17 @@ const ToolbarBulbIconInfo = {
     <li>A <strong>basic</strong> data type, including integer, string, dateTime, boolean, or other less common data types.</li><br/>
     <li><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> A <strong>structured</strong> type, which is comprised of its own properties, which can also be of other structured types. Use structured types to create hierarchies of properties within your entity type. For example, the structured type property <span className={styles.lightFont}>FullName</span> of the entity <span className={styles.lightFont}>Employee</span> might have a <span className={styles.lightFont}>firstName, middleName</span>, and <span className={styles.lightFont}>lastName</span> properties within it. The depth of nested structured types is not limited.</li><br/>
     <li><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> A <strong>relationship</strong> type, which links to an entity of the selected type. Use a relationship type when there's a relationship between two entities — for example, an employee belongs to a department, so there's a relationship between Employee and Department.</li>
-  </ul></div>
+  </ul></div>,
+  homePageInfo: <div>
+      <span style={{fontSize:"larger"}}><strong>Ready to get started?</strong></span><br/><br/>
+      To understand exactly what Data Hub Central can do for you, first try to get a very simple use case working. When you are happy with the results, you can build on it to satisfy all your requirements.<br/><br/>
+      <div style={{display: "flex"}}><div className={"modelIconHeader"} style={{color: "#999999"}}></div><div>Start by creating a simple entity type from the <strong>Model</strong> screen. The entity type defines the standard structures to be populated with values from your source file. Add just a few properties to start.</div></div><br/>
+      <div style={{display: "flex"}}><div style={{display: "flex", flexDirection:"column"}}><div className={"loadIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"runIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"exploreIconHeader"} style={{color: "#999999"}}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a mapping step from the <strong>Curate</strong> screen. The mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br/><br/></div></div>
+      Once you are happy with the way the data from your first source system looks, you are ready to load and map data from additional sources. You will need to create a new load and mapping steps for each new source.<br/><br/>
+      After you have finished mapping, if there are duplicate records from various sources that you would like to merge, do the following from the <strong>Curate</strong> screen:<br/>
+      &nbsp;&nbsp;1. Create a match step to identify the duplicates.<br/>
+      &nbsp;&nbsp;2. Create a merge step to merge duplicates.
+  </div>
 }
 
 /* ===== */
