@@ -1,5 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Row, Col, Card, Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip, Switch} from "antd";
+import {Card, Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip, Switch} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -690,9 +692,9 @@ const MatchingStepDetail: React.FC = () => {
           <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
           <span className={styles.expandCollapseRulesIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapseRulesIcon(id)} currentSelection={"collapse"} aria-label="expandCollapseRulesetIcon"/></span>
           {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
-            <Row gutter={[24, 24]} type="flex">
+            <Row>
               {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
-                return <Col span={8} key={`${combinationsObject["name"]}-${i}`}>
+                return <Col xs={4} key={`${combinationsObject["name"]}-${i}`}>
                   <div className={styles.matchCombinationsColsContainer}>
                     <Card bordered={false} className={styles.matchCombinationsCardStyle}>
                       <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
