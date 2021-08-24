@@ -1,6 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
-import {Card, Col, Row, Modal, Alert, Button, Tooltip} from "antd";
+import {Card, Modal, Alert, Button, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
@@ -152,8 +154,7 @@ const SystemInfo = (props) => {
         </div>
         <div className={styles.cardsContainer}>
           <div className={styles.cards}>
-            <Row gutter={16} type="flex" >
-
+            <Row>
               { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
