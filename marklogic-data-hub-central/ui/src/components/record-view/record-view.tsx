@@ -1,6 +1,8 @@
 import React, {CSSProperties, useContext} from "react";
 import styles from "./record-view.module.scss";
-import {Card, Icon, Row, Col, Popover, Tooltip} from "antd";
+import {Card, Icon, Popover, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {AuthoritiesContext} from "../../util/authorities";
@@ -170,9 +172,9 @@ const RecordCardView = (props) => {
 
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
-      <Row gutter={24} type="flex" >
+      <Row>
         {props.data && props.data.length > 0 ? props.data.map((elem, index) => (
-          <Col key={index}>
+          <Col xs={"auto"} key={index}>
             <div >
               <Card
                 className={styles.cardStyle}

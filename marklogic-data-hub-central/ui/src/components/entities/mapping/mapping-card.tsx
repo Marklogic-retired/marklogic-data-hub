@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./mapping-card.module.scss";
-import {Card, Icon, Divider, Row, Col, Modal, Select, Tooltip} from "antd";
+import {Card, Icon, Divider, Modal, Select, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
@@ -291,16 +293,16 @@ const MappingCard: React.FC<Props> = (props) => {
       maskClosable={false}
     >
       <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mappingArtifactName}</strong>.</div>
-      <Row className={styles.flowSelectGrid}>
-        <Col span={11}>
+      <Row className={"pt-4"}>
+        <Col>
           <div>{props.flows.map((flow, i) => (
             <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
           ))}</div>
         </Col>
-        <Col span={2}>
+        <Col xs={"auto"}>
           <Divider type="vertical" className={styles.verticalDiv}></Divider>
         </Col>
-        <Col span={11}>
+        <Col>
           <Link data-testid="link" id="tiles-add-run-new-flow" to={
             {pathname: "/tiles/run/add-run",
               state: {
@@ -362,8 +364,8 @@ const MappingCard: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.loadContainer}>
-      <Row gutter={16} type="flex" >
-        {props.canReadWrite ? <Col>
+      <Row>
+        {props.canReadWrite ?<Col xs={"auto"}>
           <Card
             size="small"
             className={styles.addNewCard}>
@@ -371,7 +373,7 @@ const MappingCard: React.FC<Props> = (props) => {
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </Card>
-        </Col> : <Col>
+        </Col> : <Col xs={"auto"}>
           <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><Card
             size="small"
             className={styles.addNewCardDisabled}>
@@ -383,7 +385,7 @@ const MappingCard: React.FC<Props> = (props) => {
         {
           props.data && props.data.length > 0 ?
             props.data.map((elem, index) => (
-              <Col key={index}>
+              <Col xs={"auto"} key={index}>
                 <div
                   data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
                   onMouseOver={(e) => handleMouseOver(e, elem.name)}
