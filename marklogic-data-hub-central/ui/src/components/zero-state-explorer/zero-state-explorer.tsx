@@ -1,5 +1,7 @@
 import React, {useState, useContext} from "react";
-import {Row, Col, Card, Select, Input, Divider, Button, Radio, Tooltip} from "antd";
+import {Card, Select, Input, Divider, Button, Radio, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import styles from "./zero-state-explorer.module.scss";
 import {SearchContext} from "../../util/search-context";
 import graphic from "./explore_visual_big.png";
@@ -131,27 +133,27 @@ const ZeroStateExplorer = (props) => {
   return (
     <div id="zero-state-explorer" className={styles.container} >
       <div className={styles.zeroContent}>
-        <Row>
-          <Col span={18}>
+        <Row className={"g-0"}>
+          <Col md={9}>
             <p className={styles.intro}>{tiles.explore.intro}</p>
           </Col>
-          <Col span={6} >
+          <Col md={3} >
             <div className={styles.image}>
               <img className={styles.graphic} src={graphic} alt={""} />
             </div>
           </Col>
         </Row>
-        <Row gutter={[0, 28]}>
-          <Col span={12} offset={6}>
+        <Row className={"g-0"}>
+          <Col xs={12} className={"py-3"}>
             <p className={styles.p}>What do you want to explore?</p>
           </Col>
         </Row>
-        <Row>
-          <Col span={24}>
+        <Row className={"g-0"}>
+          <Col xs={12}>
             <div className={styles.box}>
               <Card className={styles.largeCard} bordered={false}>
-                <Row>
-                  <Col span={24}>
+                <Row className={"g-0"}>
+                  <Col xs={12}>
                     <div className={styles.database}>
                       <p className={styles.databaseLabel}>Database:</p>
                       <Radio.Group
@@ -175,7 +177,7 @@ const ZeroStateExplorer = (props) => {
                 </Row>
                 <br />
                 <Row>
-                  <Col span={24}>
+                  <Col xs={12}>
                     <div className={styles.input}>
                       <Input
                         className={styles.searchBar}
@@ -190,8 +192,7 @@ const ZeroStateExplorer = (props) => {
                   </Col>
                 </Row>
                 <Row>
-                  <br />
-                  <Col span={24}>
+                  <Col xs={12} className={"py-3"}>
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
                       <Radio.Group
@@ -231,7 +232,7 @@ const ZeroStateExplorer = (props) => {
                 </Row>
                 <Row>
                   <br />
-                  <Col span={24}>
+                  <Col xs={12}>
                     <div className={styles.exploreButton}>
                       <Button type="primary" data-cy="explore" className={styles.button} onClick={onClickExplore} >Explore</Button>
                     </div>
@@ -241,17 +242,17 @@ const ZeroStateExplorer = (props) => {
             </div>
           </Col>
         </Row>
-        {props.isSavedQueryUser && <Row gutter={[0, 28]}>
-          <Col span={24}>
+        {props.isSavedQueryUser && <Row className={"g-0"}>
+          <Col xs={12} className={"py-3"}>
             <p className={styles.p}>- or -</p>
           </Col>
         </Row>}
-        {props.isSavedQueryUser && <Row >
-          <Col span={24}>
+        {props.isSavedQueryUser && <Row className={"g-0"}>
+          <Col xs={12}>
             <div className={styles.box}>
               <Card className={styles.smallCard} bordered={false}>
                 <Row>
-                  <Col span={24} >
+                  <Col xs={12} >
                     <div id="query-selector" className={styles.query} >
                       <Select
                         className={styles.querySelector}
