@@ -2,7 +2,9 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Table, Icon, Modal, Menu, Select, Row, Col, Divider, Dropdown, Button, Tooltip} from "antd";
+import {Table, Icon, Modal, Menu, Select, Divider, Dropdown, Button, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import moment from "moment";
@@ -236,17 +238,17 @@ const LoadList: React.FC<Props> = (props) => {
       width={650}
       maskClosable={false}
     >
-      <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div>
-      <Row className={styles.flowSelectGrid}>
-        <Col span={11}>
+      <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}> Choose the flow in which to add and run the step <strong>{loadArtifactName}</strong>.</div>
+      <Row className={"pt-4"}>
+        <Col>
           <div>{props.flows?.map((flow, i) => (
             <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
           ))}</div>
         </Col>
-        <Col span={2}>
+        <Col xs={"auto"}>
           <Divider type="vertical" className={styles.verticalDiv}></Divider>
         </Col>
-        <Col span={11}>
+        <Col>
           <Link data-testid="link" id="tiles-add-run-new-flow" to={
             {
               pathname: "/tiles/run/add-run",

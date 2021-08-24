@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Card, Row, Col, Modal, Select, Tooltip} from "antd";
+import {Card, Modal, Select, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {CustomStepTooltips} from "../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -139,11 +141,11 @@ const CustomCard: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.customContainer}>
-      <Row gutter={16} type="flex" >
+      <Row>
         {
           props && props.data.length > 0 ? props.data.map((elem, index) => (
 
-            <Col key={index}>
+            <Col xs={"auto"} key={index}>
               <div
                 data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
                 onMouseOver={(e) => handleMouseOver(e, elem.name)}

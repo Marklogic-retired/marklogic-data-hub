@@ -1,6 +1,8 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Card, Icon, Row, Col, Select, Divider, Modal, Tooltip} from "antd";
+import {Card, Icon, Select, Divider, Modal, Tooltip} from "antd";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -256,16 +258,16 @@ const MergingCard: React.FC<Props> = (props) => {
       maskClosable={false}
     >
       <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mergingArtifactName}</strong>.</div>
-      <Row className={styles.flowSelectGrid}>
-        <Col span={11}>
+      <Row className={"pt-4"}>
+        <Col>
           <div>{props.flows.map((flow, i) => (
             <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
           ))}</div>
         </Col>
-        <Col span={2}>
+        <Col xs={"auto"}>
           <Divider type="vertical" className={styles.verticalDiv}></Divider>
         </Col>
-        <Col span={11}>
+        <Col>
           <Link data-testid="link" id="tiles-add-run-new-flow" to={
             {pathname: "/tiles/run/add-run",
               state: {
@@ -366,9 +368,9 @@ const MergingCard: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.mergingContainer}>
-      <Row gutter={16} type="flex">
+      <Row>
         {props.canWriteMatchMerge ? (
-          <Col>
+          <Col xs={"auto"}>
             <Card
               size="small"
               className={styles.addNewCard}>
@@ -377,7 +379,7 @@ const MergingCard: React.FC<Props> = (props) => {
               <p className={styles.addNewContent}>Add New</p>
             </Card>
           </Col>
-        ) : <Col>
+        ) : <Col xs={"auto"}>
           <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
             size="small"
             className={styles.addNewCardDisabled}>
@@ -388,7 +390,7 @@ const MergingCard: React.FC<Props> = (props) => {
         </Col>}
         {props.mergingStepsArray && props.mergingStepsArray.length > 0 ? (
           props.mergingStepsArray.map((step, index) => (
-            <Col key={index}>
+            <Col xs={"auto"} key={index}>
               <div
                 data-testid={`${props.entityName}-${step.name}-step`}
                 onMouseOver={(e) => handleMouseOver(e, step.name)}
