@@ -17,6 +17,7 @@ import Steps from "../../steps/steps";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
 import HCDivider from "../../common/hc-divider/hc-divider";
 
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 interface Props {
   mergingStepsArray: any;
   flows: any;
@@ -430,7 +431,7 @@ const MergingCard: React.FC<Props> = (props) => {
                     <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
                       {selectVisible ? (
-                        <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
+                        <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="add-merging-step-to-flow-tooltip" placement="bottom" show={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
                           <Select
                             style={{width: "100%"}}
                             value={selected[step.name] ? selected[step.name] : undefined}
@@ -444,7 +445,7 @@ const MergingCard: React.FC<Props> = (props) => {
                               <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                             )) : null}
                           </Select>
-                        </div></Tooltip>
+                        </div></HCTooltip>
                       ): null}
                     </div>
                   </div>

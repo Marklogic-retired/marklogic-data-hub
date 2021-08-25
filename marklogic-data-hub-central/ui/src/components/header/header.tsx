@@ -1,13 +1,18 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout, Icon, Menu, Dropdown, Button, Tooltip} from "antd";
+import {Layout, Menu, Dropdown, Button} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
 import SystemInfo from "./system-info";
 import {Image} from "react-bootstrap";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {QuestionCircle} from "react-bootstrap-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faQuestionCircle, faUser} from "@fortawesome/free-regular-svg-icons";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -147,26 +152,26 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <Tooltip title={infoContainer} placement={"bottomLeft"} overlayClassName={styles.infoTooltip}>
-            <i id="service-name" aria-label="service-details" className={styles.serviceName} tabIndex={1} ref={serviceNameRef}
+          <HCTooltip text={infoContainer} id="info-tooltip" placement="bottom-end" className={styles.infoTooltip}>
+            <i id="service-name" aria-label="service-details" tabIndex={1} ref={serviceNameRef}
               onMouseDown={serviceNameClickHandler} onKeyDown={serviceNameKeyDownHandler}>
-              <Icon type="info-circle" className={styles.infoIcon}/>
+              <FontAwesomeIcon icon={faInfoCircle} size="2x" aria-label="icon: info-circle"/>
             </i>
-          </Tooltip>
+          </HCTooltip>
         </Menu.Item>
         <div className={styles.vertical}></div>
         {/* <Menu.Item>
           <Tooltip title="Search"><Icon type="search"/></Tooltip>
         </Menu.Item> */}
         <Menu.Item>
-          <Tooltip title="Help" overlayClassName={styles.infoTooltip}>
+          <HCTooltip text="Help" id="help-tooltip" placement="bottom">
             <div className={styles.helpIconContainer}>
               <a id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
                 tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler}>
-                <Icon type="question-circle" className={styles.helpIcon}/>
+                <FontAwesomeIcon color={"rgba(255, 255, 255, 0.65)"} icon={faQuestionCircle} size="2x" aria-label="icon: question-circle"/>
               </a>
             </div>
-          </Tooltip>
+          </HCTooltip>
         </Menu.Item>
         {/* <Menu.Item>
           <Tooltip title="Settings"><Icon type="setting"/></Tooltip>
@@ -186,7 +191,11 @@ const Header:React.FC<Props> = (props) => {
                 hover: onMouseOver={toggleUserDropdown(true)}  not used; makes dropdown feel clunky
                 un-hover: onMouseOut={toggleUserDropdown(false)}  DO NOT USE: impossible to click on the logout button
             */}
-            <Tooltip title="User" overlayClassName={styles.infoTooltip}><Icon type="user" className={styles.userIcon}/></Tooltip>
+            <HCTooltip text="User" id="user-tooltip" placement="bottom">
+              <i>
+                <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user"/>
+              </i>
+            </HCTooltip>
           </span>
         </Dropdown>
       </Menu>
@@ -201,13 +210,13 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <Tooltip title="Help">
+          <HCTooltip text="Help" id="help-tooltip" placement="bottom">
             <div className={styles.helpIconContainer}>
               <a id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>
-                <Icon type="question-circle" className={styles.helpIcon}/>
+                <QuestionCircle color={"rgba(255, 255, 255, 0.65)"} size={24} aria-label="icon: question-circle"/>
               </a>
             </div>
-          </Tooltip>
+          </HCTooltip>
         </Menu.Item>
       </Menu>
     </div>;

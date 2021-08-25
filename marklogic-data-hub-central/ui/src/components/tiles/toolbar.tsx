@@ -7,7 +7,7 @@ import "./toolbar.scss";
 import ConfirmationModal from "../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../types/common-types";
 import {ModelingContext} from "../../util/modeling-context";
-import {Tooltip} from "antd";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 interface Props {
@@ -111,7 +111,7 @@ const Toolbar: React.FC<Props> = (props) => {
         if (tiles[id]["iconType"] === "custom") {
           return (
             <div className={(tiles[id]["title"] === "Explore" || tiles[id]["title"] ===  "Curate") ? styles.toolTallWrapper : styles.toolWrapper} aria-label={`tool-${id}-wrapper`} key={`tool-${id}-wrapper`} tabIndex={-1}>
-              <Tooltip title={getTooltip(id)} placement="leftTop" key={i}>
+              <HCTooltip text={getTooltip(id)} id={getTooltip(id)+"-tooltip"} placement="left-start" key={i}>
                 <div
                   className={tiles[id]["icon"]}
                   aria-label={"tool-" + id}
@@ -131,13 +131,13 @@ const Toolbar: React.FC<Props> = (props) => {
                   onKeyDown={(e) => linkKeyDownHandler(e, id, i)}
                   />
                 </div>
-              </Tooltip>
+              </HCTooltip>
             </div>
           );
         } else {
           return (
             <div className={styles.toolWrapper} aria-label={"tool-" + id + "-wrapper"} tabIndex={-1}>
-              <Tooltip title={getTooltip(id)} placement="leftTop" key={i}>
+              <HCTooltip text={getTooltip(id)} id={getTooltip(id)+"-tooltip"} placement="left-start" key={i}>
                 <i
                   className={styles.tool}
                   aria-label={"tool-" + id}
@@ -154,7 +154,7 @@ const Toolbar: React.FC<Props> = (props) => {
                   />
                   <FontAwesomeIcon icon={tiles[id]["icon"]} size="lg" />
                 </i>
-              </Tooltip>
+              </HCTooltip>
             </div>
           );
         }
