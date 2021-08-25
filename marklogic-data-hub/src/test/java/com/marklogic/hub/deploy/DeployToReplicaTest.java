@@ -38,12 +38,13 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.impl.DataHubImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,8 +64,12 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
     @BeforeEach
     void beforeEach() {
         assumeTrue(isVersionCompatibleWith520Roles());
+        runAsAdmin();
 
         initialHost = getHubConfig().getHost();
+        logger.info("Saving initialHost: " + initialHost);
+        logger.info("Initial AppConfig host: " + getHubConfig().getAppConfig().getHost());
+        logger.info("Initial ManageClient host: " + getHubConfig().getManageClient().getManageConfig().getHost());
 
         installProjectInFolder("test-projects/simple-custom-step");
 
@@ -90,7 +95,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
         verifyCommandListForDeployingToReplicaOnPremise();
 
-        runAsAdmin();
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
         // This is failing intermittently with the following error:
@@ -98,11 +102,31 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
         // This occurs at the beginning of the deployment when a check is made to see if /manage/v3 exists
         // The problem is 1 of 2 things - either "localhost" is wrong, or it's correct but ML is restarting somehow
         // So trying to prevent either of those from being a problem here
-        getHubConfig().setHost(initialHost);
-        getHubConfig().getAdminManager().waitForRestart();
+        HubConfigImpl hubConfig = getHubConfig();
+        hubConfig.setHost(initialHost);
+        hubConfig.getAdminManager().waitForRestart();
+
+        logger.info("HubConfig host: " + hubConfig.getHost());
+        logger.info("AppConfig host: " + hubConfig.getAppConfig().getHost());
+        logger.info("ManageClient host: " + hubConfig.getManageClient().getManageConfig().getHost());
 
         // For on-premise, it's reasonable to deploy as an admin user
-        new SimpleAppDeployer(new DataHubImpl(getHubConfig()).buildCommandsForDeployingToReplica()).deploy(getHubConfig().getAppConfig());
+
+        // Disabling CMA usage to see if we avoid mysterious error where "host" is "localhost", regardless of what
+        // initialHost is above
+        hubConfig.getAppConfig().setCmaConfig(new CmaConfig(false));
+
+        DataHubImpl dataHub = new DataHubImpl(hubConfig);
+        logger.info("HubConfig host: " + hubConfig.getHost());
+        logger.info("AppConfig host: " + hubConfig.getAppConfig().getHost());
+        logger.info("ManageClient host: " + hubConfig.getManageClient().getManageConfig().getHost());
+
+        List<Command> commands = dataHub.buildCommandsForDeployingToReplica();
+        logger.info("HubConfig host: " + hubConfig.getHost());
+        logger.info("AppConfig host: " + hubConfig.getAppConfig().getHost());
+        logger.info("ManageClient host: " + hubConfig.getManageClient().getManageConfig().getHost());
+
+        new SimpleAppDeployer(commands).deploy(hubConfig.getAppConfig());
 
         verifyLatestTimestampsAreUnchanged(initialLatestTimestamps);
     }
@@ -111,7 +135,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
     void deployToReplicaInDHS() {
         assumeTrue(isVersionCompatibleWith520Roles());
 
-        runAsAdmin();
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
         runAsTestUserWithRoles("data-hub-developer", "data-hub-security-admin");
