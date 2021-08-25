@@ -411,7 +411,7 @@ function validateAndTestMapping(mapping, uri) {
   }
 
   const parameterMap = Object.assign({}, {"URI":uri}, userParameterMap);
-  const sourceInstance = extractInstance(sourceDocument);
+  const sourceInstance = getSourceRecordForMapping(mapping, sourceDocument);
   const mappingsArray = createMappingsArray(mapping);
   const validatedMappingsArray = validateMappings(mappingsArray, userParameterNames);
   let validatedAndTestedMapping =  testMappings(mapping, validatedMappingsArray, sourceInstance, userParameterNames, parameterMap);
@@ -752,6 +752,7 @@ function addNode(obj, paths, mappedProperty, isNested ) {
 }
 
 function extractInstance(docNode) {
+  console.log(docNode)
   let instance = docNode.xpath('/*:envelope/(object-node("instance")|*:instance/(element() except *:info))');
   if (fn.empty(instance)) {
     instance = docNode;
@@ -851,6 +852,11 @@ function getFunctionsWithSignatures(xpathFunctions, excludeFunctions) {
   return response;
 }
 
+function getSourceRecordForMapping(mappingStep, sourceRecord){
+  const sourceRecordInstanceOnly = mappingStep.sourceRecordScope == "entireRecord" ? false : true;
+  return sourceRecordInstanceOnly ? extractInstance(sourceRecord) : sourceRecord;
+}
+
 module.exports = {
   xsltPermissions,
   xmlMappingCollections,
@@ -860,6 +866,7 @@ module.exports = {
   getEntityName,
   getFunctionsWithSignatures,
   getMarkLogicMappingFunctions,
+  getSourceRecordForMapping,
   getTargetEntity,
   getXpathFunctionsThatDoNotWorkInMappingExpressions,
   getXpathMappingFunctions,

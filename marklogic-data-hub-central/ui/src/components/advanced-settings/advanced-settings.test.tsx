@@ -43,6 +43,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Coarse-grained")).toBeInTheDocument();
 
     expect(queryByText("Entity Validation")).not.toBeInTheDocument();
+    expect(queryByText("Source Record Scope")).not.toBeInTheDocument();
 
     expect(getByText("Batch Size")).toBeInTheDocument();
 
@@ -128,6 +129,9 @@ describe("Advanced step settings", () => {
 
     expect(getByText("Entity Validation")).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
+
+    expect(getByText("Source Record Scope")).toBeInTheDocument();
+    expect(getByText("Instance only")).toBeInTheDocument();
 
     expect(getByText("Attach Source Document")).toBeInTheDocument();
     const radio = getByLabelText("No");

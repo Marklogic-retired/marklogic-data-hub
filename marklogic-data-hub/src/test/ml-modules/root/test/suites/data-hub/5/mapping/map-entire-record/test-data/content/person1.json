@@ -1,0 +1,10 @@
+{
+  "envelope": {
+    "headers": {
+      "createdBy": "admin"
+    },
+    "instance": {
+      "CustomerID": 101
+    }
+  }
+}

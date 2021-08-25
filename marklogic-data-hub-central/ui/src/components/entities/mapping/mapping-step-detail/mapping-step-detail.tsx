@@ -233,6 +233,7 @@ const MappingStepDetail: React.FC = () => {
       let srcDocResp = await getDoc(stepName, uri);
       if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
         let parsedDoc: any;
+        const mappingStep = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
         if (typeof(srcDocResp.data) === "string") {
           parsedDoc = getParsedXMLDoc(srcDocResp);
           setSourceFormat("xml");
@@ -253,14 +254,13 @@ const MappingStepDetail: React.FC = () => {
           }
         }
         let nestedDoc: any = [];
-        let docRoot = parsedDoc["envelope"] ? parsedDoc["envelope"]["instance"] : parsedDoc;
+        let docRoot = mappingStep.sourceRecordScope === "entireRecord" ?  parsedDoc : parsedDoc["envelope"]["instance"] ;
         let sDta = generateNestedDataSource(docRoot, nestedDoc);
         setSourceData([]);
         setSourceData([...sDta]);
         setSrcPropertiesXML(sDta[0].children);
         if (typeof(srcDocResp.data) === "string") {
-          let mData = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
-          updateMappingWithNamespaces(mData);
+          updateMappingWithNamespaces(mappingStep);
         }
       }
       setIsLoading(false);

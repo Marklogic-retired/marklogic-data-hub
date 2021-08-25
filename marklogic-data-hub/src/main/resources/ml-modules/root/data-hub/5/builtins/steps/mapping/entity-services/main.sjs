@@ -70,7 +70,7 @@ function main(contentSequence, options, stepExecutionContext) {
       }
 
       let doc = content.value;
-      let instance = lib.extractInstance(doc);
+      const instance = lib.getSourceRecordForMapping(mappingStep, doc);
 
       const mappingParams = Object.assign({}, {"URI":currentContentUri}, userMappingParameterMap);
 

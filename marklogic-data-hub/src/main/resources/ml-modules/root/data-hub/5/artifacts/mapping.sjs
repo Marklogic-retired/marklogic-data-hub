@@ -79,6 +79,7 @@ function defaultArtifact(artifactName, entityTypeId) {
   const defaultCollections =  [artifactName];
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   const defaultValidateEntity = 'doNotValidate';
+  const defaultSourceRecordScope = 'instanceOnly';
   if (entityTypeId) {
     // look for Entity Service Title, if not found will use the ID
     defaultCollections.push(hubEs.findEntityServiceTitle(entityTypeId) || entityTypeId);
@@ -90,7 +91,8 @@ function defaultArtifact(artifactName, entityTypeId) {
     batchSize: 100,
     validateEntity: defaultValidateEntity,
     targetFormat: "json",
-    attachSourceDocument: false
+    attachSourceDocument: false,
+    sourceRecordScope: defaultSourceRecordScope
   };
 }
 
