@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Layout, PageHeader, Menu, Icon, Table, Tooltip} from "antd";
+import {Layout, PageHeader, Menu, Icon, Table} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -9,6 +9,7 @@ import AsyncLoader from "../async-loader/async-loader";
 import {updateUserPreferences} from "../../services/user-preferences";
 import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
 import {getRecord} from "../../api/record";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
@@ -70,11 +71,13 @@ const DetailPageNonEntity = (props) => {
         };
       },
       sorter: (a: any, b: any) => a.flow?.localeCompare(b.flow),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <Tooltip
+      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
         key={text}
-        title={text}>
+        text={text}
+        id="history-flow-tooltip"
+        placement="top">
         <div style={{color: "#333333", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
-      </Tooltip>
+      </HCTooltip>
     },
     {
       title: "Step",
@@ -89,11 +92,13 @@ const DetailPageNonEntity = (props) => {
         };
       },
       sorter: (a: any, b: any) => a.step?.localeCompare(b.step),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <Tooltip
+      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
         key={text}
-        title={text}>
+        text={text}
+        id="history-step-tooltip"
+        placement="top">
         <div style={{color: "#333333", textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
-      </Tooltip>
+      </HCTooltip>
     },
     {
       title: "User",
@@ -108,11 +113,13 @@ const DetailPageNonEntity = (props) => {
         };
       },
       sorter: (a: any, b: any) => a.user?.localeCompare(b.user),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <Tooltip
+      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
         key={text}
-        title={text}>
+        text={text}
+        id="history-user-tooltip"
+        placement="top">
         <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{text}</div>
-      </Tooltip>
+      </HCTooltip>
     }
   ];
 
@@ -146,10 +153,12 @@ const DetailPageNonEntity = (props) => {
   const viewSelector = <div id="menu" className={styles.menu}>
     <Menu id="subMenu" onClick={(event) => handleMenuSelect(event)} mode="horizontal" selectedKeys={["record"]}>
       <Menu.Item key="record" id="record" data-testid="record-view">
-        <Tooltip title={"Show the complete record"} >
-          <FontAwesomeIcon icon={faCode} size="lg" />
-          <span className={styles.subMenu}>Record</span>
-        </Tooltip>
+        <HCTooltip text="Show the complete record" id="complete-record-tooltip" placement="top">
+          <span>
+            <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
+            <span className={styles.subMenu}>Record</span>
+          </span>
+        </HCTooltip>
       </Menu.Item>
     </Menu>
   </div>;
@@ -157,10 +166,12 @@ const DetailPageNonEntity = (props) => {
   const textViewSelector = <div id="menu" className={styles.menuText}>
     <Menu id="subMenu" mode="horizontal" selectedKeys={["record"]}>
       <Menu.Item key="record" id="record" data-cy="source-view">
-        <Tooltip title={"Show the complete record"} >
-          <FontAwesomeIcon icon={faCode} size="lg" />
-          <span className={styles.subMenu}>Record</span>
-        </Tooltip>
+        <HCTooltip text="Show the complete record" id="show-complete-record-tooltip" placement="top">
+          <span>
+            <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
+            <span className={styles.subMenu}>Record</span>
+          </span>
+        </HCTooltip>
       </Menu.Item>
     </Menu>
   </div>;

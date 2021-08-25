@@ -6,6 +6,8 @@ import styles from "./column-selector.module.scss";
 import {treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey} from "../../util/data-conversion";
 import {SearchContext} from "../../util/search-context";
 import HCDivider from "../common/hc-divider/hc-divider";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+
 
 interface Props {
   entityPropertyDefinitions: any[];
@@ -98,9 +100,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
         return <TreeNode style={{display: "none"}} title={title} key={item.key} />;
       } else {
         if (item && primaryKey && item.key === primaryKey.key) {
-          let pkTitle = <Tooltip title="The column identified as the unique identifier must always be displayed." placement="top">
+          let pkTitle = <HCTooltip text="The column identified as the unique identifier must always be displayed." id="column-identifier-tooltip" placement="top">
             <div data-testid="pk-tooltip">{title}</div>
-          </Tooltip>;
+          </HCTooltip>;
           return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`}/>;
         } else {
           return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`}/>;

@@ -3,11 +3,12 @@ import {facetParser} from "../../util/data-conversion";
 import monitorPropertiesConfig from "../../config/monitoring.config";
 import MonitorFacet from "../monitor-facet/monitor-facet";
 import {MonitorContext} from "../../util/monitor-context";
-import {DatePicker, Select, Tooltip} from "antd";
+import {DatePicker, Select} from "antd";
 import styles from "../facet/facet.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 interface Props {
@@ -257,8 +258,12 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
   return (
     <>
       <div className={styles.facetContainer} style={{"marginLeft": "7px"}}>
-        <div className={styles.name} data-testid="start-time-facet">Start Time<Tooltip title={"Start time for a step that has run"} placement="topLeft">
-          <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip>
+        <div className={styles.name} data-testid="start-time-facet">Start Time
+          <HCTooltip text="Start time for a step that has run" id="start-time-tooltip" placement="bottom-start">
+            <i>
+              <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" />
+            </i>
+          </HCTooltip>
         </div>
         <div>
           <Select

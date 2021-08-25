@@ -77,7 +77,7 @@ describe("Add Edit Relationship component", () => {
     //verify error message is only present upon Save click
     fireEvent.click(getByText("Save"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
-    fireEvent.mouseOver(getByLabelText("error-circle"));
+    fireEvent.mouseOver(getByTestId("error-circle"));
     wait(() => expect(getByText(ModelingTooltips.relationshipEmpty)).toBeInTheDocument());
 
     //error icon disappears
@@ -116,7 +116,7 @@ describe("Add Edit Relationship component", () => {
     //verify error message upon Save click with no selected entity, entity selection tested in e2e
     fireEvent.click(getByText("Add"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
-    fireEvent.mouseOver(getByLabelText("error-circle"));
+    fireEvent.mouseOver(getByTestId("error-circle"));
     wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
   });
 });
