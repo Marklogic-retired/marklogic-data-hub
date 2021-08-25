@@ -7,7 +7,7 @@ import ExportQueryModal from "./query-export-modal/query-export-modal";
 import {UserContext} from "../../util/user-context";
 import {getExportPreview} from "../query-export/export-preview/export-preview";
 import {getExportQueryPreview} from "../../api/queries";
-import {Tooltip} from "antd";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 const QueryExport = (props) => {
@@ -68,9 +68,9 @@ const QueryExport = (props) => {
   return (
     <div>
       <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
-      <Tooltip title="Export results with the displayed columns to CSV." placement="topRight">
-        <FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" />
-      </Tooltip>
+      <HCTooltip text="Export results with the displayed columns to CSV." id="export-results-tooltip" placement="top-end">
+        <i><FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" /></i>
+      </HCTooltip>
     </div>
   );
 };

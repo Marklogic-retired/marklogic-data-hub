@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Collapse, Icon, DatePicker, Select, Switch, Radio, Tooltip} from "antd";
+import {Collapse, Icon, DatePicker, Select, Switch, Radio} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -14,6 +14,7 @@ import DateFacet from "../date-facet/date-facet";
 import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 const {Panel} = Collapse;
 const {RangePicker} = DatePicker;
@@ -521,10 +522,11 @@ const Sidebar: React.FC<Props> = (props) => {
         </Panel>
 
         {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-          <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/> Include Data Hub artifacts<Tooltip
-            title={tooltips.includingDataHubArtifacts}>
-            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" />
-          </Tooltip>
+          <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/>
+            Include Data Hub artifacts
+          <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
+            <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
+          </HCTooltip>
         </div> : ""}
 
         {props.selectedEntities.length === 1 && (
@@ -641,8 +643,12 @@ const Sidebar: React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={facetPanelStyle}>
-          <div className={styles.facetName} data-cy="created-on-facet">Created On<Tooltip title={tooltips.createdOn} placement="topLeft">
-            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip></div>
+          <div className={styles.facetName} data-cy="created-on-facet">
+            Created On
+            <HCTooltip text={tooltips.createdOn} id="created-on-tooltip" placement="top-start">
+              <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
+            </HCTooltip>
+          </div>
           <div>
             <Select
               style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}

@@ -5,6 +5,7 @@ import styles from "./selected-facets.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 
@@ -229,27 +230,27 @@ const SelectedFacets: React.FC<Props> = (props) => {
         );
       })}
       {props.greyFacets.length > 0 &&
-        <Tooltip title={"Clear unapplied facets"}>
-          <FontAwesomeIcon
+        <HCTooltip text="Clear unapplied facets" id="clear-facets-toolbar" placement="top">
+          <i><FontAwesomeIcon
             icon={faWindowClose}
             onClick={clearGreyFacets}
             data-cy="clear-all-grey-button"
             data-testid="clear-all-grey-button"
             className={styles.closeIcon}
-            size="lg" />
-        </Tooltip>
+            size="lg" /></i>
+        </HCTooltip>
       }
       {props.greyFacets.length > 0 &&
-        <Tooltip title={"Apply facets"}>
-          <FontAwesomeIcon
+        <HCTooltip text="Apply facets" id="apply-facets-tooltip" placement="top">
+          <i><FontAwesomeIcon
             icon={faCheckSquare}
             onClick={() => applyFacet()}
             size="lg"
             className={styles.checkIcon}
             data-cy="facet-apply-button"
             data-testid="facet-apply-button"
-          />
-        </Tooltip>
+          /></i>
+        </HCTooltip>
       }
     </div>
   );
