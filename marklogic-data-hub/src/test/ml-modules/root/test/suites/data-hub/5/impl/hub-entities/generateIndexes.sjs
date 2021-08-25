@@ -1,12 +1,12 @@
 const test = require("/test/test-helper.xqy");
-const hent = require("/data-hub/5/impl/hub-entities.xqy");
+const hubEs = require("/data-hub/5/impl/hub-es.sjs");
 
 function generateElementRangeIndexConfig(entityDefinitionArray) {
-  return hent.dumpIndexes(entityDefinitionArray).toObject()["range-element-index"];
+  return hubEs.generateDatabaseProperties(entityDefinitionArray).toObject()["range-element-index"];
 }
 
 function generateRangeIndexConfig(entityDefinitionArray) {
-  return hent.dumpIndexes(entityDefinitionArray).toObject()["range-path-index"];
+  return hubEs.generateDatabaseProperties(entityDefinitionArray).toObject()["range-path-index"];
 }
 
 function sharedPropertyWithNullNamespace() {
@@ -145,7 +145,7 @@ function differentPropertyNames() {
 }
 
 function generateIndexConfigForFacetableProperties() {
-  const indexes = hent.dumpIndexes([
+  const indexes = hubEs.generateDatabaseProperties([
     {
       "info": {
         "title": "Book"
@@ -174,7 +174,7 @@ function generateIndexConfigForFacetableProperties() {
 
   const pathIndexes = indexes["range-path-index"];
   return [
-    test.assertFalse(indexes.hasOwnProperty("range-element-index"), "Since no range element indexes were generated, " + 
+    test.assertFalse(indexes.hasOwnProperty("range-element-index"), "Since no range element indexes were generated, " +
       ", there should not be a range-element-index property, as an empty array can remove existing indexes"),
     test.assertEqual(3, pathIndexes.length),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", pathIndexes[0]["path-expression"]),
@@ -374,7 +374,7 @@ function entityDefWithNamespace() {
 }
 
 function multipleNamespacesButNoIndexes() {
-  const indexes = hent.dumpIndexes([
+  const indexes = hubEs.generateDatabaseProperties([
     {
       "info": {
         "title": "Book"

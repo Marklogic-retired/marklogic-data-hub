@@ -1,0 +1,31 @@
+/**
+ Copyright (c) 2021 MarkLogic Corporation
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+'use strict';
+
+/**
+ * Invoked when DHF generates database properties based on entity models.
+ *
+ * @param {object} databaseProperties a document-node; call toObject() on it to modify it
+ * @returns {object} a document-node; use xdmp.toJSON to convert an object into a document-node
+ */
+function postProcessDatabaseProperties(databaseProperties) {
+  return databaseProperties;
+}
+
+module.exports = {
+  postProcessDatabaseProperties
+}

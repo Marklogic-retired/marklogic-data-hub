@@ -2,9 +2,7 @@
   "info": {
     "title": "Person",
     "version": "0.0.1",
-    "baseUri": "http://example.org/",
-    "searchOptionsPostProcessor": "/custom-data-modules/my-options-post-processor.xqy",
-    "databaseIndexesPostProcessor": "/custom-data-modules/my-indexes-post-processor.sjs"
+    "baseUri": "http://example.org/"
   },
   "definitions": {
     "Person": {

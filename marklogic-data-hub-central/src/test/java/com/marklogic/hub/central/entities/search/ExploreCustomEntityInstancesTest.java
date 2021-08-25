@@ -20,8 +20,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
 
@@ -34,6 +33,9 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
         // Gotta reset the indexes because we changed them during this test
         runAsAdmin();
         applyDatabasePropertiesForTests(getHubConfig());
+
+        // And need to reload all of the OOTB extension modules so as not to impact subsequent tests
+        installHubModules();
     }
 
     @Test
@@ -68,12 +70,27 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
 
         // Verify an entity-specific facet
         JsonNode statusFacet = response.get("facets").get("Person.status");
+        assertNotNull(statusFacet, "Expecting Person.status facet to exist; response: " + response.toPrettyString());
         assertEquals(1, statusFacet.get("facetValues").size(), "Expecting the status value to be returned; this ensures " +
             "that both the database indexes and the range constraints were modified to conform to the project-specific path " +
             "of /customEnvelope/Person/status/value instead of assuming the ES-specific path");
         assertEquals("Active", statusFacet.get("facetValues").get(0).get("name").asText());
         assertEquals(2, statusFacet.get("facetValues").get(0).get("count").asInt(), "Expecting a count of 2 since each of " +
             "the 2 persons has a status of 'Active'");
+
+        // Verify entity-specific property values
+        ArrayNode entityProps = (ArrayNode) results.get(0).get("entityProperties");
+        assertEquals(3, entityProps.size(), "Expecting name, status, and birthYear properties, since those are the 3 " +
+            "properties defined in the model");
+        assertEquals("Jane", entityProps.get(0).get("propertyValue").asText());
+        assertEquals("Active", entityProps.get(1).get("propertyValue").asText());
+        assertEquals("1990", entityProps.get(2).get("propertyValue").asText());
+
+        entityProps = (ArrayNode) results.get(1).get("entityProperties");
+        assertEquals(3, entityProps.size());
+        assertEquals("Janet", entityProps.get(0).get("propertyValue").asText());
+        assertEquals("Active", entityProps.get(1).get("propertyValue").asText());
+        assertEquals("1991", entityProps.get(2).get("propertyValue").asText());
     }
 
     private void verifyPersonsSortedByBirthYearDescending() {
