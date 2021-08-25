@@ -1,8 +1,9 @@
 import React, {useState} from "react";
-import {Radio, Tooltip} from "antd";
+import {Radio} from "antd";
 import styles from "./expand-collapse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleDown, faAngleDoubleUp} from "@fortawesome/free-solid-svg-icons";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   handleSelection: (option: string) => void;
@@ -54,22 +55,26 @@ const ExpandCollapse: React.FC<Props> = (props) => {
         value={""}
       >
         <Radio.Button id="expandBtn" data-testid="expandBtn" aria-label="radio-button-expand" value={"expand"} checked={enabled === "expand"} >
-          <Tooltip title={"Expand All"}>
-            {<FontAwesomeIcon
-              id="expandIcon"
-              icon={faAngleDoubleDown}
-              className={styles.icon}
-              size="sm" />}
-          </Tooltip>
+          <HCTooltip text="Expand All" id="collapse-all-tooltip" placement="top">
+            <i>
+              <FontAwesomeIcon
+                id="expandIcon"
+                icon={faAngleDoubleDown}
+                className={styles.icon}
+                size="sm" />
+            </i>
+          </HCTooltip>
         </Radio.Button>
         <Radio.Button id="collapseBtn" data-testid="collapseBtn" aria-label="radio-button-collapse" value={"collapse"} checked={enabled === "collapse"} >
-          <Tooltip title={"Collapse All"}>
-            {<FontAwesomeIcon
-              id="collapseIcon"
-              icon={faAngleDoubleUp}
-              className={styles.icon}
-              size="sm" />}
-          </Tooltip>
+          <HCTooltip text="Collapse All" id="collapse-all-tooltip" placement="top">
+            <i>
+              <FontAwesomeIcon
+                id="collapseIcon"
+                icon={faAngleDoubleUp}
+                className={styles.icon}
+                size="sm" />
+            </i>
+          </HCTooltip>
         </Radio.Button>
       </Radio.Group>
     </span>

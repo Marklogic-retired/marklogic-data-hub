@@ -1,7 +1,7 @@
 import {
   Modal,
   Form,
-  Icon, Input, Radio, Button, Select, Tooltip
+  Input, Radio, Button, Select
 } from "antd";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
@@ -12,6 +12,8 @@ import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteS
 import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 type Props = {
     sourceNames: string[];
@@ -367,9 +369,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange}  name={"maxValues"}>
             <Radio value={1} > All</Radio>
             <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
-              <Tooltip title={MergeRuleTooltips.maxValues}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </Tooltip>
+              <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
+                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+              </HCTooltip>
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -381,9 +383,9 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange}  name={"maxSources"}>
             <Radio value={1} > All</Radio>
             <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
-              <Tooltip title={MergeRuleTooltips.maxSources}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </Tooltip>
+              <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
+                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+              </HCTooltip>
             </Radio>
           </Radio.Group>
         </Form.Item>
@@ -400,9 +402,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           </Radio.Group>
         </Form.Item>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
-          <div><p className={styles.priorityText}>Priority Order<Tooltip title={multiSliderTooltips.priorityOrder} placement="right">
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip></p></div>
+          <div>
+            <p className={styles.priorityText}>
+              Priority Order
+              <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
+                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+              </HCTooltip>
+            </p>
+          </div>
           <div className={styles.addButtonContainer}>
             <Select
               id="dropdownOptions"

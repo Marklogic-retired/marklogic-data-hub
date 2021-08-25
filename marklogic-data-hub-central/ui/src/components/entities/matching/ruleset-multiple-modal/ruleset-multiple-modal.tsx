@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Table, Tag, Button, Select, Tooltip} from "antd";
+import {Modal, Form, Input, Icon, Switch, Table, Tag, Button, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -14,6 +14,8 @@ import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-
 import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import HCAlert from "../../../common/hc-alert/hc-alert";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 type Props = {
   editRuleset: any;
@@ -715,9 +717,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     <span>
       <div className={styles.asterisk}>*</div>
       <div>
-        <Tooltip title={title} placement={title === MatchingStepTooltips.distanceThreshold ? "bottomLeft" : "top"}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>
+        <HCTooltip text={title} id="asterisk-help-tooltip" placement={title === MatchingStepTooltips.distanceThreshold ? "bottom-end" : "top"}>
+          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+        </HCTooltip>
       </div>
     </span>
   );
@@ -749,9 +751,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <Tooltip title={MatchingStepTooltips.filter} placement="bottomLeft">
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>
+        <HCTooltip text={MatchingStepTooltips.filter} id="node-thesaurus-tooltip" placement="bottom">
+          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+        </HCTooltip>
       </span>
     </div>;
   };
@@ -833,9 +835,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onChange={(e) => handleInputChange(e, propertyPath)}
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
-        <Tooltip title={MatchingStepTooltips.namespace}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>
+        <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-input-tooltip" placement="bottom">
+          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+        </HCTooltip>
       </span>
     </div>;
   };
@@ -1185,10 +1187,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         </Form.Item>
         <Form.Item>
           <span className={styles.reduceWeightText}>Reduce Weight</span>
-          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={curationRuleset.reduce} aria-label="reduceToggle"></Switch>
-          <Tooltip title={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} placement="right">
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>
+          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+          <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
+            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
+          </HCTooltip>
         </Form.Item>
 
         <Form.Item>
