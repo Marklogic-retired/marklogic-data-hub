@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
-import {DatePicker, Tooltip} from "antd";
+import {DatePicker} from "antd";
 import {SearchContext} from "../../util/search-context";
 import styles from "./date-facet.module.scss";
 import moment from "moment";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 const {RangePicker} = DatePicker;
 
@@ -67,7 +68,7 @@ const DateFacet: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.name} data-testid="facet-date-picker">
-      <p className={styles.name} ><Tooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</Tooltip></p>
+      <p className={styles.name} ><HCTooltip text={props.name.replace(/\./g, " > ")} id={props.name+"-date-tooltip"} placement="top">{formatTitle()}</HCTooltip></p>
       <RangePicker
         // className={styles.datePicker}
         onChange={onChange}

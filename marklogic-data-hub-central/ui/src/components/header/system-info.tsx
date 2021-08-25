@@ -13,6 +13,7 @@ import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
 import HCAlert from "../common/hc-alert/hc-alert";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 const SystemInfo = (props) => {
@@ -144,7 +145,14 @@ const SystemInfo = (props) => {
         <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
           <HCAlert variant="success" showIcon>{<span><b>Clear All User Data </b>completed successfully</span>}</HCAlert>
         </div>
-        <div className={styles.serviceName}>{serviceName}<Tooltip title="Copy to clipboard" placement={"bottom"}><FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)} /></Tooltip></div>
+        <div className={styles.serviceName}>
+          {serviceName}
+          <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"}>
+            <i>
+              {<FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/>}
+            </i>
+          </HCTooltip>
+        </div>
         <div className={styles.version}>
           <div className={styles.label}>Data Hub Version:</div>
           <div className={styles.value}>{dataHubVersion}</div>

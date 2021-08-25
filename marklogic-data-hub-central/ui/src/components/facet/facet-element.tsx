@@ -2,8 +2,9 @@ import React, {useState} from "react";
 import styles from "./facet.module.scss";
 import {numberConverter} from "../../util/number-conversion";
 import {stringConverter} from "../../util/string-conversion";
-import {Checkbox, Tooltip} from "antd";
+import {Checkbox} from "antd";
 import {OverflowDetector} from "react-overflow";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 export const FacetName = (props) => {
@@ -21,11 +22,12 @@ export const FacetName = (props) => {
             className={styles.value}
             data-testid={`${stringConverter(props.name)}-${props.facet.value}-checkbox`}
           >
-            <Tooltip
-              title={isOverflowed && props.facet.value}
+            <HCTooltip
+              text={isOverflowed ? props.facet.value : ""}
+              id={"-tooltip"}
+              placement="top"
               // id={props.facet.value + "-tooltip"} // DHFPROD-7711 MLTooltip -> Tooltip
-              getPopupContainer={() => document.getElementById(props.facet.value + "-tooltipContainer") || document.body}
-            >{props.facet.value}</Tooltip>
+            ><span>{props.facet.value}</span></HCTooltip>
           </Checkbox>
         </div>
       </OverflowDetector>

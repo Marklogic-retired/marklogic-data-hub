@@ -3,6 +3,7 @@ import {Collapse, Icon, Card, Modal, Menu, Dropdown, Button, Tooltip} from "antd
 import {DownOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
 import sourceFormatOptions from "../../config/formats.config";
@@ -15,8 +16,8 @@ import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
 import axios from "axios";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
-// import Button from 'react-bootstrap/Button';
-
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {PlayCircleFill, X} from "react-bootstrap-icons";
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -612,7 +613,7 @@ const Flows: React.FC<Props> = (props) => {
             style={{}}
           >Add Step <DownOutlined /></Button>
           :
-          <Tooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}} placement="bottom">
+          <HCTooltip text={SecurityTooltips.missingPermission} id="add-step-disabled-tooltip" placement="bottom">
             <span className={styles.disabledCursor}>
               <Button
                 className={styles.addStep}
@@ -623,12 +624,12 @@ const Flows: React.FC<Props> = (props) => {
                 disabled={!props.canWriteFlow}
               >Add Step <DownOutlined /></Button>
             </span>
-          </Tooltip>
+          </HCTooltip>
         }
       </Dropdown>
       <span className={styles.deleteFlow}>
         {props.canWriteFlow ?
-          <Tooltip title={"Delete Flow"} placement="bottom">
+          <HCTooltip text="Delete Flow" id="disabled-trash-tooltip" placement="bottom">
             <i aria-label={`deleteFlow-${name}`}>
               <FontAwesomeIcon
                 icon={faTrashAlt}
@@ -637,9 +638,9 @@ const Flows: React.FC<Props> = (props) => {
                 className={styles.deleteIcon}
                 size="lg" />
             </i>
-          </Tooltip>
+          </HCTooltip>
           :
-          <Tooltip title={"Delete Flow: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}} placement="bottom">
+          <HCTooltip text={"Delete Flow: " + SecurityTooltips.missingPermission} id="trash-tooltip" placement="bottom">
             <i aria-label={`deleteFlowDisabled-${name}`}>
               <FontAwesomeIcon
                 icon={faTrashAlt}
@@ -647,17 +648,18 @@ const Flows: React.FC<Props> = (props) => {
                 className={styles.disabledDeleteIcon}
                 size="lg" />
             </i>
-          </Tooltip>}
+          </HCTooltip>}
       </span>
     </div>
   );
 
   const flowHeader = (name, index) => (
-    <Tooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="right">
+    <span><HCTooltip text={props.canWriteFlow ? "Edit Flow" : "Flow Details"} id="open-edit-tooltip" placement="bottom">
       <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
         {name}
       </span>
-    </Tooltip>
+    </HCTooltip>
+    </span>
 
     /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6, replace above with below later
     // <span>
@@ -763,11 +765,11 @@ const Flows: React.FC<Props> = (props) => {
     } else if (step.lastRunStatus === "completed step " + step.stepNumber) {
       tooltipText = "Step last ran successfully on " + stepEndTime;
       return (
-        <Tooltip overlayStyle={{maxWidth: "200px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
+        <HCTooltip text={tooltipText} id="success-tooltip" placement="bottom">
           <span onClick={(e) => showStepRunResponse(step)}>
-            <Icon type="check-circle" theme="filled" className={styles.successfulRun} data-testid={`check-circle-${step.stepName}`}/>
+            <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`}/></i>
           </span>
-        </Tooltip>
+        </HCTooltip>
       );
 
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
@@ -886,16 +888,18 @@ const Flows: React.FC<Props> = (props) => {
                 <div className={styles.reorder}>
                   {index !== 0 && props.canWriteFlow &&
                     <div className={styles.reorderLeft}>
-                      <Tooltip title={"Move left"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
-                        <FontAwesomeIcon
-                          aria-label={`leftArrow-${step.stepName}`}
-                          icon={faArrowAltCircleLeft}
-                          className={styles.reorderFlowLeft}
-                          role="button"
-                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)}
-                          onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.LEFT)}
-                          tabIndex={0}/>
-                      </Tooltip>
+                      <HCTooltip text="Move left" id="move-left-tooltip" placement="bottom">
+                        <i>
+                          <FontAwesomeIcon
+                            aria-label={`leftArrow-${step.stepName}`}
+                            icon={faArrowAltCircleLeft}
+                            className={styles.reorderFlowLeft}
+                            role="button"
+                            onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)}
+                            onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.LEFT)}
+                            tabIndex={0}/>
+                        </i>
+                      </HCTooltip>
                     </div>
                   }
                   <div className={styles.reorderRight}>
@@ -906,16 +910,18 @@ const Flows: React.FC<Props> = (props) => {
                       }
                     </div>
                     {index < flow.steps.length - 1 && props.canWriteFlow &&
-                      <Tooltip title={"Move right"} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
-                        <FontAwesomeIcon
-                          aria-label={`rightArrow-${step.stepName}`}
-                          icon={faArrowAltCircleRight}
-                          className={styles.reorderFlowRight}
-                          role="button"
-                          onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)}
-                          onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.RIGHT)}
-                          tabIndex={0}/>
-                      </Tooltip>
+                      <HCTooltip aria-label="icon: right" text="Move right" id="move-right-tooltip" placement="bottom" >
+                        <i>
+                          <FontAwesomeIcon
+                            aria-label={`rightArrow-${step.stepName}`}
+                            icon={faArrowAltCircleRight}
+                            className={styles.reorderFlowRight}
+                            role="button"
+                            onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)}
+                            onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.RIGHT)}
+                            tabIndex={0}/>
+                        </i>
+                      </HCTooltip>
                     }
                   </div>
                 </div>
@@ -937,9 +943,9 @@ const Flows: React.FC<Props> = (props) => {
                             openFilePicker();
                           }}
                         >
-                          <Tooltip title={RunToolTips.ingestionStep} placement="bottom">
-                            <Icon type="play-circle" theme="filled" />
-                          </Tooltip>
+                          <HCTooltip text={RunToolTips.ingestionStep} id="run-ingestion-tooltip" placement="bottom">
+                            <PlayCircleFill aria-label="icon: play-circle" color="#7F86B5" size={20} />
+                          </HCTooltip>
                         </div>
                       </div>
                       :
@@ -952,9 +958,9 @@ const Flows: React.FC<Props> = (props) => {
                         aria-label={`runStep-${step.stepName}`}
                         data-testid={"runStep-" + stepNumber}
                       >
-                        <Tooltip title={RunToolTips.otherSteps} placement="bottom">
-                          <Icon type="play-circle" theme="filled" />
-                        </Tooltip>
+                        <HCTooltip text={RunToolTips.otherSteps} id="run-tooltip" placement="bottom">
+                          <PlayCircleFill aria-label="icon: play-circle" color="#7F86B5" size={20} />
+                        </HCTooltip>
                       </div>
                     :
                     <div
@@ -967,12 +973,16 @@ const Flows: React.FC<Props> = (props) => {
                     </div>
                   }
                   {props.canWriteFlow ?
-                    <Tooltip title={RunToolTips.removeStep} placement="bottom">
-                      <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
-                    </Tooltip> :
-                    <Tooltip title={RunToolTips.removeStep} placement="bottom">
-                      <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
-                    </Tooltip>
+                    <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
+                      <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}>
+                        <X aria-label="icon: close" color="#7F86B5" size={27} />
+                      </div>
+                    </HCTooltip> :
+                    <HCTooltip text={RunToolTips.removeStep} id="delete-step-tooltip" placement="bottom">
+                      <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+                        <X aria-label="icon: close" color="#7F86B5" size={27} />
+                      </div>
+                    </HCTooltip>
                   }
                 </div>
               }
