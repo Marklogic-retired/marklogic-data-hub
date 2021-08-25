@@ -1,12 +1,13 @@
 import {
-  Icon,
   Select,
-  Table, Tooltip
+  Table
 } from "antd";
 import React, {useState, useEffect} from "react";
 import styles from "./advanced-target-collections.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCheck, faTimes, faSquare} from "@fortawesome/free-solid-svg-icons";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 export const breakLine = "\u000A";
 
@@ -22,13 +23,13 @@ const defaultTargetCollectionHeaders = [
     render: eventPropertyName => eventLabels[eventPropertyName]
   },
   {
-    title: <span>Default Collections <Tooltip title={"Collection tags that are added to the resulting records by default."}><Icon type="question-circle" className={styles.questionCircle} theme="filled"/></Tooltip></span>,
+    title: <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataIndex: "defaultCollections",
     visible: true,
     render: collectionArray => <div className={styles.preWrap}>{collectionArray.join(breakLine)}</div>
   },
   {
-    title: <span>Additional Collections <Tooltip title={"Collection tags that you specify to be added to the resulting records."}><Icon type="question-circle" className={styles.questionCircle} theme="filled"/></Tooltip></span>,
+    title: <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
     dataIndex: "additionalCollectionsField",
     visible: true,
     render: additionalCollectionsField => additionalCollectionsField.mode === "edit" ? <Select
@@ -68,11 +69,11 @@ const defaultTargetCollectionHeaders = [
             </span>
           </div>;
         } else {
-          return <Tooltip title={"Edit"} placement="bottom">
+          return <HCTooltip text="Edit" id="edit-tooltip" placement="bottom">
             <i role="edit-collections button" key="last">
               <FontAwesomeIcon className={styles.iconLink} size={"lg"} icon={faPencilAlt} data-testid={action.event+"-edit"} onClick={action.toggle}/>
             </i>
-          </Tooltip>;
+          </HCTooltip>;
         }
       }
     }

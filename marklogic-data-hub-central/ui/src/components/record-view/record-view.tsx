@@ -1,6 +1,6 @@
 import React, {CSSProperties, useContext} from "react";
 import styles from "./record-view.module.scss";
-import {Card, Icon, Popover, Tooltip} from "antd";
+import {Card, Popover} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -14,6 +14,9 @@ import {CardViewDateConverter} from "../../util/date-conversion";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
 import {getRecord} from "../../api/record";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {Download} from "react-bootstrap-icons";
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);  // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -92,25 +95,28 @@ const RecordCardView = (props) => {
         </div>
         <div className={styles.colValue}>
           {item.hubMetadata?.sources?.length > 0 ? <span className={styles.valText} data-testid={item.uri + "-sources"}>
-            <Tooltip
-              title={displayRecordSources(item)}
+            <HCTooltip
+              text={displayRecordSources(item)}
+              id="source-tooltip"
               placement="bottom"
               //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-            >{displayRecordSources(item).substring(0, 28)}</Tooltip>
+            ><span>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
-            <Tooltip
-              title={item.hubMetadata?.lastProcessedByFlow}
+            <HCTooltip
+              text={item.hubMetadata?.lastProcessedByFlow}
+              id="last-processed-by-flow-tooltip"
               placement="bottom"
               //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-            >{item.hubMetadata?.lastProcessedByFlow}</Tooltip>
+            ><span>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
-            <Tooltip
-              title={item.hubMetadata.lastProcessedByStep}
+            <HCTooltip
+              text={item.hubMetadata.lastProcessedByStep}
+              id="last-processed-by-step-tooltip"
               placement="bottom"
               //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-            >{item.hubMetadata.lastProcessedByStep}</Tooltip>
+            ><span>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
             {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
@@ -182,13 +188,18 @@ const RecordCardView = (props) => {
               >
                 <div className={styles.cardMetadataContainer}>
                   <span className={styles.uriContainer} data-testid={elem.uri + "-URI"}>URI: <span className={styles.uri}>
-                    <Tooltip title={elem.uri} placement="bottom">{displayUri(elem.uri)}</Tooltip></span></span>
+                    <HCTooltip text={elem.uri} id="element-uri-tooltip" placement="bottom">
+                      <span>{displayUri(elem.uri)}</span>
+                    </HCTooltip>
+                  </span></span>
                   <span className={styles.cardIcons}>
                     <Popover getPopupContainer={trigger => trigger.parentElement || document.body} content={displayRecordMetadata(elem)} placement="bottomRight" trigger="click">
                       <span>
-                        <Tooltip title={"View info"} placement="bottom">
-                          <span className={styles.infoIcon}><Icon type="info-circle" theme="filled" data-testid={elem.uri + "-InfoIcon"} /></span>
-                        </Tooltip>
+                        <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
+                          <span className={styles.infoIcon}>
+                            <i><FontAwesomeIcon icon={faInfoCircle} size="1x" data-testid={elem.uri + "-InfoIcon"}/></i>
+                          </span>
+                        </HCTooltip>
                       </span>
                     </Popover>
                     <span className={styles.sourceFormat}
@@ -198,16 +209,20 @@ const RecordCardView = (props) => {
                     {elem.format === "binary" ?
                       <span id={"instance"}
                         data-cy="instance">
-                        <Tooltip title={"Detail view"} placement="bottom"
-                        ><i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIconDisabled} size="lg" /></i>
-                        </Tooltip>
+                        <HCTooltip text="Detail view" id="binary-detail-view-tooltip" placement="bottom">
+                          <i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}>
+                            <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIconDisabled} size="lg" />
+                          </i>
+                        </HCTooltip>
                       </span>
                       :
                       <Link to={getLinkProperties(elem)} id={"instance"}
                         data-cy="instance">
-                        <Tooltip title={"Detail view"} placement="bottom"
-                        ><i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIcon} size="lg" /></i>
-                        </Tooltip>
+                        <HCTooltip text="Detail view" id="detail-view-tooltip" placement="bottom">
+                          <i role="detail-link icon" data-testid={elem.uri + "-detailViewIcon"}>
+                            <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIcon} size="lg" />
+                          </i>
+                        </HCTooltip>
                       </Link>
                     }
                   </span>
@@ -217,9 +232,9 @@ const RecordCardView = (props) => {
                 </div>
               </Card>
               <span className={styles.downloadIcon}>
-                <Tooltip title={displayFileSize(elem)} placement="bottom" >
-                  <span><Icon type="download" onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"} /></span>
-                </Tooltip>
+                <HCTooltip text={displayFileSize(elem)} id="download-icon-tooltip" placement="bottom" >
+                  <Download onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"}  size={13} />
+                </HCTooltip>
               </span>
             </div>
           </Col>)) : <span></span>}

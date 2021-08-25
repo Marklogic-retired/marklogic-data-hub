@@ -11,6 +11,7 @@ import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
 import {ConfirmationType} from "../../../types/common-types";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 type Props = {
   entityTypes: any;
@@ -135,11 +136,11 @@ const GraphView: React.FC<Props> = (props) => {
     </Dropdown>
   );
 
-  const publishButton = <MLButton
+  const publishButton = <Button
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
     aria-label="publish-to-database"
-    size="small" type="secondary"
+    size="small"
     onClick={() => {
       props.setConfirmType(ConfirmationType.PublishAll);
       props.toggleConfirmModal(true);
@@ -148,7 +149,7 @@ const GraphView: React.FC<Props> = (props) => {
       <PublishToDatabaseIcon style={publishIconStyle} />
       <span className={styles.publishButtonText}>Publish</span>
     </span>
-  </MLButton>;
+  </Button>;
 
   const headerButtons = <span className={styles.buttons}>
     {graphEditMode ?
@@ -164,19 +165,17 @@ const GraphView: React.FC<Props> = (props) => {
           {addButton}
         </span>
         :
-        <Tooltip
-          title={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess}
-          placement="top" overlayStyle={{maxWidth: "175px"}}>
+        <HCTooltip text={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess} id="add-button-tooltip" placement="top">
           <span className={styles.disabledCursor}>{addButton}</span>
-        </Tooltip>
+        </HCTooltip>
       }
     </span>
     <Tooltip title={ModelingTooltips.publish}>
       <span className={styles.disabledCursor}>{publishButton}</span>
     </Tooltip>
-    <Tooltip title={ModelingTooltips.exportGraph} placement="topLeft">
-      <FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/>
-    </Tooltip>
+    <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
+      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/></i>
+    </HCTooltip>
   </span>;
 
   const splitPaneStyles = {

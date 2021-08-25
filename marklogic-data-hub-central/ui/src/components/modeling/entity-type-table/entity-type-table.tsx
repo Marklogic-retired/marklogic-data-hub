@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
-import {MLTooltip} from "@marklogic/design-system";
-import {Tooltip, Table} from "antd";
+import {Table} from "antd";
 import {faTrashAlt, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
@@ -16,6 +15,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {queryDateConverter, relativeTimeConverter} from "../../../util/date-conversion";
 import {numberConverter} from "../../../util/number-conversion";
 import {ModelingTooltips, SecurityTooltips} from "../../../config/tooltips.config";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 type Props = {
   allEntityTypesData: any[];
@@ -150,7 +150,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <>
             {props.canWriteEntityModel && props.canReadEntityModel ? (
-              <Tooltip title={ModelingTooltips.entityTypeName}>
+              <HCTooltip text={ModelingTooltips.entityTypeName} id="entity-name-tooltip" placement="top">
                 <span data-testid={entityName + "-span"} className={styles.link}
                   onClick={() => {
                     props.editEntityTypeDescription(
@@ -162,7 +162,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                     );
                   }}>
                   {entityName}</span>
-              </Tooltip>
+              </HCTooltip>
             ) : <span data-testid={entityName + "-span"}>{entityName}</span>}
           </>
         );
@@ -184,7 +184,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         return (
           <>
             {instanceCount === "0" ? <span data-testid={parseText[0] + "-instance-count"}>{instanceCount}</span> : (
-              <Tooltip title={ModelingTooltips.instanceNumber}>
+              <HCTooltip text={ModelingTooltips.instanceNumber} id="explore-instances-tooltip" placement="top">
                 <Link
                   to={{
                     pathname: "/tiles/explore",
@@ -195,7 +195,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 >
                   {instanceCount}
                 </Link>
-              </Tooltip>
+              </HCTooltip>
             )
             }
           </>
@@ -223,7 +223,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         } else {
           let displayDate = relativeTimeConverter(parseText[2]);
           return (
-            <Tooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
+            <HCTooltip text={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed} id="explore-last-processed-tooltip" placement="top">
               <Link
                 to={{
                   pathname: "/tiles/explore",
@@ -234,7 +234,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               >
                 {displayDate}
               </Link>
-            </Tooltip>
+            </HCTooltip>
 
           );
         }
@@ -271,16 +271,17 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       render: text => {
         return (
           <div className={styles.iconContainer}>
-            <Tooltip title={ModelingTooltips.viewGraph} overlayStyle={{maxWidth: "225px"}}>
-              <FontAwesomeIcon
-                data-testid={text + "-graphView-icon"}
-                className={styles.iconViewGraph}
-                icon={faProjectDiagram}
-                onClick={() => navigateToGraphView(text)}
-              />
-            </Tooltip>
-            <Tooltip title={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}}>
-              <FontAwesomeIcon
+            <HCTooltip text={ModelingTooltips.viewGraph} id="graph-view-tooltip" placement="top">
+              <i>
+                <FontAwesomeIcon
+                  data-testid={text + "-graphView-icon"}
+                  className={styles.iconViewGraph}
+                  icon={faProjectDiagram}
+                  onClick={() => navigateToGraphView(text)}
+                /></i>
+            </HCTooltip>
+            <HCTooltip text={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : "Delete Entity: " + SecurityTooltips.missingPermission} id="trash-icon-tooltip" placement="top">
+              <i><FontAwesomeIcon
                 data-testid={text + "-trash-icon"}
                 className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
                 icon={faTrashAlt}
@@ -292,8 +293,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   }
                 }}
                 size="2x"
-              />
-            </Tooltip>
+              /></i>
+            </HCTooltip>
           </div>
         );
       }

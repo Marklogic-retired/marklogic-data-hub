@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Icon, Radio, Cascader, Select, Checkbox, Button, Tooltip} from "antd";
+import {Modal, Form, Input, Radio, Cascader, Select, Checkbox, Button} from "antd";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -28,6 +28,8 @@ import {
   DROPDOWN_PLACEHOLDER
 } from "../../../config/modeling.config";
 import HCAlert from "../../common/hc-alert/hc-alert";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 const {Option} = Select;
 
@@ -714,9 +716,9 @@ const PropertyModal: React.FC<Props> = (props) => {
           <Radio aria-label={radio.value + "-yes"} value={"yes"}>Yes</Radio>
           <Radio aria-label={radio.value + "-no"} value={"no"}>No</Radio>
         </Radio.Group>
-        <Tooltip title={radio.tooltip}>
-          <Icon type="question-circle" className={styles.radioQuestionIcon} theme="filled" />
-        </Tooltip>
+        <HCTooltip text={radio.tooltip} id={radio.value+"-tooltip"} placement="top">
+          <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon}/>
+        </HCTooltip>
       </Form.Item>
     );
   });
@@ -735,9 +737,9 @@ const PropertyModal: React.FC<Props> = (props) => {
           checked={selectedPropertyOptions[checkbox.value]}
           onChange={(event) => onCheckboxChange(event, checkbox.value)}
         >{checkbox.label}</Checkbox>
-        <Tooltip title={checkbox.tooltip}>
-          <Icon type="question-circle" className={styles.checkboxQuestionIcon} theme="filled" />
-        </Tooltip>
+        <HCTooltip text={checkbox.tooltip} id={checkbox.value+"-tooltip"} placement="top">
+          <QuestionCircleFill color="#7F86B5" size={13} className={styles.checkboxQuestionIcon}/>
+        </HCTooltip>
       </Form.Item>
     );
   });
@@ -856,9 +858,9 @@ const PropertyModal: React.FC<Props> = (props) => {
             onChange={handleInputChange}
             onBlur={handleInputChange}
           />
-          <Tooltip title={ModelingTooltips.nameEntityProperty}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>
+          <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
+            <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon}/>
+          </HCTooltip>
         </Form.Item>
 
         <Form.Item
@@ -899,9 +901,9 @@ const PropertyModal: React.FC<Props> = (props) => {
                   <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
                 ))}
               </Select>
-              <MLTooltip title={ModelingTooltips.foreignKeyInfo}>
-                <Icon data-testid={"foreign-key-tooltip"} type="question-circle" className={styles.joinPropertyHelpIcon} theme="filled" />
-              </MLTooltip>
+              <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
+              </HCTooltip>
             </div>
           </div>
         ) }

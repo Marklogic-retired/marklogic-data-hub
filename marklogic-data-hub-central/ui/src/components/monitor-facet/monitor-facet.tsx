@@ -1,11 +1,12 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Icon, Checkbox, Tooltip} from "antd";
+import {Icon, Checkbox} from "antd";
 import styles from "../facet/facet.module.scss";
 import {stringConverter} from "../../util/string-conversion";
 import {MonitorContext} from "../../util/monitor-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import PopOverSearch from "../pop-over-search/pop-over-search";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 
@@ -125,7 +126,7 @@ const MonitorFacet: React.FC<Props> = (props) => {
           key={index}
           data-testid={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
         >
-          <Tooltip title={facet.value} >{facet.value}</Tooltip>
+          <HCTooltip text={facet.value} id="facet-value-tooltip" placement="top"><span>{facet.value}</span></HCTooltip>
         </Checkbox>
       </div>
     );
@@ -142,12 +143,12 @@ const MonitorFacet: React.FC<Props> = (props) => {
           className={styles.name}
           data-testid={stringConverter(props.displayName) + "-facet"}
         >
-          <Tooltip title={props.displayName}>{props.displayName}</Tooltip>
-          <Tooltip
-            title={props.tooltip} placement="topLeft">
-            {props.tooltip ?
+          <HCTooltip text={props.displayName} id="display-name-tooltip" placement="top"><span>{props.displayName}</span></HCTooltip>
+          <HCTooltip text={props.tooltip} id="info-tooltip" placement="top-start">
+            <span>{props.tooltip ?
               <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /> : ""}
-          </Tooltip>
+            </span>
+          </HCTooltip>
         </div>
         <div className={styles.summary}>
           {checked.length > 0 ?

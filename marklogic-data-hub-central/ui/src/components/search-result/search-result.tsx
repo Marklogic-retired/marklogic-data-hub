@@ -4,10 +4,11 @@ import styles from "./search-result.module.scss";
 import ReactHtmlParser from "react-html-parser";
 import {dateConverter} from "../../util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
-import {Icon, Tooltip} from "antd";
+import {Icon} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
 import {SearchContext} from "../../util/search-context";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 
 interface Props extends RouteComponentProps {
@@ -92,7 +93,9 @@ const SearchResult: React.FC<Props> = (props) => {
             entityInstance: props.item.entityInstance,
             targetDatabase: searchOptions.database
           }}} id={"instance"} data-cy="instance" >
-            <Tooltip title={"Show the processed data"} placement="topRight"><FontAwesomeIcon  className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid="instance-icon"/></Tooltip>
+            <HCTooltip text="Show the processed data" id="instance-icon-tooltip" placement="top-start">
+              <i><FontAwesomeIcon  className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid="instance-icon"/></i>
+            </HCTooltip>
           </Link>
           <Link to={{pathname: "/tiles/explore/detail", state: {selectedValue: "source",
             entity: searchOptions.entityTypeIds,
@@ -108,13 +111,13 @@ const SearchResult: React.FC<Props> = (props) => {
             entityInstance: props.item.entityInstance,
             targetDatabase: searchOptions.database
           }}} id={"source"} data-cy="source" >
-            <Tooltip title={"Show the complete " + recordTypeVal.toUpperCase()} placement="topRight">
+            <HCTooltip text={"Show the complete " + recordTypeVal.toUpperCase()} id="source-icon-tooltip" placement="top-start">
               {recordTypeVal.toUpperCase() === "XML" ?
-                <FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid="source-icon"/>
+                <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid="source-icon"/></i>
                 :
                 <span className={styles.jsonIcon} data-testid="source-icon"></span>
               }
-            </Tooltip>
+            </HCTooltip>
           </Link>
         </div>
         <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
