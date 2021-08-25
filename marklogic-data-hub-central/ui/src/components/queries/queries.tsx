@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Tooltip, Button} from "antd";
+import {Modal, Button} from "antd";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import SelectedFacets from "../../components/selected-facets/selected-facets";
@@ -14,6 +14,7 @@ import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import {QueryOptions} from "../../types/query-types";
 import {getUserPreferences} from "../../services/user-preferences";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   queries: any[];
@@ -409,16 +410,16 @@ const Query: React.FC<Props> = (props) => {
                 || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
                 showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === "select a query" &&
                 <div>
-                  <Tooltip title={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"}>
-                    <FontAwesomeIcon
+                  <HCTooltip text={props.isSavedQueryUser ? "Save the current query" : "Save Query: Contact your security administrator to get the roles and permissions to access this functionality"} id="save-current-query-tooltip" placement="top">
+                    <i><FontAwesomeIcon
                       icon={faSave}
                       onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
                       className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
                       data-testid="save-modal"
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    />
-                  </Tooltip>
+                    /></i>
+                  </HCTooltip>
                   <div id={"savedQueries"}>
                     {openSaveModal &&
                       <SaveQueryModal
@@ -440,8 +441,8 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
               {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
                 <div>
-                  <Tooltip title={"Save changes"}>
-                    <FontAwesomeIcon
+                  <HCTooltip text="Save changes" id="save-changes-tooltip" placement="top">
+                    <i><FontAwesomeIcon
                       icon={faSave}
                       className={styles.iconHover}
                       title="save-changes"
@@ -449,8 +450,8 @@ const Query: React.FC<Props> = (props) => {
                       data-testid="save-changes-modal"
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    />
-                  </Tooltip>
+                    /></i>
+                  </HCTooltip>
                   <div id={"saveChangedQueries"}>
                     {openSaveChangesModal &&
                       <SaveChangesModal
@@ -477,16 +478,16 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
               {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
                 <div>
-                  <Tooltip title={"Discard changes"}>
-                    <FontAwesomeIcon
+                  <HCTooltip text="Discard changes" id="discard-changes-tooltip" placement="top">
+                    <i><FontAwesomeIcon
                       icon={faUndo}
                       className={styles.iconHover}
                       title="discard-changes"
                       onClick={() => setOpenDiscardChangesModal(true)}
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    />
-                  </Tooltip>
+                    /></i>
+                  </HCTooltip>
                   <div>
                     {openDiscardChangesModal &&
                       <DiscardChangesModal
@@ -499,16 +500,16 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
 
               {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div>
-                <Tooltip title={"Edit query details"}>
-                  {hoverOverDropdown && <FontAwesomeIcon
+                {hoverOverDropdown && <HCTooltip text="Edit query details" id="edit-query-details-tooltip" placement="top">
+                  <i><FontAwesomeIcon
                     icon={faPencilAlt}
                     className={styles.iconHover}
                     title="edit-query"
                     size="lg"
                     onClick={() => setOpenEditDetail(true)}
                     style={{width: "16px", color: "#5b69af", cursor: "pointer"}}
-                  />}
-                </Tooltip>
+                  /></i>
+                </HCTooltip>}
                 {openEditDetail &&
                   <EditQueryDetails
                     setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
@@ -522,15 +523,15 @@ const Query: React.FC<Props> = (props) => {
               </div>}
               {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
                 <div>
-                  <Tooltip title={"Save a copy"}>
-                    {hoverOverDropdown && <FontAwesomeIcon
+                  {hoverOverDropdown && <HCTooltip text="Save a copy" id="save-copy-tooltip" placement="top">
+                    <i><FontAwesomeIcon
                       icon={faCopy}
                       className={styles.iconHover}
                       size="lg"
                       onClick={() => setOpenSaveCopyModal(true)}
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    />}
-                  </Tooltip>
+                    /></i>
+                  </HCTooltip>}
                   {openSaveCopyModal &&
                     <SaveQueryModal
                       setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
@@ -550,8 +551,8 @@ const Query: React.FC<Props> = (props) => {
                 </div>}
               {resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
                 <div>
-                  <Tooltip title={"Clear query"}>
-                    <FontAwesomeIcon
+                  <HCTooltip text="Clear query" id="clear-query-tooltip" placement="top">
+                    <i><FontAwesomeIcon
                       className={styles.iconHover}
                       icon={faWindowClose}
                       title={"reset-changes"}
@@ -559,8 +560,8 @@ const Query: React.FC<Props> = (props) => {
                       onClick={() => resetIconClicked()}
                       style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
                       id="reset-changes"
-                    />
-                  </Tooltip>
+                    /></i>
+                  </HCTooltip>
                   <Modal
                     visible={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
                     title={"Confirmation"}
@@ -587,12 +588,12 @@ const Query: React.FC<Props> = (props) => {
 
           <div id="selected-query-description" style={props.isSavedQueryUser ? {marginTop: "10px"} : {marginTop: "-36px"}}
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
-            <Tooltip title={currentQueryDescription}>
-              {
+            <HCTooltip text={currentQueryDescription} id="current-query-description-tooltip" placement="top">
+              <span>{
                 searchOptions.selectedQuery === "select a query" ? "" : searchOptions.selectedQuery && searchOptions.selectedQuery !== "select a query" &&
                   currentQueryDescription.length > 50 ? currentQueryDescription.substring(0, 50).concat("...") : currentQueryDescription
-              }
-            </Tooltip>
+              }</span>
+            </HCTooltip>
           </div>
         </div>}
         <div className={styles.selectedFacets}>

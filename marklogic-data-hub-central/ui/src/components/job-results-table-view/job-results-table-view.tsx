@@ -9,6 +9,7 @@ import "./job-results-table-view.scss";
 import {MonitorContext} from "../../util/monitor-context";
 import JobResponse from "../job-response/job-response";
 import HCDivider from "../common/hc-divider/hc-divider";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -69,22 +70,22 @@ const JobResultsTableView = (props) => {
       render: (status) => {
         if (status === "running" || /^running/.test(status)) {
           return <>
-            <Tooltip title={"Running"} placement={"bottom"}>
+            <HCTooltip text="Running" id="running-tooltip" placement="bottom">
               <ClockCircleFilled data-testid= "progress" style={{color: "#5B69AF"}}/>
-            </Tooltip>
+            </HCTooltip>
           </>;
 
         } else if (status === "finished") {
           return <>
-            <Tooltip title={"Completed Successfully"} placement={"bottom"}>
+            <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
               <CheckCircleFilled data-testid= "success" style={{color: "#389E0D"}}/>
-            </Tooltip>
+            </HCTooltip>
           </>;
         } else {
           return <>
-            <Tooltip title={"Completed With Errors"} placement={"bottom"}>
+            <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
               <CloseCircleFilled data-testid= "error" style={{color: "#B32424"}}/>
-            </Tooltip>
+            </HCTooltip>
           </>;
         }
       }

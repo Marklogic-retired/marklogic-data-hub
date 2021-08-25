@@ -11,9 +11,10 @@ import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import modelingInfoIcon from "../../assets/icon_helpInfo.png";
-import {Popover, Button, Tooltip} from "antd";
+import {Popover, Button} from "antd";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 interface Props {
     id: string;
@@ -159,28 +160,30 @@ const Tiles: React.FC<Props> = (props) => {
           ) : null}
           {showControl("newTab") ? (
             <i className={styles.fa} aria-label={"newTab"} style={{color: options["controlColor"]}} onClick={onClickNewTab}>
-              <Tooltip title={"Open in New Tab"} placement="top">
-                <FontAwesomeIcon icon={faExternalLinkAlt} />
-              </Tooltip>
+              <HCTooltip text="Open in New Tab" id="new-tab-tooltip" placement="bottom">
+                <i>
+                  <FontAwesomeIcon icon={faExternalLinkAlt} />
+                </i>
+              </HCTooltip>
             </i>) : null}
           {showControl("maximize") ? (
             <i className={styles.ant} aria-label={"maximize"} style={{color: options["controlColor"]}} onClick={onClickMaximize}>
-              <Tooltip title={"Maximize"} placement="top">
+              <HCTooltip text="Maximize" id="maximize-tooltip" placement="bottom">
                 <ArrowsAltOutlined />
-              </Tooltip>
+              </HCTooltip>
             </i>) : null}
           {showControl("minimize") ? (
             <i className={styles.ant} aria-label={"minimize"} style={{color: options["controlColor"]}} onClick={onClickMinimize}>
-              <Tooltip title={"Minimize"} placement="top">
+              <HCTooltip text="Minimize" id="minimize-tooltip" placement="bottom">
                 <ShrinkOutlined />
-              </Tooltip>
+              </HCTooltip>
             </i>) : null}
           {showControl("close") ? (
             <i className={styles.close} aria-label={"close"} style={{color: options["controlColor"]}} tabIndex={0}
               onClick={onClickClose} onMouseDown={onClickClose} onKeyDown={onKeyDownClose}>
-              <Tooltip title={"Close"} placement="top">
+              <HCTooltip text="Close" id="close-tooltip" placement="bottom">
                 <CloseOutlined />
-              </Tooltip>
+              </HCTooltip>
             </i>
           ) : null}
         </div>
