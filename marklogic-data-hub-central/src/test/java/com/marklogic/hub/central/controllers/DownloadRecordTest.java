@@ -5,6 +5,7 @@ import com.marklogic.client.document.DocumentManager;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.central.AbstractMvcTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.LinkedMultiValueMap;
@@ -82,7 +83,7 @@ public class DownloadRecordTest extends AbstractMvcTest {
     }
 
 
-    private void writeAndValidateDownloadRecord(DocumentManager docMgr, String docUri, String database, String content) throws Exception {
+    private void writeAndValidateDownloadRecord(@NotNull DocumentManager docMgr, String docUri, String database, @NotNull String content) throws Exception {
         final byte[] contentBytes = content.getBytes();
         docMgr.write(docUri, addDefaultPermissions(new DocumentMetadataHandle()), new BytesHandle(contentBytes));
 
@@ -95,7 +96,7 @@ public class DownloadRecordTest extends AbstractMvcTest {
             .andDo(result -> assertEquals(contentBytes.length, result.getResponse().getContentAsByteArray().length));
     }
 
-    private void verifyJsonRecordInDatabase(String database, DatabaseClient client) throws Exception {
+    private void verifyJsonRecordInDatabase(String database, @NotNull DatabaseClient client) throws Exception {
         writeAndValidateDownloadRecord(client.newJSONDocumentManager(), "/jsonDocument.json", database,
                 "{\n" +
                         "  \"test\": {\n" +

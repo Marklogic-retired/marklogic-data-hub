@@ -47,73 +47,75 @@ public interface ModelsService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_updateModelInfo;
-            private BaseProxy.DBFunctionRequest req_saveModel;
+            private BaseProxy.DBFunctionRequest req_saveDraftModel;
+            private BaseProxy.DBFunctionRequest req_createDraftModel;
             private BaseProxy.DBFunctionRequest req_generateProtectedPathConfig;
+            private BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
             private BaseProxy.DBFunctionRequest req_generateModelConfig;
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
             private BaseProxy.DBFunctionRequest req_deleteModel;
-            private BaseProxy.DBFunctionRequest req_createModel;
             private BaseProxy.DBFunctionRequest req_saveModels;
             private BaseProxy.DBFunctionRequest req_getModelReferences;
-            private BaseProxy.DBFunctionRequest req_updateModelEntityTypes;
+            private BaseProxy.DBFunctionRequest req_publishDraftModels;
             private BaseProxy.DBFunctionRequest req_getLatestJobData;
+            private BaseProxy.DBFunctionRequest req_updateDraftModelEntityTypes;
 
             private ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/", servDecl);
 
-                this.req_updateModelInfo = this.baseProxy.request(
-                    "updateModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
-                this.req_saveModel = this.baseProxy.request(
-                    "saveModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_saveDraftModel = this.baseProxy.request(
+                    "saveDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_createDraftModel = this.baseProxy.request(
+                    "createDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_generateProtectedPathConfig = this.baseProxy.request(
                     "generateProtectedPathConfig.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_updateDraftModelInfo = this.baseProxy.request(
+                    "updateDraftModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_generateModelConfig = this.baseProxy.request(
                     "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
                     "getPrimaryEntityTypes.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_deleteModel = this.baseProxy.request(
                     "deleteModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
-                this.req_createModel = this.baseProxy.request(
-                    "createModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_saveModels = this.baseProxy.request(
                     "saveModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
                     "getModelReferences.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_updateModelEntityTypes = this.baseProxy.request(
-                    "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_publishDraftModels = this.baseProxy.request(
+                    "publishDraftModels.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getLatestJobData = this.baseProxy.request(
                     "getLatestJobData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_updateDraftModelEntityTypes = this.baseProxy.request(
+                    "updateDraftModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode updateModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input) {
-                return updateModelInfo(
-                    this.req_updateModelInfo.on(this.dbClient), name, input
+            public void saveDraftModel(com.fasterxml.jackson.databind.JsonNode model) {
+                saveDraftModel(
+                    this.req_saveDraftModel.on(this.dbClient), model
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode updateModelInfo(BaseProxy.DBFunctionRequest request, String name, com.fasterxml.jackson.databind.JsonNode input) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
-                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
-            public void saveModel(com.fasterxml.jackson.databind.JsonNode model) {
-                saveModel(
-                    this.req_saveModel.on(this.dbClient), model
-                    );
-            }
-            private void saveModel(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode model) {
+            private void saveDraftModel(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode model) {
               request
                       .withParams(
                           BaseProxy.documentParam("model", false, BaseProxy.JsonDocumentType.fromJsonNode(model))
                           ).responseNone();
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode createDraftModel(com.fasterxml.jackson.databind.JsonNode input) {
+                return createDraftModel(
+                    this.req_createDraftModel.on(this.dbClient), input
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode createDraftModel(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode input) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -127,6 +129,22 @@ public interface ModelsService {
                 request
                       .withParams(
                           BaseProxy.documentParam("models", false, BaseProxy.JsonDocumentType.fromJsonNode(models))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input) {
+                return updateDraftModelInfo(
+                    this.req_updateDraftModelInfo.on(this.dbClient), name, input
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(BaseProxy.DBFunctionRequest request, String name, com.fasterxml.jackson.databind.JsonNode input) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
+                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -169,21 +187,6 @@ public interface ModelsService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode createModel(com.fasterxml.jackson.databind.JsonNode input) {
-                return createModel(
-                    this.req_createModel.on(this.dbClient), input
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode createModel(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode input) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
-                          ).responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
             public void saveModels(com.fasterxml.jackson.databind.JsonNode models) {
                 saveModels(
                     this.req_saveModels.on(this.dbClient), models
@@ -213,16 +216,13 @@ public interface ModelsService {
             }
 
             @Override
-            public void updateModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input) {
-                updateModelEntityTypes(
-                    this.req_updateModelEntityTypes.on(this.dbClient), input
+            public void publishDraftModels() {
+                publishDraftModels(
+                    this.req_publishDraftModels.on(this.dbClient)
                     );
             }
-            private void updateModelEntityTypes(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode input) {
-              request
-                      .withParams(
-                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
-                          ).responseNone();
+            private void publishDraftModels(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
             }
 
             @Override
@@ -239,27 +239,39 @@ public interface ModelsService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public void updateDraftModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input) {
+                updateDraftModelEntityTypes(
+                    this.req_updateDraftModelEntityTypes.on(this.dbClient), input
+                    );
+            }
+            private void updateDraftModelEntityTypes(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode input) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
+                          ).responseNone();
+            }
         }
 
         return new ModelsServiceImpl(db, serviceDeclaration);
     }
 
   /**
-   * Update the description and optionally the namespace and namespace prefix of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations.
-   *
-   * @param name	The name of the model
-   * @param input	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode updateModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input);
-
-  /**
-   * Save a model, where the input is a JSON model
+   * Save a draft model, where the input is a JSON model
    *
    * @param model	provides input
    * 
    */
-    void saveModel(com.fasterxml.jackson.databind.JsonNode model);
+    void saveDraftModel(com.fasterxml.jackson.databind.JsonNode model);
+
+  /**
+   * Create a new draft model, resulting in a new entity descriptor with a primary entity type in it.
+   *
+   * @param input	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode createDraftModel(com.fasterxml.jackson.databind.JsonNode input);
 
   /**
    * Generate a CMA config object with protected paths and query rolesets based on the 'pii' arrays in the given entity models
@@ -268,6 +280,15 @@ public interface ModelsService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode generateProtectedPathConfig(com.fasterxml.jackson.databind.JsonNode models);
+
+  /**
+   * Update the description and optionally the namespace and namespace prefix of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations. Changes are saved to the entity model draft collection.
+   *
+   * @param name	The name of the model
+   * @param input	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode updateDraftModelInfo(String name, com.fasterxml.jackson.databind.JsonNode input);
 
   /**
    * Invokes the generateModelConfig operation on the database server
@@ -294,14 +315,6 @@ public interface ModelsService {
     void deleteModel(String entityName);
 
   /**
-   * Create a new model, resulting in a new entity descriptor with a primary entity type in it.
-   *
-   * @param input	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode createModel(com.fasterxml.jackson.databind.JsonNode input);
-
-  /**
    * Save an array of entity models to only the database associated with the app server that receives this request
    *
    * @param models	The array of entity models
@@ -319,12 +332,12 @@ public interface ModelsService {
     com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName, String propertyName);
 
   /**
-   * Invokes the updateModelEntityTypes operation on the database server
+   * Moves draft entity models to the published collection and clear out the draft collection
    *
-   * @param input	provides input
+   * 
    * 
    */
-    void updateModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input);
+    void publishDraftModels();
 
   /**
    * Invokes the getLatestJobData operation on the database server
@@ -333,5 +346,13 @@ public interface ModelsService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getLatestJobData(String entityCollection);
+
+  /**
+   * Update entity model types in the entity models draft collection.
+   *
+   * @param input	provides input
+   * 
+   */
+    void updateDraftModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input);
 
 }

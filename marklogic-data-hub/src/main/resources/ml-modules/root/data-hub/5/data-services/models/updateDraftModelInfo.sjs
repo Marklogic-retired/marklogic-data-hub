@@ -32,11 +32,13 @@ const namespacePrefix = input.namespacePrefix;
 const hubCentralConfig = input.hubCentral;
 
 const uri = entityLib.getModelUri(name);
-if (!fn.docAvailable(uri)) {
+const draftUri = entityLib.getDraftModelUri(name);
+const draftExists = fn.docAvailable(draftUri);
+if (!(fn.docAvailable(uri) || draftExists)) {
   httpUtils.throwBadRequest("Could not find model with name: " + name);
 }
 
-const model = cts.doc(uri).toObject();
+const model = (draftExists) ? cts.doc(draftUri).toObject() : cts.doc(uri).toObject();
 
 if (!model.definitions[name]) {
   httpUtils.throwBadRequest("Could not find model with an entity type with name: " + name);
@@ -71,7 +73,7 @@ if(hubCentralConfig){
 }
 
 try{
-  entityLib.writeModel(name, model);
+  entityLib.writeDraftModel(name, model);
 }
 catch (e){
   httpUtils.throwBadRequest(hubUtils.getErrorMessage(e));

@@ -42,14 +42,15 @@ input.forEach(entry => {
   const hubCentralConfig = entry["hubCentral"];
 
   const uri = entityLib.getModelUri(entityName);
-  if (!fn.docAvailable(uri)) {
+  const draftUri = entityLib.getDraftModelUri(entityName);
+  if (!(fn.docAvailable(uri) || fn.docAvailable(draftUri))) {
     httpUtils.throwBadRequest("Could not find model with name: " + entityName);
   }
 
-  const model = cts.doc(uri).toObject();
+  const model = (cts.doc(draftUri) || cts.doc(uri)).toObject();
   model.definitions = modelDefinition;
   if(hubCentralConfig){
     model.hubCentral = hubCentralConfig;
   }
-  entityLib.writeModel(entityName, model);
+  entityLib.writeDraftModel(entityName, model);
 });

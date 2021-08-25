@@ -83,7 +83,9 @@ public class MappingPerformanceTool extends AbstractHubCoreTest {
         for (int i = 1; i <= propertyCount; i++) {
             properties.putObject("property" + i).put("datatype", "string");
         }
-        ModelsService.on(getHubClient().getStagingClient()).saveModel(model);
+        ModelsService modelsService = ModelsService.on(getHubClient().getStagingClient());
+        modelsService.saveDraftModel(model);
+        modelsService.publishDraftModels();
     }
 
     private void createFlowWithMappingStepWithExpressionCount(final int expressionCount) {

@@ -17,8 +17,8 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
     private final static String CUSTOMER_MODEL_NAME = "CreateModelTestEntity";
     private final static String ORDER_MODEL_NAME = "OrderModelTestEntity";
-    private final static String EXPECTED_CUSTOMER_MODEL_URI = "/entities/" + CUSTOMER_MODEL_NAME + ".entity.json";
-    private final static String EXPECTED_ORDER_MODEL_URI = "/entities/" + ORDER_MODEL_NAME + ".entity.json";
+    private final static String EXPECTED_CUSTOMER_MODEL_URI = "/entities/" + CUSTOMER_MODEL_NAME + ".draft.entity.json";
+    private final static String EXPECTED_ORDER_MODEL_URI = "/entities/" + ORDER_MODEL_NAME + ".draft.entity.json";
 
     private ModelsService service;
 
@@ -31,14 +31,14 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     void createAndUpdateInfoThenUpdateEntityTypes() {
         ObjectNode customerNode = newModel(CUSTOMER_MODEL_NAME);
         customerNode.put("description", "Initial description");
-        JsonNode model = service.createModel(customerNode);
-        service.createModel(newModel(ORDER_MODEL_NAME));
+        JsonNode model = service.createDraftModel(customerNode);
+        service.createDraftModel(newModel(ORDER_MODEL_NAME));
 
         verifyModelContents(model, "Initial description");
         verifyPersistedModels("Initial description");
 
         customerNode.put("description", "Modified description");
-        service.updateModelInfo(CUSTOMER_MODEL_NAME, customerNode);
+        service.updateDraftModelInfo(CUSTOMER_MODEL_NAME, customerNode);
         verifyPersistedModels("Modified description");
 
         updateEntityTypes();
@@ -51,7 +51,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     @Test
     void invalidEntityName() {
         try {
-            service.createModel(newModel("Spaces are not allowed"));
+            service.createDraftModel(newModel("Spaces are not allowed"));
             fail("Expected error because spaces are not allowed in an entity name");
         } catch (Exception ex) {
             logger.info("Caught expected exception: " + ex.getMessage());
@@ -61,9 +61,9 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
     @Test
     void entityNameIsAlreadyUsed() {
-        service.createModel(newModel("TestName"));
+        service.createDraftModel(newModel("TestName"));
         try {
-            service.createModel(newModel("TestName"));
+            service.createDraftModel(newModel("TestName"));
             fail("Expected a failure because a model already exists with the same name");
         } catch (FailedRequestException ex) {
             assertEquals(400, ex.getServerStatusCode());
@@ -74,7 +74,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     @Test
     void entityNameMissing() {
         try {
-            service.createModel(objectMapper.createObjectNode());
+            service.createDraftModel(objectMapper.createObjectNode());
             fail("Expected a failure because no name was provided");
         } catch (FailedRequestException ex) {
             assertEquals(400, ex.getServerStatusCode());
@@ -114,7 +114,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     }
 
     private void verifyModelMetadata(DocumentMetadataHandle metadata) {
-        assertEquals("http://marklogic.com/entity-services/models", metadata.getCollections().iterator().next());
+        assertEquals("http://marklogic.com/entity-services/models/draft", metadata.getCollections().iterator().next());
         DocumentMetadataHandle.DocumentPermissions perms = metadata.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-entity-model-reader").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-entity-model-writer").iterator().next());
@@ -139,7 +139,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
                 "        }\n" +
                 "      }\n" +
                 "    }}}]";
-        service.updateModelEntityTypes(readJsonArray(entityTypes));
+        service.updateDraftModelEntityTypes(readJsonArray(entityTypes));
 
         JSONDocumentManager stagingMgr = getHubClient().getStagingClient().newJSONDocumentManager();
         JSONDocumentManager finalMgr = getHubClient().getFinalClient().newJSONDocumentManager();
@@ -173,7 +173,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
         JsonNode input = readJsonArray(entityTypes);
 
         try {
-            service.updateModelEntityTypes(input);
+            service.updateDraftModelEntityTypes(input);
             fail("Expected an error because of an invalid property name");
         } catch (Exception ex) {
             logger.info("Caught expected error: " + ex.getMessage());

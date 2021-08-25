@@ -41,7 +41,7 @@ public class SaveModelTest extends AbstractHubCoreTest {
             "  }\n" +
             "}";
 
-        service.saveModel(ObjectMapperFactory.getObjectMapper().readTree(json));
+        service.saveDraftModel(ObjectMapperFactory.getObjectMapper().readTree(json));
 
         JsonNode type = service.getPrimaryEntityTypes().get(0);
         JsonNode model = type.get("model");
@@ -71,7 +71,7 @@ public class SaveModelTest extends AbstractHubCoreTest {
             mgr.writeAs(configUri, originalConfig.replaceAll(
                 getHubClient().getDbName(DatabaseKind.STAGING), getHubClient().getDbName(DatabaseKind.FINAL)));
 
-            service.saveModel(readJsonObject(simpleModel));
+            service.saveDraftModel(readJsonObject(simpleModel));
 
             ArrayNode types = (ArrayNode) service.getPrimaryEntityTypes();
             assertEquals(1, types.size(), "Verifying that the model was saved, even though both staging and final are " +

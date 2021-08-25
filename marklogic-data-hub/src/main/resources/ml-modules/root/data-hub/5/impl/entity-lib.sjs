@@ -202,18 +202,27 @@ function findEntityTypeByEntityName(entityName) {
 }
 
 function getModelUri(entityName) {
-  return "/entities/" + xdmp.urlEncode(entityName) + ".entity.json";
+  return `/entities/${xdmp.urlEncode(entityName)}.entity.json`;
 }
 
+function getDraftModelUri(entityName) {
+  return `/entities/${xdmp.urlEncode(entityName)}.draft.entity.json`;
+}
+
+function getDraftModelCollection() {
+  return consts.DRAFT_ENTITY_MODEL_COLLECTION;
+}
 function getModelCollection() {
-  return "http://marklogic.com/entity-services/models";
+  return consts.ENTITY_MODEL_COLLECTION;
 }
 
 function deleteModel(entityName) {
   const uri = getModelUri(entityName);
+  const draftUri = getDraftModelUri(entityName);
   if (fn.docAvailable(uri)) {
     [config.STAGINGDATABASE, config.FINALDATABASE].forEach(db => {
       hubUtils.deleteDocument(uri, db);
+      hubUtils.deleteDocument(draftUri, db);
     });
   }
 }
@@ -317,6 +326,17 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
 }
 
 /**
+ * Handles writing a draft model to both databases. Will overwrite existing permissions/collections, which is consistent
+ * with how DH has been since 5.0.
+ *
+ * @param entityName
+ * @param model
+ */
+function writeDraftModel(entityName, model) {
+  writeModelToDatabases(entityName, model, [config.STAGINGDATABASE, config.FINALDATABASE], true);
+}
+
+/**
  * Handles writing the model to both databases. Will overwrite existing permissions/collections, which is consistent
  * with how DH has been since 5.0.
  *
@@ -324,7 +344,7 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
  * @param model
  */
 function writeModel(entityName, model) {
-  writeModelToDatabases(entityName, model, [config.STAGINGDATABASE, config.FINALDATABASE]);
+  writeModelToDatabases(entityName, model, [config.STAGINGDATABASE, config.FINALDATABASE], false);
 }
 
 /**
@@ -335,8 +355,16 @@ function writeModel(entityName, model) {
  * @param model
  * @param databases
  */
-function writeModelToDatabases(entityName, model, databases) {
+function writeModelToDatabases(entityName, model, databases, isDraft = false) {
   databases = [...new Set(databases)];
+  let collection, uriFunction;
+  if (isDraft) {
+    collection = consts.DRAFT_ENTITY_MODEL_COLLECTION;
+    uriFunction = getDraftModelUri;
+  } else {
+    collection = consts.ENTITY_MODEL_COLLECTION;
+    uriFunction = getModelUri;
+  }
 
   if (model.info) {
     if (!model.info.version) {
@@ -360,9 +388,30 @@ function writeModelToDatabases(entityName, model, databases) {
     // Using xdmp.invoke results in e.g. 20 models being saved in several seconds as opposed to well under a second
     // when calling xdmp.documentInsert directly.
     if (db === xdmp.databaseName(xdmp.database())) {
-      xdmp.documentInsert(getModelUri(entityName), model, permissions, getModelCollection());
+      xdmp.documentInsert(uriFunction(entityName), model, permissions, collection);
     } else {
-      hubUtils.writeDocument(getModelUri(entityName), model, permissions, getModelCollection(), db)
+      hubUtils.writeDocument(uriFunction(entityName), model, permissions, collection, db)
+    }
+  });
+}
+
+function publishDraftModels() {
+  const databaseNames = [config.STAGINGDATABASE, config.FINALDATABASE];
+  const publishOperation = () => {
+    const draftModels = cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION));
+    for (const draftModel of draftModels) {
+      let modelObject = draftModel.toObject();
+      writeModel(modelObject.info.title, modelObject);
+    }
+    xdmp.collectionDelete(consts.DRAFT_ENTITY_MODEL_COLLECTION);
+  };
+  const currentDatabase = xdmp.database();
+  databaseNames.forEach(databaseName => {
+    const database = xdmp.database(databaseName);
+    if (database === currentDatabase) {
+      publishOperation();
+    } else {
+      xdmp.invokeFunction(publishOperation, {database, update: "true", commit: "auto"});
     }
   });
 }
@@ -418,12 +467,16 @@ module.exports = {
   findEntityTypesAsMap,
   findModelByEntityName,
   findModelForEntityTypeId,
+  getDraftModelCollection,
+  getDraftModelUri,
   getEntityTypeId,
   getEntityTypeIdParts,
   getLatestJobData,
   getModelCollection,
   getModelUri,
+  publishDraftModels,
   validateModelDefinitions,
+  writeDraftModel,
   writeModel,
   writeModelToDatabases
 };

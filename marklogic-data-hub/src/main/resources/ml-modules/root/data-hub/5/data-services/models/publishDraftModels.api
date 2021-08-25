@@ -1,0 +1,5 @@
+{
+  "functionName": "publishDraftModels",
+  "desc": "Moves draft entity models to the published collection and clear out the draft collection",
+  "params": []
+}

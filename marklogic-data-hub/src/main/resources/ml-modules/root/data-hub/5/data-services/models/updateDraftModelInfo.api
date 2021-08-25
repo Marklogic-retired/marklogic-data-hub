@@ -1,6 +1,6 @@
 {
-  "functionName" : "updateModelInfo",
-  "desc" : "Update the description and optionally the namespace and namespace prefix of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations.",
+  "functionName" : "updateDraftModelInfo",
+  "desc" : "Update the description and optionally the namespace and namespace prefix of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations. Changes are saved to the entity model draft collection.",
   "params" : [
   {
       "name" : "name",
