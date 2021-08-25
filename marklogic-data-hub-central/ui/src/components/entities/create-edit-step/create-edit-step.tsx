@@ -8,6 +8,8 @@ import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} 
 import {StepType} from "../../../types/curation-types";
 import {CurationContext} from "../../../util/curation-context";
 import HCAlert from "../../common/hc-alert/hc-alert";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 type Props = {
   tabKey: string;
@@ -477,15 +479,20 @@ const CreateEditStep: React.FC<Props> = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />}&nbsp;&nbsp;
-          {props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.name} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip> : props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.name} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip> :
-            <Tooltip title={NewMergeTooltips.name} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
-          }
+          <div className={styles.inputHCTooltip}>
+            { props.stepType === StepType.Mapping ?
+              <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+              </HCTooltip>:
+              props.stepType === StepType.Matching ?
+                <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                </HCTooltip>:
+                <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                </HCTooltip>
+            }
+          </div>
         </Form.Item>
         <Form.Item label={<span>
           Description:
@@ -500,15 +507,20 @@ const CreateEditStep: React.FC<Props> = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />&nbsp;&nbsp;
-          {props.stepType === StepType.Mapping ? <Tooltip title={NewMapTooltips.description} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip> : props.stepType === StepType.Matching ? <Tooltip title={NewMatchTooltips.description} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip> :
-            <Tooltip title={NewMergeTooltips.description} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
-          }
+          <div className={styles.inputHCTooltip}>
+            { props.stepType === StepType.Mapping ?
+              <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
+                <QuestionCircleFill color="#7F86B5" size={13}/>
+              </HCTooltip>:
+              props.stepType === StepType.Matching ?
+                <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
+                  <QuestionCircleFill color="#7F86B5" size={13}/>
+                </HCTooltip>:
+                <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
+                  <QuestionCircleFill color="#7F86B5" size={13}/>
+                </HCTooltip>
+            }
+          </div>
         </Form.Item>
 
         <Form.Item label={<span>
@@ -537,9 +549,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
               <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
             </Popover></span>
 
-          <Tooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
-            <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip" />
-          </Tooltip>
+          <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
+            <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
+          </HCTooltip>
 
           {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
@@ -581,9 +593,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
               className={styles.input}
               onBlur={sendPayload}
             />&nbsp;&nbsp;
-            <Tooltip title={NewMergeTooltips.timestampPath} placement={"right"}>
+            <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
+            </HCTooltip>
           </Form.Item> : ""}
 
         <Form.Item className={styles.submitButtonsForm}>

@@ -107,6 +107,12 @@ span.readOnlyLabel {
     right: -20px;
 }
 
+.selectHCTooltip, .inputHCTooltip {
+    position: absolute;
+    top: -16px;
+    right: -20px;
+}
+
 .textarea {
     width: 95% !important;
     margin-top: 6px;
@@ -116,6 +122,13 @@ span.readOnlyLabel {
     display: inline-block;
     right: -20px;
     margin-top: 8px;
+}
+
+.textareaHCTooltip {
+    position: absolute;
+    display: inline-block;
+    right: -20px;
+    margin-top: 0px;
 }
 
 // Expandable form areas

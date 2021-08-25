@@ -26,6 +26,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);
@@ -164,12 +165,13 @@ const PropertyTable: React.FC<Props> = (props) => {
           renderText =
           <span>
             {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-            <Tooltip
-              title={tooltip}
-              //id={"tooltip-" + record.propertyName} // DHFPROD-7711 MLTooltip -> Tooltip
+            <HCTooltip
+              text={tooltip}
+              id={"tooltip-" + record.propertyName}
+              placement="top"
             >
-              <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/>
-            </Tooltip>
+              <i><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/></i>
+            </HCTooltip>
           </span>;
         }
         return renderText;
@@ -177,9 +179,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.identifier}>
+        <HCTooltip text={ModelingTooltips.identifier} id="identifier-title-tooltip" placement="top">
           <span aria-label="identifier-header">Identifier</span>
-        </Tooltip>
+        </HCTooltip>
       ),
       dataIndex: "identifier",
       width: 100,
@@ -189,9 +191,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.multiple}>
+        <HCTooltip text={ModelingTooltips.multiple} id="identifier-title-tooltip" placement="top">
           <span aria-label="multiple-header">Multiple</span>
-        </Tooltip>
+        </HCTooltip>
       ),
       dataIndex: "multiple",
       width: 100,
@@ -201,9 +203,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.sort}>
+        <HCTooltip text={ModelingTooltips.sort} id="identifier-title-tooltip" placement="top">
           <span aria-label="sort-header">Sort</span>
-        </Tooltip>
+        </HCTooltip>
       ),
       dataIndex: "sortable",
       width: 75,
@@ -213,9 +215,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: (
-        <Tooltip title={ModelingTooltips.facet}>
+        <HCTooltip text={ModelingTooltips.facet} id="identifier-title-tooltip" placement="top">
           <span aria-label="facet-header">Facet</span>
-        </Tooltip>
+        </HCTooltip>
       ),
       dataIndex: "facetable",
       width: 100,
@@ -237,9 +239,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     // },
     {
       title: (
-        <Tooltip title={ModelingTooltips.pii}>
+        <HCTooltip text={ModelingTooltips.pii} id="identifier-title-tooltip" placement="top">
           <span aria-label="pii-header">PII</span>
-        </Tooltip>
+        </HCTooltip>
       ),
       dataIndex: "pii",
       width: 75,
@@ -293,29 +295,33 @@ const PropertyTable: React.FC<Props> = (props) => {
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
 
         const addIcon = props.canWriteEntityModel ? (
-          <Tooltip title={ModelingTooltips.addStructuredProperty} placement="topRight">
-            <FontAwesomeIcon
-              data-testid={"add-struct-" + structuredTypeName}
-              className={styles.addIcon}
-              icon={faPlusSquare}
-              onClick={() => {
-                setStructuredTypeOptions({
-                  isStructured: true,
-                  name: text,
-                  propertyName: ""
-                });
-                setEditPropertyOptions({...editPropertyOptions, isEdit: false});
-                toggleShowPropertyModal(true);
-              }}
-            />
-          </Tooltip>
+          <HCTooltip text={ModelingTooltips.addStructuredProperty} id="add-struct-tooltip" placement="top-end">
+            <i>
+              <FontAwesomeIcon
+                data-testid={"add-struct-" + structuredTypeName}
+                className={styles.addIcon}
+                icon={faPlusSquare}
+                onClick={() => {
+                  setStructuredTypeOptions({
+                    isStructured: true,
+                    name: text,
+                    propertyName: ""
+                  });
+                  setEditPropertyOptions({...editPropertyOptions, isEdit: false});
+                  toggleShowPropertyModal(true);
+                }}
+              />
+            </i>
+          </HCTooltip>
         ) : (
-          <Tooltip title={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} placement="topRight" overlayStyle={{maxWidth: "175px"}}>
-            <FontAwesomeIcon
-              data-testid={"add-struct-" + structuredTypeName} className={styles.addIconReadOnly}
-              icon={faPlusSquare}
-            />
-          </Tooltip>
+          <HCTooltip text={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} id="disabled-add-struct-tooltip" placement="top-end">
+            <i>
+              <FontAwesomeIcon
+                data-testid={"add-struct-" + structuredTypeName} className={styles.addIconReadOnly}
+                icon={faPlusSquare}
+              />
+            </i>
+          </HCTooltip>
         );
 
         return text && addIcon;

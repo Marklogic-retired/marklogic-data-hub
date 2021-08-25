@@ -13,6 +13,8 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {Link} from "react-router-dom";
 import HCDivider from "../common/hc-divider/hc-divider";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {PlayCircleFill} from "react-bootstrap-icons";
 
 const {Option} = Select;
 
@@ -367,9 +369,33 @@ const LoadCard: React.FC<Props> = (props) => {
             >
               <Card
                 actions={[
-                  <Tooltip title={"Step Settings"} placement="bottom"><i key="edit" className={styles.editIcon}><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></Tooltip>,
-                  props.canReadWrite ? <Tooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"} onClick={() => handleStepRun(elem.name)}/></i></Tooltip> : <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></Tooltip>,
-                  props.canReadWrite ? <Tooltip title={"Delete"} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <Tooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i data-testid={elem.name+"-disabled-delete"}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/></i></Tooltip>,
+                  <HCTooltip text="Step Settings" id="step-settings-tooltip" placement="bottom">
+                    <i key="edit" className={styles.editIcon}>
+                      <FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/>
+                    </i>
+                  </HCTooltip>,
+                  props.canReadWrite ?
+                    <HCTooltip text="Run" id="run-tooltip" placement="bottom">
+                      <i aria-label="icon: run">
+                        <PlayCircleFill data-testid={elem.name+"-run"} size={20} onClick={() => handleStepRun(elem.name)}/>
+                      </i>
+                    </HCTooltip> :
+                    <HCTooltip text={"Run: " + SecurityTooltips.missingPermission} id="run-tooltip" placement="bottom">
+                      <i role="disabled-run-load button" data-testid={elem.name+"-disabled-run"}>
+                        <PlayCircleFill data-testid={elem.name+"-run"} size={23} onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/>
+                      </i>
+                    </HCTooltip>,
+                  props.canReadWrite ?
+                    <HCTooltip text="Delete" id="delete-tooltip" placement="bottom">
+                      <i aria-label="icon: delete">
+                        <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}/>
+                      </i>
+                    </HCTooltip> :
+                    <HCTooltip text={"Delete: " + SecurityTooltips.missingPermission} id="delete-tooltip" placement="bottom" >
+                      <i data-testid={elem.name+"-disabled-delete"}>
+                        <FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/>
+                      </i>
+                    </HCTooltip>,
                 ]}
                 className={styles.cardStyle}
                 size="small"

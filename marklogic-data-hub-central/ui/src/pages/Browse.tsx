@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
 import axios from "axios";
-import {Layout, Radio, Tooltip} from "antd";
+import {Layout, Radio} from "antd";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
@@ -23,6 +23,7 @@ import {QueryOptions} from "../types/query-types";
 import Spinner from "react-bootstrap/Spinner";
 import RecordCardView from "../components/record-view/record-view";
 import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
+import HCTooltip from "../components/common/hc-tooltip/hc-tooltip";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -482,14 +483,18 @@ const Browse: React.FC<Props> = ({location}) => {
                           onChange={e => handleViewChange(e.target.value)}
                         >
                           <Radio.Button aria-label="switch-view-table" value={"table"} >
-                            <i data-cy="table-view" id={"tableView"}><Tooltip title={"Table View"}>
-                              {<FontAwesomeIcon icon={faTable} />}
-                            </Tooltip></i>
+                            <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
+                              <i data-cy="table-view" id={"tableView"}>
+                                <FontAwesomeIcon icon={faTable} />
+                              </i>
+                            </HCTooltip>
                           </Radio.Button>
                           <Radio.Button aria-label="switch-view-snippet" value={"snippet"} >
-                            <i data-cy="facet-view" id={"snippetView"}><Tooltip title={"Snippet View"}>
-                              {<FontAwesomeIcon icon={faStream} />}
-                            </Tooltip></i>
+                            <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
+                              <i data-cy="facet-view" id={"snippetView"}>
+                                <FontAwesomeIcon icon={faStream} />
+                              </i>
+                            </HCTooltip>
                           </Radio.Button>
                         </Radio.Group>
                       </div> : ""}

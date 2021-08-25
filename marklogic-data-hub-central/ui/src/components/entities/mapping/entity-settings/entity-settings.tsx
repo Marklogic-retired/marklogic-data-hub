@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Icon, Select, Popover, Button, Tooltip} from "antd";
+import {Form, Input, Select, Popover, Button} from "antd";
 import styles from "./entity-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../../../config/messages.config";
 import StepsConfig from "../../../../config/steps.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 
 const {Option} = Select;
 
@@ -189,9 +191,9 @@ const EntitySettings: React.FC<Props> = (props) => {
               })}
             </Select>
             <div className={styles.inputTooltip}>
-              <Tooltip title={tooltips.additionalCollections} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </Tooltip>
+              <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
+                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+              </HCTooltip>
             </div>
           </Form.Item>
           <Form.Item
@@ -218,9 +220,9 @@ const EntitySettings: React.FC<Props> = (props) => {
               onPressEnter={(e) => e.key === "Enter" && e.preventDefault()}
             />
             <div className={styles.inputTooltip}>
-              <Tooltip title={tooltips.targetPermissions} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-              </Tooltip>
+              <HCTooltip text={tooltips.targetPermissions} id="target-permissions-tooltip" placement="left">
+                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+              </HCTooltip>
             </div>
             <div className={styles.validationError} aria-label={`${props.entityTitle}-validationError`} data-testid="validationError">
               {permissionValidationError}
@@ -229,11 +231,11 @@ const EntitySettings: React.FC<Props> = (props) => {
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
               <Button data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;
-              {!canReadWrite || !targetPermissionsValid ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+              {!canReadWrite || !targetPermissionsValid ? <HCTooltip text={tooltips.missingPermission} id="missing-permissions-tooltip" placement="bottom-end">
                 <span className={styles.disabledCursor}>
                   <Button id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</Button>
                 </span>
-              </Tooltip> : <Button id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</Button>}
+              </HCTooltip> : <Button id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</Button>}
             </div>
           </Form.Item>
         </Form>
