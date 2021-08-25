@@ -3,12 +3,13 @@ import QueryExport from "../query-export/query-export";
 import {AuthoritiesContext} from "../../util/authorities";
 import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "../../components/column-selector/column-selector";
-import {Tooltip, Table} from "antd";
+import {Table} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {Link} from "react-router-dom";
 import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 /* eslint-disable */
 interface Props {
@@ -129,11 +130,13 @@ const ResultsTabularView = (props) => {
                   let title = val.toString();
                   if (title) {
                     values.push(
-                      <Tooltip
+                      <HCTooltip
                         key={title}
-                        title={title}>
+                        text={title}
+                        id="title-tooltip"
+                        placement="top">
                         <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{title}</div>
-                      </Tooltip>
+                      </HCTooltip>
                     );
                   }
                 }
@@ -145,10 +148,9 @@ const ResultsTabularView = (props) => {
               if (value) {
                 return {
                   children: (
-                    <Tooltip
-                      title={value}>
+                    <HCTooltip text={value} id="title-tooltip" placement="top">
                       <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{value}</div>
-                    </Tooltip>
+                    </HCTooltip>
                   )
                 };
               }
@@ -228,7 +230,9 @@ const ResultsTabularView = (props) => {
                 }
               }} id={"instance"}
               data-cy="instance">
-                <Tooltip title={"Show the processed data"} placement="topRight"><FontAwesomeIcon className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
+                <HCTooltip text="Show the processed data" id="processed-data-tooltip" placement="top-end">
+                  <i><FontAwesomeIcon className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></i>
+                </HCTooltip>
               </Link>
               <Link to={{
                 pathname: `${path.pathname}`,
@@ -249,13 +253,13 @@ const ResultsTabularView = (props) => {
                 }
               }} id={"source"}
               data-cy="source">
-                <Tooltip title={"Show the complete " + item.format.toUpperCase()} placement="topRight">
-                  {item.format.toUpperCase() === "XML" ?
-                    <FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} />
+                <HCTooltip text={"Show the complete " + item.format.toUpperCase()} id="show-json-tooltip" placement="top-end">
+                  {item.format.toUpperCase() !== "XML" ?
+                    <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></i>
                     :
                     <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
                   }
-                </Tooltip>
+                </HCTooltip>
               </Link>
             </div>;
     if (props.selectedEntities?.length === 0 && item.hasOwnProperty("entityName")) {
@@ -263,9 +267,10 @@ const ResultsTabularView = (props) => {
       let itemEntityName = item.entityName;
       let document = item.uri.split("/")[item.uri.split("/").length - 1];
       let createdOn = item.createdOn;
+      const identifierCell = isUri ?  <HCTooltip text={item.uri} id={itemIdentifier+"-tooltip"} placement="top"><span>".../" + {document}</span></HCTooltip> : itemIdentifier;
       options = {
         primaryKey: primaryKeyValue,
-        identifier: <Tooltip title={isUri && item.uri}>{isUri ? ".../" + document : itemIdentifier}</Tooltip>,
+        identifier: identifierCell,
         entityName: <span data-testid={`${itemEntityName}-${primaryKeyValue}`}>{itemEntityName}</span>,
         recordType: <span data-testid={`${item.format}-${primaryKeyValue}`}>{item.format}</span>,
         createdOn: dateConverter(createdOn),
@@ -375,8 +380,9 @@ const ResultsTabularView = (props) => {
               }
             }}
             data-cy="nested-instance">
-              <Tooltip title={"Show nested detail on a separate page"}><FontAwesomeIcon icon={faExternalLinkAlt}
-                size="sm" /></Tooltip>
+              <HCTooltip text="Show nested detail on a separate page" id="show-separate-page-tooltip" placement="top">
+                <i><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></i>
+              </HCTooltip>
             </Link>
           });
         } else {

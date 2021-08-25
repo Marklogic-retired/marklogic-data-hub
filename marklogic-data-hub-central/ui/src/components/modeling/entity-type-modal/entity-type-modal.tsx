@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Form, Icon, Input, Modal, Tooltip} from "antd";
+import {Form, Input, Modal, Tooltip, Icon} from "antd";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +9,8 @@ import {createEntityType, updateModelInfo} from "../../../api/modeling";
 import {TwitterPicker} from "react-color";
 import graphConfig from "../../../config/graph-vis.config";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 
 type Props = {
@@ -308,9 +310,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           />}
           { errorServer === "name-error" ? <p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>
             : errorServer !== "" ? <p className={styles.errorServer}>{errorServer}</p> : null}
-          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.nameRegex}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>}
+          {props.isEditModal ? null : <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
+            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+          </HCTooltip>}
         </Form.Item>
         <Form.Item
           label={<span className={styles.label}>Description:</span>}
@@ -327,9 +329,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <Tooltip title={ModelingTooltips.entityDescription}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>
+          <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
+            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+          </HCTooltip>
         </Form.Item>
 
         <Form.Item
@@ -368,9 +370,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               onBlur={handleChange}
               style={{width: "120px"}}
             />
-            <Tooltip title={ModelingTooltips.namespace}>
-              <Icon type="question-circle" className={styles.icon} theme="filled" />
-            </Tooltip>
+            <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
+              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+            </HCTooltip>
           </Form.Item>
         </Form.Item>
         <Form.Item

@@ -1,9 +1,11 @@
 import React, {useEffect, useState, useContext} from "react";
-import {Form, Icon, Input, Modal, Button, Tooltip} from "antd";
+import {Form, Input, Modal, Button} from "antd";
 import styles from "./structured-type-modal.module.scss";
 
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 
 type Props = {
@@ -125,9 +127,9 @@ A structured type cannot use the same name as an existing structured type.</span
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <Tooltip title={ModelingTooltips.nameRegex}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>
+          <HCTooltip text={ModelingTooltips.nameRegex} id="structured-name-tooltip" placement="top">
+            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+          </HCTooltip>
         </Form.Item>
       </Form>
     </Modal>

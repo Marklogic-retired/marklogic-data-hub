@@ -1,8 +1,9 @@
 import React, {useState} from "react";
-import {Icon, Tooltip} from "antd";
+import {Icon} from "antd";
 import {Slider, Handles, Ticks, Rail, GetRailProps} from "@marklogic/react-compound-slider";
 import "./multi-slider.scss";
 import {multiSliderTooltips} from "../../../../config/tooltips.config";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 
 const MultiSlider = (props) => {
 
@@ -60,7 +61,7 @@ const MultiSlider = (props) => {
             </div>
           }
         </div>
-        {<Tooltip title={ (props.mergeStepViewOnly !== true && disabled) ?  multiSliderTooltips.timeStamp : ""} placement="bottom">
+        {<HCTooltip text={ (props.mergeStepViewOnly !== true && disabled) ?  multiSliderTooltips.timeStamp : ""} id="multi-slider-tooltip" placement="bottom">
           {disabled ?
             <div className={"handleDisabledParent"}  style={{
               left: `${percent}%`
@@ -85,7 +86,7 @@ const MultiSlider = (props) => {
               {...getHandleProps(id)}
             >
             </div> }
-        </Tooltip>}
+        </HCTooltip>}
       </>
     );
   }

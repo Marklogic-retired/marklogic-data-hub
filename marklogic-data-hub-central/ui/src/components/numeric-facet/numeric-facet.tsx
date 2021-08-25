@@ -1,9 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
-import {InputNumber, Slider, Tooltip} from "antd";
+import {InputNumber, Slider} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {UserContext} from "../../util/user-context";
 import styles from "./numeric-facet.module.scss";
 import {rangeFacet} from "../../api/facets";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   name: any;
@@ -145,7 +146,9 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.facetName} >
-      <p className={styles.name}>{<Tooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</Tooltip>}</p>
+      <p className={styles.name}>
+        <HCTooltip text={props.name.replace(/\./g, " > ")} id="facet-name-tooltip" placement="top">{formatTitle()}</HCTooltip>
+      </p>
       <div className={styles.numericFacet} data-testid="numeric-slider">
         <Slider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
         <div id={"min-numeric-value"}><InputNumber data-testid="numeric-slider-min" className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
