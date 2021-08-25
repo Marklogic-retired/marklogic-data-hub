@@ -12,6 +12,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
 import {updateModelInfo} from "../../../api/modeling";
 import {ConfirmationType} from "../../../types/common-types";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 type Props = {
   entityTypes: any;
@@ -182,19 +183,17 @@ const GraphView: React.FC<Props> = (props) => {
           {addButton}
         </span>
         :
-        <Tooltip
-          title={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess}
-          placement="top" overlayStyle={{maxWidth: "175px"}}>
+        <HCTooltip text={ModelingTooltips.addNewEntityGraph + " " + ModelingTooltips.noWriteAccess} id="add-button-tooltip" placement="top">
           <span className={styles.disabledCursor}>{addButton}</span>
-        </Tooltip>
+        </HCTooltip>
       }
     </span>
     <Tooltip title={ModelingTooltips.publish}>
       <span className={styles.disabledCursor}>{publishButton}</span>
     </Tooltip>
-    <Tooltip title={ModelingTooltips.exportGraph} placement="topLeft">
-      <FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/>
-    </Tooltip>
+    <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
+      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/></i>
+    </HCTooltip>
   </span>;
 
   const splitPaneStyles = {

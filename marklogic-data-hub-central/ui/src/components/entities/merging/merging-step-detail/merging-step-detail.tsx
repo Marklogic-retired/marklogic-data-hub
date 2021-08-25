@@ -15,10 +15,12 @@ import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {RightOutlined, DownOutlined} from "@ant-design/icons";
-import {Icon, Modal, Table, Button, Tooltip} from "antd";
+import {Modal, Table, Button} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -242,14 +244,14 @@ const MergingStepDetail: React.FC = () => {
         maxSources: i["maxSources"],
         default: i["default"] === true ? <FontAwesomeIcon className={styles.defaultIcon} icon={faCheck} data-testid={"default-" + i["strategyName"] + "-icon"} /> : null,
         priorityOrder: i.hasOwnProperty("priorityOrder") ? true : false,
-        delete: <Tooltip title={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? MergeStrategyTooltips.delete : ""}>
-          <FontAwesomeIcon
+        delete: <HCTooltip text={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? MergeStrategyTooltips.delete : ""} id="delete-strategy-tooltip" placement="top">
+          <i><FontAwesomeIcon
             icon={faTrashAlt}
             size="lg"
             className={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
             data-testid={`mergestrategy-${i.strategyName}`}
-            onClick={() => onDelete(i)}/>
-        </Tooltip>
+            onClick={() => onDelete(i)}/></i>
+        </HCTooltip>
       }
     );
   });
@@ -306,12 +308,20 @@ const MergingStepDetail: React.FC = () => {
       }
     }
     return <>
-      <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<Tooltip title={multiSliderTooltips.priorityOrder} placement="right">
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip></p>
-      <div id="strategyText"><Tooltip title={multiSliderTooltips.viewOnlyTooltip}><div style={{opacity: "60%"}}>
-        <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
-      </div></Tooltip></div>
+      <div className={styles.priorityOrderContainer}>
+        <p className={styles.priorityText}>
+          Priority Order
+          <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
+            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.questionCircle} size={13} />
+          </HCTooltip>
+        </p>
+        <div id="strategyText">
+          <HCTooltip text={multiSliderTooltips.viewOnlyTooltip} id="view-only-tooltip" placement="top">
+            <div style={{opacity: "60%"}}>
+              <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
+            </div>
+          </HCTooltip>
+        </div>
       </div>
     </>;
   };
