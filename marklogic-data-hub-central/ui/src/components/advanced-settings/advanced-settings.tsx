@@ -87,6 +87,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [attachSourceDocument, setAttachSourceDocument] = useState(false);
   const [attachSourceDocumentTouched, setAttachSourceDocumentTouched] = useState(false);
 
+  const defaultSourceRecordScope = StepsConfig.defaultSourceRecordScope;
+  const sourceRecordScopeOptions = {"Instance only": "instanceOnly", "Entire record": "entireRecord"};
+  const [sourceRecordScope, setSourceRecordScope] = useState(defaultSourceRecordScope);
+  const [sourceRecordScopeTouched, setSourceRecordScopeTouched] = useState(false);
+
   const defaultBatchSize = StepsConfig.defaultBatchSize;
   const [batchSize, setBatchSize] = useState(defaultBatchSize);
   const [batchSizeTouched, setBatchSizeTouched] = useState(false);
@@ -125,6 +130,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setProvGranularityTouched(false);
     setValidateEntityTouched(false);
     setAttachSourceDocumentTouched(false);
+    setSourceRecordScopeTouched(false);
     setBatchSizeTouched(false);
     setHeadersTouched(false);
     setInterceptorsTouched(false);
@@ -208,6 +214,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (props.stepData.attachSourceDocument) {
         setAttachSourceDocument(props.stepData.attachSourceDocument);
       }
+      if (props.stepData.sourceRecordScope) {
+        setSourceRecordScope(props.stepData.sourceRecordScope);
+      }
       if (props.stepData.batchSize) {
         setBatchSize(props.stepData.batchSize);
       }
@@ -253,7 +262,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       props.setHasChanged(hasFormChanged());
     }
     props.setPayload(getPayload());
-  }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections, attachSourceDocumentTouched]);
+  }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections, attachSourceDocumentTouched, sourceRecordScopeTouched]);
 
   // On change of default collections in parent, update default collections if not empty
   useEffect(() => {
@@ -274,6 +283,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         && !provGranularityTouched
         && !validateEntityTouched
         && !attachSourceDocumentTouched
+        && !sourceRecordScopeTouched
         && !batchSizeTouched
         && !interceptorsTouched
         && !customHookTouched
@@ -309,6 +319,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     if (stepType === "mapping") {
       payload["validateEntity"] = validateEntity;
       payload["attachSourceDocument"] = attachSourceDocument;
+      payload["sourceRecordScope"] = sourceRecordScope;
     }
     if (usesAdvancedTargetCollections) {
       payload["targetCollections"] = targetCollections;
@@ -526,6 +537,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setValidateEntity(value);
     }
   };
+  const handleSourceRecordScope = (value) => {
+    if (value === " ") {
+      setSourceRecordScopeTouched(false);
+    } else {
+      setSourceRecordScopeTouched(true);
+      setSourceRecordScope(value);
+    }
+  };
   const formItemLayout = {
     labelCol: {
       xs: {span: 24},
@@ -542,6 +561,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid={`provOptions-${d}`} key={provGranularityOptions[d]}>{d}</Option>);
   const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
+  const sourceRecordScopeValue = Object.keys(sourceRecordScopeOptions).map((d, index) => <Option data-testid={`sourceRecordScopeOptions-${index}`} key={sourceRecordScopeOptions[d]}>{d}</Option>);
   return (
     <div className={styles.newDataForm}>
       {(stepType === "matching" || stepType === "merging") ? curationOptions.activeStep.hasWarnings.length > 0 ? (
@@ -760,6 +780,29 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           </Select>
           <div className={styles.selectTooltip}>
             <MLTooltip title={tooltips.validateEntity} placement={"right"}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </MLTooltip>
+          </div>
+        </Form.Item> : ""}
+        {   stepType === "mapping" ? <Form.Item
+          label={<span>Source Record Scope</span>}
+          labelAlign="left"
+          className={styles.formItem}
+        >
+          <Select
+            id="sourceRecordScope"
+            placeholder="Please select Source Record Scope"
+            value={sourceRecordScope}
+            onChange={handleSourceRecordScope}
+            disabled={!canReadWrite}
+            className={styles.inputWithTooltip}
+            aria-label="sourceRecordScope-select"
+            onBlur={sendPayload}
+          >
+            {sourceRecordScopeValue}
+          </Select>
+          <div className={styles.selectTooltip}>
+            <MLTooltip title={tooltips.sourceRecordScope} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>

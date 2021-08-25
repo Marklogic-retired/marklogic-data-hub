@@ -9,6 +9,7 @@ const defaultSourceFormat = "json";
 const defaultTargetFormat = "JSON";
 const defaultProvGran = "off";
 const defaultValidateEntity = "doNotValidate";
+const defaultSourceRecordScope = "instanceOnly";
 const defaultBatchSize = 100;
 const defaultSelectedSource = "collections";
 const defaultFieldSeparator = ",";
@@ -22,6 +23,7 @@ export default {
     finalDb,
     defaultTargetPerms,
     validCapabilities,
+    defaultSourceRecordScope,
     defaultSourceFormat,
     defaultTargetFormat,
     defaultProvGran,

@@ -137,6 +137,24 @@ describe("RTL Source-to-entity map tests", () => {
     //TODO: add verification for table foreign-key and related-entity legend icons.
   });
 
+  test("RTL tests with entire source record", async () => {
+    mockGetMapArtifactByName.mockResolvedValue({...mappingStep.artifacts[0], "sourceRecordScope": "entireRecord"});
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
+
+    let getByText;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByText = renderResults.getByText;
+    });
+
+    expect(getByText("envelope")).toBeInTheDocument();
+    expect(getByText("triples")).toBeInTheDocument();
+    expect(getByText("instance")).toBeInTheDocument();
+
+  });
+
   test("RTL tests with source data", async () => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
