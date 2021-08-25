@@ -17,12 +17,10 @@
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const consts = require('/data-hub/5/impl/consts.sjs');
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const es = require('/MarkLogic/entity-services/entity-services');
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
 const prov = require("/data-hub/5/impl/prov.sjs");
-
-// TODO Will move this to /data-hub/5/entities soon
-const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 /**
  * If the entity instance cannot be found for any search result, that fact is logged instead of an error being thrown or
@@ -42,10 +40,6 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
     //Single Entity is selected
 
     const entityModel = entityLib.findModelByEntityName(entityName);
-    const entityInfo = {
-      "entityName": entityName,
-      "entityModel": entityModel
-    };
     if (!entityModel) {
       httpUtils.throwNotFound(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
     }
@@ -57,10 +51,11 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
       selectedPropertyMetadata = buildSelectedPropertiesMetadata(allMetadata, selectedPropertyNames);
     }
     selectedPropertyMetadata = selectedPropertyMetadata.length > 0 ? selectedPropertyMetadata : propertyMetadata.slice(0, maxDefaultProperties);
-    // Add entityProperties to each search result
+
     searchResponse.results.forEach(result => {
-      addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata)
+      addEntitySpecificProperties(result, entityName, entityModel, selectedPropertyMetadata)
     });
+
     // Remove entityName from Collection facetValues
     removeEntityNameFromCollection(searchResponse, entityName);
   } else {
@@ -250,45 +245,93 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
 }
 
 /**
+ * "Details" in this context is an abstraction for different parts of an entity document, such that a coupling to
+ * the location of those parts can be avoided.
  *
- * @param doc expected to be a document-node
- * @returns the "instance" portion if the document is an ES envelope; else null
+ * @param doc a document-node
+ * @returns a JSON object containing "entityTitle" and "properties" if those values can be determined from the
+ * document; otherwise, null
  */
-function getEntityInstance(doc) {
-  if (!doc) {
-    return null;
-  }
+function getEntityDetails(doc) {
+  const jsonInstance = getInstanceAsJson(doc);
+  return jsonInstance == null ? null : getEntityDetailsFromJsonInstance(jsonInstance);
+}
 
-  if(doc instanceof Element || doc instanceof XMLDocument) {
-    const builder = new NodeBuilder();
-    const instance = doc.xpath("/*:envelope/*:instance");
-    if(!fn.empty(instance)) {
-      return fn.head(es.instanceJsonFromDocument(builder.startDocument().addNode(instance).endDocument().toNode())).toObject();
+/**
+ *
+ * @param jsonInstance {object} expected to be the output of the getInstanceAsJson function, which converts XML
+ * into an ES-compliant JSON object
+ * @returns {object} a JSON object containing "entityTitle" and "properties" if those values can be determined from the
+ * document; otherwise, null
+ */
+function getEntityDetailsFromJsonInstance(jsonInstance) {
+  let entityName;
+  let instanceProperties;
+
+  if (jsonInstance.info) {
+    if (jsonInstance.info.title && jsonInstance.hasOwnProperty(jsonInstance.info.title)) {
+      entityName = jsonInstance.info.title;
+      instanceProperties = jsonInstance[jsonInstance.info.title];
+    } else {
+      const keys = Object.keys(jsonInstance);
+      if (keys.length == 2) {
+        const otherKey = keys.find(val => val !== "info");
+        if (otherKey) {
+          entityName = otherKey;
+          instanceProperties = jsonInstance[otherKey];
+        }
+      }
+    }
+  } else {
+    // If there's no info, and only one key, assume that's the properties
+    const keys = Object.keys(jsonInstance);
+    if (keys.length == 1) {
+      entityName = keys[0];
+      instanceProperties = jsonInstance[keys[0]];
     }
   }
 
-  if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.instance) {
-    return doc.toObject().envelope.instance;
+  return {
+    entityName,
+    properties: instanceProperties
+  };
+}
+
+/**
+ *
+ * @param doc a document-node
+ * @returns the content under "envelope/instance" as a JSON object; if the incoming doc is an XML document, then
+ * the ES library will be used to convert the XML content under "envelope/instance" into JSON
+ */
+function getInstanceAsJson(doc) {
+  if (doc === null) {
+    return null;
   }
 
+  if (doc instanceof Element || doc instanceof XMLDocument) {
+    const builder = new NodeBuilder();
+    const instance = doc.xpath("/*:envelope/*:instance");
+    if (!fn.empty(instance)) {
+      const node = builder.startDocument().addNode(instance).endDocument().toNode();
+      return fn.head(es.instanceJsonFromDocument(node)).toObject();
+    }
+  } else if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.instance) {
+    return doc.toObject().envelope.instance;
+  }
   return null;
 }
 
 /**
  *
- * @param doc expected to be a document-node so that ".xpath()" can be called on it
+ * @param doc expected to be a document-node
  * @returns a JSON object contain the instance properties (expected to be located at
  * envelope/instance/(entity type name))
  */
 function getEntityInstanceProperties(doc) {
-  const entityInstance = getEntityInstance(doc);
-  if (entityInstance == null) {
-    return null;
-  }
-
-  const entityTitle = doc.xpath("/*:envelope/*:instance/*:info/*:title/fn:string()");
-  return entityInstance[entityTitle];
+  const details = getEntityDetails(doc);
+  return details != null ? details.properties : null;
 }
+
 
 function getEntitySources(doc) {
   let sourcesArray = [];
@@ -378,9 +421,15 @@ function getPrimaryValue(entityInstance, entityDefinition) {
   }
 }
 
-// Helper function to add properties to each result instance under results array in searchResponse
-function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata) {
-  const entityTitle = entityInfo.entityName;
+/**
+ *
+ * @param result {object} the search result
+ * @param entityName {string}
+ * @param entityModel {object} retrieved via entityName
+ * @param selectedPropertyMetadata {array} optional; the specific properties to add
+ * @returns
+ */
+function addEntitySpecificProperties(result, entityName, entityModel, selectedPropertyMetadata) {
   result.entityName = "";
   result.createdOn = "";
   result.createdBy = "";
@@ -388,25 +437,20 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
   result.sources = [];
   result.entityInstance = {};
 
+  const entityDefinition = entityModel.definitions[entityName];
   const doc = cts.doc(result.uri);
 
-  const instance = getEntityInstance(doc);
-  if(!instance) {
-    console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
-    return;
-  }
+  const entityProperties = getEntityInstanceProperties(doc);
 
-  let entityDef = entityInfo.entityModel.definitions[entityTitle];
-  let entityInstance = instance[entityTitle];
-  if (!entityInstance) {
-    console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
+  if (!entityProperties) {
+    console.log(`Unable to obtain entity properties from document with URI '${result.uri}' and entity name '${entityName}'; will not add entity properties to its search result`);
     return;
   }
 
   selectedPropertyMetadata.forEach(parentProperty => {
-    result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
+    result.entityProperties.push(getPropertyValues(parentProperty, entityProperties));
   });
-  addPrimaryKeyToResult(result, entityInstance, entityDef);
+  addPrimaryKeyToResult(result, entityProperties, entityDefinition);
 
   const metadata = xdmp.documentGetMetadata(result.uri);
   if (metadata) {
@@ -414,9 +458,9 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
     result.createdBy = metadata.datahubCreatedBy;
   }
 
-  result.entityInstance = entityInstance;
+  result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
-  result.entityName = entityTitle;
+  result.entityName = entityName;
 }
 
 function addGenericEntityProperties(result) {
@@ -429,33 +473,29 @@ function addGenericEntityProperties(result) {
   result.entityInstance = {};
 
   const doc = cts.doc(result.uri);
-  const instance = getEntityInstance(doc);
-  if(!instance) {
+  const entityDetails = getEntityDetails(doc);
+  if(!entityDetails) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
   }
 
-  let isEntityInstance = instance.hasOwnProperty("info") ? true : (Object.keys(instance).length > 1 ? false : true);
-  if(!isEntityInstance) {
-    console.log(`Unable to obtain a valid entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+  const entityName = entityDetails.entityName;
+  if(!entityName) {
+    console.log(`Unable to determine the entity type from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
   }
 
-  const entityTitle = instance.hasOwnProperty("info") ? instance.info.title : Object.keys(instance)[0];
-  const entityModel = entityLib.findModelByEntityName(entityTitle);
+  const entityProperties = entityDetails.properties;
+
+  const entityModel = entityLib.findModelByEntityName(entityName);
   if(!entityModel) {
-    console.log(`Unable to find an entity model for entity name: ${entityTitle}; will not add entity properties to its search result`);
+    console.log(`Unable to find an entity model for entity name: ${entityName}; will not add entity properties to its search result`);
     return;
   }
 
-  let entityDef = entityModel.definitions[entityTitle];
-  const entityInstance = instance[entityTitle];
-  if (!entityInstance) {
-    console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
-    return;
-  }
+  const entityDef = entityModel.definitions[entityName];
 
-  addPrimaryKeyToResult(result, entityInstance, entityDef);
+  addPrimaryKeyToResult(result, entityProperties, entityDef);
   try {
     result.createdOn = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
     result.createdBy = xdmp.documentGetMetadata(result.uri).datahubCreatedBy;
@@ -468,9 +508,9 @@ function addGenericEntityProperties(result) {
     "propertyPath": "identifier",
     "propertyValue": identifierValue
   };
-  result.entityInstance = entityInstance;
+  result.entityInstance = entityProperties;
   result.sources = getEntitySources(doc);
-  result.entityName = entityTitle;
+  result.entityName = entityName;
 }
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {
@@ -658,8 +698,8 @@ module.exports = {
   addPropertiesToSearchResponse,
   buildPropertyMetadata,
   getDocumentSize,
-  getEntityInstance,
   getEntityInstanceProperties,
   getEntitySources,
+  getEntityDetails,
   getRecordHistory
 };

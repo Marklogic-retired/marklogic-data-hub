@@ -28,7 +28,10 @@ const doc = fn.head(xdmp.unquote(`<envelope xmlns='http://marklogic.com/entity-s
 const props = entitySearchLib.getEntityInstanceProperties(doc);
 
 const assertions = [
-  test.assertEqual(null, props, "The properties should be null because info/title is missing")
+  test.assertEqual("myValue", props.myProperty,
+    "info/title is missing, but since there's only one other key under 'instance' that is not 'info', DHF " +
+    "will assume that that other key refers to the entity instance properties"
+  )
 ];
 
 assertions
