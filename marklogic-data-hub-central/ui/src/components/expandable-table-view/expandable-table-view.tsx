@@ -1,9 +1,10 @@
 import React, {useContext} from "react";
-import {Table, Tooltip} from "antd";
+import {Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   item: any;
@@ -50,8 +51,9 @@ const ExpandableTableView: React.FC<Props> = (props) => {
             entityInstance: props.item.entityInstance,
             targetDatabase: searchOptions.database
           }}} data-cy="nested-instance">
-            <Tooltip title={"Show nested detail on a separate page"}><FontAwesomeIcon icon={faExternalLinkAlt}
-              size="sm"/></Tooltip>
+            <HCTooltip text="Show nested detail on a separate page" id="show-nested-tooltip" placement="top">
+              <i><FontAwesomeIcon icon={faExternalLinkAlt} size="sm"/></i>
+            </HCTooltip>
           </Link>
         });
       } else {

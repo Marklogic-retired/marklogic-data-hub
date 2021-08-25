@@ -1,8 +1,10 @@
-import {Modal, Form, Input, Icon, Button, Tooltip} from "antd";
+import {Modal, Form, Input, Button, Tooltip} from "antd";
 import React, {useState, useEffect} from "react";
 import styles from "./new-flow-dialog.module.scss";
 import {NewFlowTooltips} from "../../../config/tooltips.config";
 import {useHistory} from "react-router-dom";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 
 const NewFlowDialog = (props) => {
@@ -162,10 +164,10 @@ const NewFlowDialog = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          />} &nbsp;
-          <Tooltip title={NewFlowTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          />}
+          <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
+            <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+          </HCTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
@@ -177,10 +179,10 @@ const NewFlowDialog = (props) => {
             onChange={handleChange}
             disabled={!props.canWriteFlow}
             className={styles.input}
-          />&nbsp;&nbsp;
-          <Tooltip title={NewFlowTooltips.description}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          />
+          <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
+            <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+          </HCTooltip>
         </Form.Item>
         <br /><br />
         <Form.Item className={styles.submitButtonsForm}>

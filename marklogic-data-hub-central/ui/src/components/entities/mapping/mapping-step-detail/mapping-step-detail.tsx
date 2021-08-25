@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Card, Table, Icon, Input, Dropdown, Menu, Checkbox, Button, Tooltip, Alert} from "antd";
+import {Card, Table, Icon, Input, Dropdown, Menu, Checkbox, Button, Alert} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -28,6 +28,7 @@ import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "..
 import {paginationMapping, mappingColors} from "../../../../config/mapping.config";
 import useDynamicRefs from "use-dynamic-refs";
 import HCAlert from "../../../common/hc-alert/hc-alert";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -969,7 +970,7 @@ const MappingStepDetail: React.FC = () => {
       defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
       render: (text, row) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
-        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div><span className={styles.tableExpandIcon}>{expandTableIcon}</span><span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><Tooltip title={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></Tooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div> : <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><Tooltip title={text?.split(":")[0] + " = \"" + namespaces[text?.split(":")[0]] + "\""}><span className={styles.namespace}>{text?.split(":")[0] + ": "}</span></Tooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div><span className={styles.tableExpandIcon}>{expandTableIcon}</span><span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
       }
     },
@@ -1018,7 +1019,7 @@ const MappingStepDetail: React.FC = () => {
       requiresToolTip = text.length > stringLenWithoutEllipsis;
       response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
-    return requiresToolTip ? <Tooltip placement="bottom" title={text}>{response}</Tooltip> : response;
+    return requiresToolTip ?  <HCTooltip text={text} id="source-value-tooltip" placement="bottom">{response}</HCTooltip> : response;
   };
 
   const customExpandIcon = (props) => {
