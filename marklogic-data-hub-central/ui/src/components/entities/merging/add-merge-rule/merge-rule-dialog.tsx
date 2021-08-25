@@ -1,7 +1,7 @@
 import {
   Modal,
   Form,
-  Icon, Radio, Input, Button, Select, Tooltip
+  Radio, Input, Button, Select
 } from "antd";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
@@ -18,6 +18,8 @@ import {updateMergingArtifact, getMergingRulesWarnings} from "../../../../api/me
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import HCAlert from "../../../common/hc-alert/hc-alert";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 type Props = {
   sourceNames: string[];
@@ -549,10 +551,10 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               entityDefinitionsArray={curationOptions.entityDefinitionsArray}
               value={property}
               onValueSelected={handleProperty}
-            />
-            <Tooltip title={MergeRuleTooltips.disabledProperties}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </Tooltip>
+            />&nbsp;&nbsp;
+            <HCTooltip text={MergeRuleTooltips.disabledProperties} id="property-name-tooltip" placement="top">
+              <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+            </HCTooltip>
           </Form.Item>
           <Form.Item
             label={<span aria-label="formItem-MergeType">Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
@@ -592,9 +594,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                     className={styles.input}
                     aria-label="uri-input"
                   />&nbsp;&nbsp;
-                  <Tooltip title={MergeRuleTooltips.uri}>
-                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                  </Tooltip>
+                  <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                  </HCTooltip>
                 </div>
               </Form.Item>
               <Form.Item
@@ -613,9 +615,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   className={styles.input}
                   aria-label="function-input"
                 />&nbsp;&nbsp;
-                <Tooltip title={MergeRuleTooltips.function}>
-                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Tooltip>
+                <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
               </Form.Item>
               <Form.Item
                 label={<span aria-label="formItem-namespace">Namespace:</span>}
@@ -631,9 +633,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   className={styles.input}
                   aria-label="namespace-input"
                 />&nbsp;&nbsp;
-                <Tooltip title={MergeRuleTooltips.namespace}>
-                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Tooltip>
+                <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
               </Form.Item>
             </> : ""
           }
@@ -669,9 +671,9 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
                 </Radio.Group>
-                <Tooltip title={MergeRuleTooltips.maxValues}>
-                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Tooltip>
+                <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
               </Form.Item>
               <Form.Item
                 colon={false}
@@ -682,14 +684,18 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
                 </Radio.Group>
-                <Tooltip title={MergeRuleTooltips.maxSources}>
-                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Tooltip>
+                <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
               </Form.Item>
               <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
-                <div><p className={styles.priorityText}>Priority Order<Tooltip title={multiSliderTooltips.priorityOrder} placement="right">
-                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Tooltip></p></div>
+                <div>
+                  <p className={styles.priorityText}>Priority Order
+                    <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
+                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                    </HCTooltip>
+                  </p>
+                </div>
                 <div className={styles.addButtonContainer}>
                   <Select
                     id="dropdownOptions"

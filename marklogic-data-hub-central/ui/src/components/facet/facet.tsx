@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Icon, Tooltip} from "antd";
+import {Icon} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {FacetName} from "./facet-element";
 import styles from "./facet.module.scss";
@@ -7,6 +7,7 @@ import {stringConverter} from "../../util/string-conversion";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
+import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   name: string;
@@ -152,12 +153,12 @@ const Facet: React.FC<Props> = (props) => {
           data-cy={stringConverter(props.name) + "-facet"}
           data-testid={stringConverter(props.name) + "-facet"}
         >
-          <Tooltip title={props.name.replace(/\./g, " > ")}>{formatTitle()}</Tooltip>
-          <Tooltip
-            title={props.tooltip} placement="topLeft">
-            {props.tooltip ?
-              <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /> : ""}
-          </Tooltip>
+          <HCTooltip text={props.name.replace(/\./g, " > ")} id="name-prop-tooltip" placement="top">{formatTitle()}</HCTooltip>
+          <HCTooltip text={props.tooltip} id="props-tooltip" placement="top-start">
+            <span>{props.tooltip ?
+              <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /></i> : ""}
+            </span>
+          </HCTooltip>
         </div>
         <div className={styles.summary}>
           {checked.length > 0 ? <div className={styles.selected}
