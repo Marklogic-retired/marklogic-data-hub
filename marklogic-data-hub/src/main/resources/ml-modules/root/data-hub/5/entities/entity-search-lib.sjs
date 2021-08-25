@@ -18,8 +18,8 @@
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const consts = require('/data-hub/5/impl/consts.sjs');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const es = require('/MarkLogic/entity-services/entity-services');
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
+const ext = require("/data-hub/public/extensions/entity/get-entity-details.sjs");
 const prov = require("/data-hub/5/impl/prov.sjs");
 
 /**
@@ -245,90 +245,13 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
 }
 
 /**
- * "Details" in this context is an abstraction for different parts of an entity document, such that a coupling to
- * the location of those parts can be avoided.
- *
- * @param doc a document-node
- * @returns a JSON object containing "entityTitle" and "properties" if those values can be determined from the
- * document; otherwise, null
- */
-function getEntityDetails(doc) {
-  const jsonInstance = getInstanceAsJson(doc);
-  return jsonInstance == null ? null : getEntityDetailsFromJsonInstance(jsonInstance);
-}
-
-/**
- *
- * @param jsonInstance {object} expected to be the output of the getInstanceAsJson function, which converts XML
- * into an ES-compliant JSON object
- * @returns {object} a JSON object containing "entityTitle" and "properties" if those values can be determined from the
- * document; otherwise, null
- */
-function getEntityDetailsFromJsonInstance(jsonInstance) {
-  let entityName;
-  let instanceProperties;
-
-  if (jsonInstance.info) {
-    if (jsonInstance.info.title && jsonInstance.hasOwnProperty(jsonInstance.info.title)) {
-      entityName = jsonInstance.info.title;
-      instanceProperties = jsonInstance[jsonInstance.info.title];
-    } else {
-      const keys = Object.keys(jsonInstance);
-      if (keys.length == 2) {
-        const otherKey = keys.find(val => val !== "info");
-        if (otherKey) {
-          entityName = otherKey;
-          instanceProperties = jsonInstance[otherKey];
-        }
-      }
-    }
-  } else {
-    // If there's no info, and only one key, assume that's the properties
-    const keys = Object.keys(jsonInstance);
-    if (keys.length == 1) {
-      entityName = keys[0];
-      instanceProperties = jsonInstance[keys[0]];
-    }
-  }
-
-  return {
-    entityName,
-    properties: instanceProperties
-  };
-}
-
-/**
- *
- * @param doc a document-node
- * @returns the content under "envelope/instance" as a JSON object; if the incoming doc is an XML document, then
- * the ES library will be used to convert the XML content under "envelope/instance" into JSON
- */
-function getInstanceAsJson(doc) {
-  if (doc === null) {
-    return null;
-  }
-
-  if (doc instanceof Element || doc instanceof XMLDocument) {
-    const builder = new NodeBuilder();
-    const instance = doc.xpath("/*:envelope/*:instance");
-    if (!fn.empty(instance)) {
-      const node = builder.startDocument().addNode(instance).endDocument().toNode();
-      return fn.head(es.instanceJsonFromDocument(node)).toObject();
-    }
-  } else if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.instance) {
-    return doc.toObject().envelope.instance;
-  }
-  return null;
-}
-
-/**
  *
  * @param doc expected to be a document-node
  * @returns a JSON object contain the instance properties (expected to be located at
  * envelope/instance/(entity type name))
  */
 function getEntityInstanceProperties(doc) {
-  const details = getEntityDetails(doc);
+  const details = ext.getEntityDetails(doc);
   return details != null ? details.properties : null;
 }
 
@@ -473,7 +396,7 @@ function addGenericEntityProperties(result) {
   result.entityInstance = {};
 
   const doc = cts.doc(result.uri);
-  const entityDetails = getEntityDetails(doc);
+  const entityDetails = ext.getEntityDetails(doc);
   if(!entityDetails) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     return;
@@ -700,6 +623,5 @@ module.exports = {
   getDocumentSize,
   getEntityInstanceProperties,
   getEntitySources,
-  getEntityDetails,
   getRecordHistory
 };

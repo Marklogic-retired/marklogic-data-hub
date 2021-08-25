@@ -88,7 +88,7 @@ if (entityModels.length > 0) {
   });
 
   // Add database properties
-  const dbProps = hent.dumpIndexes(entityModels);
+  const dbProps = hubEs.generateDatabaseProperties(entityModels);
   const stagingProps = dbProps.toObject();
   stagingProps["database-name"] = config.STAGINGDATABASE;
   const finalProps = dbProps.toObject();

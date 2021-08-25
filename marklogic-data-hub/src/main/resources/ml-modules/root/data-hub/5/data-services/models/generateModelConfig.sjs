@@ -49,7 +49,7 @@ if (entityModels.length > 0) {
   }
 
   // Add indexes
-  const dbProps = hent.dumpIndexes(entityModels);
+  const dbProps = hubEs.generateDatabaseProperties(entityModels);
   result.indexConfig = dbProps.toObject();
 }
 

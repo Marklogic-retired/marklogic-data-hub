@@ -17,6 +17,22 @@
 'use strict';
 const sem = require("/MarkLogic/semantics.xqy");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const hent = require("/data-hub/5/impl/hub-entities.xqy");
+const ext = require("/data-hub/public/extensions/entity/post-process-database-properties.sjs");
+
+/**
+ * Generates database properties based on the given entity models. This starts with the ES database-properties-generate
+ * function, then applies a significant amount of DHF logic to the properties, and then calls an extension point to allow
+ * a user to further modify them.
+ *
+ * @param {array} entityModels
+ * @returns {object} a document-node wrapping a JSON object containing the database properties
+ */
+function generateDatabaseProperties(entityModels)
+{
+  const dbProps = hent.dumpIndexes(entityModels);
+  return ext.postProcessDatabaseProperties(dbProps);
+};
 
 /**
  * @param entityIRI
@@ -259,6 +275,7 @@ function getEntityInfoFromRecord(record) {
 module.exports = {
   buildPathReferenceParts,
   findEntityServiceTitle,
+  generateDatabaseProperties,
   generateProtectedPathConfig,
   getEntityDefinitionFromIRI,
   getEntityInfoFromRecord,

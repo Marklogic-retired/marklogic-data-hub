@@ -18,11 +18,13 @@ xquery version "1.0-ml";
 module namespace hent = "http://marklogic.com/data-hub/hub-entities";
 
 import module namespace es = "http://marklogic.com/entity-services"
-at "/MarkLogic/entity-services/entity-services.xqy";
-import module namespace tde = "http://marklogic.com/xdmp/tde"
-at "/MarkLogic/tde.xqy";
+  at "/MarkLogic/entity-services/entity-services.xqy";
+
+import module namespace ext = "http://marklogic.com/data-hub/extensions/entity"
+  at "/data-hub/public/extensions/entity/post-process-search-options.xqy";
 
 declare namespace search = "http://marklogic.com/appservices/search";
+declare namespace tde = "http://marklogic.com/xdmp/tde";
 
 declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-services/models";
 
@@ -392,8 +394,6 @@ declare function build-entity-namespace-map($uber-model)
 
 declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
-  let $post-processors := get-search-options-post-processors($entities)
-
   let $entity-model-map := hent:add-indexes-for-entity-properties($entities)
   let $sortable-properties := map:get($entity-model-map, "sortable-properties")
   let $uber-model :=
@@ -403,47 +403,9 @@ declare function hent:dump-search-options($entities as json:array, $for-explorer
   return
     if ($for-explorer = fn:true()) then
       let $options := hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, build-entity-namespace-map($uber-model))
-      return apply-search-options-post-processors($options, $post-processors)
+      return ext:post-process-search-options($options)
     else
       hent:fix-options(es:search-options-generate($uber-model))
-};
-
-(:
-The concept of a module that can post-process DHF's generated search options is not specific to an entity; it's
-generic to a DHF application. But as of 5.6, DHF doesn't have a place in ML to store application-generic information.
-The config.sjs module is close to it, but that cannot be modified within DHS with user-specific config. So as an initial
-location, the "info" block in an entity model is being used as a source for this configuration.
-:)
-declare private function get-search-options-post-processors($entities as json:array) as xs:string*
-{
-  fn:distinct-values(
-    for $val in json:array-values($entities)
-    where $val instance of map:map
-    return
-      let $info := map:get($val, "info")
-      where fn:exists($info) and $info instance of map:map
-      return
-        let $processor := map:get($info, "searchOptionsPostProcessor")
-        where fn:exists($processor)
-        return fn:string($processor)
-  )
-};
-
-declare private function apply-search-options-post-processors(
-  $options as element(search:options),
-  $post-processors as xs:string*
-) as element(search:options)
-{
-  let $updated-options := $options
-
-  let $_ :=
-    for $processor in $post-processors
-    let $_ := xdmp:trace("hub-entity", "Invoking search options post processor: " || $processor)
-    return xdmp:set($updated-options, xdmp:invoke($processor, map:new(
-      map:entry("options", $updated-options)
-    )))
-
-  return $updated-options
 };
 
 declare private function fix-path-index($path-index as element(search:path-index)) as element(search:path-index)
@@ -515,21 +477,13 @@ declare private function fix-path-expression($path as xs:string) as xs:string
     $path
 };
 
-declare private function get-database-indexes-post-processors($entities as json:array) as xs:string*
-{
-  let $key := "databaseIndexesPostProcessor"
-  return fn:distinct-values(
-    for $val in json:array-values($entities)
-    let $info := map:get($val, "info")
-    where fn:exists($info) and map:contains($info, $key)
-    return fn:string(map:get($info, $key))
-  )
-};
-
+(:
+Use hubEs.generateDatabaseProperties instead of this. This code is being kept here for now as there's a lot of
+custom logic that would need to be rewritten in SJS. That is likely worth doing eventually since the output
+of es:database-properties-generate is a JSON object, and it's of course easier to manipulate JSON in SJS vs XQuery.
+:)
 declare function hent:dump-indexes($entities as json:array) as document-node()
 {
-  let $post-processors := get-database-indexes-post-processors($entities)
-
   let $updated-models := map:get(hent:add-indexes-for-entity-properties($entities), "updated-models")
   let $uber-model := hent:uber-model(json:array-values($updated-models) ! xdmp:to-json(.)/object-node())
 
@@ -548,21 +502,7 @@ declare function hent:dump-indexes($entities as json:array) as document-node()
     return map:put($index, "path-expression", fix-path-expression($path))
 
   let $_ := remove-duplicate-range-indexes($database-config)
-  let $index-config := xdmp:to-json($database-config)
-
-  (:
-  Note that a processor must return a document-node, as this function is required to return a document-node.
-  A processor will typically be an SJS module, where it's easier to modify JSON. But the module will need to call
-  toObject() on the config variable, and then call xdmp.toJSON on the variable that it returns.
-  :)
-  let $_ :=
-    for $processor in $post-processors
-    let $_ := xdmp:trace("hub-entity", "Invoking database indexes post processor: " || $processor)
-    return xdmp:set($index-config, xdmp:invoke($processor, map:new(
-      map:entry("config", $index-config)
-    )))
-
-  return $index-config
+  return xdmp:to-json($database-config)
 };
 
 (:

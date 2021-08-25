@@ -1,0 +1,15 @@
+{
+  "functionName" : "generateDatabaseProperties",
+  "desc" : "Returns a JSON object containing database properties based on entity models",
+  "params" : [ {
+    "name" : "models",
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "Array of entity models"
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "Object containing database properties"
+  }
+}

@@ -47,6 +47,7 @@ public interface ModelsService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_generateDatabaseProperties;
             private BaseProxy.DBFunctionRequest req_updateModelInfo;
             private BaseProxy.DBFunctionRequest req_saveModel;
             private BaseProxy.DBFunctionRequest req_generateProtectedPathConfig;
@@ -63,6 +64,8 @@ public interface ModelsService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/models/", servDecl);
 
+                this.req_generateDatabaseProperties = this.baseProxy.request(
+                    "generateDatabaseProperties.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_updateModelInfo = this.baseProxy.request(
                     "updateModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_saveModel = this.baseProxy.request(
@@ -85,6 +88,21 @@ public interface ModelsService {
                     "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getLatestJobData = this.baseProxy.request(
                     "getLatestJobData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode generateDatabaseProperties(com.fasterxml.jackson.databind.JsonNode models) {
+                return generateDatabaseProperties(
+                    this.req_generateDatabaseProperties.on(this.dbClient), models
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode generateDatabaseProperties(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode models) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("models", false, BaseProxy.JsonDocumentType.fromJsonNode(models))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -243,6 +261,14 @@ public interface ModelsService {
 
         return new ModelsServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Returns a JSON object containing database properties based on entity models
+   *
+   * @param models	Array of entity models
+   * @return	Object containing database properties
+   */
+    com.fasterxml.jackson.databind.JsonNode generateDatabaseProperties(com.fasterxml.jackson.databind.JsonNode models);
 
   /**
    * Update the description and optionally the namespace and namespace prefix of an existing model. Model title and version cannot yet be edited because doing so would break existing mapping and mastering configurations.

@@ -37,7 +37,7 @@ public class UpdateDhsRestExtensionPermissionsTest extends AbstractSimpleHubTest
         GenericDocumentManager modMgr = getHubClient().getModulesClient().newDocumentManager();
 
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
-        modMgr.readMetadata("/marklogic.rest.resource/mlDbConfigs/assets/metadata.xml", metadataHandle);
+        modMgr.readMetadata("/marklogic.rest.resource/mlHubversion/assets/metadata.xml", metadataHandle);
         DocumentMetadataHandle.DocumentPermissions perms = metadataHandle.getPermissions();
 
         Assertions.assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-environment-manager").iterator().next());

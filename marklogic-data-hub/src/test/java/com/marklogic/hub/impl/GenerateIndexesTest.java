@@ -1,9 +1,11 @@
 package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.*;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Companion test to generate-indexes.sjs - runs a single test to verify that DbConfigsManager works correctly.
+ * Companion test to generate-indexes.sjs - runs a single test to verify that generateDatabaseProperties works correctly.
  * All other tests should be in generate-indexes.sjs, as those tests will run faster.
  */
 public class GenerateIndexesTest extends AbstractHubCoreTest {
@@ -72,7 +74,7 @@ public class GenerateIndexesTest extends AbstractHubCoreTest {
     }
 
     private void whenTheIndexesAreBuilt() {
-        indexes = new DbConfigsManager(getHubConfig().newReverseFlowClient()).generateIndexes(entities);
+        indexes = (ObjectNode) ModelsService.on(getHubClient().getStagingClient()).generateDatabaseProperties(new ObjectMapper().valueToTree(entities));
     }
 
     private void thenTheresOnlyOneRangeIndexForTheSharedProperty(String namespace) {

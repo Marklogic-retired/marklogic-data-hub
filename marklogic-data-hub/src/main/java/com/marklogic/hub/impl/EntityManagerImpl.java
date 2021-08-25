@@ -165,10 +165,10 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             List<JsonNode> entities = getAllEntities();
 
             if (entities.size() > 0) {
-                DatabaseClient databaseClient = hubConfig.newReverseFlowClient();
+                DatabaseClient databaseClient = hubConfig.newStagingClient(null);
                 try {
-                    DbConfigsManager generator = new DbConfigsManager(databaseClient);
-                    ObjectNode indexNode = generator.generateIndexes(entities);
+                    JsonNode modelArray = new ObjectMapper().valueToTree(entities);
+                    ObjectNode indexNode = (ObjectNode) ModelsService.on(databaseClient).generateDatabaseProperties(modelArray);
 
                     // in order to make entity indexes ml-app-deployer compatible, add database-name keys.
                     // ml-app-deployer removes these keys upon sending to marklogic.
