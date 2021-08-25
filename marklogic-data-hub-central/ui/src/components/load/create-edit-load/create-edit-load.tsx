@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Icon, Select, Button, Tooltip} from "antd";
+import {Form, Input, Select, Button, Tooltip} from "antd";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
 import StepsConfig from "../../../config/steps.config";
 import {NewLoadTooltips} from "../../../config/tooltips.config";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   tabKey: string;
@@ -442,9 +444,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             className={styles.input}
             onBlur={sendPayload}
           />}
-        &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.name} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          <span className={styles.questionMarkIcon}>
+            <HCTooltip text={NewLoadTooltips.name} id="name-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
+          </span>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
@@ -457,9 +461,9 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.description} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          /><span className={styles.questionMarkIcon}><HCTooltip text={NewLoadTooltips.description} id="description-tooltip" placement="left">
+            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+          </HCTooltip></span>
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -477,9 +481,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceFormat} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          <span className={styles.questionMarkIcon}>
+            <HCTooltip text={NewLoadTooltips.sourceFormat} id="source-format-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
+          </span>
         </Form.Item>
         {srcFormat === "csv" ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -505,11 +511,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             style={{width: 75}}
             disabled={props.canReadOnly && !props.canReadWrite}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip></span> : <span>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip></span>}</span>
+          />&nbsp;&nbsp;<HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="top">
+            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+          </HCTooltip></span> : <span>&nbsp;&nbsp;<HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="right">
+            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+          </HCTooltip></span>}</span>
         </Form.Item> : ""}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -523,10 +529,12 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             style={{width: "95%"}}
             onBlur={sendPayload}>
             {toptions}
-          </Select>&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.targetFormat} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </Select>
+          <span className={styles.questionMarkIcon}>
+            <HCTooltip text={NewLoadTooltips.targetFormat} id="target-format-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
+          </span>
         </Form.Item>
         {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
           Source Name:&nbsp;
@@ -539,9 +547,12 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceName} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          />
+          <span className={styles.questionMarkIcon}>
+            <HCTooltip text={NewLoadTooltips.sourceName} id="source-name-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
+          </span>
         </Form.Item>}
         {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
           Source Type:&nbsp;
@@ -554,9 +565,12 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceType} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          />
+          <span className={styles.questionMarkIcon}>
+            <HCTooltip text={NewLoadTooltips.sourceType} id="source-type-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
+          </span>
         </Form.Item>}
         <Form.Item label={<span>
           Target URI Prefix:&nbsp;
@@ -569,24 +583,26 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
             onBlur={sendPayload}
-          />&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.outputURIPrefix} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          />
+          <span className={styles.questionMarkIcon}>
+            <HCTooltip text={NewLoadTooltips.outputURIPrefix} id="output-uri-refix-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
+          </span>
         </Form.Item>
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <Button aria-label="Cancel" onClick={() => onCancel()}>Cancel</Button>
             &nbsp;&nbsp;
-            {!props.canReadWrite?<Tooltip title={NewLoadTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}><Button
+            {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><Button
               className={styles.disabledSaveButton}
               aria-label="Save"
               type="primary"
               htmlType="submit"
               disabled={true}
               onClick={handleSubmit}
-            >Save</Button></span></Tooltip>:
+            >Save</Button></span></HCTooltip>:
               <Button
                 aria-label="Save"
                 type="primary"

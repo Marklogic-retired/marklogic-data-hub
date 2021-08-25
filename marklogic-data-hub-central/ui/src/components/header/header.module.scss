@@ -59,14 +59,14 @@ header.container {
     margin-right: 0px !important;
   }
 }
+
 .serviceName:focus {
   outline: 2px solid #7f86b5;
   outline-offset: 2px;
 }
 
-.infoTooltip {
-  top: 62px !important;
-  max-width: 100%;
+.infoTooltip > div {
+  max-width: 500px;
 }
 
 li.menuLink {
@@ -125,10 +125,12 @@ div.iconsContainer {
   position: absolute;
   top: 12px;
   right: 0;
+  color: rgba(255, 255, 255, 0.65);
   .helpIconContainer {
     margin-right: 10px;
     .helpIconLink {
       line-height: 0px;
+      color: rgba(255, 255, 255, 0.65);
       .helpIcon {
         color: rgba(255, 255, 255, 0.65);
         margin: 0px;
@@ -139,7 +141,7 @@ div.iconsContainer {
       }
     }
     .helpIconLink:focus {
-      outline: 2px solid #7f86b5;
+      outline: 2px solid #219e4b;
       outline-offset: 2px;
     }
   }

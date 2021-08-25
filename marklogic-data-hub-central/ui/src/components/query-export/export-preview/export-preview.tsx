@@ -1,5 +1,5 @@
 import React from "react";
-import {Tooltip} from "antd";
+import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 
 export const getExportPreview = (response) => {
   const tableColumns: Object[] = [];
@@ -24,7 +24,7 @@ export const getExportPreview = (response) => {
                     textOverflow: "ellipsis"}
                 };
               },
-              render: (text) => <Tooltip title={text}>{text}</Tooltip>
+              render: (text) => <HCTooltip text={text} id="export-preview-prop-tooltip" placement="top">{text}</HCTooltip>
             }
           );
         });
