@@ -18,7 +18,7 @@
 const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
 const test = require("/test/test-helper.xqy");
 
-const doc = {
+let props = entitySearchLib.getEntityInstanceProperties(xdmp.toJSON({
   envelope: {
     instance: {
       info: {
@@ -29,13 +29,33 @@ const doc = {
       }
     }
   }
-};
-
-const props = entitySearchLib.getEntityInstanceProperties(xdmp.toJSON(doc));
+}));
 
 const assertions = [
-  test.assertEqual(null, props, "Because info/title is missing, the doc isn't a valid envelope and thus " +
-    "it can't be safely assumed where the properties are")
+  test.assertEqual("someValue", props.someProperty,
+    "info/title is missing, but since there's only one other key under 'instance' that is not 'info', DHF " +
+    "will assume that that other key refers to the entity instance properties"
+  )
 ];
+
+
+props = entitySearchLib.getEntityInstanceProperties(xdmp.toJSON({
+  envelope: {
+    instance: {
+      info: {
+        notTheTitle: "MyEntity"
+      },
+      MyEntity: {
+        someProperty: "someValue"
+      },
+      SomeOtherKey: {}
+    }
+  }
+}));
+
+assertions.push(
+  test.assertEqual(null, props, "Because info/title is missing and there are 2 or more other keys under 'instance', " +
+    "DHF does not know where to find the properties, so null is returned")
+);
 
 assertions

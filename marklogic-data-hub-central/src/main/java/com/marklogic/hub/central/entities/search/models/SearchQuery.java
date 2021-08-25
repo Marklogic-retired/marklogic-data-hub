@@ -35,6 +35,11 @@ public class SearchQuery {
         this.propertiesToDisplay = new ArrayList<>();
     }
 
+    public SearchQuery(String selectedEntityType) {
+        this();
+        withEntityType(selectedEntityType);
+    }
+
     /**
      * @return combination of the user's search text plus custom constraints plus sort operators
      */
@@ -56,11 +61,22 @@ public class SearchQuery {
         return StringUtils.trim(builder.toString());
     }
 
-    public void addSortOrder(String propertyName, String direction) {
+    public SearchQuery withSearchText(String searchText) {
+        this.query.setSearchText(searchText);
+        return this;
+    }
+
+    public SearchQuery withEntityType(String entityType) {
+        this.query.addSelectedEntityType(entityType);
+        return this;
+    }
+
+    public SearchQuery addSortOrder(String propertyName, String direction) {
         if (this.sortOrder == null) {
             this.sortOrder = new ArrayList<>();
         }
         this.sortOrder.add(new SortOrder(propertyName, direction));
+        return this;
     }
 
     public DocSearchQueryInfo getQuery() {

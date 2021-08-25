@@ -64,26 +64,24 @@ const billingResults = {
 function getInstanceWithoutESInfo() {
   let docUri = "/content/sally.xml";
   const assertions = [];
-  let instance = getEntityInstanceForUri(docUri);
-  let results = instance["Customer"];
+  let props = getEntityInstancePropertiesForUri(docUri);
 
   assertions.concat([
-    test.assertEqual(101, results["customerId"]),
-    test.assertEqual("Sally Hardin", results["name"]),
-    test.assertEqual(shippingResults, results["shipping"]),
-    test.assertEqual(["Sal", "din", "shh"], results["nicknames"]),
-    test.assertEqual(JSON.stringify(billingResults), JSON.stringify(results["billing"])),
+    test.assertEqual(101, props["customerId"]),
+    test.assertEqual("Sally Hardin", props["name"]),
+    test.assertEqual(shippingResults, props["shipping"]),
+    test.assertEqual(["Sal", "din", "shh"], props["nicknames"]),
+    test.assertEqual(JSON.stringify(billingResults), JSON.stringify(props["billing"])),
   ]);
 
   docUri = "/content/sally.json";
-  instance = getEntityInstanceForUri(docUri);
-  results = instance["Customer"];
+  props = getEntityInstancePropertiesForUri(docUri);
   assertions.concat([
-    test.assertEqual(101, results["customerId"]),
-    test.assertEqual("Sally Hardin", results["name"]),
-    test.assertEqual(shippingResults, results["shipping"]),
-    test.assertEqual(["Sal", "din", "shh"], results["nicknames"]),
-    test.assertEqual(JSON.stringify(billingResults), JSON.stringify(results["billing"])),
+    test.assertEqual(101, props["customerId"]),
+    test.assertEqual("Sally Hardin", props["name"]),
+    test.assertEqual(shippingResults, props["shipping"]),
+    test.assertEqual(["Sal", "din", "shh"], props["nicknames"]),
+    test.assertEqual(JSON.stringify(billingResults), JSON.stringify(props["billing"])),
   ]);
   return assertions;
 }
@@ -91,21 +89,19 @@ function getInstanceWithoutESInfo() {
 function getInstanceWithESInfo() {
   let docUri = "/content/jane.xml";
   const assertions = [];
-  let instance = getEntityInstanceForUri(docUri);
-  let results = instance["Customer"];
+  let props = getEntityInstancePropertiesForUri(docUri);
   assertions.concat([
-    test.assertEqual(101, results["customerId"]),
-    test.assertEqual("Jane Foster", results["name"]),
-    test.assertEqual(["jane", "foster"], results["nicknames"])
+    test.assertEqual(101, props["customerId"]),
+    test.assertEqual("Jane Foster", props["name"]),
+    test.assertEqual(["jane", "foster"], props["nicknames"])
   ]);
 
   docUri = "/content/jane.json";
-  instance = getEntityInstanceForUri(docUri);
-  results = instance["Customer"];
+  props = getEntityInstancePropertiesForUri(docUri);
   assertions.concat([
-    test.assertEqual(101, results["customerId"]),
-    test.assertEqual("Jane Foster", results["name"]),
-    test.assertEqual(["jane", "foster"], results["nicknames"])
+    test.assertEqual(101, props["customerId"]),
+    test.assertEqual("Jane Foster", props["name"]),
+    test.assertEqual(["jane", "foster"], props["nicknames"])
   ]);
 
   return assertions;
@@ -113,61 +109,58 @@ function getInstanceWithESInfo() {
 
 function getInstanceWithAdditionalProperty() {
   let docUri = "/content/instanceWithAdditionalProperty.xml";
-  const instance = getEntityInstanceForUri(docUri);
-  const results = instance["Customer"];
+  const props = getEntityInstancePropertiesForUri(docUri);
   return [
-    test.assertEqual(101, results["customerId"]),
-    test.assertEqual("Jane Foster", results["name"]),
-    test.assertEqual(["jane", "foster"], results["nicknames"]),
-    test.assertEqual(2000, results["birthYear"])
+    test.assertEqual(101, props["customerId"]),
+    test.assertEqual("Jane Foster", props["name"]),
+    test.assertEqual(["jane", "foster"], props["nicknames"]),
+    test.assertEqual(2000, props["birthYear"])
   ];
 }
 
 function getInstanceWithNonExistentModel() {
   let docUri = "/content/instanceWithNonExistentModel.xml";
-  const instance = getEntityInstanceForUri(docUri);
-  const results = instance["TestEntity"];
+  const props = getEntityInstancePropertiesForUri(docUri);
   return [
-    test.assertEqual(101, results["testPropertyId"]),
-    test.assertEqual("Jane Foster", results["testPropertyName"])
+    test.assertEqual(101, props["testPropertyId"]),
+    test.assertEqual("Jane Foster", props["testPropertyName"])
   ];
 }
 
 function getInstanceWithNamespace() {
   let docUri = "/content/instanceWithNamespace.xml";
-  const instance = getEntityInstanceForUri(docUri);
-  const results = instance["Customer"];
+  const props = getEntityInstancePropertiesForUri(docUri);
   return [
-    test.assertEqual(101, results["customerId"]),
-    test.assertEqual("Sally Hardin", results["name"]),
-    test.assertEqual(["Sal", "din", "shh"], results["nicknames"])
+    test.assertEqual(101, props["customerId"]),
+    test.assertEqual("Sally Hardin", props["name"]),
+    test.assertEqual(["Sal", "din", "shh"], props["nicknames"])
   ];
 }
 
 function getInstanceWithNonExistingDocUri() {
     let docUri = "/content/someURI.xml";
-    const instance = getEntityInstanceForUri(docUri);
+    const props = getEntityInstancePropertiesForUri(docUri);
     return [
-      test.assertEqual(null, instance)
+      test.assertEqual(null, props)
     ]
 }
 
 function getInstanceFromTextDocument() {
   let docUri = "/content/textdoc.txt";
-  const instance = getEntityInstanceForUri(docUri);
+  const props = getEntityInstancePropertiesForUri(docUri);
   return [
-    test.assertEqual(null, instance)
+    test.assertEqual(null, props)
   ]
 }
 
 function getInstanceWithInstanceInDifferentXpath() {
   let docUri = "/content/instanceElementInDifferentXpath.xml";
-  let instance = getEntityInstanceForUri(docUri);
-  return [test.assertEqual(null, instance)];
+  let props = getEntityInstancePropertiesForUri(docUri);
+  return [test.assertEqual(null, props)];
 }
 
-function getEntityInstanceForUri(docUri) {
-  return entitySearchLib.getEntityInstance(cts.doc(docUri));
+function getEntityInstancePropertiesForUri(docUri) {
+  return entitySearchLib.getEntityInstanceProperties(cts.doc(docUri));
 }
 
 []

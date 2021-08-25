@@ -751,6 +751,7 @@ function verifyEntityInstanceResults() {
     test.assertEqual(2, response.results[0].entityInstance.shipping.length),
     test.assertEqual(null, response.results[0].entityInstance.birthDate),
     test.assertEqual(null, response.results[0].entityInstance.status),
+
     // For XML doc result
     test.assertEqual(5, Object.keys(response.results[1].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(101, response.results[1].entityInstance.customerId),
@@ -759,12 +760,17 @@ function verifyEntityInstanceResults() {
     test.assertEqual(2, response.results[1].entityInstance.shipping.length),
     test.assertEqual(null, response.results[1].entityInstance.birthDate),
     test.assertEqual(null, response.results[1].entityInstance.status),
+
     // instanceWithAdditionalProperty
     test.assertEqual(4, Object.keys(response.results[2].entityInstance).length, "4 props are populated. which are available in the xpath /*:envelope/*:instance" +
         "Additional property birthDate is returned. There are only 4 properties in the instance"),
+
     // instanceWithNonExistentModel
-    test.assertEqual(0, Object.keys(response.results[3].entityInstance).length),
-    test.assertEqual(0, Object.keys(response.results[3].entityProperties).length),
+    test.assertEqual(2, Object.keys(response.results[3].entityInstance).length,
+      "While the info/title doesn't correspond to the actual entity type, since there's only one other " +
+      "key under the instance besides 'info', DHF can assume that's where the entity instance is"),
+    test.assertEqual(5, Object.keys(response.results[3].entityProperties).length),
+
     // instanceWithNamespace
     test.assertEqual(3, Object.keys(response.results[4].entityInstance).length, "Sally has only 3 props populated. which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(101, response.results[4].entityInstance.customerId),
@@ -774,10 +780,13 @@ function verifyEntityInstanceResults() {
     test.assertEqual(null, response.results[4].entityInstance.billing),
     test.assertEqual(null, response.results[4].entityInstance.birthDate),
     test.assertEqual(null, response.results[4].entityInstance.status),
+
     // textdocument
     test.assertEqual(0, Object.keys(response.results[5].entityInstance).length),
+
     // nonExistentDoc
     test.assertEqual(0, Object.keys(response.results[6].entityInstance).length),
+
     // mergedJsonInstance
     test.assertEqual(4, Object.keys(response.results[7].entityInstance).length, "mergedJsonInstance has 5 props populated which are available in the xpath /*:envelope/*:instance"),
     test.assertEqual(105, response.results[7].entityInstance.customerId),

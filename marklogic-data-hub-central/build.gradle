@@ -117,6 +117,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
+    testImplementation "com.marklogic:marklogic-junit5:1.1.0"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
