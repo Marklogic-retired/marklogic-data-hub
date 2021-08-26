@@ -5,6 +5,7 @@ import AdvancedSettings from "./advanced-settings";
 import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/advanced-settings.data";
 import {AdvancedSettingsTooltips, SecurityTooltips} from "../../config/tooltips.config";
+import StepsConfig from "../../config/steps.config";
 
 jest.mock("axios");
 
@@ -310,6 +311,16 @@ describe("Advanced step settings", () => {
     fireEvent.click(getByText("Store validation errors in entity headers"));
     fireEvent.select(getByTestId("entityValOpts-2"));
     expect(getByText("Skip documents with validation errors")).toBeInTheDocument();
+
+    //Verifying source record scope options select field
+    let instanceOnlyOption = getByText("Instance only");
+    expect(instanceOnlyOption).toBeInTheDocument();
+    fireEvent.click(instanceOnlyOption);
+    fireEvent.select(getByTestId("sourceRecordScopeOptions-1"));
+    expect(getByText("Entire record")).toBeInTheDocument();
+    let entireRecordOption = getByText("Entire record");
+    fireEvent.click(entireRecordOption);
+    expect(getByText(StepsConfig.toggleSourceRecordScopeMessage)).toBeInTheDocument();
 
     //Not able to send input to Additional collections. Test via e2e
     //https://github.com/testing-library/react-testing-library/issues/375

@@ -38,6 +38,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = StepsConfig.invalidJSONMessage;
+  const toggleSourceRecordScopeMessage = StepsConfig.toggleSourceRecordScopeMessage;
 
   const [isCustomIngestion, setIsCustomIngestion] = useState(false);
   const [stepDefinitionName, setStepDefinitionName] = useState("");
@@ -91,6 +92,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const sourceRecordScopeOptions = {"Instance only": "instanceOnly", "Entire record": "entireRecord"};
   const [sourceRecordScope, setSourceRecordScope] = useState(defaultSourceRecordScope);
   const [sourceRecordScopeTouched, setSourceRecordScopeTouched] = useState(false);
+  const [sourceRecordScopeToggled, setSourceRecordScopeToggled] = useState(false);
 
   const defaultBatchSize = StepsConfig.defaultBatchSize;
   const [batchSize, setBatchSize] = useState(defaultBatchSize);
@@ -131,6 +133,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setValidateEntityTouched(false);
     setAttachSourceDocumentTouched(false);
     setSourceRecordScopeTouched(false);
+    setSourceRecordScopeToggled(false);
     setBatchSizeTouched(false);
     setHeadersTouched(false);
     setInterceptorsTouched(false);
@@ -538,6 +541,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
   const handleSourceRecordScope = (value) => {
+    if (props.isEditing) {
+      if (props.stepData.sourceRecordScope !== value) {
+        setSourceRecordScopeToggled(true);
+      } else {
+        setSourceRecordScopeToggled(false);
+      }
+    }
+
     if (value === " ") {
       setSourceRecordScopeTouched(false);
     } else {
@@ -797,7 +808,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
             aria-label="sourceRecordScope-select"
-            onBlur={sendPayload}
           >
             {sourceRecordScopeValue}
           </Select>
@@ -806,6 +816,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
+          { sourceRecordScopeToggled ? <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div> : null }
         </Form.Item> : ""}
         {   stepType === "mapping" ? <Form.Item
           label={<span>Attach Source Document</span>}
