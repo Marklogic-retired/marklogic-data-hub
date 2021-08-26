@@ -1,6 +1,5 @@
 import React, {useContext} from "react";
-import {Modal} from "antd";
-import {MLButton} from "@marklogic/design-system";
+import {Modal, Button} from "antd";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import {CurationContext} from "../../../../util/curation-context";
 
@@ -43,17 +42,17 @@ const DeleteModal: React.FC<Props> = (props) => {
 
 
   const modalFooter = <div >
-    <MLButton
+    <Button
       aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-no`: `confirm-${props.editRuleset.thresholdName}-no`}
       size="default"
       onClick={closeModal}
-    >No</MLButton>
-    <MLButton
+    >No</Button>
+    <Button
       aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-yes`: `confirm-${props.editRuleset.thresholdName}-yes`}
       type="primary"
       size="default"
       onClick={() => confirmAction()}
-    >Yes</MLButton>
+    >Yes</Button>
   </div>;
 
   return (
