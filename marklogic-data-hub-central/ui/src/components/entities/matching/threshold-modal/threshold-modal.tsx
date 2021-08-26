@@ -417,21 +417,21 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-    <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-    <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
-    </Button>
-    <div className={styles.footer}>
-      <Button
-        aria-label={`cancel-threshold-modal`}
-        onClick={closeModal}
-      >Cancel</Button>
-      <Button
-        className={styles.saveButton}
-        aria-label={`confirm-threshold-modal`}
-        type="primary"
-        onClick={(e) => onSubmit(e)}
-      >Save</Button>
-    </div>
+      <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+      </Button>
+      <div className={styles.footer}>
+        <Button
+          aria-label={`cancel-threshold-modal`}
+          onClick={closeModal}
+        >Cancel</Button>
+        <Button
+          className={styles.saveButton}
+          aria-label={`confirm-threshold-modal`}
+          type="primary"
+          onClick={(e) => onSubmit(e)}
+        >Save</Button>
+      </div>
     </div>
   );
 
