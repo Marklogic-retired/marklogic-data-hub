@@ -6,7 +6,7 @@ import UserProvider from "./util/user-context";
 
 import * as serviceWorker from "./serviceWorker";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./HCTheme.scss";
 
 ReactDOM.render(
   <Router basename={process.env.PUBLIC_URL}>
