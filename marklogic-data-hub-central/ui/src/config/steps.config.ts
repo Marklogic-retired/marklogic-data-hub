@@ -13,6 +13,7 @@ const defaultSourceRecordScope = "instanceOnly";
 const defaultBatchSize = 100;
 const defaultSelectedSource = "collections";
 const defaultFieldSeparator = ",";
+const toggleSourceRecordScopeMessage = "Any existing mapping expressions must be adjusted to reflect the new paths to your source fields.";
 
 const defaultPrimaryUri = "$URI";
 const defaultRelatedUri = (entityName) => `hubURI('${entityName}')`;
@@ -32,5 +33,6 @@ export default {
     defaultSelectedSource,
     defaultFieldSeparator,
     defaultPrimaryUri,
-    defaultRelatedUri
+    defaultRelatedUri,
+    toggleSourceRecordScopeMessage
 };
