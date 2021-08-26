@@ -926,6 +926,8 @@ describe("RTL Source-to-entity map tests", () => {
     //verify proper target entity settings title shows up when popover is clicked (Person)
     fireEvent.click(getByTestId("Person-entity-settings"));
     expect(getByTestId("Person-settings-title")).toBeInTheDocument();
+
+    // TODO DHFPROD-7744 Add validation for testing URI value tooltip
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
