@@ -1,0 +1,83 @@
+$primary: #394494;
+$secondary: #993366;
+$success: #389e0d;
+$info: #5b69af;
+$warning: #ce8406;
+$danger: #b32424;
+$light: #f8f9fa;
+$dark: #343a40;
+
+$text-color: #333;
+
+// this is used to map colors. change accordingly.
+$theme-colors: (
+    primary: $primary,
+    secondary: $secondary,
+    success: $success,
+    info: $info,
+    warning: $warning,
+    danger: $danger,
+    light: $light,
+    dark: $dark,
+);
+
+//fonts
+$body-color: $text-color !default;
+$font-size-base: 0.875rem !default;
+$font-family-sans-serif: "Helvetica Neue", system-ui, -apple-system, "Segoe UI",
+    Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+// Alert
+$alert-padding-y: 0.7rem;
+$alert-padding-x: 0.7rem;
+$alert-bg-scale: -90% !default;
+$alert-border-scale: 30% !default;
+$alert-color-scale: 50% !default;
+
+// Tooltip
+$tooltip-bg: #373737 !default;
+$tooltip-opacity: 1 !default;
+$tooltip-max-width: 250px !default;
+
+//accordion
+$accordion-icon-width: 0.875rem;
+$accordion-icon-transform: rotate(0deg) !default;
+
+//Form
+$input-btn-focus-width: .05rem;
+$input-border-color: #ccc;
+$input-border-width: 1px;
+$input-border-radius: 2px;
+
+// Import Bootstrap and its default variables
+@import "~bootstrap/scss/bootstrap.scss";
+
+.accordion-button {
+    &:not(.collapsed) {
+        &::before {
+            background-image: escape-svg($accordion-button-active-icon);
+            transform: $accordion-icon-transform;
+        }
+    }
+    // Accordion icon
+    &::before {
+        flex-shrink: 0;
+        width: $accordion-icon-width;
+        height: $accordion-icon-width;
+        margin-right: 12px;
+        content: "";
+        background-image: escape-svg($accordion-button-icon);
+        background-repeat: no-repeat;
+        transform: rotate(-90deg);
+        background-size: $accordion-icon-width;
+        @include transition($accordion-icon-transition);
+    }
+    &::after {
+        display: none;
+    }
+}
+
+.tooltip-inner {
+    text-align: left;
+}
