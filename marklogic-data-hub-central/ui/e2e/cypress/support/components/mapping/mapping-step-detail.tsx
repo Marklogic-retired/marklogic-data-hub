@@ -80,7 +80,7 @@ class MappingStepDetail {
   }
 
   relatedFilterMenu (entityName: string) {
-    return cy.get(`#${entityName}-entities-filter`);
+    cy.get(`#${entityName}-entities-filter`).click();
   }
 
   deleteConfirmationButtonYes() {
@@ -159,7 +159,7 @@ class MappingStepDetail {
    * @example Child (childOf Person)
    */
   getRelatedEntityFromList(entityTitle: string) {
-    return cy.findByLabelText(`${entityTitle}-option`);
+    cy.findByLabelText(`${entityTitle}-option`).click({force: true});
   }
 
   /**
@@ -170,7 +170,7 @@ class MappingStepDetail {
    * @example /
    */
   setXpathExpressionInput(propertyName: string, value: string) {
-    cy.findByTestId(`${propertyName}-mapexpression`).type(value);
+    cy.findByTestId(`${propertyName}-mapexpression`).clear().type(value);
   }
 
   validateContextInput(entityTitle: string, value:string) {
@@ -193,6 +193,10 @@ class MappingStepDetail {
     cy.get(`[data-testid="${entityName}-${propertyName}-value"] > span`).should("have.text", value);
   }
 
+  validateMapURIValue(entityName: string, value:string) {
+    cy.get(`[data-testid="${entityName}-URI-value"] > span`).should("have.text", value);
+  }
+
   validateMapInput(propertyName: string, value:string) {
     cy.findByTestId(`${propertyName}-mapexpression`).should("have.text", value);
   }
@@ -201,8 +205,9 @@ class MappingStepDetail {
     return cy.findByTestId(`${entityTitle}-URI-mapexpression`);
   }
 
-  getURIValue(entityTitle: string) {
-    return cy.get(`[data-testid="${entityTitle}-URI-value"]`);
+  getURIValue(entityTitle: string, value:string) {
+    cy.get(`[data-testid="${entityTitle}-URI-value"]`).trigger("mouseover");
+    cy.contains(value);
   }
 
   getForeignIcon(propertyName: string) {
@@ -266,39 +271,37 @@ class MappingStepDetail {
   }
 
   XPathInfoIcon() {
-    return cy.findByTestId("XPathInfoIcon");
+    cy.findByTestId("XPathInfoIcon").trigger("mouseover");
+    cy.findByText("Documentation:").should("be.visible");
+    cy.findByTestId("XPathInfoIcon").trigger("mouseout");
   }
 
   relatedInfoIcon() {
-    return cy.findByTestId("relatedInfoIcon");
+    cy.findByTestId("relatedInfoIcon").trigger("mouseover");
+    cy.findByTestId("relatedInfoContent").should("be.visible");
+    cy.findByTestId("relatedInfoIcon").trigger("mouseout");
   }
 
   relatedInfoContent() {
     return cy.findByTestId("relatedInfoContent");
   }
 
-  sourceFieldIcon(entityName: string) {
+  verifySourceFieldTooltip(entityName: string) {
     cy.findByTestId(`${entityName}-URI-listIcon1`).trigger("mouseover");
-  }
-
-  verifySourceFieldTooltip() {
     cy.findByText("Source Field").should("be.visible");
+    cy.findByTestId(`${entityName}-URI-listIcon1`).trigger("mouseout");
   }
 
-  propertyFunctionIcon(propertyName: string) {
+  verifyFunctionTooltip(propertyName: string) {
     cy.findByTestId(`${propertyName}-101-functionIcon`).trigger("mouseover");
-  }
-
-  verifyFunctionTooltip() {
     cy.findByText("Function").should("be.visible");
+    cy.findByTestId(`${propertyName}-101-functionIcon`).trigger("mouseout");
   }
 
-  referenceIcon(entityName: string) {
+  verifyReferenceTooltip(entityName: string) {
     cy.findByTestId(`${entityName}-URI-refIcon1`).trigger("mouseover");
-  }
-
-  verifyReferenceTooltip() {
     cy.findByText("Reference").should("be.visible");
+    cy.findByTestId(`${entityName}-URI-refIcon1`).trigger("mouseout");
   }
 
 }
