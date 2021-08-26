@@ -1,6 +1,5 @@
 package com.marklogic.hub.deploy;
 
-import com.marklogic.appdeployer.CmaConfig;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.alert.DeployAlertActionsCommand;
 import com.marklogic.appdeployer.command.alert.DeployAlertRulesCommand;
@@ -38,7 +37,6 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.flow.FlowInputs;
@@ -59,17 +57,12 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class DeployToReplicaTest extends AbstractHubCoreTest {
 
-    String initialHost;
-
     @BeforeEach
     void beforeEach() {
         assumeTrue(isVersionCompatibleWith520Roles());
-        runAsAdmin();
 
-        initialHost = getHubConfig().getHost();
-        logger.info("Saving initialHost: " + initialHost);
-        logger.info("Initial AppConfig host: " + getHubConfig().getAppConfig().getHost());
-        logger.info("Initial ManageClient host: " + getHubConfig().getManageClient().getManageConfig().getHost());
+        // For on-premise deployments, it's common to run as an admin user
+        runAsAdmin();
 
         installProjectInFolder("test-projects/simple-custom-step");
 
@@ -80,10 +73,6 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
     @AfterEach
     void afterEach() {
         assumeTrue(isVersionCompatibleWith520Roles());
-
-        // Setting this back to the original value; this test is failing when the suite runs against multiple hosts,
-        // as host is getting set back to "localhost"
-        getHubConfig().setHost(initialHost);
 
         // Deploying will remove the test-specific database settings, so gotta restore them
         applyDatabasePropertiesForTests(getHubConfig());
@@ -97,36 +86,13 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
 
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
-        // This is failing intermittently with the following error:
-        // I/O error on POST request for "http://localhost:8002/manage/v3": Connect to localhost:8002 [localhost/127.0.0.1, localhost/0:0:0:0:0:0:0:1] failed: Connection refused
-        // This occurs at the beginning of the deployment when a check is made to see if /manage/v3 exists
-        // The problem is 1 of 2 things - either "localhost" is wrong, or it's correct but ML is restarting somehow
-        // So trying to prevent either of those from being a problem here
         HubConfigImpl hubConfig = getHubConfig();
-        hubConfig.setHost(initialHost);
-        hubConfig.getAdminManager().waitForRestart();
+        List<Command> commands = new DataHubImpl(hubConfig).buildCommandsForDeployingToReplica();
 
-        logger.info("HubConfig host: " + hubConfig.getHost());
-        logger.info("AppConfig host: " + hubConfig.getAppConfig().getHost());
-        logger.info("ManageClient host: " + hubConfig.getManageClient().getManageConfig().getHost());
-
-        // For on-premise, it's reasonable to deploy as an admin user
-
-        // Disabling CMA usage to see if we avoid mysterious error where "host" is "localhost", regardless of what
-        // initialHost is above
-        hubConfig.getAppConfig().setCmaConfig(new CmaConfig(false));
-
-        DataHubImpl dataHub = new DataHubImpl(hubConfig);
-        logger.info("HubConfig host: " + hubConfig.getHost());
-        logger.info("AppConfig host: " + hubConfig.getAppConfig().getHost());
-        logger.info("ManageClient host: " + hubConfig.getManageClient().getManageConfig().getHost());
-
-        List<Command> commands = dataHub.buildCommandsForDeployingToReplica();
-        logger.info("HubConfig host: " + hubConfig.getHost());
-        logger.info("AppConfig host: " + hubConfig.getAppConfig().getHost());
-        logger.info("ManageClient host: " + hubConfig.getManageClient().getManageConfig().getHost());
-
-        new SimpleAppDeployer(commands).deploy(hubConfig.getAppConfig());
+        // Need to pass along hubConfig's ManageClient/AdminManager so that the correct enviroment config is used.
+        // Otherwise, SimpleAppDeployer will default to localhost.
+        new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), commands.toArray(new Command[]{}))
+            .deploy(hubConfig.getAppConfig());
 
         verifyLatestTimestampsAreUnchanged(initialLatestTimestamps);
     }
