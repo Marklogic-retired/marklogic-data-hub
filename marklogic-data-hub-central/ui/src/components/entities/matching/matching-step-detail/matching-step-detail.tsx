@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Row, Col, Card, Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip, Switch} from "antd";
+import {Row, Col, Card, Menu, Dropdown, Collapse, Icon, Button, Input, Radio, Table, Tooltip, Switch} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
