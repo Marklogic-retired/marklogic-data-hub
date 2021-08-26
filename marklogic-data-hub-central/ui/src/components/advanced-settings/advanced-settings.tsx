@@ -810,9 +810,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {sourceRecordScopeValue}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.sourceRecordScope} placement={"right"}>
+            <Tooltip title={tooltips.sourceRecordScope} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Tooltip>
           </div>
           { sourceRecordScopeToggled ? <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div> : null }
         </Form.Item> : ""}
