@@ -12,6 +12,7 @@ import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
 import {updateModelInfo} from "../../../api/modeling";
+import {ConfirmationType} from "../../../types/common-types";
 
 type Props = {
   entityTypes: any;
@@ -25,6 +26,8 @@ type Props = {
   toggleShowEntityModal: any;
   toggleIsEditModal: any;
   setEntityTypesFromServer: any;
+  toggleConfirmModal: any;
+  setConfirmType: any;
 };
 
 const GraphView: React.FC<Props> = (props) => {
@@ -150,6 +153,21 @@ const GraphView: React.FC<Props> = (props) => {
     </Dropdown>
   );
 
+  const publishButton = <MLButton
+    className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
+    disabled={!modelingOptions.isModified}
+    aria-label="publish-to-database"
+    size="small" type="secondary"
+    onClick={() => {
+      props.setConfirmType(ConfirmationType.PublishAll);
+      props.toggleConfirmModal(true);
+    }}>
+    <span className={styles.publishButtonContainer}>
+      <PublishToDatabaseIcon style={publishIconStyle} />
+      <span className={styles.publishButtonText}>Publish</span>
+    </span>
+  </MLButton>;
+
   const headerButtons = <span className={styles.buttons}>
     {graphEditMode ?
       <div className={styles.editModeInfoContainer}>
@@ -172,12 +190,7 @@ const GraphView: React.FC<Props> = (props) => {
       }
     </span>
     <MLTooltip title={ModelingTooltips.publish}>
-      <MLButton aria-label="publish-to-database" size="small" type="secondary">
-        <span className={styles.publishButtonContainer}>
-          <PublishToDatabaseIcon style={publishIconStyle} />
-          <span className={styles.publishButtonText}>Publish</span>
-        </span>
-      </MLButton>
+      <span className={styles.disabledCursor}>{publishButton}</span>
     </MLTooltip>
     <MLTooltip title={ModelingTooltips.exportGraph} placement="topLeft">
       <FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/>
@@ -264,6 +277,7 @@ const GraphView: React.FC<Props> = (props) => {
           canReadEntityModel={props.canReadEntityModel}
           canWriteEntityModel={props.canWriteEntityModel}
           updateEntities={props.updateEntities}
+          updateSavedEntity={props.updateSavedEntity}
         />
       </SplitPane> //: graphViewMainPanel
   //)

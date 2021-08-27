@@ -75,8 +75,9 @@ const ModelingTooltips = {
       )
   },
 
+  publish: "Publishing will apply your changes to the application. Changes are saved automatically.",
+  
   /* Graph view */
-  publish: "Publish to Database",
   exportGraph: "Export graph to PNG",
   relationshipEmpty: "Relationship name is required",
   targetEntityEmpty: "Target entity type is required",
@@ -124,8 +125,8 @@ const ModelingPlaceholders = {
 };
 
 const ModelingMessages = {
-  entityEditedAlert: 'You have unsaved changes for one or more entity types. You can individually save each modified entity type or save all.',
-  saveEntityConfirm: 'You have unsaved changes. Saving changes to the entity model could impact features that depend on it or on data that require reindexing due to the changes.'
+  entityEditedAlert: <span>You have unpublished changes for one or more entity types. Unpublished changes are saved automatically and have no impact on your project. Click the <strong>Publish</strong> button to apply changes to the rest of your project.</span>,
+  saveEntityConfirm: <span>You have unpublished changes that are only available in the <strong>Model</strong> screen. Publish changes to apply changes to the rest of your project. Publishing changes could trigger a reindex of your data.</span>
 };
 
 

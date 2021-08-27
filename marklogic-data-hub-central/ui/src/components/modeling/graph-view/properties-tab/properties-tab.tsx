@@ -9,6 +9,7 @@ interface Props {
   entityTypeData: any;
   canWriteEntityModel: any;
   canReadEntityModel: any;
+  updateSavedEntity: any;
 }
 
 
@@ -52,6 +53,7 @@ const PropertiesTab: React.FC<Props> = (props) => {
         canReadEntityModel={props.canReadEntityModel}
         canWriteEntityModel={props.canWriteEntityModel}
         sidePanelView={true}
+        updateSavedEntity={props.updateSavedEntity}
       />
     </div>
   );

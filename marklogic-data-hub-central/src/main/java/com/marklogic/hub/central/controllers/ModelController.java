@@ -70,9 +70,9 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/primaryEntityTypes", method = RequestMethod.GET)
     @ResponseBody
     @ApiOperation(value = "Get primary entity types; does not include entity definitions that are considered 'structured' types", response = PrimaryEntityTypeList.class)
-    public ResponseEntity<JsonNode> getPrimaryEntityTypes() {
+    public ResponseEntity<JsonNode> getPrimaryEntityTypes(@RequestParam(required = false, name = "includeDrafts", defaultValue = "false") Boolean includeDrafts) {
         // This must use the final client instead of staging so that the entityInstanceCount is derived from final
-        return ResponseEntity.ok(ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes());
+        return ResponseEntity.ok(ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes(includeDrafts));
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -80,8 +80,8 @@ public class ModelController extends BaseController {
     @ApiOperation(value = "Create a new model and return the persisted model descriptor", response = ModelDescriptor.class)
     @ApiImplicitParam(name = "entityModel", required = true, paramType = "body", dataTypeClass = CreateModelInput.class)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(name = "entityModel", hidden = true) JsonNode input) {
-        JsonNode modelNode = newService().createModel(input);
+    public ResponseEntity<JsonNode> createDraftModel(@RequestBody @ApiParam(name = "entityModel", hidden = true) JsonNode input) {
+        JsonNode modelNode = newService().createDraftModel(input);
 
         JsonNode modelConfigNode = newService().generateModelConfig();
         logger.info("Deploying search options");
@@ -93,18 +93,18 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
     @ApiImplicitParam(name = "entityModel", required = true, paramType = "body", dataTypeClass = UpdateModelInfoInput.class)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> updateModelInfo(@PathVariable String modelName, @RequestBody @ApiParam(name = "entityModel", hidden = true) JsonNode input) {
+    public ResponseEntity<Void> updateDraftModelInfo(@PathVariable String modelName, @RequestBody @ApiParam(name = "entityModel", hidden = true) JsonNode input) {
         if(input.get("name") != null && !(input.get("name").asText().equals(modelName))){
             throw new RuntimeException("Unable to update entity model; incorrect model name: " + input.get("name").asText());
         }
-        newService().updateModelInfo(modelName, input);
+        newService().updateDraftModelInfo(modelName, input);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{modelName}", method = RequestMethod.DELETE)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> deleteModel(@PathVariable String modelName) {
-        newService().deleteModel(modelName);
+    public ResponseEntity<Void> deleteDraftModel(@PathVariable String modelName) {
+        newService().deleteDraftModel(modelName);
 
         /*
         * We're not doing anything with indexes or protected paths here because we don't have a reliable way to
@@ -126,16 +126,21 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/entityTypes", method = RequestMethod.PUT)
     @ApiImplicitParam(name = "entityTypes", required = true, paramType = "body", allowMultiple = true, dataTypeClass = UpdateModelInput.class)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(name = "entityTypes", hidden = true) @RequestBody JsonNode entityTypes) {
-        // update the model
-        newService().updateModelEntityTypes(entityTypes);
-
-        //deploy updated configs
-        deployModelConfigs();
-
+    public ResponseEntity<Void> updateDraftModelEntityTypes(@ApiParam(name = "entityTypes", hidden = true) @RequestBody JsonNode entityTypes) {
+        // update the draft models
+        newService().updateDraftModelEntityTypes(entityTypes);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/publishDraftModels", method = RequestMethod.PUT)
+    @Secured("ROLE_writeEntityModel")
+    public ResponseEntity<Void> publishDraftModels() {
+        // publish models to ES collection
+        newService().publishDraftModels();
+        // deploy the configs for the newly published models
+        deployModelConfigs();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     void deployModelConfigs() {
         ManageClient manageClient = hubClientProvider.getHubClient().getManageClient();

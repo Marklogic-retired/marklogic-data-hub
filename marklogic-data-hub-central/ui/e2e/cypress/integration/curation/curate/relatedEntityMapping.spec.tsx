@@ -62,11 +62,13 @@ describe("Mapping", () => {
     propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getJoinProperty("id").click();
     propertyModal.getSubmitButton().click();
-    entityTypeTable.getSaveEntityIcon("Relation").click();
-    confirmationModal.getSaveEntityText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
-    confirmationModal.getSaveEntityText().should("exist");
-    confirmationModal.getSaveEntityText().should("not.exist");
+    //Save Changes
+    modelPage.getPublishButton().click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    cy.waitForAsyncRequest();
+    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getSaveAllEntityText().should("not.exist");
+    modelPage.getEntityModifiedAlert().should("not.exist");
     propertyTable.getForeignIcon("relatedTo").should("exist");
   });
   it("Create new mapping in Curate", () => {

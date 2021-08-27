@@ -35,8 +35,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [modelingOptions, setModelingOptions] = useState<ModelingOptionsInterface>(DEFAULT_MODELING_OPTIONS);
 
-  const setEntityTypeNamesArray = (entityTypeNamesArray: any[]) => {
-    setModelingOptions({...modelingOptions, entityTypeNamesArray});
+  const setEntityTypeNamesArray = (entityTypeNamesArray: any[], isModified: boolean) => {
+    setModelingOptions({...modelingOptions, entityTypeNamesArray, isModified});
   };
 
   const toggleIsModified = (isModified: boolean) => {

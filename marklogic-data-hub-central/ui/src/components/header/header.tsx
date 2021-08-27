@@ -3,14 +3,11 @@ import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-do
 import axios from "axios";
 import {Layout, Icon, Avatar, Menu, Dropdown} from "antd";
 import {UserContext} from "../../util/user-context";
-import {ModelingContext} from "../../util/modeling-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import SystemInfo from "./system-info";
-import ConfirmationModal from "../confirmation-modal/confirmation-modal";
-import {ConfirmationType} from "../../types/common-types";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -18,10 +15,8 @@ interface Props extends RouteComponentProps<any> {
 
 const Header:React.FC<Props> = (props) => {
   const {user, userNotAuthenticated, handleError} = useContext(UserContext);
-  const {modelingOptions, clearEntityModified} = useContext(ModelingContext);
 
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
-  const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [showUserDropdown, toggleUserDropdown] = useState(false);
   const history = useHistory();
 
@@ -30,14 +25,6 @@ const Header:React.FC<Props> = (props) => {
   const serviceNameRef = React.createRef<HTMLElement>();
   const helpLinkRef = React.createRef<HTMLAnchorElement>();
   const userDropdownRef = React.createRef<HTMLSpanElement>();
-
-  const handleLogout = () => {
-    if (modelingOptions.isModified) {
-      toggleConfirmModal(true);
-    } else {
-      confirmLogout();
-    }
-  };
 
   const confirmLogout = async () => {
     try {
@@ -48,8 +35,6 @@ const Header:React.FC<Props> = (props) => {
     } catch (error) {
       handleError(error);
     }
-    clearEntityModified();
-    toggleConfirmModal(false);
     toggleUserDropdown(false);
   };
 
@@ -105,7 +90,7 @@ const Header:React.FC<Props> = (props) => {
     <div className={styles.username}>{localStorage.getItem("dataHubUser")}</div>
     <div className={styles.logout}>
       <MLButton id="logOut" type="primary" size="default"
-        onClick={handleLogout} onKeyDown={logoutKeyDownHandler} tabIndex={1}>
+        onClick={confirmLogout} onKeyDown={logoutKeyDownHandler} tabIndex={1}>
         Log Out
       </MLButton>
     </div>
@@ -273,13 +258,6 @@ const Header:React.FC<Props> = (props) => {
         marklogicVersion={props.environment.marklogicVersion}
         systemInfoVisible={systemInfoVisible}
         setSystemInfoVisible={setSystemInfoVisible}
-      />
-      <ConfirmationModal
-        isVisible={showConfirmModal}
-        type={ConfirmationType.NavigationWarn}
-        boldTextArray={[]}
-        toggleModal={toggleConfirmModal}
-        confirmAction={confirmLogout}
       />
     </>
   );

@@ -1,10 +1,11 @@
 /// <reference types="cypress"/>
 
-import {toolbar, tiles} from "../../support/components/common/index";
+import {toolbar, tiles, confirmationModal} from "../../support/components/common/index";
 import "cypress-wait-until";
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
+import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("customRole", () => {
 
@@ -36,6 +37,8 @@ describe("customRole", () => {
 
     let entityTypeId = "Customer";
     toolbar.getCurateToolbarIcon().click();
+    confirmationModal.getNavigationWarnText().should("be.visible");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "be.visible");
 

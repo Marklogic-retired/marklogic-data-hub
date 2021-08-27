@@ -15,6 +15,7 @@ import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
 import graphVis from "../../support/components/model/graph-vis";
 import "cypress-wait-until";
+import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Entity Modeling: Reader Role", () => {
   //login with valid account
@@ -58,23 +59,15 @@ describe("Entity Modeling: Reader Role", () => {
     modelPage.getAddEntityButton().click({force: true});
     entityTypeModal.getAddButton().should("not.exist");
 
-    modelPage.getSaveAllButton().click({force: true});
-    confirmationModal.getSaveAllEntityText().should("not.exist");
-
-    modelPage.getRevertAllButton().click({force: true});
-    confirmationModal.getRevertEntityText().should("not.exist");
+    modelPage.getPublishButton().click({force: true});
+    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getNoButton(ConfirmationType.PublishAll).click();
 
     entityTypeTable.getEntity("Customer").click({force: true});
     propertyModal.getSubmitButton().should("not.exist");
 
     entityTypeTable.getDeleteEntityIcon("Customer").click({force: true});
     confirmationModal.getDeleteEntityStepText().should("not.exist");
-
-    entityTypeTable.getRevertEntityIcon("Customer").click({force: true});
-    confirmationModal.getRevertEntityText().should("not.exist");
-
-    entityTypeTable.getSaveEntityIcon("Customer").click({force: true});
-    confirmationModal.getSaveEntityText().should("not.exist");
 
     entityTypeTable.getExpandEntityIcon("Customer").click();
     propertyTable.getAddPropertyButton("Customer").should("be.visible").click({force: true});

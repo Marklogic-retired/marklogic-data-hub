@@ -1,5 +1,5 @@
 /*
-  Copyright 2012-2019 MarkLogic Corporation
+  Copyright (c) 2021 MarkLogic Corporation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,11 +22,24 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-var model = fn.head(xdmp.fromJSON(model));
-
-const name = model.info.title;
-if (name == null) {
-  httpUtils.throwBadRequest("The model must have an info object with a title property");
+var entityName;
+if (!entityName) {
+  httpUtils.throwBadRequest("Must specify a name in order to delete an entity model");
 }
 
-entityLib.writeModel(name, model);
+var entityModel = entityLib.findModelByEntityName(entityName);
+if (!entityModel) {
+  entityModel = entityLib.findDraftModelByEntityName(entityName);
+  if (!entityModel) {
+    httpUtils.throwNotFound(`Could not find entity model with name: ${entityName}`);
+  }
+}
+
+const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
+
+const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
+if (stepNames.length) {
+  httpUtils.throwBadRequest(`Cannot delete the entity type '${entityName}' because it is referenced by the following step names: ${stepNames}`);
+}
+
+entityLib.deleteDraftModel(entityName);

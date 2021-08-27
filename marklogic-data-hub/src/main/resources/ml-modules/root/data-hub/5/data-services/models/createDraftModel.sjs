@@ -35,7 +35,7 @@ if (name == null) {
   httpUtils.throwBadRequest("The model must have an info object with a title property");
 }
 
-if (fn.docAvailable(entityLib.getModelUri(name))) {
+if (fn.docAvailable(entityLib.getModelUri(name)) || fn.docAvailable(entityLib.getDraftModelUri(name))) {
   httpUtils.throwBadRequest(`An entity type already exists with a name of ${name}`);
 }
 
@@ -70,7 +70,7 @@ if(hubCentralConfig){
 }
 
 try{
-  entityLib.writeModel(name, model);
+  entityLib.writeDraftModel(name, model);
 }
 catch (e){
   httpUtils.throwBadRequest(hubUtils.getErrorMessage(e));

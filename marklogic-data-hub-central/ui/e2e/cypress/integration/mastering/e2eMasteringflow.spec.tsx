@@ -137,11 +137,12 @@ describe("Validate E2E Mastering Flow", () => {
     propertyModal.getSubmitButton().click();
   });
   it("Save Patient entity", () => {
-    entityTypeTable.getSaveEntityIcon("Patient").click();
-    confirmationModal.getSaveEntityText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
-    confirmationModal.getSaveEntityText().should("exist");
-    confirmationModal.getSaveEntityText().should("not.exist");
+    modelPage.getPublishButton().click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    cy.waitForAsyncRequest();
+    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getSaveAllEntityText().should("not.exist");
+    modelPage.getEntityModifiedAlert().should("not.exist");
   });
   it("Create mapping step", () => {
     toolbar.getCurateToolbarIcon().click();

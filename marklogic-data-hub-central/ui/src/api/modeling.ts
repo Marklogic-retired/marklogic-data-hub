@@ -2,7 +2,7 @@ import axios from "axios";
 import {EntityModified} from "../types/modeling-types";
 
 export const primaryEntityTypes = async () => {
-  return await axios.get(`/api/models/primaryEntityTypes`);
+  return await axios.get(`/api/models/primaryEntityTypes?includeDrafts=true`);
 };
 
 export const updateModelInfo = async (name: string, description: string,
@@ -38,4 +38,8 @@ export const deleteEntity = async (entityName: string) => {
 
 export const updateEntityModels = async (entityModifiedArray: EntityModified[]) => {
   return await axios.put(`/api/models/entityTypes`, entityModifiedArray);
+};
+
+export const publishDraftModels = async () => {
+  return await axios.put(`/api/models/publishDraftModels`);
 };

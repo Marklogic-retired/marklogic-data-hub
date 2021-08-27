@@ -6,11 +6,12 @@ import {
   graphViewSidePanel,
   relationshipModal
 } from "../../support/components/model/index";
-import {toolbar} from "../../support/components/common/index";
+import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 import graphVis from "../../support/components/model/graph-vis";
+import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Graph Validations", () => {
   //login with valid account
@@ -185,6 +186,9 @@ describe("Graph Validations", () => {
 
     // Exit graph view and return
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    confirmationModal.getNavigationWarnText().should("be.visible");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("project-diagram");
 

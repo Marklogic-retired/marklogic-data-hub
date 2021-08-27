@@ -11,12 +11,8 @@ class ModelPage {
     return cy.findByLabelText("add-entity");
   }
 
-  getSaveAllButton() {
-    return cy.findByLabelText("save-all");
-  }
-
-  getRevertAllButton() {
-    return cy.findByLabelText("revert-all");
+  getPublishButton() {
+    return cy.findByLabelText("publish-to-database");
   }
 
   getEntityModifiedAlert() {

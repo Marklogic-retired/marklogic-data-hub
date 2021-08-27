@@ -16,6 +16,7 @@
 
 const FLOW_COLLECTION = "http://marklogic.com/data-hub/flow";
 const ENTITY_MODEL_COLLECTION = "http://marklogic.com/entity-services/models";
+const DRAFT_ENTITY_MODEL_COLLECTION = `${ENTITY_MODEL_COLLECTION}/draft`;
 const STEP_DEFINITION_COLLECTION = "http://marklogic.com/data-hub/step-definition";
 const STEP_COLLECTION = "http://marklogic.com/data-hub/steps";
 
@@ -71,6 +72,7 @@ module.exports = {
 
   FLOW_COLLECTION,
   ENTITY_MODEL_COLLECTION,
+  DRAFT_ENTITY_MODEL_COLLECTION,
   STEP_DEFINITION_COLLECTION,
   STEP_COLLECTION,
 
@@ -90,5 +92,6 @@ module.exports = {
   TRACE_FLOW: "hub-flow",
   TRACE_FLOW_DEBUG: "hub-flow-debug",
   TRACE_MAPPING: "hub-mapping",
+  TRACE_ENTITY: "hub-entity",
   TRACE_MAPPING_DEBUG: "hub-mapping-debug"
 };

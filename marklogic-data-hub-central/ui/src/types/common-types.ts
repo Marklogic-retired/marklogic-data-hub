@@ -16,7 +16,8 @@ export enum ConfirmationType {
   NavigationWarn = "navigationWarn",
   DeleteStep = "deleteStep",
   AddStepToFlow = "addStepToFlow",
-  DiscardChanges = "discardChanges"
+  DiscardChanges = "discardChanges",
+  PublishAll = "publishAllEntity"
 }
 
 declare global {

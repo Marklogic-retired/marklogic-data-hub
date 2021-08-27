@@ -261,7 +261,7 @@ const GraphVis: React.FC<Props> = (props) => {
           id: e.entityName,
           label: label.concat(
             "<b>", e.entityName, "</b>\n",
-            "<code>", getNumInstances(e.entityName).toString(), "</code>"
+            // "<code>", getNumInstances(e.entityName).toString(), "</code>"
           ),
           title: e.entityName + " tooltip text", // TODO use entity description
           color: {

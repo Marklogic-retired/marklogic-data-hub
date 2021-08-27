@@ -1,6 +1,6 @@
 export interface ModelingContextInterface {
   modelingOptions: ModelingOptionsInterface;
-  setEntityTypeNamesArray: (entityTypeNamesArray: any[]) => void;
+  setEntityTypeNamesArray: (entityTypeNamesArray: any[], isModified: boolean) => void;
   toggleIsModified: (isModified: boolean) => void;
   updateEntityModified: (entityModified: EntityModified) => void;
   removeEntityModified: (entityModified: EntityModified) => void;

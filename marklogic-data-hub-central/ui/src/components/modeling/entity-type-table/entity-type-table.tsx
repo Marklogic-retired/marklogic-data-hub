@@ -1,13 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
 import {MLTable, MLTooltip} from "@marklogic/design-system";
-import {faUndo, faTrashAlt, faSave, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
 
 import PropertyTable from "../property-table/property-table";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
-import {entityReferences, deleteEntity, updateEntityModels} from "../../../api/modeling";
+import {entityReferences, deleteEntity} from "../../../api/modeling";
 import {EntityModified} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
 import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-context";
@@ -21,11 +21,9 @@ type Props = {
   canReadEntityModel: boolean;
   canWriteEntityModel: boolean;
   autoExpand: string;
-  revertAllEntity: boolean;
   editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified) => void;
-  toggleRevertAllEntity: (state: boolean) => void;
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
@@ -33,7 +31,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const expandedRowStorage = storage?.model?.entityExpandedRows;
 
   const {handleError} = useContext(UserContext);
-  const {modelingOptions, removeEntityModified, clearEntityModified, setGraphViewOptions} = useContext(ModelingContext);
+  const {modelingOptions, setGraphViewOptions} = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
@@ -84,14 +82,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   }, [JSON.stringify(props.allEntityTypesData), JSON.stringify(modelingOptions.modifiedEntitiesArray)]);
 
-  useEffect(() => {
-    if (props.revertAllEntity) {
-      // Deep copying props.allEntityTypesData since we dont want the prop to be mutated
-      setAllEntityTypes(deepCopy(props.allEntityTypesData));
-      props.toggleRevertAllEntity(false);
-    }
-  }, [props.revertAllEntity]);
-
   const deepCopy = (object) => {
     return JSON.parse(JSON.stringify(object));
   };
@@ -103,10 +93,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let newConfirmType = ConfirmationType.DeleteEntity;
 
         if (modelingOptions.isModified) {
-          newConfirmType = ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn;
           setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
         }
-
         if (response["data"]["stepNames"].length > 0) {
           newConfirmType = ConfirmationType.DeleteEntityStepWarn;
           setArrayValues(response["data"]["stepNames"]);
@@ -114,12 +102,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           newConfirmType = ConfirmationType.DeleteEntityWithForeignKeyReferences;
           setArrayValues(response["data"]["entityNamesWithForeignKeyReferences"]);
         } else if (response["data"]["entityNames"].length > 0) {
-          if (modelingOptions.isModified) {
-            newConfirmType = ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn;
-            setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
-          } else {
-            newConfirmType = ConfirmationType.DeleteEntityRelationshipWarn;
-          }
+          newConfirmType = ConfirmationType.DeleteEntityRelationshipWarn;
+          setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
         }
 
         setConfirmBoldTextArray([entityName]);
@@ -145,84 +129,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   };
 
-  const saveEntityToServer = async () => {
-    try {
-      let modifiedEntity = modelingOptions.modifiedEntitiesArray.filter(entity => entity.entityName === confirmBoldTextArray[0]);
-      const response = await updateEntityModels(modifiedEntity);
-      if (response["status"] === 200) {
-        removeEntityModified(modifiedEntity[0]);
-        props.updateSavedEntity(modifiedEntity[0]);
-      }
-    } catch (error) {
-      handleError(error);
-    } finally {
-      toggleConfirmModal(false);
-    }
-  };
-
-  const saveAllEntitiesThenDeleteFromServer = async () => {
-    try {
-      const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
-      if (response["status"] === 200) {
-        try {
-          let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
-          await deleteEntity(entityName);
-        } catch (error) {
-          handleError(error);
-        } finally {
-          await props.updateEntities();
-          clearEntityModified();
-          toggleConfirmModal(false);
-        }
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
-  const confirmSaveEntity = (entityName: string) => {
-    setConfirmBoldTextArray([entityName]);
-    setArrayValues([]);
-    setConfirmType(ConfirmationType.SaveEntity);
-    toggleConfirmModal(true);
-  };
-
-  const revertEntity = async () => {
-    const entityName = confirmBoldTextArray[0];
-    const entityNameFilter = (entity) => entity.entityName === entityName;
-    const originalEntity = deepCopy(props.allEntityTypesData.find(entityNameFilter));
-    const modifiedEntity = modelingOptions.modifiedEntitiesArray.filter(entityNameFilter)[0];
-    let updatedEntities = deepCopy(allEntityTypes);
-    let updatedEntityIndex = updatedEntities.findIndex(entityNameFilter);
-
-    updatedEntities[updatedEntityIndex] = originalEntity;
-
-    removeEntityModified(modifiedEntity);
-    setAllEntityTypes(updatedEntities);
-    toggleConfirmModal(false);
-  };
-
-  const confirmRevertEntity = (entityName: string) => {
-    setConfirmBoldTextArray([entityName]);
-    setArrayValues([]);
-    setConfirmType(ConfirmationType.RevertEntity);
-    toggleConfirmModal(true);
-  };
-
-  const isEntityModified = (entityName: string) => {
-    return modelingOptions.modifiedEntitiesArray.some(entity => entity.entityName === entityName);
-  };
-
   const confirmAction = () => {
-    if (confirmType === ConfirmationType.SaveEntity) {
-      saveEntityToServer();
-    } else if (confirmType === ConfirmationType.RevertEntity) {
-      revertEntity();
-    } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn) {
-      saveAllEntitiesThenDeleteFromServer();
-    } else {
-      deleteEntityFromServer();
-    }
+    deleteEntityFromServer();
   };
 
   const navigateToGraphView = (entityName) => {
@@ -359,42 +267,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.actions,
       width: 100,
       render: text => {
-
-        const saveIcon =
-          <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.saveIcon : "Save Entity: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}}>
-            <FontAwesomeIcon
-              icon={faSave}
-              data-testid={text + "-save-icon"}
-              className={!modelingOptions.isModified || !isEntityModified(text) ? styles.iconSaveReadOnly : styles.iconSave}
-              onClick={(event) => {
-                if ((!props.canWriteEntityModel && props.canReadEntityModel) || !isEntityModified(text)) {
-                  return event.preventDefault();
-                } else {
-                  confirmSaveEntity(text);
-                }
-              }}
-              size="2x"
-            />
-          </MLTooltip>;
-
         return (
           <div className={styles.iconContainer}>
-            {saveIcon}
-            <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.revertIcon : "Discard Changes: " + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "225px"}}>
-              <FontAwesomeIcon
-                data-testid={text + "-revert-icon"}
-                className={(!props.canWriteEntityModel && props.canReadEntityModel) || !modelingOptions.isModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
-                icon={faUndo}
-                onClick={(event) => {
-                  if ((!props.canWriteEntityModel && props.canReadEntityModel) || !isEntityModified(text)) {
-                    return event.preventDefault();
-                  } else {
-                    confirmRevertEntity(text);
-                  }
-                }}
-                size="2x"
-              />
-            </MLTooltip>
             <MLTooltip title={ModelingTooltips.viewGraph} overlayStyle={{maxWidth: "225px"}}>
               <FontAwesomeIcon
                 data-testid={text + "-graphView-icon"}
@@ -445,6 +319,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       canReadEntityModel={props.canReadEntityModel}
       canWriteEntityModel={props.canWriteEntityModel}
       sidePanelView={false}
+      updateSavedEntity={props.updateSavedEntity}
     />;
   };
 
