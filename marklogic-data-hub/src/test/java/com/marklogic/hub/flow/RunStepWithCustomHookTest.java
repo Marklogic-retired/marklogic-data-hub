@@ -3,7 +3,7 @@ package com.marklogic.hub.flow;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;

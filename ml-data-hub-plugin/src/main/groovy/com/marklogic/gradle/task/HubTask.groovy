@@ -30,7 +30,7 @@ import com.marklogic.hub.legacy.LegacyDebugging
 import com.marklogic.hub.legacy.LegacyFlowManager
 import com.marklogic.hub.legacy.LegacyTracing
 import com.marklogic.hub.legacy.job.LegacyJobManager
-import com.marklogic.hub.scaffold.Scaffolding
+import com.marklogic.hub.impl.Scaffolding
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal

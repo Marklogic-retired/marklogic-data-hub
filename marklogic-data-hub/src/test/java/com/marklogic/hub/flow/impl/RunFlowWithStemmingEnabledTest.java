@@ -6,7 +6,6 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.scaffold;
+package com.marklogic.hub.impl;
 
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.legacy.flow.CodeFormat;

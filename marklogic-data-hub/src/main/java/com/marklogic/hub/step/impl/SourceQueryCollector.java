@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.collector.impl;
+package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.collector.Collector;
-import com.marklogic.hub.collector.DiskQueue;
+import com.marklogic.hub.util.DiskQueue;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -29,7 +28,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-public class CollectorImpl implements Collector {
+public class SourceQueryCollector {
 
     private HubClient hubClient;
     private String sourceDatabase;
@@ -39,12 +38,11 @@ public class CollectorImpl implements Collector {
      * @param sourceDatabase Determines what database will be queried; the HTTP request will still go to the staging
      *                       server
      */
-    public CollectorImpl(HubClient hubClient, String sourceDatabase) {
+    public SourceQueryCollector(HubClient hubClient, String sourceDatabase) {
         this.hubClient = hubClient;
         this.sourceDatabase = sourceDatabase;
     }
 
-    @Override
     public DiskQueue<String> run(String flow, String step, Map<String, Object> options) {
         final DatabaseClient stagingClient = hubClient.getStagingClient();
 

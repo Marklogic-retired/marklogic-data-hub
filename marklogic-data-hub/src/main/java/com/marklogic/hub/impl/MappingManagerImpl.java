@@ -27,7 +27,6 @@ import com.marklogic.hub.entity.HubEntity;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingImpl;
-import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;

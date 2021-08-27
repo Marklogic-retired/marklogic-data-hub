@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.main.impl;
+package com.marklogic.hub.legacy.impl;
 
 import com.marklogic.hub.legacy.flow.CodeFormat;
-import com.marklogic.hub.main.MainPlugin;
+import com.marklogic.hub.legacy.MainPlugin;
 
 public class MainPluginImpl implements MainPlugin {
 

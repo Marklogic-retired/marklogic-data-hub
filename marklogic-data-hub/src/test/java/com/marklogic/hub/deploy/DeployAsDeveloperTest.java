@@ -1,4 +1,4 @@
-package com.marklogic.hub.dhs;
+package com.marklogic.hub.deploy;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.CmaConfig;
@@ -22,12 +22,13 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.HubDeployer;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.DeployHubDatabaseCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
-import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
+import com.marklogic.hub.deploy.commands.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +70,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
         testHubConfig.setIsProvisionedEnvironment(true);
 
-        new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
+        new HubDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
         assertTrue(testHubConfig.getIsProvisionedEnvironment(), "When deploying to DHS, this property is assumed to be true, " +
             "as it's defined in the DHS portal's gradle properties file. But if someone wants to test this on-premise, it " +
@@ -121,7 +122,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
         testHubConfig.setIsProvisionedEnvironment(false);
 
-        new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
+        new HubDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
         assertEquals(8000, appConfig.getAppServicesPort(),
             "For vanilla datahub, 8000 is app services port");
@@ -153,7 +154,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
     @Test
     public void verifySchemaAndTriggersDbSettingIsRemovedForHubDeployAsDeveloperCommand() {
-        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(testHubConfig);
+        List<Command> commands = new HubDeployer().buildCommandsForDeveloper(testHubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
         DeployOtherDatabasesCommand command = (DeployOtherDatabasesCommand) commands.get(1);
         CommandContext context = newCommandContext();
@@ -193,7 +194,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
         assertEquals("my-final-db", appConfig.getContentDatabaseName(), "Smoke test to verify that default names on AppConfig " +
             "were updated based on custom property values set above");
 
-        new DhsDeployer().setKnownValuesForDhsDeployment(hubConfig);
+        new HubDeployer().setKnownValuesForDhsDeployment(hubConfig);
 
         assertEquals(HubConfig.DEFAULT_STAGING_NAME, hubConfig.getHttpName(DatabaseKind.STAGING));
         assertEquals(HubConfig.DEFAULT_FINAL_NAME, hubConfig.getHttpName(DatabaseKind.FINAL));
@@ -242,7 +243,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
             testHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
             testHubConfig.setIsProvisionedEnvironment(true);
 
-            new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
+            new HubDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
             assertNotNull(appConfig.getAppServicesSslContext());
             assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
@@ -254,7 +255,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(testHubConfig);
+        List<Command> commands = new HubDeployer().buildCommandsForDeveloper(testHubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;

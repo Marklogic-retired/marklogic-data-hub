@@ -35,7 +35,7 @@ import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.impl.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;

@@ -32,7 +32,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.legacy.validate.EntitiesValidator;
-import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.impl.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.mlcp.MlcpRunner;
 import org.apache.commons.io.FileUtils;

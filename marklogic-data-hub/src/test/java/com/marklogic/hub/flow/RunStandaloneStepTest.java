@@ -7,7 +7,7 @@ import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.dataservices.mappingStep.MappingStepInfo;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.json.JSONObject;
 

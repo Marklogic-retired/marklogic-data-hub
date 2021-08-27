@@ -1,8 +1,9 @@
-package com.marklogic.hub.dhs.installer.deploy;
+package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.MarkLogicVersion;
+import com.marklogic.hub.deploy.commands.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.security.AbstractSecurityTest;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.security.QueryRolesetManager;

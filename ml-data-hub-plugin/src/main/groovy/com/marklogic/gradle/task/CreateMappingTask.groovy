@@ -19,7 +19,7 @@ package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.MappingNameRequiredException
 import com.marklogic.hub.MappingManager
-import com.marklogic.hub.scaffold.Scaffolding
+import com.marklogic.hub.impl.Scaffolding
 import org.gradle.api.tasks.TaskAction
 
 class CreateMappingTask extends HubTask {

@@ -18,7 +18,7 @@ package com.marklogic.hub.scaffolding;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.impl.Scaffolding;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

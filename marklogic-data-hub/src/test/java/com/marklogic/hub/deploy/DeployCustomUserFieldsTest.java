@@ -1,4 +1,4 @@
-package com.marklogic.hub.dhs;
+package com.marklogic.hub.deploy;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;

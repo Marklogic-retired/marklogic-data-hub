@@ -16,7 +16,7 @@
 package com.marklogic.hub.legacy.flow;
 
 import com.marklogic.hub.legacy.collector.LegacyCollector;
-import com.marklogic.hub.main.MainPlugin;
+import com.marklogic.hub.legacy.MainPlugin;
 
 import java.util.Properties;
 

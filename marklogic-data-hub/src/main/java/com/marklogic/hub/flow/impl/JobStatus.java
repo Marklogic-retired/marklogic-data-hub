@@ -1,4 +1,4 @@
-package com.marklogic.hub.job;
+package com.marklogic.hub.flow.impl;
 
 public enum JobStatus {
     STARTED("started"),

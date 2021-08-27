@@ -18,7 +18,7 @@ package com.marklogic.hub;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.impl.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.DynamicTest;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

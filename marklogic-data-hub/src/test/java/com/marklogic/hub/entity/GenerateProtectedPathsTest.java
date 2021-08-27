@@ -11,7 +11,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
+import com.marklogic.hub.deploy.commands.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

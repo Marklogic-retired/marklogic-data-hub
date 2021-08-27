@@ -18,8 +18,8 @@ package com.marklogic.hub.legacy.flow;
 import com.marklogic.hub.legacy.collector.LegacyCollector;
 import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.impl.LegacyFlowImpl;
-import com.marklogic.hub.main.MainPlugin;
-import com.marklogic.hub.main.impl.MainPluginImpl;
+import com.marklogic.hub.legacy.MainPlugin;
+import com.marklogic.hub.legacy.impl.MainPluginImpl;
 
 public class LegacyFlowBuilder {
 
