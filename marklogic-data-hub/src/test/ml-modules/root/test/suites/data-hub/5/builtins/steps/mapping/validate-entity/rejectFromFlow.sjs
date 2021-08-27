@@ -42,7 +42,7 @@ if (lib.canTestJsonSchemaValidation()) {
   // Per DHFPROD-3108, verifying that the new data-hub-job-reader/data-hub-job-internal permissions are set as well
   let jobReaderPerm = batchData.perms.find(perm => xdmp.roleName(perm.roleId) == "data-hub-job-reader");
   assertions.push(test.assertEqual("read", jobReaderPerm.capability));
-  let jobInternalPerm = batchData.perms.find(perm => xdmp.roleName(perm.roleId) == "data-hub-job-internal");
+  let jobInternalPerm = batchData.perms.find(perm => xdmp.roleName(perm.roleId) == "data-hub-job-internal" && perm.capability == "update");
   assertions.push(test.assertEqual("update", jobInternalPerm.capability));
 
   assertions;
