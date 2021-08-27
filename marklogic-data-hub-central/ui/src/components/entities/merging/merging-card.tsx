@@ -1,15 +1,13 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Card, Icon, Select, Divider, Modal, Tooltip} from "antd";
+import {Card, Icon, Select, Modal, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import styles from "./merging-card.module.scss";
-
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
-
 import {CurationContext} from "../../../util/curation-context";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
@@ -17,6 +15,8 @@ import {ConfirmationType} from "../../../types/common-types";
 import {MergingStep, StepType} from "../../../types/curation-types";
 import Steps from "../../steps/steps";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
+import HCDivider from "../../common/hc-divider/hc-divider";
+
 interface Props {
   mergingStepsArray: any;
   flows: any;
@@ -265,7 +265,7 @@ const MergingCard: React.FC<Props> = (props) => {
           ))}</div>
         </Col>
         <Col xs={"auto"}>
-          <Divider type="vertical" className={styles.verticalDiv}></Divider>
+          <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
         </Col>
         <Col>
           <Link data-testid="link" id="tiles-add-run-new-flow" to={
