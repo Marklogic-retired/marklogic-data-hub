@@ -1,9 +1,9 @@
 import React, {useContext} from "react";
 import styles from "./sidebar-footer.module.scss";
-import {Divider, Button} from "antd";
+import {Button} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {MonitorContext} from "../../util/monitor-context";
-
+import HCDivider from "../common/hc-divider/hc-divider";
 
 const SidebarFooter: React.FC = () => {
   const {
@@ -51,7 +51,7 @@ const SidebarFooter: React.FC = () => {
 
   return (
     <div>
-      <Divider style={{"backgroundColor": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
+      <HCDivider style={{"backgroundColor": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
       <div className={styles.facetFooter}>
         <Button className={styles.button} aria-label="clear-facets-button" disabled={searchOptions.tileId === "explore" ?
           (Object.keys(searchOptions.selectedFacets).length === 0 && Object.keys(greyedOptions.selectedFacets).length === 0)

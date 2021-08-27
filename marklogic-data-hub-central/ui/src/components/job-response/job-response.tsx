@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Descriptions, Divider, Modal, Icon, Collapse, Button} from "antd";
+import {Descriptions, Modal, Icon, Collapse, Button} from "antd";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -13,6 +13,7 @@ import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
+import HCDivider from "../common/hc-divider/hc-divider";
 
 const {Panel} = Collapse;
 
@@ -124,7 +125,7 @@ const JobResponse: React.FC<Props> = (props) => {
       <strong className={styles.headerItem}>Documents Written</strong>
       <strong className={styles.headerItem}>Action</strong>
     </div>
-    <Divider className={styles.divider}/>
+    <HCDivider className={styles.divider}/>
   </div>;
 
 
@@ -143,7 +144,7 @@ const JobResponse: React.FC<Props> = (props) => {
                   <span className={styles.exploreActionText}>Explore Data</span>
                 </Button>
               </div>
-              <Divider className={styles.divider}/>
+              <HCDivider className={styles.divider}/>
             </div>;
           } else {
             const errors = getErrors(stepResponse);
