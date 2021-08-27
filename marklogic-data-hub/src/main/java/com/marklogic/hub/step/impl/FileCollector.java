@@ -1,7 +1,7 @@
-package com.marklogic.hub.collector.impl;
+package com.marklogic.hub.step.impl;
 
 import com.marklogic.client.ext.helper.LoggingObject;
-import com.marklogic.hub.collector.DiskQueue;
+import com.marklogic.hub.util.DiskQueue;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;

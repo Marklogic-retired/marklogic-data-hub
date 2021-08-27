@@ -38,7 +38,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -104,7 +103,7 @@ public class DeployToReplicaTest extends AbstractHubCoreTest {
         final Map<String, Long> initialLatestTimestamps = getLatestDocumentTimestampForEachDatabase();
 
         runAsTestUserWithRoles("data-hub-developer", "data-hub-security-admin");
-        new DhsDeployer().deployToReplica(getHubConfig());
+        new HubDeployer().deployToReplica(getHubConfig());
 
         verifyLatestTimestampsAreUnchanged(initialLatestTimestamps);
     }

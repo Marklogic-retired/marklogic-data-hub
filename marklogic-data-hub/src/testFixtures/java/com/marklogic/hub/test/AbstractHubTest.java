@@ -15,7 +15,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.dhs.DhsDeployer;
+import com.marklogic.hub.deploy.HubDeployer;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
@@ -602,7 +602,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     public void deployAsDeveloper(HubConfigImpl hubConfig){
         boolean isProvisioned = hubConfig.getIsProvisionedEnvironment();
         try{
-            new DhsDeployer().deployAsDeveloper(hubConfig);
+            new HubDeployer().deployAsDeveloper(hubConfig);
         }
         finally {
             hubConfig.setIsProvisionedEnvironment(isProvisioned);
@@ -612,7 +612,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     public void deployAsSecurityAdmin(HubConfigImpl hubConfig){
         boolean isProvisioned = hubConfig.getIsProvisionedEnvironment();
         try{
-            new DhsDeployer().deployAsSecurityAdmin(hubConfig);
+            new HubDeployer().deployAsSecurityAdmin(hubConfig);
         }
         finally {
             hubConfig.setIsProvisionedEnvironment(isProvisioned);

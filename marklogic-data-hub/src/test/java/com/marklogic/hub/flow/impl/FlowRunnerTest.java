@@ -22,22 +22,17 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.DeleteQueryDefinition;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.dataservices.ArtifactService;
-import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.rest.util.Fragment;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -358,7 +353,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        
+
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus(), "Per DHFPROD-7570, since the sourceQuery failed " +
             "and stopOnError=true, the job status should be stop-on-error");
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));

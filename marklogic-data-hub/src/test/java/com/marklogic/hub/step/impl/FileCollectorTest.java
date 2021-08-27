@@ -1,5 +1,6 @@
-package com.marklogic.hub.collector.impl;
+package com.marklogic.hub.step.impl;
 
+import com.marklogic.hub.step.impl.FileCollector;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

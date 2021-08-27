@@ -22,7 +22,7 @@
   * * Modifications copyright (c) 2016 MarkLogic Corporation
   *
  */
-package com.marklogic.hub.collector;
+package com.marklogic.hub.util;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

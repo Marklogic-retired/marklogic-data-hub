@@ -12,7 +12,6 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;

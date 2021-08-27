@@ -22,13 +22,12 @@ import com.marklogic.client.datamovement.*;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.collector.DiskQueue;
-import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.util.DiskQueue;
 import com.marklogic.hub.dataservices.JobService;
 import com.marklogic.hub.dataservices.StepRunnerService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.hub.step.*;
 
 import java.io.PrintWriter;
@@ -250,7 +249,7 @@ public class QueryStepRunner extends LoggingObject implements StepRunner {
     }
 
     private DiskQueue<String> runCollector(String sourceDatabase) {
-        CollectorImpl collector = new CollectorImpl(hubClient, sourceDatabase);
+        SourceQueryCollector collector = new SourceQueryCollector(hubClient, sourceDatabase);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");

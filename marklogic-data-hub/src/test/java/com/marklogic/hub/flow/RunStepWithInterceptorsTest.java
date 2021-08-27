@@ -5,7 +5,7 @@ import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;

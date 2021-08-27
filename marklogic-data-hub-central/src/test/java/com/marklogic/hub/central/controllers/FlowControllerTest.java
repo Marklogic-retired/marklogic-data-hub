@@ -6,7 +6,7 @@ import com.marklogic.hub.central.controllers.steps.IngestionStepControllerTest;
 import com.marklogic.hub.central.controllers.steps.MappingStepControllerTest;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import javax.ws.rs.core.MediaType;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;

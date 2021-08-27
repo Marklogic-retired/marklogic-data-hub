@@ -22,7 +22,7 @@ import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.hub.legacy.flow.CodeFormat
 import com.marklogic.hub.legacy.flow.DataFormat
 import com.marklogic.hub.legacy.flow.FlowType
-import com.marklogic.hub.scaffold.Scaffolding
+import com.marklogic.hub.impl.Scaffolding
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 

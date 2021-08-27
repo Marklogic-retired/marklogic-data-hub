@@ -18,7 +18,6 @@
 package com.marklogic.gradle.task
 
 
-import com.marklogic.hub.scaffold.Scaffolding
 import com.marklogic.hub.step.StepDefinition
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction

@@ -2,7 +2,7 @@ package com.marklogic.hub.flow;
 
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.flow.impl.JobStatus;
 import com.marklogic.rest.util.Fragment;
 import org.junit.jupiter.api.Test;
 

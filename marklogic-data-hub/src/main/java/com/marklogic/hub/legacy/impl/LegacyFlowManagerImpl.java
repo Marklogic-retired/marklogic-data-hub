@@ -26,7 +26,6 @@ import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.collector.impl.LegacyCollectorImpl;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.legacy.flow.impl.LegacyFlowRunnerImpl;
-import com.marklogic.hub.main.impl.MainPluginImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;

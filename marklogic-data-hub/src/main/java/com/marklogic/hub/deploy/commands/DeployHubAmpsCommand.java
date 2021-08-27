@@ -1,4 +1,4 @@
-package com.marklogic.hub.dhs.installer.deploy;
+package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;

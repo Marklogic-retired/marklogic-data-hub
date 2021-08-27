@@ -1,4 +1,4 @@
-package com.marklogic.hub.dhs;
+package com.marklogic.hub.deploy;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.CmaConfig;
@@ -25,8 +25,8 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.deploy.commands.*;
-import com.marklogic.hub.dhs.installer.deploy.DeployHubAmpsCommand;
-import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
+import com.marklogic.hub.deploy.commands.DeployHubAmpsCommand;
+import com.marklogic.hub.deploy.commands.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.VersionInfo;
 
@@ -37,14 +37,24 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * Handles deploying to DHS.
+ * Handles additional hub deployment scenarios beyond what "mlDeploy" is used for.
  */
-public class DhsDeployer extends LoggingObject {
+public class HubDeployer extends LoggingObject {
 
+    /**
+     * Deploys the portions of a DHF app that a data-hub-developer is permitted to deploy.
+     *
+     * @param hubConfig
+     */
     public void deployAsDeveloper(HubConfigImpl hubConfig) {
         deployWithCommands(hubConfig, buildCommandsForDeveloper(hubConfig));
     }
 
+    /**
+     * Deploys the portions of a DHF app that a data-hub-security-admin is permitted to deploy.
+     *
+     * @param hubConfig
+     */
     public void deployAsSecurityAdmin(HubConfigImpl hubConfig) {
         deployWithCommands(hubConfig, buildCommandsForSecurityAdmin());
     }
