@@ -1,62 +1,91 @@
 {
-  "name" : "merge-persons",
-  "description" : "",
-  "stepDefinitionName" : "default-merging",
-  "stepDefinitionType" : "MERGING",
-  "provenanceGranularityLevel" : "fine",
-  "additionalCollections" : [ ],
-  "sourceQuery" : "cts.collectionQuery([\"match-persons\"])",
-  "sourceDatabase" : "data-hub-FINAL",
-  "collections" : [ "master-persons", "Person", "merge-persons" ],
-  "targetDatabase" : "data-hub-FINAL",
-  "targetFormat" : "json",
-  "targetEntityType" : "Person",
-  "stepId" : "merge-persons-merging",
-  "mergeStrategies" : [ {
-    "strategyName" : "retain-single-value",
-    "maxValues" : 1,
-    "priorityOrder" : {
-      "lengthWeight" : 10,
-      "sources" : [ ]
-    }
-  } ],
-  "mergeRules" : [ {
-    "entityPropertyPath" : "Address",
-    "mergeStrategyName" : "retain-single-value",
-    "maxValues" : 1,
-    "priorityOrder" : {
-      "lengthWeight" : "10",
-      "sources" : [ ]
-    }
-  }, {
-    "entityPropertyPath" : "DateOfBirth",
-    "priorityOrder" : {
-      "sources" : [ ]
-    }
-  }, {
-    "entityPropertyPath" : "ZipCode",
-    "mergeStrategyName" : "retain-single-value",
-    "maxValues" : 1,
-    "priorityOrder" : {
-      "lengthWeight" : "10",
-      "sources" : [ ]
-    }
-  } ],
-  "targetCollections" : {
-    "onMerge" : {
-      "add" : [ "" ],
-      "remove" : [ "no-match", "likely-match" ]
+  "batchSize": 1,
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "Person",
+  "sourceQuery": "cts.collectionQuery([\"match-persons\"])",
+  "provenanceGranularityLevel": "fine",
+  "collections": [
+    "master-persons",
+    "Person",
+    "merge-persons"
+  ],
+  "targetFormat": "json",
+  "mergeRules": [
+    {
+      "entityPropertyPath": "DateOfBirth",
+      "mergeType": "strategy",
+      "mergeStrategyName": "retain-single-value"
     },
-    "onNoMatch" : {
-      "add" : [ "no-match" ],
-      "remove" : [ "" ]
+    {
+      "entityPropertyPath": "PrimaryAddress.StreetAddress",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "1",
+      "priorityOrder": {
+        "sources": [ ],
+        "lengthWeight": 10
+      }
     },
-    "onNotification" : {
-      "add" : [ "likely-match" ],
-      "remove" : [ "" ]
+    {
+      "entityPropertyPath": "PrimaryAddress.ZipCode",
+      "mergeType": "property-specific",
+      "maxSources": "All",
+      "maxValues": "1",
+      "priorityOrder": {
+        "sources": [ ],
+        "lengthWeight": 10
+      }
+    }
+  ],
+  "mergeStrategies": [
+    {
+      "strategyName": "retain-single-value",
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 10,
+        "sources": [ ]
+      }
+    }
+  ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [
+        ""
+      ],
+      "remove": [
+        "no-match",
+        "likely-match"
+      ]
+    },
+    "onNoMatch": {
+      "add": [
+        "no-match"
+      ],
+      "remove": [
+        ""
+      ]
+    },
+    "onNotification": {
+      "add": [
+        "likely-match"
+      ],
+      "remove": [
+        ""
+      ]
     }
   },
-  "lastUpdatedLocation" : {
-    "documentXPath" : "/envelope/headers/createdOn"
-  }
+  "name": "merge-persons",
+  "description": "",
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "additionalCollections": [ ],
+  "stepId": "merge-persons-merging",
+  "lastUpdatedLocation": {
+    "documentXPath": "/envelope/headers/createdOn"
+  },
+  "acceptsBatch": false,
+  "stepUpdate": false,
+  "lastUpdated": "2021-08-27T01:01:23.83535Z"
 }
