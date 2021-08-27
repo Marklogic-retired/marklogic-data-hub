@@ -20,18 +20,41 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model"
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const ext = require("/data-hub/extensions/entity/build-entity-query.xqy");
 
-let modelResponseArr = fn.collection(entityLib.getModelCollection()).toArray().map(model => {
-  model = model.toObject();
-  const entityName = model.info.title;
+var includeDrafts;
+
+function buildEntityResponse(modelObject) {
+  const entityName = modelObject.info.title;
   const jobData = entityLib.getLatestJobData(entityName);
   const response = {
     entityName: entityName,
-    entityTypeId: entityLib.getEntityTypeId(model, entityName),
+    entityTypeId: entityLib.getEntityTypeId(modelObject, entityName),
     entityInstanceCount: cts.estimate(ext.buildEntityQuery(entityName)),
-    model: model
+    model: modelObject
   };
   return Object.assign(response, jobData);
-})
+
+};
+
+let modelResponseArr = [];
+// Get draft models if requested
+if (includeDrafts) {
+  modelResponseArr = fn.collection(entityLib.getDraftModelCollection()).toArray().map(model => {
+    model = model.toObject();
+    return buildEntityResponse(model);
+  });
+}
+
+// Add in published models that were not added as part of drafts
+fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
+  model = model.toObject();
+  const entityName = model.info.title;
+  const existingDraftIndex = modelResponseArr.findIndex((entityResp) => {
+    return entityName === entityResp.entityName;
+  });
+  if (existingDraftIndex < 0) {
+    modelResponseArr.push(buildEntityResponse(model));
+  }
+});
 
 modelResponseArr.sort(function(modelA, modelB) {
   var nameA = modelA.entityName;

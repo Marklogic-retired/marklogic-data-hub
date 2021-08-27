@@ -12,6 +12,7 @@ import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
 import {UserContext} from "../../../../util/user-context";
 import {TwitterPicker} from "react-color";
 import graphConfig from "../../../../config/graph-vis.config";
+import {EntityModified} from "../../../../types/modeling-types";
 
 type Props = {
   entityTypes: any;
@@ -20,6 +21,7 @@ type Props = {
   canWriteEntityModel: any;
   canReadEntityModel: any;
   updateEntities: any;
+  updateSavedEntity: (entity: EntityModified) => void;
 };
 
 const DEFAULT_TAB = "properties";
@@ -289,6 +291,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         entityTypeData={props.entityTypes.find(e => e.entityName === modelingOptions.selectedEntity)}
         canWriteEntityModel={props.canWriteEntityModel}
         canReadEntityModel={props.canReadEntityModel}
+        updateSavedEntity={props.updateSavedEntity}
       />;
   };
 

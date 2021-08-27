@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {faProjectDiagram, faSave, faTable, faUndo} from "@fortawesome/free-solid-svg-icons";
+import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {MLButton, MLTooltip, MLAlert, MLRadio} from "@marklogic/design-system";
 import "./Modeling.scss";
@@ -9,12 +9,11 @@ import EntityTypeModal from "../components/modeling/entity-type-modal/entity-typ
 import EntityTypeTable from "../components/modeling/entity-type-table/entity-type-table";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, primaryEntityTypes, updateEntityModels} from "../api/modeling";
+import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
 import {UserContext} from "../util/user-context";
 import {ModelingContext} from "../util/modeling-context";
-import {ModelingTooltips} from "../config/tooltips.config";
+import {ModelingMessages, ModelingTooltips} from "../config/tooltips.config";
 import {AuthoritiesContext} from "../util/authorities";
-import {EntityModified} from "../types/modeling-types";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
@@ -23,6 +22,7 @@ import arrayIcon from "../assets/icon_array.png";
 import relatedEntityIcon from "../assets/icon_related_entities.png";
 import GraphView from "../components/modeling/graph-view/graph-view";
 import {defaultModelingView} from "../config/modeling.config";
+import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
@@ -36,13 +36,13 @@ const Modeling: React.FC = () => {
   const [prefix, setPrefix] = useState("");
   const [color, setColor] = useState("");
   const [autoExpand, setAutoExpand] = useState("");
-  const [revertAllEntity, toggleRevertAllEntity] = useState(false);
+  //const [revertAllEntity, toggleRevertAllEntity] = useState(false);
   const [width, setWidth] = React.useState(window.innerWidth);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [showRelationshipModal, toggleRelationshipModal] = useState(true);
 
-  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.SaveAll);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.PublishAll);
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -80,11 +80,21 @@ const Modeling: React.FC = () => {
     try {
       const response = await primaryEntityTypes();
       if (response) {
-        setEntityTypes(response["data"]);
+        let model: any = [];
+        let entityTypesArray:any = [];
+        let isDraft = false;
+        await response["data"].forEach(entity => {
+          if (!entity.model.info.draftDeleted) {
+            model.push(entity);
+            entityTypesArray.push({name: entity.entityName, entityTypeId: entity.entityTypeId});
+          }
+          if (entity.model.info.draft && !isDraft) {
+            isDraft = true;
+          }
+        });
+        setEntityTypes(model);
         if (response["data"].length > 0) {
-          setEntityTypeNamesArray(response["data"].map(entity => {
-            return {name: entity.entityName, entityTypeId: entity.entityTypeId};
-          }));
+          setEntityTypeNamesArray(entityTypesArray, isDraft);
         }
       }
     } catch (error) {
@@ -106,18 +116,24 @@ const Modeling: React.FC = () => {
     } catch (error) {
       handleError(error);
     } finally {
-      clearEntityModified();
       toggleRelationshipModal(false);
       toggleConfirmModal(false);
     }
   };
 
-  const updateSavedEntity = (entity: EntityModified) => {
-    let updatedEntityTypes = [...entityTypes];
-    let updateEntityIndex = updatedEntityTypes.findIndex((entityType) => entityType.entityName === entity.entityName);
-
-    updatedEntityTypes[updateEntityIndex]["model"]["definitions"] = entity.modelDefinition;
-    setEntityTypes(updatedEntityTypes);
+  const publishDraftModelToServer = async () => {
+    try {
+      let response = await publishDraftModels();
+      if (response["status"] === 200) {
+        await setEntityTypesFromServer();
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      clearEntityModified();
+      toggleRelationshipModal(false);
+      toggleConfirmModal(false);
+    }
   };
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
@@ -144,22 +160,11 @@ const Modeling: React.FC = () => {
   };
 
   const confirmAction = () => {
-    if (confirmType === ConfirmationType.SaveAll) {
-      saveAllEntitiesToServer([]);
-    } else if (confirmType === ConfirmationType.RevertAll) {
-      resetAllEntityTypes();
-    } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn) {
-      saveAllEntitiesThenDeleteFromServer();
-    } else if (confirmType === ConfirmationType.DeleteEntity) {
+    if (confirmType === ConfirmationType.PublishAll) {
+      publishDraftModelToServer();
+    } else if (confirmType === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn || confirmType === ConfirmationType.DeleteEntity) {
       deleteEntityFromServer();
     }
-  };
-
-  const resetAllEntityTypes = async () => {
-    await setEntityTypesFromServer();
-    clearEntityModified();
-    toggleRevertAllEntity(true);
-    toggleConfirmModal(false);
   };
 
   /* Deleting an entity type */
@@ -170,7 +175,7 @@ const Modeling: React.FC = () => {
         let newConfirmType = ConfirmationType.DeleteEntity;
 
         if (modelingOptions.isModified) {
-          newConfirmType = ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn;
+          //newConfirmType = ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn;
           setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
         }
 
@@ -215,31 +220,27 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const saveAllEntitiesThenDeleteFromServer = async () => {
-    try {
-      const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
-      if (response["status"] === 200) {
-        let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
-        try {
-          await deleteEntity(entityName);
-        } catch (error) {
-          handleError(error);
-        } finally {
-          await setEntityTypesFromServer();
-          clearEntityModified();
-          toggleConfirmModal(false);
-          // if (modelingOptions.openSidePanelInGraphView && modelingOptions.selectedEntity === entityName) {
-          //   closeSidePanelInGraphView();
-          // }
-          if (modelingOptions.selectedEntity && modelingOptions.selectedEntity === entityName) {
-            setSelectedEntity(undefined);
-          }
-        }
-      }
-    } catch (error) {
-      handleError(error);
-    }
-  };
+  // const saveAllEntitiesThenDeleteFromServer = async () => {
+  //   try {
+  //     const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
+  //     if (response["status"] === 200) {
+  //       let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
+  //       try {
+  //         await deleteEntity(entityName);
+  //       } catch (error) {
+  //         handleError(error);
+  //       } finally {
+  //         await setEntityTypesFromServer();
+  //         toggleConfirmModal(false);
+  //         if (modelingOptions.selectedEntity && modelingOptions.selectedEntity === entityName) {
+  //           setSelectedEntity(undefined);
+  //         }
+  //       }
+  //     }
+  //   } catch (error) {
+  //     handleError(error);
+  //   }
+  // };
 
 
   const addButton = <MLButton
@@ -253,39 +254,28 @@ const Modeling: React.FC = () => {
     className={!canWriteEntityModel && styles.disabledPointerEvents}
   >Add</MLButton>;
 
-  const saveAllButton = <MLButton
-    className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
-    disabled={!modelingOptions.isModified}
-    aria-label="save-all"
-    onClick={() => {
-      setConfirmType(ConfirmationType.SaveAll);
-      toggleConfirmModal(true);
-    }}
-  >
-    <FontAwesomeIcon
-      icon={faSave}
-      className={styles.publishIcon}
-      size="sm"
-    />
-        Save All
-  </MLButton>;
+  const publishIconStyle: CSSProperties = {
+    width: "18px",
+    height: "18px",
+    fill: "currentColor"
+  };
 
-  const revertAllButton = <MLButton
+  const publishButton = <span className={styles.publishButtonParent}><MLButton
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
-    aria-label="revert-all"
+    aria-label="publish-to-database"
     onClick={() => {
-      setConfirmType(ConfirmationType.RevertAll);
+      setConfirmType(ConfirmationType.PublishAll);
       toggleConfirmModal(true);
     }}
+    size="small"
   >
-    <FontAwesomeIcon
-      className={styles.icon}
-      icon={faUndo}
-      size="sm"
-    />
-        Revert All
-  </MLButton>;
+    <span className={styles.publishButtonContainer}>
+      <PublishToDatabaseIcon style={publishIconStyle} />
+      <span className={styles.publishButtonText}>Publish</span>
+    </span>
+  </MLButton>
+  </span>;
 
   const handleViewChange = (view) => {
     if (view === "table") {
@@ -331,7 +321,7 @@ const Modeling: React.FC = () => {
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
                 type="info" aria-label="entity-modified-alert" showIcon
-                message={ModelingTooltips.entityEditedAlert}/></div>
+                message={ModelingMessages.entityEditedAlert}/></div>
             )}
             <div>
               <div className={styles.header}>
@@ -367,29 +357,16 @@ const Modeling: React.FC = () => {
                       </MLTooltip>
                     }
                     {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.saveAll}
+                      <MLTooltip title={ModelingTooltips.publish}
                         overlayStyle={{maxWidth: "175px"}}>
                         <span
-                          className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{saveAllButton}</span>
+                          className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{publishButton}</span>
                       </MLTooltip>
                       :
                       <MLTooltip
-                        title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess}
+                        title={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess}
                         placement="top" overlayStyle={{maxWidth: "225px"}}>
-                        <span className={styles.disabledCursor}>{saveAllButton}</span>
-                      </MLTooltip>
-                    }
-                    {canWriteEntityModel ?
-                      <MLTooltip title={ModelingTooltips.revertAll}
-                        overlayStyle={{maxWidth: "175px"}}>
-                        <span
-                          className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{revertAllButton}</span>
-                      </MLTooltip>
-                      :
-                      <MLTooltip
-                        title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess}
-                        placement="left" overlayStyle={{maxWidth: "250px"}}>
-                        <span className={styles.disabledCursor}>{revertAllButton}</span>
+                        <span className={styles.disabledCursor}>{publishButton}</span>
                       </MLTooltip>
                     }
                   </div>
@@ -404,7 +381,7 @@ const Modeling: React.FC = () => {
             {modelingOptions.isModified && (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
                 type="info" aria-label="entity-modified-alert" showIcon
-                message={ModelingTooltips.entityEditedAlert}/></div>
+                message={ModelingMessages.entityEditedAlert}/></div>
             )}
             <h1>Entity Types</h1>
             <div className={styles.borderBelowHeader}></div>
@@ -420,6 +397,8 @@ const Modeling: React.FC = () => {
               toggleShowEntityModal={toggleShowEntityModal}
               toggleIsEditModal={toggleIsEditModal}
               setEntityTypesFromServer={setEntityTypesFromServer}
+              toggleConfirmModal={toggleConfirmModal}
+              setConfirmType={setConfirmType}
             />
           </>
         }
@@ -431,17 +410,15 @@ const Modeling: React.FC = () => {
             allEntityTypesData={entityTypes}
             editEntityTypeDescription={editEntityTypeDescription}
             updateEntities={setEntityTypesFromServer}
-            updateSavedEntity={updateSavedEntity}
+            updateSavedEntity={saveAllEntitiesToServer}
             autoExpand={autoExpand}
-            revertAllEntity={revertAllEntity}
-            toggleRevertAllEntity={toggleRevertAllEntity}
           />
         </div> : ""}
         <ConfirmationModal
           isVisible={showConfirmModal}
           type={confirmType}
-          boldTextArray={![ConfirmationType.SaveAll, ConfirmationType.RevertAll].includes(confirmType) ? confirmBoldTextArray : []}
-          arrayValues={![ConfirmationType.SaveAll, ConfirmationType.RevertAll].includes(confirmType) ? arrayValues : []}
+          boldTextArray={![ConfirmationType.PublishAll].includes(confirmType) ? confirmBoldTextArray : []}
+          arrayValues={![ConfirmationType.PublishAll].includes(confirmType) ? arrayValues : []}
           toggleModal={toggleConfirmModal}
           confirmAction={confirmAction}
         />

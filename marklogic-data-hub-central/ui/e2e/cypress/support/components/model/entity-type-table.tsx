@@ -37,14 +37,6 @@ class EntityTypeTable {
     return cy.findByTestId(`${entityName}-trash-icon`);
   }
 
-  getSaveEntityIcon(entityName: string) {
-    return cy.findByTestId(`${entityName}-save-icon`);
-  }
-
-  getRevertEntityIcon(entityName: string) {
-    return cy.findByTestId(`${entityName}-revert-icon`);
-  }
-
   waitForTableToLoad() {
     cy.waitUntil(() => cy.get(".ant-table-row").should("have.length.gt", 0));
   }

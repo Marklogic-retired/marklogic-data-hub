@@ -161,128 +161,14 @@ describe("Confirmation Modal Component", () => {
     expect(toggleModal).toBeCalledTimes(1);
   });
 
-  test("can render delete type entity relation with outstanding edit warn confirmation", () => {
-    let entityName = "PersonXML";
-    let arrayValues = ["Person-Mapping-XML"];
-    let toggleModal = jest.fn();
-    let confirmAction = jest.fn();
-
-    const {getByText, getAllByText, queryByLabelText, rerender} =  render(
-      <ConfirmationModal
-        isVisible={false}
-        type={ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}
-        boldTextArray={[entityName]}
-        arrayValues={arrayValues}
-        toggleModal={toggleModal}
-        confirmAction={confirmAction}
-      />
-    );
-
-    expect(queryByLabelText("delete-relationship-edit-text")).toBeNull();
-
-    rerender(<ConfirmationModal
-      isVisible={true}
-      type={ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}
-      boldTextArray={[entityName]}
-      arrayValues={arrayValues}
-      toggleModal={toggleModal}
-      confirmAction={confirmAction}
-    />);
-
-    expect(getAllByText(entityName)).toHaveLength(4);
-    expect(getByText("There are existing entity type relationships, and outstanding edits that need to be saved.")).toBeInTheDocument();
-    expect(getByText(arrayValues[0])).toBeInTheDocument();
-
-    userEvent.click(getByText("No"));
-    expect(toggleModal).toBeCalledTimes(1);
-
-    userEvent.click(getByText("Yes"));
-    expect(confirmAction).toBeCalledTimes(1);
-  });
-
-  test("can render delete type outstanding edit warn confirmation", () => {
-    let entityName = "PersonXML";
-    let arrayValues = ["Person-Mapping-XML"];
-    let toggleModal = jest.fn();
-    let confirmAction = jest.fn();
-
-    const {getByText, getAllByText, queryByLabelText, rerender} =  render(
-      <ConfirmationModal
-        isVisible={false}
-        type={ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn}
-        boldTextArray={[entityName]}
-        arrayValues={arrayValues}
-        toggleModal={toggleModal}
-        confirmAction={confirmAction}
-      />
-    );
-
-    expect(queryByLabelText("delete-no-relationship-edit-text")).toBeNull();
-
-
-    rerender(<ConfirmationModal
-      isVisible={true}
-      type={ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn}
-      boldTextArray={[entityName]}
-      arrayValues={arrayValues}
-      toggleModal={toggleModal}
-      confirmAction={confirmAction}
-    />);
-
-    expect(getAllByText(entityName)).toHaveLength(2);
-    expect(getByText("There are outstanding edits that need to be saved.")).toBeInTheDocument();
-    expect(getByText(arrayValues[0])).toBeInTheDocument();
-
-    userEvent.click(getByText("No"));
-    expect(toggleModal).toBeCalledTimes(1);
-
-    userEvent.click(getByText("Yes"));
-    expect(confirmAction).toBeCalledTimes(1);
-  });
-
-  test("can render save entity type confirmation", () => {
-    let entityName = "Product";
+  test("can render publish entity types confirmation", () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
     const {queryByLabelText, getByText, rerender} =  render(
       <ConfirmationModal
         isVisible={false}
-        type={ConfirmationType.SaveEntity}
-        boldTextArray={[entityName]}
-        toggleModal={toggleModal}
-        confirmAction={confirmAction}
-      />
-    );
-
-    expect(queryByLabelText("save-text")).toBeNull();
-
-    rerender(<ConfirmationModal
-      isVisible={true}
-      type={ConfirmationType.SaveEntity}
-      boldTextArray={[entityName]}
-      toggleModal={toggleModal}
-      confirmAction={confirmAction}
-    />);
-
-    expect(getByText(entityName)).toBeInTheDocument();
-    expect(getByText(/Are you sure you want to save changes to /i)).toBeInTheDocument();
-
-    userEvent.click(getByText("No"));
-    expect(toggleModal).toBeCalledTimes(1);
-
-    userEvent.click(getByText("Yes"));
-    expect(confirmAction).toBeCalledTimes(1);
-  });
-
-  test("can render save all entity types confirmation", () => {
-    let toggleModal = jest.fn();
-    let confirmAction = jest.fn();
-
-    const {queryByLabelText, getByText, rerender} =  render(
-      <ConfirmationModal
-        isVisible={false}
-        type={ConfirmationType.SaveAll}
+        type={ConfirmationType.PublishAll}
         boldTextArray={[]}
         toggleModal={toggleModal}
         confirmAction={confirmAction}
@@ -293,81 +179,13 @@ describe("Confirmation Modal Component", () => {
 
     rerender(<ConfirmationModal
       isVisible={true}
-      type={ConfirmationType.SaveAll}
+      type={ConfirmationType.PublishAll}
       boldTextArray={[]}
       toggleModal={toggleModal}
       confirmAction={confirmAction}
     />);
 
-    expect(getByText("Are you sure you want to save ALL changes to ALL entity types?")).toBeInTheDocument();
-
-    userEvent.click(getByText("No"));
-    expect(toggleModal).toBeCalledTimes(1);
-
-    userEvent.click(getByText("Yes"));
-    expect(confirmAction).toBeCalledTimes(1);
-  });
-
-  test("can render revert entity type confirmation", () => {
-    let entityName = "Product";
-    let toggleModal = jest.fn();
-    let confirmAction = jest.fn();
-
-    const {queryByLabelText, getByText, rerender} =  render(
-      <ConfirmationModal
-        isVisible={false}
-        type={ConfirmationType.RevertEntity}
-        boldTextArray={[entityName]}
-        toggleModal={toggleModal}
-        confirmAction={confirmAction}
-      />
-    );
-
-    expect(queryByLabelText("revert-text")).toBeNull();
-
-    rerender(<ConfirmationModal
-      isVisible={true}
-      type={ConfirmationType.RevertEntity}
-      boldTextArray={[entityName]}
-      toggleModal={toggleModal}
-      confirmAction={confirmAction}
-    />);
-
-    expect(getByText(entityName)).toBeInTheDocument();
-    expect(getByText(/Are you sure you want to discard your changes to /i)).toBeInTheDocument();
-
-    userEvent.click(getByText("No"));
-    expect(toggleModal).toBeCalledTimes(1);
-
-    userEvent.click(getByText("Yes"));
-    expect(confirmAction).toBeCalledTimes(1);
-  });
-
-  test("can render revert all entity types confirmation", () => {
-    let toggleModal = jest.fn();
-    let confirmAction = jest.fn();
-
-    const {queryByLabelText, getByText, rerender} =  render(
-      <ConfirmationModal
-        isVisible={false}
-        type={ConfirmationType.RevertAll}
-        boldTextArray={[]}
-        toggleModal={toggleModal}
-        confirmAction={confirmAction}
-      />
-    );
-
-    expect(queryByLabelText("revert-all-text")).toBeNull();
-
-    rerender(<ConfirmationModal
-      isVisible={true}
-      type={ConfirmationType.RevertAll}
-      boldTextArray={[]}
-      toggleModal={toggleModal}
-      confirmAction={confirmAction}
-    />);
-
-    expect(getByText("Are you sure you want to discard all changes to all entity types?")).toBeInTheDocument();
+    expect(getByText("Are you sure you want to publish your changes to the entity model?")).toBeInTheDocument();
 
     userEvent.click(getByText("No"));
     expect(toggleModal).toBeCalledTimes(1);
@@ -400,8 +218,8 @@ describe("Confirmation Modal Component", () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText("Unsaved Changes")).toBeInTheDocument();
-    expect(getByText("You have made changes to the properties of one or more entity types. If you exit now, you will lose those changes.")).toBeInTheDocument();
+    expect(getByText("Unpublished Changes")).toBeInTheDocument();
+    expect(getByText("You have made changes to the properties of one or more entity types. If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.")).toBeInTheDocument();
 
     userEvent.click(getByText("No"));
     expect(toggleModal).toBeCalledTimes(1);

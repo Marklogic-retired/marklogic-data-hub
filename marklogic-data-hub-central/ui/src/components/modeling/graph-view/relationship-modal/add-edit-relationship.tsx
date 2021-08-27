@@ -175,7 +175,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     }
   };
 
-  const editPropertyUpdateDefinition = (entityIdx: number, definitionName: string, propertyName: string, editPropertyOptions) => {
+  const editPropertyUpdateDefinition = async (entityIdx: number, definitionName: string, propertyName: string, editPropertyOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...props.entityTypes[entityIdx].model.definitions};
@@ -244,6 +244,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       entityName: definitionName,
       modelDefinition: updatedDefinitions
     };
+    if (props.updateSavedEntity) {
+      await props.updateSavedEntity([modifiedEntityStruct]);
+    }
 
     return modifiedEntityStruct;
   };
@@ -293,7 +296,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           props.setOpenRelationshipModal(false);
         } else {
           toggleLoading(true);
-          let entityModified = editPropertyUpdateDefinition(sourceEntityIdx, props.relationshipInfo.sourceNodeName, props.relationshipInfo.relationshipName, newEditPropertyOptions);
+          let entityModified: any = editPropertyUpdateDefinition(sourceEntityIdx, props.relationshipInfo.sourceNodeName, props.relationshipInfo.relationshipName, newEditPropertyOptions);
           updateEntityModified(entityModified);
           props.updateSavedEntity([entityModified]);
         }

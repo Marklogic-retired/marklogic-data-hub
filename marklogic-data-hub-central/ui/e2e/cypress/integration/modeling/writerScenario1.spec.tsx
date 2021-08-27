@@ -148,16 +148,16 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.getCancelButton().click();
   });
   it("Save new Buyer entity", {defaultCommandTimeout: 120000}, () => {
-    entityTypeTable.getSaveEntityIcon("Buyer").click();
-    confirmationModal.getSaveEntityText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
-    confirmationModal.getSaveEntityText().should("exist");
-    confirmationModal.getSaveEntityText().should("not.exist");
+    modelPage.getPublishButton().click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    cy.waitForAsyncRequest();
+    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getSaveAllEntityText().should("not.exist");
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
-    modelPage.getEntityModifiedAlert().should("exist");
+    modelPage.getEntityModifiedAlert().should("not.exist");
   });
-  it("Validate the entity in explore page and Logout to validate warning Text", () => {
+  it("Validate the entity in explore page", () => {
     toolbar.getExploreToolbarIcon().click();
     cy.waitUntil(() => tiles.getExploreTile());
     cy.url().should("include", "/tiles/explore");
@@ -165,13 +165,10 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     tiles.getModelTile().should("exist");
     modelPage.selectView("table");
     cy.waitUntil(() => entityTypeTable.getExpandEntityIcon("Customer")).click();
-    modelPage.getEntityModifiedAlert().should("exist");
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
     cy.get("[aria-label=\"user-dropdown\"]").trigger("mousedown");
     cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
     cy.location("pathname").should("eq", "/");
   });
   it("Add new property to Order entity", () => {
@@ -193,6 +190,10 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     //propertyTable.getWildcardIcon('orderID').should('exist');
   });
   it("Add related property to Buyer, check Join Property menu, cancel the addition", () => {
+    LoginPage.postLogin();
+    toolbar.getModelToolbarIcon().click();
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
     entityTypeTable.getExpandEntityIcon("Buyer").click();
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.newPropertyName("relProp");
@@ -203,37 +204,6 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.checkJoinPropertyDropdownLength(6); // Check for saved (5) and unsaved (1) Order properties
     propertyModal.toggleJoinPropertyDropdown();
     propertyModal.getCancelButton().click();
-  });
-  it("Revert new Order property changes", () => {
-    entityTypeTable.getRevertEntityIcon("Order").should("exist");
-    entityTypeTable.getRevertEntityIcon("Order").click();
-    confirmationModal.getYesButton(ConfirmationType.RevertEntity).click();
-    confirmationModal.getRevertEntityText().should("exist");
-    confirmationModal.getRevertEntityText().should("not.exist");
-    propertyTable.getMultipleIcon("orderID").should("not.exist");
-    propertyTable.getPiiIcon("orderID").should("not.exist");
-    modelPage.getEntityModifiedAlert().should("not.exist");
-    //propertyTable.getWildcardIcon('orderID').should('not.exist');
-  });
-  it("Edit Order type and then revert again", () => {
-    propertyTable.editProperty("orderDetails-orderDetails");
-    propertyModal.clearPropertyName();
-    propertyModal.newPropertyName("testing");
-    propertyModal.getNoRadio("multiple").click();
-    propertyModal.getYesRadio("pii").click();
-    propertyModal.getSubmitButton().click();
-    propertyTable.getMultipleIcon("testing").should("not.exist");
-    propertyTable.getPiiIcon("testing").should("exist");
-    entityTypeTable.getRevertEntityIcon("Order").should("exist");
-    entityTypeTable.getRevertEntityIcon("Order").click();
-    confirmationModal.getYesButton(ConfirmationType.RevertEntity).click();
-    confirmationModal.getRevertEntityText().should("exist");
-    confirmationModal.getRevertEntityText().should("not.exist");
-    propertyTable.getProperty("testing").should("not.exist");
-    propertyTable.getProperty("orderDetails-orderDetails").should("exist");
-    propertyTable.getMultipleIcon("orderDetails").should("exist");
-    propertyTable.getPiiIcon("orderDetails").should("not.exist");
-    modelPage.getEntityModifiedAlert().should("not.exist");
   });
   it("Adding property to Person entity", () => {
     entityTypeTable.getExpandEntityIcon("Person").click();
@@ -254,7 +224,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getFacetIcon("newID").should("exist");
     propertyTable.getSortIcon("newID").should("exist");
   });
-  it("Show identifier confirm modal, and then show delete property confim modal", () => {
+  it("Show identifier confirm modal, and then show delete property confirm modal", () => {
     propertyTable.editProperty("lname");
     propertyModal.getYesRadio("identifier").click();
     confirmationModal.getIdentifierText().should("be.visible");
@@ -285,7 +255,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.contains("Hide Steps...").should("not.exist");
     propertyModal.getCancelButton().click();
   });
-  it("Delete Entity that is used in other steps and Click on Revert All Changes", () => {
+  it("Delete Entity that is used in other steps", () => {
     entityTypeTable.getDeleteEntityIcon("Person").click();
     cy.contains("Entity type is used in one or more steps.").should("be.visible");
     cy.contains("Show Steps...").should("be.visible");
@@ -298,8 +268,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     confirmationModal.getCloseButton(ConfirmationType.DeleteEntityStepWarn).click();
     entityTypeTable.getEntity("Person").should("exist");
     //Revert All changes
-    modelPage.getRevertAllButton().click();
-    confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
-    confirmationModal.getRevertAllEntityText().should("not.exist");
+    // modelPage.getRevertAllButton().click();
+    // confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
+    // confirmationModal.getRevertAllEntityText().should("not.exist");
   });
 });

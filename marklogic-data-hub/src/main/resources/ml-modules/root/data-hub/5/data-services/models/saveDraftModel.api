@@ -1,6 +1,6 @@
 {
-    "functionName": "saveModel",
-    "desc": "Save a model, where the input is a JSON model",
+    "functionName": "saveDraftModel",
+    "desc": "Save a draft model, where the input is a JSON model",
     "params": [
         {
             "name": "model",

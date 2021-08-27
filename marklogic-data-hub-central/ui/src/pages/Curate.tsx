@@ -69,7 +69,6 @@ const Curate: React.FC = () => {
       console.error("Error fetching entities", error);
       handleError(error);
     }
-
   };
 
   //GET all the flow artifacts

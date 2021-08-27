@@ -43,6 +43,7 @@ type Props = {
   entityName: string;
   definitions: any;
   sidePanelView: boolean;
+  updateSavedEntity: any;
 }
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
@@ -363,7 +364,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     setTableData(renderTableData);
   };
 
-  const addStructuredTypeToDefinition = (structuredTypeName: string) => {
+  const addStructuredTypeToDefinition = async (structuredTypeName: string) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName]: {
         properties: {}
@@ -376,6 +377,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     };
 
     updateEntityModified(entityModified);
+    if (props.updateSavedEntity) {
+      await props.updateSavedEntity([entityModified]);
+    }
     updateEntityDefinitionsAndRenderTable(newDefinitions);
   };
 
@@ -442,7 +446,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
   // Covers both Entity Type and Structured Type
-  const addPropertyToDefinition = (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => {
+  const addPropertyToDefinition = async (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
@@ -487,6 +491,9 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
+    if (props.updateSavedEntity) {
+      await props.updateSavedEntity([entityModified]);
+    }
     setNewRowKey(newRowKey);
   };
 
@@ -557,7 +564,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     toggleShowPropertyModal(true);
   };
 
-  const editPropertyUpdateDefinition = (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => {
+  const editPropertyUpdateDefinition = async (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
@@ -646,6 +653,9 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
+    if (props.updateSavedEntity) {
+      await props.updateSavedEntity([entityModified]);
+    }
   };
 
   const deletePropertyShowModal = async (text: string, record: any, definitionName: string) => {
@@ -676,7 +686,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
-  const deletePropertyFromDefinition = (definitionName: string, propertyName: string) => {
+  const deletePropertyFromDefinition = async (definitionName: string, propertyName: string) => {
     let parseName = definitionName.split(",");
     let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
@@ -718,8 +728,13 @@ const PropertyTable: React.FC<Props> = (props) => {
       modelDefinition: updatedDefinitions
     };
 
+    if (props.updateSavedEntity) {
+      await props.updateSavedEntity([entityModified]);
+    }
+
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
+
   };
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
@@ -759,7 +774,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             });
 
             let piiValue = entityTypeDefinition?.pii?.some(value => value === property.name) ? property.name : "";
-            let addValue = property.name + "," + structuredType.name;
+            let addValue = property.name + "," + structuredType?.name;
 
             if (parentDefinitionName) {
               let parentTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === parentDefinitionName) || DEFAULT_ENTITY_DEFINITION;
@@ -768,7 +783,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             }
             return {
               key: property.name + "," + index + counter,
-              structured: structuredType.name,
+              structured: structuredType?.name,
               propertyName: property.name,
               multiple: property.multiple ? property.name : "",
               facetable: property.facetable ? property.name : "",

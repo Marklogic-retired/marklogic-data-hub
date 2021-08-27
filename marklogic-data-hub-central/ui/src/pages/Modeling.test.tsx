@@ -11,7 +11,7 @@ import {ModelingContext} from "../util/modeling-context";
 import {ModelingTooltips} from "../config/tooltips.config";
 import {getEntityTypes} from "../assets/mock-data/modeling/modeling";
 import {isModified, notModified, isModifiedTableView, notModifiedTableView} from "../assets/mock-data/modeling/modeling-context-mock";
-import {primaryEntityTypes, updateEntityModels} from "../api/modeling";
+import {primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
 import {getViewSettings} from "../util/user-context";
@@ -22,6 +22,7 @@ jest.mock("../api/modeling");
 
 const mockPrimaryEntityType = primaryEntityTypes as jest.Mock;
 const mockUpdateEntityModels = updateEntityModels as jest.Mock;
+const mockPublishDraftModels = publishDraftModels as jest.Mock;
 
 const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;
@@ -45,9 +46,10 @@ describe("Modeling Page", () => {
     jest.clearAllMocks();
   });
 
-  test("Modeling: with mock data, renders modified Alert component and Dev role can click add, edit, and save all", async () => {
+  test("Modeling: with mock data, renders modified Alert component and Dev role can click add, edit, and publish", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
     mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
+    mockPublishDraftModels.mockResolvedValueOnce({status: 200});
 
     let getByText, getByLabelText;
     await act(async () => {
@@ -72,15 +74,13 @@ describe("Modeling Page", () => {
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
-    expect(getByText(ModelingTooltips.entityEditedAlert)).toBeInTheDocument();
+    expect(getByLabelText("entity-modified-alert")).toBeInTheDocument();
 
-    // test add, save, revert icons display correct tooltip when enabled
+    // test add, publish icons display correct tooltip when enabled
     fireEvent.mouseOver(getByText("Add"));
     await wait(() => expect(getByText(ModelingTooltips.addNewEntity)).toBeInTheDocument());
-    fireEvent.mouseOver(getByText("Save All"));
-    await wait(() => expect(getByText(ModelingTooltips.saveAll)).toBeInTheDocument());
-    fireEvent.mouseOver(getByText("Revert All"));
-    await wait(() => expect(getByText(ModelingTooltips.revertAll)).toBeInTheDocument());
+    fireEvent.mouseOver(getByLabelText("publish-to-database"));
+    await wait(() => expect(getByText(ModelingTooltips.publish)).toBeInTheDocument());
 
     userEvent.click(screen.getByTestId("AnotherModel-span"));
     expect(screen.getByText("Edit Entity Type")).toBeInTheDocument();
@@ -88,13 +88,13 @@ describe("Modeling Page", () => {
     userEvent.click(getByText("Add"));
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
-    userEvent.click(getByText("Save All"));
-    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveAll}-yes`));
-    expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1);
+    userEvent.click(getByLabelText("publish-to-database"));
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.PublishAll}-yes`));
+    expect(mockPublishDraftModels).toHaveBeenCalledTimes(1);
 
-    userEvent.click(getByText("Revert All"));
-    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));
-    expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2);
+    // userEvent.click(getByText("Revert All"));
+    // userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));
+    // expect(mockPrimaryEntityType).toHaveBeenCalledTimes(2);
   });
 
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
@@ -127,12 +127,8 @@ describe("Modeling Page", () => {
     // test add, save, revert icons display correct tooltip when disabled
     fireEvent.mouseOver(getByText("Add"));
     await wait(() => expect(getByText(ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
-    fireEvent.mouseOver(getByText("Save All"));
-    await wait(() => expect(getByText(ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
-    fireEvent.mouseOver(getByText("Revert All"));
-    await wait(() => expect(getByText(ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
-
-    expect(getByLabelText("save-all")).toBeDisabled();
+    fireEvent.mouseOver(getByText("Publish"));
+    await wait(() => expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
   });
 
@@ -155,7 +151,7 @@ describe("Modeling Page", () => {
     expect(queryByText("Last Processed")).toBeNull();
 
     expect(queryByLabelText("add-entity")).toBeNull();
-    expect(queryByLabelText("save-all")).toBeNull();
+    expect(queryByLabelText("publish-to-database")).toBeNull();
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
   });
 });

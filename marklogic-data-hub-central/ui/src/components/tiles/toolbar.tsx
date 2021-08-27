@@ -1,10 +1,13 @@
-import React, {CSSProperties} from "react";
-import {Link} from "react-router-dom";
+import React, {CSSProperties, useContext, useState} from "react";
+import {Link, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 import styles from "./toolbar.module.scss";
 import "./toolbar.scss";
 import {MLTooltip} from "@marklogic/design-system";
+import ConfirmationModal from "../confirmation-modal/confirmation-modal";
+import {ConfirmationType} from "../../types/common-types";
+import {ModelingContext} from "../../util/modeling-context";
 
 
 interface Props {
@@ -19,6 +22,12 @@ const Toolbar: React.FC<Props> = (props) => {
   // array of references used to set focus
   let tileRefs : any[] = [];
   for (let i = 0; i < Object.keys(tiles).length; ++i) tileRefs.push(React.createRef<HTMLDivElement>());
+
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const {modelingOptions} = useContext(ModelingContext);
+  const [tileInfo, setTileInfo] = useState({});
+  const location:any = useLocation();
+
 
   const getTooltip = (id) => {
     if (props.enabled && props.enabled.includes(id)) {
@@ -47,7 +56,17 @@ const Toolbar: React.FC<Props> = (props) => {
   };
 
   const tileOnClickHandler = (id, index) => {
-    if (props.enabled && props.enabled.includes(id)) tileRefs[index].current.click();
+    if (modelingOptions.isModified) {
+      let previousRouteId = location.pathname.split("/").pop();
+      if (id !== "model" && previousRouteId === "model") {
+        setTileInfo({id: id, index: index});
+        toggleConfirmModal(true);
+      } else {
+        if (props.enabled && props.enabled.includes(id)) tileRefs[index].current.click();
+      }
+    } else {
+      if (props.enabled && props.enabled.includes(id)) tileRefs[index].current.click();
+    }
   };
 
   const linkOnClickHandler = (event, id) => {
@@ -78,6 +97,13 @@ const Toolbar: React.FC<Props> = (props) => {
             note that the shadow is drawn on the parent div object when this object is tabbed to or
             navigated to using arrow keys.
     */
+
+  const confirmTileClick = () => {
+    toggleConfirmModal(false);
+    if (tileInfo) {
+      if (props.enabled && props.enabled.includes(tileInfo["id"])) tileRefs[tileInfo["index"]].current.click();
+    }
+  };
 
   return (
     <div id={styles.toolbar} aria-label={"toolbar"}>
@@ -133,6 +159,13 @@ const Toolbar: React.FC<Props> = (props) => {
           );
         }
       })}
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        type={ConfirmationType.NavigationWarn}
+        boldTextArray={[]}
+        toggleModal={toggleConfirmModal}
+        confirmAction={confirmTileClick}
+      />
     </div>
   );
 };

@@ -41,9 +41,9 @@ public class SaveModelTest extends AbstractHubCoreTest {
             "  }\n" +
             "}";
 
-        service.saveModel(ObjectMapperFactory.getObjectMapper().readTree(json));
+        service.saveDraftModel(ObjectMapperFactory.getObjectMapper().readTree(json));
 
-        JsonNode type = service.getPrimaryEntityTypes().get(0);
+        JsonNode type = service.getPrimaryEntityTypes(Boolean.TRUE).get(0);
         JsonNode model = type.get("model");
         assertEquals("zxx", model.get("lang").asText(), " Per DHFPROD-3193 and an update to MarkLogic 10.0-2, 'lang' " +
             "must now be used instead of 'language'.");
@@ -71,9 +71,9 @@ public class SaveModelTest extends AbstractHubCoreTest {
             mgr.writeAs(configUri, originalConfig.replaceAll(
                 getHubClient().getDbName(DatabaseKind.STAGING), getHubClient().getDbName(DatabaseKind.FINAL)));
 
-            service.saveModel(readJsonObject(simpleModel));
+            service.saveDraftModel(readJsonObject(simpleModel));
 
-            ArrayNode types = (ArrayNode) service.getPrimaryEntityTypes();
+            ArrayNode types = (ArrayNode) service.getPrimaryEntityTypes(Boolean.TRUE);
             assertEquals(1, types.size(), "Verifying that the model was saved, even though both staging and final are " +
                 "the same database; this ensures a conflicting-updates error doesn't occur from trying to write to the " +
                 "same database twice");

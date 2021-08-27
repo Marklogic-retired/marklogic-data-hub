@@ -1,5 +1,6 @@
 import React from "react";
-import {render, screen, fireEvent, wait, within, cleanup} from "@testing-library/react";
+import {render, screen, fireEvent, within, cleanup} from "@testing-library/react";
+import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
 
@@ -36,6 +37,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
@@ -58,6 +60,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={true}
+        updateSavedEntity={jest.fn()}
       />
     );
 
@@ -82,6 +85,7 @@ describe("Entity Modeling Property Table Component", () => {
       entityName={entityNameStruct}
       definitions={definitionsStruct}
       sidePanelView={true}
+      updateSavedEntity={jest.fn()}
     />
     );
 
@@ -109,26 +113,27 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
     fireEvent.mouseOver(getByLabelText("identifier-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("multiple-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("sort-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("facet-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
 
     // fireEvent.mouseOver(getByLabelText('wildcard-header'));
     // await wait (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("pii-header"));
-    await wait(() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
 
     expect(getByTestId("identifier-concept_name")).toBeInTheDocument();
     expect(getByTestId("multiple-synonyms")).toBeInTheDocument();
@@ -156,6 +161,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
@@ -185,9 +191,9 @@ describe("Entity Modeling Property Table Component", () => {
 
     // add property and add struct property display correct tooltip when disabled
     fireEvent.mouseOver((getByText("Add Property")));
-    await wait(() => expect(screen.getByText(ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver((getByTestId("add-struct-Zip")));
-    await wait(() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
 
     // Table expansion for zip property -> Zip structure type
     const zipExpandIcon = getByTestId("mltable-expand-zip");
@@ -214,7 +220,7 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getAllByText("string")).toHaveLength(13);
   });
 
-  test("can add sortable and facetable Property to the table", () => {
+  test("can add sortable and facetable Property to the table", async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const {getByTestId, getByLabelText} =  render(
@@ -225,6 +231,7 @@ describe("Entity Modeling Property Table Component", () => {
           entityName={entityName}
           definitions={definitions}
           sidePanelView={false}
+          updateSavedEntity={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -251,10 +258,10 @@ describe("Entity Modeling Property Table Component", () => {
     expect(sortableCheckbox).toBeChecked();
 
     fireEvent.submit(screen.getByLabelText("input-name"));
-    expect(getByTestId("altName-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("altName-span")).toBeInTheDocument());
   });
 
-  test("can add a Property to the table and then edit it", () => {
+  test("can add a Property to the table and then edit it", async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const {getByTestId} =  render(
@@ -264,6 +271,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
@@ -275,7 +283,7 @@ describe("Entity Modeling Property Table Component", () => {
 
     fireEvent.submit(screen.getByLabelText("input-name"));
 
-    expect(getByTestId("conceptDate-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("conceptDate-span")).toBeInTheDocument());
 
     userEvent.click(screen.getByTestId("conceptDate-span"));
 
@@ -283,10 +291,10 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.type(screen.getByLabelText("input-name"), "conception");
 
     fireEvent.submit(screen.getByLabelText("input-name"));
-    expect(getByTestId("conception-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("conception-span")).toBeInTheDocument());
   });
 
-  test("can add a new structured type property to the table and then edit it", () => {
+  test("can add a new structured type property to the table and then edit it", async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const {getByTestId} =  render(
@@ -296,6 +304,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
@@ -312,7 +321,7 @@ describe("Entity Modeling Property Table Component", () => {
 
     fireEvent.submit(screen.getByLabelText("input-name"));
 
-    expect(getByTestId("newStructure-newStructure-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("newStructure-newStructure-span")).toBeInTheDocument());
 
     userEvent.click(screen.getByTestId("newStructure-newStructure-span"));
     userEvent.clear(screen.getByLabelText("input-name"));
@@ -322,7 +331,7 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getByText("dayTimeDuration"));
 
     fireEvent.submit(screen.getByLabelText("input-name"));
-    expect(getByTestId("conception-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("conception-span")).toBeInTheDocument());
   });
 
   test("can edit a property and change the type from basic to relationship", async () => {
@@ -339,6 +348,7 @@ describe("Entity Modeling Property Table Component", () => {
           entityName={entityName}
           definitions={definitions}
           sidePanelView={false}
+          updateSavedEntity={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -349,9 +359,9 @@ describe("Entity Modeling Property Table Component", () => {
 
     // add property and add struct property display correct tooltip when enabled
     fireEvent.mouseOver((getByText("Add Property")));
-    await wait(() => expect(screen.getByText(ModelingTooltips.addProperty)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.addProperty)).toBeInTheDocument());
     fireEvent.mouseOver((getAllByTestId("add-struct-Address")[0]));
-    await wait(() => expect(screen.getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
 
     userEvent.click(getByTestId("nicknames-span"));
     userEvent.clear(screen.getByLabelText("input-name"));
@@ -387,15 +397,15 @@ describe("Entity Modeling Property Table Component", () => {
     // Choose join property after menu is populated
     userEvent.click(getByLabelText("joinProperty-select"));
     expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
-    await wait(() => userEvent.click(getAllByText("customerId")[1]));
+    await waitFor(() => userEvent.click(getAllByText("customerId")[1]));
 
     userEvent.click(getByLabelText("property-modal-submit"));
-    expect(getByTestId("customerRelationship-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("customerRelationship-span")).toBeInTheDocument());
     userEvent.click(screen.getByTestId("customerRelationship-span"));
 
     expect(getByText("customerRelationship")).toBeInTheDocument();
     fireEvent.mouseOver((getByTestId("foreign-customerRelationship")));
-    await wait(() => expect(document.querySelector("#tooltip-customerRelationship")).toBeInTheDocument());
+    await waitFor(() => expect(document.querySelector("#tooltip-customerRelationship")).toBeInTheDocument());
     expect(screen.getByText("array (Customer)")).toBeInTheDocument();
 
     userEvent.clear(screen.getByLabelText("input-name"));
@@ -404,7 +414,7 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getAllByText("integer")[0]);
     fireEvent.submit(screen.getByLabelText("input-name"));
 
-    expect(getByTestId("basicID-span")).toBeInTheDocument();
+    await waitFor(() => expect(getByTestId("basicID-span")).toBeInTheDocument());
   });
 
   test("can delete a basic property from the table", async () => {
@@ -419,19 +429,20 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
     userEvent.click(getByTestId("delete-Concept-domain"));
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(mockEntityReferences).toBeCalledTimes(1);
-    expect(screen.queryByTestId("domain-span")).toBeNull();
+    await waitFor(() => expect(screen.queryByTestId("domain-span")).toBeNull());
     expect(mockGetSystemInfo).toBeCalledTimes(1);
-    expect(screen.queryByTestId("domain-span")).toBeNull();
+    await waitFor(() => expect(screen.queryByTestId("domain-span")).toBeNull());
   });
 
   test("can delete a property that is type structured from the table", async () => {
@@ -448,12 +459,13 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
     userEvent.click(getByTestId("delete-Order-address"));
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
@@ -476,18 +488,19 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
     userEvent.click(getByTestId("delete-Customer-Address-shipping-city"));
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-step-text")).toBeInTheDocument(),
     );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
     expect(mockEntityReferences).toBeCalledTimes(1);
     expect(mockGetSystemInfo).toBeCalledTimes(1);
-    expect(screen.queryByTestId("shipping-city-span")).toBeNull();
+    await waitFor(() => expect(screen.queryByTestId("shipping-city-span")).toBeNull());
 
   });
   test("cannot delete a property that's a foreign key", async () => {
@@ -502,12 +515,13 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
+        updateSavedEntity={jest.fn()}
       />
     );
 
     userEvent.click(getByTestId("delete-Concept-synonyms"));
 
-    await wait(() =>
+    await waitFor(() =>
       expect(screen.getByLabelText("delete-property-foreign-key-text")).toBeInTheDocument(),
     );
 

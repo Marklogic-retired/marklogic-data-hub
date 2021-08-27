@@ -1,9 +1,10 @@
 import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
+import {confirmationModal, toolbar} from "../../support/components/common";
 import curatePage from "../../support/pages/curate";
 import loadPage from "../../support/pages/load";
 import LoginPage from "../../support/pages/login";
 import modelPage from "../../support/pages/model";
+import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Validate persistence across Hub Central", () => {
   before(() => {
@@ -40,11 +41,15 @@ describe("Validate persistence across Hub Central", () => {
     modelPage.selectView("table");
     cy.findByTestId("mltable-expand-Customer").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    confirmationModal.getNavigationWarnText().should("be.visible");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-shipping-span").should("exist");
     cy.findByTestId("mltable-expand-shipping").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    confirmationModal.getNavigationWarnText().should("be.visible");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-street-span").should("exist");
@@ -91,6 +96,8 @@ describe("Validate persistence across Hub Central", () => {
 
   it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    confirmationModal.getNavigationWarnText().should("be.visible");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
     cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();

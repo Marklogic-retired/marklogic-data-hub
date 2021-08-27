@@ -27,9 +27,12 @@ if (!entityName) {
   httpUtils.throwBadRequest("Must specify a name in order to get model references");
 }
 
-const entityModel = entityLib.findModelByEntityName(entityName);
+var entityModel = entityLib.findModelByEntityName(entityName);
 if (!entityModel) {
-  httpUtils.throwNotFound(`Could not find entity model with name: ${entityName}`);
+  entityModel = entityLib.findDraftModelByEntityName(entityName);
+  if (!entityModel) {
+    httpUtils.throwNotFound(`Could not find entity model with name: ${entityName}`);
+  }
 }
 
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);

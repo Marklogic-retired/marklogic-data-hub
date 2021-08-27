@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {Modal} from "antd";
 import {MLAlert, MLButton} from "@marklogic/design-system";
 import styles from "./confirmation-modal.module.scss";
-import {ModelingTooltips} from "../../config/tooltips.config";
+import {ModelingMessages} from "../../config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
 
 type Props = {
@@ -107,7 +107,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           </>
         )}
 
-        {props.type === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn && (
+        {/* {props.type === ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn && (
           <>
             <MLAlert
               className={styles.alert}
@@ -127,26 +127,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             </ul>
             <p>OK to save these entity type changes before proceeding with deleting <b>{props.boldTextArray[0]}</b>?</p>
           </>
-        )}
-
-        {props.type === ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn && (
-          <>
-            <MLAlert
-              className={styles.alert}
-              closable={false}
-              description={"There are outstanding edits that need to be saved."}
-              showIcon
-              type="warning"
-            />
-            <p aria-label="delete-no-relationship-edit-text">Before you can delete the <b>{props.boldTextArray[0]}</b> entity type, all changes to other entity
-              types must be saved first, in order to make changes to the whole entity model. This may include updating
-              indexes. Changes to the following entity types will be saved if you continue:</p>
-            <ul className={styles.stepList}>
-              {renderArrayValues}
-            </ul>
-            <p>OK to save these entity type changes before proceeding with deleting <b>{props.boldTextArray[0]}</b>?</p>
-          </>
-        )}
+        )} */}
 
         {props.type === ConfirmationType.DeleteEntityStepWarn && (
           <>
@@ -251,35 +232,17 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           </>
         )}
 
-        {props.type === ConfirmationType.SaveEntity && (
+        {/* {props.type === ConfirmationType.SaveEntity && (
           <>
             <p aria-label="save-text">Are you sure you want to save changes to <b>{props.boldTextArray[0]}</b>?</p>
             <p>{ModelingTooltips.saveEntityConfirm}</p>
           </>
-        )}
+        )} */}
 
-        {props.type === ConfirmationType.SaveAll && (
+        {(props.type === ConfirmationType.PublishAll) && (
           <>
-            <p aria-label="save-all-text">Are you sure you want to save ALL changes to ALL entity types?</p>
-            <p>{ModelingTooltips.saveEntityConfirm}</p>
-          </>
-        )}
-
-        {props.type === ConfirmationType.RevertEntity && (
-          <>
-            <p aria-label="revert-text">Are you sure you want to discard your changes to <b>{props.boldTextArray[0]}</b>?</p>
-
-            <p>The settings from the last saved version of all properties will be restored.</p>
-          </>
-        )}
-
-        {props.type === ConfirmationType.RevertAll && (
-          <>
-            <p aria-label="revert-all-text">Are you sure you want to discard all changes to all entity types?</p>
-
-            <p>The settings from the last saved version of all properties of all
-              entity types will be restored.
-            </p>
+            <p aria-label="save-all-text">Are you sure you want to publish your changes to the entity model?</p>
+            <p>{ModelingMessages.saveEntityConfirm}</p>
           </>
         )}
 
@@ -288,15 +251,15 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             <MLAlert
               className={styles.alert}
               closable={false}
-              description={"Unsaved Changes"}
+              description={"Unpublished Changes"}
               showIcon
               type="warning"
             />
             <p aria-label="navigation-warn-text">You have made changes to the properties of one or more entity types.
-            If you exit now, you will lose those changes.
+            If you leave the screen without publishing your changes, they will not be available in the rest of Hub Central.
             </p>
 
-            <p>Are you sure you want to exit?</p>
+            <p>Are you sure you want to leave the Model screen?</p>
           </>
         )}
 
