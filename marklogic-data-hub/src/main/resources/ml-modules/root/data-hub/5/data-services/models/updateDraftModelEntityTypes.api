@@ -1,5 +1,6 @@
 {
-  "functionName": "updateModelEntityTypes",
+  "functionName": "updateDraftModelEntityTypes",
+  "desc" : "Update entity model types in the entity models draft collection.",
   "params": [
     {
       "name": "input",

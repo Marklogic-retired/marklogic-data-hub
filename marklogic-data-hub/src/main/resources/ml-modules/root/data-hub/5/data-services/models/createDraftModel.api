@@ -1,6 +1,6 @@
 {
-  "functionName" : "createModel",
-  "desc" : "Create a new model, resulting in a new entity descriptor with a primary entity type in it.",
+  "functionName" : "createDraftModel",
+  "desc" : "Create a new draft model, resulting in a new entity descriptor with a primary entity type in it.",
   "params" : [ {
     "name" : "input",
     "datatype" : "jsonDocument",

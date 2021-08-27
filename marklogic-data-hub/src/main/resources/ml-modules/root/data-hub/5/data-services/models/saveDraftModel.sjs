@@ -29,4 +29,4 @@ if (name == null) {
   httpUtils.throwBadRequest("The model must have an info object with a title property");
 }
 
-entityLib.writeModel(name, model);
+entityLib.writeDraftModel(name, model);

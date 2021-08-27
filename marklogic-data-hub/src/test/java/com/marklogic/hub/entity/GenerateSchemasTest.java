@@ -46,7 +46,9 @@ public class GenerateSchemasTest extends AbstractHubCoreTest {
             "  }\n" +
             "}";
 
-        ModelsService.on(getHubClient().getStagingClient()).saveModel(readJsonObject(modelWithMultipleNamespaces));
+        ModelsService modelsService = ModelsService.on(getHubClient().getStagingClient());
+        modelsService.saveDraftModel(readJsonObject(modelWithMultipleNamespaces));
+        modelsService.publishDraftModels();
         waitForTasksToFinish();
 
         GenericDocumentManager mgr = getHubConfig().getAppConfig().newAppServicesDatabaseClient(
