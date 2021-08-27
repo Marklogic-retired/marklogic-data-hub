@@ -1,0 +1,25 @@
+.color {
+	color: #a1a1a1;
+}
+.vl {
+	width: 1px;
+	@extend .color;
+}
+.hl {
+	width: 100%;
+	height: 0px;
+	@extend .color;
+}
+.dashed {
+	color: #fff;
+	background-color: #fff;	
+}
+.dashedHorizontal {
+	@extend .dashed;
+	height: 0px !important;
+	border: 1px dashed #ccc;
+}
+.dashedVertical {
+	@extend .dashed;
+	border-right: 1px dashed #a1a1a1;
+}
