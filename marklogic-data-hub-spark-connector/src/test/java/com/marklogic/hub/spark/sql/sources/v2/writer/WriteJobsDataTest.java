@@ -6,6 +6,9 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteJobsDataTest extends AbstractSparkConnectorTest {
@@ -40,7 +43,13 @@ public class WriteJobsDataTest extends AbstractSparkConnectorTest {
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-job-reader").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-developer-role").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-operator-role").iterator().next());
-        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-job-internal").iterator().next());
+        Iterator<?> internalPermissions = perms.get("data-hub-job-internal").iterator();
+        AtomicInteger internalPermissionsCount = new AtomicInteger();
+        internalPermissions.forEachRemaining((internalPermission) -> {
+            assertTrue(DocumentMetadataHandle.Capability.UPDATE.equals(internalPermission) || DocumentMetadataHandle.Capability.READ.equals(internalPermission));
+            internalPermissionsCount.getAndIncrement();
+        });
+        assertEquals(2, internalPermissionsCount.get());
 
         dataSourceWriter.commit(null);
 
