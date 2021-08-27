@@ -1,36 +1,76 @@
 {
-  "name" : "map-persons",
-  "description" : "",
-  "stepDefinitionName" : "entity-services-mapping",
-  "stepDefinitionType" : "MAPPING",
-  "additionalCollections" : [ ],
-  "sourceQuery" : "cts.collectionQuery([\"ingest-persons\"])",
-  "sourceDatabase" : "data-hub-STAGING",
-  "collections" : [ "map-persons", "Person" ],
-  "targetDatabase" : "data-hub-FINAL",
-  "targetFormat" : "json",
-  "targetEntityType" : "http://marklogic.com/Person-0.0.1/Person",
-  "properties" : {
-    "DateOfBirth" : {
-      "sourcedFrom" : "DateOfBirth"
+  "collections": [
+    "map-persons",
+    "Person"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "json",
+  "attachSourceDocument": true,
+  "name": "map-persons",
+  "description": "",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "sourceQuery": "cts.collectionQuery([\"ingest-persons\"])",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetEntityType": "http://marklogic.com/Person-0.0.1/Person",
+  "properties": {
+    "DateOfBirth": {
+      "sourcedFrom": "DateOfBirth"
     },
-    "Address" : {
-      "sourcedFrom" : "Address"
+    "Address": {
+      "sourcedFrom": "Address"
     },
-    "FirstName" : {
-      "sourcedFrom" : "FirstName"
+    "FirstName": {
+      "sourcedFrom": "FirstName"
     },
-    "ZipCode" : {
-      "sourcedFrom" : "ZipCode"
+    "ZipCode": {
+      "sourcedFrom": "ZipCode"
     },
-    "LastName" : {
-      "sourcedFrom" : "LastName"
+    "LastName": {
+      "sourcedFrom": "LastName"
     },
-    "SSN" : {
-      "sourcedFrom" : "SSN"
+    "SSN": {
+      "sourcedFrom": "SSN"
+    },
+    "address": {
+      "sourcedFrom": ".",
+      "properties": {
+        "streetAddress": {
+          "sourcedFrom": "Address"
+        },
+        "zipCode": {
+          "sourcedFrom": "ZipCode"
+        }
+      }
+    },
+    "PrimaryAddress": {
+      "sourcedFrom": ".",
+      "properties": {
+        "streetAddress": {
+          "sourcedFrom": "Address"
+        },
+        "zipCode": {
+          "sourcedFrom": "ZipCode"
+        },
+        "StreetAddress": {
+          "sourcedFrom": "Address"
+        },
+        "ZipCode": {
+          "sourcedFrom": "ZipCode"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
     }
   },
-  "namespaces" : { },
-  "selectedSource" : "query",
-  "stepId" : "map-persons-mapping"
+  "namespaces": { },
+  "selectedSource": "query",
+  "stepId": "map-persons-mapping",
+  "acceptsBatch": true,
+  "provenanceGranularityLevel": "off",
+  "lastUpdated": "2021-08-27T00:55:54.821891Z",
+  "uriExpression": "$URI"
 }

@@ -1,24 +1,31 @@
 {
-  "name" : "ingest-persons",
-  "description" : "",
-  "stepDefinitionName" : "default-ingestion",
-  "stepDefinitionType" : "INGESTION",
-  "additionalCollections" : [ ],
-  "headers" : {
-    "sources" : [ {
-      "name" : "persons"
-    } ],
-    "createdOn" : "currentDateTime",
-    "createdBy" : "currentUser"
+  "headers": {
+    "sources": [
+      {
+        "name": "persons"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
   },
-  "sourceQuery" : "cts.collectionQuery([])",
-  "collections" : [ "ingest-persons" ],
-  "permissions" : "data-hub-common,read,data-hub-common,update",
-  "targetDatabase" : "data-hub-STAGING",
-  "targetFormat" : "json",
-  "inputFilePath" : "data/persons",
-  "outputURIReplacement" : ".*data,''",
-  "separator" : "",
-  "sourceFormat" : "json",
-  "stepId" : "ingest-persons-ingestion"
+  "collections": [
+    "ingest-persons"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "ingest-persons",
+  "description": "",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "additionalCollections": [ ],
+  "sourceQuery": "cts.collectionQuery([])",
+  "targetDatabase": "data-hub-STAGING",
+  "targetFormat": "json",
+  "inputFilePath": "data/persons",
+  "outputURIReplacement": ".*data,''",
+  "separator": "",
+  "sourceFormat": "json",
+  "stepId": "ingest-persons-ingestion",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2021-08-19T15:41:39.658974Z"
 }

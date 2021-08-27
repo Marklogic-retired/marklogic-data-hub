@@ -1,26 +1,27 @@
 {
-  "name" : "persons",
-  "description" : "",
-  "batchSize" : 100,
-  "threadCount" : 4,
-  "stopOnError" : false,
-  "options" : { },
-  "version" : 0,
-  "steps" : {
-    "1" : {
-      "stepId" : "ingest-persons-ingestion"
+  "name": "persons",
+  "description": "",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stopOnError": false,
+  "options": { },
+  "version": 0,
+  "steps": {
+    "1": {
+      "stepId": "ingest-persons-ingestion"
     },
-    "2" : {
-      "stepId" : "map-persons-mapping"
+    "2": {
+      "stepId": "map-persons-mapping"
     },
-    "3" : {
-      "stepId" : "generate-dictionary-custom"
+    "3": {
+      "stepId": "generate-dictionary-custom"
     },
-    "4" : {
-      "stepId" : "match-persons-matching"
+    "4": {
+      "stepId": "match-persons-matching"
     },
-    "5" : {
-      "stepId" : "merge-persons-merging"
+    "5": {
+      "stepId": "merge-persons-merging"
     }
-  }
+  },
+  "lastUpdated": "2021-08-27T01:06:59.300291Z"
 }
