@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Table, Icon, Modal, Menu, Select, Divider, Dropdown, Button, Tooltip} from "antd";
+import {Table, Icon, Modal, Menu, Select, Dropdown, Button, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -13,6 +13,7 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
 import {getViewSettings, setViewSettings} from "../../util/user-context";
+import HCDivider from "../common/hc-divider/hc-divider";
 
 const {Option} = Select;
 
@@ -246,7 +247,7 @@ const LoadList: React.FC<Props> = (props) => {
           ))}</div>
         </Col>
         <Col xs={"auto"}>
-          <Divider type="vertical" className={styles.verticalDiv}></Divider>
+          <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
         </Col>
         <Col>
           <Link data-testid="link" id="tiles-add-run-new-flow" to={
