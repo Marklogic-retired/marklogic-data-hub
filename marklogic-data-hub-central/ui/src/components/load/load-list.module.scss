@@ -132,7 +132,8 @@
 
 .verticalDiv {
   margin-left: 15px;
-  height: 55vh;
+  height: 55vh !important;
+  margin-top: -3px;
 }
 
 .stepLink:hover {

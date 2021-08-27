@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Descriptions, Divider, Modal, Icon, Collapse, Button} from "antd";
+import {Descriptions, Modal, Icon, Collapse, Button} from "antd";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -15,6 +15,7 @@ import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
+import HCDivider from "../common/hc-divider/hc-divider";
 
 const {Panel} = Collapse;
 
@@ -233,7 +234,7 @@ const JobResponse: React.FC<Props> = (props) => {
         </Descriptions>
         { jobResponse.flowOrStepsUpdatedSinceRun ? <div className={styles.flowOrStepsUpdatedSinceRun}>* The flow or steps are updated since the previous flow run.</div>:""}
       </div>
-      <Divider />
+      <HCDivider />
       <div>
         {renderStepResponses(jobResponse)}
       </div>
