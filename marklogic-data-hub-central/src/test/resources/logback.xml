@@ -27,7 +27,7 @@
   <logger name="com.marklogic.hub.impl.HubProjectImpl" level="WARN" additivity="false">
     <appender-ref ref="STDOUT"/>
   </logger>
-  <logger name="com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand" level="WARN" additivity="false">
+  <logger name="com.marklogic.hub.deploy" level="WARN" additivity="false">
     <appender-ref ref="STDOUT"/>
   </logger>
 

@@ -15,27 +15,14 @@
 :)
 xquery version "1.0-ml";
 
-module namespace ns = "org:example";
+module namespace ext = "http://marklogic.com/data-hub/extensions/entity";
 
-declare function parse(
-  $constraint-qtext as xs:string,
-  $right as schema-element(cts:query)
-) as schema-element(cts:query)
+declare function build-entity-query($entity-type-names as xs:string*) as cts:query
 {
   (: Adds "entity-" as a prefix, which is the convention for collections in this example project :)
-  let $entity-types :=
-    for $token in fn:tokenize($right//cts:text, ",")
-    let $token := fn:normalize-space($token)
-    where fn:not($token = "")
-    return "entity-" || $token
-
-  let $query :=
-    if ($entity-types) then <x>{cts:collection-query($entity-types)}</x>/*
-    else <x>{cts:false-query()}</x>/*
-
-  return element {fn:node-name($query)} {
-    attribute qtextconst {fn:concat($constraint-qtext, fn:string($right//cts:text))},
-    $query/@*,
-    $query/node()
-  }
+  cts:collection-query(
+    for $name in $entity-type-names
+    return "entity-" || $name
+  )
 };
+

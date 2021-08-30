@@ -9,6 +9,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
+import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.junit5.XmlNode;
@@ -55,6 +56,18 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
         verifyPersonsSortedByBirthYearDescending();
         assertEquals(1, search(new SearchQuery("Person").withSearchText("Jane")).get("total").asInt());
         assertEquals(0, search(new SearchQuery("Person").withSearchText("aTermThatDoesntMatchAnything")).get("total").asInt());
+
+        verifyEntityCountInPrimaryEntityTypes();
+    }
+
+    private void verifyEntityCountInPrimaryEntityTypes() {
+        JsonNode json = ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
+        assertEquals(1, json.size(), "Expecting an array with the single Person entity type in it: " + json.toPrettyString());
+        JsonNode personType = json.get(0);
+        assertEquals("Person", personType.get("entityName").asText(), "Expected Person: " + personType.toPrettyString());
+        assertEquals(2, personType.get("entityInstanceCount").asInt(), "Expected a count of 2, which means that this " +
+            "endpoint is taking into account the build-entity-query.xqy extension point for determining a query to count " +
+            "entity instances: " + personType);
     }
 
     private void verifyPersonSearchResults() {
@@ -160,8 +173,6 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
             .readOptions("exp-final-entity-options", new StringHandle()).get();
         XmlNode options = new XmlNode(xml, Namespace.getNamespace("s", "http://marklogic.com/appservices/search"));
 
-        assertEquals("/custom-data-modules/my-entity-type-constraint.xqy",
-            options.getAttributeValue("/s:options/s:constraint[@name = 'entityType']/s:custom/s:parse", "at"));
         assertEquals("/customEnvelope/Person/birthYear/value",
             options.getElementValue("/s:options/s:operator/s:state[@name = 'Person_birthYearAscending']/s:sort-order/s:path-index"));
         assertEquals("/customEnvelope/Person/birthYear/value",
