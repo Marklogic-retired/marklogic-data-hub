@@ -1,7 +1,7 @@
 build
 src/main/hub-internal-config
 src/main/ml-config
-src/main/entity-config
+src/main/entity-config/*.xml
 gradle
 gradlew
 gradlew.bat
