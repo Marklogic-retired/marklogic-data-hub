@@ -67,7 +67,13 @@ function saveNewJob(job) {
 
   function buildJobPermissions() {
     let permissionsString = config.JOBPERMISSIONS;
-    let permissions = xdmp.defaultPermissions().concat([xdmp.permission(config.FLOWDEVELOPERROLE, 'update'), xdmp.permission(config.FLOWOPERATORROLE, 'update')]);
+    let permissions = xdmp.defaultPermissions().concat([
+      xdmp.permission(config.FLOWDEVELOPERROLE, "update"),
+      xdmp.permission(config.FLOWOPERATORROLE, "update"),
+      xdmp.permission("data-hub-job-internal", "update"),
+      xdmp.permission("data-hub-job-internal", "read"),
+      xdmp.permission("data-hub-job-reader", "read")
+    ]);
     if (permissionsString != null && permissionsString.indexOf("mlJobPermissions") < 0) {
       let tokens = permissionsString.split(",");
       for (let i = 0; i < tokens.length; i += 2) {
