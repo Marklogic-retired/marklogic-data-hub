@@ -17,6 +17,9 @@ xquery version "1.0-ml";
 
 module namespace ns = "http://marklogic.com/data-hub/entities/constraint/entityType";
 
+import module namespace ext = "http://marklogic.com/data-hub/extensions/entity"
+  at "/data-hub/public/extensions/entity/build-entity-query.xqy";
+
 declare namespace search = "http://marklogic.com/appservices/search";
 
 (:
@@ -34,14 +37,21 @@ declare function parse(
     where fn:not($token = "")
     return $token
 
+  (:
+  This query does not worry about custom queries for entity instances, as mastering does not yet allow
+  that to be customized.
+  :)
+  let $mastering-data-query :=
+    cts:collection-query((
+      "mdm-auditing",
+      for $entity-type in $entity-types
+      return ("auditing", "notification") ! fn:concat("sm-", $entity-type, "-", .)
+    ))
+
   let $query := <x>{
     cts:and-not-query(
-      cts:collection-query($entity-types),
-      cts:collection-query((
-        "mdm-auditing",
-        for $entity-type in $entity-types
-        return ("auditing", "notification") ! fn:concat("sm-", $entity-type, "-", .)
-      ))
+      ext:build-entity-query($entity-types),
+      $mastering-data-query
     )
   }</x>/element()
 

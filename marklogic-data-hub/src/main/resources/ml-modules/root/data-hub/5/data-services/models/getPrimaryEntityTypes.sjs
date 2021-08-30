@@ -18,6 +18,7 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const ext = require("/data-hub/public/extensions/entity/build-entity-query.xqy");
 
 let modelResponseArr = fn.collection(entityLib.getModelCollection()).toArray().map(model => {
   model = model.toObject();
@@ -26,7 +27,7 @@ let modelResponseArr = fn.collection(entityLib.getModelCollection()).toArray().m
   const response = {
     entityName: entityName,
     entityTypeId: entityLib.getEntityTypeId(model, entityName),
-    entityInstanceCount: cts.estimate(cts.collectionQuery(entityName)),
+    entityInstanceCount: cts.estimate(ext.buildEntityQuery(entityName)),
     model: model
   };
   return Object.assign(response, jobData);

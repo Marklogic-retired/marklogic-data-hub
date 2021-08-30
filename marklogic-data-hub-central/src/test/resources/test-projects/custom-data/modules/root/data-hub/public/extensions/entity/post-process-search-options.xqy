@@ -26,16 +26,7 @@ declare function post-process-search-options($options as element(search:options)
 
     for $el in $options/element()
     return
-
-      if ($el[self::search:constraint and @name = "entityType"]) then
-        <constraint name="entityType" xmlns="http://marklogic.com/appservices/search">
-          <custom facet="false">
-            <parse apply="parse" ns="org:example" at="/custom-data-modules/my-entity-type-constraint.xqy"/>
-          </custom>
-        </constraint>
-
-      else if ($el//search:path-index) then rewrite($el)
-
+      if ($el//search:path-index) then rewrite($el)
       else $el
   }
 };
