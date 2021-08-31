@@ -439,6 +439,7 @@ function finishFlowExecution(flowExecutionContext, writeQueue) {
 
 module.exports = {
   copyContentObject,
+  invokeInterceptors,
   prepareContentBeforeStepIsRun,
   runFlowOnContent,
   runStepAgainstSourceDatabase
