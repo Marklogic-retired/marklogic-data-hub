@@ -373,8 +373,12 @@ function invokeInterceptors(stepExecutionContext, contentArray, whenValue) {
         // part of the public DHF API
         vars.stepExecutionContext = stepExecutionContext;
 
-        hubUtils.hubTrace(INFO_EVENT, `Invoking interceptor on ${stepExecutionContext.describe()} at path: ${interceptor.path}`);
-        xdmp.invoke(interceptor.path, vars);
+        const database = whenValue === "beforeMain" ?
+          stepExecutionContext.getSourceDatabase() : stepExecutionContext.getTargetDatabase();
+
+        hubUtils.hubTrace(INFO_EVENT, `Invoking interceptor on ${stepExecutionContext.describe()} at path: ${interceptor.path}; database: ${database}`);
+
+        xdmp.invoke(interceptor.path, vars, {database: xdmp.database(database)});
       });
     } catch (error) {
       hubUtils.hubTrace(INFO_EVENT, `Caught error invoking interceptor on ${stepExecutionContext.describe()}; path: ${currentInterceptor.path}; error: ${error.message}`);

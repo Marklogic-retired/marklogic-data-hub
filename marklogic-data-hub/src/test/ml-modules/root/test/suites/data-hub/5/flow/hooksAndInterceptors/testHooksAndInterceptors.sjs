@@ -24,10 +24,15 @@ const assertions = [
 const mappedCustomer = hubTest.getRecord("/customer1.json").document.envelope;
 
 assertions.push(
-  test.assertEqual("hello", mappedCustomer.headers.beforeHeader, 
+  test.assertEqual("hello", mappedCustomer.headers.beforeHeader,
     "Verifying that the beforeMain interceptor was invoked correctly"),
+  test.assertEqual("data-hub-STAGING", mappedCustomer.headers.beforeHeaderDatabase,
+    "Verifying that the beforeMain interceptor was invoked against the source database"),
+
   test.assertEqual("world", mappedCustomer.headers.afterHeader,
-    "Verifying that the beforeContentPersisted interceptor was invoked correctly")
+    "Verifying that the beforeContentPersisted interceptor was invoked correctly"),
+  test.assertEqual("data-hub-FINAL", mappedCustomer.headers.afterHeaderDatabase,
+    "Verifying that the beforeMain interceptor was invoked against the target database")
 );
 
 const beforeHookDoc = hubTest.getRecord("/beforeHook/customer1.json", config.STAGINGDATABASE);
@@ -39,8 +44,8 @@ assertions.push(
 
 const afterHookDoc = hubTest.getRecord("/afterHook/customer1.json", config.FINALDATABASE);
 assertions.push(
-  test.assertEqual("world", afterHookDoc.document.envelope.headers.afterHeader, 
-    "Starting in 5.5, an 'after' hook receives the output content array from a step instead of the input " + 
+  test.assertEqual("world", afterHookDoc.document.envelope.headers.afterHeader,
+    "Starting in 5.5, an 'after' hook receives the output content array from a step instead of the input " +
     "content array. So the hook should see the data added by the interceptor."),
   test.assertEqual("hello", afterHookDoc.document.envelope.headers.beforeHeader)
 );
