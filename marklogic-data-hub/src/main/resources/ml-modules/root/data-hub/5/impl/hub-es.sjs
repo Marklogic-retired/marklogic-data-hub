@@ -18,7 +18,7 @@
 const sem = require("/MarkLogic/semantics.xqy");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
-const ext = require("/data-hub/public/extensions/entity/post-process-database-properties.sjs");
+const ext = require("/data-hub/extensions/entity/post-process-database-properties.sjs");
 
 /**
  * Generates database properties based on the given entity models. This starts with the ES database-properties-generate

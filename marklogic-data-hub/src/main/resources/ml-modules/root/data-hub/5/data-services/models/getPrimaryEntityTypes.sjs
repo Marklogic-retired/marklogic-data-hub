@@ -18,7 +18,7 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const ext = require("/data-hub/public/extensions/entity/build-entity-query.xqy");
+const ext = require("/data-hub/extensions/entity/build-entity-query.xqy");
 
 let modelResponseArr = fn.collection(entityLib.getModelCollection()).toArray().map(model => {
   model = model.toObject();
