@@ -877,7 +877,7 @@ export const propertyTableEntities = [
   }
 ];
 
-export const mockRelationshipInfo = {
+export const mockEditRelationshipInfo = {
   edgeId: "ownedBy-customerId-edge",
   sourceNodeName: "BabyRegistry",
   sourceNodeColor: "#e3ebbc",
@@ -885,6 +885,16 @@ export const mockRelationshipInfo = {
   targetNodeColor: "#ecf7fd",
   relationshipName: "ownedBy",
   joinPropertyName: "customerId"
+};
+
+export const mockAddRelationshipInfo = {
+  edgeId: "ownedBy-customerId-edge",
+  sourceNodeName: "BabyRegistry",
+  sourceNodeColor: "#e3ebbc",
+  targetNodeName: "Select target entity type*",
+  targetNodeColor: "",
+  relationshipName: "",
+  joinPropertyName: ""
 };
 
 export const entityDefinitionsArray = [

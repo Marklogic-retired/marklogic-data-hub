@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Modal, Input, Select, Icon, Card} from "antd";
+import {Modal, Input, Select, Icon, Card, Dropdown} from "antd";
+import {DownOutlined} from "@ant-design/icons";
+import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
@@ -30,6 +32,7 @@ type Props = {
   updateSavedEntity: any;
   canReadEntityModel: any;
   canWriteEntityModel: any;
+  entityMetadata: any;
 }
 
 const {Option} = Select;
@@ -37,7 +40,7 @@ const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
 const AddEditRelationship: React.FC<Props> = (props) => {
 
-  // const headerText = !props.isEditing ? "Set the cardinality and name of the relationship. Now or in the future, you can also select the join property or swap the entity type that the relationship comes from." :
+  const headerText = !props.isEditing ? ModelingTooltips.addRelationshipHeader : "";
   //   <span className={styles.headerText}><Icon type="exclamation-circle" className={styles.headerWarning}/>This relationship cannot be published until a join property is selected.</span>;
 
   const [relationshipName, setRelationshipName] = useState(""); //set default value when editing
@@ -54,13 +57,24 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
   const [modifiedEntity, setModifiedEntity] = useState({entityName: "", modelDefinition: ""});
+  const [targetEntityName, setTargetEntityName] = useState("");
+  const [targetEntityColor, setTargetEntityColor] = useState("");
+  const [emptyTargetEntity, setEmptyTargetEntity] = useState(false);
+  const [displayEntityList, setDisplayEntityList] = useState(false);
+  const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
+
 
   const initRelationship = (sourceEntityIdx) => {
     let sourceEntityDetails = props.entityTypes[sourceEntityIdx];
-    if (props.relationshipInfo.relationshipName) {
+    if (props.relationshipInfo.relationshipName !== "") {
       setRelationshipName(props.relationshipInfo.relationshipName);
+    } else {
+      setErrorMessage(ModelingTooltips.relationshipEmpty);
     }
     setJoinPropertyValue(props.relationshipInfo.joinPropertyName);
+    setTargetEntityName(props.relationshipInfo.targetNodeName);
+    setTargetEntityColor(props.relationshipInfo.targetNodeColor);
+    setOneToManySelected(false);
 
     if (sourceEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName].properties[props.relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
       //set cardinality selection to "multiple"
@@ -74,9 +88,12 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       let targetEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.targetNodeName);
       let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
 
-      createJoinMenu(targetEntityIdx);
-      if (props.isEditing) {
-        initRelationship(sourceEntityIdx);
+      initRelationship(sourceEntityIdx);
+      if (props.relationshipInfo.targetNodeName !== "Select target entity type*") {
+        setEmptyTargetEntity(false);
+        createJoinMenu(targetEntityIdx);
+      } else {
+        setEmptyTargetEntity(true);
       }
     }
   }, [props.entityTypes, props.relationshipInfo]);
@@ -88,70 +105,6 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       props.toggleRelationshipModal(true);
     }
   }, [props.relationshipModalVisible]);
-
-  const createJoinMenu = (entityIdx) => {
-    let targetEntityDetails, entityUpdated, modelUpdated, menuProps, model;
-    targetEntityDetails = props.entityTypes[entityIdx];
-    model = targetEntityDetails.model.definitions[props.relationshipInfo.targetNodeName];
-    entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === props.relationshipInfo.targetNodeName);
-    // Modified model data (if present)
-    if (entityUpdated) {
-      modelUpdated = entityUpdated.modelDefinition[props.relationshipInfo.targetNodeName];
-    }
-    menuProps = getJoinMenuProps(model, modelUpdated);
-    // setTargetNodeJoinProperties(Object.keys(targetEntityDetails.model.definitions[props.relationshipInfo.targetNodeName].properties));
-    setTargetNodeJoinProperties(menuProps);
-  };
-
-  const getJoinMenuProps = (model, modelUpdated) => {
-    let alreadyAdded: string[] = [], result;
-    // Check each property from saved model and build menu items
-    if (model) {
-      result = Object.keys(model.properties).map(key => {
-        alreadyAdded.push(key);
-        // Structured property case
-        if (model.properties[key].hasOwnProperty("$ref")) {
-          return {
-            value: key,
-            label: key,
-            type: "", // TODO
-            disabled: true,
-            // TODO Support structure properties
-            // children: getJoinProps(...)
-          };
-        } else if (model.properties[key]["datatype"] === "array") {
-          // Array property case
-          return {
-            value: key,
-            label: key,
-            type: "", // TODO
-            disabled: true
-          };
-        } else {
-          // Default case
-          return {
-            value: key,
-            label: key,
-            type: model.properties[key].datatype
-          };
-        }
-      });
-    }
-    // Include any new properties from updated model object
-    if (modelUpdated) {
-      Object.keys(modelUpdated?.properties).map(key => {
-        if (!alreadyAdded.includes(key)) {
-          result.push({
-            value: key,
-            label: key,
-            type: modelUpdated.properties[key].datatype,
-            disabled: true
-          });
-        }
-      });
-    }
-    return result;
-  };
 
   const getPropertyType = (joinPropName, targetNodeName) => {
     let targetEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === targetNodeName);
@@ -301,32 +254,36 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       props.toggleRelationshipModal(true);
       props.setOpenRelationshipModal(false);
       setSubmitClicked(false);
+      setTargetEntityName("");
+      setTargetEntityColor("");
+      setJoinPropertyValue("");
+      setRelationshipName("");
     }
   };
 
   const onSubmit = () => {
     setSubmitClicked(true);
-    if (props.isEditing && errorMessage === "") {
+    if (errorMessage === "" && !emptyTargetEntity) {
       let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
       let sourceProperties = props.entityTypes[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
-      let propertyNamesArray = Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName);
+      let propertyNamesArray = props.isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName) : Object.keys(sourceProperties);
       if (propertyNamesArray.includes(relationshipName)) {
         setErrorMessage(`A property already exists with a name of ${relationshipName}`);
       } else {
 
         const newEditPropertyOptions = {
           name: relationshipName,
-          isEdit: true,
+          isEdit: props.isEditing,
           propertyOptions: {
             facetable: false,
             identifier: "no",
             joinPropertyName: joinPropertyValue,
-            joinPropertyType: getPropertyType(joinPropertyValue, props.relationshipInfo.targetNodeName),
+            joinPropertyType: getPropertyType(joinPropertyValue, targetEntityName),
             multiple: oneToManySelected ? "yes" : "no",
             pii: "no",
             propertyType: "relatedEntity",
             sortable: false,
-            type: props.relationshipInfo.targetNodeName
+            type: targetEntityName
           }
         };
 
@@ -344,6 +301,69 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         setSubmitClicked(false);
       }
     }
+  };
+
+  const createJoinMenu = (entityIdx) => {
+    let targetEntityDetails, entityUpdated, modelUpdated, menuProps, model;
+    targetEntityDetails = props.entityTypes[entityIdx];
+    model = targetEntityDetails.model.definitions[props.relationshipInfo.targetNodeName];
+    entityUpdated = modelingOptions.modifiedEntitiesArray.find(ent => ent.entityName === props.relationshipInfo.targetNodeName);
+    // Modified model data (if present)
+    if (entityUpdated) {
+      modelUpdated = entityUpdated.modelDefinition[props.relationshipInfo.targetNodeName];
+    }
+    menuProps = getJoinMenuProps(model, modelUpdated);
+    setTargetNodeJoinProperties(menuProps);
+  };
+
+  const getJoinMenuProps = (model, modelUpdated) => {
+    let alreadyAdded: string[] = [], result;
+    // Check each property from saved model and build menu items
+    if (model) {
+      result = Object.keys(model.properties).map(key => {
+        alreadyAdded.push(key);
+        // Structured property case
+        if (model.properties[key].hasOwnProperty("$ref")) {
+          return {
+            value: key,
+            label: key,
+            type: "", // TODO
+            disabled: true,
+            // TODO Support structure properties
+            // children: getJoinProps(...)
+          };
+        } else if (model.properties[key]["datatype"] === "array") {
+          // Array property case
+          return {
+            value: key,
+            label: key,
+            type: "", // TODO
+            disabled: true
+          };
+        } else {
+          // Default case
+          return {
+            value: key,
+            label: key,
+            type: model.properties[key].datatype
+          };
+        }
+      });
+    }
+    // Include any new properties from updated model object
+    if (modelUpdated) {
+      Object.keys(modelUpdated?.properties).map(key => {
+        if (!alreadyAdded.includes(key)) {
+          result.push({
+            value: key,
+            label: key,
+            type: modelUpdated.properties[key].datatype,
+            disabled: true
+          });
+        }
+      });
+    }
+    return result;
   };
 
   const toggleCardinality = () => {
@@ -371,12 +391,64 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     setJoinPropertyValue(value);
   };
 
+  function handleMenuClick(event) {
+    let model, menuProps, entityName, entityIdx;
+    setEmptyTargetEntity(false);
+    //update join property dropdown with new target entity properties and clear existing value
+    entityName = event;
+    entityIdx = props.entityTypes.findIndex(entity => entity.entityName === entityName);
+    model = props.entityTypes[entityIdx].model.definitions[entityName];
+    menuProps = getJoinMenuProps(model, "");
+    setTargetNodeJoinProperties(menuProps);
+    setJoinPropertyValue("");
+
+    //update target entity name and color,
+    setTargetEntityName(entityName);
+    if (props.entityMetadata[entityName]) {  //revise when colors are retrieved from backend
+      setTargetEntityColor(props.entityMetadata[entityName].color);
+    } else {
+      setTargetEntityColor("#F5F5F5"); //assigning default color for now if entity is not in metadata
+    }
+    setDisplaySourceMenu(prev => false);
+    setDisplayEntityList(prev => false);
+  }
+
+  //format entity types to tuples for DropDownWithSearch to work
+  const entityTypesToTuples = (entityTypes) => {
+    let entityTuples:any = [];
+    entityTypes.map(entity => {
+      entityTuples.push({value: entity.entityName, key: entity.entityName, struct: false});
+    });
+    return entityTuples;
+  };
+
+  const toggleDropdown = () => {
+    setDisplayEntityList(!displayEntityList);
+  };
+
+  const menu = (
+    <DropDownWithSearch
+      displayMenu={displaySourceMenu}
+      setDisplayMenu={setDisplaySourceMenu}
+      setDisplaySelectList={setDisplayEntityList}
+      displaySelectList={displayEntityList}
+      itemValue={""}
+      onItemSelect={handleMenuClick}
+      srcData={entityTypesToTuples(props.entityTypes)}
+      propName={""}
+      handleDropdownMenu={{}}
+      indentList={null}
+      modelling={true}
+    />
+  );
+
   const joinPropertyDropdown = (
     <Select
       placeholder="Join Property"
       id="join-property-dropdown"
       data-testid="join-property-dropdown"
-      value={joinPropertyValue}
+      disabled={emptyTargetEntity}
+      value={joinPropertyValue ? joinPropertyValue : undefined}
       onChange={value => handleOptionSelect(value)}
       className={styles.joinPropertyDropdown}
       showArrow={true}
@@ -478,22 +550,22 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     destroyOnClose={true}
   >
     <div aria-label="relationshipModal" id="relationshipModal" className={styles.relationshipModalContainer}>
-      {/* Add in header text when implementing "Add a relationship"
-      <div aria-label="headerMessage">
-      {headerText}
-      </div>
-    */}
+      {
+        <div aria-label="header-message">
+          {headerText}
+        </div>
+      }
       <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
         <div className={styles.nodeDisplay}>
           <span className={styles.nodeLabel}>SOURCE</span>
-          <Card style={{width: 200, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
-            <p data-testid="sourceNodeName" className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
+          <Card style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
+            <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
           </Card>
         </div>
         <div className={styles.relationshipInputContainer}>
           <Input
             id="relationship"
-            placeholder= "Relationship"
+            placeholder="Relationship*"
             value={relationshipName}
             onChange={handleChange}
             size={"small"}
@@ -521,11 +593,24 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         </div>
         <div className={styles.nodeDisplay}>
           <span className={styles.nodeLabel}>TARGET</span>
-          <Card style={{width: 200, backgroundColor: props.relationshipInfo.targetNodeColor}}>
-            <p  data-testid="targetNodeName" className={styles.entityName}><b>{props.relationshipInfo.targetNodeName}</b></p>
-          </Card>
+          <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
+            <Card style={{width: 204, backgroundColor: targetEntityColor}}>
+              <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
+            </Card>
+            {!props.isEditing ?
+              <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
+                <span className={styles.dropdownArrow}>
+                  {
+                    <DownOutlined data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
+                  }
+                </span>
+              </Dropdown>
+              : null }
+          </div>
+          {submitClicked && emptyTargetEntity ? <span className={styles.targetEntityErrorMsg}>{ModelingTooltips.targetEntityEmpty}</span> : null}
         </div>
       </div>
+      <div className={styles.requiredFootnote}>* Required</div>
     </div>
     <ConfirmationModal
       isVisible={showConfirmModal}

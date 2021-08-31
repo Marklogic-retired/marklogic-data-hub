@@ -2,7 +2,7 @@ import React from "react";
 import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import AddEditRelationship from "./add-edit-relationship";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
-import {mockRelationshipInfo, entityTypesWithRelationship} from "../../../../assets/mock-data/modeling/modeling";
+import {mockEditRelationshipInfo, mockAddRelationshipInfo, entityTypesWithRelationship} from "../../../../assets/mock-data/modeling/modeling";
 
 jest.mock("axios");
 describe("Add Edit Relationship component", () => {
@@ -12,29 +12,31 @@ describe("Add Edit Relationship component", () => {
     jest.clearAllMocks();
   });
 
-  test("Verify Edit Relationoship dialog renders correctly", () => {
+  test("Verify Edit Relationship dialog renders correctly", () => {
     const updateSavedEntity = jest.fn(() => {});
-    const {getByText, getByTestId, getByLabelText, queryByLabelText, queryByText} = render(
+    const {getByText, getByTestId, getByLabelText, queryByLabelText, queryByText, queryByTestId} = render(
       <AddEditRelationship
         openRelationshipModal={true}
         setOpenRelationshipModal={jest.fn()}
         isEditing={true}
-        relationshipInfo={mockRelationshipInfo}
+        relationshipInfo={mockEditRelationshipInfo}
         entityTypes={entityTypesWithRelationship}
         relationshipModalVisible={true}
         toggleRelationshipModal={true}
         updateSavedEntity={updateSavedEntity}
+        entityMetadata={{}}
       />
     );
 
     expect(getByText("Edit Relationship")).toBeInTheDocument();
+    expect(getByLabelText("header-message")).toHaveTextContent("");
     expect(getByText("SOURCE")).toBeInTheDocument();
     expect(getByText("TARGET")).toBeInTheDocument();
     expect(getByTestId("delete-relationship")).toBeInTheDocument();
 
     //source and target node names are displayed
-    expect(getByTestId("sourceNodeName")).toHaveTextContent("BabyRegistry");
-    expect(getByTestId("targetNodeName")).toHaveTextContent("Customer");
+    expect(getByTestId("BabyRegistry-sourceNodeName")).toHaveTextContent("BabyRegistry");
+    expect(getByTestId("Customer-targetNodeName")).toHaveTextContent("Customer");
 
     //cardinality button is displayed and can be toggled
     expect(getByTestId("oneToOneIcon")).toBeInTheDocument();
@@ -81,6 +83,40 @@ describe("Add Edit Relationship component", () => {
     //error icon disappears
     fireEvent.change(relationshipInput, {target: {value: "usedBy"}});
     wait(() => expect(queryByLabelText("error-circle")).not.toBeInTheDocument());
+
+    //target entity dropdown should not exist in Edit Relationship
+    expect(queryByTestId("targetEntityDropdown")).not.toBeInTheDocument();
   });
 
+  test("Verify Add Relationship dialog renders correctly", () => {
+    const updateSavedEntity = jest.fn(() => {});
+    const {getByText, getByTestId, getByLabelText} = render(
+      <AddEditRelationship
+        openRelationshipModal={true}
+        setOpenRelationshipModal={jest.fn()}
+        isEditing={false}
+        relationshipInfo={mockAddRelationshipInfo}
+        entityTypes={entityTypesWithRelationship}
+        relationshipModalVisible={true}
+        toggleRelationshipModal={true}
+        updateSavedEntity={updateSavedEntity}
+        entityMetadata={{}}
+      />
+    );
+    expect(getByText("Add a Relationship")).toBeInTheDocument();
+    expect(getByLabelText("header-message")).toHaveTextContent(ModelingTooltips.addRelationshipHeader);
+    expect(getByText("SOURCE")).toBeInTheDocument();
+    expect(getByText("TARGET")).toBeInTheDocument();
+    expect(getByTestId("delete-relationship")).toBeInTheDocument();
+
+    //source node name and placeholder target node name displayed
+    expect(getByTestId("BabyRegistry-sourceNodeName")).toHaveTextContent("BabyRegistry");
+    expect(getByTestId("Select target entity type*-targetNodeName")).toHaveTextContent("Select target entity type*");
+
+    //verify error message upon Save click with no selected entity, entity selection tested in e2e
+    fireEvent.click(getByText("Add"));
+    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    fireEvent.mouseOver(getByLabelText("error-circle"));
+    wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
+  });
 });

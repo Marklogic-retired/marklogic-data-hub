@@ -69,6 +69,13 @@ class PropertyModal {
   checkJoinPropertyDropdownLength(len: number) {
     return cy.get(".ant-select-dropdown-menu").find("li").should("have.length", len);
   }
+
+  verifyPropertyType(entityType: string) {
+    return cy.get(".ant-cascader-picker-label").should("have.text", entityType);
+  }
+  verifyJoinProperty(propertyName: string) {
+    return cy.get(".ant-select-selection-selected-value").should("have.text", propertyName);
+  }
 }
 
 const propertyModal = new PropertyModal();

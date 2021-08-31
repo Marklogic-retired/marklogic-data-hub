@@ -208,6 +208,20 @@ ul.ant-cascader-menu:nth-child(2) {
   width: auto;
 }
 
+#relationshipModal {
+  .ant-dropdown-trigger {
+    margin-top: 1px;
+    background-color: #fafafa;
+  }
+
+  .ant-dropdown-trigger > .anticon.anticon-down {
+    margin-top: 30px !important;
+  }
+
+  .ant-dropdown-trigger:hover {
+    cursor: pointer;
+  }
+}
 /* Mapping - Create/Edit step Typeahead search  */
 
 .ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled) {

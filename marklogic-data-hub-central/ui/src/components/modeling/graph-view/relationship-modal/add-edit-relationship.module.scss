@@ -98,8 +98,33 @@
     color: #CCCCCC;
 }
 
+.targetEntityContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.targetEntityErrorContainer {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #C00;
+}
+
+.targetEntityErrorMsg {
+  color: #C00;
+}
+
+.requiredFootnote {
+  color: #777777;
+  font-size: 12px;
+  margin-bottom: -15px;
+}
+
 .entityName {
     text-align: center;
+}
+
+.dropdownMenu {
+  width: 212px;
 }
 
 .oneToManyIcon {

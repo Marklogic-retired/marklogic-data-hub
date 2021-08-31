@@ -7,11 +7,13 @@ import {
   graphView,
   graphViewSidePanel,
   propertyModal,
-  propertyTable
+  propertyTable,
+  relationshipModal
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
+import graphVis from "../../support/components/model/graph-vis";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Reader Role", () => {
@@ -114,6 +116,12 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getPropertiesTab().should("be.visible");
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
     graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
+
+    //verify cannot edit without permissions
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+    });
+    relationshipModal.getModalHeader().should("not.exist");
 
     //Properties tab should display property table
     graphViewSidePanel.getPropertyTableHeader("propertyName").should("be.visible");
