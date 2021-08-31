@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useLayoutEffect, CSSProperties} from "react";
+import React, {useState, useEffect, useContext, useLayoutEffect, CSSProperties, useCallback} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import {ModelingContext} from "../../../../util/modeling-context";
@@ -21,6 +21,8 @@ type Props = {
   relationshipModalVisible: any;
   canReadEntityModel: any;
   canWriteEntityModel: any;
+  graphEditMode: any;
+  setGraphEditMode: any;
 };
 
 // TODO temp hardcoded node data, remove when retrieved from db
@@ -101,6 +103,8 @@ const GraphVis: React.FC<Props> = (props) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
   const [menuPosition, setMenuPosition] = useState({});
+  const [newRelationship, setNewRelationship] = useState(false);
+  const [escKeyPressed, setEscKeyPressed] = useState(false);
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
@@ -121,6 +125,47 @@ const GraphVis: React.FC<Props> = (props) => {
       setContextMenuVisible(false);
     };
   }, [props.entityTypes, props.filteredEntityTypes.length]);
+
+  const escFunction = useCallback((event) => {
+    if (event.keyCode === 27) {
+      //Detect when esc is pressed, set state to disable edit mode
+      setEscKeyPressed(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", escFunction, false);
+
+    return () => {
+      document.removeEventListener("keydown", escFunction, false);
+    };
+  }, []);
+
+  useEffect(() => {
+  //turn off edit mode on escape keydown
+    if (network && props.graphEditMode) {
+      network.disableEditMode();
+      props.setGraphEditMode(false);
+    }
+    setEscKeyPressed(false);
+  }, [escKeyPressed]);
+
+  //turn on edit mode
+  useEffect(() => {
+    if (props.graphEditMode) {
+      network.addEdgeMode();
+      // setPhysicsEnabled(false);
+    }
+  }, [props.graphEditMode]);
+
+  //turn off edit mode on cancel modal
+  useEffect(() => {
+    if (!openRelationshipModal && props.graphEditMode) {
+      network.disableEditMode();
+      props.setGraphEditMode(false);
+      // network.addEdgeMode();
+    }
+  }, [openRelationshipModal]);
 
   // Focus on the selected nodes in filter input
   useEffect(() => {
@@ -240,14 +285,18 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   const onChosen = (values, id, selected, hovering) => {
-    values.color = "#7FADE3";
-
-    //change one to many image
-    if (values.arrowStrikethrough === false) {
-      values.toArrowSrc = graphConfig.customEdgeSVG.oneToManyHover;
+    if (!props.canWriteEntityModel && props.canReadEntityModel) {
+      //hide interactions if edit permissinos are missing
     } else {
-    //change one to one image
-      values.toArrowSrc = graphConfig.customEdgeSVG.oneToOneHover;
+      values.color = "#7FADE3";
+
+      //change one to many image
+      if (values.arrowStrikethrough === false) {
+        values.toArrowSrc = graphConfig.customEdgeSVG.oneToManyHover;
+      } else {
+      //change one to one image
+        values.toArrowSrc = graphConfig.customEdgeSVG.oneToOneHover;
+      }
     }
   };
 
@@ -266,7 +315,7 @@ const GraphVis: React.FC<Props> = (props) => {
             to: parts[parts.length - 1],
             label: p,
             id: p + "-" + pObj.joinPropertyName + "-edge",
-            title: "Edit Relationship",
+            title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
             arrows: {
               to: {
                 enabled: true,
@@ -298,7 +347,7 @@ const GraphVis: React.FC<Props> = (props) => {
             to: parts[parts.length - 1],
             label: p,
             id: p + "-" + pObj.items.joinPropertyName + "-edge",
-            title: "Edit Relationship",
+            title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
             arrowStrikethrough: false,
             arrows: {
               to: {
@@ -319,6 +368,21 @@ const GraphVis: React.FC<Props> = (props) => {
       });
     });
     return edges;
+  };
+
+  const getRelationshipInfo = (node1, node2, event) => {
+    let sourceNodeName = node1;
+    let targetNodeName = node2;
+    let edgeInfo = event && event.edges?.length > 0 ? event.edges[0] : "";
+    return {
+      edgeId: edgeInfo,
+      sourceNodeName: sourceNodeName,
+      sourceNodeColor: entityMetadata[sourceNodeName] && entityMetadata[sourceNodeName].color ? entityMetadata[sourceNodeName].color : "#cfe3e8",
+      targetNodeName: targetNodeName,
+      targetNodeColor: entityMetadata[targetNodeName] && entityMetadata[targetNodeName].color ? entityMetadata[targetNodeName].color : "#cfe3e8",
+      relationshipName: edgeInfo.split("-")[0],
+      joinPropertyName: edgeInfo.split("-")[1]
+    };
   };
 
   const options = {
@@ -348,9 +412,18 @@ const GraphVis: React.FC<Props> = (props) => {
         // filling in the popup DOM elements
       },
       addEdge: function (data, callback) {
-        // filling in the popup DOM elements
+        let relationshipInfo;
+        if (data.to === data.from) {  //if node is just clicked on during add edge mode, not dragged
+          relationshipInfo = getRelationshipInfo(data.from, "Select target entity type*", "");
+          relationshipInfo.targetNodeColor = "#ececec";
+        } else { //if edge is dragged
+          relationshipInfo = getRelationshipInfo(data.from, data.to, "");
+        }
+        setSelectedRelationship(relationshipInfo);
+        setNewRelationship(true);
+        setOpenRelationshipModal(true);
       }
-    }
+    },
   };
 
   const getRandomArbitrary = (min, max) => {
@@ -402,26 +475,19 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const events = {
     select: (event) => {
-      let {nodes} = event;
-      if (nodes.length > 0) {
-        props.handleEntitySelection(nodes[0]);
+      if (!props.graphEditMode) {
+        let {nodes} = event;
+        if (nodes.length > 0) {
+          props.handleEntitySelection(nodes[0]);
+        }
       }
     },
     click: (event) => {
       //if click is on an edge
-      if (event.edges.length > 0 && event.nodes.length < 1) {
+      if (event.edges.length > 0 && event.nodes.length < 1 && props.canWriteEntityModel) {
         let connectedNodes = network.getConnectedNodes(event.edges[0]);
-        let sourceNodeName = connectedNodes[0];
-        let targetNodeName = connectedNodes[1];
-        let relationshipInfo = {
-          edgeId: event.edges[0],
-          sourceNodeName: connectedNodes[0],
-          sourceNodeColor: entityMetadata[sourceNodeName] && entityMetadata[sourceNodeName].color ? entityMetadata[sourceNodeName].color : "#cfe3e8",
-          targetNodeName: connectedNodes[1],
-          targetNodeColor: entityMetadata[targetNodeName] && entityMetadata[targetNodeName].color ? entityMetadata[targetNodeName].color : "#cfe3e8",
-          relationshipName: event.edges[0].split("-")[0],
-          joinPropertyName: event.edges[0].split("-")[1]
-        };
+        let relationshipInfo = getRelationshipInfo(connectedNodes[0], connectedNodes[1], event);
+        setNewRelationship(false);
         setSelectedRelationship(relationshipInfo);
         setOpenRelationshipModal(true);
       }
@@ -431,8 +497,10 @@ const GraphVis: React.FC<Props> = (props) => {
     },
 
     dragStart: (event) => {
-      if (physicsEnabled) {
-        setPhysicsEnabled(false);
+      if (!props.graphEditMode) {
+        if (physicsEnabled) {
+          setPhysicsEnabled(false);
+        }
       }
     },
     dragEnd: (event) => {
@@ -445,7 +513,7 @@ const GraphVis: React.FC<Props> = (props) => {
       event.event.target.style.cursor = "";
     },
     hoverEdge: (event) => {
-      event.event.target.style.cursor = "pointer";
+      event.event.target.style.cursor = !props.canWriteEntityModel && props.canReadEntityModel ? "" : "pointer";
     },
     blurEdge: (event) => {
       event.event.target.style.cursor = "";
@@ -498,7 +566,7 @@ const GraphVis: React.FC<Props> = (props) => {
       <AddEditRelationship
         openRelationshipModal={openRelationshipModal}
         setOpenRelationshipModal={setOpenRelationshipModal}
-        isEditing={true}
+        isEditing={!newRelationship}
         relationshipInfo={selectedRelationship}
         entityTypes={props.entityTypes}
         updateSavedEntity={props.updateSavedEntity}
@@ -506,6 +574,7 @@ const GraphVis: React.FC<Props> = (props) => {
         toggleRelationshipModal={props.toggleRelationshipModal}
         canReadEntityModel={props.canReadEntityModel}
         canWriteEntityModel={props.canWriteEntityModel}
+        entityMetadata={entityMetadata} //passing in for colors, update when colors are retrieved from backend
       />
     </div>
   );

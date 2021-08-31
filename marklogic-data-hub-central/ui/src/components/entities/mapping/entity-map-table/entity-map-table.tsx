@@ -932,7 +932,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
       srcData={sourcePropListForDropDown}
       propName={sourcePropName}
       handleDropdownMenu={handleSourceList}
-      indentList={sourceIndentForDropDown} />
+      indentList={sourceIndentForDropDown}
+      modelling={false}/>
   );
 
   const sourceDropdown = (row) => {

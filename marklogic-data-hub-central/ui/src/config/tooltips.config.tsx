@@ -71,8 +71,11 @@ const ModelingTooltips = {
   publish: "Publish to Database",
   exportGraph: "Export graph to PNG",
   relationshipEmpty: "Relationship name is required",
+  targetEntityEmpty: "Target entity type is required",
   joinPropertyInfo: "This property establishes a foreign key relationship between the two entities. When data is mapped to these entity types, the value of this property and the relationship property should be identical. Structured type properties, arrays, and unsaved properties cannot be used as join properties.",
   deleteRelationshipIcon: "Delete this relationship",
+  editModeInfo: "Drag from the source entity type to the target entity type. Or just click on the source entity type to connect to itself or a target entity type not visible on the screen. Esc to exit.",
+  addRelationshipHeader: "Set the cardinality and name of the relationship. Now or in the future, you can also select the join property or swap the entity type that the relationship comes from.",
   relationshipNameInfo: function (entityName) {
     return (
       <span>

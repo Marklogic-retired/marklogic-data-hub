@@ -1,7 +1,7 @@
 class RelationshipModal {
 
   getModalHeader() {
-    return cy.findByLabelText("relationshipHeader");
+    return cy.findByLabelText("relationshipHeader", {timeout: 120000});
   }
 
   verifyRelationshipValue(relationshipName: string) {
@@ -21,6 +21,26 @@ class RelationshipModal {
     return cy.findByTestId(cardinalityType);
   }
 
+  verifySourceEntity(entityName: string) {
+    return cy.findByTestId(`${entityName}-sourceNodeName`);
+  }
+
+  verifyTargetEntity(entityName: string) {
+    return cy.findByTestId(`${entityName}-targetNodeName`);
+  }
+
+  targetEntityDropdown() {
+    return cy.findByTestId("targetEntityDropdown");
+  }
+
+  verifyEntityOption(entityName: string) {
+    return cy.findByTestId(`${entityName}-option`);
+  }
+
+  selectTargetEntityOption(entityName: string) {
+    return cy.findByTestId(`${entityName}-option`).click();
+  }
+
   toggleCardinality() {
     cy.findByTestId("cardinalityButton").click({force: true});
   }
@@ -28,6 +48,18 @@ class RelationshipModal {
   editJoinProperty(joinPropertyName: string) {
     cy.findByTestId("join-property-dropdown").click();
     cy.findByLabelText(`${joinPropertyName}-option`).click();
+  }
+
+  cancelModal() {
+    cy.findByLabelText("relationship-modal-cancel").click(({force: true}));
+  }
+
+  addRelationshipSubmit() {
+    cy.findByLabelText("relationship-modal-submit").click(({force: true}));
+  }
+
+  searchEntityDropdown(searchInput: string) {
+    cy.get(".ant-select-search__field__wrap > #dropdownList").type(searchInput);
   }
 
   confirmationOptions(option: string) {

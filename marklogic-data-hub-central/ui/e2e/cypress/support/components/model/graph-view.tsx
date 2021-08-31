@@ -7,6 +7,10 @@ class GraphView {
     return cy.findByLabelText("add-entity-type-relationship");
   }
 
+  addNewRelationship() {
+    return cy.findByText("Add new relationship");
+  }
+
   getAddEntityTypeOption() {
     return cy.findByLabelText("add-entity-type");
   }
@@ -21,6 +25,10 @@ class GraphView {
 
   getExportGraphIcon() {
     return cy.findByLabelText("graph-export");
+  }
+
+  verifyEditInfoMessage() {
+    return cy.findByLabelText("graph-edit-mode-info");
   }
 }
 

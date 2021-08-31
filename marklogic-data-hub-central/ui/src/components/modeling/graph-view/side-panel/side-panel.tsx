@@ -3,7 +3,7 @@ import styles from "./side-panel.module.scss";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
-import {ModelingTooltips} from "../../../../config/tooltips.config";
+import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
 import {CloseOutlined} from "@ant-design/icons";
 import {Menu, Form, Input, Icon} from "antd";
 import {ModelingContext} from "../../../../util/modeling-context";
@@ -216,7 +216,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     <div id="sidePanel" className={styles.sidePanel}>
       <div>
         <span className={styles.selectedEntityHeading} aria-label={`${modelingOptions.selectedEntity}-selectedEntity`}>{modelingOptions.selectedEntity}</span>
-        <span><MLTooltip title={ModelingTooltips.deleteIcon} placement="top">
+        <span><MLTooltip title={!props.canWriteEntityModel && props.canReadEntityModel ? "Delete Entity: " + SecurityTooltips.missingPermission : ModelingTooltips.deleteIcon} placement="right">
           <i key="last" role="delete-entity button" data-testid={modelingOptions.selectedEntity + "-delete"} onClick={(event) => {
             if (!props.canWriteEntityModel && props.canReadEntityModel) {
               return event.preventDefault();
@@ -224,7 +224,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               props.deleteEntityClicked(modelingOptions.selectedEntity);
             }
           }}>
-            <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" />
+            <FontAwesomeIcon icon={faTrashAlt} className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.deleteIconDisabled : styles.deleteIcon} size="lg" />
           </i>
         </MLTooltip></span>
         <span><i className={styles.close} aria-label={"closeGraphViewSidePanel"}

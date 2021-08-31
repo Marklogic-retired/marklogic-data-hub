@@ -17,6 +17,11 @@
             border: 1px solid rgb(222, 220, 220);
           }
 
+          .editModeInfoContainer {
+            margin-left: 7px;
+            margin-right: 20px;
+          }
+
           .addButtonContainer {
             padding-right: 10px;
           }
@@ -51,7 +56,6 @@
         color: #bfbfbf;
     }
 }
-
 .resizerStyle {
   border: 1px solid rgba(1, 22, 39, 0.21);
   cursor: col-resize;

@@ -7,7 +7,9 @@ import {
   graphViewSidePanel,
   propertyModal,
   propertyTable,
-  structuredTypeModal
+  structuredTypeModal,
+  graphView,
+  relationshipModal
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
@@ -400,5 +402,140 @@ describe("Entity Modeling: Writer Role", () => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y));
     });
     graphViewSidePanel.getPropertyName("patientType").should("not.exist");
+  });
+
+  it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
+    //Verifying edit relationship modal
+
+    //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+    });
+
+    relationshipModal.getModalHeader().should("be.visible");
+
+    //edit properties should be populated
+    relationshipModal.verifyRelationshipValue("ownedBy");
+    relationshipModal.verifyJoinPropertyValue("customerId");
+    relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
+
+    //modify properties and save
+    relationshipModal.editRelationshipName("usedBy");
+    relationshipModal.toggleCardinality();
+    relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
+    relationshipModal.editJoinProperty("email");
+
+    relationshipModal.confirmationOptions("Save").click({force: true});
+    cy.waitForAsyncRequest();
+    relationshipModal.getModalHeader().should("not.exist");
+    //reopen modal to verify changes were saved and persisted
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+    });
+
+    relationshipModal.verifyRelationshipValue("usedBy");
+    relationshipModal.verifyJoinPropertyValue("email");
+    relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
+
+    relationshipModal.cancelModal();
+
+  });
+
+  it("can enter graph edit mode and add edge relationships via single node click", () => {
+
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    cy.waitForAsyncRequest();
+
+    graphView.getAddButton().click();
+    graphView.addNewRelationship().click();
+    graphView.verifyEditInfoMessage().should("be.visible");
+
+    //verify create relationship via clicking a node in edit mode
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let personCoordinates: any = nodePositions["Person"];
+      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y);
+    });
+
+    relationshipModal.getModalHeader().should("be.visible");
+    relationshipModal.verifySourceEntity("Person").should("be.visible");
+    relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
+
+    //target entity node should be placeholder and user can set relationship options
+    relationshipModal.verifyTargetEntity("Select target entity type*").should("be.visible");
+
+    relationshipModal.targetEntityDropdown().click();
+    //verify dropdown options can be searched
+    relationshipModal.verifyEntityOption("Customer").should("be.visible");
+    relationshipModal.verifyEntityOption("Order").should("be.visible");
+    relationshipModal.verifyEntityOption("Client").should("be.visible");
+    relationshipModal.verifyEntityOption("Patients").should("be.visible");
+
+    relationshipModal.searchEntityDropdown("ord");
+    relationshipModal.verifyEntityOption("Customer").should("not.exist");
+    relationshipModal.verifyEntityOption("Client").should("not.exist");
+    relationshipModal.verifyEntityOption("Patients").should("not.exist");
+    relationshipModal.verifyEntityOption("Order").should("be.visible");
+    relationshipModal.selectTargetEntityOption("Order");
+    relationshipModal.editJoinProperty("orderId");
+    relationshipModal.editRelationshipName("purchased");
+    relationshipModal.toggleCardinality();
+
+    relationshipModal.addRelationshipSubmit();
+    relationshipModal.getModalHeader().should("not.exist");
+
+    //verify relationship was created and properties are present
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+    entityTypeTable.getExpandEntityIcon("Person").click();
+    propertyTable.editProperty("purchased");
+    propertyModal.getYesRadio("multiple").should("be.checked");
+    propertyModal.verifyPropertyType("Order");
+    propertyModal.verifyJoinProperty("orderId");
+    propertyModal.getCancelButton().click();
+  });
+
+  it("can edit graph edit mode and add edge relationships via drag/drop", () => {
+
+    entityTypeTable.viewEntityInGraphView("Person");
+    graphView.getAddButton().click();
+    graphView.addNewRelationship().click();
+    graphView.verifyEditInfoMessage().should("be.visible");
+
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let PersonCoordinates: any = nodePositions["Person"];
+      let ClientCoordinates: any = nodePositions["Client"];
+      graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
+      graphVis.getGraphVisCanvas().trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+      graphVis.getGraphVisCanvas().trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+    });
+
+    //relationship modal should open with proper source and target nodes in place
+    relationshipModal.verifySourceEntity("Person").should("be.visible");
+    relationshipModal.verifyTargetEntity("Client").should("be.visible");
+
+    //add relationship properties and save
+    relationshipModal.editJoinProperty("firstname");
+    relationshipModal.editRelationshipName("referredBy");
+    relationshipModal.toggleCardinality();
+    relationshipModal.addRelationshipSubmit();
+    cy.waitForAsyncRequest();
+    relationshipModal.getModalHeader().should("not.exist");
+
+    //verify relationship was created and properties are present
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+    propertyTable.editProperty("referredBy");
+    propertyModal.getYesRadio("multiple").should("be.checked");
+    propertyModal.verifyPropertyType("Client");
+    propertyModal.verifyJoinProperty("firstname");
+    propertyModal.getCancelButton().click();
+
+    entityTypeTable.viewEntityInGraphView("Person");
+    //re-enter graph edit mode, verify can exit with {esc}
+    graphView.getAddButton().click();
+    graphView.addNewRelationship().click();
+    graphView.verifyEditInfoMessage().should("be.visible");
+    graphVis.getGraphVisCanvas().type("{esc}");
+    graphView.verifyEditInfoMessage().should("not.exist");
   });
 });

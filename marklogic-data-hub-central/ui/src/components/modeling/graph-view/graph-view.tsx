@@ -2,7 +2,7 @@ import React, {CSSProperties, useContext, useState} from "react";
 import {AutoComplete, Dropdown, Icon, Menu} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {MLTooltip, MLInput, MLButton} from "@marklogic/design-system";
+import {MLTooltip, MLInput, MLButton, MLAlert} from "@marklogic/design-system";
 import {DownOutlined} from "@ant-design/icons";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -30,6 +30,7 @@ const GraphView: React.FC<Props> = (props) => {
   const [filterMenuSuggestions, setFilterMenuSuggestions] = useState(["a"]);
   const [entityFiltered, setEntityFiltered] = useState("");
   const [isEntityFiltered, setIsEntityFiltered] = useState(false);
+  const [graphEditMode, setGraphEditMode] = useState(false);
 
   const publishIconStyle: CSSProperties = {
     width: "18px",
@@ -92,7 +93,7 @@ const GraphView: React.FC<Props> = (props) => {
       <Menu.Item key="addNewEntityType">
         <span aria-label={"add-entity-type"}>Add new entity type</span>
       </Menu.Item>
-      <Menu.Item key="addNewRelationship">
+      <Menu.Item key="addNewRelationship" onClick={() => setGraphEditMode(true)}>
         <span aria-label={"add-relationship"}>Add new relationship</span>
       </Menu.Item>
     </Menu>
@@ -121,6 +122,13 @@ const GraphView: React.FC<Props> = (props) => {
   );
 
   const headerButtons = <span className={styles.buttons}>
+    {graphEditMode ?
+      <div className={styles.editModeInfoContainer}>
+        <MLAlert
+          type="info" aria-label="graph-edit-mode-info" showIcon
+          message={ModelingTooltips.editModeInfo}/>
+      </div> : ""
+    }
     <span>
       {props.canWriteEntityModel ?
         <span>
@@ -189,6 +197,8 @@ const GraphView: React.FC<Props> = (props) => {
           relationshipModalVisible={props.relationshipModalVisible}
           canReadEntityModel={props.canReadEntityModel}
           canWriteEntityModel={props.canWriteEntityModel}
+          graphEditMode={graphEditMode}
+          setGraphEditMode={setGraphEditMode}
         />
       </div>
     </div>;

@@ -12,9 +12,18 @@
       font-size: 24px;
     }
 
-    .deleteIcon:hover{
-      color: var(--hoverColor);
+    .deleteIconDisabled {
+      color: #cccccc;
+      font-size: 24px;
+    }
+
+    .deleteIcon:hover {
+      color:var(--hoverColor);
       cursor: pointer;
+    }
+
+    .deleteIconDisabled:hover{
+      cursor: not-allowed;
     }
 
     .close {

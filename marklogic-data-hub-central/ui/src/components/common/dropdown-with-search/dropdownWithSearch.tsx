@@ -37,6 +37,10 @@ const DropDownWithSearch = (props) => {
       if (maxStringLengthInPx < minWidth) return minWidth.toString() + "px";
       return maxStringLengthInPx.toString() + "px";
     }
+    if (props.modelling) {
+      let cardWidth = "204px";
+      return cardWidth;
+    }
     return minWidth.toString() + "px";
   };
 
