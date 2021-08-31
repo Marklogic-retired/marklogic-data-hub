@@ -19,7 +19,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const consts = require('/data-hub/5/impl/consts.sjs');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
-const ext = require("/data-hub/public/extensions/entity/get-entity-details.sjs");
+const ext = require("/data-hub/extensions/entity/get-entity-details.sjs");
 const prov = require("/data-hub/5/impl/prov.sjs");
 
 /**

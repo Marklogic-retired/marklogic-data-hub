@@ -21,7 +21,7 @@ import module namespace es = "http://marklogic.com/entity-services"
   at "/MarkLogic/entity-services/entity-services.xqy";
 
 import module namespace ext = "http://marklogic.com/data-hub/extensions/entity"
-  at "/data-hub/public/extensions/entity/post-process-search-options.xqy";
+  at "/data-hub/extensions/entity/post-process-search-options.xqy";
 
 declare namespace search = "http://marklogic.com/appservices/search";
 declare namespace tde = "http://marklogic.com/xdmp/tde";

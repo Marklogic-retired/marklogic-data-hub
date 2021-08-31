@@ -18,7 +18,7 @@ xquery version "1.0-ml";
 module namespace ns = "http://marklogic.com/data-hub/entities/constraint/entityType";
 
 import module namespace ext = "http://marklogic.com/data-hub/extensions/entity"
-  at "/data-hub/public/extensions/entity/build-entity-query.xqy";
+  at "/data-hub/extensions/entity/build-entity-query.xqy";
 
 declare namespace search = "http://marklogic.com/appservices/search";
 
