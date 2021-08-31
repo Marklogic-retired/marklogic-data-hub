@@ -164,6 +164,25 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
     }
 
     @Test
+    void getXmlDocumentForMapping() throws Exception {
+        final String uri = "/testDoc1.xml";
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/reference-project");
+        writeStagingXmlDoc("/testDoc1.xml", "<test>12</test>", "content");
+        loginAsTestUserWithRoles("hub-central-developer");
+
+        mockMvc.perform(get(PATH + "/{stepName}/doc", "testMap")
+                .param("docUri", uri)
+                .session(mockHttpSession))
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(HttpStatus.OK.value(), response.getStatus());
+                assertEquals(200, response.getStatus());
+                assertEquals("\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<test>12</test>\"", response.getContentAsString());
+            });
+    }
+
+    @Test
     void getMappingStepReferences() throws Exception {
         installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-mapping-writer");
