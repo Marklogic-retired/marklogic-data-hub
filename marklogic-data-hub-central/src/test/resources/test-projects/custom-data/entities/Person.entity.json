@@ -18,7 +18,8 @@
         },
         "birthYear": {
           "datatype": "integer",
-          "sortable": true
+          "sortable": true,
+          "facetable": true
         }
       }
     }

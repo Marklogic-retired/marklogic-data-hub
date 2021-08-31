@@ -8,6 +8,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.controllers.EntitySearchController;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.deploy.commands.HubDeployDatabaseCommandFactory;
@@ -18,6 +19,7 @@ import com.marklogic.rest.util.Fragment;
 import org.jdom2.Namespace;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.regex.Pattern;
 
@@ -28,6 +30,9 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
     // Using an alternate convention for entity type collections, which allows us to verify that DHF supports
     // modifying the entityType constraint to match how the data is persisted
     private final static String ENTITY_COLLECTION = "entity-Person";
+
+    @Autowired
+    EntitySearchController entitySearchController;
 
     @AfterEach
     void afterEach() {
@@ -58,6 +63,7 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
         assertEquals(0, search(new SearchQuery("Person").withSearchText("aTermThatDoesntMatchAnything")).get("total").asInt());
 
         verifyEntityCountInPrimaryEntityTypes();
+        verifyNumericFacetWorks();
     }
 
     private void verifyEntityCountInPrimaryEntityTypes() {
@@ -189,5 +195,19 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
         assertTrue(config.elementExists("/m:database-properties/m:range-path-indexes/" +
                 "m:range-path-index[m:path-expression = '/customEnvelope/Person/birthYear/value']"),
             "The index for a sortable=true property should have been modified to match the custom data format");
+    }
+
+    private void verifyNumericFacetWorks() {
+        ObjectNode input = readJsonObject("{\"referenceType\":\"path\", " +
+            "\"entityTypeId\":\"http://example.org/Person-0.0.1/Person\", " +
+            "\"propertyPath\":\"birthYear\"}");
+
+        JsonNode range = entitySearchController.getFacetValuesRange(input, "final");
+        String message = "Verifying that the endpoint for getting a range of values allows for a user to override " +
+            "the cts.pathReference generation; by default, DHF will assume an ES envelope is used and will construct a " +
+            "property path based on that; the build-property-path-reference.sjs extension point allows a user to " +
+            "override how the path reference is constructed so it can fit a custom data format; range: " + range.toPrettyString();
+        assertEquals(1990, range.get("min").asInt(), message);
+        assertEquals(1991, range.get("max").asInt(), message);
     }
 }

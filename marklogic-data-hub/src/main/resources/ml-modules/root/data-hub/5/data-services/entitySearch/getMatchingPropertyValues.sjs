@@ -17,8 +17,8 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
+const ext = require("/data-hub/public/extensions/entity/build-property-path-reference.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const lib = require('/data-hub/5/impl/hub-es.sjs');
 
 var facetValuesSearchQuery;
 if(facetValuesSearchQuery == null) {
@@ -70,8 +70,7 @@ if(referenceType === 'element') {
 } else if(referenceType === 'collection') {
   query = cts.collectionReference();
 } else {
-  const result = lib.buildPathReferenceParts(entityTypeId, propertyPath);
-  query = cts.pathReference(result.pathExpression, null, result.namespaces);
+  query = ext.buildPropertyPathReference(entityTypeId, propertyPath);
 }
 
 var facetValues = cts.valueMatch(query, pattern + "*",
