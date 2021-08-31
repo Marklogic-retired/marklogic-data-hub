@@ -6,4 +6,5 @@ var headerValueToAdd;
 
 contentArray.forEach(content => {
   content.value.envelope.headers.hello = headerValueToAdd;
+  content.value.envelope.headers.addHeadersDatabase = xdmp.databaseName(xdmp.database());
 });
