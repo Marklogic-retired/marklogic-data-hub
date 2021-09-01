@@ -8,19 +8,47 @@ class MultiSlider {
     return cy.findAllByTestId(`${name}-active`);
   }
 
-  getHandleNameAndType(name: string, type: string) {
-    return cy.findByLabelText(`${name}-${type}`);
+  getThresholdHandleNameAndType(name: string, type: string) {
+    return cy.findAllByTestId(`threshold ${name} - ${type}`);
   }
 
-  editOption(name: string) {
-    cy.findByTestId(`edit-${name}`).should("be.visible").then($option => {
+  getRulesetHandleNameAndType(name: string, type: string) {
+    return cy.findAllByTestId(`ruleset ${name} - ${type}`);
+  }
+
+  thresholdEditOption(name: string, type: string) {
+    cy.findByTestId(`threshold ${name} - ${type}`).should("be.visible").then($option => {
       $option[0].click();
     });
   }
 
-  deleteOption(name: string) {
-    cy.findByTestId(`delete-${name}`).trigger("mousemove").should("be.visible").then($option => {
+  ruleSetEditOption(name: string, type: string) {
+    cy.findByTestId(`ruleset ${name} - ${type}`).should("be.visible").then($option => {
       $option[0].click();
+    });
+  }
+
+  ruleSetEditOptionMulti(name: string) {
+    cy.findByTestId(`ruleset ${name}`).should("be.visible").then($option => {
+      $option[0].click();
+    });
+  }
+
+  deleteOption(name: string, type: string) {
+    cy.findByTestId(`ruleset ${name} - ${type}`).should("be.visible").click().then(() => {
+      cy.get(`[data-icon="trash-alt"]`).click();
+    });
+  }
+
+  deleteOptionMulti(name: string) {
+    cy.findByTestId(`ruleset ${name}`).should("be.visible").click().then(() => {
+      cy.get(`[data-icon="trash-alt"]`).click();
+    });
+  }
+
+  deleteOptionThreshold(name: string, type: string) {
+    cy.findByTestId(`threshold ${name} - ${type}`).scrollIntoView().should("be.visible").click().then(() => {
+      cy.get(`[data-icon="trash-alt"]`).click();
     });
   }
 
@@ -42,6 +70,22 @@ class MultiSlider {
 
   sliderTicksMove(sliderName: string, val: string) {
     cy.findByTestId(`${sliderName}-ticks`).find(`div[style*="left: ${val}%;"]`).trigger("mousemove", {force: true});
+  }
+
+  confirmDelete(name: string, type: string) {
+    cy.findByLabelText(`confirm-${name} - ${type}-yes`).click();
+  }
+
+  confirmDeleteThreshold(name: string) {
+    cy.findByLabelText(`confirm-${name}-yes`).click();
+  }
+
+  confirmDeleteMulti(name: string) {
+    cy.findByLabelText(`confirm-${name}-yes`).click();
+  }
+
+  enableEdit(name: string) {
+    cy.findByLabelText(`${name}-scale-switch`).click();
   }
 }
 
