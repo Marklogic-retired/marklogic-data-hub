@@ -81,7 +81,7 @@ describe("Property Modal Component", () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
 
-    const {getByLabelText, getByPlaceholderText, getByText} =  render(
+    const {getByLabelText, getByPlaceholderText, getByText, getByTestId} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -100,7 +100,7 @@ describe("Property Modal Component", () => {
 
     userEvent.type(getByLabelText("input-name"), "name");
     userEvent.click(getByText("Add"));
-    expect(getByText("A property already exists with a name of name")).toBeInTheDocument();
+    expect(getByTestId("propery-name-error")).toBeInTheDocument();
 
     userEvent.clear(getByLabelText("input-name"));
     userEvent.type(getByLabelText("input-name"), "new-property-name");
