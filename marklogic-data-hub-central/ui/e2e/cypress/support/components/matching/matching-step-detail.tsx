@@ -29,7 +29,7 @@ class MatchingStepDetail {
   }
 
   getMultiPropertyOption() {
-    cy.findByLabelText("multiPropertyRulesetOption").click();
+    cy.findByLabelText("multiPropertyRulesetOption").should("be.visible").scrollIntoView().click({force: true});
   }
 
   getSliderDeleteText() {
@@ -49,7 +49,11 @@ class MatchingStepDetail {
   }
 
   getPossibleMatchCombinationRuleset(thresholdName: string, ruleset: string) {
-    return cy.findByLabelText(`rulesetName-${thresholdName}-${ruleset}`);
+    return cy.findByLabelText(`rulesetName-testing-${thresholdName} - ${ruleset}`);
+  }
+
+  getPossibleMatchCombinationRulesetMulti(thresholdName: string) {
+    return cy.findByLabelText(`rulesetName-testing-${thresholdName}`);
   }
 
   getDefaultTextNoMatchedCombinations() {
