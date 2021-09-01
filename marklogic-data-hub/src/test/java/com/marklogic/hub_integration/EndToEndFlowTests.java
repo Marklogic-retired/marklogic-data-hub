@@ -35,6 +35,7 @@ import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.mlcp.MlcpRunner;
+import com.marklogic.mgmt.resource.hosts.HostManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -803,8 +804,10 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         String basePath = getResourceFile("e2e-test/input").getAbsolutePath();
         String optionString;
         JsonNode mlcpOptions;
+        //mlcp seem to behave differently on Windows single node/ cluster env
+        int hostCount = new HostManager(getHubClient().getManageClient()).getHostIds().size();
         try {
-            if (OS.WINDOWS.isCurrentOs()) {
+            if (OS.WINDOWS.isCurrentOs() && hostCount > 1) {
                 optionString = toJsonString(options).replace("\"", "\\\\\\\"");
             }
             else {
