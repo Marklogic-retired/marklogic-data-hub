@@ -52,6 +52,8 @@ describe("Run Tile tests", () => {
     //confirm the first load step is no longer visible because panel scrolled to the end
     cy.findByText("loadPersonXML").should("not.be.visible");
 
+    /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
+
     //Verify selected steps in run flow dropdown are executed successfully
     runPage.openStepsSelectDropdown("testPersonXML");
     cy.get("#mapPersonXML").click();
@@ -89,6 +91,8 @@ describe("Run Tile tests", () => {
     runPage.openFlowStatusModal("testCustomFlow");
     runPage.verifyFlowModalCompleted("testCustomFlow");
     runPage.getFlowStatusModal().type("{esc}");
+
+    */
 
     //Run map,match and merge step for Person entity using xml documents
     runPage.runStep("mapPersonXML");

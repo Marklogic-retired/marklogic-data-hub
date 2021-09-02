@@ -9,14 +9,16 @@ import {curationContextMock} from "../../assets/mock-data/curation/curation-cont
 
 jest.mock("axios");
 
-const getSubElements=(content, node, title) => {
-  const hasText = node => node.textContent === title;
-  const nodeHasText = hasText(node);
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child)
-  );
-  return nodeHasText && childrenDontHaveText;
-};
+/* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
+// const getSubElements=(content, node, title) => {
+//   const hasText = node => node.textContent === title;
+//   const nodeHasText = hasText(node);
+//   const childrenDontHaveText = Array.from(node.children).every(
+//     child => !hasText(child)
+//   );
+//   return nodeHasText && childrenDontHaveText;
+// };
+*/
 
 describe("Job response modal", () => {
 
@@ -46,6 +48,7 @@ describe("Job response modal", () => {
       ));
     });
 
+    /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
     // verify modal text and headers
     expect(await(waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "The flow testFlow completed");
@@ -56,6 +59,12 @@ describe("Job response modal", () => {
     expect(getByText("Duration:")).toBeInTheDocument();
 
     expect(getByText("e4590649-8c4b-419c-b6a1-473069186592")).toBeInTheDocument();
+    expect(getByText("2020-04-24 14:05")).toBeInTheDocument();
+    expect(getByText("0s 702ms")).toBeInTheDocument();
+    */
+
+    // check that
+    await (waitForElement(() => (getByText("testFlow"))));
     expect(getByText("2020-04-24 14:05")).toBeInTheDocument();
     expect(getByText("0s 702ms")).toBeInTheDocument();
 
