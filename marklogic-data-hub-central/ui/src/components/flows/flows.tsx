@@ -2,7 +2,7 @@ import React, {useState, CSSProperties, useEffect, useContext, createRef} from "
 import {Collapse, Icon, Card, Modal, Menu, Dropdown} from "antd";
 import {DownOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCog} from "@fortawesome/free-solid-svg-icons";
+import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import {MLButton} from "@marklogic/design-system";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
@@ -10,7 +10,7 @@ import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
 import "./flows.scss";
 import styles from "./flows.module.scss";
-import {MLTooltip, MLSpin, MLCheckbox} from "@marklogic/design-system";
+import {MLTooltip, MLSpin, MLCheckbox} from "@marklogic/design-system";   // eslint-disable-line @typescript-eslint/no-unused-vars
 import {useDropzone} from "react-dropzone";
 import {AuthoritiesContext} from "../../util/authorities";
 import {Link, useLocation} from "react-router-dom";
@@ -98,8 +98,8 @@ const Flows: React.FC<Props> = (props) => {
   const [addFlowDirty, setAddFlowDirty] = useState({});
   const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
   const [hasQueriedInitialJobData, setHasQueriedInitialJobData] = useState(false);
-  const [selectedStepOptions, setSelectedStepOptions] = useState<any>({});
-  const [currentFlowName, setCurrentFlowName] = useState("");
+  const [selectedStepOptions, setSelectedStepOptions] = useState<any>({}); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [currentFlowName, setCurrentFlowName] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [selectedStepDetails, setSelectedStepDetails]= useState<any>([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
   const [runFlowClicked, setRunFlowClicked] = useState(false);
   const location = useLocation();
@@ -417,6 +417,8 @@ const Flows: React.FC<Props> = (props) => {
     </Modal>
   );
 
+  /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
+
   const onCheckboxChange = (event, checkedValues, stepNumber, stepDefinitionType, flowNames, stepId, sourceFormat) => {
     if (currentFlowName !== flowNames) {
       if (currentFlowName.length > 0) {
@@ -455,63 +457,64 @@ const Flows: React.FC<Props> = (props) => {
     event.stopPropagation();
   };
 
-  const flowMenu = (flowName) => {
-    return (
-      <Menu>
-        <Menu.ItemGroup title="Select the steps to include in the run.">
-          {props.flows.map((flow) => (
-            flow["name"] === flowName &&
-                       flow.steps.map((step, index)  => (
-                         <Menu.Item key={index}>
-                           <MLCheckbox
-                             id={step.stepName}
-                             checked={selectedStepOptions[step.stepName]}
-                             onClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)
-                             }
-                           >{step.stepName}</MLCheckbox>
-                         </Menu.Item>
-                       ))
-          ))}
-        </Menu.ItemGroup>
-      </Menu>
-    );
-  };
+  // const flowMenu = (flowName) => {
+  //   return (
+  //     <Menu>
+  //       <Menu.ItemGroup title="Select the steps to include in the run.">
+  //         {props.flows.map((flow) => (
+  //           flow["name"] === flowName &&
+  //                      flow.steps.map((step, index)  => (
+  //                        <Menu.Item key={index}>
+  //                          <MLCheckbox
+  //                            id={step.stepName}
+  //                            checked={selectedStepOptions[step.stepName]}
+  //                            onClick={(event) => onCheckboxChange(event, step.stepName, step.stepNumber, step.stepDefinitionType, flowName, step.stepId, step.sourceFormat)
+  //                            }
+  //                          >{step.stepName}</MLCheckbox>
+  //                        </Menu.Item>
+  //                      ))
+  //         ))}
+  //       </Menu.ItemGroup>
+  //     </Menu>
+  //   );
+  // };
 
-  const handleRunFlow = async (index, name) => {
-    setRunFlowClicked(true);
-    const setKey = async () => {
-      await setActiveKeys(`${index}`);
-    };
-    setRunningFlow(name);
-    selectedStepDetails.shift();
-    let flag=false;
+  // const handleRunFlow = async (index, name) => {
+  //   setRunFlowClicked(true);
+  //   const setKey = async () => {
+  //     await setActiveKeys(`${index}`);
+  //   };
+  //   setRunningFlow(name);
+  //   selectedStepDetails.shift();
+  //   let flag=false;
 
-    await selectedStepDetails.map(async step => {
-      if (step.stepDefinitionType === "ingestion") {
-        flag=true;
-        setRunningStep(step);
-        await setKey();
-        await openFilePicker();
-      }
-    });
-    if (Object.keys(selectedStepOptions).length === 0 && selectedStepOptions.constructor === Object) {
-      flag=true;
-      await setKey();
-      await openFilePicker();
-    }
-    if (!flag) {
-      let stepNumbers=[{}];
-      for (let i=0;i<selectedStepDetails.length;i++) {
-        stepNumbers.push(selectedStepDetails[i]);
-      }
-      stepNumbers.shift();
-      await props.runFlowSteps(name, stepNumbers)
-        .then(() => {
-          setSelectedStepOptions({});
-          setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
-        });
-    }
-  };
+  //   await selectedStepDetails.map(async step => {
+  //     if (step.stepDefinitionType === "ingestion") {
+  //       flag=true;
+  //       setRunningStep(step);
+  //       await setKey();
+  //       await openFilePicker();
+  //     }
+  //   });
+  //   if (Object.keys(selectedStepOptions).length === 0 && selectedStepOptions.constructor === Object) {
+  //     flag=true;
+  //     await setKey();
+  //     await openFilePicker();
+  //   }
+  //   if (!flag) {
+  //     let stepNumbers=[{}];
+  //     for (let i=0;i<selectedStepDetails.length;i++) {
+  //       stepNumbers.push(selectedStepDetails[i]);
+  //     }
+  //     stepNumbers.shift();
+  //     await props.runFlowSteps(name, stepNumbers)
+  //       .then(() => {
+  //         setSelectedStepOptions({});
+  //         setSelectedStepDetails([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+  //       });
+  //   }
+  // };
+  */
 
   const stepMenu = (flowName) => {
     return (
@@ -582,6 +585,7 @@ const Flows: React.FC<Props> = (props) => {
         event.preventDefault();
       }}
     >
+      {/* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
       <span id="stepsDropdown" className={styles.hoverColor}>
         <Dropdown.Button
           className={styles.runFlow}
@@ -593,7 +597,7 @@ const Flows: React.FC<Props> = (props) => {
         >
           <span className={styles.runIconAlign}><Icon type="play-circle" theme="filled"  className={styles.runIcon}/></span>
           <span className={styles.runFlowLabel}>Run Flow</span>
-        </Dropdown.Button></span>
+        </Dropdown.Button></span> */}
       <Dropdown
         overlay={stepMenu(name)}
         trigger={["click"]}
@@ -649,23 +653,32 @@ const Flows: React.FC<Props> = (props) => {
   );
 
   const flowHeader = (name, index) => (
-    <span>
-      <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="bottom">
-        <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
-          {name}
-        </span>
-      </MLTooltip>
-      {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
-        <MLTooltip title={"Flow Status"} placement="bottom">
-          <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon}>
-            <Icon type="info-circle" theme="filled" data-testid={name + "-StatusIcon"} />
-          </span>
-        </MLTooltip>
-        : ""
-      }
-    </span>
+    <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="right">
+      <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+        {name}
+      </span>
+    </MLTooltip>
+
+    /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6, replace above with below later
+    // <span>
+    //   <MLTooltip title={props.canWriteFlow ? "Edit Flow" : "Flow Details"} placement="bottom">
+    //     <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
+    //       {name}
+    //     </span>
+    //   </MLTooltip>
+    //   {latestJobData && latestJobData[name] && latestJobData[name].find(step => step.jobId) ?
+    //     <MLTooltip title={"Flow Status"} placement="bottom">
+    //       <span onClick={(e) => OpenFlowJobStatus(e, index, name)} className={styles.infoIcon}>
+    //         <Icon type="info-circle" theme="filled" data-testid={name + "-StatusIcon"} />
+    //       </span>
+    //     </MLTooltip>
+    //     : ""
+    //   }
+    // </span>
+    */
   );
 
+  /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
   const OpenFlowJobStatus = (e, index, name) => {
     e.stopPropagation();
     e.preventDefault();
@@ -673,6 +686,7 @@ const Flows: React.FC<Props> = (props) => {
     props.setJobId(latestJobData[name][jobIdIndex].jobId);
     props.setOpenJobResponse(true);
   };
+  */
 
   const OpenEditFlowDialog = (e, index) => {
     e.stopPropagation();
