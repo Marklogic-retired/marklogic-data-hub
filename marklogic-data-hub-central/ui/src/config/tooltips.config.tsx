@@ -326,7 +326,7 @@ const MatchingStepMessages = {
 /* --- STEPS - MERGING --- */
 
 const MergingStepIntros = {
-  main: 'The Merging step defines how to combine documents that the Matching step identified as similar.',
+  main: 'Each merge step is associated with a match step. After the match step is run, there is a set of matched entities associated with each match threshold. Depending on the action specified for the match threshold, the merge step will either merge the matched entities, create notifications for the matched entities, or perform a custom action. When entities are merged, all the property values from the matched entities are combined into the merged entity by default. To define exceptions to this default behavior, create merge strategies and merge rules.',
   strategy: 'A merge strategy is a predefined set of merge options that you can name and reuse.',
   ruleset: 'A merge ruleset is a set of merge options that define how similar documents are combined based on certain conditions.'
 }

@@ -3,7 +3,7 @@
 }
 
 .headerDescription {
-    padding: 0 0 10px 57px;
+    padding: 0 13px 10px 57px;
 }
 
 .stepNumberContainer {
@@ -38,15 +38,21 @@
         grid-template-columns: 90% 10%;
     }
 
-    .addButtonContainer {
-        display: flex;
-        justify-content: flex-end;
+    .addStrategyButtonContainer {
+        margin-left: 6.5vw;
+        margin-right: -1vw;
+    }
 
-        .addMergeButton {
-            padding-left: 25px;
-            padding-right: 25px;
-            margin-bottom: 10px;
-        }
+    .addRuleButtonContainer {
+        margin-left: 58vw;
+        margin-right: -1vw;
+    }
+
+    .addMergeButton {
+        padding-left: 25px;
+        padding-right: 25px;
+        margin-bottom: 10px;
+        margin-top: -5vh;
     }
 
     .link {
@@ -99,4 +105,8 @@
 
 .deleteMessage {
     margin: 4% 0 8% 0;
+}
+
+.textContainer {
+    display: flex;
 }

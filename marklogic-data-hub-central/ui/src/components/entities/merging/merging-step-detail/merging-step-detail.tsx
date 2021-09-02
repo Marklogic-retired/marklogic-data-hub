@@ -10,7 +10,7 @@ import {CurationContext} from "../../../../util/curation-context";
 import {
   MergingStep, StepType, defaultPriorityOption
 } from "../../../../types/curation-types";
-import {MergeStrategyTooltips, MergingStepDetailText, multiSliderTooltips} from "../../../../config/tooltips.config";
+import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "../../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faCheck} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
@@ -380,7 +380,7 @@ const MergingStepDetail: React.FC = () => {
           setViewSettings({...storage, curate: {}});
         }}
       />
-      <p className={styles.headerDescription}>{MergingStepDetailText.description}</p>
+      <p className={styles.headerDescription}>{MergingStepIntros.main}</p>
       <div className={styles.mergingDetailContainer}>
 
         <div className={styles.stepNumberContainer}>
@@ -389,19 +389,18 @@ const MergingStepDetail: React.FC = () => {
         </div>
         <div className={styles.greyContainer}>
           <div className={styles.textContainer}>
-            <p>A <span className={styles.italic}>merge strategy</span><span> defines how to combine the property values of
+            <div><p>A <span className={styles.italic}>merge strategy</span><span> defines how to combine the property values of
                             candidate entities, but the merge strategy is not active until assigned to a merge rule.
-                            A merge strategy can be assigned to multiple
-                            merge rules.</span>
-            </p>
-          </div>
-          <div className={styles.addButtonContainer}>
-            <MLButton aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
-              toggleCreateEditStrategyModal(true);
-              toggleIsEditStrategy(false);
-              setCurrentStrategyName("");
-            }
-            }>Add</MLButton>
+                            A merge strategy can be assigned to multiple merge rules.</span>
+            </p></div>
+            <div className={styles.addStrategyButtonContainer}>
+              <MLButton aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
+                toggleCreateEditStrategyModal(true);
+                toggleIsEditStrategy(false);
+                setCurrentStrategyName("");
+              }
+              }>Add</MLButton>
+            </div>
           </div>
           <div>
             <Table
@@ -433,7 +432,7 @@ const MergingStepDetail: React.FC = () => {
           <div className={styles.textContainer}>
             <div><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
             </p></div>
-            <div className={styles.addButtonContainer}>
+            <div className={styles.addRuleButtonContainer}>
               <MLButton aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
                 toggleCreateEditRuleModal(true);
                 toggleIsEditRule(false);
