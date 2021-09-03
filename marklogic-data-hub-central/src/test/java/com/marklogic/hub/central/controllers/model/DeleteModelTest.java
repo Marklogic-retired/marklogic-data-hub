@@ -34,10 +34,12 @@ public class DeleteModelTest extends AbstractHubCentralTest {
         verifyEntity2BasedArtifactsExist();
         getModelReferences();
         deleteEntity2Model();
+        publishDraftModel();
         verifyEntity2BasedArtifactsDontExist();
         verifyReferencesToEntity2DontExistInEntity1();
 
         deleteEntity1Model();
+        publishDraftModel();
     }
 
     private void getModelReferences() {
@@ -51,18 +53,23 @@ public class DeleteModelTest extends AbstractHubCentralTest {
     }
 
     private void deleteEntity2Model() {
-        assertThrows(FailedRequestException.class, () -> controller.deleteModel("Entity2"), "Should throw an exception since the entity is referenced in steps.");
+        assertThrows(FailedRequestException.class, () -> controller.deleteDraftModel("Entity2"), "Should throw an exception since the entity is referenced in steps.");
 
         runAsDataHubDeveloper();
         removeReferencesToEntity();
         runAsTestUserWithRoles("hub-central-entity-model-writer");
 
-        assertTrue(controller.deleteModel("Entity2").getStatusCode().is2xxSuccessful(), "Should be ok since we deleted the steps that refer to the entity.");
+        assertTrue(controller.deleteDraftModel("Entity2").getStatusCode().is2xxSuccessful(), "Should be ok since we deleted the steps that refer to the entity.");
 
         // Needed because a post-commit trigger is executed after a model is deleted
         runAsDataHubDeveloper();
         waitForTasksToFinish();
         runAsTestUserWithRoles("hub-central-entity-model-writer");
+    }
+
+    private void publishDraftModel() {
+        runAsDataHubDeveloper();
+        assertDoesNotThrow(() -> controller.publishDraftModels(), "Should publish the deleted draft with no issues.");
     }
 
     private void removeReferencesToEntity() {
@@ -98,7 +105,7 @@ public class DeleteModelTest extends AbstractHubCentralTest {
         removeDocuments("/steps/mapping/testMap1.step.json", "/steps/merging/merging-step.step.json");
         runAsTestUserWithRoles("hub-central-entity-model-writer");
 
-        assertDoesNotThrow(() -> controller.deleteModel("Entity1"), "Should be ok since we deleted the references" +
+        assertDoesNotThrow(() -> controller.deleteDraftModel("Entity1"), "Should be ok since we deleted the references" +
                 " to Entity1 and we generate and deploy search options even if there are no entities present.");
     }
 

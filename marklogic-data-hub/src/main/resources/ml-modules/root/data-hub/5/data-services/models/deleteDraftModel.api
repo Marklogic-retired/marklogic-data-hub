@@ -1,6 +1,6 @@
 {
-    "functionName": "deleteModel",
-    "desc": "Delete an entity model",
+    "functionName": "deleteDraftModel",
+    "desc": "Mark a draft entity model to be deleted",
     "params": [
         {
             "name": "entityName",
