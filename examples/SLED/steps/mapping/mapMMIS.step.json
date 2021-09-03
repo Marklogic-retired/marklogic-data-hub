@@ -1,0 +1,191 @@
+{
+  "name" : "mapMMIS",
+  "description" : "Map MMIS Source to Member Target Entity",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"loadMMIS\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "mapMMIS", "Member" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "http://marklogic.com/envision/Member-0.0.1/Member",
+  "properties" : {
+    "FullAddress" : {
+      "sourcedFrom" : "concat(getAddress1Normalized(address1),', ', getAddress2Normalized(getPossibleAddress2(address1,address2)),',',getPossibleQuadrant2(address1,quadrant))"
+    },
+    "possibleQuadrant" : {
+      "sourcedFrom" : "getPossibleQuadrant(string(Address1))"
+    },
+    "idCard" : {
+      "sourcedFrom" : "'/images/member-id-card.png'"
+    },
+    "zip4" : {
+      "sourcedFrom" : "checkUndefined(zip4)"
+    },
+    "Gender" : {
+      "sourcedFrom" : "getGenderNormalized(gender)"
+    },
+    "suffix" : {
+      "sourcedFrom" : "checkUndefined(suffix)"
+    },
+    "zip5" : {
+      "sourcedFrom" : "getZip5Normalized(zip5)"
+    },
+    "LastNameHistory" : {
+      "sourcedFrom" : "getLastNameNormalized(getPossibleLastName(firstname,lastname))"
+    },
+    "dayOfDOB" : {
+      "sourcedFrom" : "getDayOfDOB(DOB)"
+    },
+    "hasClaim" : {
+      "sourcedFrom" : ""
+    },
+    "DOB" : {
+      "sourcedFrom" : "dob"
+    },
+    "scenarioNumber" : {
+      "sourcedFrom" : "scenarioNumber"
+    },
+    "hasDependent" : {
+      "sourcedFrom" : ""
+    },
+    "origAddress1" : {
+      "sourcedFrom" : "address1"
+    },
+    "quadrant" : {
+      "sourcedFrom" : "checkUndefined(getPossibleQuadrant2(address1,quadrant))"
+    },
+    "Quadrant" : {
+      "sourcedFrom" : "getPossibleQuadrant2(address1,quadrant)"
+    },
+    "Zip5History" : {
+      "sourcedFrom" : "getZip5Normalized(zip5)"
+    },
+    "DataSource" : {
+      "sourcedFrom" : "\"MMIS\""
+    },
+    "ScenarioNumber" : {
+      "sourcedFrom" : "concat('Scenario',scenarionumber)"
+    },
+    "firstName" : {
+      "sourcedFrom" : "checkUndefined(getFirstNameNormalized(firstName))"
+    },
+    "Suffix" : {
+      "sourcedFrom" : "suffix"
+    },
+    "MonthOfDOB" : {
+      "sourcedFrom" : "getMonthOfDOB(dob)"
+    },
+    "LastName" : {
+      "sourcedFrom" : "addToDictionary(getLastNameNormalized(getPossibleLastName(firstname,lastname)),\"LastName\")"
+    },
+    "lastName" : {
+      "sourcedFrom" : "checkUndefined(getLastNameNormalized(lastName))"
+    },
+    "possibleAddress2" : {
+      "sourcedFrom" : "getPossibleAddress2(string(Address1))"
+    },
+    "gender" : {
+      "sourcedFrom" : "getGenderNormalized(gender)"
+    },
+    "monthOfDOB" : {
+      "sourcedFrom" : "getMonthOfDOB(DOB)"
+    },
+    "PrimaryInsuredRelationship" : {
+      "sourcedFrom" : "primaryInsuredRelationship"
+    },
+    "DayOfDOB" : {
+      "sourcedFrom" : "getDayOfDOB(dob)"
+    },
+    "ScenarioDesc" : {
+      "sourcedFrom" : "scenariodesc"
+    },
+    "uid" : {
+      "sourcedFrom" : "generate-id()"
+    },
+    "SSNHistory" : {
+      "sourcedFrom" : "ssn"
+    },
+    "Race" : {
+      "sourcedFrom" : "getRaceNormalized(race)"
+    },
+    "primaryInsuredMemberID" : {
+      "sourcedFrom" : ""
+    },
+    "DOBHistory" : {
+      "sourcedFrom" : "dob"
+    },
+    "PrimaryInsuredId" : {
+      "sourcedFrom" : "customHash64(primaryInsuredId)"
+    },
+    "IsDependent" : {
+      "sourcedFrom" : "IsDependent"
+    },
+    "yearOfDOB" : {
+      "sourcedFrom" : "getYearOfDOB(DOB)"
+    },
+    "possibleLastName" : {
+      "sourcedFrom" : "getPossibleLastName(string(FirstName))"
+    },
+    "race" : {
+      "sourcedFrom" : "getRaceNormalized(race)"
+    },
+    "address2" : {
+      "sourcedFrom" : "checkUndefined(getAddress2Normalized(getPossibleAddress2(address1,address2)))"
+    },
+    "address1" : {
+      "sourcedFrom" : "checkUndefined(getAddress1Normalized(address1))"
+    },
+    "FirstName" : {
+      "sourcedFrom" : "addToDictionary(getFirstNameNormalized(firstname),\"FirstName\")"
+    },
+    "origQuadrant" : {
+      "sourcedFrom" : "quadrant"
+    },
+    "Address2" : {
+      "sourcedFrom" : "getAddress2Normalized(getPossibleAddress2(address1,address2))"
+    },
+    "SourceFormat" : {
+      "sourcedFrom" : "\"CSV\""
+    },
+    "FirstLastNameSorted" : {
+      "sourcedFrom" : "getFirstLastNameSorted(getFirstNameNormalized(firstname),getLastNameNormalized(getPossibleLastName(firstname,lastname)))"
+    },
+    "Address1" : {
+      "sourcedFrom" : "getAddress1Normalized(address1)"
+    },
+    "MiddleName" : {
+      "sourcedFrom" : "middlename"
+    },
+    "YearOfDOB" : {
+      "sourcedFrom" : "getYearOfDOB(dob)"
+    },
+    "SSN" : {
+      "sourcedFrom" : "ssn"
+    },
+    "FullName" : {
+      "sourcedFrom" : "concat(getFirstNameNormalized(firstname),' ',getLastNameNormalized(getPossibleLastName(firstname,lastname)),' ',suffix)"
+    },
+    "Zip4" : {
+      "sourcedFrom" : "zip4"
+    },
+    "middleName" : {
+      "sourcedFrom" : "checkUndefined(middleName)"
+    },
+    "Zip5" : {
+      "sourcedFrom" : "getZip5Normalized(zip5)"
+    },
+    "memberID" : {
+      "sourcedFrom" : "customHash64(ssn)"
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "mapMMIS-mapping",
+  "lastUpdated" : "2021-06-30T23:49:50.210836-07:00"
+}

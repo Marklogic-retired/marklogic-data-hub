@@ -1,0 +1,163 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
+    }
+    dependencies {
+        if (project.hasProperty("testing")) {
+            classpath "com.marklogic:ml-data-hub:5.6-SNAPSHOT"
+        } else {
+            classpath "com.marklogic:ml-data-hub:5.5.0"
+        }
+    }
+}
+
+plugins {
+    id "net.saliman.properties" version "1.5.1"
+    id "java"
+}
+apply plugin: "com.marklogic.ml-data-hub"
+
+repositories {
+    mavenCentral()
+    if (project.hasProperty("testing")) {
+        mavenLocal()
+    }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    // Ensures that the marklogic-unit-test modules are loaded into the modules database when the application is deployed
+    mlBundle "com.marklogic:marklogic-unit-test-modules:1.1.0"
+
+    // Makes the DHF JUnit5 library available for tests
+    if (project.hasProperty("testing")) {
+        testImplementation "com.marklogic:marklogic-data-hub-junit5:5.6-SNAPSHOT"
+    } else {
+        testImplementation "com.marklogic:marklogic-data-hub-junit5:5.5.0"
+    }
+
+    // Adds logging support for tests
+    testImplementation "ch.qos.logback:logback-classic:1.2.3"
+
+    mlcp "com.marklogic:mlcp:10.0.6.2"
+    mlcp files("lib")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task createDictionaries(type: com.marklogic.gradle.task.ServerEvalTask) {
+  description 'Runs SJS to create first and last name dictionaries'
+  javascript = '''
+  declareUpdate();
+  const spell = require("/MarkLogic/spell");
+  const dict = spell.makeDictionary([]);
+  const permissions = [
+		xdmp.permission("data-hub-developer", "update"),
+		xdmp.permission("data-hub-operator", "read"),
+    xdmp.permission("data-hub-operator", "update")
+	]
+  const collections = [
+    "http://marklogic.com/xdmp/documents",
+    "http://marklogic.com/xdmp/spell"
+  ]
+  xdmp.documentInsert('/customDictionary/FirstName.json', dict, permissions, collections)
+  xdmp.documentInsert('/customDictionary/LastName.json', dict, permissions, collections)
+  '''
+}
+
+task loadImages(type: com.marklogic.gradle.task.MlcpTask) {
+  doFirst {
+    database = mlFinalDbName
+    port = mlFinalPort.toInteger()
+  }
+  classpath = configurations.mlcp
+  command = "IMPORT"
+  args = [
+      "-input_file_path", "$project.projectDir/data/images/",
+      "-output_collections", "binaries",
+      "-output_permissions", "data-hub-operator,read",
+      "-document_type", "binary",
+      "-output_uri_replace", ".*data,''",
+      "-modules_root", "/",
+  ]
+}
+
+task resetDBs(type: com.marklogic.gradle.task.ServerEvalTask) {
+  javascript = 'xdmp.invoke("/envision/system/resetSystem.sjs")'
+}
+
+
+
+
+loadImages.mustRunAfter resetDBs
+loadImages.mustRunAfter mlLoadModules
+createDictionaries.mustRunAfter resetDBs
+createDictionaries.mustRunAfter mlLoadModules
+
+import com.marklogic.client.io.DocumentMetadataHandle
+import com.marklogic.client.io.StringHandle
+task createUsers(type: com.marklogic.gradle.task.HubTask) {
+  doFirst {
+    def file = new File("data/users/drsmith.json")
+    if (file.exists()) {
+      def meta = new DocumentMetadataHandle()
+      meta.getCollections().addAll("http://marklogic.com/envision/usr");
+      getFinalClient().newDocumentManager().write("/envision/users/7fb10240d038b6b050b9fac12f56034d.json", meta, new StringHandle(file.text))
+    }
+
+    file = new File("data/users/mrjones.json")
+    if (file.exists()) {
+      def meta = new DocumentMetadataHandle()
+      meta.getCollections().addAll("http://marklogic.com/envision/usr");
+      getFinalClient().newDocumentManager().write("/envision/users/f643f7e9044d5866aad54eeb5fb29e37.json", meta, new StringHandle(file.text))
+    }
+  }
+}
+createUsers.mustRunAfter mlLoadModules
+
+import com.marklogic.client.io.DocumentMetadataHandle;
+task createRedactionRules(type: com.marklogic.gradle.task.HubTask) {
+  doFirst {
+    def file = new File("data/redactionRules/redactionRules2Roles.json")
+    if (file.exists()) {
+      def meta = new DocumentMetadataHandle()
+      meta.getCollections().addAll("redactionRules");
+		  meta.getPermissions().add("rest-reader", DocumentMetadataHandle.Capability.READ);
+      getFinalClient().newDocumentManager().write("/redactionRules2Roles.json", meta, new StringHandle(file.text))
+    }
+  }
+}
+createRedactionRules.mustRunAfter mlLoadModules
+
+
+mlLoadModules.mustRunAfter mlDeploy
+
+
+task resetDemo {
+  dependsOn resetDBs
+  dependsOn loadImages
+  dependsOn createDictionaries
+  dependsOn createRedactionRules
+}
+
+task install {
+  dependsOn mlDeploy
+  dependsOn mlLoadModules
+  dependsOn createUsers
+  dependsOn createRedactionRules
+  dependsOn loadImages
+  dependsOn createDictionaries
+}
+
+ext {
+  // Configuration for loading the reference data documents under src/main/ml-data
+  mlAppConfig.dataConfig.databaseName = mlStagingDbName
+  // mlAppConfig.dataConfig.permissions = "flow-operator-role,read,flow-developer-role,update"
+}

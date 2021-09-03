@@ -1,0 +1,36 @@
+{
+  "stepId" : "ingestCuram-ingestion",
+  "name" : "ingestCuram",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "fileLocations" : {
+    "inputFileType" : "xml",
+    "inputFilePath" : "./data/Member-CURAM",
+    "outputURIReplacement" : ".*data, '/curam/member'",
+    "separator" : ""
+  },
+  "stepNumber" : "1",
+  "inputFileType" : "xml",
+  "inputFilePath" : "./data/Member-CURAM",
+  "outputURIReplacement" : ".*data, '/curam/member'",
+  "separator" : "",
+  "headers" : {
+    "sources" : [ {
+      "name" : "Curam"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "provenanceGranularityLevel" : "coarse",
+  "collections" : [ "ingestCuram" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "outputFormat" : "xml",
+  "targetDatabase" : "data-hub-STAGING",
+  "additionalCollections" : [ ],
+  "targetFormat" : "xml",
+  "sourceFormat" : "xml"
+}

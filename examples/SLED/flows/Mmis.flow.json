@@ -1,0 +1,17 @@
+{
+  "name" : "Mmis",
+  "description" : "Ingest MMIS CSV dataset",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "stepId" : "loadMMIS-ingestion"
+    },
+    "2" : {
+      "stepId" : "mapMMIS-mapping"
+    }
+  }
+}

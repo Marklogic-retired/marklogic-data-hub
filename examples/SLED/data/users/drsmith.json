@@ -1,0 +1,9 @@
+{
+  "email": "DrSmith",
+  "name": "Dr. Smith",
+  "token": null,
+  "tokenExpiry": null,
+  "resetToken": null,
+  "resetTokenExpiry": null,
+  "validated": true
+  }

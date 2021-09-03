@@ -1,0 +1,179 @@
+{
+  "info" : {
+    "title" : "Member",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/envision/",
+    "description" : "Member Entity Final DB"
+  },
+  "definitions" : {
+    "Member" : {
+      "primaryKey" : "uid",
+      "required" : [ "uid" ],
+      "pii" : [ "SSN", "Address1", "Address2", "idCard", "DOB", "FullAddress", "MiddleName", "DayOfDOB", "MonthOfDOB", "YearOfDOB", "origAddress1", "FirstLastNameSorted", "Suffix" ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "SSN" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "FullName" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "FirstName" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "LastName" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Address1" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Address2" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "idCard" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Gender" : {
+          "datatype" : "string",
+          "description" : "gender",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "DataSource" : {
+          "datatype" : "string",
+          "description" : "Input Data Source",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "SourceFormat" : {
+          "datatype" : "string",
+          "description" : "Format of Input Data Source",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "DOB" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Race" : {
+          "datatype" : "string",
+          "description" : "race",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "FullAddress" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "MiddleName" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "IsDependent" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "DayOfDOB" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "MonthOfDOB" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "YearOfDOB" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "origAddress1" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Quadrant" : {
+          "datatype" : "string",
+          "description" : "quadrant",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "origQuadrant" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "PrimaryInsuredId" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "FirstLastNameSorted" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "PrimaryInsuredRelationship" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "ScenarioDesc" : {
+          "datatype" : "string",
+          "description" : "ScenarioDesc",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "ScenarioNumber" : {
+          "datatype" : "string",
+          "description" : "ScenarioNumber",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "Suffix" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Zip4" : {
+          "datatype" : "string",
+          "description" : "zip4",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "Zip5" : {
+          "datatype" : "string",
+          "description" : "zip5",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "uid" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "memberID" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "hasDependent" : {
+          "datatype" : "array",
+          "facetable": false,
+          "sortable": false,
+          "items" : {
+			"datatype": "string",
+            "relatedEntityType" : "http://marklogic.com/envision/Member-0.0.1/Member",
+            "joinPropertyName": "SSN"
+            }
+        },
+        "hasClaim" : {
+          "datatype" : "array",
+          "facetable": false,
+          "sortable": false,
+          "items" : {
+			"datatype": "string",
+            "relatedEntityType" : "http://marklogic.com/envision/ClaimFHIR-0.0.1/ClaimFHIR",
+            "joinPropertyName": "identifier"
+          }
+        }
+      }
+    }
+  }
+}

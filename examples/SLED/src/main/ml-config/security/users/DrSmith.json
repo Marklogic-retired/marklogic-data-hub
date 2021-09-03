@@ -1,0 +1,24 @@
+{
+  "user-name": "DrSmith",
+  "description": "Doctor with PII reading permission",
+  "password": "demo",
+  "role": [
+    "envision",
+    "data-hub-operator",
+    "hub-central-operator",
+    "hub-central-developer",
+    "pii-reader",
+    "member-reader",
+    "redaction-user"
+  ],
+  "permission": [
+    {
+      "role-name": "envision",
+      "capability": "update"
+    },
+    {
+      "role-name": "envision",
+      "capability": "read"
+    }
+  ]
+}

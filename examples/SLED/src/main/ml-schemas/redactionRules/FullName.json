@@ -1,0 +1,10 @@
+{
+    "rule": {
+      "description": "Remove the fullAddress which is only for SMT matching",
+      "path": "//FullName",
+      "method": {
+        "function": "redactFullName",
+        "module": "/redaction/memberRedactionFunctions.sjs"
+    }
+    }
+  }

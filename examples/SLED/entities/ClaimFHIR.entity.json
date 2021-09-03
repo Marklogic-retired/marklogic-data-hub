@@ -1,0 +1,98 @@
+{
+  "info" : {
+    "title" : "ClaimFHIR",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/envision/"
+  },
+  "definitions" : {
+    "ClaimFHIR" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "created" : {
+          "datatype" : "date",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "diagnosis" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "diagnosisDescription" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "enterer" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "facility" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "identifier" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "insurer" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "patient" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "procedure" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "provider" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "status" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "total" : {
+          "datatype" : "decimal",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "type" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "use" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "patientZip" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "hasItem" : {
+          "datatype" : "array",
+          "facetable": false,
+          "sortable": false,
+          "items" : {
+			"datatype": "string",
+            "relatedEntityType" : "http://marklogic.envision.com/ClaimItem-0.0.1/ClaimItem",
+            "joinPropertyName": "claimId"
+          }
+        }
+      }
+    }
+  }
+}

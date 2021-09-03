@@ -1,0 +1,44 @@
+{
+  "Member" : {
+    "x" : 124,
+    "y" : 215,
+    "width" : 719,
+    "height" : 476,
+    "vertices" : { }
+  },
+  "RawMember" : {
+    "x" : 579,
+    "y" : 29,
+    "width" : 583,
+    "height" : 517,
+    "vertices" : { }
+  },
+  "Provider" : {
+    "x" : 125,
+    "y" : 10,
+    "width" : 517,
+    "height" : 167,
+    "vertices" : { }
+  },
+  "patient" : {
+    "x" : 106,
+    "y" : 26,
+    "width" : 423,
+    "height" : 172,
+    "vertices" : { }
+  },
+  "ClaimFHIR" : {
+    "x" : 803,
+    "y" : 3,
+    "width" : 595,
+    "height" : 393,
+    "vertices" : { }
+  },
+  "ClaimItem" : {
+    "x" : 803,
+    "y" : 369,
+    "width" : 444,
+    "height" : 356,
+    "vertices" : { }
+  }
+}

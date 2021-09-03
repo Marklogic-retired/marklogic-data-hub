@@ -1,0 +1,50 @@
+{
+  "name" : "MapProvider",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"IngestProvider\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "MapProvider", "Provider" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "http://marklogic.com/envision/Provider-0.0.1/Provider",
+  "properties" : {
+    "Zip" : {
+      "sourcedFrom" : "Zip"
+    },
+    "ProviderName" : {
+      "sourcedFrom" : "ProviderName"
+    },
+    "NPI" : {
+      "sourcedFrom" : "NPI"
+    },
+    "State" : {
+      "sourcedFrom" : "State"
+    },
+    "DataGenesis" : {
+      "sourcedFrom" : "DataGenesis"
+    },
+    "Address2" : {
+      "sourcedFrom" : "Address2"
+    },
+    "DataType" : {
+      "sourcedFrom" : "DataType"
+    },
+    "Address1" : {
+      "sourcedFrom" : "Address1"
+    },
+    "City" : {
+      "sourcedFrom" : "City"
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "MapProvider-mapping",
+  "lastUpdated" : "2021-06-30T23:49:50.140246-07:00"
+}

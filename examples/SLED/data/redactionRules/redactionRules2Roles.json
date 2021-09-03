@@ -1,0 +1,22 @@
+{
+  "rules": [
+    {
+      "redactionRuleCollection": "redactionRule",
+      "rolesThatDoNotUseRedaction": [
+        "member-reader"
+      ]
+    },
+    {
+      "redactionRuleCollection": "claim-redaction",
+      "rolesThatDoNotUseRedaction": [
+        "member-reader"
+      ]
+    },
+    {
+      "redactionRuleCollection": "member-redaction",
+      "rolesThatDoNotUseRedaction": [
+        "member-reader"
+      ]
+    }
+  ]
+}
