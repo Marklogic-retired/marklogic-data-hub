@@ -39,7 +39,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should("be.gte", 5);

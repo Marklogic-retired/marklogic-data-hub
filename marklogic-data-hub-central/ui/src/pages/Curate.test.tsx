@@ -29,7 +29,6 @@ describe("Curate component", () => {
   test("Verify readMapping authority can only view mapping configs and settings", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMapping"]);
-    const mockStepSettingsOpen = customerMappingStep.setStepOpenOptions;
 
     const {getByText, getAllByText, queryByText, getByTestId, queryByTestId} = await render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}>
@@ -54,7 +53,6 @@ describe("Curate component", () => {
 
     // test edit
     fireEvent.click(getByTestId("Mapping3-edit"));
-    expect(await (waitForElement(() => (mockStepSettingsOpen)))).toHaveBeenCalledWith({isEditing: true, openStepSettings: true}); //Indicates that the mapping settings modal is opened.
     wait(async () => {
       expect(await (waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
       expect(getAllByText("Save")[0]).toBeDisabled();
@@ -68,7 +66,6 @@ describe("Curate component", () => {
   test("Verify writeMapping authority can edit mapping configs and settings", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMapping", "writeMapping"]);
-    const mockStepSettingsOpen = customerMappingStep.setStepOpenOptions;
 
     const {getByText, queryByText, getByTestId} = await render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}>
@@ -93,7 +90,6 @@ describe("Curate component", () => {
 
     // test edit
     fireEvent.click(getByTestId("Mapping1-edit"));
-    expect(await (waitForElement(() => (mockStepSettingsOpen)))).toHaveBeenCalledWith({isEditing: true, openStepSettings: true}); //Indicates that the mapping settings modal is opened.
     wait(async () => {
       expect(await (waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
       expect(getByTestId("mapping-dialog-save")).not.toBeDisabled();
@@ -101,9 +97,13 @@ describe("Curate component", () => {
     });
     // test delete
     fireEvent.click(getByTestId("Mapping1-delete"));
-    fireEvent.click(getByText("No"));
+    await wait(() => {
+      fireEvent.click(getByText("No"));
+    });
     fireEvent.click(getByTestId("Mapping1-delete"));
-    fireEvent.click(getByText("Yes"));
+    await wait(() => {
+      fireEvent.click(getByText("Yes"));
+    });
     expect(axiosMock.delete).toHaveBeenNthCalledWith(1, "/api/steps/mapping/Mapping1");
   });
 

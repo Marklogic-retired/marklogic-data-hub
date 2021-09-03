@@ -26,6 +26,7 @@
     color: #b32424;
     font-size: 14px;
     cursor: pointer;
+    display: flex;
   }
   .deleteIcon:hover {
     color: var(--hoverColor);
