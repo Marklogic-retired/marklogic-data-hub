@@ -83,7 +83,7 @@ describe("Tiles View component tests for Developer user", () => {
   });
 
   test("Verify Curate tile displays from toolbar", async () => {
-    const {getByLabelText, getByText, queryByText} = render(<Router history={history}>
+    const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}>
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <SearchContext.Provider value={setViewCurateFunction}>
           <TilesView id="curate"/>
@@ -107,8 +107,8 @@ describe("Tiles View component tests for Developer user", () => {
 
     fireEvent.mouseOver(getByText("Mapping3"));
 
-    expect(getByText("Add step to a new flow"));
-    expect(getByText("Add step to an existing flow"));
+    expect(getByTestId("Customer-Mapping3-step")).toHaveTextContent("Add step to a new flow");
+    expect(getByTestId("Customer-Mapping3-step")).toHaveTextContent("Add step to an existing flow");
   });
 
   test("Verify Load tile displays from toolbar with readIngestion authority", async () => {
@@ -240,7 +240,7 @@ describe("Tiles View component tests for Developer user", () => {
     expect(getByText("Save")).not.toBeDisabled();
     fireEvent.click(getByText("Cancel"));
     // test run
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(getByTestId("runStep-1")).toBeInTheDocument();
   });
 
@@ -279,7 +279,7 @@ describe("Tiles View component tests for Developer user", () => {
     fireEvent.click(getByText("Cancel"));
 
     // test run
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(getByTestId("runStepDisabled-1")).toBeInTheDocument();
     expect(getByTestId("runStepDisabled-2")).toBeInTheDocument();
     expect(getByTestId("runStepDisabled-3")).toBeInTheDocument();
@@ -305,7 +305,7 @@ describe("Tiles View component tests for Developer user", () => {
 
     await wait(() => expect(getByLabelText("icon-run")).toBeInTheDocument());
     // test run
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(getByTestId("runStep-1")).toBeInTheDocument();
     expect(getByTestId("runStep-2")).toBeInTheDocument();
     expect(getByTestId("runStep-3")).toBeInTheDocument();

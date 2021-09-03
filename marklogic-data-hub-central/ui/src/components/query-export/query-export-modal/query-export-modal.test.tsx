@@ -8,6 +8,29 @@ describe("Query Export Component", () => {
   let columns = ["id", "firstName", "lastName", "age"];
   let columnsNested = ["id", "firstName", "lastName", "age", "phoneNumber.work"];
 
+  let tableColumns = [
+    {
+      "title": "id",
+      "dataIndex": "id",
+      "key": "id"
+    },
+    {
+      "title": "firstName",
+      "dataIndex": "firstName",
+      "key": "firstName"
+    },
+    {
+      "title": "lastName",
+      "dataIndex": "lastName",
+      "key": "lastName"
+    },
+    {
+      "title": "age",
+      "dataIndex": "age",
+      "key": "age"
+    }
+  ];
+
   test("Verify Query Export Modal Dialog renders", () => {
     const {getByTestId, getByText, queryByText} = render(<QueryExportModal exportModalVisibility={true} columns={columns} />);
     expect(queryByText("export-warning")).toBeNull();
@@ -62,12 +85,12 @@ describe("Query Export Component", () => {
   });
 
   test("Verify object/array warning displays", () => {
-    const {getByTestId} = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} tableColumns={columns}/>);
+    const {getByTestId} = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} tableColumns={tableColumns}/>);
     expect(getByTestId("export-warning")).toBeInTheDocument();
   });
 
-  xtest("Verify export preview renders", () => {
-    const {getByTestId, getByText} = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} tableColumns={columns} />);
+  test("Verify export preview renders", () => {
+    const {getByTestId, getByText} = render(<QueryExportModal exportModalVisibility={true} columns={columnsNested} hasStructured={true} tableColumns={tableColumns} />);
     fireEvent.click(getByText("Show Preview"));
     expect(getByTestId("export-preview-table")).toBeInTheDocument();
   });

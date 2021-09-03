@@ -63,11 +63,11 @@ describe("Flows component", () => {
       "sourceFormat": "xml"}
     ]
     }];
-    const {getByText, getByLabelText} = render(
+    const {getByText} = render(
       <Router history={history}>
         <Flows {...data.flowProps} flows={allKindsOfIngestInAFlow} />
       </Router>);
-    userEvent.click(getByLabelText("icon: right"));
+    userEvent.click(document.querySelector(".accordion-button"));
     ["CSV", "BIN", "TXT", "JSON", "XML"].forEach(format => {
       expect(getByText(format)).toBeInTheDocument();
       expect(getByText(format)).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
@@ -84,7 +84,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = getByLabelText("icon: right");
+    let flowButton = document.querySelector(".accordion-button");
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow")).toBeInTheDocument();
     expect(getByLabelText("deleteFlow-"+flowName)).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = getByLabelText("icon: right");
+    let flowButton = document.querySelector(".accordion-button");
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow-disabled")).toBeInTheDocument();
     expect(getByLabelText("deleteFlowDisabled-"+flowName)).toBeInTheDocument();
@@ -153,7 +153,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = getByLabelText("icon: right");
+    let flowButton = document.querySelector(".accordion-button");
     expect(getByText(flowName)).toBeInTheDocument();
     expect(getByLabelText("create-flow-disabled")).toBeInTheDocument();
     expect(getByLabelText("deleteFlowDisabled-"+flowName)).toBeInTheDocument();
@@ -227,7 +227,7 @@ describe("Flows component", () => {
 
     let i : number;
 
-    userEvent.click(getByLabelText("icon: right"));
+    userEvent.click(document.querySelector(".accordion-button"));
     for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
       const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
       expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild.href).toBe(pathname);
@@ -246,7 +246,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = getByLabelText("icon: right");
+    let flowButton = document.querySelector(".accordion-button");
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
 
@@ -267,7 +267,7 @@ describe("Flows component", () => {
   });
 
   it("user without write privileges can't reorder a flow", () => {
-    const {getByText, getByLabelText, queryByLabelText} = render(
+    const {getByText, queryByLabelText} = render(
       <Router history={history}><Flows
         {...flowsProps}
         canReadFlow={true}
@@ -276,7 +276,7 @@ describe("Flows component", () => {
       /></Router>
     );
 
-    let flowButton = getByLabelText("icon: right");
+    let flowButton = document.querySelector(".accordion-button");
     fireEvent.click(flowButton);
     expect(getByText(flowStepName)).toBeInTheDocument();
     expect(queryByLabelText("rightArrow-"+flowStepName)).not.toBeInTheDocument();
@@ -292,7 +292,7 @@ describe("Flows component", () => {
         hasOperatorRole={true}
       /></Router>
     );
-    let flowButton = getByLabelText("icon: right");
+    let flowButton = document.querySelector(".accordion-button");
     fireEvent.click(flowButton);
 
     const rightArrowButton = getByLabelText("rightArrow-"+flowStepName);

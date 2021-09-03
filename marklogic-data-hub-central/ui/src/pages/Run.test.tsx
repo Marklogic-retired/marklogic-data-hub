@@ -75,7 +75,7 @@ describe("Verify links back to step details", () => {
 
     // Click expand icon
     await act(() => {
-      fireEvent.click(getByLabelText("icon: right"));
+      fireEvent.click(document.querySelector(".accordion-button"));
     });
     const implementedStepTypes = ["ingestion", "mapping", "custom"];
     steps.forEach((step) => {
@@ -111,7 +111,7 @@ describe("Verify links back to step details", () => {
     let steps = data.flows.data[0].steps;
     // Click expand icon
     await act(() => {
-      fireEvent.click(getByLabelText("icon: right"));
+      fireEvent.click(document.querySelector(".accordion-button"));
     });
     const implementedStepTypes = ["ingestion", "mapping", "custom"];
     steps.forEach((step) => {
@@ -140,11 +140,11 @@ describe("Verify load step failures in a flow", () => {
   test("Verify errors when flow with Load step fails with jobStatus finished_with_errors", async() => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve(data.response)));
-    const {getByText, getByLabelText, getAllByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider
+    const {getByText, getByLabelText, getAllByLabelText, getAllByText} = await render(<MemoryRouter><AuthoritiesContext.Provider
       value={mockDevRolesService}><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     let runButton = await getByLabelText("runStep-failedIngest");
     fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]); //temporarily fixing for DHFPROD-7820, change back to 1 eventually
     await waitForElement(() => getByText(RunToolTips.ingestionStep));
@@ -171,10 +171,11 @@ describe("Verify load step failures in a flow", () => {
     expect(await(waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "The ingestion step failedIngest completed with errors");
     })))).toBeInTheDocument();
-    expect(getByText("Message:")).toBeInTheDocument();
-    expect(getByText("Details:")).toBeInTheDocument();
-    expect(getByText("URI:")).toBeInTheDocument();
-    expect(getByText("/test/data/nestedPerson1.json")).toBeInTheDocument();
+
+    expect(getAllByText("Message:")[0]).toBeInTheDocument();
+    expect(getAllByText("Details:")[0]).toBeInTheDocument();
+    expect(getAllByText("URI:")[0]).toBeInTheDocument();
+    expect(getAllByText("/test/data/nestedPerson1.json")[0]).toBeInTheDocument();
 
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
     expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
@@ -191,7 +192,7 @@ describe("Verify load step failures in a flow", () => {
     const {getByText, getByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
 
     let upload;
     upload = document.querySelector("#fileUpload");
@@ -237,7 +238,7 @@ describe("Verify step running", () => {
     let runButton;
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
 
     let upload;
     upload = document.querySelector("#fileUpload");
@@ -330,7 +331,7 @@ describe("Verify step running", () => {
     let runButton;
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
 
     let upload;
     upload = document.querySelector("#fileUpload");
@@ -429,7 +430,7 @@ describe("Verify step display", () => {
     const {getByText, getByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(await(waitForElement(() => getByText("XML")))).toBeInTheDocument();
 
     expect(await(waitForElement(() => getByText("loadXML")))).toBeInTheDocument();
@@ -447,10 +448,10 @@ describe("Verify step display", () => {
 
   test("Verify a mapping step's notification shows up correctly", async () => {
     mocks.runXMLAPI(axiosMock);
-    const {getByText, getByLabelText, getAllByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, getByLabelText, getAllByLabelText, getAllByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(await(waitForElement(() => getByText("Mapping1")))).toBeInTheDocument();
     let notification = await(waitForElement(() => getByLabelText("icon: exclamation-circle")));
     expect(notification).toBeInTheDocument();
@@ -467,9 +468,9 @@ describe("Verify step display", () => {
     })))).toBeInTheDocument();
     expect(getAllByLabelText("icon: exclamation-circle").length).toEqual(2);
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(getByText("Message:")).toBeInTheDocument();
-    expect(getByText("Details:")).toBeInTheDocument();
-    expect(getByText("URI:")).toBeInTheDocument();
+    expect(getAllByText("Message:")[0]).toBeInTheDocument();
+    expect(getAllByText("Details:")[0]).toBeInTheDocument();
+    expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByText("Error 2")).toBeInTheDocument();
     expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
@@ -650,7 +651,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     let steps = data.flows.data[0].steps;
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
 
     //Mapping step failed error
     fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
@@ -696,11 +697,11 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
   test("Verify errors when a flow with mapping/match/merge/mastering step fails with jobStatus finished_with_errors", async () => {
     mocks.runErrorsAPI(axiosMock);
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve(data.response)));
-    const {getByText, getByLabelText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, getByLabelText, getAllByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService}><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
     let steps = data.flows.data[0].steps;
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
 
     //Mapping step error
     fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
@@ -710,9 +711,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(getByText("Message:")).toBeInTheDocument();
-    expect(getByText("Details:")).toBeInTheDocument();
-    expect(getByText("URI:")).toBeInTheDocument();
+    expect(getAllByText("Message:")[0]).toBeInTheDocument();
+    expect(getAllByText("Details:")[0]).toBeInTheDocument();
+    expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     //expect(getByText("Error 2")).toBeInTheDocument();
     expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
@@ -732,9 +733,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(getByText("Message:")).toBeInTheDocument();
-    expect(getByText("Details:")).toBeInTheDocument();
-    expect(getByText("URI:")).toBeInTheDocument();
+    expect(getAllByText("Message:")[0]).toBeInTheDocument();
+    expect(getAllByText("Details:")[0]).toBeInTheDocument();
+    expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByText("Error 2")).toBeInTheDocument();
     //debug();
@@ -748,9 +749,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(getByText("Message:")).toBeInTheDocument();
-    expect(getByText("Details:")).toBeInTheDocument();
-    expect(getByText("URI:")).toBeInTheDocument();
+    expect(getAllByText("Message:")[0]).toBeInTheDocument();
+    expect(getAllByText("Details:")[0]).toBeInTheDocument();
+    expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByText("Error 2")).toBeInTheDocument();
     fireEvent.click(getByText("Close"));
@@ -763,9 +764,9 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
     })))).toBeInTheDocument();
     expect(getByLabelText("icon: exclamation-circle")).toBeInTheDocument();
     expect(document.querySelector("#error-list")).toHaveTextContent("Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below");
-    expect(getByText("Message:")).toBeInTheDocument();
-    expect(getByText("Details:")).toBeInTheDocument();
-    expect(getByText("URI:")).toBeInTheDocument();
+    expect(getAllByText("Message:")[0]).toBeInTheDocument();
+    expect(getAllByText("Details:")[0]).toBeInTheDocument();
+    expect(getAllByText("URI:")[0]).toBeInTheDocument();
     // Error 2 is present
     expect(getByText("Error 2")).toBeInTheDocument();
     fireEvent.click(getByText("Close"));
@@ -788,7 +789,7 @@ describe("Verify map/match/merge/master step failures in a flow", () => {
 
     let steps = data.flows.data[0].steps;
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     //Mapping step error
     fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
 
@@ -824,7 +825,7 @@ describe("Verify Add Step function", () => {
     </MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
 
     // Click to open Add Step menu and click a step
@@ -853,7 +854,7 @@ describe("Verify Add Step function", () => {
     </MemoryRouter>);
 
     // Click disclosure icon
-    fireEvent.click(getByLabelText("icon: right"));
+    fireEvent.click(document.querySelector(".accordion-button"));
     expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
 
     // Click Add Step menu
