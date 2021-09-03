@@ -49,9 +49,9 @@ describe("Sidebar createdOn face time window dropdown", () => {
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
     />);
-    expect(document.querySelector("#hub-properties div")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
     userEvent.click(getByText("Hub Properties"));
-    expect(document.querySelector("#hub-properties div")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
   });
 
   test("Verify that entity properties is expanded when entity is selected", () => {
@@ -62,12 +62,12 @@ describe("Sidebar createdOn face time window dropdown", () => {
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
     />);
-    expect(document.querySelector("#entity-properties div")).toHaveAttribute("aria-expanded", "true");
-    expect(document.querySelector("#hub-properties div")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#entity-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
     userEvent.click(getByText("Entity Properties"));
     userEvent.click(getByText("Hub Properties"));
-    expect(document.querySelector("#entity-properties div")).toHaveAttribute("aria-expanded", "false");
-    expect(document.querySelector("#hub-properties div")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#entity-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
   });
 
   test("Verify entity properties, marked as facetable in entityModel, are rendered properly as facets", () => {
@@ -130,18 +130,20 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setDatabasePreferences={jest.fn()}
       />
     );
-    expect(document.querySelector("#database [data-icon=down]")).toBeInTheDocument();
-    expect(document.querySelector("#database [data-icon=down]")).not.toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#database .accordion-collapse")).not.toHaveClass("collapsed");
     userEvent.click(getByText("Database"));
-    expect(document.querySelector("#database [data-icon=down]")).toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#database .accordion-collapse")).not.toHaveClass("collapse");
 
-    expect(document.querySelector("#hub-properties [data-icon=down]")).toBeInTheDocument();
-    expect(document.querySelector("#hub-properties [data-icon=down]")).not.toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#hub-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#hub-properties .accordion-collapse")).not.toHaveClass("collapsed");
     userEvent.click(getByText("Hub Properties"));
-    expect(document.querySelector("#hub-properties [data-icon=down]")).toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#hub-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#hub-properties .accordion-collapse")).not.toHaveClass("collapse");
   });
 
-  test("Collapse/Expand carets render properly for database, entity and hub properties", () => {
+  test("Collapse/Expand carets render properly for database, entity and hub properties", async () => {
     const {getByText} = render(
       <Sidebar
         entityDefArray={entityDefArray}
@@ -153,18 +155,23 @@ describe("Sidebar createdOn face time window dropdown", () => {
         setDatabasePreferences={jest.fn()}
       />
     );
-    expect(document.querySelector("#database [data-icon=down]")).toBeInTheDocument();
-    expect(document.querySelector("#database [data-icon=down]")).not.toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#database .accordion-collapse")).not.toHaveClass("collapsed");
     userEvent.click(getByText("Database"));
-    expect(document.querySelector("#database [data-icon=down]")).toHaveStyle("transform: rotate(-90deg);");
-    expect(document.querySelector("#entity-properties [data-icon=down]")).toBeInTheDocument();
-    expect(document.querySelector("#entity-properties [data-icon=down]")).not.toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#database .accordion-collapse")).not.toHaveClass("collapse");
+
+    expect(document.querySelector("#entity-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#entity-properties .accordion-collapse")).not.toHaveClass("collapsed");
     userEvent.click(getByText("Entity Properties"));
-    expect(document.querySelector("#entity-properties [data-icon=down]")).toHaveStyle("transform: rotate(-90deg);");
-    expect(document.querySelector("#hub-properties [data-icon=down]")).toBeInTheDocument();
-    expect(document.querySelector("#hub-properties [data-icon=down]")).toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#entity-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#entity-properties .accordion-collapse")).not.toHaveClass("collapse");
+
+    expect(document.querySelector("#hub-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "false");
+    expect(document.querySelector("#hub-properties .accordion-collapse")).toHaveClass("collapse");
     userEvent.click(getByText("Hub Properties"));
-    expect(document.querySelector("#hub-properties [data-icon=down]")).not.toHaveStyle("transform: rotate(-90deg);");
+    expect(document.querySelector("#hub-properties .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
+    expect(document.querySelector("#hub-properties .accordion-collapse")).not.toHaveClass("collapse");
   });
 
   test("Verify Include Data Hub Artifacts switch is rendered properly and user is able to toggle it", () => {

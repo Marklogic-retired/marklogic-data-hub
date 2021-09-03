@@ -100,9 +100,10 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
-    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
+    cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse");
+    cy.get("#personJSON .accordion-button").click();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item ant-collapse-item-active");
+    cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse show");
   });
 });

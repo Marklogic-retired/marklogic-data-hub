@@ -121,7 +121,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.verifyStepAddedToFlow("Load", stepName, flowName);
   });
   it("Delete the step and Navigate back to load step", () => {
-    runPage.deleteStep(stepName).click();
+    runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -140,11 +140,11 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     tiles.closeRunMessage();
   });
   it("Run the flow with JSON input", {defaultCommandTimeout: 120000}, () => {
-    runPage.runStep(stepName);
+    runPage.runStep(stepName, flowName);
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
-    runPage.deleteStep(stepName).click();
+    runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     //Delete the flow
@@ -174,7 +174,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.addStep(flowName1);
     cy.wait(1000);
     runPage.addStepToFlow(stepName);
-    runPage.runStep(stepName);
+    runPage.runStep(stepName, flowName1);
     cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", stepName);
@@ -216,7 +216,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     tiles.closeRunMessage();
   });
   it("Delete the step and Navigate back to load step", () => {
-    runPage.deleteStep(stepName).click();
+    runPage.deleteStep(stepName, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();

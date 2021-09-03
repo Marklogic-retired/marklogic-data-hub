@@ -5,6 +5,8 @@ import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 
+let flowName= "testPersonXML";
+
 describe("Run Tile tests", () => {
 
   beforeEach(() => {
@@ -19,12 +21,11 @@ describe("Run Tile tests", () => {
 
   after(() => {
     cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
-    cy.deleteFlows("testPersonXML");
+    cy.deleteFlows(flowName);
     cy.resetTestUser();
   });
 
   it("can create flow and add steps to flow, should load xml merged document and display content", {defaultCommandTimeout: 120000}, () => {
-    const flowName = "testPersonXML";
     //Verify create flow and add all user-defined steps to flow via Run tile
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
@@ -32,25 +33,27 @@ describe("Run Tile tests", () => {
     loadPage.confirmationOptions("Save").click();
     runPage.addStep(flowName);
     runPage.addStepToFlow("loadPersonXML");
-    runPage.verifyStepInFlow("Load", "loadPersonXML");
+    runPage.verifyStepInFlow("Load", "loadPersonXML", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("mapPersonXML");
-    runPage.verifyStepInFlow("Map", "mapPersonXML");
+    runPage.verifyStepInFlow("Map", "mapPersonXML", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("match-xml-person");
-    runPage.verifyStepInFlow("Match", "match-xml-person");
+    runPage.verifyStepInFlow("Match", "match-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("merge-xml-person");
-    runPage.verifyStepInFlow("Merge", "merge-xml-person");
+    runPage.verifyStepInFlow("Merge", "merge-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("master-person");
-    runPage.verifyStepInFlow("Master", "master-person");
+    runPage.verifyStepInFlow("Master", "master-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("generate-dictionary");
     //Verify scrolling, last step should still be visible in the flow panel
-    runPage.verifyStepInFlow("Custom", "generate-dictionary");
+    runPage.verifyStepInFlow("Custom", "generate-dictionary", flowName);
     //confirm the first load step is no longer visible because panel scrolled to the end
-    cy.findByText("loadPersonXML").should("not.be.visible");
+    cy.get("#testPersonXML").within(() => {
+      cy.findByText("loadPersonXML").should("not.be.visible");
+    });
 
     /* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
 
@@ -60,17 +63,17 @@ describe("Run Tile tests", () => {
     cy.get("#match-xml-person").click();
     cy.get("#merge-xml-person").click();
     cy.get("#master-person").click();
-    runPage.runFlow("testPersonXML");
+    runPage.runFlow(flowName);
     runPage.verifyFlowModalRunning("testPersonXML");
     cy.waitForAsyncRequest();
     runPage.getFlowStatusModal().type("{esc}");
-    runPage.clickSuccessCircleIcon("mapPersonXML");
+    runPage.clickSuccessCircleIcon("mapPersonXML", flowName);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
-    runPage.clickSuccessCircleIcon("match-xml-person");
+    runPage.clickSuccessCircleIcon("match-xml-person", flowName);
     cy.verifyStepRunResult("success", "Matching", "match-xml-person");
     tiles.closeRunMessage();
-    runPage.clickSuccessCircleIcon("merge-xml-person");
+    runPage.clickSuccessCircleIcon("merge-xml-person", flowName);
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
     tiles.closeRunMessage();
     runPage.openFlowStatusModal("testPersonXML");
@@ -85,7 +88,7 @@ describe("Run Tile tests", () => {
     runPage.verifyFlowModalRunning("testCustomFlow");
     runPage.getFlowStatusModal().type("{esc}");
     runPage.expandFlow("testCustomFlow");
-    runPage.clickSuccessCircleIcon("mapping-step");
+    runPage.clickSuccessCircleIcon("mapping-step", flowName);
     cy.verifyStepRunResult("success", "Custom", "mapping-step");
     tiles.closeRunMessage();
     runPage.openFlowStatusModal("testCustomFlow");
@@ -95,15 +98,15 @@ describe("Run Tile tests", () => {
     */
 
     //Run map,match and merge step for Person entity using xml documents
-    runPage.runStep("mapPersonXML");
+    runPage.runStep("mapPersonXML", flowName);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
-    runPage.runStep("match-xml-person");
+    runPage.runStep("match-xml-person", flowName);
     cy.verifyStepRunResult("success", "Matching", "match-xml-person");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
-    runPage.runStep("merge-xml-person");
+    runPage.runStep("merge-xml-person", flowName);
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
 
     //Navigate to explorer tile using the explorer link
@@ -126,11 +129,12 @@ describe("Run Tile tests", () => {
   });
 
   it("show all entity instances in Explorer after running mapping with related entities", {defaultCommandTimeout: 120000}, () => {
+    const flowName = "CurateCustomerWithRelatedEntitiesJSON";
     //expand flow
-    runPage.expandFlow("CurateCustomerWithRelatedEntitiesJSON");
+    runPage.expandFlow(flowName);
 
     //run mapping step
-    runPage.runStep("mapCustomersWithRelatedEntitiesJSON");
+    runPage.runStep("mapCustomersWithRelatedEntitiesJSON", flowName);
 
     cy.verifyStepRunResult("success", "Mapping", "mapCustomersWithRelatedEntitiesJSON");
     cy.waitForAsyncRequest();

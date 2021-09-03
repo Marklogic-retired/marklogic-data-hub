@@ -38,7 +38,7 @@ describe("Custom Ingestion", () => {
     cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
     cy.waitUntil(() => cy.contains("Custom"));
     cy.waitForAsyncRequest();
-    runPage.runStep(loadStep);
+    runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/test-1.json");
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", loadStep);

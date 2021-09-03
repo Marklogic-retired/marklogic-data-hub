@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {useLocation} from "react-router-dom";
-import {Collapse, Menu, Modal} from "antd";
+import {Menu, Modal} from "antd";
+import {Row, Col, Accordion, Card} from "react-bootstrap";
 import axios from "axios";
 import {createStep, updateStep, getSteps, deleteStep} from "../../api/steps";
 import {sortStepsByUpdated} from "../../util/conversionFunctions";
@@ -27,7 +28,6 @@ const EntityTiles = (props) => {
   const [customArtifactsWithoutEntity, setCustomArtifactsWithoutEntity] = useState<any[]>([]);
   const {canReadMapping, canWriteMapping} = props;
   //For accordian within entity tiles
-  const {Panel} = Collapse;
   const [requiresNoEntityTypeTile, setRequiresNoEntityTypeTile]  = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openStep, setOpenStep] = useState({});
@@ -419,55 +419,93 @@ const EntityTiles = (props) => {
   };
 
   // need special onChange for direct links to entity steps
-  const handleCollapseChange = (keys) => {
-    Array.isArray(keys) ? setActiveEntityTypes(keys):setActiveEntityTypes([keys]);
+  const handleAccordionChange = (key) => {
+    const tmpActiveEntityTypes = [...activeEntityTypes];
+    const index = tmpActiveEntityTypes.indexOf(key);
+    index !== -1 ? tmpActiveEntityTypes.splice(index, 1) : tmpActiveEntityTypes.push(key);
+    setActiveEntityTypes(tmpActiveEntityTypes);
     setOpenStep("");
   };
 
   return (
     <div id="entityTilesContainer" className={styles.entityTilesContainer}>
-
-      <Collapse activeKey={activeEntityTypes} onChange={handleCollapseChange} defaultActiveKey={locationEntityType}>
-        { Object.keys(props.entityModels).sort().map((entityType, index) => (
-          <Panel header={<span data-testid={entityType}>{entityType}</span>} key={entityModels[entityType].entityTypeId}>
-            <div className={styles.switchMapMaster}>
-              <Menu mode="horizontal" defaultSelectedKeys={["map-" + entityType]} selectedKeys={viewData}>
-                {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index, "map", entityType)}>
-                            Map
-                </Menu.Item>: null}
-                {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index, "match", entityType)}>
-                            Match
-                </Menu.Item>: null}
-                {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Merge`} key={`merge-${entityType}`} onClick={() => updateView(index, "merge", entityType)}>
-                            Merge
-                </Menu.Item>: null}
-                {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index, "custom", entityType)}>
-                            Custom
-                </Menu.Item>: null}
-              </Menu>
-            </div>
-            {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
-          </Panel>
-        ))}
-        {requiresNoEntityTypeTile  ?
-          <Panel id="customNoEntity" header={<span data-testid={"noEntityType"}>No Entity Type</span>} key="No Entity Type">
-            <div className={styles.customNoEntityTitle} aria-label={"customNoEntityTitle"}>Steps that are created outside Hub Central and are not associated with any entity type appear here. Hub Central only allows running these steps, not editing or deleting them.</div>
-            {props.canReadCustom ? <div className={styles.cardView}>
-              <CustomCard data={customArtifactsWithoutEntity}
-                flows={props.flows}
-                entityTypeTitle={/** entityType */""}
-                entityModel={/** props.entityModels[entityType] */""}
-                updateCustomArtifact={updateCustomArtifact}
-                canReadOnly={props.canReadCustom}
-                canReadWrite = {props.canWriteCustom}
-                canWriteFlow={props.canWriteFlow}
-                addStepToFlow={props.addStepToFlow}
-                addStepToNew={props.addStepToNew}
-                getArtifactProps={getCustomArtifactProps}
-              />
-            </div>: null}
-          </Panel>: null}
-      </Collapse>
+      { Object.keys(props.entityModels).sort().map((entityType, index) => (
+        <Accordion
+          id={entityType}
+          flush
+          className={"w-100"}
+          key={entityModels[entityType].entityTypeId}
+          activeKey={activeEntityTypes.includes(entityModels[entityType].entityTypeId) ? entityModels[entityType].entityTypeId : ""}
+          defaultActiveKey={locationEntityType.includes(entityModels[entityType].entityTypeId) ? entityModels[entityType].entityTypeId : ""}
+        >
+          <Accordion.Item eventKey={entityModels[entityType].entityTypeId}>
+            <Card>
+              <Card.Header className={"p-1 d-flex bg-white"}>
+                <Accordion.Button data-testid={entityType} onClick={() => handleAccordionChange(entityModels[entityType].entityTypeId)}>
+                  {entityType}
+                </Accordion.Button>
+              </Card.Header>
+              <Accordion.Body>
+                <Menu mode="horizontal" defaultSelectedKeys={[`map-${entityType}`]} selectedKeys={viewData}>
+                  {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index, "map", entityType)}>
+                              Map
+                  </Menu.Item>: null}
+                  {props.canReadMatchMerge ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index, "match", entityType)}>
+                              Match
+                  </Menu.Item>: null}
+                  {props.canReadMatchMerge ? <Menu.Item data-testid={`${entityType}-Merge`} key={`merge-${entityType}`} onClick={() => updateView(index, "merge", entityType)}>
+                              Merge
+                  </Menu.Item>: null}
+                  {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index, "custom", entityType)}>
+                              Custom
+                  </Menu.Item>: null}
+                </Menu>
+                {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
+              </Accordion.Body>
+            </Card>
+          </Accordion.Item>
+        </Accordion>
+      ))}
+      {requiresNoEntityTypeTile ?
+        <Accordion
+          flush
+          id="customNoEntity"
+          className={"w-100"}
+          key={"No Entity Type"}
+          activeKey={activeEntityTypes.includes("No Entity Type") ? "No Entity Type" : ""}
+          defaultActiveKey={locationEntityType.includes("No Entity Type") ? "No Entity Type" : ""}
+        >
+          <Accordion.Item eventKey={"No Entity Type"}>
+            <Card>
+              <Card.Header className={"p-1 d-flex bg-white"}>
+                <Accordion.Button data-testid={"noEntityType"} onClick={() => handleAccordionChange("No Entity Type")}>
+                  No Entity Type
+                </Accordion.Button>
+              </Card.Header>
+              <Accordion.Body>
+                <Row>
+                  <Col xs={12} className={"px-5"} aria-label={"customNoEntityTitle"}>
+                    Steps that are created outside Hub Central and are not associated with any entity type appear here. Hub Central only allows running these steps, not editing or deleting them.
+                  </Col>
+                </Row>
+                {props.canReadCustom ? <div className={styles.cardView}>
+                  <CustomCard data={customArtifactsWithoutEntity}
+                    flows={props.flows}
+                    entityTypeTitle={/** entityType */""}
+                    entityModel={/** props.entityModels[entityType] */""}
+                    updateCustomArtifact={updateCustomArtifact}
+                    canReadOnly={props.canReadCustom}
+                    canReadWrite = {props.canWriteCustom}
+                    canWriteFlow={props.canWriteFlow}
+                    addStepToFlow={props.addStepToFlow}
+                    addStepToNew={props.addStepToNew}
+                    getArtifactProps={getCustomArtifactProps}
+                  />
+                </div>: null}
+              </Accordion.Body>
+            </Card>
+          </Accordion.Item>
+        </Accordion> : null}
     </div>
   );
 
