@@ -1282,7 +1282,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         const dType = expanded ? text.slice(text.indexOf("-") + 1) : text;
         if (row.joinPropertyName && row.relatedEntityType) {
           let relatedEntityName = row.relatedEntityType.split("/").pop();
-          let tooltip = ModelingTooltips.foreignKey(relatedEntityName, row.joinPropertyName, text);
+          let tooltip = ModelingTooltips.foreignKeyMapping(relatedEntityName, row.joinPropertyName, text, props.entityTypeTitle, row.name);
           renderText =
           <span>
             {renderText = renderText.concat(" (" + relatedEntityName + ")")}

@@ -104,7 +104,7 @@ describe("Add Edit Relationship component", () => {
       />
     );
     expect(getByText("Add a Relationship")).toBeInTheDocument();
-    expect(getByLabelText("header-message")).toHaveTextContent(ModelingTooltips.addRelationshipHeader);
+    expect(getByLabelText("addRelationshipHeader")).toBeInTheDocument();
     expect(getByText("SOURCE")).toBeInTheDocument();
     expect(getByText("TARGET")).toBeInTheDocument();
     expect(getByTestId("delete-relationship")).toBeInTheDocument();

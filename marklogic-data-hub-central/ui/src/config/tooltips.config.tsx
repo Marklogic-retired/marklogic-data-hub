@@ -56,15 +56,23 @@ const ModelingTooltips = {
   /* Form fields */
   joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',
 
-   /* Foreign key relationship */
-   foreignKey: function (relatedEntityName, joinPropertyName, type) {
+   /* Foreign key relationship tooltip in mapping tile*/
+   foreignKeyMapping: function (relatedEntityName, joinPropertyName, type, sourceEntityName, propertyName) {
     return (
       <span>
-        This property establishes a foreign key relationship with the <b>{relatedEntityName}</b> entity through the
-        <b> {joinPropertyName}</b> property ({type}). The value of this property and the
-        <b> {joinPropertyName}</b> property in <b>{relatedEntityName}</b> should be identical.
+        Using the <strong>{joinPropertyName}</strong>  property (<strong>{type}</strong>), the <strong>{propertyName}</strong> property creates a foreign key relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.<br />
+        The <strong>{propertyName}</strong> property (<strong>{sourceEntityName}</strong>) and the <strong>{joinPropertyName}</strong> property (<strong>{relatedEntityName}</strong>) must return the same value.
       </span>
     )
+  },
+
+    /* Foreign key relationship in modeling tile*/
+    foreignKeyModeling: function (relatedEntityName, joinPropertyName, type, sourceEntityName, propertyName) {
+      return (
+          <span>
+              Using the <strong>{joinPropertyName}</strong> property (<strong>{type}</strong>), the <strong>{propertyName}</strong> property creates a foreign key relationship between <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.
+           </span>
+      )
   },
 
   /* Graph view */
@@ -72,21 +80,22 @@ const ModelingTooltips = {
   exportGraph: "Export graph to PNG",
   relationshipEmpty: "Relationship name is required",
   targetEntityEmpty: "Target entity type is required",
-  joinPropertyInfo: "This property establishes a foreign key relationship between the two entities. When data is mapped to these entity types, the value of this property and the relationship property should be identical. Structured type properties, arrays, and unsaved properties cannot be used as join properties.",
+  joinPropertyInfo: "Select a property in the target entity type to connect the source and target entity types. A join property cannot be a structured type property, array, or unpublished property.",
   deleteRelationshipIcon: "Delete this relationship",
-  editModeInfo: "Drag from the source entity type to the target entity type. Or just click on the source entity type to connect to itself or a target entity type not visible on the screen. Esc to exit.",
-  addRelationshipHeader: "Set the cardinality and name of the relationship. Now or in the future, you can also select the join property or swap the entity type that the relationship comes from.",
+  editModeInfo: <span>To add a relationship between entity types, drag the source entity type to the target entity type. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
+  addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and join property. You are not required to specify a join property to save the relationship.<br /><strong>Note:</strong> You cannot publish relationships with missing join properties.</span>,
   relationshipNameInfo: function (entityName) {
     return (
       <span>
-        Relationship name. The relationship is saved as a property on the <b>{entityName}</b> entity type with the same name. Names must start with a letter and can contain letters, numbers, hyphens, and underscores.
+        The name that identifies the relationship between the source and target entities. Relationship names must begin with a letter and can contain letters, numbers, hyphens, and underscores.
       </span>
     )
   },
   cardinalityButton: function () {
     return (
       <span>
-        Click to toggle between one [ | ] and many [ <img src={oneToManyIcon}/> ]
+        Click to toggle between one [ | ] and many [<img src={oneToManyIcon}></img>] relationship types. Choose one [ | ] to specify that one instance of the target entity type can be related to an instance of the source entity type.
+        Choose many [<img src={oneToManyIcon}></img>] to specify that many instances of the target entity type can be related to an instance of the source entity type.
       </span>
     )
   },
