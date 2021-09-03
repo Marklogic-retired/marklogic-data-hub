@@ -178,7 +178,8 @@ export const customerMappingStep = {
     activeStep: {
       stepArtifact: curateData.mappings.data[0],
       entityName: curateData.mappings.data[0].entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
@@ -191,7 +192,10 @@ export const customerMappingStep = {
   setOpenStepSettings: jest.fn(),
   setOpenStep: jest.fn(),
   setIsEditing: jest.fn(),
-  setStepOpenOptions: jest.fn()
+  setStepOpenOptions: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn()
 };
 
 export const personMappingStepEmpty = {

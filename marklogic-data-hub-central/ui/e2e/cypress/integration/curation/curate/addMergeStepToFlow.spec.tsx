@@ -45,7 +45,7 @@ describe("Add Merge step to a flow", () => {
     curatePage.selectMergeTab("Customer");
   });
   it("Create a new merge step", () => {
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().type("merge order step example", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Query");
@@ -57,7 +57,7 @@ describe("Add Merge step to a flow", () => {
     curatePage.verifyStepNameIsVisible(mergeStep);
   });
   it("Create merge step with duplicate name and verify duplicate name modal is displayed", () => {
-    cy.waitUntil(() => curatePage.addNewStep()).click();
+    cy.waitUntil(() => curatePage.addNewStep("Customer")).click();
     createEditStepDialog.stepNameInput().type(mergeStep);
     createEditStepDialog.stepDescriptionInput().type("merge order step example");
     createEditStepDialog.setSourceRadio("Query");
@@ -80,12 +80,12 @@ describe("Add Merge step to a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
-    runPage.runStep(mergeStep);
+    runPage.runStep(mergeStep, flowName1);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
   it("Delete the step and Navigate back to merge tab", () => {
-    runPage.deleteStep(mergeStep).click();
+    runPage.deleteStep(mergeStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -101,12 +101,12 @@ describe("Add Merge step to a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName1);
     cy.waitForAsyncRequest();
-    runPage.runStep(mergeStep);
+    runPage.runStep(mergeStep, flowName1);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
   it("Delete the merge step", () => {
-    runPage.deleteStep(mergeStep).click();
+    runPage.deleteStep(mergeStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     runPage.expandFlow(flowName1);
@@ -124,12 +124,12 @@ describe("Add Merge step to a flow", () => {
     runPage.addStep(flowName2);
     runPage.addStepToFlow(mergeStep);
     cy.verifyStepAddedToFlow("Merge", mergeStep, flowName2);
-    runPage.runStep(mergeStep);
+    runPage.runStep(mergeStep, flowName2);
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
   it("Delete the merge step and Navigating to merge tab", () => {
-    runPage.deleteStep(mergeStep).click();
+    runPage.deleteStep(mergeStep, flowName2).click();
     loadPage.confirmationOptionsAll("Yes").eq(0).click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();

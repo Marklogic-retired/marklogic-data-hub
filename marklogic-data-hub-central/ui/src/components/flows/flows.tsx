@@ -1,5 +1,6 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Collapse, Icon, Modal, Menu, Dropdown, Tooltip} from "antd";
+import {Icon, Modal, Menu, Dropdown, Tooltip} from "antd";
+import {Accordion, Card} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -25,8 +26,6 @@ enum ReorderFlowOrderDirection {
   LEFT = "left",
   RIGHT = "right"
 }
-
-const {Panel} = Collapse;
 
 interface Props {
   flows: any;
@@ -583,6 +582,7 @@ const Flows: React.FC<Props> = (props) => {
   const panelActions = (name, i) => (
     <div
       id="panelActions"
+      className={"d-flex p-2"}
       onClick={event => {
         event.stopPropagation(); // Do not trigger collapse
         event.preventDefault();
@@ -616,7 +616,7 @@ const Flows: React.FC<Props> = (props) => {
           >Add Step<ChevronDown className="ms-2" /></HCButton>
           :
           <HCTooltip text={SecurityTooltips.missingPermission} id="add-step-disabled-tooltip" placement="bottom">
-            <span className={styles.disabledCursor}>
+            <span className={`me-3 ${styles.disabledCursor}`}>
               <HCButton
                 className={styles.addStep}
                 aria-label={"addStepDisabled-" + i}
@@ -631,7 +631,7 @@ const Flows: React.FC<Props> = (props) => {
       <span className={styles.deleteFlow}>
         {props.canWriteFlow ?
           <HCTooltip text="Delete Flow" id="disabled-trash-tooltip" placement="bottom">
-            <i aria-label={`deleteFlow-${name}`}>
+            <i aria-label={`deleteFlow-${name}`} className={"d-flex align-items-center"}>
               <FontAwesomeIcon
                 icon={faTrashAlt}
                 onClick={() => { handleFlowDelete(name); }}
@@ -642,7 +642,7 @@ const Flows: React.FC<Props> = (props) => {
           </HCTooltip>
           :
           <HCTooltip text={"Delete Flow: " + SecurityTooltips.missingPermission} id="trash-tooltip" placement="bottom">
-            <i aria-label={`deleteFlowDisabled-${name}`}>
+            <i aria-label={`deleteFlowDisabled-${name}`} className={"d-flex align-items-center"}>
               <FontAwesomeIcon
                 icon={faTrashAlt}
                 data-testid={`deleteFlow-${name}`}
@@ -1025,23 +1025,34 @@ const Flows: React.FC<Props> = (props) => {
         );
       });
       return (
-        <Panel header={flowHeader(flowName, i)} key={i} extra={panelActions(flowName, i)} id={flowName} >
-          <div className={styles.panelContent} ref={flowPanels[flowName]}>
-            {cards}
-          </div>
-        </Panel>
+        <Accordion className={"w-100"} flush key={i} id={flowName} activeKey={activeKeys.includes(i) ? i : ""} defaultActiveKey={activeKeys.includes(i) ? i : ""}>
+          <Accordion.Item eventKey={i}>
+            <Card>
+              <Card.Header className={"p-0 pe-3 d-flex bg-white"}>
+                <Accordion.Button onClick={() => handlePanelInteraction(i)}>{flowHeader(flowName, i)}</Accordion.Button>
+                {panelActions(flowName, i)}
+              </Card.Header>
+              <Accordion.Body className={styles.panelContent} ref={flowPanels[flowName]}>
+                {cards}
+              </Accordion.Body>
+            </Card>
+          </Accordion.Item>
+        </Accordion>
       );
     });
   }
 
   //Update activeKeys on Collapse Panel interactions
   const handlePanelInteraction = (key) => {
+    const tmpActiveKeys = [...activeKeys];
+    const index = tmpActiveKeys.indexOf(key);
+    index !== -1 ? tmpActiveKeys.splice(index, 1) : tmpActiveKeys.push(key);
     /* Request to get latest job info for the flow will be made when someone opens the pane for the first time
         or opens a new pane. Closing the pane shouldn't send any requests*/
-    if (!activeKeys || (key.length > activeKeys.length && key.length > 0)) {
-      getFlowWithJobInfo(key[key.length - 1]);
+    if (!activeKeys || (tmpActiveKeys.length > activeKeys.length && tmpActiveKeys.length > 0)) {
+      getFlowWithJobInfo(tmpActiveKeys[tmpActiveKeys.length - 1]);
     }
-    setActiveKeys([...key]);
+    setActiveKeys([...tmpActiveKeys]);
   };
 
   const createFlowKeyDownHandler = (event) => {
@@ -1096,13 +1107,7 @@ const Flows: React.FC<Props> = (props) => {
                 </Tooltip>
             }
           </div>
-          <Collapse
-            className={styles.collapseFlows}
-            activeKey={activeKeys}
-            onChange={handlePanelInteraction}
-          >
-            {panels}
-          </Collapse>
+          {panels}
           <NewFlowDialog
             newFlow={newFlow || openNewFlow}
             title={title}
