@@ -159,7 +159,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       render: (text, record) => {
         let renderText = text;
         if (record.joinPropertyName && record.joinPropertyType) {
-          let tooltip = ModelingTooltips.foreignKey(record.joinPropertyType, record.joinPropertyName, text);
+          let tooltip = ModelingTooltips.foreignKeyModeling(record.joinPropertyType, record.joinPropertyName, text, record.delete, record.propertyName);
           renderText =
           <span>
             {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
