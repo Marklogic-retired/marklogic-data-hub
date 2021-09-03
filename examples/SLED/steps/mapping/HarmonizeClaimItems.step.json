@@ -1,0 +1,60 @@
+{
+  "stepId" : "HarmonizeClaimItems-mapping",
+  "name" : "HarmonizeClaimItems",
+  "description" : "",
+  "customHook" : {
+    "module" : "/customHooks/extractClaimItems.sjs",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : true
+  },
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "stepNumber" : "3",
+  "sourceQuery" : "cts.collectionQuery([\"LoadClaims\"])",
+  "mapping" : {
+    "name" : "HarmonizeClaimItems"
+  },
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "HarmonizeClaimItems", "ClaimItem" ],
+  "targetEntityType" : "http://marklogic.envision.com/ClaimItem-0.0.1/ClaimItem",
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "validateEntity" : false,
+  "outputFormat" : "json",
+  "targetDatabase" : "data-hub-FINAL",
+  "namespaces" : { },
+  "additionalCollections" : [ ],
+  "targetFormat" : "json",
+  "properties" : {
+    "unitPrice" : {
+      "sourcedFrom" : "CPT_Charges"
+    },
+    "sequence" : {
+      "sourcedFrom" : "Sequence"
+    },
+    "hasProvider" : {
+      "sourcedFrom" : ""
+    },
+    "provider" : {
+      "sourcedFrom" : "NPI"
+    },
+    "patient" : {
+      "sourcedFrom" : "PatientAccountNumber"
+    },
+    "modifier" : {
+      "sourcedFrom" : "CPT_Mod1|CPT_Mod2|CPT_Mod3|CPT_Mod4"
+    },
+    "serviceDescription" : {
+      "sourcedFrom" : "documentLookup(CPT, '/referenceData/cptCodes.json')"
+    },
+    "claimId" : {
+      "sourcedFrom" : "ClaimIdentifier"
+    },
+    "productOrService" : {
+      "sourcedFrom" : "CPT"
+    }
+  },
+  "selectedSource" : "query"
+}

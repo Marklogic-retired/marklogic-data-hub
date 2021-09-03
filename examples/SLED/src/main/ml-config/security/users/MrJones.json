@@ -1,0 +1,7 @@
+{
+    "user-name": "MrJones",
+    "description": "PII reading permission with Redacton",
+    "password": "demo",
+    "role": ["envision","pii-reader","hub-central-operator","hub-central-developer"],
+    "permission": [{"role-name":"envision", "capability":"update"}, {"role-name":"envision", "capability":"read"}]
+}

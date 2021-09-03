@@ -1,0 +1,21 @@
+{
+  "name" : "Curam",
+  "description" : "Ingest Curam XML dataset",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : null,
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "stepId" : "ingestCuram-ingestion",
+      "name" : "ingestCuram",
+      "stepDefinitionType" : "INGESTION"
+    },
+    "2" : {
+      "stepId" : "mapCuram-mapping",
+      "name" : "mapCuram",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}

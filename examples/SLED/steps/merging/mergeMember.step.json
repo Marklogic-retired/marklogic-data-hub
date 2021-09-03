@@ -1,0 +1,94 @@
+{
+  "name" : "mergeMember",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-merging",
+  "stepDefinitionType" : "MERGING",
+  "stepUpdate" : false,
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"matchMember\"])",
+  "acceptsBatch" : false,
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "mergeMember", "Member" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "Member",
+  "stepId" : "mergeMember-merging",
+  "mergeStrategies" : [ ],
+  "mergeRules" : [ {
+    "entityPropertyPath" : "Gender",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "Race",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "FullAddress",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "Zip5",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "SSN",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ {
+        "sourceName" : "MMIS",
+        "weight" : "10"
+      }, {
+        "sourceName" : "CURAM",
+        "weight" : "5"
+      } ]
+    }
+  }, {
+    "entityPropertyPath" : "DOB",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "FirstName",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "lengthWeight" : "10",
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "LastName",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "origAddress1",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "origQuadrant",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "uid",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  } ]
+}

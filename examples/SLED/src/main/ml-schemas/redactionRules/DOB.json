@@ -1,0 +1,13 @@
+{
+    "rule": {
+      "description": "Adjust date 3 years max",
+      "path": "//DOB",
+      "method": {
+          "function": "redactDOB",
+          "module": "/redaction/memberRedactionFunctions.sjs"
+        },
+      "options": { 
+          "maxYearsDifferent": 3
+        }
+    }
+  }

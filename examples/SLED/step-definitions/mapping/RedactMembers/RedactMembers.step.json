@@ -1,0 +1,28 @@
+{
+  "lang" : "zxx",
+  "name" : "RedactMembers",
+  "description" : "Redact all member records and replace them in this data hub",
+  "type" : "MAPPING",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery('Member')",
+    "targetEntity" : "Member",
+    "collections" : [ "RedactMembers", "Member" ],
+    "sourceDatabase" : "data-hub-FINAL",
+    "permissions" : "data-hub-operator,read,data-hub-operator,update",
+    "sourceCollection" : "",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-FINAL"
+  },
+  "customHook" : {
+    "module" : "",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "modulePath" : "/custom-modules/mapping/RedactMembers/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

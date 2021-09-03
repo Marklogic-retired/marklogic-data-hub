@@ -1,0 +1,17 @@
+{
+  "name" : "ProviderData",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "stepId" : "IngestProvider-ingestion"
+    },
+    "2" : {
+      "stepId" : "MapProvider-mapping"
+    }
+  }
+}

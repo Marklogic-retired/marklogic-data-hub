@@ -1,0 +1,26 @@
+{
+  "name" : "IngestProvider",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "ProviderData"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "IngestProvider" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "./data/ProviderData",
+  "outputURIReplacement" : ".*data,''",
+  "separator" : ",",
+  "sourceFormat" : "csv",
+  "stepId" : "IngestProvider-ingestion"
+}

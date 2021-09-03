@@ -1,0 +1,27 @@
+{
+  "role-name": "member-reader",
+  "description": "Custom Role for SLED Demo to read Member Entity without any Redaction Rules applied ",
+  "role": [
+    "data-hub-operator",
+    "redaction-user"
+  ],
+  "permission": [
+  ],
+  "privilege": [
+    {
+      "privilege-name": "admin-database",
+      "action": "http://marklogic.com/xdmp/privileges/admin/database",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "dhf-internal-entities",
+      "action": "/entities/",
+      "kind": "uri"
+    },
+    {
+      "privilege-name": "xdmp:user-roles",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-user-roles",
+      "kind": "execute"
+    }
+  ]
+}

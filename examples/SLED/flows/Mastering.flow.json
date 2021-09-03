@@ -1,0 +1,17 @@
+{
+  "name" : "Mastering",
+  "description" : "Mastering of MMIS and CURAM Sources",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "stepId" : "matchMember-matching"
+    },
+    "2" : {
+      "stepId" : "mergeMember-merging"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+    "NOTE": "removed via collecitons.properties"
+    ,
+    "rule": {
+    "description": "Random last name",
+    "path": "//LastName",
+    "method": {
+        "function": "redactLastName",
+        "module": "/redaction/memberRedactionFunctions.sjs"
+    }
+    }
+}

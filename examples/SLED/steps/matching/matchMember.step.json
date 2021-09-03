@@ -1,0 +1,147 @@
+{
+  "name" : "matchMember",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-matching",
+  "stepDefinitionType" : "MATCHING",
+  "stepUpdate" : false,
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"Member\"])",
+  "acceptsBatch" : true,
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "matchMember", "Member" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "Member",
+  "stepId" : "matchMember-matching",
+  "matchRulesets" : [ {
+    "name" : "SSN - Exact",
+    "weight" : 40,
+    "matchRules" : [ {
+      "entityPropertyPath" : "SSN",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "LastName - Exact",
+    "weight" : 8,
+    "matchRules" : [ {
+      "entityPropertyPath" : "LastName",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Address1 - Exact",
+    "weight" : 12,
+    "matchRules" : [ {
+      "entityPropertyPath" : "Address1",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Address2 - Exact",
+    "weight" : 2,
+    "matchRules" : [ {
+      "entityPropertyPath" : "Address2",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Quadrant - Exact",
+    "weight" : 1,
+    "matchRules" : [ {
+      "entityPropertyPath" : "Quadrant",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Zip5 - Exact",
+    "weight" : 3,
+    "matchRules" : [ {
+      "entityPropertyPath" : "Zip5",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "YearOfDOB - Exact",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "YearOfDOB",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "MonthOfDOB - Exact",
+    "weight" : 6,
+    "matchRules" : [ {
+      "entityPropertyPath" : "MonthOfDOB",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "DayOfDOB - Exact",
+    "weight" : 8,
+    "matchRules" : [ {
+      "entityPropertyPath" : "DayOfDOB",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "FirstName - Exact",
+    "weight" : 15,
+    "matchRules" : [ {
+      "entityPropertyPath" : "FirstName",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Zip4 - Exact",
+    "weight" : 2,
+    "matchRules" : [ {
+      "entityPropertyPath" : "Zip4",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "FirstLastNameSorted - Exact",
+    "weight" : 23,
+    "matchRules" : [ {
+      "entityPropertyPath" : "FirstLastNameSorted",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "FirstName - Double Metaphone",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "FirstName",
+      "matchType" : "doubleMetaphone",
+      "options" : {
+        "dictionaryURI" : "/customDictionary/FirstName.json",
+        "distanceThreshold" : 100
+      }
+    } ]
+  }, {
+    "name" : "LastName - Double Metaphone",
+    "weight" : 6,
+    "matchRules" : [ {
+      "entityPropertyPath" : "LastName",
+      "matchType" : "doubleMetaphone",
+      "options" : {
+        "dictionaryURI" : "/customDictionary/LastName.json",
+        "distanceThreshold" : 100
+      }
+    } ]
+  } ],
+  "thresholds" : [ {
+    "thresholdName" : "MemberMatch",
+    "action" : "merge",
+    "score" : 60
+  }, {
+    "thresholdName" : "HumanReview",
+    "action" : "notify",
+    "score" : 43
+  } ]
+}

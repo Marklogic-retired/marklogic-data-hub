@@ -1,0 +1,82 @@
+{
+  "name" : "HarmonizeClaims",
+  "description" : "",
+  "customHook" : {
+    "module" : "/customHooks/claimUriRemapper.sjs",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"LoadClaims\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "HarmonizeClaims", "ClaimFHIR" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "http://marklogic.com/envision/ClaimFHIR-0.0.1/ClaimFHIR",
+  "properties" : {
+    "identifier" : {
+      "sourcedFrom" : "ClaimIdentifier"
+    },
+    "created" : {
+      "sourcedFrom" : "current-date()"
+    },
+    "use" : {
+      "sourcedFrom" : ""
+    },
+    "hasItem" : {
+      "sourcedFrom" : ""
+    },
+    "diagnosis" : {
+      "sourcedFrom" : "DiagnosisCode1"
+    },
+    "procedure" : {
+      "sourcedFrom" : ""
+    },
+    "type" : {
+      "sourcedFrom" : "*[local-name(.)='Claim Type']"
+    },
+    "total" : {
+      "sourcedFrom" : "TotalCharge"
+    },
+    "provider" : {
+      "sourcedFrom" : ""
+    },
+    "patient" : {
+      "sourcedFrom" : "customHash64(PatientAccountNumber)"
+    },
+    "insurer" : {
+      "sourcedFrom" : ""
+    },
+    "enterer" : {
+      "sourcedFrom" : "'hubOperator'"
+    },
+    "facility" : {
+      "sourcedFrom" : ""
+    },
+    "diagnosisDescription" : {
+      "sourcedFrom" : "documentLookup(DiagnosisCode1, '/referenceData/icd10Codes.json')"
+    },
+    "patientZip" : {
+      "sourcedFrom" : "Patient_Zip"
+    },
+    "status" : {
+      "sourcedFrom" : ""
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "HarmonizeClaims-mapping",
+  "lastUpdated" : "2021-06-28T13:12:25.660759-07:00",
+  "stepNumber" : "2",
+  "mapping" : {
+    "name" : "HarmonizeClaims"
+  },
+  "outputFormat" : "json"
+}

@@ -1,0 +1,145 @@
+{
+  "collections" : [ "mapCuram", "Member" ],
+  "additionalCollections" : [ ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "batchSize" : 100,
+  "validateEntity" : false,
+  "targetFormat" : "json",
+  "attachSourceDocument" : true,
+  "name" : "mapCuram",
+  "description" : "Map Curam source to Member Entity",
+  "threadCount" : 4,
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "sourceQuery" : "cts.collectionQuery([\"ingestCuram\"])",
+  "sourceDatabase" : "data-hub-STAGING",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetEntityType" : "http://marklogic.com/envision/Member-0.0.1/Member",
+  "properties" : {
+    "FullAddress" : {
+      "sourcedFrom" : "concat(getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE),', ', //ADDRESSES/ADDRESSELEMENT/ZIP)"
+    },
+    "idCard" : {
+      "sourcedFrom" : ""
+    },
+    "PrimaryInsuredRelationship" : {
+      "sourcedFrom" : ""
+    },
+    "Gender" : {
+      "sourcedFrom" : "//PERSON/GENDER"
+    },
+    "DayOfDOB" : {
+      "sourcedFrom" : "getDayOfDOB(//DATEOFBIRTH)"
+    },
+    "ScenarioDesc" : {
+      "sourcedFrom" : ""
+    },
+    "LastNameHistory" : {
+      "sourcedFrom" : "getLastNameNormalized(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/ALTERNATENAMES/ALTERNATENAME/SURNAME)"
+    },
+    "uid" : {
+      "sourcedFrom" : "generate-id()"
+    },
+    "hasClaim" : {
+      "sourcedFrom" : ""
+    },
+    "SSNHistory" : {
+      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value"
+    },
+    "DOB" : {
+      "sourcedFrom" : "//DATEOFBIRTH"
+    },
+    "Race" : {
+      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/RACE"
+    },
+    "primaryInsuredMemberID" : {
+      "sourcedFrom" : ""
+    },
+    "DOBHistory" : {
+      "sourcedFrom" : "//DATEOFBIRTH"
+    },
+    "PrimaryInsuredId" : {
+      "sourcedFrom" : ""
+    },
+    "IsDependent" : {
+      "sourcedFrom" : ""
+    },
+    "hasDependent" : {
+      "sourcedFrom" : ""
+    },
+    "origAddress1" : {
+      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ELEMENTVALUE"
+    },
+    "FirstName" : {
+      "sourcedFrom" : "//FIRSTFORENAME"
+    },
+    "origQuadrant" : {
+      "sourcedFrom" : ""
+    },
+    "SourceFormat" : {
+      "sourcedFrom" : "\"XML\""
+    },
+    "Address2" : {
+      "sourcedFrom" : ""
+    },
+    "Quadrant" : {
+      "sourcedFrom" : ""
+    },
+    "FirstLastNameSorted" : {
+      "sourcedFrom" : "getFirstLastNameSorted(\n  //FIRSTFORENAME,\n  getLastNameNormalized(\n  //SURNAME))"
+    },
+    "Address1" : {
+      "sourcedFrom" : "getAddress1Normalized(//ADDRESSELEMENT/ELEMENTVALUE)"
+    },
+    "MiddleName" : {
+      "sourcedFrom" : ""
+    },
+    "YearOfDOB" : {
+      "sourcedFrom" : "getYearOfDOB(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/DATEOFBIRTH)"
+    },
+    "Zip5History" : {
+      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ZIP"
+    },
+    "SSN" : {
+      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value"
+    },
+    "DataSource" : {
+      "sourcedFrom" : "\"CURAM\""
+    },
+    "ScenarioNumber" : {
+      "sourcedFrom" : ""
+    },
+    "Suffix" : {
+      "sourcedFrom" : ""
+    },
+    "FullName" : {
+      "sourcedFrom" : "//CONCERNROLE/CONCERNROLENAME"
+    },
+    "MonthOfDOB" : {
+      "sourcedFrom" : "getMonthOfDOB(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/DATEOFBIRTH)"
+    },
+    "Zip4" : {
+      "sourcedFrom" : ""
+    },
+    "LastName" : {
+      "sourcedFrom" : "getLastNameNormalized(CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/PERSON/ALTERNATENAMES/ALTERNATENAME/SURNAME)"
+    },
+    "Zip5" : {
+      "sourcedFrom" : "CURAM/MMELIGIBILITYDECISIONDETAILS/CONCERNROLE/ADDRESSES/ADDRESSELEMENT/ZIP"
+    },
+    "memberID" : {
+      "sourcedFrom" : "customHash64(CURAM/MMELIGIBILITYDECISIONDETAILS/alternateId/value)"
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "mapCuram-mapping",
+  "acceptsBatch" : true,
+  "provenanceGranularityLevel" : "off",
+  "lastUpdated" : "2021-06-30T23:49:49.788714-07:00",
+  "stepNumber" : "2",
+  "mapping" : {
+    "name" : "mapCuram"
+  },
+  "outputFormat" : "json"
+}

@@ -1,0 +1,26 @@
+{
+  "name" : "Claims",
+  "description" : "Claims Data",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : null,
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "stepId" : "LoadClaims-ingestion",
+      "name" : "LoadClaims",
+      "stepDefinitionType" : "INGESTION"
+    },
+    "2" : {
+      "stepId" : "HarmonizeClaims-mapping",
+      "name" : "HarmonizeClaims",
+      "stepDefinitionType" : "MAPPING"
+    },
+    "3" : {
+      "stepId" : "HarmonizeClaimItems-mapping",
+      "name" : "HarmonizeClaimItems",
+      "stepDefinitionType" : "MAPPING"
+    }
+  }
+}

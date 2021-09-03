@@ -1,0 +1,10 @@
+{
+    "rule": {
+    "description": "Synthetic addr line 1",
+    "path": "//Address1",
+    "method": {
+        "function": "redactStreetLine1",
+        "module": "/redaction/memberRedactionFunctions.sjs"
+    }
+    }
+}
