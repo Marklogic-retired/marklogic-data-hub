@@ -263,6 +263,8 @@ const MappingStepPlaceholders = {
 };
 
 const MappingStepMessages = {
+  interceptorMessage: <span>These records are the output of an interceptor configured to run before this step. See <b>Step Settings</b> for more details.</span>,
+  interceptorError: "An error prevented the interceptor from completing successfully. The source data will be visible once you resolve the error."
 };
 
 

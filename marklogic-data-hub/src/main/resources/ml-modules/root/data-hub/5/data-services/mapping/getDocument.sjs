@@ -53,10 +53,10 @@ try{
   flowRunner.invokeInterceptors(stepExecutionContext, contentArray, "beforeMain");
 }
 catch(e){
-  httpUtils.throwBadRequest("Interceptor execution failed;cause: " + e.message);
+  httpUtils.throwBadRequest("Interceptor execution failed;cause: " + Error(e).message);
 }
 
-JSON.stringify(contentArray[0].value);
+xdmp.quote(contentArray[0].value);
 
 
 
