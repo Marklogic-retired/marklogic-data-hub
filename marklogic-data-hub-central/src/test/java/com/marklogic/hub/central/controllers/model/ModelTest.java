@@ -92,6 +92,7 @@ public class ModelTest extends AbstractHubCentralTest {
         input.put("name", MODEL_NAME);
         JsonNode model = controller.createDraftModel(input).getBody();
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
+        assertTrue(model.get("info").get("draft").asBoolean());
 
         // Create a customer in final so we have a way to verify the entity instance count
         new ReferenceModelProject(getHubClient()).createCustomerInstance(new Customer(1, "Jane"));
@@ -187,6 +188,7 @@ public class ModelTest extends AbstractHubCentralTest {
         assertEquals("http://example.org/", model.get("definitions").get(MODEL_NAME).get("namespace").asText());
         assertEquals("ex", model.get("definitions").get(MODEL_NAME).get("namespacePrefix").asText());
         assertEquals("Updated description", model.get("definitions").get(MODEL_NAME).get("description").asText());
+        assertTrue(model.get("info").get("draft").asBoolean());
 
         verifyGraphConfig(model);
 
@@ -202,6 +204,12 @@ public class ModelTest extends AbstractHubCentralTest {
         assertNull(model.get("definitions").get(MODEL_NAME).get("namespacePrefix"));
 
         verifyGraphConfig(model);
+    }
+
+    public void deleteModel() {
+        controller.deleteDraftModel(MODEL_NAME);
+        JsonNode model = getModel(getHubClient().getFinalClient(), true);
+        assertTrue(model.get("info").get("draft").asBoolean());
     }
 
     protected void updateModelEntityTypes() {

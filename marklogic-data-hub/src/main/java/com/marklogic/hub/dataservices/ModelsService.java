@@ -53,7 +53,7 @@ public interface ModelsService {
             private BaseProxy.DBFunctionRequest req_updateDraftModelInfo;
             private BaseProxy.DBFunctionRequest req_generateModelConfig;
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
-            private BaseProxy.DBFunctionRequest req_deleteModel;
+            private BaseProxy.DBFunctionRequest req_deleteDraftModel;
             private BaseProxy.DBFunctionRequest req_saveModels;
             private BaseProxy.DBFunctionRequest req_getModelReferences;
             private BaseProxy.DBFunctionRequest req_publishDraftModels;
@@ -76,8 +76,8 @@ public interface ModelsService {
                     "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
                     "getPrimaryEntityTypes.sjs", BaseProxy.ParameterValuesKind.NONE);
-                this.req_deleteModel = this.baseProxy.request(
-                    "deleteModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_deleteDraftModel = this.baseProxy.request(
+                    "deleteDraftModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveModels = this.baseProxy.request(
                     "saveModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
@@ -174,12 +174,12 @@ public interface ModelsService {
             }
 
             @Override
-            public void deleteModel(String entityName) {
-                deleteModel(
-                    this.req_deleteModel.on(this.dbClient), entityName
+            public void deleteDraftModel(String entityName) {
+                deleteDraftModel(
+                    this.req_deleteDraftModel.on(this.dbClient), entityName
                     );
             }
-            private void deleteModel(BaseProxy.DBFunctionRequest request, String entityName) {
+            private void deleteDraftModel(BaseProxy.DBFunctionRequest request, String entityName) {
               request
                       .withParams(
                           BaseProxy.atomicParam("entityName", false, BaseProxy.StringType.fromString(entityName))
@@ -261,7 +261,7 @@ public interface ModelsService {
    * Save a draft model, where the input is a JSON model
    *
    * @param model	provides input
-   * 
+   *
    */
     void saveDraftModel(com.fasterxml.jackson.databind.JsonNode model);
 
@@ -293,7 +293,7 @@ public interface ModelsService {
   /**
    * Invokes the generateModelConfig operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode generateModelConfig();
@@ -301,24 +301,24 @@ public interface ModelsService {
   /**
    * Returns an array of primary entity types. A primary entity type is the entity type in a model descriptor with a name equal to the title of the model descriptor.
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getPrimaryEntityTypes();
 
   /**
-   * Delete an entity model
+   * Marks a draft entity model to be deleted
    *
    * @param entityName	The name of the primary entity in the model
-   * 
+   *
    */
-    void deleteModel(String entityName);
+    void deleteDraftModel(String entityName);
 
   /**
    * Save an array of entity models to only the database associated with the app server that receives this request
    *
    * @param models	The array of entity models
-   * 
+   *
    */
     void saveModels(com.fasterxml.jackson.databind.JsonNode models);
 
@@ -334,8 +334,8 @@ public interface ModelsService {
   /**
    * Moves draft entity models to the published collection and clear out the draft collection
    *
-   * 
-   * 
+   *
+   *
    */
     void publishDraftModels();
 
@@ -351,7 +351,7 @@ public interface ModelsService {
    * Update entity model types in the entity models draft collection.
    *
    * @param input	provides input
-   * 
+   *
    */
     void updateDraftModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input);
 

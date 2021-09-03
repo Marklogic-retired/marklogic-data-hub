@@ -77,6 +77,14 @@ function findModelByEntityName(entityName) {
   return cts.doc(assumedUri).toObject();
 }
 
+function findDraftModelByEntityName(entityName) {
+  const assumedUri = "/entities/" + entityName + ".draft.entity.json";
+  if (!fn.docAvailable(assumedUri)) {
+    return null;
+  }
+  return cts.doc(assumedUri).toObject();
+}
+
 /**
  * @param entityTypeId string or a sem.iri
  * @return null if a model can't be found matching the given EntityTypeId, or if a model is found but there's no an entity type
@@ -216,15 +224,24 @@ function getModelCollection() {
   return consts.ENTITY_MODEL_COLLECTION;
 }
 
+function deleteDraftModel(entityName) {
+  var uri = getModelUri(entityName);
+    if (!fn.docAvailable(uri)) {
+      uri = getDraftModelUri(entityName);
+      if (!fn.docAvailable(uri)) {
+          return null;
+        }
+    }
+  const model = cts.doc(uri).toObject();
+  model.info.draftDeleted = true;
+  writeDraftModel(entityName, model)
+}
+
 function deleteModel(entityName) {
   const uri = getModelUri(entityName);
-  const draftUri = getDraftModelUri(entityName);
-  if (fn.docAvailable(uri)) {
-    [config.STAGINGDATABASE, config.FINALDATABASE].forEach(db => {
-      hubUtils.deleteDocument(uri, db);
-      hubUtils.deleteDocument(draftUri, db);
-    });
-  }
+  [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])].forEach(db => {
+    hubUtils.deleteDocument(uri, db);
+  });
 }
 
 /**
@@ -333,6 +350,7 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
  * @param model
  */
 function writeDraftModel(entityName, model) {
+   model.info.draft = true;
   writeModelToDatabases(entityName, model, [config.STAGINGDATABASE, config.FINALDATABASE], true);
 }
 
@@ -396,22 +414,49 @@ function writeModelToDatabases(entityName, model, databases, isDraft = false) {
 }
 
 function publishDraftModels() {
-  const databaseNames = [config.STAGINGDATABASE, config.FINALDATABASE];
-  const publishOperation = () => {
-    const draftModels = cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION));
-    for (const draftModel of draftModels) {
-      let modelObject = draftModel.toObject();
+  hubUtils.hubTrace(consts.TRACE_ENTITY,`publishing in database: ${xdmp.databaseName(xdmp.database())}`);
+  const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION)), xdmp.databaseName(xdmp.database()));
+  hubUtils.hubTrace(consts.TRACE_ENTITY,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
+  const urisOfModelsBeingDeleted = draftModels.toArray()
+    .map((model) => model.toObject())
+    .filter((modelObject) => modelObject.info.draftDeleted)
+    .map((modelObject) => getModelUri(modelObject.info.title));
+  for (const draftModel of draftModels) {
+    let modelObject = draftModel.toObject();
+
+    modelObject.info.draft = false;
+
+    if(modelObject.info.draftDeleted) {
+      const entityTypeId = getEntityTypeId(modelObject, modelObject.info.title);
+      const entityModelUri = getModelUri(modelObject.info.title);
+
+      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleting draft model: ${modelObject.info.title}`);
+      deleteModel(modelObject.info.title);
+      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleted draft model: ${modelObject.info.title}`);
+
+      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleting draft model references: ${modelObject.info.title}`);
+      const entityURIsToIgnore = urisOfModelsBeingDeleted.concat([entityModelUri]);
+      deleteModelReferencesInOtherModels(entityURIsToIgnore, entityTypeId);
+      hubUtils.hubTrace(consts.TRACE_ENTITY,`deleted draft model references: ${modelObject.info.title}`);
+    } else {
+      hubUtils.hubTrace(consts.TRACE_ENTITY,`writing draft model: ${modelObject.info.title}`);
       writeModel(modelObject.info.title, modelObject);
+      hubUtils.hubTrace(consts.TRACE_ENTITY,`draft model written: ${modelObject.info.title}`);
     }
+  }
+  const deleteDraftsOperation = () => {
+    hubUtils.hubTrace(consts.TRACE_ENTITY,"deleting draft collection");
     xdmp.collectionDelete(consts.DRAFT_ENTITY_MODEL_COLLECTION);
+    hubUtils.hubTrace(consts.TRACE_ENTITY,"deleted draft collection");
   };
+  const databaseNames = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
   const currentDatabase = xdmp.database();
   databaseNames.forEach(databaseName => {
     const database = xdmp.database(databaseName);
     if (database === currentDatabase) {
-      publishOperation();
+      deleteDraftsOperation();
     } else {
-      xdmp.invokeFunction(publishOperation, {database, update: "true", commit: "auto"});
+      xdmp.invokeFunction(deleteDraftsOperation, {database, update: "true", commit: "auto"});
     }
   });
 }
@@ -456,6 +501,7 @@ function findEntityIdentifiers(uris, entityType) {
 
 module.exports = {
   deleteModel,
+  deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
   findModelReferencesInSteps,
   findModelReferencesInOtherModels,
@@ -466,6 +512,7 @@ module.exports = {
   findEntityTypeIds,
   findEntityTypesAsMap,
   findModelByEntityName,
+  findDraftModelByEntityName,
   findModelForEntityTypeId,
   getDraftModelCollection,
   getDraftModelUri,

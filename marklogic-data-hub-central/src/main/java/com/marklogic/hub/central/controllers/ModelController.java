@@ -103,8 +103,8 @@ public class ModelController extends BaseController {
 
     @RequestMapping(value = "/{modelName}", method = RequestMethod.DELETE)
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> deleteModel(@PathVariable String modelName) {
-        newService().deleteModel(modelName);
+    public ResponseEntity<Void> deleteDraftModel(@PathVariable String modelName) {
+        newService().deleteDraftModel(modelName);
 
         /*
         * We're not doing anything with indexes or protected paths here because we don't have a reliable way to
