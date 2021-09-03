@@ -15,6 +15,8 @@
 */
 'use strict';
 
+declareUpdate();
+
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
@@ -25,18 +27,19 @@ if (!entityName) {
   httpUtils.throwBadRequest("Must specify a name in order to delete an entity model");
 }
 
-const entityModel = entityLib.findModelByEntityName(entityName);
+var entityModel = entityLib.findModelByEntityName(entityName);
 if (!entityModel) {
-  httpUtils.throwNotFound(`Could not find entity model with name: ${entityName}`);
+  entityModel = entityLib.findDraftModelByEntityName(entityName);
+  if (!entityModel) {
+    httpUtils.throwNotFound(`Could not find entity model with name: ${entityName}`);
+  }
 }
 
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
-const entityModelUri = entityLib.getModelUri(entityName);
 
 const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
 if (stepNames.length) {
   httpUtils.throwBadRequest(`Cannot delete the entity type '${entityName}' because it is referenced by the following step names: ${stepNames}`);
 }
 
-entityLib.deleteModel(entityName);
-entityLib.deleteModelReferencesInOtherModels(entityModelUri, entityTypeId);
+entityLib.deleteDraftModel(entityName);

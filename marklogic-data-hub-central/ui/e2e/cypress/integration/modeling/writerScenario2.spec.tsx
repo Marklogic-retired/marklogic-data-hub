@@ -229,9 +229,10 @@ describe("Entity Modeling: Writer Role", () => {
     entityTypeTable.getDeleteEntityIcon("User3").click();
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    confirmationModal.getDeleteEntityText().should("exist");
-    confirmationModal.getDeleteEntityText().should("not.exist");
-    entityTypeTable.getEntity("User3").should("not.exist");
+    // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
+    // confirmationModal.getDeleteEntityText().should("exist");
+    // confirmationModal.getDeleteEntityText().should("not.exist");
+    // entityTypeTable.getEntity("User3").should("not.exist");
   });
   it("Adding property to Order entity", () => {
     entityTypeTable.getExpandEntityIcon("Order").click();

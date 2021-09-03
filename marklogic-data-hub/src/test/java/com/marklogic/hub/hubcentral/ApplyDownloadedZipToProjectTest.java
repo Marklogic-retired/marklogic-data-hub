@@ -47,7 +47,10 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
 
         // Delete the Order entity so we can verify that entity-based artifacts are updated
         DatabaseClient stagingClient = getHubClient().getStagingClient();
-        ModelsService.on(stagingClient).deleteModel("Order");
+        ModelsService.on(stagingClient).deleteDraftModel("Order");
+
+        //Publish the change
+        ModelsService.on(stagingClient).publishDraftModels();
 
         // Download the zip
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
@@ -76,8 +79,9 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         stepService.deleteStep("mapping", "personMapping");
         stepService.deleteStep("custom", "customStep");
         ModelsService modelsService = ModelsService.on(stagingClient);
-        modelsService.deleteModel("Order");
-        modelsService.deleteModel("Person");
+        modelsService.deleteDraftModel("Order");
+        modelsService.deleteDraftModel("Person");
+        modelsService.publishDraftModels();
         FlowService.on(stagingClient).deleteFlow("testFlow");
         StepDefinitionService.on(stagingClient).deleteStepDefinition("testStep");
 
