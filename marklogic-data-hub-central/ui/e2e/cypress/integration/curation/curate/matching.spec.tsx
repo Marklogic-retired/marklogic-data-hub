@@ -348,16 +348,10 @@ describe("Matching", () => {
     rulesetMultipleModal.saveButton().click();
     cy.waitForAsyncRequest();
 
-<<<<<<< HEAD
-    /*multiSlider.getHandleName("testMultipleProperty").trigger("mousedown", {force: true});
-    cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
-    multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});*/
-=======
     // TODO DHFPROD-7711 skip since fails for Ant Design Table component
     // multiSlider.getHandleName("testMultipleProperty").trigger("mousedown", {force: true});
     // cy.findByTestId("ruleSet-slider-ticks").find(`div[style*="left: 19.1919%;"]`).trigger("mousemove", {force: true});
     // multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
->>>>>>> DHFPROD-7768: Threshold and ruleset handle names are not displayed (#6009)
 
     //To test when users click on test button and no data is returned
     cy.waitUntil(() => matchingStepDetail.getUriInputField().type("/json/noDataUri"));
@@ -423,7 +417,6 @@ describe("Matching", () => {
     //   cy.findAllByLabelText(compareValuesData[i].uriValue2).should("have.length.gt", 0);
     // }
 
-<<<<<<< HEAD
     // To test expanded uri table content
     cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().click());
     for (let i in allDataMatchedResults) {
@@ -438,7 +431,6 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDeleteMulti("testMultipleProperty");
     cy.waitForAsyncRequest();
-=======
     // // To test highlighted matched rows
     // cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
     // cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
@@ -453,7 +445,6 @@ describe("Matching", () => {
     //   cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
     // }
     // cy.findAllByText("Total Score: 40").should("have.length.gt", 0);
->>>>>>> DHFPROD-7768: Threshold and ruleset handle names are not displayed (#6009)
 
     // multiSlider.deleteOption("testMultipleProperty");
     // matchingStepDetail.getSliderDeleteText().should("be.visible");
