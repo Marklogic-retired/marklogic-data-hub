@@ -45,7 +45,7 @@ describe("Add Matching step to a flow", () => {
     curatePage.selectMatchTab("Customer");
   });
   it("Create a new match step", () => {
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().type("match customer step example", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Query");
@@ -55,7 +55,7 @@ describe("Add Matching step to a flow", () => {
     curatePage.verifyStepNameIsVisible(matchStep);
   });
   it("Create match step with duplicate name and verify duplicate name modal is displayed", () => {
-    cy.waitUntil(() => curatePage.addNewStep()).click();
+    cy.waitUntil(() => curatePage.addNewStep("Customer")).click();
     createEditStepDialog.stepNameInput().type(matchStep);
     createEditStepDialog.setSourceRadio("Query");
     createEditStepDialog.setQueryInput("test");
@@ -75,13 +75,13 @@ describe("Add Matching step to a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
-    runPage.runStep(matchStep);
+    runPage.runStep(matchStep, flowName1);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
   });
   it("Delete the step and Navigate back to match tab", () => {
-    runPage.deleteStep(matchStep).click();
+    runPage.deleteStep(matchStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
@@ -97,12 +97,12 @@ describe("Add Matching step to a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep, flowName1);
     cy.waitForAsyncRequest();
-    runPage.runStep(matchStep);
+    runPage.runStep(matchStep, flowName1);
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
   it("Delete the match step", () => {
-    runPage.deleteStep(matchStep).click();
+    runPage.deleteStep(matchStep, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
   });
@@ -126,11 +126,11 @@ describe("Add Matching step to a flow", () => {
     // add step to that new flow
     runPage.addStep(flowName2);
     runPage.addStepToFlow(matchStep);
-    runPage.verifyStepInFlow("Match", matchStep);
+    runPage.verifyStepInFlow("Match", matchStep, flowName2);
     cy.wait(500);
   });
   it("Delete the match step and Navigate back to match tab", () => {
-    runPage.deleteStep(matchStep).click();
+    runPage.deleteStep(matchStep, flowName2).click();
     //loadPage.confirmationOptions("Yes").click(); // multiple "Yes" options appearing
     loadPage.confirmationOptionsAll("Yes").last().click();
     cy.waitForAsyncRequest();

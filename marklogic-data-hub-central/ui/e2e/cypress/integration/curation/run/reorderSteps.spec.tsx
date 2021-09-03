@@ -33,19 +33,19 @@ describe("Run Tile tests", () => {
     loadPage.confirmationOptions("Save").click();
     runPage.addStep(flowName);
     runPage.addStepToFlow("loadPersonXML");
-    runPage.verifyStepInFlow("Load", "loadPersonXML");
+    runPage.verifyStepInFlow("Load", "loadPersonXML", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("mapPersonXML");
-    runPage.verifyStepInFlow("Map", "mapPersonXML");
+    runPage.verifyStepInFlow("Map", "mapPersonXML", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("match-xml-person");
-    runPage.verifyStepInFlow("Match", "match-xml-person");
+    runPage.verifyStepInFlow("Match", "match-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("merge-xml-person");
-    runPage.verifyStepInFlow("Merge", "merge-xml-person");
+    runPage.verifyStepInFlow("Merge", "merge-xml-person", flowName);
     runPage.addStep(flowName);
     runPage.addStepToFlow("master-person");
-    runPage.verifyStepInFlow("Master", "master-person");
+    runPage.verifyStepInFlow("Master", "master-person", flowName);
     runPage.addStep(flowName);
 
     // Reorder steps
@@ -59,15 +59,15 @@ describe("Run Tile tests", () => {
     runPage.moveStepLeft("merge-xml-person");
 
     //Run map,match and merge step for Person entity using xml documents
-    runPage.runStep("mapPersonXML");
+    runPage.runStep("mapPersonXML", flowName);
     cy.verifyStepRunResult("success", "Mapping", "mapPersonXML");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
-    runPage.runStep("match-xml-person");
+    runPage.runStep("match-xml-person", flowName);
     cy.verifyStepRunResult("success", "Matching", "match-xml-person");
     tiles.closeRunMessage();
     cy.waitForAsyncRequest();
-    runPage.runStep("merge-xml-person");
+    runPage.runStep("merge-xml-person", flowName);
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
 
     //Navigate to explorer tile using the explorer link

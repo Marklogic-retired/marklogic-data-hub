@@ -55,18 +55,18 @@ describe("Add Custom step to a flow", () => {
     runPage.addStepToFlow(stepName);
     cy.waitForAsyncRequest();
 
-    runPage.verifyStepInFlow("Custom", stepName);
+    runPage.verifyStepInFlow(stepType, stepName, flowName);
     cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
-    runPage.runStep(stepName);
+    runPage.runStep(stepName, flowName);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });
 
   it("Remove custom steps from flow", () => {
-    runPage.deleteStep(stepName).click();
+    runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
   });
@@ -86,12 +86,12 @@ describe("Add Custom step to a flow", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
 
-    runPage.verifyStepInFlow("Custom", stepName);
+    runPage.verifyStepInFlow(stepType, stepName, flowName);
     cy.waitUntil(() => toolbar.getRunToolbarIcon().should("be.visible")).click();
     runPage.expandFlow(flowName);
     cy.waitForAsyncRequest();
 
-    runPage.runStep(stepName);
+    runPage.runStep(stepName, flowName);
     cy.verifyStepRunResult("success", stepType, stepName);
     tiles.closeRunMessage();
   });

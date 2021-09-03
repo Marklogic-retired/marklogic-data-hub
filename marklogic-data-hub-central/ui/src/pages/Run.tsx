@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
 import Flows from "../components/flows/flows";
-import {Modal, Collapse, Icon} from "antd";
+import {Modal, Icon} from "antd";
+import {Accordion} from "react-bootstrap";
 import axios from "axios";
 import {AuthoritiesContext} from "../util/authorities";
 import {UserContext} from "../util/user-context";
@@ -13,8 +14,6 @@ import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "../../src/components/job-response/job-response";
 import HCButton from "../components/common/hc-button/hc-button";
 import {ExclamationCircleFill} from "react-bootstrap-icons";
-
-const {Panel} = Collapse;
 
 interface PollConfig {
     interval: number;
@@ -320,13 +319,18 @@ const Run = (props) => {
                   <span className={styles.exploreText}>Explore Loaded Data</span>
                 </HCButton></div> : ""}
           <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
-          <Collapse defaultActiveKey={["0"]} bordered={false}>
-            {errors.map((e, i) => {
-              return <Panel header={getErrorsHeader(i)} key={i}>
-                {getErrorDetails(e)}
-              </Panel>;
-            })}
-          </Collapse>
+          {errors.map((e, i) => {
+            return <Accordion className={"w-100"} flush key={i}>
+              <Accordion.Item eventKey={i}>
+                <div className={"p-0 d-flex"}>
+                  <Accordion.Button>{getErrorsHeader(i)}</Accordion.Button>
+                </div>
+                <Accordion.Body>
+                  {getErrorDetails(e)}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>;
+          })}
         </div>
       ),
       okText: "Close",
