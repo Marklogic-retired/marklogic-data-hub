@@ -73,7 +73,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.verifyStepAddedToFlow("Load", loadStep, flowName);
     //Run the ingest with JSON
     cy.waitForAsyncRequest();
-    runPage.runStep(loadStep);
+    runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10260.json");
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
@@ -83,7 +83,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep().click());
+    cy.waitUntil(() => curatePage.addNewStep("Order").click());
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom header");
     createEditMappingDialog.setSourceRadio("Query");
@@ -137,10 +137,10 @@ describe("Create and verify load steps, map step and flows with a custom header"
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName);
     cy.waitForAsyncRequest();
-    runPage.runStep(mapStep);
+    runPage.runStep(mapStep, flowName);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
-    runPage.deleteStep(mapStep).click();
+    runPage.deleteStep(mapStep, flowName).click();
     loadPage.confirmationOptions("Yes").click();
   });
   it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {
@@ -181,7 +181,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     runPage.addStep(flowName);
     runPage.addStepToFlow(mapStep);
     cy.verifyStepAddedToFlow("Map", mapStep, flowName2);
-    runPage.runStep(mapStep);
+    runPage.runStep(mapStep, flowName);
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
   });

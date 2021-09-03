@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Collapse, Icon, DatePicker, Select, Switch, Radio} from "antd";
+import React, {useState, useEffect, useContext} from "react";
+import {DatePicker, Select, Switch, Radio} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -15,8 +15,8 @@ import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {Accordion} from "react-bootstrap";
 
-const {Panel} = Collapse;
 const {RangePicker} = DatePicker;
 const {Option} = Select;
 const tooltips = tooltipsConfig.browseDocuments;
@@ -463,13 +463,12 @@ const Sidebar: React.FC<Props> = (props) => {
   //   return name;
   // }
 
-  const facetPanelStyle: CSSProperties = {
-    borderBottom: "none",
-    backgroundColor: "#F1F2F5"
-  };
-  const setActive = (key) => {
-    setActiveKey(key);
-    handleFacetPreferences(key);
+  const setActiveAccordion = (key) => {
+    const tmpActiveKeys = [...activeKey];
+    const index = tmpActiveKeys.indexOf(key);
+    index !== -1 ? tmpActiveKeys.splice(index, 1) : tmpActiveKeys.push(key);
+    setActiveKey(tmpActiveKeys);
+    handleFacetPreferences(tmpActiveKeys);
   };
 
   const initializeFacetPreferences = () => {
@@ -495,205 +494,215 @@ const Sidebar: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
-      <Collapse
-        className={styles.sideBarFacets}
-        activeKey={activeKey}
-        expandIcon={panelProps => <Icon className={styles.toggleIcon} type="down" rotate={panelProps.isActive ? 0 : -90} data-testid="toggle" />}
-        expandIconPosition="right"
-        bordered={false}
-        onChange={setActive}
-      >
-        <Panel id="database" header={<div className={styles.title}>Database</div>} key="database" style={facetPanelStyle}>
-          <Radio.Group
-            style={{}}
-            buttonStyle="solid"
-            defaultValue={searchOptions.database}
-            name="radiogroup"
-            onChange={e => props.setDatabasePreferences(e.target.value)}
-            // size="medium"
-          >
-            <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
-              Final
-            </Radio.Button>
-            <Radio.Button aria-label="switch-database-staging" value={"staging"} className={styles.button}>
-              Staging
-            </Radio.Button>
-          </Radio.Group>
-        </Panel>
-
-        {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-          <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/>
-            Include Data Hub artifacts
-          <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
-            <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
-          </HCTooltip>
-        </div> : ""}
-
-        {props.selectedEntities.length === 1 && (
-          <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={facetPanelStyle}>
-            {entityFacets.length ? entityFacets.map((facet, index) => {
-              let datatype = "";
-              let step;
-              switch (facet.type) {
-              case "xs:string": {
-                return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
-                  <Facet
-                    name={facet.propertyPath}
-                    constraint={facet.facetName}
-                    facetValues={facet.facetValues}
-                    key={facet.facetName}
-                    tooltip=""
-                    facetType={facet.type}
-                    facetCategory="entity"
-                    referenceType={facet.referenceType}
-                    entityTypeId={facet.entityTypeId}
-                    propertyPath={facet.propertyPath}
-                    updateSelectedFacets={updateSelectedFacets}
-                    addFacetValues={addFacetValues}
-                  />
-                );
-              }
-              case "xs:date": {
-                datatype = "date";
-                return Object.entries(facet).length !== 0 && (
-                  <DateFacet
-                    constraint={facet.facetName}
-                    name={facet.propertyPath}
-                    datatype={datatype}
-                    key={facet.facetName}
-                    propertyPath={facet.propertyPath}
-                    onChange={onDateFacetChange}
-                  />
-                );
-              }
-              case "xs:dateTime": {
-                datatype = "dateTime";
-                return Object.entries(facet).length !== 0 && (
-                  <DateTimeFacet
-                    constraint={facet.facetName}
-                    name={facet.propertyPath}
-                    datatype={datatype}
-                    key={facet.facetName}
-                    propertyPath={facet.propertyPath}
-                    onChange={onDateTimeFacetChange}
-                  />
-                );
-              }
-              case "xs:int": {
-                datatype = "int";
-                step = 1;
-                break;
-              }
-              case "xs:integer": {
-                datatype = "integer";
-                step = 1;
-                break;
-              }
-              case "xs:short": {
-                datatype = "short";
-                step = 1;
-                break;
-              }
-              case "xs:long": {
-                datatype = "long";
-                step = 1;
-                break;
-              }
-              case "xs:decimal": {
-                datatype = "decimal";
-                step = 0.1;
-                break;
-              }
-              case "xs:double": {
-                datatype = "double";
-                step = 0.1;
-                break;
-              }
-              case "xs:float": {
-                datatype = "float";
-                step = 0.1;
-                break;
-              }
-              //add date type cases
-
-              default:
-                break;
-              }
-
-              if (step && facet.facetValues.length) {
-                return (
-                  <div key={index}>
-                    <NumericFacet
-                      constraint={facet.facetName}
+      <Accordion id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
+        <Accordion.Item eventKey="database" className={"bg-transparent"}>
+          <div className={"p-0 d-flex"}>
+            <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}>Database</Accordion.Button>
+          </div>
+          <Accordion.Body>
+            <Radio.Group
+              style={{}}
+              buttonStyle="solid"
+              defaultValue={searchOptions.database}
+              name="radiogroup"
+              onChange={e => props.setDatabasePreferences(e.target.value)}
+              // size="medium"
+            >
+              <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
+                Final
+              </Radio.Button>
+              <Radio.Button aria-label="switch-database-staging" value={"staging"} className={styles.button}>
+                Staging
+              </Radio.Button>
+            </Radio.Group>
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+      {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
+        <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/>
+          Include Data Hub artifacts
+        <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
+          <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
+        </HCTooltip>
+      </div> : ""}
+      {props.selectedEntities.length === 1 && (
+        <Accordion id="entity-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("entityProperties") ? "entityProperties" : ""} defaultActiveKey={activeKey.includes("entityProperties") ? "entityProperties" : ""}>
+          <Accordion.Item eventKey="entityProperties" className={"bg-transparent"}>
+            <div className={"p-0 d-flex"}>
+              <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("entityProperties")}>Entity Properties</Accordion.Button>
+            </div>
+            <Accordion.Body>
+              {entityFacets.length ? entityFacets.map((facet, index) => {
+                let datatype = "";
+                let step;
+                switch (facet.type) {
+                case "xs:string": {
+                  return Object.entries(facet).length !== 0 && facet.facetValues.length > 0 && (
+                    <Facet
                       name={facet.propertyPath}
-                      step={step}
+                      constraint={facet.facetName}
+                      facetValues={facet.facetValues}
+                      key={facet.facetName}
+                      tooltip=""
+                      facetType={facet.type}
+                      facetCategory="entity"
                       referenceType={facet.referenceType}
                       entityTypeId={facet.entityTypeId}
                       propertyPath={facet.propertyPath}
+                      updateSelectedFacets={updateSelectedFacets}
+                      addFacetValues={addFacetValues}
+                    />
+                  );
+                }
+                case "xs:date": {
+                  datatype = "date";
+                  return Object.entries(facet).length !== 0 && (
+                    <DateFacet
+                      constraint={facet.facetName}
+                      name={facet.propertyPath}
                       datatype={datatype}
                       key={facet.facetName}
-                      onChange={onNumberFacetChange}
+                      propertyPath={facet.propertyPath}
+                      onChange={onDateFacetChange}
                     />
-                  </div>
-                );
+                  );
+                }
+                case "xs:dateTime": {
+                  datatype = "dateTime";
+                  return Object.entries(facet).length !== 0 && (
+                    <DateTimeFacet
+                      constraint={facet.facetName}
+                      name={facet.propertyPath}
+                      datatype={datatype}
+                      key={facet.facetName}
+                      propertyPath={facet.propertyPath}
+                      onChange={onDateTimeFacetChange}
+                    />
+                  );
+                }
+                case "xs:int": {
+                  datatype = "int";
+                  step = 1;
+                  break;
+                }
+                case "xs:integer": {
+                  datatype = "integer";
+                  step = 1;
+                  break;
+                }
+                case "xs:short": {
+                  datatype = "short";
+                  step = 1;
+                  break;
+                }
+                case "xs:long": {
+                  datatype = "long";
+                  step = 1;
+                  break;
+                }
+                case "xs:decimal": {
+                  datatype = "decimal";
+                  step = 0.1;
+                  break;
+                }
+                case "xs:double": {
+                  datatype = "double";
+                  step = 0.1;
+                  break;
+                }
+                case "xs:float": {
+                  datatype = "float";
+                  step = 0.1;
+                  break;
+                }
+                //add date type cases
+
+                default:
+                  break;
+                }
+
+                if (step && facet.facetValues.length) {
+                  return (
+                    <div key={index}>
+                      <NumericFacet
+                        constraint={facet.facetName}
+                        name={facet.propertyPath}
+                        step={step}
+                        referenceType={facet.referenceType}
+                        entityTypeId={facet.entityTypeId}
+                        propertyPath={facet.propertyPath}
+                        datatype={datatype}
+                        key={facet.facetName}
+                        onChange={onNumberFacetChange}
+                      />
+                    </div>
+                  );
+                }
+              }) :
+                <div>No Facets</div>
               }
-            }) :
-              <div>No Facets</div>
-            }
-          </Panel>
-        )}
-        <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={facetPanelStyle}>
-          <div className={styles.facetName} data-cy="created-on-facet">
-            Created On
-            <HCTooltip text={tooltips.createdOn} id="created-on-tooltip" placement="top-start">
-              <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
-            </HCTooltip>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      )}
+      <Accordion id="hub-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("hubProperties") ? "hubProperties" : ""} defaultActiveKey={activeKey.includes("hubProperties") ? "hubProperties" : ""}>
+        <Accordion.Item eventKey="hubProperties" className={"bg-transparent"}>
+          <div className={"p-0 d-flex"}>
+            <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("hubProperties")}>Hub Properties</Accordion.Button>
           </div>
-          <div>
-            <Select
-              style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}
-              placeholder="Select time"
-              id="date-select"
-              value={dateRangeValue}
-              onChange={value => handleOptionSelect(value)}
-              getPopupContainer={() => document.getElementById("date-select") || document.body}
-            >{dateRangeOptions.map((timeBucket, index) => {
-                return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
-                  {timeBucket}
-                </Option>;
-              })
-              }</Select>
-          </div>
-          <div className={styles.dateTimeWindow} >
-            {timeWindow(dateRangeValue)}
-          </div>
-          {dateRangeValue === "Custom" && <RangePicker
-            id="range-picker"
-            className={styles.datePicker}
-            onChange={onDateChange}
-            value={datePickerValue}
-            getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
-          />}
-          {hubFacets.map(facet => {
-            return facet && (
-              <Facet
-                name={facet.hasOwnProperty("displayName") ? facet.displayName : facet.facetName}
-                constraint={facet.facetName}
-                facetValues={facet.facetValues}
-                key={facet.facetName}
-                tooltip={facet.tooltip}
-                facetType={facet.type}
-                facetCategory="hub"
-                updateSelectedFacets={updateSelectedFacets}
-                addFacetValues={addFacetValues}
-                referenceType={facet.referenceType}
-                entityTypeId={facet.entityTypeId}
-                propertyPath={facet.propertyPath}
-              />
-            );
-          })}
-        </Panel>
-      </Collapse>
+          <Accordion.Body>
+            <div className={styles.facetName} data-cy="created-on-facet">
+              Created On
+              <HCTooltip text={tooltips.createdOn} id="created-on-tooltip" placement="top-start">
+                <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
+              </HCTooltip>
+            </div>
+            <div>
+              <Select
+                style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}
+                placeholder="Select time"
+                id="date-select"
+                value={dateRangeValue}
+                onChange={value => handleOptionSelect(value)}
+                getPopupContainer={() => document.getElementById("date-select") || document.body}
+              >{dateRangeOptions.map((timeBucket, index) => {
+                  return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
+                    {timeBucket}
+                  </Option>;
+                })
+                }</Select>
+            </div>
+            <div className={styles.dateTimeWindow} >
+              {timeWindow(dateRangeValue)}
+            </div>
+            {dateRangeValue === "Custom" && <RangePicker
+              id="range-picker"
+              className={styles.datePicker}
+              onChange={onDateChange}
+              value={datePickerValue}
+              getCalendarContainer={() => document.getElementById("sideBarContainer") || document.body}
+            />}
+            {hubFacets.map(facet => {
+              return facet && (
+                <Facet
+                  name={facet.hasOwnProperty("displayName") ? facet.displayName : facet.facetName}
+                  constraint={facet.facetName}
+                  facetValues={facet.facetValues}
+                  key={facet.facetName}
+                  tooltip={facet.tooltip}
+                  facetType={facet.type}
+                  facetCategory="hub"
+                  updateSelectedFacets={updateSelectedFacets}
+                  addFacetValues={addFacetValues}
+                  referenceType={facet.referenceType}
+                  entityTypeId={facet.entityTypeId}
+                  propertyPath={facet.propertyPath}
+                />
+              );
+            })}
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
     </div>
   );
 };

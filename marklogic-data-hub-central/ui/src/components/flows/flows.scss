@@ -1,9 +1,8 @@
 #panelActions {
-    margin-top: -4px;
     .ant-dropdown-trigger {
         height: 32px;
         margin-right: 16px;
-        
+        white-space: nowrap;
     }
 }
 
@@ -32,7 +31,6 @@
         width: 110px;
         background-color: #394494;
         border-color: #394494;
-        margin: 0 0 20px 0;
         padding: 0 15px;
     }
 }

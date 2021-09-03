@@ -39,10 +39,10 @@ describe("Merging", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.selectMergeTab("Order");
-    cy.waitUntil(() => curatePage.addNewStep());
+    cy.waitUntil(() => curatePage.addNewStep("Order"));
   });
   it("Creating a new merge step ", () => {
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Order").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().type("merge order step example", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Query");
