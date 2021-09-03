@@ -112,6 +112,48 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByRole("presentation").className).toEqual("Resizer vertical ");
   });
 
+  test("Verify 'before' interceptor success messaging in source table", async () => {
+    mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[4]);
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping"]);
+
+    let getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId;
+    });
+
+    expect(getByLabelText("interceptorMessage")).toBeInTheDocument();
+
+    //source table should still be present
+    expect(getByTestId("sourceTableKey")).toBeInTheDocument();
+
+  });
+
+  test("Verify 'before' interceptor error messaging in source table", async () => {
+    mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
+    mockGetMapArtifactByName.mockResolvedValue(mappingStep.artifacts[4]);
+    mockGetSourceDoc.mockImplementation(() => {
+      throw {response: {data: {message: "Interceptor execution failed;cause: JS-JAVASCRIPT: a.b; -- Error running JavaScript request: TypeError: Cannot read property 'b' of undefined"}}};
+    });
+
+    let getByLabelText, queryByTestId;
+    await act(async () => {
+      const renderResults = defaultRender(personMappingStepWithData);
+      getByLabelText = renderResults.getByLabelText;
+      queryByTestId = renderResults.queryByTestId;
+    });
+
+    expect(getByLabelText("interceptorError")).toBeInTheDocument();
+
+    //source table should not be present
+    expect(queryByTestId("sourceTableKey")).not.toBeInTheDocument();
+  });
+
   test("Verify legend visibility",  async() => {
     mockGetMapArtifactByName.mockResolvedValue({status: 200, data: mappingStep.artifacts[0]});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
@@ -2469,5 +2511,4 @@ describe("RTL Source Selector/Source Search tests", () => {
     await (waitForElement(() => getByText("/dummy/uri/person-102.json")));
     expect(getByText("/dummy/uri/person-102.json")).toBeInTheDocument();
   });
-
 });

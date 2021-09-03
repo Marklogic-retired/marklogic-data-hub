@@ -178,7 +178,8 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
                 assertEquals(200, response.getStatus());
-                assertEquals("\"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<test>12</test>\"", response.getContentAsString());
+                assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                    "<test>12</test>", response.getContentAsString());
             });
     }
 

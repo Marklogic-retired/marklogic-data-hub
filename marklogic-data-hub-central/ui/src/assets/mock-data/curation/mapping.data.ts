@@ -136,6 +136,29 @@ export const mappingStep = {
       "namespaces": {
         "entity-services": "http://marklogic.com/entity-services"
       }
+    },
+    {
+      "name": "mapCustomers",
+      ...mappingArtifactCommonProps,
+      "stepId": "mapCustomers-mapping",
+      "properties": {
+        propId: {sourcedFrom: "id"},
+        propName: {sourcedFrom: "testNameInExp"},
+        propAttribute: {sourcedFrom: "placeholderAttribute"},
+        items: {
+          sourcedFrom: "",
+          properties: {
+            itemTypes: {sourcedFrom: ""}
+          },
+          targetEntityType: "#/definitions/ItemType"
+        }
+      },
+      "interceptors": [
+        {
+          path: "/custom-modules/step-interceptors/updateCustomerId.sjs",
+          when: "beforeMain"
+        }
+      ]
     }
   ]
 };

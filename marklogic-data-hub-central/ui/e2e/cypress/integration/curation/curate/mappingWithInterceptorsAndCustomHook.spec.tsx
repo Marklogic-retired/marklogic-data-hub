@@ -214,7 +214,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
     //verify that step details is updated based on recent changes
-    cy.waitUntil(() => mappingStepDetail.noDataAvailable().should("be.visible"));
+    // cy.waitUntil(() => mappingStepDetail.noDataAvailable().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
 
     //Change the source Database again to see if the previous data comes back

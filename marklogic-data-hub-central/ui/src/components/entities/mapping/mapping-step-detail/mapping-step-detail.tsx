@@ -10,7 +10,7 @@ import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFrom
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
-import {MLButton, MLTooltip, MLCheckbox, MLSpin} from "@marklogic/design-system";
+import {MLButton, MLTooltip, MLCheckbox, MLSpin, MLAlert} from "@marklogic/design-system";
 import SourceNavigation from "../source-navigation/source-navigation";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {useHistory} from "react-router-dom";
@@ -21,7 +21,7 @@ import {AuthoritiesContext} from "../../../../util/authorities";
 import {MappingStep, StepType} from "../../../../types/curation-types";
 import {getMappingArtifactByMapName, updateMappingArtifact, getMappingFunctions, getMappingRefs} from "../../../../api/mapping";
 import Steps from "../../../steps/steps";
-import {AdvMapTooltips} from "../../../../config/tooltips.config";
+import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.config";
 import arrayIcon from "../../../../assets/icon_array.png";
 import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
 import CustomPageHeader from "../../page-header/page-header";
@@ -148,6 +148,8 @@ const MappingStepDetail: React.FC = () => {
   const [docNotFound, setDocNotFound] = useState(false);
   const [mapData, setMapData] = useState<any>(DEFAULT_MAPPING_STEP);
   const [getRef, setRef] =  useDynamicRefs();
+  const [interceptorExecuted, setInterceptorExecuted] = useState(false);
+  const [interceptorExecutionError, setInterceptorExecutionError] = useState("");
 
   const executeScroll = (refId) => {
     const scrollToRef : any = getRef(refId);
@@ -230,10 +232,20 @@ const MappingStepDetail: React.FC = () => {
 
   const fetchSrcDocFromUri = async (stepName, uri) => {
     try {
+      const mappingStep = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
+      if (mappingStep.interceptors) {
+        for (let i =0; i<mappingStep.interceptors.length; i++) {
+          const interceptor = mappingStep.interceptors[i];
+          if (interceptor.path && interceptor.when === "beforeMain") {
+            setInterceptorExecuted(true);
+          }
+          break;
+        }
+      }
       let srcDocResp = await getDoc(stepName, uri);
+
       if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
         let parsedDoc: any;
-        const mappingStep = await getMappingArtifactByMapName(curationOptions.activeStep.stepArtifact.targetEntityType, stepName);
         if (typeof(srcDocResp.data) === "string") {
           parsedDoc = getParsedXMLDoc(srcDocResp);
           setSourceFormat("xml");
@@ -265,10 +277,14 @@ const MappingStepDetail: React.FC = () => {
       }
       setIsLoading(false);
     } catch (error)  {
-      let message = error;//.response.data.message;
       setIsLoading(false);
-      console.error("Error While loading the Doc from URI!", message);
       setDocNotFound(true);
+      if (error.response.data.message.includes("Interceptor execution failed")) {
+        setInterceptorExecutionError(error.response.data.message);
+      } else {
+        let message = error;//.response.data.message;
+        console.error("Error While loading the Doc from URI!", message);
+      }
     }
   };
 
@@ -1366,6 +1382,8 @@ const MappingStepDetail: React.FC = () => {
         title={<span aria-label={`${curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}-details-header`}>{curationOptions.activeStep.stepArtifact && curationOptions.activeStep.stepArtifact.name}</span>}
         handleOnBack={onBack}
       />
+
+      <div className={styles.srcDetails}>{srcDetails}</div>
       <div className={styles.mapContainer}>
         <div className={styles.legend}>
           <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
@@ -1413,7 +1431,7 @@ const MappingStepDetail: React.FC = () => {
               <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
                 <div className={styles.sourceTitle}
                 ><span className={styles.sourceDataIcon}></span><strong>Source Data</strong>
-                  <span className={styles.srcDetails}>{srcDetails}</span></div>
+                </div>
               </div>
               {isLoading === true ? <div className={styles.spinRunning}>
                 <MLSpin size={"large"} data-testid="spinTest"/>
@@ -1430,17 +1448,92 @@ const MappingStepDetail: React.FC = () => {
                     </Card>
                   </div>
                   :
-                  <div id="dataPresent">
-                    <div className={styles.sourceButtons}>
-                      <span className={styles.navigationButtons}>{navigationButtons}</span>
-                      <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
+                  (interceptorExecuted && interceptorExecutionError !== "") ?
+                    <div id="failedInterceptor">
+                      <br/><br/><br/>
+
+                      <div className={styles.sourceButtons}>
+
+                        <span className={interceptorExecuted && interceptorExecutionError !== "" ? styles.navigationButtonsError: styles.navigationButtons}>{navigationButtons}</span>
+                        <span className={styles.sourceCollapseButtons}>{interceptorExecuted && interceptorExecutionError !== "" ? "" : <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""}/>}</span>
+                      </div>
+                      <br/><br/><br/>
+                      <MLAlert
+                        className={styles.interceptorFailureAlert}
+                        closable={false}
+                        message={<span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br/><br/> <b>Error Details:</b> <br/> {interceptorExecutionError}</span>}
+                        showIcon={true}
+                        icon={<Icon type="exclamation-circle" className={styles.interceptorFailureIcon} theme="filled"/>}
+                        type="info"
+                      />
                     </div>
-                    {
-                      sourceFormat === "xml" ?
-                        <div>
-                          <div id="upperTableXML">
+                    :
+                    <div id="dataPresent">
+                      <br/><br/><br/>
+                      {!isLoading  && !emptyData  && interceptorExecuted && interceptorExecutionError === "" ?
+                        <MLAlert
+                          className={styles.interceptorSuccessAlert}
+                          closable={true}
+                          message={<span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span>}
+                          showIcon={true}
+                          icon={<Icon type="exclamation-circle" className={styles.interceptorSuccessIcon} theme="filled"/>}
+                          type="info"
+                        /> : null}
+                      <div className={styles.sourceButtons}>
+                        <span className={styles.navigationButtons}>{navigationButtons}</span>
+                        <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>
+                      </div>
+
+                      {
+                        sourceFormat === "xml" ?
+                          <div>
+                            <div id="upperTableXML">
+                              <Table
+                                pagination={false}
+                                expandIcon={(props) => customExpandIcon(props)}
+                                onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                                expandedRowKeys={sourceExpandedKeys}
+                                className={styles.sourceTable}
+                                rowClassName={() => styles.sourceTableRows}
+                                scroll={{x: 300}}
+                                indentSize={20}
+                                //defaultExpandAllRows={true}
+                                //size="small"
+                                columns={columns}
+                                dataSource={[{rowKey: 1, key: sourceData[0]?.key}]}
+                                tableLayout="unset"
+                                rowKey={(record:any) => record.rowKey}
+                                getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                              />
+                            </div>
+                            <div id="lowerTableXML">
+                              {srcPropertiesXML.length > 0 ?
+                                <Table
+                                  pagination={paginationMapping}
+                                  expandIcon={(props) => customExpandIcon(props)}
+                                  onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                                  expandedRowKeys={sourceExpandedKeys}
+                                  className={styles.sourceTable}
+                                  rowClassName={() => styles.sourceTableRows}
+                                  scroll={{x: 300}}
+                                  indentSize={20}
+                                  showHeader={false}
+                                  //defaultExpandAllRows={true}
+                                  //size="small"
+                                  columns={columns}
+                                  dataSource={srcPropertiesXML}
+                                  tableLayout="unset"
+                                  rowKey={(record:any) => record.rowKey}
+                                  getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                                />
+                                : null
+                              }
+                            </div>
+                          </div>
+                          :
+                          <div id="jsonTable">
                             <Table
-                              pagination={false}
+                              pagination={paginationMapping}
                               expandIcon={(props) => customExpandIcon(props)}
                               onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
                               expandedRowKeys={sourceExpandedKeys}
@@ -1451,59 +1544,15 @@ const MappingStepDetail: React.FC = () => {
                               //defaultExpandAllRows={true}
                               //size="small"
                               columns={columns}
-                              dataSource={[{rowKey: 1, key: sourceData[0]?.key}]}
+                              dataSource={sourceData}
                               tableLayout="unset"
-                              rowKey={(record:any) => record.rowKey}
+                              rowKey={(record) => record.rowKey}
                               getPopupContainer={() => document.getElementById("srcContainer") || document.body}
                             />
                           </div>
-                          <div id="lowerTableXML">
-                            {srcPropertiesXML.length > 0 ?
-                              <Table
-                                pagination={paginationMapping}
-                                expandIcon={(props) => customExpandIcon(props)}
-                                onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
-                                expandedRowKeys={sourceExpandedKeys}
-                                className={styles.sourceTable}
-                                rowClassName={() => styles.sourceTableRows}
-                                scroll={{x: 300}}
-                                indentSize={20}
-                                showHeader={false}
-                                //defaultExpandAllRows={true}
-                                //size="small"
-                                columns={columns}
-                                dataSource={srcPropertiesXML}
-                                tableLayout="unset"
-                                rowKey={(record:any) => record.rowKey}
-                                getPopupContainer={() => document.getElementById("srcContainer") || document.body}
-                              />
-                              : null
-                            }
-                          </div>
-                        </div>
-                        :
-                        <div id="jsonTable">
-                          <Table
-                            pagination={paginationMapping}
-                            expandIcon={(props) => customExpandIcon(props)}
-                            onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
-                            expandedRowKeys={sourceExpandedKeys}
-                            className={styles.sourceTable}
-                            rowClassName={() => styles.sourceTableRows}
-                            scroll={{x: 300}}
-                            indentSize={20}
-                            //defaultExpandAllRows={true}
-                            //size="small"
-                            columns={columns}
-                            dataSource={sourceData}
-                            tableLayout="unset"
-                            rowKey={(record) => record.rowKey}
-                            getPopupContainer={() => document.getElementById("srcContainer") || document.body}
-                          />
-                        </div>
-                    }
+                      }
 
-                  </div> }
+                    </div> }
             </div>
             <div
               id="entityContainer"
