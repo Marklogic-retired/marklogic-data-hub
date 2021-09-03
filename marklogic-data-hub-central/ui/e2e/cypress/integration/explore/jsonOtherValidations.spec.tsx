@@ -110,7 +110,7 @@ describe("Verify numeric/date facet can be applied", () => {
     toolbar.getRunToolbarIcon().click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
     runPage.expandFlow("personJSON");
-    runPage.runStep("mapPersonJSON");
+    runPage.runStep("mapPersonJSON", "personJSON");
     cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();

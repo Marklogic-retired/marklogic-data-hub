@@ -43,8 +43,11 @@ $tooltip-opacity: 1 !default;
 $tooltip-max-width: 250px !default;
 
 //accordion
+$accordion-button-padding-y: 0.5rem !default;
+$accordion-button-focus-box-shadow: shade-color($secondary, 10%) !default;
 $accordion-icon-width: 0.875rem;
 $accordion-icon-transform: rotate(0deg) !default;
+$accordion-icon-after-transform: rotate(-90deg) !default;
 
 //Form
 $input-btn-focus-width: 0.05rem;
@@ -60,12 +63,30 @@ $input-border-radius: 2px;
 // Import Bootstrap and its default variables
 @import "~bootstrap/scss/bootstrap.scss";
 
+.accordion {
+    &:not(:last-child) .accordion-item > .card, 
+    .accordion-item > .card .card-header {
+        border-bottom: 0;
+    }
+    &:not(.accordion-sidebar) .accordion-body {
+        border-top: 1px solid rgba(0, 0, 0, 0.125);
+    }
+}
+
 .accordion-button {
+    padding: $accordion-button-padding-y $accordion-button-padding-x;
+    background-color: unset;
     &:not(.collapsed) {
+        box-shadow: none;
+        color: unset;
+        background-color: unset;
         &::before {
             background-image: escape-svg($accordion-button-active-icon);
             transform: $accordion-icon-transform;
         }
+    }
+    &:focus{
+        box-shadow: none;
     }
     // Accordion icon
     &::before {
@@ -82,6 +103,22 @@ $input-border-radius: 2px;
     }
     &::after {
         display: none;
+    }
+
+    &.after-indicator {
+        &:not(.collapsed) {
+            &::after {
+                background-image: escape-svg($accordion-button-active-icon);
+                transform: $accordion-icon-transform;
+            }
+        }
+        &::before {
+            display: none;
+        }
+        &::after {
+            display: block;
+            transform: $accordion-icon-after-transform;
+        }
     }
 }
 

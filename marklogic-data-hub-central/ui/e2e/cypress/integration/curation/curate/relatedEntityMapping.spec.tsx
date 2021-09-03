@@ -76,7 +76,7 @@ describe("Mapping", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
     curatePage.getEntityTypePanel("Person").should("exist");
     curatePage.toggleEntityTypeId("Person");
-    cy.waitUntil(() => curatePage.addNewStep()).click();
+    cy.waitUntil(() => curatePage.addNewStep("Person")).click();
     createEditMappingDialog.setMappingName("mapRelation");
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['loadPersonJSON'])`);
@@ -177,9 +177,9 @@ describe("Mapping", () => {
     loadPage.confirmationOptions("Save").click();
     runPage.addStep("relationFlow");
     runPage.addStepToFlow("mapRelation");
-    runPage.verifyStepInFlow("Map", "mapRelation");
+    runPage.verifyStepInFlow("Map", "mapRelation", "relationFlow");
 
-    runPage.runStep("mapRelation");
+    runPage.runStep("mapRelation", "relationFlow");
     cy.verifyStepRunResult("success", "Mapping", "mapRelation");
     cy.waitForAsyncRequest();
 

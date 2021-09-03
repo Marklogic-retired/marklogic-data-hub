@@ -183,7 +183,7 @@ describe("Validate CRUD functionality from list view", () => {
     // add step to that new flow
     runPage.addStep(flowName);
     runPage.addStepToFlow(stepName);
-    runPage.verifyStepInFlow("Load", stepName);
+    runPage.verifyStepInFlow("Load", stepName, flowName);
     cy.wait(500);
   });
 

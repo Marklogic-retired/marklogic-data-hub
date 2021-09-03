@@ -78,12 +78,12 @@ class CuratePage {
     cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Custom`)).click();
   }
 
-  addNewStep() {
-    return cy.findByLabelText("icon: plus-circle");
+  addNewStep(curateTabId: string) {
+    return cy.get(`#${curateTabId}`).findByLabelText("icon: plus-circle");
   }
 
-  addNewStepDisabled() {
-    return cy.findByLabelText("add-new-card-disabled");
+  addNewStepDisabled(entityTypeId: string) {
+    return cy.get(`#${entityTypeId}`).findByLabelText("add-new-card-disabled");
   }
 
   stepSettings(stepName: string) {
