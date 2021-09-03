@@ -12,7 +12,7 @@
       "when": "pre-commit"
     }
   },
-  "module": "data-hub/4/triggers/entity-model-validate-trigger.xqy",
+  "module": "data-hub/4/triggers/draft-entity-model-validate-trigger.xqy",
   "module-db": "%%mlModulesDbName%%",
   "module-root": "/",
   "enabled": true,

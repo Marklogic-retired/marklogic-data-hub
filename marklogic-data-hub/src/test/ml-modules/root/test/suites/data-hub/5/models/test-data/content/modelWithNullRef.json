@@ -1,0 +1,16 @@
+{
+  "info": {
+    "title": "modelWithNullRef",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Test": {
+      "properties": {
+        "link": {
+          "$ref": null
+        }
+      }
+    }
+  }
+}
