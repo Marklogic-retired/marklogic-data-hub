@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Icon, Collapse, Button} from "antd";
+import {Modal, Icon, Button} from "antd";
+import {Accordion} from "react-bootstrap";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -17,8 +18,6 @@ import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import HCDivider from "../common/hc-divider/hc-divider";
 import {ExclamationCircleFill} from "react-bootstrap-icons";
-
-const {Panel} = Collapse;
 
 type Props = {
   openJobResponse: boolean;
@@ -126,19 +125,29 @@ const JobResponse: React.FC<Props> = (props) => {
             return <div  className={styles.stepResponse} key={"success-" + index}><Icon type="check-circle" className={styles.successfulRun} theme="filled"/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>;
           } else {
             const errors = getErrors(stepResponse);
-            return <div className={styles.stepResponse} key={"failed-" + index}>
-              <div><ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/><strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
-              <Collapse defaultActiveKey={[]} bordered={false}>
-                <Panel header={<span className={styles.errorSummary}>{getErrorsSummary(stepResponse)}</span>} key={stepResponse.stepName + "-errors"}>
-                  <Collapse defaultActiveKey={[]} bordered={false}>
+            return <div className={styles.errorStepResponse} key={"failed-" + index}>
+              <div><ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
+              <Accordion className={"w-100"} flush>
+                <Accordion.Item eventKey={stepResponse.stepName + "-errors"}>
+                  <div className={"p-0 d-flex"}>
+                    <Accordion.Button>{getErrorsSummary(stepResponse)}</Accordion.Button>
+                  </div>
+                  <Accordion.Body>
                     {errors.map((e, i) => {
-                      return <Panel header={getErrorsHeader(i)} key={stepResponse.stepName + "-error-" + i}>
-                        {getErrorDetails(e)}
-                      </Panel>;
+                      return <Accordion className={"w-100"} flush key={i}>
+                        <Accordion.Item eventKey={stepResponse.stepName + "-error-" + i}>
+                          <div className={"p-0 d-flex"}>
+                            <Accordion.Button>{getErrorsHeader(i)}</Accordion.Button>
+                          </div>
+                          <Accordion.Body>
+                            {getErrorDetails(e)}
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>;
                     })}
-                  </Collapse>
-                </Panel>
-              </Collapse>
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
             </div>;
           }
         } else {

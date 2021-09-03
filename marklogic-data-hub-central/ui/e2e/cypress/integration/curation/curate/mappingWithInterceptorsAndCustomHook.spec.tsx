@@ -96,7 +96,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.verifyStepAddedToFlow("Load", loadStep, flowName);
     //Run the ingest with JSON
     cy.waitForAsyncRequest();
-    runPage.runStep(loadStep);
+    runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/10259.json");
     cy.verifyStepRunResult("success", "Ingestion", loadStep);
     tiles.closeRunMessage();
@@ -105,7 +105,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep().click());
+    cy.waitUntil(() => curatePage.addNewStep("Order").click());
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     createEditMappingDialog.setSourceRadio("Query");
@@ -250,7 +250,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   // will unskip next test when pending PR are merged in ant-lib-replacement
   it.skip("Verify mapping step with duplicate name cannot be created", () => {
     curatePage.toggleEntityTypeId("Order");
-    cy.waitUntil(() => curatePage.addNewStep().click());
+    cy.waitUntil(() => curatePage.addNewStep("Order").click());
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput("test");

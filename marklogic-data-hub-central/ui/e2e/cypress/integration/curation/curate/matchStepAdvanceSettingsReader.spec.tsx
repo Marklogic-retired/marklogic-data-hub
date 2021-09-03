@@ -33,7 +33,7 @@ describe("Validate Advance Settings for hub-central-match-merge-reader role", ()
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person").should("be.visible"));
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
-    cy.waitUntil(() => curatePage.addNewStep());
+    cy.waitUntil(() => curatePage.addNewStep("Person"));
   });
   it("Validate the default Advanced settings are disabled", () => {
     loadPage.editStepInCardView(matchStep).click({force: true});

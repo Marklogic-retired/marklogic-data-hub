@@ -122,7 +122,7 @@ Cypress.Commands.add("logout", () => {
 
 Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => {
   cy.wait(1000);
-  cy.get("[class=\"ant-collapse-content ant-collapse-content-active\"]").then($body => {
+  cy.get("[class=\"accordion-collapse collapse show\"]").then($body => {
     if ($body.find(`[aria-label="runStep-${stepName}"]`).length > 0) {
       const text = $body.find("[class^=\"hc-card_title\"]").text();
       expect(text).to.equal(stepType);
@@ -131,7 +131,7 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => 
       cy.wait(1000);
       cy.waitForAsyncRequest();
       cy.waitUntil(() => cy.get(`#${flowName}`).should("be.visible"));
-      cy.get(`#${flowName}`).find("[class*=\"ant-collapse-arrow\"]").click({force: true});
+      cy.get(`#${flowName}`).find("[class*=\"accordion-button\"]").click({force: true});
       cy.waitUntil(() => cy.findByText(stepType).should("be.visible"));
       cy.waitUntil(() => cy.findByText(stepName).should("be.visible"));
     }

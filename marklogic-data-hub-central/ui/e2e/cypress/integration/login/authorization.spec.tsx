@@ -139,7 +139,7 @@ describe("login", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "not.exist");
-    curatePage.addNewStepDisabled().should("be.visible");
+    curatePage.addNewStepDisabled(entityTypeId).should("be.visible");
     curatePage.editStep(mapStepName).click();
     curatePage.verifyStepNameIsVisibleEdit(mapStepName);
     curatePage.saveEdit().should("be.disabled");
@@ -182,7 +182,7 @@ describe("login", () => {
     runPage.deleteFlow(flowName).should("exist");
     runPage.deleteFlowDisabled(flowName).should("not.exist");
     runPage.toggleFlowConfig(flowName);
-    runPage.deleteStep(stepName).click();
+    runPage.deleteStep(stepName, flowName).click();
     runPage.deleteStepConfirmationMessage(stepName, flowName).should("be.visible");
     cy.findByLabelText("No").click();
   });

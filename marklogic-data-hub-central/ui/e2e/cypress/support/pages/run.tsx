@@ -1,5 +1,7 @@
 class RunPage {
 
+  private flowBodyContainer = ".accordion-collapse";
+
   createFlowButton() {
     return cy.findByText("Create Flow").closest("button");
   }
@@ -43,10 +45,10 @@ class RunPage {
     cy.findByLabelText("Yes").click();
   }
 
-  verifyStepInFlow(stepType: string, stepName: string) {
+  verifyStepInFlow(stepType: string, stepName: string, flowName: string) {
     cy.waitForModalToDisappear();
-    cy.findByText(stepType).should("be.visible");
-    cy.findAllByText(stepName).first().should("be.visible");
+    cy.get(`#${flowName} ${this.flowBodyContainer}`).findByText(stepType).should("be.visible");
+    cy.get(`#${flowName} ${this.flowBodyContainer}`).findAllByText(stepName).first().should("be.visible");
   }
 
   getFlowStatusModal() {
@@ -69,8 +71,8 @@ class RunPage {
     return cy.get("[aria-label=\"icon: close\"]").click();
   }
 
-  runStep(stepName: string) {
-    cy.waitUntil(() => cy.findByLabelText(`runStep-${stepName}`)).click({force: true});
+  runStep(stepName: string, flowName: string) {
+    cy.waitUntil(() => cy.get(`#${flowName}`).findByLabelText(`runStep-${stepName}`)).click({force: true});
     cy.waitForAsyncRequest();
   }
 
@@ -79,8 +81,8 @@ class RunPage {
     cy.waitForAsyncRequest();
   }
 
-  deleteStep(stepName: string) {
-    return cy.findByLabelText(`deleteStep-${stepName}`);
+  deleteStep(stepName: string, flowName: string) {
+    return cy.get(`#${flowName}`).findByLabelText(`deleteStep-${stepName}`);
   }
 
   deleteStepDisabled(stepName: string) {
@@ -124,8 +126,10 @@ class RunPage {
     cy.findByLabelText(`stepSettings-${flowName}`).first().click();
   }
 
-  clickSuccessCircleIcon(stepName: string) {
-    cy.findByTestId(`check-circle-${stepName}`).scrollIntoView().click();
+  clickSuccessCircleIcon(stepName: string, flowName: string) {
+    cy.get(`#${flowName}`).within(() => {
+      cy.findByTestId(`check-circle-${stepName}`).scrollIntoView().click();
+    });
   }
 
   runFlow(flowName :string) {
