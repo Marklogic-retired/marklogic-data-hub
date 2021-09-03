@@ -1,5 +1,6 @@
 import React, {useState, useContext} from "react";
-import {Modal, Form, Input, Radio, Table, Collapse} from "antd";
+import {Modal, Form, Input, Radio, Table} from "antd";
+import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "../../../util/search-context";
 import {UserContext} from "../../../util/user-context";
@@ -7,7 +8,6 @@ import {exportQuery, exportSavedQuery} from "../../../api/queries";
 import HCAlert from "../../common/hc-alert/hc-alert";
 
 const QueryExportModal = (props) => {
-  const {Panel} = Collapse;
 
   const [value, setValue] = useState<number>(1);
   const [limit, setLimit] = useState<number>(Number.MAX_SAFE_INTEGER);
@@ -130,23 +130,24 @@ const QueryExportModal = (props) => {
         }
       </Form>
 
-      {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && <div>
-        <Collapse bordered={false} className={styles.collapseCustomPanel} style={{border: "0px", color: "blue"}}>
-          <Panel id="export-panel" header="Show Preview" key="1" style={{border: "0px", color: "blue"}}>
-
-            <HCAlert
-              data-testid="export-data-warning"
-              variant="warning"
-              className={styles.dataWarning}
-              showIcon
-            >{"Preview may improperly render new lines in property values"}</HCAlert>
-
-            <br />
-
-            <Table data-testid="export-preview-table" className={styles.exportTable} dataSource={props.tableData} columns={props.tableColumns} pagination={false} size="small" scroll={{x: 500}} bordered />
-          </Panel>
-        </Collapse>
-      </div>}
+      {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
+        <Accordion id="export-panel" className={"w-100"} flush>
+          <Accordion.Item eventKey="1">
+            <div className={"d-flex"}>
+              <Accordion.Button>Show Preview</Accordion.Button>
+            </div>
+            <Accordion.Body>
+              <HCAlert
+                data-testid="export-data-warning"
+                variant="warning"
+                className={styles.dataWarning}
+                showIcon
+              >{"Preview may improperly render new lines in property values"}</HCAlert>
+              <br />
+              <Table data-testid="export-preview-table" className={styles.exportTable} dataSource={props.tableData} columns={props.tableColumns} pagination={false} size="small" scroll={{x: 500}} bordered />
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>}
     </Modal>
   );
 };

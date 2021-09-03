@@ -40,10 +40,10 @@ describe("Validate Advance Settings for hub-central-match-merge-writer role", ()
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
-    cy.waitUntil(() => curatePage.addNewStep());
+    cy.waitUntil(() => curatePage.addNewStep("Customer"));
   });
   it("Creating a new match step", () => {
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
     createEditStepDialog.stepDescriptionInput().type("match customer step example", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Query");
