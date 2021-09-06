@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Select, Button, Tooltip} from "antd";
+import {Form, Input, Select, Tooltip} from "antd";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
 import StepsConfig from "../../../config/steps.config";
 import {NewLoadTooltips} from "../../../config/tooltips.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import HCButton from "../../common/hc-button/hc-button";
 
 interface Props {
   tabKey: string;
@@ -163,7 +164,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         name: stepName,
         description: description,
         sourceFormat: srcFormat,
-        separator: fieldSeparator === "Other"? otherSeparator : fieldSeparator,
+        separator: fieldSeparator === "Other" ? otherSeparator : fieldSeparator,
         targetFormat: tgtFormat,
         sourceName: sourceName,
         sourceType: sourceType,
@@ -186,7 +187,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     return result;
   };
 
-  const handleSubmit = (event: { preventDefault: () => void; }) => {
+  const handleSubmit = (event: {preventDefault: () => void;}) => {
     if (!stepName || invalidChars) {
       // missing name
       setStepNameTouched(true);
@@ -427,7 +428,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
         help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          { tobeDisabled?<Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}> <Input
+          {tobeDisabled ? <Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -435,7 +436,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
             onBlur={sendPayload}
-          /></Tooltip>:<Input
+          /></Tooltip> : <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -593,24 +594,26 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <Button aria-label="Cancel" onClick={() => onCancel()}>Cancel</Button>
+            <HCButton aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
             &nbsp;&nbsp;
-            {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><Button
+            {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
               className={styles.disabledSaveButton}
               aria-label="Save"
-              type="primary"
-              htmlType="submit"
+              size="sm"
+              variant="primary"
+              type="submit"
               disabled={true}
               onClick={handleSubmit}
-            >Save</Button></span></HCTooltip>:
-              <Button
+            >Save</HCButton></span></HCTooltip> :
+              <HCButton
                 aria-label="Save"
-                type="primary"
-                htmlType="submit"
+                size="sm"
+                variant="primary"
+                type="submit"
                 disabled={false}
                 onClick={handleSubmit}
                 onFocus={sendPayload}
-              >Save</Button>}
+              >Save</HCButton>}
           </div>
         </Form.Item>
       </Form>
