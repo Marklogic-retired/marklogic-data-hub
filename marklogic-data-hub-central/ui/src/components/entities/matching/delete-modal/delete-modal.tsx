@@ -1,7 +1,8 @@
 import React, {useContext} from "react";
-import {Modal, Button} from "antd";
+import {Modal} from "antd";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import {CurationContext} from "../../../../util/curation-context";
+import HCButton from "../../../common/hc-button/hc-button";
 
 
 type Props = {
@@ -42,17 +43,16 @@ const DeleteModal: React.FC<Props> = (props) => {
 
 
   const modalFooter = <div >
-    <Button
+    <HCButton
       aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-no`: `confirm-${props.editRuleset.thresholdName}-no`}
-      size="default"
+      variant="outline-light"
       onClick={closeModal}
-    >No</Button>
-    <Button
+    >No</HCButton>
+    <HCButton
       aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-yes`: `confirm-${props.editRuleset.thresholdName}-yes`}
-      type="primary"
-      size="default"
+      variant="primary"
       onClick={() => confirmAction()}
-    >Yes</Button>
+    >Yes</HCButton>
   </div>;
 
   return (

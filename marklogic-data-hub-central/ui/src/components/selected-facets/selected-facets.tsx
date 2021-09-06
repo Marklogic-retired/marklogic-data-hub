@@ -1,19 +1,20 @@
 import React, {useContext, useEffect} from "react";
-import {Icon, Button, Tooltip} from "antd";
+import {Icon, Tooltip} from "antd";
 import {SearchContext} from "../../util/search-context";
 import styles from "./selected-facets.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import HCButton from "../common/hc-button/hc-button";
 
 
 
 interface Props {
   selectedFacets: any[];
   greyFacets: any[];
-  toggleApply: (clicked:boolean) => void;
-  toggleApplyClicked: (clicked:boolean) => void;
+  toggleApply: (clicked: boolean) => void;
+  toggleApplyClicked: (clicked: boolean) => void;
   showApply: boolean
   applyClicked: boolean
 }
@@ -65,7 +66,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
   };
 
 
-  const unCheckRest = (constraint, facet, rangeValues:any = {}) => {
+  const unCheckRest = (constraint, facet, rangeValues: any = {}) => {
     if (props.selectedFacets.length === 0) { return true; }
     for (let item of props.selectedFacets) {
       if (item.rangeValues && JSON.stringify(rangeValues) === JSON.stringify(item.rangeValues)) { return false; }
@@ -80,12 +81,12 @@ const SelectedFacets: React.FC<Props> = (props) => {
       data-testid="selected-facet-block"
       data-cy="selected-facet-block"
       className={styles.clearContainer}
-      style={ (Object.entries(searchOptions.selectedFacets).length === 0 && Object.entries(greyedOptions.selectedFacets).length === 0) ? {"visibility": "hidden"} : {"visibility": "visible"}}
+      style={(Object.entries(searchOptions.selectedFacets).length === 0 && Object.entries(greyedOptions.selectedFacets).length === 0) ? {"visibility": "hidden"} : {"visibility": "visible"}}
     >
-      { props.selectedFacets.map((item, index) => {
+      {props.selectedFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
         if (facetName === "createdOnRange") {
-          let dateValues:any = [];
+          let dateValues: any = [];
           if (item.facet.rangeValues.lowerBound && item.facet.rangeValues.upperBound) {
             const startDate = moment(item.facet.rangeValues.lowerBound).format("YYYY-MM-DD");
             const endDate = moment(item.facet.rangeValues.upperBound).format("YYYY-MM-DD");
@@ -94,25 +95,27 @@ const SelectedFacets: React.FC<Props> = (props) => {
             dateValues.push(item.facet.stringValues[0]);
           }
           return (
-            <Button
-              size="small"
+            <HCButton
+              size="sm"
+              variant="outline-light"
               className={styles.dateFacet}
               key={index}
               onClick={() => clearDateFacet()}
               data-cy="clear-date-facet"
               data-testid="clear-date-facet"
             >
-              { dateValues.join(" ~ ") }
-              <Icon type="close"/>
-            </Button>
+              {dateValues.join(" ~ ")}
+              <Icon type="close" />
+            </HCButton>
           );
         } else if (item.rangeValues) {
           if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
-            let dateValues:any = [];
+            let dateValues: any = [];
             dateValues.push(item.rangeValues.lowerBound, item.rangeValues.upperBound);
             return (
-              <Button
-                size="small"
+              <HCButton
+                size="sm"
+                variant="outline-light"
                 className={styles.dateFacet}
                 key={index}
                 onClick={() => clearRangeFacet(item.constraint)}
@@ -120,13 +123,14 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid={`clear-${item.displayName}`}
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
-                <Icon type="close"/>
-              </Button>
+                <Icon type="close" />
+              </HCButton>
             );
           } else {
             return (
-              <Button
-                size="small"
+              <HCButton
+                size="sm"
+                variant="outline-light"
                 className={styles.facetButton}
                 key={index}
                 onClick={() => clearRangeFacet(item.constraint)}
@@ -134,14 +138,15 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid="clear-range-facet"
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
-                <Icon type="close"/>
-              </Button>
+                <Icon type="close" />
+              </HCButton>
             );
           }
         }
         return (
-          <Button
-            size="small"
+          <HCButton
+            size="sm"
+            variant="outline-light"
             className={styles.facetButton}
             key={index}
             onClick={() => clearFacet(item.constraint, item.facet)}
@@ -149,8 +154,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-testid={`clear-${item.facet}`}
           >
             {facetName + ": " + item.facet}
-            <Icon type="close"/>
-          </Button>
+            <Icon type="close" />
+          </HCButton>
         );
       })}
       {props.greyFacets.map((item, index) => {
@@ -165,68 +170,72 @@ const SelectedFacets: React.FC<Props> = (props) => {
             dateValues.push(item.facet.stringValues[0]);
           }
           return ((unCheckRest(item.constraint, item.facet)) &&
-                    <Button
-                      size="small"
-                      className={styles.facetGreyButton}
-                      key={index}
-                      onClick={() => clearGreyDateFacet()}
-                      data-cy="clear-date-facet"
-                      data-testid="clear-date-facet"
-                    >
-                      {dateValues.join(" ~ ")}
-                      <Icon type="close"/>
-                    </Button>
+            <HCButton
+              size="sm"
+              variant="outline-light"
+              className={styles.facetGreyButton}
+              key={index}
+              onClick={() => clearGreyDateFacet()}
+              data-cy="clear-date-facet"
+              data-testid="clear-date-facet"
+            >
+              {dateValues.join(" ~ ")}
+              <Icon type="close" />
+            </HCButton>
           );
         } else if (item.rangeValues) {
           if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
             let dateValues: any = [];
             dateValues.push(item.rangeValues.lowerBound, item.rangeValues.upperBound);
             return ((unCheckRest(item.constraint, item.facet, item.rangeValues)) &&
-                        <Button
-                          size="small"
-                          className={styles.facetGreyButton}
-                          key={index}
-                          onClick={() => clearGreyRangeFacet(item.constraint)}
-                          data-cy={`clear-grey-${item.rangeValues.lowerBound}`}
-                        >
-                          {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
-                          <Icon type="close"/>
-                        </Button>
+              <HCButton
+                size="sm"
+                variant="outline-light"
+                className={styles.facetGreyButton}
+                key={index}
+                onClick={() => clearGreyRangeFacet(item.constraint)}
+                data-cy={`clear-grey-${item.rangeValues.lowerBound}`}
+              >
+                {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
+                <Icon type="close" />
+              </HCButton>
             );
           } else {
             return ((unCheckRest(item.constraint, item.facet)) &&
-                        <Button
-                          size="small"
-                          className={styles.facetGreyButton}
-                          key={index}
-                          onClick={() => clearGreyRangeFacet(item.constraint)}
-                          data-cy="clear-range-facet"
-                          data-testid="clear-range-facet"
-                        >
-                          {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
-                          <Icon type="close"/>
-                        </Button>
+              <HCButton
+                size="sm"
+                variant="outline-light"
+                className={styles.facetGreyButton}
+                key={index}
+                onClick={() => clearGreyRangeFacet(item.constraint)}
+                data-cy="clear-range-facet"
+                data-testid="clear-range-facet"
+              >
+                {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
+                <Icon type="close" />
+              </HCButton>
             );
           }
         }
         return (
           (unCheckRest(item.constraint, item.facet)) &&
-                <Tooltip
-                  key={index + "-" + item.facet}
-                  title={"Not yet applied"}
-                >
-                  <Button
-                    size="small"
-                    className={styles.facetGreyButton}
-                    key={index}
-                    onClick={() => clearGreyFacet(item.constraint, item.facet)}
-                    data-cy={`clear-grey-${item.facet}`}
-                    data-testid={`clear-grey-${item.facet}`}
-                  >
-                    {facetName + ": " + item.facet}
-                    <Icon type="close"/>
-                  </Button>
-                </Tooltip>
+          <Tooltip
+            key={index + "-" + item.facet}
+            title={"Not yet applied"}
+          >
+            <HCButton
+              size="sm"
+              variant="outline-light"
+              className={styles.facetGreyButton}
+              key={index}
+              onClick={() => clearGreyFacet(item.constraint, item.facet)}
+              data-cy={`clear-grey-${item.facet}`}
+              data-testid={`clear-grey-${item.facet}`}
+            >
+              {facetName + ": " + item.facet}
+              <Icon type="close" />
+            </HCButton>
+          </Tooltip>
         );
       })}
       {props.greyFacets.length > 0 &&
