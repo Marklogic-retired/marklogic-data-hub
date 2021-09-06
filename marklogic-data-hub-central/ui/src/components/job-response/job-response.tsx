@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Icon, Collapse, Button} from "antd";
+import {Modal, Icon, Collapse} from "antd";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -14,6 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import HCDivider from "../common/hc-divider/hc-divider";
+import HCButton from "../common/hc-button/hc-button";
 
 const {Panel} = Collapse;
 
@@ -139,10 +140,10 @@ const JobResponse: React.FC<Props> = (props) => {
               <div className={styles.stepRow}>
                 <div className={styles.stepResponse} key={"success-" + index}><Icon type="check-circle" className={styles.successfulRun} theme="filled" /> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
                 <div className={styles.documentsWritten}>{stepResponse.successfulEvents}</div>
-                <Button data-testid="explorer-link" size="small" type="primary" onClick={() => { }} className={styles.exploreCuratedData}>
+                <HCButton data-testid="explorer-link" size="sm" variant="primary" onClick={() => {}} className={styles.exploreCuratedData}>
                   <span className={styles.exploreActionIcon}></span>
                   <span className={styles.exploreActionText}>Explore Data</span>
-                </Button>
+                </HCButton>
               </div>
               <HCDivider className={styles.divider} />
             </div>;

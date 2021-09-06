@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Radio, Cascader, Select, Checkbox, Button} from "antd";
+import {Modal, Form, Input, Radio, Cascader, Select, Checkbox} from "antd";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -30,6 +30,7 @@ import {
 import HCAlert from "../../common/hc-alert/hc-alert";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCButton from "../../common/hc-button/hc-button";
 
 const {Option} = Select;
 
@@ -758,29 +759,27 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
     { props.editPropertyOptions.isEdit &&
-      <Button type="link" onClick={async () => {
+      <HCButton variant="link" onClick={async () => {
         if (confirmType === ConfirmationType.Identifer) {
           await getEntityReferences();
         }
         toggleConfirmModal(true);
       }}>
         <FontAwesomeIcon data-testid={"delete-" + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
-      </Button>
+      </HCButton>
     }
     <div>
-      <Button
+      <HCButton
         aria-label="property-modal-cancel"
-        size="default"
+        variant="outline-light"
         onClick={onCancel}
-      >Cancel</Button>
-      <Button
+      >Cancel</HCButton>
+      <HCButton
         aria-label="property-modal-submit"
-        form="property-form"
-        type="primary"
-        htmlType="submit"
-        size="default"
+        variant="primary"
+        type="submit"
         onClick={onSubmit}
-      >{props.editPropertyOptions.isEdit ? "OK" : "Add"}</Button>
+      >{props.editPropertyOptions.isEdit ? "OK" : "Add"}</HCButton>
     </div>
   </div>;
 

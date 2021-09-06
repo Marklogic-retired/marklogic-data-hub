@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Button} from "antd";
+import {Modal} from "antd";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import SelectedFacets from "../../components/selected-facets/selected-facets";
@@ -15,6 +15,7 @@ import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal"
 import {QueryOptions} from "../../types/query-types";
 import {getUserPreferences} from "../../services/user-preferences";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import HCButton from "../common/hc-button/hc-button";
 
 interface Props {
   queries: any[];
@@ -567,19 +568,19 @@ const Query: React.FC<Props> = (props) => {
                     title={"Confirmation"}
                     onCancel={() => onResetCancel()}
                     footer={[
-                      <Button key="cancel" id="reset-confirmation-cancel-button" onClick={() => onResetCancel()}>Cancel</Button>,
-                      <Button key="back" id="reset-confirmation-no-button" onClick={() => onNoResetClick()}>
-                      No
-                      </Button>,
-                      <Button key="submit" id="reset-confirmation-yes-button" type="primary" onClick={() => onResetOk()}>
-                      Yes
-                      </Button>
+                      <HCButton variant="outline-light" key="cancel" id="reset-confirmation-cancel-button" onClick={() => onResetCancel()}>Cancel</HCButton>,
+                      <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" onClick={() => onNoResetClick()}>
+                        No
+                      </HCButton>,
+                      <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
+                        Yes
+                      </HCButton>
                     ]}>
                     {showResetQueryEditedConfirmation &&
-                    <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
-                      <br />
-                      <p>Would you like to save the changes before switching to another query?</p>
-                    </div>}
+                      <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                        <br />
+                        <p>Would you like to save the changes before switching to another query?</p>
+                      </div>}
                     {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
                   </Modal>
                 </div>}
@@ -611,13 +612,13 @@ const Query: React.FC<Props> = (props) => {
           title={"Existing Query"}
           onCancel={() => onCancel()}
           footer={[
-            <Button key="cancel" id="entity-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</Button>,
-            <Button key="back" id="entity-confirmation-no-button" onClick={() => onNoClick()}>
+            <HCButton variant="outline-light" key="cancel" id="entity-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>,
+            <HCButton variant="outline-light" key="back" id="entity-confirmation-no-button" onClick={() => onNoClick()}>
               No
-            </Button>,
-            <Button key="submit" id="entity-confirmation-yes-button" type="primary" onClick={() => onOk()}>
+            </HCButton>,
+            <HCButton key="submit" id="entity-confirmation-yes-button" variant="primary" onClick={() => onOk()}>
               Yes
-            </Button>
+            </HCButton>
           ]}>
           <p>Changing the entity selection starts a new query. Would you like to save the existing query before changing the selection?</p>
         </Modal>

@@ -1,9 +1,9 @@
 import React, {useContext} from "react";
 import styles from "./sidebar-footer.module.scss";
-import {Button} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {MonitorContext} from "../../util/monitor-context";
 import HCDivider from "../common/hc-divider/hc-divider";
+import HCButton from "../common/hc-button/hc-button";
 
 const SidebarFooter: React.FC = () => {
   const {
@@ -53,10 +53,10 @@ const SidebarFooter: React.FC = () => {
     <div>
       <HCDivider style={{"backgroundColor": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
       <div className={styles.facetFooter}>
-        <Button className={styles.button} aria-label="clear-facets-button" disabled={searchOptions.tileId === "explore" ?
+        <HCButton variant="outline-light" size="sm" aria-label="clear-facets-button" disabled={searchOptions.tileId === "explore" ?
           (Object.keys(searchOptions.selectedFacets).length === 0 && Object.keys(greyedOptions.selectedFacets).length === 0)
-          : (Object.keys(monitorOptions.selectedFacets).length === 0 && Object.keys(monitorGreyedOptions.selectedFacets).length === 0)} onClick={searchOptions.tileId === "explore" ? () => clearAllFacets() : () => clearAllMonitorFacets()}>Clear All Facets</Button>
-        <Button className={styles.button} aria-label="apply-facets-button" disabled={searchOptions.tileId === "explore" ? Object.keys(greyedOptions.selectedFacets).length === 0 : Object.keys(monitorGreyedOptions.selectedFacets).length === 0} onClick={searchOptions.tileId === "explore" ? () => applyFacets() : () => applyMonitorFacets()} type="primary" >Apply Facets</Button>
+          : (Object.keys(monitorOptions.selectedFacets).length === 0 && Object.keys(monitorGreyedOptions.selectedFacets).length === 0)} onClick={searchOptions.tileId === "explore" ? () => clearAllFacets() : () => clearAllMonitorFacets()}>Clear All Facets</HCButton>
+        <HCButton className={styles.button} size="sm" aria-label="apply-facets-button" disabled={searchOptions.tileId === "explore" ? Object.keys(greyedOptions.selectedFacets).length === 0 : Object.keys(monitorGreyedOptions.selectedFacets).length === 0} onClick={searchOptions.tileId === "explore" ? () => applyFacets() : () => applyMonitorFacets()} variant="primary" >Apply Facets</HCButton>
       </div>
     </div>
   );

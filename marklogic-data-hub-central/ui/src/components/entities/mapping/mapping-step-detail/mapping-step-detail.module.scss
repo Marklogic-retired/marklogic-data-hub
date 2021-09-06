@@ -247,6 +247,7 @@ hr {
     position: relative;
     padding-top: 5px;
     margin-bottom: -41px;
+    z-index: 0;
 }
 .sourceDataIcon:before {
   content: "\e934";
@@ -261,6 +262,9 @@ hr {
 }
 .srcDetails {
     font-size: 14px;
+}
+.dataPresent {
+    z-index: 1;
 }
 
 .sourceValue{
@@ -383,7 +387,7 @@ hr {
 
   .stepSettingsLink {
     position: absolute;
-    bottom: 75px;
+    bottom: 89px;
     padding-right: 27px;
     right: 22px;
     color: #44499C;
