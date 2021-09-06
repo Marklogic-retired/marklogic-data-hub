@@ -1,0 +1,40 @@
+.wrapperStyle { 
+    width: 400px; 
+    margin: 50px;
+}
+
+.rcSliderTrack {
+    div[class=rc-slider-tooltip-inner] {
+        background-color: #262b27;   
+        padding: 9px 8px;
+        font-size: 14px;
+        min-height: 32px;
+    }  
+    div[class=rc-slider-tooltip-arrow] {
+        border-top-color: #262b27;   
+    }  
+    &:hover {  
+        cursor: pointer; 
+        div[class=rc-slider-step]{
+            background-color: #e1e1e1;  
+
+        }
+        div[class*=rc-slider-track]{
+            z-index: 1;
+            background-color: #7f86b5 !important;
+        }
+        div[class*=rc-slider-handle]{
+            border-color: #7f86b5 !important; 
+            z-index: 2;
+        }
+    } 
+    
+    div[class*=rc-slider-handle]{
+        &:active {        
+            border-color: #7c87bf;
+            outline: none;
+            -webkit-box-shadow: 0 0 0 5px #5b69af33;
+            box-shadow: 0 0 0 5px #5b69af33;
+        }
+    }
+}
