@@ -1,10 +1,11 @@
 import React, {useContext} from "react";
 import styles from "../selected-facets/selected-facets.module.scss";
-import {Icon, Button, Tooltip} from "antd";
+import {Icon, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import {MonitorContext} from "../../util/monitor-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import HCButton from "../common/hc-button/hc-button";
 
 interface Props {
     selectedFacets: any[];
@@ -71,8 +72,8 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
         let displayName = item.constraint !== "startTime" ? facetName + ": " + item.facet : item.facet;
         return (
-          <Button
-            size="small"
+          <HCButton
+            size="sm"
             className={styles.facetButton}
             key={index}
             onClick={() => clearMonitorFacet(item.constraint, item.facet)}
@@ -81,7 +82,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
           >
             {displayName}
             <Icon type="close"/>
-          </Button>
+          </HCButton>
         );
       })}
       {props.greyFacets.map((item, index) => {
@@ -93,8 +94,8 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
             key={index + "-" + item.facet}
             title={"Not yet applied"}
           >
-            <Button
-              size="small"
+            <HCButton
+              size="sm"
               className={styles.facetGreyButton}
               key={index}
               onClick={() => clearMonitorGreyFacet(item.constraint, item.facet)}
@@ -103,7 +104,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
             >
               {displayName}
               <Icon type="close"/>
-            </Button>
+            </HCButton>
           </Tooltip>
         );
       })}

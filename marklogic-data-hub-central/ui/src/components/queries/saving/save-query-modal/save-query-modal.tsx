@@ -1,25 +1,26 @@
 import React, {useState, useContext} from "react";
-import {Modal, Form, Input, Radio, Button} from "antd";
+import {Modal, Form, Input, Radio} from "antd";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "./save-query-modal.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
+import HCButton from "../../../common/hc-button/hc-button";
 
 
 interface Props {
-    setSaveModalVisibility: () => void;
-    saveNewQuery: (queryName: string, queryDescription: string, facets: {}) => void;
-    greyFacets: any[];
-    toggleApply: (clicked: boolean) => void;
-    toggleApplyClicked: (clicked: boolean) => void;
-    currentQueryName: string;
-    setCurrentQueryName: (name: string) => void;
-    setSaveNewIconVisibility: (clicked: boolean) => void;
-    currentQueryDescription: string;
-    setCurrentQueryDescription: (description: string) => void;
-    resetYesClicked: boolean;
-    setColumnSelectorTouched: (state: boolean) => void;
-    existingQueryYesClicked: boolean;
+  setSaveModalVisibility: () => void;
+  saveNewQuery: (queryName: string, queryDescription: string, facets: {}) => void;
+  greyFacets: any[];
+  toggleApply: (clicked: boolean) => void;
+  toggleApplyClicked: (clicked: boolean) => void;
+  currentQueryName: string;
+  setCurrentQueryName: (name: string) => void;
+  setSaveNewIconVisibility: (clicked: boolean) => void;
+  currentQueryDescription: string;
+  setCurrentQueryDescription: (description: string) => void;
+  resetYesClicked: boolean;
+  setColumnSelectorTouched: (state: boolean) => void;
+  existingQueryYesClicked: boolean;
 }
 
 const SaveQueryModal: React.FC<Props> = (props) => {
@@ -146,7 +147,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         <Form.Item
           colon={false}
           label={<span className={styles.text}>
-                        Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
           </span>}
           labelAlign="left"
           validateStatus={errorMessage ? "error" : ""}
@@ -184,13 +185,13 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         </Form.Item>}
         <Form.Item>
           <div className={styles.submitButtons}>
-            <Button id="save-query-cancel-button" onClick={() => onCancel()}>Cancel</Button>
-                        &nbsp;&nbsp;
-            <Button type="primary"
-              htmlType="submit"
+            <HCButton variant="outline-light" id="save-query-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+            &nbsp;&nbsp;
+            <HCButton variant="primary"
+              type="submit"
               disabled={queryName.length === 0}
               onClick={() => onOk()} id="save-query-button">Save
-            </Button>
+            </HCButton>
           </div>
         </Form.Item>
       </Form>

@@ -1,7 +1,8 @@
 import React, {useContext, useEffect} from "react";
-import {Result, Button} from "antd";
+import {Result} from "antd";
 import {withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
+import HCButton from "../components/common/hc-button/hc-button";
 
 
 const NoMatchRedirect = ({history}) => {
@@ -20,7 +21,7 @@ const NoMatchRedirect = ({history}) => {
       status={404}
       title="404"
       subTitle="Sorry, the page you visited does not exist."
-      extra={<Button type="primary" aria-label="back home" onClick={backToHomePage}>Back Home</Button>}
+      extra={<HCButton variant="primary" aria-label="back home" onClick={backToHomePage}>Back Home</HCButton>}
     />
   );
 };
