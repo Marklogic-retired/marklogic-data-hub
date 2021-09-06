@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Button, Table, Tooltip} from "antd";
+import {Table, Tooltip} from "antd";
 import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
@@ -27,6 +27,7 @@ import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import HCButton from "../../common/hc-button/hc-button";
 
 let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);
@@ -859,13 +860,14 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   };
 
-  const addPropertyButton = <Button
-    type="primary"
+  const addPropertyButton = <HCButton
+    variant="primary"
+    size="sm"
     aria-label={props.entityName + "-add-property"}
     disabled={!props.canWriteEntityModel}
     className={!props.canWriteEntityModel ? styles.disabledButton : undefined}
     onClick={() => addPropertyButtonClicked()}
-  >Add Property</Button>;
+  >Add Property</HCButton>;
 
   return (
     <div>

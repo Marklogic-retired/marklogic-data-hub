@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from "react";
-import {Modal, Button} from "antd";
+import {Modal} from "antd";
 import styles from "./confirmation-modal.module.scss";
 import {ModelingMessages} from "../../config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
 import HCAlert from "../common/hc-alert/hc-alert";
+import HCButton from "../common/hc-button/hc-button";
 
 type Props = {
   isVisible: boolean;
@@ -36,15 +37,14 @@ const ConfirmationModal: React.FC<Props> = (props) => {
   const renderArrayValues = props.arrayValues?.map((item, index) => <li key={item + index}>{item}</li>);
 
   const modalFooter = <div className={styles.modalFooter}>
-    <Button
+    <HCButton
       aria-label={`confirm-${props.type}-no`}
-      size="default"
+      variant="outline-light"
       onClick={closeModal}
-    >No</Button>
-    <Button
+    >No</HCButton>
+    <HCButton
       aria-label={`confirm-${props.type}-yes`}
-      type="primary"
-      size="default"
+      variant="primary"
       loading={loading}
       onClick={() => {
         switch (props.type) {
@@ -58,15 +58,14 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         }
         props.confirmAction();
       }}
-    >Yes</Button>
+    >Yes</HCButton>
   </div>;
 
-  const modalFooterClose = <Button
+  const modalFooterClose = <HCButton
     aria-label={`confirm-${props.type}-close`}
-    type="primary"
-    size="default"
+    variant="primary"
     onClick={closeModal}
-  >Close</Button>;
+  >Close</HCButton>;
 
   return (
     <Modal
