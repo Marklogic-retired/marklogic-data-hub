@@ -1,7 +1,8 @@
-import {Select, Modal, Button} from "antd";
+import {Select, Modal} from "antd";
 import React, {useContext, useState} from "react";
 import styles from "./save-queries-dropdown.module.scss";
 import {SearchContext} from "../../../../util/search-context";
+import HCButton from "../../../common/hc-button/hc-button";
 
 interface Props {
     savedQueryList: any[];
@@ -99,13 +100,13 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         title={"Confirmation"}
         onCancel={() => onCancel()}
         footer={[
-          <Button key="cancel" id="query-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</Button>,
-          <Button key="back" id="query-confirmation-no-button" onClick={() => onNoClick()}>
+          <HCButton variant="outline-light" key="cancel" id="query-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>,
+          <HCButton variant="outline-light" key="back" id="query-confirmation-no-button" onClick={() => onNoClick()}>
                         No
-          </Button>,
-          <Button key="submit" id="query-confirmation-yes-button" type="primary"  onClick={() => onOk()}>
+          </HCButton>,
+          <HCButton key="submit" id="query-confirmation-yes-button" variant="primary"  onClick={() => onOk()}>
                         Yes
-          </Button>
+          </HCButton>
         ]}>
         <p><strong>{props.currentQueryName}</strong> has been edited since it was last saved.</p>
         <br/>

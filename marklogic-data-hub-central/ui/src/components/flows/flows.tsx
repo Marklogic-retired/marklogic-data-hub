@@ -1,6 +1,5 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Button, Collapse, Icon, Modal, Menu, Dropdown, Tooltip} from "antd";
-import {DownOutlined} from "@ant-design/icons";
+import {Collapse, Icon, Modal, Menu, Dropdown, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +18,9 @@ import {PlayCircleFill, X} from "react-bootstrap-icons";
 import styles from "./flows.module.scss";
 import "./flows.scss";
 import HCCard from "../common/hc-card/hc-card";
+import HCButton from "../common/hc-button/hc-button";
+import {ChevronDown} from "react-bootstrap-icons";
+
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -607,23 +609,22 @@ const Flows: React.FC<Props> = (props) => {
         overlayClassName="stepMenu"
       >
         {props.canWriteFlow ?
-          <Button
+          <HCButton
             className={styles.addStep}
-            size="default"
+            variant="outline-light"
             aria-label={`addStep-${name}`}
             style={{}}
-          >Add Step <DownOutlined /></Button>
+          >Add Step<ChevronDown className="ms-2" /></HCButton>
           :
           <HCTooltip text={SecurityTooltips.missingPermission} id="add-step-disabled-tooltip" placement="bottom">
             <span className={styles.disabledCursor}>
-              <Button
+              <HCButton
                 className={styles.addStep}
-                size="default"
                 aria-label={"addStepDisabled-" + i}
                 style={{backgroundColor: "#f5f5f5", borderColor: "#f5f5f5", pointerEvents: "none"}}
-                type="primary"
+                variant="primary"
                 disabled={!props.canWriteFlow}
-              >Add Step <DownOutlined /></Button>
+              >Add Step  <ChevronDown className="ms-2" /></HCButton>
             </span>
           </HCTooltip>
         }
@@ -1075,23 +1076,23 @@ const Flows: React.FC<Props> = (props) => {
                     aria-label={"create-flow"}
                     tabIndex={0}
                   >Create Flow</Button> */}
-                  <Button
-                    className={styles.createButton} size="default"
-                    type="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
+                  <HCButton
+                    className={styles.createButton}
+                    variant="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
                     aria-label={"create-flow"}
                     tabIndex={0}
-                  >Create Flow</Button>
+                  >Create Flow</HCButton>
                 </span>
                 :
                 <Tooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}}>
                   <span className={styles.disabledCursor}>
-                    <Button
-                      className={styles.createButtonDisabled} size="default"
-                      type="primary"
+                    <HCButton
+                      className={styles.createButtonDisabled}
+                      variant="primary"
                       disabled={true}
                       aria-label={"create-flow-disabled"}
                       tabIndex={-1}
-                    >Create Flow</Button>
+                    >Create Flow</HCButton>
                   </span>
                 </Tooltip>
             }

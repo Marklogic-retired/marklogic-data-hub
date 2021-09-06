@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Icon, Table, Popover, Input, Select, Dropdown, Modal, Button, Tooltip} from "antd";
+import {Icon, Table, Popover, Input, Select, Dropdown, Modal, Tooltip} from "antd";
 import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
@@ -17,6 +17,7 @@ import {paginationMapping} from "../../../../config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
 import StepsConfig from "../../../../config/steps.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import HCButton from "../../../common/hc-button/hc-button";
 
 interface Props {
   setScrollRef: any;
@@ -81,7 +82,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const uriHelp = <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>;
 
   //Text for related entities help icon
-  const relatedInfo = <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br/>Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>;
+  const relatedInfo = <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>;
 
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
@@ -140,11 +141,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const getValue = (object, keys) => keys.split(".").reduce((o, k) => (o || {})[k], object);
 
   const getDefaultEntities = () => {
-    let defaultSelected : any = [];
+    let defaultSelected: any = [];
     let entityTitle = props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle;
     props.relatedEntitiesSelected.map(entity => {
       let entityIdSections = entity["entityMappingId"].split(":");
-      let entityId = entityIdSections.length > 2 ?  /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] :  /([^.]+)/.exec(entityIdSections[0])![1];
+      let entityId = entityIdSections.length > 2 ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] : /([^.]+)/.exec(entityIdSections[0])![1];
       if (entityId && entityId === entityTitle) { defaultSelected.push(entity.entityLabel); }
     });
     return defaultSelected;
@@ -292,7 +293,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       uriExpr = props.mapData.uriExpression ? props.mapData.uriExpression : StepsConfig.defaultPrimaryUri;
     } else {
       // For related entity
-      let entName = props.entityModel?.info.title ? props.entityModel?.info.title: "";
+      let entName = props.entityModel?.info.title ? props.entityModel?.info.title : "";
       uriExpr = relatedEntityMapData?.uriExpression ? relatedEntityMapData.uriExpression : StepsConfig.defaultRelatedUri(entName);
     }
     setUriExpression(uriExpr);
@@ -416,18 +417,18 @@ const EntityMapTable: React.FC<Props> = (props) => {
           onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
           className={styles.searchInput}
         />
-        <Button data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
+        <HCButton data-testid={`ResetSearch-${dataIndex}`} variant="outline-light" onClick={() => handleSearchReset(clearFilters, dataIndex)} size="sm" className={styles.resetButton}>
           Reset
-        </Button>
-        <Button
+        </HCButton>
+        <HCButton
           data-testid={`submitSearch-${dataIndex}`}
-          type="primary"
+          variant="primary"
           onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
-          size="small"
+          size="sm"
           className={styles.searchSubmitButton}
         >
           <Icon type="search" theme="outlined" /> Search
-        </Button>
+        </HCButton>
       </div>
     ),
     filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={filtered ? "active" : "inactive"} /></i>,
@@ -711,14 +712,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
             field = field.slice(len);
           }
         } else {
-          if (field.substring(0, len+1) === contextValue + "/") {
-            field = field.slice(len+1);
+          if (field.substring(0, len + 1) === contextValue + "/") {
+            field = field.slice(len + 1);
           }
         }
       }
 
       let newExp = mapExp[propName].substr(0, caretPosition) + field +
-            mapExp[propName].substr(caretPosition, mapExp[propName].length);
+        mapExp[propName].substr(caretPosition, mapExp[propName].length);
       await setMapExp({...mapExp, [propName]: newExp});
       tempMapExp = Object.assign({}, mapExp);
       tempMapExp[propName] = newExp;
@@ -994,14 +995,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
     return (
       <Dropdown overlay={functionMenu} trigger={["click"]} disabled={!props.canReadWrite}>
         <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
-          <Button
+          <HCButton
             id="functionIcon"
             data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
             className={styles.functionIcon}
-            size="small"
+            size="sm"
+            variant="outline-light"
             onClick={(e) => handleFunctionsList(row.name)}
             disabled={!props.canReadWrite}
-          >fx</Button>
+          >fx</HCButton>
         </Tooltip>
       </Dropdown>
     );
@@ -1044,7 +1046,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       mode="multiple"
       style={{width: "98%"}}
       placeholder="Select"
-      key={props.relatedEntityTypeProperties.length  > 0 ? "loaded" : "notloaded"}
+      key={props.relatedEntityTypeProperties.length > 0 ? "loaded" : "notloaded"}
       id={`${props.entityTypeTitle}-entities-filter`}
       data-testid={`${props.entityTypeTitle}-entities-filter`}
       onChange={value => handleOptionSelect(value)}
@@ -1055,7 +1057,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       {props.relatedEntityTypeProperties?.map((entity, i) => {
         let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
         let entityIdSections = entity["entityMappingId"].split(":");
-        let entityId = entityIdSections.length > 2 ?  /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] :  /([^.]+)/.exec(entityIdSections[0])![1];
+        let entityId = entityIdSections.length > 2 ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] : /([^.]+)/.exec(entityIdSections[0])![1];
         if (entityId && entityId === entityTitle) {
           let entityLabel = entity.entityLabel;
           return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={i}>{entityLabel}</Option>;
@@ -1065,34 +1067,34 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}><Icon type={tableCollapsed && entityProperties.length < 1 ? "right" : "down"}/></a>
+    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}><Icon type={tableCollapsed && entityProperties.length < 1 ? "right" : "down"} /></a>
   );
 
   const topRowDetails = (
     <div>
-      <div className = {styles.entityTopRow}>
+      <div className={styles.entityTopRow}>
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
           {props.relatedMappings &&
-                <Popover
-                  content={relatedInfo}
-                  trigger="hover"
-                  placement="right"
-                  overlayStyle={{
-                    width: "16vw"
-                  }}>
-                  <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon"/></Popover>}
+            <Popover
+              content={relatedInfo}
+              trigger="hover"
+              placement="right"
+              overlayStyle={{
+                width: "16vw"
+              }}>
+              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" /></Popover>}
         </div>
         <div className={styles.entitySettingsLink}>
-          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle}/>
+          <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle} />
         </div>
         {props.isRelatedEntity ?
           <div className={styles.deleteEntityLink}>
-            <Icon className={styles.deleteTableIcon} type="close" data-testid={props.entityTypeTitle + "-delete"} onClick={(e) => onDelete(props.relatedEntityTypeProperties[props.relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === props.entityMappingId)])}/>
+            <Icon className={styles.deleteTableIcon} type="close" data-testid={props.entityTypeTitle + "-delete"} onClick={(e) => onDelete(props.relatedEntityTypeProperties[props.relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === props.entityMappingId)])} />
           </div> : ""
         }
       </div>
-      { props.relatedMappings && props.relatedMappings.length > 0 ?
+      {props.relatedMappings && props.relatedMappings.length > 0 ?
         <div className={styles.entityFilterContainer}>
           <div className={styles.mapRelatedEntitiesText}>Map related entities: </div>
           <div className={styles.entityFilter}>{relatedEntitiesFilter}</div>
@@ -1150,7 +1152,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const findReferringEntities = (relatedMappings) => {
-    let referringEntities:any = [];
+    let referringEntities: any = [];
     if (relatedMappings) {
       //find any related mappings to the removed entity that are currently also being mapped/displayed
       props.relatedEntitiesSelected.forEach(entity => {
@@ -1170,7 +1172,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const onOk = () => {
     props.deleteRelatedEntity(removedEntity);
-    let updateSelectedEntities : any = props.relatedEntitiesSelected.filter(entity => entity["entityMappingId"] !== removedEntity["entityMappingId"]);
+    let updateSelectedEntities: any = props.relatedEntitiesSelected.filter(entity => entity["entityMappingId"] !== removedEntity["entityMappingId"]);
     props.setRelatedEntitiesSelected(updateSelectedEntities);
     setFilterValues(pendingOptions);
     setSelectedOptions(pendingOptions);
@@ -1189,10 +1191,10 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const deleteConfirmation = <Modal
     visible={deleteDialogVisible}
-    okText={entitiesReferencing.length > 0 ? "OK" : "Yes" }
-    cancelText= "No"
+    okText={entitiesReferencing.length > 0 ? "OK" : "Yes"}
+    cancelText="No"
     onOk={() => { entitiesReferencing.length > 0 ? onCancel() : onOk(); }}
-    cancelButtonProps= {entitiesReferencing.length > 0 ? {style: {display: "none"}} : {}}
+    cancelButtonProps={entitiesReferencing.length > 0 ? {style: {display: "none"}} : {}}
     onCancel={() => onCancel()}
     bodyStyle={{paddingTop: "40px"}}
     width={550}
@@ -1201,7 +1203,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {entitiesReferencing.length > 0 ?
       <span aria-label={"entity-being-referenced-msg"} style={{fontSize: "16px"}}>The <strong>{removedEntity?.entityLabel}</strong> mapping is referenced by the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping. Please delete the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping first.</span>
       :
-      <span aria-label={"confirm-deletion-msg"}style={{fontSize: "16px"}}>Are you sure you want to delete any mapping expressions associated with the <strong>{removedEntity?.entityLabel}</strong> entity?</span>
+      <span aria-label={"confirm-deletion-msg"} style={{fontSize: "16px"}}>Are you sure you want to delete any mapping expressions associated with the <strong>{removedEntity?.entityLabel}</strong> entity?</span>
     }
   </Modal>;
 
@@ -1249,22 +1251,22 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 </span>
               }
               {row.key > 100 && row.name === "Context" && !row.isProperty &&
-              <span>
-                 &nbsp;<Popover
-                  content={contextHelp}
-                  trigger="click"
-                  placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Popover>
-              </span>
+                <span>
+                  &nbsp;<Popover
+                    content={contextHelp}
+                    trigger="click"
+                    placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                  </Popover>
+                </span>
               }
               {row.key > 100 && row.name === "URI" && !row.isProperty &&
-              <span>
-                 &nbsp;<Popover
-                  content={uriHelp}
-                  trigger="click"
-                  placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Popover>
-              </span>
+                <span>
+                  &nbsp;<Popover
+                    content={uriHelp}
+                    trigger="click"
+                    placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                  </Popover>
+                </span>
               }
             </span>;
           return {children: renderText, props: (row.key <= 100 && index === 0) ? {colSpan: 4} : {colSpan: 1}};
@@ -1285,15 +1287,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
           let relatedEntityName = row.relatedEntityType.split("/").pop();
           let tooltip = ModelingTooltips.foreignKeyMapping(relatedEntityName, row.joinPropertyName, text, props.entityTypeTitle, row.name);
           renderText =
-          <span>
-            {renderText = renderText.concat(" (" + relatedEntityName + ")")}
-            <Tooltip
-              title={tooltip}
+            <span>
+              {renderText = renderText.concat(" (" + relatedEntityName + ")")}
+              <Tooltip
+                title={tooltip}
               //id={"tooltip-" + row.name} // DHFPROD-7711 MLTooltip -> Tooltip
-            >
-              <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name}/>
-            </Tooltip>
-          </span>;
+              >
+                <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
+              </Tooltip>
+            </span>;
         }
         return {
           children: <div className={styles.typeContainer}>
@@ -1318,54 +1320,59 @@ const EntityMapTable: React.FC<Props> = (props) => {
       render: (text, row, index) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
           if (row.name === "Context" && !row.isProperty) {
-            return {children: <div className={!directRelation ? styles.relatedMapExpParentContainer: styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-              <TextArea
-                id={"mapexpression"+row.name.split("/").pop()}
-                data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
-                style={mapExpressionStyle(row.name, false)}
-                onClick={handleClickInTextArea}
-                value={expressionContext}
-                onChange={(e) => handleExpressionContext(row, e)}
-                onBlur={handleExpSubmit}
-                autoSize={{minRows: 1}}
-                disabled={!props.canReadWrite}></TextArea>
-              <span>{sourceDropdown(row)}</span>
-            </div>
-            {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
+            return {
+              children: <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+                <TextArea
+                  id={"mapexpression" + row.name.split("/").pop()}
+                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                  style={mapExpressionStyle(row.name, false)}
+                  onClick={handleClickInTextArea}
+                  value={expressionContext}
+                  onChange={(e) => handleExpressionContext(row, e)}
+                  onBlur={handleExpSubmit}
+                  autoSize={{minRows: 1}}
+                  disabled={!props.canReadWrite}></TextArea>
+                <span>{sourceDropdown(row)}</span>
+              </div>
+              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}
+            };
           } else if (row.name === "URI" && !row.isProperty) {
-            return {children: <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-              <TextArea
-                id={"mapexpression"+row.name.split("/").pop()}
-                data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
-                style={mapExpressionStyle(row.name, false)}
-                onClick={handleClickInTextArea}
-                value={uriExpression}
-                onChange={(e) => handleUri(row, e)}
-                onBlur={handleExpSubmit}
-                autoSize={{minRows: 1}}
-                disabled={!props.canReadWrite}></TextArea>
-              <span>{sourceDropdown(row)}</span>
-              <span>{functionDropdown(row)}</span>
-              <span>{refDropdown(row)}</span>
-            </div>
-            {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
+            return {
+              children: <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+                <TextArea
+                  id={"mapexpression" + row.name.split("/").pop()}
+                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                  style={mapExpressionStyle(row.name, false)}
+                  onClick={handleClickInTextArea}
+                  value={uriExpression}
+                  onChange={(e) => handleUri(row, e)}
+                  onBlur={handleExpSubmit}
+                  autoSize={{minRows: 1}}
+                  disabled={!props.canReadWrite}></TextArea>
+                <span>{sourceDropdown(row)}</span>
+                <span>{functionDropdown(row)}</span>
+                <span>{refDropdown(row)}</span>
+              </div>
+              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}
+            };
           } else {
-            return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-              <TextArea
-                id={"mapexpression"+row.name.split("/").pop()}
-                data-testid={row.name.split("/").pop()+"-mapexpression"}
-                style={mapExpressionStyle(row.name, true)}
-                onClick={handleClickInTextArea}
-                value={mapExp[row.name]}
-                onChange={(e) => handleMapExp(row, e)}
-                onBlur={handleExpSubmit}
-                autoSize={{minRows: 1}}
-                disabled={!props.canReadWrite}></TextArea>
-              <span>{sourceDropdown(row)}</span>
-              <span>{functionDropdown(row)}</span>
-              <span>{refDropdown(row)}</span>
-            </div>
-            {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>, props: {colSpan: 1}
+            return {
+              children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+                <TextArea
+                  id={"mapexpression" + row.name.split("/").pop()}
+                  data-testid={row.name.split("/").pop() + "-mapexpression"}
+                  style={mapExpressionStyle(row.name, true)}
+                  onClick={handleClickInTextArea}
+                  value={mapExp[row.name]}
+                  onChange={(e) => handleMapExp(row, e)}
+                  onBlur={handleExpSubmit}
+                  autoSize={{minRows: 1}}
+                  disabled={!props.canReadWrite}></TextArea>
+                <span>{sourceDropdown(row)}</span>
+                <span>{functionDropdown(row)}</span>
+                <span>{refDropdown(row)}</span>
+              </div>
+              {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>, props: {colSpan: 1}
             };
           }
         } else if (row.name !== "more" && row.name !== "less") {
@@ -1383,7 +1390,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
           return {
             children:
-              <div data-testid={`${props.entityTypeTitle}-`+ row.name.split("/").pop() + "-value"} className={styles.mapValue}>
+              <div data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + "-value"} className={styles.mapValue}>
                 <Tooltip title={getTextForTooltip(row.name, row.isProperty)}>{getTextForValueField(row, row.isProperty)}</Tooltip>
               </div>,
             props: {colSpan: 1}
@@ -1416,7 +1423,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }
   });
 
-  return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
+  return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
     <div id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
       <Table
         pagination={false}
@@ -1427,7 +1434,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
         expandedRowKeys={props.entityExpandedKeys}
         columns={getColumnsForEntityTable()}
-        dataSource={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]]: [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
+        dataSource={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
         tableLayout="unset"
         rowKey={(record: any) => record.key}
         getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
