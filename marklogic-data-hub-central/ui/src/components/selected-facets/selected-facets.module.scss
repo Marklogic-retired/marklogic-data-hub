@@ -1,48 +1,59 @@
 .clearContainer {
-  margin: -30px 0 0 17px;
+    margin: -30px 0 0 17px;
 }
 
 .clearAllBtn {
-  margin-right: 2px;
+    margin-right: 2px;
 }
 
 .facetButton {
-  color: #5B69AF;
-  border: 1px solid #5B69AF;;
-  margin: 0 2px 2px 0;
+    color: #5b69af;
+    border: 1px solid #5b69af;
+    margin: 0 2px 2px 0;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 10px;
 }
 
 .dateFacet {
-  color: #5B69AF;
-  border: 1px solid #5B69AF;;
-  margin: 2px 2px 2px 0;
+    color: #5b69af;
+    border: 1px solid #5b69af;
+    margin: 2px 2px 2px 0;
 }
 
 .facetGreyButton {
-  margin: 0 6px 2px 0;
-  background-color: white;
-  color: #777777;
-  border: 1px dashed #777777;
+    margin: 0 6px 2px 0;
+    background-color: white !important;
+    color: #777777 !important;
+    border: 1px dashed #777777 !important;
+    display: inline-flex !important;
+    border-style: dashed !important;
+    align-items: center;
+    gap: 10px;
+    & > i {
+        margin-top: -1px;
+    }
 }
 
 .facetGreyButton:hover {
-  background-color: #cccccc;
+    background-color: #cccccc !important;
+    color: #5b69af !important;
 }
 
 .checkIcon {
-  color: #5b69af;
-  margin-right: 6px;
-  margin-left: 6px;
-  cursor: pointer;
-  &:hover{
-    color: var(--hoverColor);
-  }
+    color: #5b69af;
+    margin-right: 6px;
+    margin-left: 6px;
+    cursor: pointer;
+    &:hover {
+        color: var(--hoverColor);
+    }
 }
 
 .closeIcon {
-  color: #5b69af;
-  cursor: pointer;
-  &:hover{
-    color: var(--hoverColor);
-  }
+    color: #5b69af;
+    cursor: pointer;
+    &:hover {
+        color: var(--hoverColor);
+    }
 }

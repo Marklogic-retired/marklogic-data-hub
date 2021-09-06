@@ -15,12 +15,13 @@ import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {RightOutlined, DownOutlined} from "@ant-design/icons";
-import {Modal, Table, Button} from "antd";
+import {Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCButton from "../../../common/hc-button/hc-button";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -66,9 +67,9 @@ const MergingStepDetail: React.FC = () => {
   const [currentMergeObj, setCurrentMergeObj] = useState<any>({});
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
   const [sourceNames, setSourceNames] = useState<string[]>([]);
-  const mergeStrategiesData : any = [];
-  const mergeRulesData : any = [];
-  let commonStrategyNames:any = [];
+  const mergeStrategiesData: any = [];
+  const mergeRulesData: any = [];
+  let commonStrategyNames: any = [];
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -106,7 +107,7 @@ const MergingStepDetail: React.FC = () => {
     toggleIsEditRule(true);
   };
 
-  const mergeStrategyColumns : any = [
+  const mergeStrategyColumns: any = [
     {
       title: "Strategy Name",
       dataIndex: "strategyName",
@@ -118,7 +119,7 @@ const MergingStepDetail: React.FC = () => {
         return (
           <span className={styles.link}
             id={"strategy-name-link"}
-            onClick={ () => editMergeStrategy(text)}>
+            onClick={() => editMergeStrategy(text)}>
             {text}</span>
         );
       }
@@ -169,7 +170,7 @@ const MergingStepDetail: React.FC = () => {
     }
   ];
 
-  const mergeRuleColumns : any = [
+  const mergeRuleColumns: any = [
     {
       title: "Property",
       dataIndex: "property",
@@ -186,7 +187,7 @@ const MergingStepDetail: React.FC = () => {
         return (
           <span className={styles.link}
             id={"property-name-link"}
-            onClick={ () => editMergeRule(mergeRuleLabel)}>
+            onClick={() => editMergeRule(mergeRuleLabel)}>
             {text}</span>
         );
       }
@@ -248,7 +249,7 @@ const MergingStepDetail: React.FC = () => {
           <i><FontAwesomeIcon
             icon={faTrashAlt}
             size="lg"
-            className={commonStrategyNames.indexOf(i["strategyName"]) !==-1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
+            className={commonStrategyNames.indexOf(i["strategyName"]) !== -1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
             data-testid={`mergestrategy-${i.strategyName}`}
             onClick={() => onDelete(i)}/></i>
         </HCTooltip>
@@ -263,7 +264,7 @@ const MergingStepDetail: React.FC = () => {
         property: i["entityPropertyPath"]?.split(".").join(" > "),
         mergeType: i["mergeType"],
         strategy: i["mergeStrategyName"],
-        delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg"  data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/>
+        delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)} />
       }
     );
   });
@@ -282,7 +283,7 @@ const MergingStepDetail: React.FC = () => {
   };
 
   const expandedRowRender = (strategyObj) => {
-    let priorityOrderStrategyOptions:any[] = [defaultPriorityOption];
+    let priorityOrderStrategyOptions: any[] = [defaultPriorityOption];
     for (let strategy of mergingStep.mergeStrategies) {
       if (strategy.hasOwnProperty("priorityOrder") && strategy.strategyName === strategyObj.strategyName) {
         for (let key of strategy.priorityOrder.sources) {
@@ -339,18 +340,17 @@ const MergingStepDetail: React.FC = () => {
       {currentMergeObj.hasOwnProperty("entityPropertyPath") ? <p aria-label="delete-merge-rule-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.entityPropertyPath} - {currentMergeObj.mergeType}</b> merge rule ?</p> :
         <p aria-label="delete-merge-strategy-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.strategyName}</b> merge strategy ?</p>}
       <div className={styles.footer}>
-        <Button
+        <HCButton
           aria-label={`delete-merge-modal-discard`}
-          size="default"
+          variant="outline-light"
           onClick={() => setDeleteModalVisibility(false)}
-        >No</Button>
-        <Button
+        >No</HCButton>
+        <HCButton
           className={styles.saveButton}
           aria-label={`delete-merge-modal-confirm`}
-          type="primary"
-          size="default"
+          variant="primary"
           onClick={() => deleteConfirm()}
-        >Yes</Button>
+        >Yes</HCButton>
       </div>
     </Modal>
   );
@@ -360,12 +360,12 @@ const MergingStepDetail: React.FC = () => {
     setCurrentMergeObj(currentObj);
   };
 
-  const deleteConfirm = async() => {
+  const deleteConfirm = async () => {
     let stepArtifact = curationOptions.activeStep.stepArtifact;
     if (currentMergeObj.hasOwnProperty("entityPropertyPath")) {
       let updateStepArtifactMergeRules = curationOptions.activeStep.stepArtifact.mergeRules;
       let index = updateStepArtifactMergeRules.findIndex(mergeRule => (mergeRule.entityPropertyPath === currentMergeObj.entityPropertyPath)
-                && (mergeRule.mergeType === currentMergeObj.mergeType));
+        && (mergeRule.mergeType === currentMergeObj.mergeType));
       updateStepArtifactMergeRules.splice(index, 1);
       stepArtifact.mergeRules = updateStepArtifactMergeRules;
     } else {
@@ -397,18 +397,19 @@ const MergingStepDetail: React.FC = () => {
         </div>
         <div className={styles.greyContainer}>
           <div className={styles.textContainer}>
-            <div><p>A <span className={styles.italic}>merge strategy</span><span> defines how to combine the property values of
-                            candidate entities, but the merge strategy is not active until assigned to a merge rule.
-                            A merge strategy can be assigned to multiple merge rules.</span>
-            </p></div>
-            <div className={styles.addStrategyButtonContainer}>
-              <Button aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
-                toggleCreateEditStrategyModal(true);
-                toggleIsEditStrategy(false);
-                setCurrentStrategyName("");
-              }
-              }>Add</Button>
-            </div>
+            <p>A <span className={styles.italic}>merge strategy</span><span> defines how to combine the property values of
+              candidate entities, but the merge strategy is not active until assigned to a merge rule.
+              A merge strategy can be assigned to multiple
+              merge rules.</span>
+            </p>
+          </div>
+          <div className={styles.addButtonContainer}>
+            <HCButton aria-label="add-merge-strategy" variant="primary"  className={styles.addMergeButton} onClick={() => {
+              toggleCreateEditStrategyModal(true);
+              toggleIsEditStrategy(false);
+              setCurrentStrategyName("");
+            }
+            }>Add</HCButton>
           </div>
           <div>
             <Table
@@ -440,12 +441,12 @@ const MergingStepDetail: React.FC = () => {
           <div className={styles.textContainer}>
             <div className={styles.mergeDefinition}><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
             </p></div>
-            <div className={styles.addRuleButtonContainer}>
-              <Button aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
+            <div className={styles.addButtonContainer}>
+              <HCButton aria-label="add-merge-rule" variant="primary"  className={styles.addMergeButton} onClick={() => {
                 toggleCreateEditRuleModal(true);
                 toggleIsEditRule(false);
                 setCurrentPropertyName("");
-              }}>Add</Button>
+              }}>Add</HCButton>
             </div>
           </div>
           <Table

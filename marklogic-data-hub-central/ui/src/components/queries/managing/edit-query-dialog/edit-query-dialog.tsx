@@ -1,8 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Button} from "antd";
+import {Modal, Form, Input} from "antd";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
+import HCButton from "../../../common/hc-button/hc-button";
 
 
 const EditQueryDialog = (props) => {
@@ -148,9 +149,9 @@ const EditQueryDialog = (props) => {
           <Form.Item
             className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
-              <Button id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</Button>
+              <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</HCButton>
                             &nbsp;&nbsp;
-              <Button type="primary" htmlType="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</Button>
+              <HCButton variant="primary" type="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</HCButton>
             </div>
           </Form.Item>
         </Form>
