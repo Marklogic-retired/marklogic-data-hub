@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Button, Select} from "antd";
+import {Modal, Form, Input, Select} from "antd";
 import styles from "./threshold-modal.module.scss";
 
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
@@ -13,6 +13,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import HCButton from "../../../common/hc-button/hc-button";
 
 type Props = {
   isVisible: boolean;
@@ -295,7 +296,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   const hasFormChanged = () => {
-    if (actionType ===  "custom") {
+    if (actionType === "custom") {
       let checkCustomValues = hasCustomFormValuesChanged();
       if (!isNameTouched
         && !isActionTypeTouched
@@ -419,20 +420,23 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
-      </Button>
+      <HCButton size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+        <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
+      </HCButton>
       <div className={styles.footer}>
-        <Button
+        <HCButton
+          variant="outline-light"
+          size="sm"
           aria-label={`cancel-threshold-modal`}
           onClick={closeModal}
-        >Cancel</Button>
-        <Button
+        >Cancel</HCButton>
+        <HCButton
           className={styles.saveButton}
+          variant="primary"
+          size="sm"
           aria-label={`confirm-threshold-modal`}
-          type="primary"
           onClick={(e) => onSubmit(e)}
-        >Save</Button>
+        >Save</HCButton>
       </div>
     </div>
   );

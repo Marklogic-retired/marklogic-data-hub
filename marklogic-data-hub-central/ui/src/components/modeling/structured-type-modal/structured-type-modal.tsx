@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useContext} from "react";
-import {Form, Input, Modal, Button} from "antd";
+import {Form, Input, Modal} from "antd";
 import styles from "./structured-type-modal.module.scss";
 
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCButton from "../../common/hc-button/hc-button";
 
 
 type Props = {
@@ -77,19 +78,18 @@ A structured type cannot use the same name as an existing structured type.</span
   };
 
   const modalFooter = <div className={styles.modalFooter}>
-    <Button
+    <HCButton
       aria-label="structured-type-modal-cancel"
-      size="default"
+      variant="outline-light"
       onClick={onCancel}
-    >Cancel</Button>
-    <Button
+    >Cancel</HCButton>
+    <HCButton
       aria-label="structured-type-modal-submit"
-      form="pstructured-type-form"
-      type="primary"
-      htmlType="submit"
-      size="default"
+      // form="pstructured-type-form"
+      variant="primary"
+      type="submit"
       onClick={onSubmit}
-    >Add</Button>
+    >Add</HCButton>
   </div>;
 
   return (

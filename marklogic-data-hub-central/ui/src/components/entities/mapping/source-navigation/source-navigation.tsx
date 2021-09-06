@@ -1,6 +1,7 @@
 import React from "react";
-import {Icon, Button} from "antd";
+import {Icon} from "antd";
 import styles from "./source-navigation.module.scss";
+import HCButton from "../../../common/hc-button/hc-button";
 
 interface Props {
   currentIndex: number;
@@ -13,25 +14,27 @@ const SourceNavigation: React.FC<Props> = (props) => {
 
   return (
     <span className={styles.navigate_source_uris}>
-      <Button
+      <HCButton
+        variant="outline-light"
         className={styles.navigate_uris_left}
         data-testid="navigate-uris-left"
         onClick={() => props.handleSelection(props.currentIndex - 1)}
         disabled={props.currentIndex === props.startIndex}
       >
         <Icon type="left" className={styles.navigateIcon} />
-      </Button>
+      </HCButton>
         &nbsp;
       <div aria-label="uriIndex" className={styles.URI_Index}><p>{props.currentIndex + 1}</p></div>
         &nbsp;
-      <Button
+      <HCButton
         className={styles.navigate_uris_right}
+        variant="outline-light"
         data-testid="navigate-uris-right"
         onClick={() => props.handleSelection(props.currentIndex + 1)}
         disabled={props.currentIndex === props.endIndex}
       >
         <Icon type="right" className={styles.navigateIcon} />
-      </Button>
+      </HCButton>
     </span>
   );
 };

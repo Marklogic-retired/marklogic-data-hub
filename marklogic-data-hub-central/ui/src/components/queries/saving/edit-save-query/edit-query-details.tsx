@@ -1,17 +1,18 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Button} from "antd";
+import {Modal, Form, Input} from "antd";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
+import HCButton from "../../../common/hc-button/hc-button";
 
 interface Props {
-    setEditQueryDetailVisibility: () => void;
-    currentQuery: any;
-    currentQueryName: string;
-    setCurrentQueryName: (name: string) => void;
-    currentQueryDescription: string;
-    setCurrentQueryDescription: (name: string) => void;
+  setEditQueryDetailVisibility: () => void;
+  currentQuery: any;
+  currentQueryName: string;
+  setCurrentQueryName: (name: string) => void;
+  currentQueryDescription: string;
+  setCurrentQueryDescription: (name: string) => void;
 }
 
 const EditQueryDetails: React.FC<Props> = (props) => {
@@ -100,7 +101,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
         <Form.Item
           colon={false}
           label={<span className={styles.text}>
-                           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
           </span>}
           labelAlign="left"
           validateStatus={errorMessage ? "error" : ""}
@@ -127,14 +128,14 @@ const EditQueryDetails: React.FC<Props> = (props) => {
         </Form.Item>
         <Form.Item>
           <div className={styles.submitButtons}>
-            <Button id="edit-query-detail-cancel-button" onClick={() => onCancel()}>Cancel</Button>
-                        &nbsp;&nbsp;
-            <Button type="primary"
-              htmlType="submit"
+            <HCButton variant="outline-light" id="edit-query-detail-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+            &nbsp;&nbsp;
+            <HCButton variant="primary"
+              type="submit"
               disabled={queryName.length === 0}
               onClick={() => onOk(queryName, queryDescription, props.currentQuery)}
               id="edit-query-detail-button">Save
-            </Button>
+            </HCButton>
           </div>
         </Form.Item>
       </Form>
