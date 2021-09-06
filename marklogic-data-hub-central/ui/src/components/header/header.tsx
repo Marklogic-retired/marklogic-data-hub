@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout, Menu, Dropdown, Button} from "antd";
+import {Layout, Menu, Dropdown} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
@@ -13,6 +13,7 @@ import {QuestionCircle} from "react-bootstrap-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {faQuestionCircle, faUser} from "@fortawesome/free-regular-svg-icons";
+import HCButton from "../common/hc-button/hc-button";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -94,10 +95,10 @@ const Header:React.FC<Props> = (props) => {
   let userMenu = <div className={styles.userMenu}>
     <div className={styles.username}>{localStorage.getItem("dataHubUser")}</div>
     <div className={styles.logout}>
-      <Button id="logOut" type="primary" size="default"
+      <HCButton id="logOut" variant="outline-light"
         onClick={confirmLogout} onKeyDown={logoutKeyDownHandler} tabIndex={1}>
         Log Out
-      </Button>
+      </HCButton>
     </div>
   </div>;
 

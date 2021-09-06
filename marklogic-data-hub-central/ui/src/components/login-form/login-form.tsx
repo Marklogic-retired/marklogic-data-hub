@@ -1,10 +1,11 @@
 import React, {useContext, useState} from "react";
-import {Form, Icon, Input, Button} from "antd";
+import {Form, Icon, Input} from "antd";
 import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
 import HCAlert from "../common/hc-alert/hc-alert";
 import {Spinner} from "react-bootstrap";
+import HCButton from "../common/hc-button/hc-button";
 
 const LoginForm: React.FC = () => {
 
@@ -114,14 +115,13 @@ const LoginForm: React.FC = () => {
             </a>
           </div> */ }
           <Form.Item className={styles.loginButton}>
-            <Button
+            <HCButton
               id="submit"
-              type="primary"
-              size="default"
-              htmlType="submit"
+              variant="primary"
+              type="submit"
             >
               Log In
-            </Button>
+            </HCButton>
           </Form.Item>
         </Form>
         {isLoading && <div className={styles.loginSpinner}><Spinner animation="border" variant="primary" /></div>}
