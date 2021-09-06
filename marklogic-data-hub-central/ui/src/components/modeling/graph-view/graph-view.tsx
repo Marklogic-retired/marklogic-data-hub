@@ -1,8 +1,7 @@
 import React, {CSSProperties, useContext, useState} from "react";
-import {AutoComplete, Dropdown, Icon, Menu, Button, Input, Tooltip, Alert} from "antd";
+import {AutoComplete, Dropdown, Icon, Menu, Input, Tooltip} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {DownOutlined} from "@ant-design/icons";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +10,9 @@ import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import HCButton from "../../common/hc-button/hc-button";
+import HCAlert from "../../common/hc-alert/hc-alert";
+import {ChevronDown} from "react-bootstrap-icons";
 
 type Props = {
   entityTypes: any;
@@ -33,8 +35,7 @@ const GraphView: React.FC<Props> = (props) => {
   const [graphEditMode, setGraphEditMode] = useState(false);
 
   const publishIconStyle: CSSProperties = {
-    width: "18px",
-    height: "18px",
+    width: "1rem",
     fill: "currentColor"
   };
 
@@ -47,7 +48,7 @@ const GraphView: React.FC<Props> = (props) => {
     setIsEntityFiltered(false);
     if (value.length > 2) {
       Object.keys(props.entityTypes).map((key) => {
-        let obj=filterMenuSuggestions;
+        let obj = filterMenuSuggestions;
         if (value && !filterMenuSuggestions.includes(props.entityTypes[key]["entityName"]) && props.entityTypes[key]["entityName"].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
           obj.push(props.entityTypes[key]["entityName"]);
         }
@@ -58,7 +59,7 @@ const GraphView: React.FC<Props> = (props) => {
     }
   };
 
-  const handleFilterSelect = (value : any) => {
+  const handleFilterSelect = (value: any) => {
     setFilterMenuSuggestions([]);
     setIsEntityFiltered(true);
     setSelectedEntity(value);
@@ -69,7 +70,7 @@ const GraphView: React.FC<Props> = (props) => {
     className={styles.filterInput}
     dataSource={filterMenuSuggestions}
     value={entityFiltered}
-    onFocus= {handleFocus}
+    onFocus={handleFocus}
     onChange={handleTypeaheadChange}
     onSelect={handleFilterSelect}
     aria-label="graph-view-filter-autoComplete"
@@ -108,15 +109,15 @@ const GraphView: React.FC<Props> = (props) => {
       disabled={!props.canWriteEntityModel}
     >
       <div className={styles.addButtonContainer}>
-        <Button
+        <HCButton
           aria-label="add-entity-type-relationship"
-          size="small"
-          type="primary"
+          variant="primary"
+          size="sm"
           disabled={!props.canWriteEntityModel}
           className={!props.canWriteEntityModel ? styles.disabledPointerEvents : undefined}>
           <span className={styles.addButtonText}>Add</span>
-          <DownOutlined className={styles.downArrowIcon} />
-        </Button>
+          <ChevronDown className="ms-2" />
+        </HCButton>
       </div>
     </Dropdown>
   );
@@ -124,9 +125,9 @@ const GraphView: React.FC<Props> = (props) => {
   const headerButtons = <span className={styles.buttons}>
     {graphEditMode ?
       <div className={styles.editModeInfoContainer}>
-        <Alert
-          type="info" aria-label="graph-edit-mode-info" showIcon
-          message={ModelingTooltips.editModeInfo}/>
+        <HCAlert
+          variant="info" aria-label="graph-edit-mode-info" showIcon
+        >{ModelingTooltips.editModeInfo}</HCAlert>
       </div> : ""
     }
     <span>
@@ -141,12 +142,12 @@ const GraphView: React.FC<Props> = (props) => {
       }
     </span>
     <Tooltip title={ModelingTooltips.publish}>
-      <Button aria-label="publish-to-database" size="small"> {/* type="secondary"> */}
+      <HCButton aria-label="publish-to-database" variant="outline-light" size="sm"> {/* type="secondary"> */}
         <span className={styles.publishButtonContainer}>
           <PublishToDatabaseIcon style={publishIconStyle} />
           <span className={styles.publishButtonText}>Publish</span>
         </span>
-      </Button>
+      </HCButton>
     </Tooltip>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
       <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/></i>
