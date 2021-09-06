@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Table, Button, Select} from "antd";
+import {Modal, Form, Input, Icon, Switch, Table, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -17,6 +17,7 @@ import HCAlert from "../../../common/hc-alert/hc-alert";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTag from "../../../common/hc-tag/hc-tag";
+import HCButton from "../../../common/hc-button/hc-button";
 
 type Props = {
   editRuleset: any;
@@ -852,20 +853,23 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+      <HCButton size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
         <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
-      </Button>
+      </HCButton>
       <div className={styles.footer}>
-        <Button
+        <HCButton
+          size="sm"
+          variant="outline-light"
           aria-label={`cancel-multiple-ruleset`}
           onClick={closeModal}
-        >Cancel</Button>
-        <Button
+        >Cancel</HCButton>
+        <HCButton
           className={styles.saveButton}
+          size="sm"
           aria-label={`confirm-multiple-ruleset`}
-          type="primary"
+          variant="primary"
           onClick={(e) => onSubmit(e)}
-        >Save</Button>
+        >Save</HCButton>
       </div>
     </div>
   );

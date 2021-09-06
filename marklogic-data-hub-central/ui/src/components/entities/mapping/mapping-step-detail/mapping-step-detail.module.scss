@@ -311,6 +311,9 @@ hr {
     padding-left: 25px;
     margin-bottom: -50px;
 }
+.dataPresent {
+    z-index: 1;
+}
 
 .sourceValue {
     margin-top: -6px;
@@ -436,9 +439,10 @@ hr {
 
 .stepSettingsLink {
     position: absolute;
-    bottom: 93%;
-    right: 30px;
-    color: #44499c;
+    bottom: 89px;
+    padding-right: 27px;
+    right: 22px;
+    color: #44499C;
     cursor: pointer;
     .stepSettingsLabel {
         display: inline-block;
