@@ -182,11 +182,12 @@
   font-size: 14px;
   width: 22px;
   height: 20px;
-  border: 1px solid #394494;
+  border: 1px solid #394494 !important;
   border-radius: 2px;
-  padding: 0;
+  padding: 0 !important;
   text-align: center;
   margin-top: 5px;
+  background-color: #fff !important;
   &:hover{
     color: var(--hoverColor);
   }

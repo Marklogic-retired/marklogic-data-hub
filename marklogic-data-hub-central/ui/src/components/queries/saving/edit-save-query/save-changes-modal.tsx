@@ -1,31 +1,32 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Modal, Form, Input, Radio, Button} from "antd";
+import {Modal, Form, Input, Radio} from "antd";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
+import HCButton from "../../../common/hc-button/hc-button";
 
 
 interface Props {
-    setSaveChangesModalVisibility: () => void;
-    savedQueryList: any[];
-    getSaveQueryWithId: (key: {}) => void;
-    greyFacets: any[];
-    toggleApply: (clicked: boolean) => void;
-    toggleApplyClicked: (clicked: boolean) => void;
-    setSaveNewIconVisibility: (clicked: boolean) => void;
-    currentQuery: any,
-    currentQueryName: string;
-    setCurrentQueryDescription: (description: string) => void;
-    setCurrentQueryName: (name: string) => void;
-    nextQueryName: string;
-    setCurrentQueryOnEntityChange: () => void;
-    isSaveQueryChanged: () => boolean;
-    entityQueryUpdate: boolean;
-    toggleEntityQueryUpdate: () => void;
-    resetYesClicked: boolean
-    setColumnSelectorTouched: (state: boolean) => void;
+  setSaveChangesModalVisibility: () => void;
+  savedQueryList: any[];
+  getSaveQueryWithId: (key: {}) => void;
+  greyFacets: any[];
+  toggleApply: (clicked: boolean) => void;
+  toggleApplyClicked: (clicked: boolean) => void;
+  setSaveNewIconVisibility: (clicked: boolean) => void;
+  currentQuery: any,
+  currentQueryName: string;
+  setCurrentQueryDescription: (description: string) => void;
+  setCurrentQueryName: (name: string) => void;
+  nextQueryName: string;
+  setCurrentQueryOnEntityChange: () => void;
+  isSaveQueryChanged: () => boolean;
+  entityQueryUpdate: boolean;
+  toggleEntityQueryUpdate: () => void;
+  resetYesClicked: boolean
+  setColumnSelectorTouched: (state: boolean) => void;
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -188,7 +189,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         <Form.Item
           colon={false}
           label={<span className={styles.text}>
-                        Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
+            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
           </span>}
           labelAlign="left"
           validateStatus={errorMessage ? "error" : ""}
@@ -227,13 +228,13 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         </Form.Item>}
         <Form.Item>
           <div className={styles.submitButtons}>
-            <Button id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</Button>
-                        &nbsp;&nbsp;
-            <Button type="primary"
-              htmlType="submit"
+            <HCButton variant="outline-light" id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+            &nbsp;&nbsp;
+            <HCButton variant="primary"
+              type="submit"
               disabled={queryName.length === 0}
               onClick={() => onOk(queryName, queryDescription, props.currentQuery)} id="edit-save-changes-button">Save
-            </Button>
+            </HCButton>
           </div>
         </Form.Item>
       </Form>

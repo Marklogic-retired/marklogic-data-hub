@@ -2,7 +2,7 @@ import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
 import {ClockCircleFilled, CheckCircleFilled, CloseCircleFilled} from "@ant-design/icons";
-import {Menu, Popover, Checkbox, Button, Tooltip, Table} from "antd";
+import {Menu, Popover, Checkbox, Tooltip, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
@@ -10,6 +10,7 @@ import {MonitorContext} from "../../util/monitor-context";
 import JobResponse from "../job-response/job-response";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import HCButton from "../common/hc-button/hc-button";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -200,9 +201,9 @@ const JobResultsTableView = (props) => {
         <HCDivider className={styles.divider} />
         <div className={styles.footer}>
           <div>
-            <Button size="small" onClick={onCancel} >Cancel</Button>
+            <HCButton size="sm" variant="outline-light" onClick={onCancel} >Cancel</HCButton>
             <span>  </span>
-            <Button type="primary" size="small" onClick={onApply} disabled={false} >Apply</Button>
+            <HCButton variant="primary" size="sm" onClick={onApply} disabled={false} >Apply</HCButton>
           </div>
         </div>
       </footer>

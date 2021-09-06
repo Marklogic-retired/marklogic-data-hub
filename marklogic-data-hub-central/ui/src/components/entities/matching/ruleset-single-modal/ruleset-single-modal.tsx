@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Switch, Button, Select} from "antd";
+import {Modal, Form, Input, Switch, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ruleset-single-modal.module.scss";
@@ -17,6 +17,7 @@ import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCButton from "../../../common/hc-button/hc-button";
 
 type Props = {
   editRuleset: any;
@@ -708,20 +709,23 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+      <HCButton size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
         <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
-      </Button>
+      </HCButton>
       <div className={styles.footer}>
-        <Button
+        <HCButton
+          size="sm"
+          variant="outline-light"
           aria-label={`cancel-single-ruleset`}
           onClick={closeModal}
-        >Cancel</Button>
-        <Button
+        >Cancel</HCButton>
+        <HCButton
           className={styles.saveButton}
           aria-label={`confirm-single-ruleset`}
-          type="primary"
+          variant="primary"
+          size="sm"
           onClick={(e) => onSubmit(e)}
-        >Save</Button>
+        >Save</HCButton>
       </div>
     </div>
   );
