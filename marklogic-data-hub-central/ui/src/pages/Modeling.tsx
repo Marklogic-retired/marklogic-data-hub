@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Button, Radio, Tooltip} from "antd";
+import {Radio, Tooltip, Button} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -24,6 +24,7 @@ import GraphView from "../components/modeling/graph-view/graph-view";
 import {defaultModelingView} from "../config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
 import HCAlert from "../components/common/hc-alert/hc-alert";
+import HCButton from "../components/common/hc-button/hc-button";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
@@ -253,8 +254,9 @@ const Modeling: React.FC = () => {
   };
 
 
-  const addButton = <Button
-    type="primary"
+  const addButton = <HCButton
+    variant="primary"
+    size="sm"
     aria-label="add-entity"
     onClick={() => {
       toggleIsEditModal(false);
@@ -262,7 +264,7 @@ const Modeling: React.FC = () => {
     }}
     disabled={!canWriteEntityModel}
     className={!canWriteEntityModel ? styles.disabledPointerEvents : undefined}
-  >Add</Button>;
+  >Add</HCButton>;
 
   const publishIconStyle: CSSProperties = {
     width: "18px",

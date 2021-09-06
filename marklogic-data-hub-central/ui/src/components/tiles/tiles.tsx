@@ -11,19 +11,20 @@ import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import modelingInfoIcon from "../../assets/icon_helpInfo.png";
-import {Popover, Button} from "antd";
+import {Popover} from "antd";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import HCButton from "../common/hc-button/hc-button";
 
 interface Props {
-    id: string;
-    view: any;
-    currentNode: any;
-    options: any;
-    onMenuClick: any;
-    onTileClose: any;
-    newStepToFlowOptions: any;
+  id: string;
+  view: any;
+  currentNode: any;
+  options: any;
+  onMenuClick: any;
+  onTileClose: any;
+  newStepToFlowOptions: any;
 }
 
 const Tiles: React.FC<Props> = (props) => {
@@ -32,7 +33,7 @@ const Tiles: React.FC<Props> = (props) => {
   const controls = props.options.controls;
   const viewId = props.id;
   const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
-  const [manageQueryModal, setManageQueryModal]= useState(false);
+  const [manageQueryModal, setManageQueryModal] = useState(false);
   const [modelingInfoVisible, setModelingInfoVisible] = useState(false);
 
   /*** For Manage Queries - Explore tab ****/
@@ -84,7 +85,7 @@ const Tiles: React.FC<Props> = (props) => {
 
   const getEntities = async () => {
     try {
-      const res= await primaryEntityTypes();
+      const res = await primaryEntityTypes();
       if (res) {
         if (res.data.length === 0) setModelingInfoVisible(true);
       }
@@ -149,9 +150,9 @@ const Tiles: React.FC<Props> = (props) => {
               <>
                 <div>
                   <i className={styles.faCog} aria-label={"menu"} style={{color: options["color"]}}>
-                    <Button id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
+                    <HCButton variant="outline-light" id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
                       <FontAwesomeIcon icon={faCog} style={{color: "#394494", fontSize: "14px", paddingRight: "4px", paddingTop: "1px"}} /> Manage Queries
-                    </Button>
+                    </HCButton>
                   </i>
                 </div>
                 {manageQueryModal && queryModal}
@@ -200,7 +201,7 @@ const Tiles: React.FC<Props> = (props) => {
             title={options["title"]}
             renderToolbar={renderHeader}
           >
-            {!props.newStepToFlowOptions?.routeToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions}/>}
+            {!props.newStepToFlowOptions?.routeToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions} />}
           </MosaicWindow>
         );
       }}
