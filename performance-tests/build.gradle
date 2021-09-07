@@ -96,3 +96,24 @@ task runPerformanceTests {
     }
 }
 
+// Testing true / false for excludeAlreadyProcessed. Can be tested alone ex - ../gradlew excludeAlreadyProcessedfalse or ../gradlew excludeAlreadyProcessedtrue
+[
+    "true": true,
+    "false": false
+].each { key, value ->
+    task "testExcludeAlreadyProcessed${key}"(type: Exec, group: taskGroup) {
+        commandLine jmeterHome + "/bin/jmeter"
+            args = [
+            "-n", // no GUI
+            "-l", "build/jmeter-output.txt",
+            "-j", "build/jmeter.log",
+            "-Jhost=" + mlHost,
+            "-Jusername=" + mlUsername,
+            "-Jpassword=" + mlPassword,
+            "-t", "src/main/jmeter/exclude-already-processed.jmx",
+            "-JsourceDocumentCount=" + sourceDocumentCount,
+            "-JexcludeAlreadyProcessed=${value}",
+            "-JenableExcludeAlreadyProcessed=${value}"
+        ]
+    }
+}

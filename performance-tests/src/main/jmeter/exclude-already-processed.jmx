@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="excludeAlreadyProcessed performance test" enabled="true">
+      <stringProp name="TestPlan.comments">This test shows the effect of excludeAlreadyProcessed with a value of &quot;true&quot; and &quot;false&quot; when a custom step that does nothing is run on N documents</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="host" elementType="Argument">
+            <stringProp name="Argument.name">host</stringProp>
+            <stringProp name="Argument.value">${__P(host, localhost)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="username" elementType="Argument">
+            <stringProp name="Argument.name">username</stringProp>
+            <stringProp name="Argument.value">${__P(username, test-data-hub-developer)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="password" elementType="Argument">
+            <stringProp name="Argument.name">password</stringProp>
+            <stringProp name="Argument.value">${__P(password, password)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="flowName" elementType="Argument">
+            <stringProp name="Argument.name">flowName</stringProp>
+            <stringProp name="Argument.value">jmeterCustomFlow</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sourceCollection" elementType="Argument">
+            <stringProp name="Argument.name">sourceCollection</stringProp>
+            <stringProp name="Argument.value">jmeter-source-documents</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sourceDocumentCount" elementType="Argument">
+            <stringProp name="Argument.name">sourceDocumentCount</stringProp>
+            <stringProp name="Argument.value">${__P(sourceDocumentCount, 10000)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="iterations" elementType="Argument">
+            <stringProp name="Argument.name">iterations</stringProp>
+            <stringProp name="Argument.value">${__P(iterations, 1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="enableExcludeAlreadyProcessed" elementType="Argument">
+            <stringProp name="Argument.name">enableExcludeAlreadyProcessed</stringProp>
+            <stringProp name="Argument.value">${__P(enableExcludeAlreadyProcessed, false)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="excludeAlreadyProcessed" elementType="Argument">
+            <stringProp name="Argument.name">excludeAlreadyProcessed</stringProp>
+            <stringProp name="Argument.value">${__P(excludeAlreadyProcessed, false)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">${iterations}</stringProp>
+        </LoopController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Run flow" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import java.util.HashMap
+import com.marklogic.hub.flow.FlowInputs
+import com.marklogic.hub.flow.impl.FlowRunnerImpl
+
+def hubClient = vars.getObject(&quot;hubClient&quot;)
+def flowRunner = new FlowRunnerImpl(hubClient)
+def flowInputs = new FlowInputs(vars.get(&quot;flowName&quot;))
+
+log.info(&quot;Running flow: &quot; + flowInputs.getFlowName())
+def flowResponse = flowRunner.runFlow(flowInputs)
+flowRunner.awaitCompletion()
+//SampleResult.setResponseMessage(flowResponse.toJson())</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Initialize once" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.WriteBatcher;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.impl.DataHubImpl;
+
+def createSourceDocuments(hubClient, sourceDocumentCount) {
+	DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+	metadata.withCollections(vars.get(&quot;sourceCollection&quot;));
+	metadata.withPermission(&quot;data-hub-common&quot;, DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+
+	DataMovementManager mgr = hubClient.getFinalClient().newDataMovementManager();
+	WriteBatcher writeBatcher = mgr.newWriteBatcher().withThreadCount(24).withBatchSize(100)
+
+	def objectMapper = new ObjectMapper()
+	for (int i = 1; i &lt;= sourceDocumentCount; i++) {
+	  ObjectNode source = objectMapper.createObjectNode();
+	  writeBatcher.add(&quot;/sourceDocument&quot; + i + &quot;.json&quot;, metadata, new JacksonHandle(source));
+	}
+	writeBatcher.flushAndWait();
+	mgr.stopJob(writeBatcher);
+}
+
+if (vars.getObject(&quot;hubClient&quot;) == null) {
+	log.info(&quot;Creating HubClient and source docs&quot;)
+
+	def configProps = new Properties()
+	configProps.setProperty(&quot;mlHost&quot;, vars.get(&quot;host&quot;))
+	configProps.setProperty(&quot;mlUsername&quot;, vars.get(&quot;username&quot;))
+	configProps.setProperty(&quot;mlPassword&quot;, vars.get(&quot;password&quot;))
+
+	def hubClient = HubClient.withHubClientConfig(new HubClientConfig(configProps))
+	vars.putObject(&quot;hubClient&quot;, hubClient)
+
+	log.info(&quot;Clearing user data&quot;);
+	new DataHubImpl(hubClient).clearUserData();
+	
+	def sourceDocumentCount = Integer.parseInt(vars.get(&quot;sourceDocumentCount&quot;))
+
+	createSourceDocuments(hubClient, sourceDocumentCount)
+}</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Create flow" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.StepService;
+import com.marklogic.client.document.DocumentManager;
+import com.marklogic.client.io.StringHandle
+
+def hubClient = vars.getObject(&quot;hubClient&quot;)
+def flowName = vars.get(&quot;flowName&quot;)
+def excludeAlreadyProcessedBool = vars.get(&quot;excludeAlreadyProcessed&quot;)
+
+def objectMapper = new ObjectMapper()
+
+ObjectNode customStep = objectMapper.createObjectNode()
+	.put(&quot;name&quot;, &quot;jmeterCustomTest&quot;)
+	.put(&quot;stepDefinitionName&quot;, &quot;jmeterCustomTest&quot;)
+	.put(&quot;stepDefinitionType&quot;, &quot;CUSTOM&quot;)
+	.put(&quot;stepId&quot;, &quot;jmeterCustomTest-custom&quot;)
+	.put(&quot;sourceDatabase&quot;, &quot;data-hub-FINAL&quot;)
+	.put(&quot;targetDatabase&quot;, &quot;data-hub-FINAL&quot;)
+	.put(&quot;selectedSource&quot;, &quot;query&quot;)
+	.put(&quot;sourceQuery&quot;, &quot;cts.collectionQuery(&apos;&quot; + vars.get(&quot;sourceCollection&quot;) + &quot;&apos;)&quot;);
+
+customStep.putArray(&quot;collections&quot;)
+
+StepService.on(hubClient.getFinalClient()).saveStep(&quot;custom&quot;, customStep, true, false);
+
+String customModuleFunc = &quot;function main(contentItem, options) { return contentItem; } module.exports = { main: main };&quot;
+String customURI = &quot;/custom-modules/custom/jmeterCustomTest/main.sjs&quot;
+
+StringHandle handle = new StringHandle();
+handle.set(customModuleFunc);
+
+DocumentManager docManager = hubClient.getModulesClient().newDocumentManager();
+docManager.write(customURI, handle);
+
+ObjectNode stepDef = objectMapper.createObjectNode();
+stepDef.put(&quot;name&quot;, &quot;jmeterCustomTest&quot;).put(&quot;type&quot;, &quot;CUSTOM&quot;).put(&quot;modulePath&quot;, &quot;/custom-modules/custom/jmeterCustomTest/main.sjs&quot;);
+stepDef.putObject(&quot;options&quot;).put(&quot;outputFormat&quot;, &quot;json&quot;);
+ArtifactService.on(hubClient.getFinalClient()).setArtifact(&quot;stepDefinition&quot;, &quot;jmeterCustomTest&quot;, stepDef);
+
+ObjectNode flow = objectMapper.createObjectNode();
+flow.put(&quot;name&quot;, flowName).putObject(&quot;steps&quot;).putObject(&quot;1&quot;).put(&quot;stepId&quot;, customStep.get(&quot;stepId&quot;).asText());
+flow.putObject(&quot;options&quot;).put(&quot;enableExcludeAlreadyProcessed&quot;, Boolean.valueOf(excludeAlreadyProcessedBool)).put(&quot;excludeAlreadyProcessed&quot;, Boolean.valueOf(excludeAlreadyProcessedBool));
+ArtifactService.on(hubClient.getFinalClient()).setArtifact(&quot;flow&quot;, flowName, flow);
+</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
