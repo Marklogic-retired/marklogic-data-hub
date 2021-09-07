@@ -38,6 +38,10 @@ You can then customize how these tests are run via Gradle command line propertie
 
     ../gradlew runPerformanceTests -PmlHost=somehost -PmlUsername=someuser -PmlPassword=somepassword
 
+The specific tests can be found within build.gradle. You can run tests separately - e.g.:
+    
+    ../gradlew testsimpleMappingExpression
+
 Those property can also be defined in a gradle-*.properties environment file, including gradle-local.properties. 
 
 ## Running the JMeter GUI
