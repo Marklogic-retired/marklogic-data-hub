@@ -1,29 +1,22 @@
 .jobResponseContainer {
-  header {
-    width: 100%;
-    margin-bottom: 35px;
-    .title {
-      font-size :24px;
-      font-weight: 500;
+    header {
+        width: 100%;
+        margin-bottom: 35px;
+        .title {
+            font-size: 24px;
+            font-weight: 500;
+        }
+        height: auto;
     }
-    height: auto;
-  }
 
-  .flowOrStepsUpdatedSinceRun {
-    float: right;
-    line-height: normal;
-    padding-top: 5px;
-    padding-left: 1px;
-    padding-bottom: 1px;
-    color: #DB4f59;
-  }
-
-  .successfulRun {
-    display: inline-block;
-    color: #008000;
-    font-size: 20px;
-    cursor: pointer;
-  }
+    .flowOrStepsUpdatedSinceRun {
+        float: right;
+        line-height: normal;
+        padding-top: 5px;
+        padding-left: 1px;
+        padding-bottom: 1px;
+        color: #db4f59;
+    }
 
   .unSuccessfulRun {
     display: inline-block;
@@ -43,59 +36,64 @@
   }
 
   .running {
-    padding-top: 25px;
-    padding-left: 15px;
-    background-color: rgba(255, 255, 255, 0.6);
-    .runningLabel {
-      margin-top: 5px;
-      color: #3b458f;
+        padding-top: 25px;
+        padding-left: 15px;
+        background-color: rgba(255, 255, 255, 0.6);
+        .runningLabel {
+            margin-top: 5px;
+            color: #3b458f;
+        }
     }
-  }
+    .descriptionContainer {
+        & > div {
+            padding-bottom: 1rem;
+        }
+    }
 
-  .descriptionLabel {
-    display: inline-block;
-    width: 100px;
-  }
+    .descriptionLabel {
+        display: inline-block;
+        width: 100px;
+    }
 }
 
-.errorHeader, .errorLabel {
-  color: rgba(0, 0, 0, 0.85);
-  font-weight: bold;
+.errorHeader,
+.errorLabel {
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: bold;
 }
 
 .errorSummary {
-  font-weight: normal;
-  padding-top: 40px;
+    font-weight: normal;
+    padding-top: 40px;
 }
 
 .errorVal {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .exploreIcon:before {
-  content: "\68";
-  font-family: ExploreIcon;
-  font-size: 24px;
-  padding-right: 6px;
-  vertical-align: middle;
-  color: #ffffff;
+    content: "\68";
+    font-family: ExploreIcon;
+    font-size: 24px;
+    padding-right: 6px;
+    vertical-align: middle;
+    color: #ffffff;
 }
 
 @font-face {
-  font-family: 'ExploreIcon';
-  src: url(../../fonts/ML_IconFont.ttf)
-  format('truetype');
+    font-family: "ExploreIcon";
+    src: url(../../fonts/ML_IconFont.ttf) format("truetype");
 }
 
 .exploreDataContainer {
-  margin: auto;
-  width: 50%;
-  text-align: center;
+    margin: auto;
+    width: 50%;
+    text-align: center;
 }
 
 .closeContainer {
-  height: 40px;
-  margin-top: -20px;
+    height: 40px;
+    margin-top: -20px;
 }
 
 .exploreCuratedData, .exploreLoadedData {
@@ -105,9 +103,9 @@
   margin-right: -3px;
 }
 
-.exploreText{
-  font-size: 17px;
-  padding-right: 5px;
+.exploreText {
+    font-size: 17px;
+    padding-right: 5px;
 }
 
 .closeButton {
