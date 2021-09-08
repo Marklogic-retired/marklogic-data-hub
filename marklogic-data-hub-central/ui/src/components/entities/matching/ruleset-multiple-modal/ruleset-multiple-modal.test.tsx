@@ -294,7 +294,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     validateMatchOnTag("shipping.zip.fiveDigit-matchOn-tag");
 
     //Removing the match tag resets the row selection.
-    userEvent.click(within(getByLabelText("customerId-matchOn-tag")).getByLabelText("icon: close"));
+    userEvent.click(within(getByLabelText("customerId-matchOn-tag")).getByTestId("iconClose-tagComponent"));
 
     expect(queryByLabelText("customerId-matchOn-tag")).not.toBeInTheDocument(); //Check the tag is removed
 
