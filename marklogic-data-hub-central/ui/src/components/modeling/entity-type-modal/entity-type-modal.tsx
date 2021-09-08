@@ -1,12 +1,15 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
 import axios from "axios";
 import {Form, Icon, Input, Modal} from "antd";
 import styles from "./entity-type-modal.module.scss";
-
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../../util/user-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {updateModelInfo} from "../../../api/modeling";
 import {MLTooltip} from "@marklogic/design-system";
+import {TwitterPicker} from "react-color";
+import graphConfig from "../../../config/graph-vis.config";
 
 
 type Props = {
@@ -16,6 +19,7 @@ type Props = {
   description: string;
   namespace: string;
   prefix: string;
+  color: string;
   toggleModal: (isVisible: boolean) => void;
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
 };
@@ -36,6 +40,10 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [prefix, setPrefix] = useState("");
   const [errorServer, setErrorServer] = useState(""); // Uncategorized errors from backend
   const [loading, toggleLoading] = useState(false);
+  const [colorSelected, setColorSelected] = useState("#EEEFF1");
+  const [displayColorPicker, setDisplayColorPicker] = useState(false);
+  const [eventValid, setEventValid] = useState(false);
+  const node: any = useRef();
 
   useEffect(() => {
     if (props.isVisible) {
@@ -44,12 +52,14 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setDescription(props.description);
         setNamespace(props.namespace);
         setPrefix(props.prefix);
+        setColorSelected(props.color);
       } else {
         // Add Modal
         setName("");
         setDescription("");
         setNamespace("");
         setPrefix("");
+        setColorSelected("#EEEFF1");
       }
       setErrorName("");
       setErrorServer("");
@@ -79,6 +89,25 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   };
 
+  const handleOuterClick = useCallback(
+    e => {
+      if (node.current && !node.current.contains(e.target)) {
+      // Clicked outside the color picker menu
+        setDisplayColorPicker(prev => false);
+        setEventValid(prev => false);
+      }
+    }, []);
+
+  useEffect(() => {
+    if (eventValid) {
+      document.addEventListener("click", handleOuterClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleOuterClick);
+    };
+  });
+
   // Parse server error message to determine its type
   // TODO Server should categorize the error messages it returns so parsing is not needed
   const isErrorOfType = (type: string) => {
@@ -99,9 +128,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     return result;
   };
 
-  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string) => {
+  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string, color: string) => {
     try {
-      const response = await updateModelInfo(name, description, namespace, prefix);
+      const response = await updateModelInfo(name, description, namespace, prefix, color);
       if (response["status"] === 200) {
         props.updateEntityTypesAndHideModal(name, description);
       }
@@ -123,7 +152,12 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         name: name,
         description: description,
         namespace: namespace,
-        namespacePrefix: prefix
+        namespacePrefix: prefix,
+        hubCentral: {
+          modeling: {
+            color: colorSelected
+          }
+        }
       };
       const response = await axios.post("/api/models", payload);
       if (response["status"] === 201) {
@@ -147,7 +181,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     event.preventDefault();
     if (props.isEditModal) {
       toggleLoading(true);
-      updateEntityDescription(name, description, namespace, prefix);
+      updateEntityDescription(name, description, namespace, prefix, colorSelected);
     } else {
       if (!NAME_REGEX.test(name)) {
         setErrorName(ModelingTooltips.nameRegex);
@@ -165,6 +199,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const formItemLayout = {
     labelCol: {span: 5},
     wrapperCol: {span: 18}
+  };
+
+  const handleEditColorMenu = () => {
+    setEventValid(prev => true);
+    setDisplayColorPicker(!displayColorPicker);
+  };
+
+  const handleColorChange = async (color, event) => {
+    setColorSelected(color.hex);
   };
 
   return (
@@ -275,8 +318,22 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           </Form.Item>
           { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
         </Form.Item>
-
+        <Form.Item
+          label="Color:"
+          labelAlign="left"
+          style={{marginLeft: 7, marginBottom: 0}}
+          {...formItemLayout}
+        >
+          <div className={styles.colorContainer}>
+            <div data-testid={`${name}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
+            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
+            <MLTooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </MLTooltip>
+          </div>
+        </Form.Item>
       </Form>
+      {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
     </Modal>
   );
 };

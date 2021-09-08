@@ -52,6 +52,10 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getPersonEntityNamespace().type("http://example.org/test");
     graphViewSidePanel.getPersonEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
+    graphViewSidePanel.getEditEntityTypeColor().click();
+    graphViewSidePanel.selectColorFromPicker("#D5D3DD").click();
+    graphViewSidePanel.getEntityTypeColor("Person").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
+
   });
 
   //Below is just an example test to showcase how to use the graph library functional library in cypress

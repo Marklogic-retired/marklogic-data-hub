@@ -225,17 +225,19 @@ const GraphVis: React.FC<Props> = (props) => {
     return ReactDOMServer.renderToString(icon);
   };
 
-  // TODO remove when color is retrieved from db
   const getColor = (entityName) => {
-    let color = "#cfe3e8";
-    if (entityMetadata[entityName] && entityMetadata[entityName].color && props.filteredEntityTypes.length > 0 && !props.filteredEntityTypes.includes("a")) {
+    let color = "#EEEFF1";
+    let entityIndex = props.entityTypes.findIndex(obj => obj.entityName === entityName);
+    if (props.entityTypes[entityIndex].model.hubCentral && props.entityTypes[entityIndex].model.hubCentral.modeling["color"]&& props.filteredEntityTypes.length > 0 && !props.filteredEntityTypes.includes("a")) {
       if (props.filteredEntityTypes.includes(entityName)) {
-        color = entityMetadata[entityName].color;
+        color = props.entityTypes[entityIndex].model.hubCentral.modeling["color"];
       } else {
         color = "#F5F5F5";
       }
-    } else if (entityMetadata[entityName] && entityMetadata[entityName].color) {
-      color = entityMetadata[entityName].color;
+    } else if (props.entityTypes[entityIndex].model.hubCentral && props.entityTypes[entityIndex].model.hubCentral.modeling["color"]) {
+      color = props.entityTypes[entityIndex].model.hubCentral.modeling["color"];
+    } else {
+      color = "#EEEFF1";
     }
     return color;
   };
@@ -398,13 +400,19 @@ const GraphVis: React.FC<Props> = (props) => {
   const getRelationshipInfo = (node1, node2, event) => {
     let sourceNodeName = node1;
     let targetNodeName = node2;
+    let targetNodeColor;
     let edgeInfo = event && event.edges?.length > 0 ? event.edges[0] : "";
+    if (node2 === "Select target entity type*") {
+      targetNodeColor = "#ececec";
+    } else {
+      targetNodeColor = getColor(targetNodeName);
+    }
     return {
       edgeId: edgeInfo,
       sourceNodeName: sourceNodeName,
-      sourceNodeColor: entityMetadata[sourceNodeName] && entityMetadata[sourceNodeName].color ? entityMetadata[sourceNodeName].color : "#cfe3e8",
+      sourceNodeColor: getColor(sourceNodeName),
       targetNodeName: targetNodeName,
-      targetNodeColor: entityMetadata[targetNodeName] && entityMetadata[targetNodeName].color ? entityMetadata[targetNodeName].color : "#cfe3e8",
+      targetNodeColor: targetNodeColor,
       relationshipName: edgeInfo.split("-")[0],
       joinPropertyName: edgeInfo.split("-")[1]
     };
@@ -443,7 +451,6 @@ const GraphVis: React.FC<Props> = (props) => {
         let relationshipInfo;
         if (data.to === data.from) {  //if node is just clicked on during add edge mode, not dragged
           relationshipInfo = getRelationshipInfo(data.from, "Select target entity type*", "");
-          relationshipInfo.targetNodeColor = "#ececec";
         } else { //if edge is dragged
           relationshipInfo = getRelationshipInfo(data.from, data.to, "");
         }

@@ -53,6 +53,15 @@ const nodeStyles: any = {
   selectColor: "#5B69AF"
 }
 
+const colorOptionsArray : string[] = [
+  "#D5D3DD",	"#CEE0ED",	"#D9F5F0",	"#C9EBC4",	"#FFF0A3",	"#F6D4A7",	"#E7B8B2",	"#EEC5D4",	"#D6D7D9",
+  "#EAE9EE",	"#E6EFF6",	"#E1F3EC",	"#E4F5E1",	"#FFF8D1",	"#FAE9D3",	"#F3DBD8",	"#F6E2E9",	"#E3E4E5",
+  "#DCDAEB",	"#BAD8E7",	"#CFE9E6",	"#E1EDB4",	"#FFECB0",	"#FFD0AE",	"#F3BEBE",	"#E2D2DC",	"#EEEFF1",
+  "#EDECF5",	"#DCEBF3",	"#E7F4F2",	"#F0F6D9",	"#FFF5D7",	"#FFE7D7",	"#F9DEDE",	"#F0E8ED",
+  "#BEC5DC",	"#CAE4EA",	"#D1F5E8",	"#E8ECC2",	"#EDD9C5",	"#FCC6B4",	"#FDC7D4",	"#E3DEEB",
+  "#DEE2ED",	"#E4F1F4",	"#E8FAF4",	"#F8F8DE",	"#FCE7D1",	"#FDE2D9",	"#FEE3E9",	"#F1EEF5"
+]
+
 const customEdgeSVG: any = {
   //base 64 svg data for custom icons on edge arrows
   oneToMany: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTMiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxMyAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB0cmFuc2Zvcm09InJvdGF0ZSgyNzApIj4KPGxpbmUgeDE9IjAuNjgzMzgxIiB5MT0iOS42MTMwMiIgeDI9IjExLjY4MzQiIHkyPSIwLjYxMzAyMSIgc3Ryb2tlPSIjMzMzMzMzIi8+CjxsaW5lIHgxPSIwLjI3NzM1IiB5MT0iOS41ODM5NyIgeDI9IjEyLjI3NzQiIHkyPSIxNy41ODQiIHN0cm9rZT0iIzMzMzMzMyIvPgo8bGluZSB4MT0iMSIgeTE9IjkuNSIgeDI9IjEyIiB5Mj0iOS41IiBzdHJva2U9IiMzMzMzMzMiLz4KPC9zdmc+Cg==",
@@ -125,5 +134,6 @@ export default {
     defaultEdgeProps,
     nodeStyles,
     customEdgeSVG,
-    sampleMetadata
+    sampleMetadata,
+    colorOptionsArray,
 };

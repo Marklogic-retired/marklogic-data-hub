@@ -49,6 +49,11 @@ export const getEntityTypes = [
           "properties": {},
           "description": "Testing"
         }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#D5D3DD"
+        }
       }
     }
   },
@@ -167,6 +172,11 @@ export const getEntityTypes = [
             }
           }
         }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#CEE0ED"
+        }
       }
     },
     "latestJobDateTime": "2020-04-09T14:28:00.664206-07:00",
@@ -207,6 +217,11 @@ export const getEntityTypes = [
               "$ref": "http://example.org/Protein-1.0.0/Order"
             }
           }
+        }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#D9F5F0"
         }
       }
     }
@@ -260,6 +275,11 @@ export const getEntityTypes = [
             },
 
           }
+        }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#C9EBC4"
         }
       }
     }
@@ -316,6 +336,11 @@ export const getEntityTypes = [
             }
           }
         }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#E7B8B2"
+        }
       }
     }
   },
@@ -339,6 +364,11 @@ export const getEntityTypes = [
           "wordLexicon": [],
           "pii": [],
           "properties": {}
+        }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#FFF0A3"
         }
       }
     }
@@ -397,6 +427,11 @@ export const getEntityTypes = [
               "collation": "http://marklogic.com/collation/codepoint"
             }
           }
+        }
+      },
+      "hubCentral": {
+        "modeling": {
+          "color": "#F6D4A7"
         }
       }
     },

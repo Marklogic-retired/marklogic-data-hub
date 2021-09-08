@@ -22,7 +22,7 @@ type Props = {
   canWriteEntityModel: boolean;
   autoExpand: string;
   revertAllEntity: boolean;
-  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string) => void;
+  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified) => void;
   toggleRevertAllEntity: (state: boolean) => void;
@@ -247,7 +247,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                       entityName,
                       getEntityTypeProp(entityName, "description"),
                       getEntityTypeProp(entityName, "namespace"),
-                      getEntityTypeProp(entityName, "namespacePrefix")
+                      getEntityTypeProp(entityName, "namespacePrefix"),
+                      getEntityTypeProp(entityName, "color")
                     );
                   }}>
                   {entityName}</span>
@@ -337,6 +338,22 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       }
     },
     {
+      title: <span data-testid="color">Color</span>,
+      dataIndex: "color",
+      className: styles.actions,
+      width: 100,
+      render: text => {
+        let parseText = text.split(",");
+        let entityName = parseText[0];
+        let color = parseText[1];
+        return (
+          <MLTooltip title={<span>This color is associated with the <b>{entityName}</b> entity type throughout your project.</span>}>
+            <div style={{width: "24px", height: "26px", background: color, marginLeft: "45%"}} data-testid={`${entityName}-${color}-color`}></div>
+          </MLTooltip>
+        );
+      }
+    },
+    {
       title: "Actions",
       dataIndex: "actions",
       className: styles.actions,
@@ -409,6 +426,12 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
   const getEntityTypeProp = (entityName: any, prop: string) => {
     const entity = allEntityTypes.find(e => e.entityName === entityName);
+    if (prop === "color") {
+      return (entity.hasOwnProperty("model") &&
+      entity.model.hasOwnProperty("hubCentral") &&
+      entity.model.hubCentral.hasOwnProperty("modeling") &&
+      entity.model.hubCentral.modeling.hasOwnProperty(prop)) ? entity.model.hubCentral.modeling[prop]: "#EEEFF1";
+    }
     return (entity.hasOwnProperty("model") &&
       entity.model.hasOwnProperty("definitions") &&
       entity.model.definitions.hasOwnProperty(entity.entityName) &&
@@ -442,6 +465,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
+      color: entity.model.hubCentral && entity.model.hubCentral.modeling.color ? (entity.entityName + "," + entity.model.hubCentral.modeling.color) : (entity.entityName + "," + "#EEEEFF1"),
       actions: entity.entityName,
       definitions: entity.model.definitions
     };
