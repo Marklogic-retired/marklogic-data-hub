@@ -355,7 +355,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         let editEntityPropertyNamesArray = entityPropertyNamesArray.filter(propertyName => propertyName !== props.editPropertyOptions.name);
 
         if (editEntityPropertyNamesArray.includes(name)) {
-          setErrorMessage(`A property already exists with a name of ${name}`);
+          setErrorMessage("name-error");
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
         } else if (selectedPropertyOptions.propertyType === "relatedEntity" && selectedPropertyOptions.joinPropertyName === "") {
@@ -398,7 +398,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       } else {
         // Add Property
         if (entityPropertyNamesArray.includes(name)) {
-          setErrorMessage(`A property already exists with a name of ${name}`);
+          setErrorMessage("name-error");
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
         } else if (selectedPropertyOptions.propertyType === "relatedEntity" && selectedPropertyOptions.joinPropertyName === "") {
@@ -858,7 +858,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           colon={false}
           labelAlign="left"
           validateStatus={errorMessage ? "error" : ""}
-          help={errorMessage}
+          help={errorMessage === "name-error" ? <span data-testid="propery-name-error">A property or structured type are already using the name <b>{name}</b>. A property cannot use the same name as an existing property or structured type.</span> : errorMessage}
         >
           <Input
             id="property-name"
@@ -869,7 +869,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             onChange={handleInputChange}
             onBlur={handleInputChange}
           />
-          <MLTooltip title={ModelingTooltips.nameRegex}>
+          <MLTooltip title={ModelingTooltips.nameEntityProperty}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
         </Form.Item>

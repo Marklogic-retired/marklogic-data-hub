@@ -59,7 +59,7 @@ describe("Entity Modeling: Writer Role", () => {
     structuredTypeModal.getAddButton().click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
-    cy.contains("A property already exists with a name of Address");
+    cy.get("[data-testid=\"propery-name-error\"]").contains("A property or structured type are already using the name Address. A property cannot use the same name as an existing property or structured type.");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("address");
     propertyModal.getSubmitButton().click();
@@ -88,7 +88,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getCascadedTypeFromDropdown("New Property Type").click();
     structuredTypeModal.newName("street");
     structuredTypeModal.getAddButton().click();
-    cy.contains("A property type already exists with a name of street");
+    cy.get("[data-testid=\"same-name-property-error\"]").contains("A property is already using the name street. A structured type cannot use the same name as an existing property.");
     structuredTypeModal.clearName();
     structuredTypeModal.newName("Zip");
     structuredTypeModal.getAddButton().click();
@@ -149,7 +149,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("Zip");
     propertyModal.getSubmitButton().click();
-    cy.contains(`A property already exists with a name of Zip`).should("be.visible");
+    cy.get("[data-testid=\"propery-name-error\"]")
+      .contains("A property or structured type are already using the name Zip. A property cannot use the same name as an existing property or structured type.").should("be.visible");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("streetAlt");
     propertyModal.clearPropertyDropdown();
