@@ -1,3 +1,29 @@
 #srcType > .ant-radio-wrapper:nth-child(2) {
     margin-left: 20px;
 }
+
+#radioCollectionPopover .ant-popover-arrow {
+    margin-right: 0vh!important;
+    border-style: none;
+    background-color: white !important;
+    margin-top: 3.5vh;
+}
+
+#radioCollectionMergePopover .ant-popover-arrow {
+    margin-right: 0vh!important;
+    border-style: none;
+    background-color: white !important;
+    margin-top: 0vh;
+}
+
+#radioCollectionPopover .ant-popover {
+    position: fixed;
+    margin-top: 5vh;
+    width: 20vw;
+}
+
+#radioCollectionMergePopover .ant-popover {
+    position: fixed;
+    margin-top: 5vh;
+    width: 20vw;
+}
