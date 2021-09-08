@@ -6,7 +6,7 @@
     "numTestsKeptInMemory": 1,
     "defaultCommandTimeout": 12000,
     "firefoxGcInterval": { "runMode": 1, "openMode": 1 },
-    "ignoreTestFiles": [],
+    "ignoreTestFiles": ["e2eMasteringflow.spec.tsx", "matching.spec.tsx"],
     "reporter": "junit",
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",
