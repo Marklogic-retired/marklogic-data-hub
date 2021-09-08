@@ -12,10 +12,10 @@ import LoginPage from "../../../support/pages/login";
 
 const matchStep = "matchCustTest";
 
-const uriMatchedResults  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "6"},
+const uriMatchedResults = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "6"},
   {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "5"}];
 
-const ruleset  = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "5"},
+const ruleset = [{ruleName: "Match - merge", threshold: "19", matchedPairs: "5"},
   {ruleName: "Likely Match - notify", threshold: "9", matchedPairs: "2"}];
 
 const allDataMatchedResults = [{ruleset: "lname - Exact", matchType: "Exact 0", score: "score 10"},
@@ -87,7 +87,7 @@ describe("Matching", () => {
     cy.findByText("Expand All").should("have.length.lt", 1);
     cy.findByText("Collapse All").should("have.length.lt", 1);
     // To test when user click on Expand all icon
-    cy.get(".matching-step-detail_expandCollapseRulesIcon__37swU").within(() => {
+    cy.get("[class*=\"matching-step-detail_expandCollapseRulesIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
         cy.get(".ant-radio-group").within(() => {
           cy.get("label:first").click();
@@ -96,7 +96,7 @@ describe("Matching", () => {
     });
     cy.findByText("Expand All").should("be.visible");
     // To test when user click on Collapse all icon
-    cy.get(".matching-step-detail_expandCollapseRulesIcon__37swU").within(() => {
+    cy.get("[class*=\"matching-step-detail_expandCollapseRulesIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
         cy.get(".ant-radio-group").within(() => {
           cy.get("label:last").click();
@@ -371,7 +371,7 @@ describe("Matching", () => {
     cy.findByLabelText("noMatchedDataView").should("not.exist");
     for (let j in uriMatchedResults) {
       cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
-      cy.findByText("(Threshold: "+uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
+      cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
     }
 
     //To test when user selects all data and click on test button
@@ -382,7 +382,7 @@ describe("Matching", () => {
     cy.findByLabelText("noMatchedDataView").should("not.exist");
     for (let j in uriMatchedResults) {
       cy.get(`[id="testMatchedPanel"]`).contains(uriMatchedResults[j].ruleName).should("have.length.gt", 0);
-      cy.findByText("(Threshold: "+uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
+      cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
     }
     cy.wait(1000);
     cy.get(`[id="testMatchedPanel"]`).contains(ruleset[0].ruleName).click();
@@ -391,7 +391,7 @@ describe("Matching", () => {
     }
 
     // To test when user click on expand all icon
-    cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {
+    cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
         cy.get(".ant-radio-group").within(() => {
           cy.get("label:first").click();
