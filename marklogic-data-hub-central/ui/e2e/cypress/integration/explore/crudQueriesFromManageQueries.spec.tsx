@@ -139,6 +139,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //create a query
     browsePage.selectEntity("Person");
     browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
@@ -186,6 +187,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //create a query first
     browsePage.selectEntity("Person");
     browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
@@ -226,6 +228,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //create a query
     browsePage.selectEntity("Person");
     browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getFacetApplyButton().click();
