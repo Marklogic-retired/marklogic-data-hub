@@ -45,6 +45,17 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     }
   };
 
+  const getErrorMessage = () => {
+    if (errorMessage === "exists-structured-type") {
+      return <span data-testid="same-name-structured-error">A structured type is already using the name <b>{name}</b>.
+A structured type cannot use the same name as an existing structured type.</span>;
+    } else if (errorMessage === "exists-property") {
+      return <span data-testid="same-name-property-error">A property is already using the name <b>{name}</b>.
+            A structured type cannot use the same name as an existing property.</span>;
+    }
+    return errorMessage;
+  };
+
   const onSubmit = (event) => {
     event.preventDefault();
     let entityDefinitionNamesArray = props.entityDefinitionsArray.map(entity => { return entity.name; });
@@ -52,9 +63,9 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     if (!NAME_REGEX.test(name)) {
       setErrorMessage(ModelingTooltips.nameRegex);
     } else if (entityDefinitionNamesArray.includes(name)) {
-      setErrorMessage(`A structured type already exists with a name of ${name}`);
+      setErrorMessage("exists-structured-type");
     } else if (modelingOptions.entityPropertiesNamesArray.includes(name)) {
-      setErrorMessage(`A property type already exists with a name of ${name}`);
+      setErrorMessage("exists-property");
     } else {
       props.updateStructuredTypesAndHideModal(name);
       props.toggleModal(false);
@@ -105,7 +116,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
           colon={false}
           labelAlign="left"
           validateStatus={errorMessage ? "error" : ""}
-          help={errorMessage}
+          help={getErrorMessage()}
         >
           <Input
             id="structured-name"
