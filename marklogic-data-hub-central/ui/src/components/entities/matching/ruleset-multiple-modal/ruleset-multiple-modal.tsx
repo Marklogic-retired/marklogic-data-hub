@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Table, Tag, Button, Select} from "antd";
+import {Modal, Form, Input, Icon, Switch, Table, Button, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -16,6 +16,7 @@ import DeleteModal from "../delete-modal/delete-modal";
 import HCAlert from "../../../common/hc-alert/hc-alert";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
+import HCTag from "../../../common/hc-tag/hc-tag";
 
 type Props = {
   editRuleset: any;
@@ -87,17 +88,17 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const [reduceValue, setReduceValue] = useState(false);
 
-  const [multipleRulesetsData, setMultipleRulesetsData] = useState<any []>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<any []>([]);
+  const [multipleRulesetsData, setMultipleRulesetsData] = useState<any[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<any[]>([]);
   const [checkTableUpdates, setCheckTableUpdates] = useState("");
   const [showDeleteConfirmModal, toggleDeleteConfirmModal] = useState(false);
 
   const [saveClicked, setSaveClicked] = useState(false);
 
   //For expand-collapse
-  const [expandedRowKeys, setExpandedRowKeys] = useState<any []>([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<any[]>([]);
 
-  let curationRuleset = props.editRuleset ;
+  let curationRuleset = props.editRuleset;
   if (props.editRuleset.hasOwnProperty("index")) {
     let index = props.editRuleset.index;
     curationRuleset = ({...curationOptions.activeStep.stepArtifact.matchRulesets[props.editRuleset.index], index});
@@ -107,7 +108,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
       let nestedEntityProps = parseDefinitionsToTable(curationOptions.entityDefinitionsArray);
       setMultipleRulesetsData(nestedEntityProps);
-      let initialKeysToExpand:any = generateExpandRowKeys(nestedEntityProps);
+      let initialKeysToExpand: any = generateExpandRowKeys(nestedEntityProps);
       setExpandedRowKeys([...initialKeysToExpand]);
     }
 
@@ -120,7 +121,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       if (editRuleset.name) {
         setRulesetName(editRuleset.name);
       }
-      let selectedKeys:any = [];
+      let selectedKeys: any = [];
       let matchTypes = {};
       let uriValues = {};
       let functionValues = {};
@@ -176,7 +177,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           if (parentKey) {
             parentKeys.push(parentKey);
           } else {
-            parentKeys.push(property.name + "," + index + (counter+1));
+            parentKeys.push(property.name + "," + index + (counter + 1));
           }
           if (parsedRef.length > 0 && parsedRef[1] === "definitions") {
             let structuredType = entityDefinitionsArray.find(entity => entity.name === parsedRef[2]);
@@ -568,12 +569,12 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         if (!matchTypes[key]) {
           return true;
         } else {
-          if (matchTypes[key] ===  "custom") {
+          if (matchTypes[key] === "custom") {
             let checkCustomValues = hasCustomFormValuesChanged();
             if (!isRulesetNameTouched
-            && !isPropertyTypeTouched
-            && !isMatchTypeTouched
-            && !checkCustomValues
+              && !isPropertyTypeTouched
+              && !isMatchTypeTouched
+              && !checkCustomValues
             ) {
               return false;
             } else {
@@ -582,9 +583,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           } else if (matchTypes[key] === "synonym") {
             let checkSynonymValues = hasSynonymFormValuesChanged();
             if (!isRulesetNameTouched
-            && !isPropertyTypeTouched
-            && !isMatchTypeTouched
-            && !checkSynonymValues
+              && !isPropertyTypeTouched
+              && !isMatchTypeTouched
+              && !checkSynonymValues
             ) {
               return false;
             } else {
@@ -593,9 +594,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           } else if (matchTypes[key] === "doubleMetaphone") {
             let checkDoubleMetaphoneValues = hasDoubleMetaphoneFormValuesChanged();
             if (!isRulesetNameTouched
-            && !isPropertyTypeTouched
-            && !isMatchTypeTouched
-            && !checkDoubleMetaphoneValues
+              && !isPropertyTypeTouched
+              && !isMatchTypeTouched
+              && !checkDoubleMetaphoneValues
             ) {
               return false;
             } else {
@@ -852,7 +853,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const modalFooter = (
     <div className={styles.editFooter}>
       <Button type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
-        <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
+        <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
       </Button>
       <div className={styles.footer}>
         <Button
@@ -885,7 +886,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       width: "17%",
       ellipsis: true,
       render: (text, row) => {
-        return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""}>{text} {row.hasOwnProperty("children") ? <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/>  : ""} {row.multiple ? <img className={styles.arrayImage} src={arrayIcon}/> : ""}</span>;
+        return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""}>{text} {row.hasOwnProperty("children") ? <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> : ""} {row.multiple ? <img className={styles.arrayImage} src={arrayIcon} /> : ""}</span>;
       }
     },
     {
@@ -1048,7 +1049,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const rowSelection = {
     onChange: (selected, selectedRows) => {
-      let fkeys = selectedRows.map(row =>  row.propertyPath);
+      let fkeys = selectedRows.map(row => row.propertyPath);
       setSelectedRowKeys([...fkeys]);
     },
     onSelect: (record, selected, selectedRows) => {
@@ -1067,13 +1068,18 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const displayMatchOnTags = () => {
-    return Object.keys(matchOnTags).map((prop) => <Tag key={prop} aria-label={`${prop}-matchOn-tag`} className={styles.matchOnTags} closable onClose={() => closeMatchOnTag(prop)}>
-      {matchOnTags[prop]}
-    </Tag>);
+    return Object.keys(matchOnTags).map((prop) =>
+      <HCTag key={prop}
+        label={matchOnTags[prop]}
+        ariaLabel={`${prop}-matchOn-tag`}
+        className={styles.matchOnTags}
+        onClose={() => closeMatchOnTag(prop)}
+      />
+    );
   };
 
   const toggleRowExpanded = (expanded, record) => {
-    let newExpandedRows =  [...expandedRowKeys];
+    let newExpandedRows = [...expandedRowKeys];
     if (expanded) {
       setCheckTableUpdates(record.propertyPath);
       if (newExpandedRows.indexOf(record.propertyPath) === -1) {
@@ -1085,7 +1091,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     setExpandedRowKeys(newExpandedRows);
   };
 
-  const generateExpandRowKeys = (dataArr, allKeysToExpand:any = []) => {
+  const generateExpandRowKeys = (dataArr, allKeysToExpand: any = []) => {
     dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         allKeysToExpand.push(obj["propertyPath"]);
@@ -1099,7 +1105,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     if (option === "collapse") {
       setExpandedRowKeys([]);
     } else {
-      let keysToExpand:any = generateExpandRowKeys(multipleRulesetsData);
+      let keysToExpand: any = generateExpandRowKeys(multipleRulesetsData);
       setExpandedRowKeys([...keysToExpand]);
     }
   };
@@ -1133,9 +1139,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           props.onExpand(props.record, e);
         }}><Icon type="down" /> </a>;
       } else {
-        return <a  className={styles.expandIcon} onClick={e => {
+        return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="right" data-testid="expandedIcon"/> </a>;
+        }}><Icon type="right" data-testid="expandedIcon" /> </a>;
       }
     }
   };
@@ -1167,8 +1173,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         <Form.Item
           className={styles.formItem}
           label={<span>
-          Ruleset Name:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
+            Ruleset Name:&nbsp;<span className={styles.asterisk}>*</span>
+            &nbsp;
           </span>}
           colon={false}
           labelAlign="left"
@@ -1200,8 +1206,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         </Form.Item>
 
         <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-          <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
-          <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+          <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} /> Multiple</div>
+          <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type</div>
           <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
         </div>
 
