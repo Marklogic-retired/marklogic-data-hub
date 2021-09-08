@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Form, Input, Icon, Radio, AutoComplete} from "antd";
+import {Form, Input, Icon, Radio, AutoComplete, Popover} from "antd";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
@@ -199,6 +199,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     }
     return result;
   };
+
+  const collectionQueryInfo = <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioCollection}</div>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (!stepName) {
@@ -526,9 +528,14 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           >
           </Radio.Group>
 
-          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
-            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
-          </MLTooltip>
+          <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" }>
+            <Popover
+              content={collectionQueryInfo}
+              trigger="hover"
+              placement="left"
+            >
+              <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
+            </Popover></span>
 
           <MLTooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
             <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>

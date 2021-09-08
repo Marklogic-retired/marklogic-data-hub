@@ -166,8 +166,13 @@ const CommonStepTooltips = {
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   options: 'Key-value pairs to pass as parameters to the custom module.',
   customModuleURI: 'The path to your custom step module.',
-  radioQuery: 'The CTS query that selects the source data to process in this configuration.',
-  radioCollection: 'A single collection that selects the source data to process in this configuration.'
+  radioQuery: 'A single collection that selects the source data to process in this configuration.',
+  radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{color: "5B69AF"}}>CTS Query.</a><br/><br/>
+  The following example source queries select data from multiple collections.<br/><br/>
+  JavaScript:<br/>
+  cts.collectionQuery([<span style={{color: "green"}}>'collection1', 'collection2'</span>])<br/><br/>
+  XQuery:<br/>
+  xdmp.xqueryEval(<span style={{color: "green"}}>"cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
 };
 
 /* Note: Some of the following are intentionally duplicated in other *Placeholders constants. */
