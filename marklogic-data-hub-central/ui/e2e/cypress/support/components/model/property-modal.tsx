@@ -76,6 +76,14 @@ class PropertyModal {
   verifyJoinProperty(propertyName: string) {
     return cy.get(".ant-select-selection-selected-value").should("have.text", propertyName);
   }
+
+  verifySameNamePropertyError(errorName: string) {
+    return cy.get("[data-testid=\"same-name-property-error\"]").contains(errorName);
+  }
+
+  verifyPropertyNameError(errorName: string) {
+    return cy.get("[data-testid=\"property-name-error\"]").contains(errorName);
+  }
 }
 
 const propertyModal = new PropertyModal();

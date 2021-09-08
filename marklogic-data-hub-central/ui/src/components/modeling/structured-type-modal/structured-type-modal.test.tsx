@@ -46,7 +46,7 @@ describe("Structured Type Modal Component", () => {
     const toggleModal = jest.fn();
     const updateStructuredTypesAndHideModal = jest.fn();
 
-    const {getByText, getByLabelText} = render(
+    const {getByText, getByLabelText, getByTestId} = render(
       <ModelingContext.Provider value={entityNamesArray}>
         <StructuredTypeModal
           isVisible={true}
@@ -60,7 +60,7 @@ describe("Structured Type Modal Component", () => {
     expect(getByText("Add New Structured Property Type")).toBeInTheDocument();
     userEvent.type(getByLabelText("structured-input-name"), "Address");
     userEvent.click(getByText("Add"));
-    expect(getByText("A structured type already exists with a name of Address")).toBeInTheDocument();
+    expect(getByTestId("same-name-structured-error")).toBeInTheDocument();
 
     userEvent.clear(getByLabelText("structured-input-name"));
     userEvent.type(getByLabelText("structured-input-name"), "123-Name");
@@ -70,7 +70,7 @@ describe("Structured Type Modal Component", () => {
     userEvent.clear(getByLabelText("structured-input-name"));
     userEvent.type(getByLabelText("structured-input-name"), "address");
     userEvent.click(getByText("Add"));
-    expect(getByText("A property type already exists with a name of address")).toBeInTheDocument();
+    expect(getByTestId("same-name-property-error")).toBeInTheDocument();
 
     expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(0);
     expect(toggleModal).toHaveBeenCalledTimes(0);

@@ -48,8 +48,8 @@ const ModelingTooltips = {
   nameEntityType: 'The name of this entity type. ' +
     'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',  /* intended dupe: all names */
   descriptionEntityType: 'A description of this entity type.',
-  nameEntityProperty: 'The name of this entity property. ' +
-    'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',  /* intended dupe: all names */
+  nameEntityProperty: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. ' +
+    'Names cannot use the same name as an existing property or structured type.',
   descriptionEntityProperty: 'A description of this entity property.',
   namespace: 'Use of entity type namespaces is optional. If you choose to use a namespace, you must specify both a namespace URI and a prefix in your entity type definition.',
 
