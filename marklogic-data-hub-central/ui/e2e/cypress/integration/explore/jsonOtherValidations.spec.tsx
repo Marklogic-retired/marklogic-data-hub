@@ -93,6 +93,7 @@ describe("Verify numeric/date facet can be applied", () => {
   it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", {defaultCommandTimeout: 120000}, () => {
     cy.intercept("/api/jobs/**").as("getJobs");
     browsePage.selectEntity("Person");
+    browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getExploreToolbarIcon().click();
@@ -103,6 +104,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
     //verify gray facets don't persist when switching between browse and run views.
     browsePage.selectEntity("Person");
+    browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getRunToolbarIcon().click();
