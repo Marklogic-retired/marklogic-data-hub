@@ -494,15 +494,15 @@ const MatchingStepDetail: React.FC = () => {
   };
 
 
-  const updateRulesetItems = async(id, newvalue) => {
+  const updateRulesetItems = async (id, newvalue) => {
     let stepArtifact = curationOptions.activeStep.stepArtifact;
     let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
     let updateRuleset = stepArtifactRulesets[id];
     updateRuleset["weight"] = parseInt(newvalue);
     stepArtifactRulesets[id] = updateRuleset;
     stepArtifact["matchRulesets"] = stepArtifactRulesets;
-    await updateMatchingArtifact(stepArtifact);
     updateActiveStepArtifact(stepArtifact);
+    await updateMatchingArtifact(stepArtifact);
   };
 
   const rulesetOptions:any = {
@@ -639,15 +639,15 @@ const MatchingStepDetail: React.FC = () => {
     return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} /></div>;
   };
 
-  const updateThresholdItems = async(id, newvalue) => {
+  const updateThresholdItems = async (id, newvalue) => {
     let stepArtifact = curationOptions.activeStep.stepArtifact;
     let stepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
     let updateThreshold = stepArtifactThresholds[id];
     updateThreshold["score"] = parseInt(newvalue);
     stepArtifactThresholds[id] = updateThreshold;
     stepArtifact["thresholds"] = stepArtifactThresholds;
-    await updateMatchingArtifact(stepArtifact);
     updateActiveStepArtifact(stepArtifact);
+    await updateMatchingArtifact(stepArtifact);
   };
 
   const onRuleSetTimelineItemClicked = (event) => {
