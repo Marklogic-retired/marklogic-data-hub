@@ -6,20 +6,20 @@ export const primaryEntityTypes = async () => {
 };
 
 export const updateModelInfo = async (name: string, description: string,
-  namespace: string, prefix: string, graphX?: number, graphY?: number) => {
+  namespace: string, prefix: string, color: string, graphX?: number, graphY?: number) => {
   let payload = {
     description: description,
     namespace: namespace,
     namespacePrefix: prefix,
     hubCentral: {
-      modeling: {}
+      modeling: {
+        color: color
+      }
     }
   };
   if (graphX && graphY) {
-    payload.hubCentral.modeling = {
-      graphX: graphX,
-      graphY: graphY
-    };
+    payload.hubCentral.modeling["graphX"] = graphX;
+    payload.hubCentral.modeling["graphY"] = graphY;
   }
   return await axios.put(`/api/models/${name}/info`, payload);
 };

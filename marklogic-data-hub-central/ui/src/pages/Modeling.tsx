@@ -34,6 +34,7 @@ const Modeling: React.FC = () => {
   const [description, setDescription] = useState("");
   const [namespace, setNamespace] = useState("");
   const [prefix, setPrefix] = useState("");
+  const [color, setColor] = useState("");
   const [autoExpand, setAutoExpand] = useState("");
   const [revertAllEntity, toggleRevertAllEntity] = useState(false);
   const [width, setWidth] = React.useState(window.innerWidth);
@@ -78,7 +79,6 @@ const Modeling: React.FC = () => {
   const setEntityTypesFromServer = async () => {
     try {
       const response = await primaryEntityTypes();
-
       if (response) {
         setEntityTypes(response["data"]);
         if (response["data"].length > 0) {
@@ -131,7 +131,7 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string) => {
+  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => {
     if (canWriteEntityModel) {
       toggleIsEditModal(true);
       toggleShowEntityModal(true);
@@ -139,6 +139,7 @@ const Modeling: React.FC = () => {
       setDescription(entityTypeDescription);
       setNamespace(entityTypeNamespace);
       setPrefix(entityTypePrefix);
+      setColor(entityTypeColor);
     }
   };
 
@@ -413,6 +414,7 @@ const Modeling: React.FC = () => {
               entityTypes={entityTypes}
               deleteEntityType={getEntityReferences}
               updateSavedEntity={saveAllEntitiesToServer}
+              updateEntities={setEntityTypesFromServer}
               relationshipModalVisible={showRelationshipModal}
               toggleRelationshipModal={toggleRelationshipModal}
               toggleShowEntityModal={toggleShowEntityModal}
@@ -452,6 +454,7 @@ const Modeling: React.FC = () => {
           description={description}
           namespace={namespace}
           prefix={prefix}
+          color={color}
         />
       </div>
     );

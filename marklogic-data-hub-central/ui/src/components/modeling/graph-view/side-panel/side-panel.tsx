@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
 import styles from "./side-panel.module.scss";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
 import {CloseOutlined} from "@ant-design/icons";
 import {Menu, Form, Input, Icon} from "antd";
@@ -10,6 +10,8 @@ import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
 import {UserContext} from "../../../../util/user-context";
+import {TwitterPicker} from "react-color";
+import graphConfig from "../../../../config/graph-vis.config";
 
 type Props = {
   entityTypes: any;
@@ -17,6 +19,7 @@ type Props = {
   deleteEntityClicked: (selectedEntity) => void;
   canWriteEntityModel: any;
   canReadEntityModel: any;
+  updateEntities: any;
 };
 
 const DEFAULT_TAB = "properties";
@@ -30,6 +33,10 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
   const [selectedEntityNamespacePrefix, setSelectedEntityNamespacePrefix] = useState("");
   const [errorServer, setErrorServer] = useState("");
+  const [colorSelected, setColorSelected] = useState("#EEEFF1");
+  const [displayColorPicker, setDisplayColorPicker] = useState(false);
+  const [eventValid, setEventValid] = useState(false);
+  const node: any = useRef();
 
   const layout = {
     labelCol: {span: 6},
@@ -56,6 +63,11 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
             setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
             setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+            if (selectedEntityDetails.model.hubCentral && selectedEntityDetails.model.hubCentral.modeling.color) {
+              setColorSelected(entity !== undefined && selectedEntityDetails.model.hubCentral.modeling.color);
+            } else {
+              setColorSelected("#EEEFF1");
+            }
           } else {
             // Entity type not found, may have been deleted, unset
             setSelectedEntity(undefined);
@@ -67,6 +79,24 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   };
 
+  const handleOuterClick = useCallback(
+    e => {
+      if (node.current && !node.current.contains(e.target)) {
+      // Clicked outside the color picker menu
+        setDisplayColorPicker(prev => false);
+        setEventValid(prev => false);
+      }
+    }, []);
+
+  useEffect(() => {
+    if (eventValid) {
+      document.addEventListener("click", handleOuterClick);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleOuterClick);
+    };
+  });
 
   const handlePropertyChange = async (event) => {
     if (event.target.id === "description") {
@@ -83,7 +113,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const handlePropertyUpdate = async (event) => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix);
+        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, colorSelected);
         if (response["status"] === 200) {
           setErrorServer("");
         }
@@ -124,6 +154,31 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   }, [modelingOptions.selectedEntity]);
 
+  const handleEditColorMenu = () => {
+    setEventValid(prev => true);
+    setDisplayColorPicker(!displayColorPicker);
+  };
+
+  const handleColorChange = async (color, event) => {
+    setColorSelected(color.hex);
+    try {
+      if (modelingOptions.selectedEntity !== undefined) {
+        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, color.hex);
+        props.updateEntities();
+        if (response["status"] === 200) {
+          setErrorServer("");
+        }
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        if (error.response.data.hasOwnProperty("message")) {
+          setErrorServer(error["response"]["data"]["message"]);
+        }
+      } else {
+        handleError(error);
+      }
+    }
+  };
 
   const displayPanelContent = () => {
     return currentTab === "entityType" ? <div>
@@ -203,6 +258,31 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           </Form.Item></span>
         { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
       </Form.Item>
+      <Form.Item
+        label="Color:"
+        labelAlign="left"
+        style={{marginLeft: 7, marginBottom: 0}}
+        {...formItemLayout}
+      >
+        <div className={styles.colorContainer}>
+          <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
+          {!props.canWriteEntityModel && props.canReadEntityModel ?
+            <div>
+              <span className={styles.editIconContainer}><MLTooltip title={SecurityTooltips.missingPermission} placement={"top"}><FontAwesomeIcon icon={faPencilAlt} size="sm" className={styles.editIconReadOnly} data-testid={"edit-color-icon-disabled"}/></MLTooltip></span>
+              <MLTooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </MLTooltip>
+            </div>
+            :
+            <div>
+              <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
+              <MLTooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </MLTooltip>
+            </div>
+          }
+        </div>
+      </Form.Item>
     </div>
       :
       <PropertiesTab
@@ -243,6 +323,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         </Menu>
       </div>
       {displayPanelContent()}
+      {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
     </div>
   );
 };

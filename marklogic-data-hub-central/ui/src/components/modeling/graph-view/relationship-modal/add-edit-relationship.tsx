@@ -404,10 +404,10 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
     //update target entity name and color,
     setTargetEntityName(entityName);
-    if (props.entityMetadata[entityName]) {  //revise when colors are retrieved from backend
-      setTargetEntityColor(props.entityMetadata[entityName].color);
+    if (props.entityTypes[entityIdx].model.hubCentral && props.entityTypes[entityIdx].model.hubCentral.modeling.color) {  //revise when colors are retrieved from backend
+      setTargetEntityColor(props.entityTypes[entityIdx].model.hubCentral.modeling.color);
     } else {
-      setTargetEntityColor("#F5F5F5"); //assigning default color for now if entity is not in metadata
+      setTargetEntityColor("#EEEFF1"); //assigning default color if entity is not assigned a color yet
     }
     setDisplaySourceMenu(prev => false);
     setDisplayEntityList(prev => false);

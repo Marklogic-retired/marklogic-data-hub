@@ -56,6 +56,54 @@
     color: #7F86B5;
 }
 
+.editIconReadOnly {
+  font-size: 27px;
+  color: #cccccc;
+  background-color: #f8f8f8;
+  padding: 5px 3px 5px 3px;
+  margin-bottom: -2px;
+  margin-right: -3px;
+  cursor: not-allowed;
+}
+
+.editIcon {
+    font-size: 27px;
+    color: #394494;
+    background-color: #f8f8f8;
+    padding: 5px 3px 5px 3px;
+    margin-bottom: -2px;
+    margin-right: -3px;
+    cursor: pointer;
+}
+
+.questionCircle {
+  font-size: 12px;
+  vertical-align: top;
+  margin-top: 10px;
+  margin-left: 10px;
+  color: #7F86B5;
+}
+
+.colorContainer {
+    display: flex;
+    flex-direction: row;
+    margin-left: 8%;
+    margin-top: 2px;
+}
+
+.colorSquare {
+    width: 24px;
+    height: 26px;
+    background: red;
+    margin-top: 4px;
+}
+
+.colorPickerContainer {
+    width: 276px;
+    margin-top: 5px;
+    margin-left: 26%
+}
+
 .prefixTooltipIcon {
     position: absolute;
     top: -7px;

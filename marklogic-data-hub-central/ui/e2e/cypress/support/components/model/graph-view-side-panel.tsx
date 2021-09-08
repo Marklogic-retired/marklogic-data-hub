@@ -25,6 +25,18 @@ class GraphViewSidePanel {
     return cy.findByTestId("description");
   }
 
+  getEditEntityTypeColor() {
+    return cy.findByTestId("edit-color-icon");
+  }
+
+  selectColorFromPicker(color: string) {
+    return cy.findByTitle(`${color}`);
+  }
+
+  getEntityTypeColor(entityName: string) {
+    return cy.findByTestId(`${entityName}-color`);
+  }
+
   getPropertyTableHeader(headerName: string) {
     return cy.findByLabelText(`${headerName}-header`);
   }

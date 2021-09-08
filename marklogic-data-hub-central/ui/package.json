@@ -34,6 +34,7 @@
     "node-sass": "^4.13.1",
     "react": "^16.12.0",
     "react-app-rewired": "^2.1.5",
+    "react-color": "^2.19.3",
     "react-contextmenu": "^2.13.0",
     "react-dom": "^16.12.0",
     "react-drag-listview": "^0.1.6",
@@ -48,6 +49,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.3.0",
     "react-split-pane": "^0.1.91",
+    "react-visjs-timeline": "^1.6.0",
     "react-xml-viewer": "^1.0.3",
     "reactour": "^1.15.2",
     "scroll-into-view": "^1.14.2",
@@ -57,10 +59,9 @@
     "typescript": "^3.8.0",
     "use-deep-compare-effect": "^1.3.1",
     "use-dynamic-refs": "^1.0.0",
-    "xml-formatter": "^2.4.0",
-    "react-visjs-timeline": "^1.6.0",
     "vis": "^4.21.0-EOL",
-    "vis-timeline": "7.3.6"
+    "vis-timeline": "7.3.6",
+    "xml-formatter": "^2.4.0"
   },
   "scripts": {
     "start": "react-app-rewired start",

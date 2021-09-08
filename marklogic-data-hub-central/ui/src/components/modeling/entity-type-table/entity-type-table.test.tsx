@@ -55,6 +55,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Name")).toBeInTheDocument();
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
+    expect(getByText("Color")).toBeInTheDocument();
   });
 
   test("Table renders with mock data, no writer role", async () => {
@@ -97,6 +98,15 @@ describe("EntityTypeModal Component", () => {
     userEvent.click(within(anotherModelExpandIcon).getByRole("img"));
 
     expect(getByLabelText("AnotherModel-add-property")).toBeDisabled();
+
+    //Verify individual colors are rendered for each entity in table view
+    expect(getByTestId("AnotherModel-#D5D3DD-color")).toBeInTheDocument();
+    expect(getByTestId("Order-#CEE0ED-color")).toBeInTheDocument();
+    expect(getByTestId("Protein-#D9F5F0-color")).toBeInTheDocument();
+    expect(getByTestId("Product-#C9EBC4-color")).toBeInTheDocument();
+    expect(getByTestId("Provider-#E7B8B2-color")).toBeInTheDocument();
+    expect(getByTestId("TestEntityForMapping-#FFF0A3-color")).toBeInTheDocument();
+    expect(getByTestId("Customer-#F6D4A7-color")).toBeInTheDocument();
 
     //Verify sorting works as expected in entity table
     let entityTable = document.querySelectorAll(".ant-table-row-level-0");

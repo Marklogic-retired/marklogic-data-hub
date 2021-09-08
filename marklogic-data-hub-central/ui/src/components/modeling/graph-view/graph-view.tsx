@@ -19,6 +19,7 @@ type Props = {
   canWriteEntityModel: any;
   deleteEntityType: (entityName: string) => void;
   updateSavedEntity: any;
+  updateEntities: any;
   relationshipModalVisible: any;
   toggleRelationshipModal: any;
   toggleShowEntityModal: any;
@@ -32,11 +33,13 @@ const GraphView: React.FC<Props> = (props) => {
     const index = props.entityTypes.map(e => e.entityName).indexOf(entityName);
     if (index >= 0) {
       let def = props.entityTypes[index].model.definitions[entityName];
+      let colorDef = props.entityTypes[index].model.hubCentral?.modeling?.color;
       await updateModelInfo(
         entityName,
         def.description ? def.description : "",
         def.namespace ? def.namespace : "",
         def.namespacePrefix ? def.namespacePrefix : "",
+        colorDef ? colorDef : "#EEEFF1",
         x,
         y
       );
@@ -260,6 +263,7 @@ const GraphView: React.FC<Props> = (props) => {
           deleteEntityClicked={deleteEntityClicked}
           canReadEntityModel={props.canReadEntityModel}
           canWriteEntityModel={props.canWriteEntityModel}
+          updateEntities={props.updateEntities}
         />
       </SplitPane> //: graphViewMainPanel
   //)
