@@ -430,9 +430,9 @@ const MergingStepDetail: React.FC = () => {
         </div>
         <div className={styles.greyContainer}>
           <div className={styles.textContainer}>
-            <div><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
+            <div className={styles.mergeDefinition}><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
             </p></div>
-            <div className={styles.addRuleButtonContainer}>
+            <div>
               <MLButton aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
                 toggleCreateEditRuleModal(true);
                 toggleIsEditRule(false);

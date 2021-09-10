@@ -6,7 +6,7 @@
     margin-right: 0vh!important;
     border-style: none;
     background-color: white !important;
-    margin-top: 3.5vh;
+    margin-top: 3vh;
 }
 
 #radioCollectionMergePopover .ant-popover-arrow {
@@ -15,6 +15,19 @@
     background-color: white !important;
     margin-top: 0vh;
 }
+
+#radioCollectionMergePopover .ant-popover-inner-content {
+    padding: 0px !important;
+    border-radius: 2px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+}
+
+#radioCollectionPopover .ant-popover-inner-content {
+    padding: 0px !important;
+    border-radius: 2px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+}
+
 
 #radioCollectionPopover .ant-popover {
     position: fixed;

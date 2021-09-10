@@ -76,7 +76,7 @@ const ModelingTooltips = {
   },
 
   publish: "Publishing will apply your changes to the application. Changes are saved automatically.",
-  
+
   /* Graph view */
   exportGraph: "Export graph to PNG",
   relationshipEmpty: "Relationship name is required",
@@ -180,9 +180,9 @@ const CommonStepTooltips = {
   radioCollection: <span>The CTS query that selects the source data to process in this configuration. CTS queries can be written in JavaScript or XQuery, and must return the URIs to be processed by the step. For XQuery, the query has to be passed as a string to xdmp.xqueryEval(), as shown in the example below.  Learn more: <a target="_blank" href="https://docs.marklogic.com/guide/search-dev/cts_query" style={{color: "5B69AF"}}>CTS Query.</a><br/><br/>
   The following example source queries select data from multiple collections.<br/><br/>
   JavaScript:<br/>
-  cts.collectionQuery([<span style={{color: "green"}}>'collection1', 'collection2'</span>])<br/><br/>
+  <span style={{fontFamily: "monospace"}}>cts.collectionQuery(['collection1', 'collection2'])</span><br/><br/>
   XQuery:<br/>
-  xdmp.xqueryEval(<span style={{color: "green"}}>"cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
+  <span style={{fontFamily: "monospace"}}>xdmp.xqueryEval("cts:collection-query(('loadCustomersJSON', 'loadCustomersXML'))"</span>)</span>
 };
 
 /* Note: Some of the following are intentionally duplicated in other *Placeholders constants. */
@@ -529,7 +529,14 @@ const AdvancedSettingsTooltips = {
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
   sourceRecordScope: 'Choose whether to access the entire source record or just the instance.',
   attachSourceDocument: 'Specifies whether the source document should be copied into the mapped entity instance',
-  interceptors: 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
+  interceptors: <span>  <strong>Syntax:</strong><br/><span style={{fontFamily: "monospace"}}>{'{'}[<br/>&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br/>&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br/>
+  &nbsp;&nbsp;"when": "beforeMain | beforeContentPersisted"<br/>]{'}'}</span><br/><br/><strong>Parameters:</strong><br/>path: The URI of the interceptor module in the MODULES database that the user running the step can read and execute.<br/>
+  vars (optional): A JSON object containing parameters to pass to the interceptor.<br/>when: Defines when the interceptor will be invoked. Allowed values are <span style={{fontFamily: "monospace"}}>"beforeMain"</span> or <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>.<br/><br/>
+  The module identified by the <span style={{fontFamily: "monospace"}}>"path"</span> property will be invoked via MarkLogic's <a href="https://docs.marklogic.com/xdmp.invoke">xdmp.invoke function</a> with the default arguments for options. The module will be passed two arguments:<br/><br/>
+  &nbsp;&nbsp;1. contentArray: The array of content objects<br/><ul style={{}}><li>When the <span style={{fontFamily: "monospace"}}>"when"</span> property is <span style={{fontFamily: "monospace"}}>"beforeMain"</span>, this will be the array of content objects that will be passed to the <span style={{fontFamily: "monospace"}}>"main"</span> function of the step module.</li>
+  <li>When the <span style={{fontFamily: "monospace"}}>"when"</span> property is <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>, this will be the array of content objects returned by the <span style={{fontFamily: "monospace"}}>"main"</span> function of the step module.</li></ul>
+  &nbsp;&nbsp;2. options: The set of combined options from the step definition, flow, step, and &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;runtime options<br/><br/>
+  For a working example of step interceptors along with more details, please see the <a href="https://github.com/marklogic/marklogic-data-hub/tree/master/examples/step-interceptors/">Step Interceptors example</a>.</span>,
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   sourceDatabase: 'The database where the input data is read from.',
   targetDatabase: 'The database where to store the processed data.',

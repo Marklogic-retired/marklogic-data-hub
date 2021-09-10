@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Form, Input, Icon, Select, Radio} from "antd";
+import {Form, Input, Icon, Select, Radio, Popover} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
@@ -895,10 +895,10 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           colon={false}
         />
         { interceptorsExpanded ? <div className={styles.expandContainer}>
-          <div className={styles.textareaExpandTooltip}>
-            <MLTooltip title={tooltips.interceptors} placement={"right"}>
+          <div className={styles.textareaExpandTooltip} id={"interceptorTooltip"}>
+            <Popover content={tooltips.interceptors} placement={"right"} overlayStyle={{width: "33vw"}}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
+            </Popover>
           </div>
           <TextArea
             id="interceptors"
