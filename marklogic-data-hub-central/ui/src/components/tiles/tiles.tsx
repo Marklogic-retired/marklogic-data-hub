@@ -125,7 +125,7 @@ const Tiles: React.FC<Props> = (props) => {
           {(options["iconType"] === "custom") ? (<>
             <span className={options["icon"] + "Header"} aria-label={"icon-" + viewId} style={{color: options["color"]}}></span>
             <div className={styles.exploreText} aria-label={"title-" + viewId}>{options["title"]}</div>
-            {viewId === "model" && <Popover
+            {viewId === "model" && <span id="modelInfo"><Popover
               visible={modelingInfoVisible}
               content={modelInfo}
               trigger="click"
@@ -135,7 +135,7 @@ const Tiles: React.FC<Props> = (props) => {
               }}
               onVisibleChange={modelingInfoViewChange}
             >
-              <span className={styles.modelingInfoIcon} aria-label="modelInfoIcon"><img src={modelingInfoIcon}/></span></Popover>}
+              <span className={styles.modelingInfoIcon} aria-label="modelInfoIcon"><img src={modelingInfoIcon}/></span></Popover></span>}
           </>) : (<>
             <i aria-label={"icon-" + viewId}>
               <FontAwesomeIcon style={{color: options["color"]}} icon={options["icon"]} />
