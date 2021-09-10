@@ -16,6 +16,7 @@ import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion"
 import {paginationMapping} from "../../../../config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
 import StepsConfig from "../../../../config/steps.config";
+import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 
 interface Props {
   setScrollRef: any;
@@ -1235,16 +1236,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
             <span><span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
-                  <Tooltip title={"Multiple"}>
+                  <HCTooltip text="Multiple" id="multiple-source-tooltip" placement="top">
                     <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-" + text} />
-                  </Tooltip>
+                  </HCTooltip>
                 </span>
               }
               {row.key > 100 && row.children &&
                 <span>
-                  <Tooltip title={"Structured Type"}>
-                    <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
-                  </Tooltip>
+                  <HCTooltip text="Structured Type" id="structure-type-tooltip" placement="top">
+                    <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
+                  </HCTooltip>
                 </span>
               }
               {row.key > 100 && row.name === "Context" && !row.isProperty &&

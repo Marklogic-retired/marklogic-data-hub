@@ -2141,10 +2141,9 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let getByText, getByTestId, getAllByTestId;
+    let getByTestId, getAllByTestId;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       getAllByTestId = renderResults.getAllByTestId;
     });
@@ -2166,9 +2165,9 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("LastName-optionIcon"));
-    await waitForElement(() => getByText("Multiple"));
+    await waitForElement(() => getByTestId("LastNameMultiple-option-tooltip"));
     fireEvent.mouseOver(getByTestId("nutFreeName-optionIcon"));
-    await waitForElement(() => getByText("Multiple"));
+    await waitForElement(() => getByTestId("nutFreeNameMultiple-option-tooltip"));
 
   });
 
@@ -2182,10 +2181,9 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let getByText, getByTestId, getAllByTestId;
+    let getByTestId, getAllByTestId;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       getAllByTestId = renderResults.getAllByTestId;
     });
@@ -2206,7 +2204,7 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("nutFree:name-optionIcon"));
-    await waitForElement(() => getByText("Multiple"));
+    await waitForElement(() => getByTestId("nutFree:nameMultiple-option-tooltip"));
   });
 
   test("Nested JSON source data - Right XPATH expression", async () => {
@@ -2249,7 +2247,7 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("proteinDog-optionIcon"));
-    await waitForElement(() => getByText("Multiple"));
+    await waitForElement(() => getByTestId("proteinDogMultiple-option-tooltip"));
 
     //Click on 'FirstNamePreferred'
     fireEvent.click(firstName[1]);
@@ -2273,10 +2271,9 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let getByText, getByTestId, getAllByText, getAllByRole, getAllByTestId;
+    let getByTestId, getAllByText, getAllByRole, getAllByTestId;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       getAllByText = renderResults.getAllByText;
       getAllByRole = renderResults.getAllByRole;
@@ -2317,7 +2314,7 @@ describe("RTL Source Selector/Source Search tests", () => {
 
     //Verify tooltip for Array icon
     fireEvent.mouseOver(getByTestId("LastName-optionIcon"));
-    await waitForElement(() => getByText("Multiple"));
+    await waitForElement(() => getByTestId("LastNameMultiple-option-tooltip"));
 
     //Click on 'FirstNamePreferred'
     fireEvent.click(lastName[1]);

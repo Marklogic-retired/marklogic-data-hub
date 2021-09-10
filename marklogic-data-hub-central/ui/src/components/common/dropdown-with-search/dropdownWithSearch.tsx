@@ -1,9 +1,10 @@
-import {Select, Tooltip} from "antd";
+import {Select} from "antd";
 import React, {useState, useEffect, useRef, useCallback, CSSProperties} from "react";
 import styles from "./dropdownWithSearch.module.scss";
 import arrayIcon from "../../../assets/icon_array.png";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import HCTooltip from "../hc-tooltip/hc-tooltip";
 
 const DropDownWithSearch = (props) => {
 
@@ -113,9 +114,9 @@ const DropDownWithSearch = (props) => {
             key={element.key}
           >
             {formatDropdownText(element.value, index)}
-            {<Tooltip title="Multiple">
+            {<HCTooltip text="Multiple" data-testid={element.value + "Multiple-option-tooltip"} id="multiple-option-tooltip" placement="top">
               <img data-testid={element.value + "-optionIcon"} src={element.struct ? arrayIcon : "" } alt={""}/>
-            </Tooltip>}
+            </HCTooltip>}
           </Select.Option>
         )}
       </Select>  }
