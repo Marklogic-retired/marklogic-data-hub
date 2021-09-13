@@ -16,6 +16,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import HCDivider from "../common/hc-divider/hc-divider";
+import {ExclamationCircleFill} from "react-bootstrap-icons";
 
 const {Panel} = Collapse;
 
@@ -126,7 +127,7 @@ const JobResponse: React.FC<Props> = (props) => {
           } else {
             const errors = getErrors(stepResponse);
             return <div className={styles.stepResponse} key={"failed-" + index}>
-              <div><Icon type="exclamation-circle" className={styles.unSuccessfulRun} theme="filled"/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
+              <div><ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/><strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
               <Collapse defaultActiveKey={[]} bordered={false}>
                 <Panel header={<span className={styles.errorSummary}>{getErrorsSummary(stepResponse)}</span>} key={stepResponse.stepName + "-errors"}>
                   <Collapse defaultActiveKey={[]} bordered={false}>
