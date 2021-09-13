@@ -613,7 +613,7 @@ const AdvMatchTooltips = {
 
 /* TO BE DEPRECATED. Please use MatchingStepIntros.main. */
 const MatchingStepDetailText = {
-  description: 'The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.'
+  description: 'The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.'
 };
 
 /* TO BE DEPRECATED. Please use MergingStepTooltips. */
