@@ -12,6 +12,7 @@ import {MissingPagePermission} from "../config/messages.config";
 import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "../../src/components/job-response/job-response";
 import HCButton from "../components/common/hc-button/hc-button";
+import {ExclamationCircleFill} from "react-bootstrap-icons";
 
 const {Panel} = Collapse;
 
@@ -304,7 +305,7 @@ const Run = (props) => {
   function showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber) {
     Modal.error({
       title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed with errors</p>,
-      icon: <Icon type="exclamation-circle" theme="filled"/>,
+      icon: <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>,
       content: (
         <div id="error-list">
           {((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName) ?
@@ -338,7 +339,7 @@ const Run = (props) => {
   function showFailed(stepName, stepType, errors) {
     Modal.error({
       title: <div id="error-title"><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> failed</p></div>,
-      icon: <Icon type="exclamation-circle" theme="filled"/>,
+      icon: <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>,
       content: (
         <div id="error-list">
           {errors.map((e, i) => {
