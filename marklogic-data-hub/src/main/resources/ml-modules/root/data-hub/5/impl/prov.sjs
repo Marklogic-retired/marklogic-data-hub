@@ -691,7 +691,7 @@ function urisToLatestProvIDs(sourceURIs, database) {
     finalProvEntities = config.FINALDATABASE === currentDatabase ? sourceMapFunction(sourceURIs): fn.head(hubUtils.invokeFunction(() => sourceMapFunction(sourceURIs), config.FINALDATABASE));
   }
   let stagingProvEntities = [];
-  let sourcesToSearchForInStaging = sourceURIs.filter((sourceURI) => !finalProvEntities.includes(sourceURI));
+  let sourcesToSearchForInStaging = finalProvEntities.length ? sourceURIs.filter((sourceURI) => finalProvEntities.includes(sourceURI)): sourceURIs;
   if (sourcesToSearchForInStaging.length) {
     stagingProvEntities = config.STAGINGDATABASE === currentDatabase ? sourceMapFunction(sourcesToSearchForInStaging) : fn.head(hubUtils.invokeFunction(() => sourceMapFunction(sourcesToSearchForInStaging), config.STAGINGDATABASE));
   }

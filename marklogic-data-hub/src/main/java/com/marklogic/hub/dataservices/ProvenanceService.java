@@ -48,6 +48,7 @@ public interface ProvenanceService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_getProvenanceGraph;
             private BaseProxy.DBFunctionRequest req_migrateProvenance;
             private BaseProxy.DBFunctionRequest req_deleteProvenance;
 
@@ -55,10 +56,27 @@ public interface ProvenanceService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/provenance/", servDecl);
 
+                this.req_getProvenanceGraph = this.baseProxy.request(
+                    "getProvenanceGraph.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_migrateProvenance = this.baseProxy.request(
                     "migrateProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_deleteProvenance = this.baseProxy.request(
                     "deleteProvenance.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getProvenanceGraph(String documentURI) {
+                return getProvenanceGraph(
+                    this.req_getProvenanceGraph.on(this.dbClient), documentURI
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getProvenanceGraph(BaseProxy.DBFunctionRequest request, String documentURI) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("documentURI", true, BaseProxy.StringType.fromString(documentURI))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -96,6 +114,14 @@ public interface ProvenanceService {
 
         return new ProvenanceServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Returns a JSON Object contain Provenance nodes and links. Requires either docURI or jobID to be provided.
+   *
+   * @param documentURI	The documentURI that you wish to get provenance data about.
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getProvenanceGraph(String documentURI);
 
   /**
    * Migrates provenance to provenance format starting in DH 5.7.

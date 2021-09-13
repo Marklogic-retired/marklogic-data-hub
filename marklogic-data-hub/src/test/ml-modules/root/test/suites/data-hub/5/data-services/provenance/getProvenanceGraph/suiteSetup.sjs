@@ -2,15 +2,15 @@ declareUpdate();
 // This tests provenance planned for the 5.7.0 release
 const dhProv = require('/data-hub/5/provenance/dh-provenance.xqy');
 const config = require("/com.marklogic.hub/config.sjs");
-const test = require("/test/test-helper.xqy");
-const hubUtil = require("/data-hub/5/impl/hub-utils.sjs");
 const flowProvenance = require("/data-hub/5/flow/flowProvenance.sjs");
+const hubTest = require("/test/data-hub-test-helper.xqy");
 const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
 const provLib = require("/data-hub/5/impl/prov.sjs");
-const provQueryLib = require("/data-hub/5/provenance/prov-lib.sjs");
 const stagingDB = config.STAGINGDATABASE;
 const finalDB = config.FINALDATABASE;
-const assertions = [];
+
+hubTest.clearProvenanceRecords(config.STAGINGDATABASE);
+hubTest.clearProvenanceRecords(config.FINALDATABASE);
 
 const flowName = "endToEndFlow";
 
@@ -113,36 +113,3 @@ xdmp.invokeFunction(() => {
   ]);
   provenanceWriteQueue.persist(finalDB);
 }, { update: "true", commit: "auto"});
-
-const sourceInformationForMerged = fn.head(hubUtil.invokeFunction(function() { return provQueryLib.sourceInformationForDocument("testJSONObjectInstanceMerged.json"); }, finalDB));
-assertions.push(
-  test.assertEqual("External Table", sourceInformationForMerged[0].dataSourceName, "Data Source Name for merged should be 'External Table'"),
-  test.assertEqual("SQL", sourceInformationForMerged[0].dataSourceType, "Data Source Type for merged should be 'SQL'")
-);
-const stepsRunAgainstMerged = fn.head(hubUtil.invokeFunction(function() { return provQueryLib.stepsRunAgainstDocument("testJSONObjectInstanceMerged.json"); }, finalDB));
-assertions.push(
-  test.assertEqual("mergingStep", stepsRunAgainstMerged[0].stepName),
-  test.assertEqual("mappingStep", stepsRunAgainstMerged[1].stepName),
-  test.assertEqual("ingestionStep", stepsRunAgainstMerged[2].stepName)
-);
-const derivedFromForMerged = fn.head(hubUtil.invokeFunction(function() { return provQueryLib.derivedFromDocuments("testJSONObjectInstanceMerged.json"); }, finalDB));
-assertions.push(
-  test.assertEqual("testJSONObjectInstanceMerged.json", derivedFromForMerged[0].derivedFromDocument),
-  test.assertEqual(finalDB, derivedFromForMerged[0].database),
-  test.assertEqual("testJSONObjectInstance2.json", derivedFromForMerged[1].derivedFromDocument),
-  test.assertEqual(finalDB, derivedFromForMerged[1].database),
-  test.assertEqual("testJSONObjectInstance1.json", derivedFromForMerged[2].derivedFromDocument),
-  test.assertEqual(finalDB, derivedFromForMerged[2].database),
-  test.assertEqual("testJSONObjectInstance2.json", derivedFromForMerged[3].derivedFromDocument),
-  test.assertEqual(stagingDB, derivedFromForMerged[3].database),
-  test.assertEqual("testJSONObjectInstance1.json", derivedFromForMerged[4].derivedFromDocument),
-  test.assertEqual(stagingDB, derivedFromForMerged[4].database)
-);
-const documentActivitiesForMerged = fn.head(hubUtil.invokeFunction(function() { return provQueryLib.documentActivities("testJSONObjectInstanceMerged.json"); }, finalDB));
-assertions.push(
-  test.assertEqual("my-merging-job", documentActivitiesForMerged[0].activityLabel),
-  test.assertEqual("my-mapping-job", documentActivitiesForMerged[1].activityLabel),
-  test.assertEqual("my-ingestion-job", documentActivitiesForMerged[2].activityLabel)
-);
-
-assertions;
