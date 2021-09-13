@@ -731,7 +731,7 @@ const MatchingStepDetail: React.FC = () => {
               <p aria-label="threshold-text" className={`${moreThresholdText ? styles.showText : styles.hideText}`}>A <span className={styles.italic}>threshold</span> specifies how closely entities have to match before a certain action is triggered.
                 The action could be the merging of those entities, the creation of a match notification, or a custom action that is defined programmatically.
                 Click the <span className={styles.bold}>Add</span> button to create a threshold. If most of the values in the entities should match to trigger the action associated with your threshold,
-                then move the threshold higher on the scale. If some of the values in the entities must match, then move the threshold lower.
+                then move the threshold higher on the scale. If only some of the values in the entities must match, then move the threshold lower.
               <span aria-label="threshold-less" className={styles.link} onClick={() => toggleMoreThresholdText(!moreThresholdText)}>less</span>
               </p>
               {!moreThresholdText && <span aria-label="threshold-more" className={styles.link} onClick={() => toggleMoreThresholdText(!moreThresholdText)}>more</span> }
@@ -768,8 +768,8 @@ const MatchingStepDetail: React.FC = () => {
             <div className={styles.textContainer}>
               <p aria-label="ruleset-text" className={`${moreRulesetText ? styles.showText : styles.hideText}`}>A <span className={styles.italic}>ruleset</span> specifies the criteria for determining whether the values of your entities match.
                 The way you define your rulesets, and where you place them on the scale, influences whether the entities are considered a match.
-                Click the <span className={styles.bold}>Add</span> button to create a ruleset. If you want the ruleset to have a major influence over whether entities qualify as a "match",
-                move it higher on the scale. If you want it to only have some influence, then move the ruleset lower.The weight is displayed as an integer on each ruleset. The weight is displayed as a negative integer if Reduce Weight is enabled for a ruleset.
+                Click the <span className={styles.bold}>Add</span> button to create a ruleset. If you want the ruleset to have a major influence over whether entities are qualified as a "match",
+                move it higher on the scale. If you want it to have only some influence, then move the ruleset lower.
               <span aria-label="ruleset-less" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>less</span>
               </p>
               {!moreRulesetText && <span aria-label="ruleset-more" className={styles.link} onClick={() => toggleMoreRulesetText(!moreRulesetText)}>more</span> }

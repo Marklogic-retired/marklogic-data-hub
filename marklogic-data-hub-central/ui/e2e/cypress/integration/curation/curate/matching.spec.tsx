@@ -82,7 +82,7 @@ describe("Matching", () => {
   });
   it("Open matching step details", () => {
     curatePage.openStepDetails(matchStep);
-    cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
+    cy.contains("The Matching step defines the criteria for determining whether the values from entities match, and the action to take based on how close of a match they are.");
 
     cy.findByText("Expand All").should("have.length.lt", 1);
     cy.findByText("Collapse All").should("have.length.lt", 1);
