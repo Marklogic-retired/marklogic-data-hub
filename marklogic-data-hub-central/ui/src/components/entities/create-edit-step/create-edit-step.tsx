@@ -511,14 +511,14 @@ const CreateEditStep: React.FC<Props> = (props) => {
           <div className={styles.inputHCTooltip}>
             { props.stepType === StepType.Mapping ?
               <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                <QuestionCircleFill color="#7F86B5" size={13}/>
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
               </HCTooltip>:
               props.stepType === StepType.Matching ?
                 <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13}/>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                 </HCTooltip>:
                 <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13}/>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                 </HCTooltip>
             }
           </div>
@@ -547,7 +547,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
               trigger="hover"
               placement="left"
             >
-              <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
+              <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
             </Popover></span>
 
           <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
@@ -594,9 +594,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
               className={styles.input}
               onBlur={sendPayload}
             />&nbsp;&nbsp;
-            <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-            </HCTooltip>
+            <div className={styles.inputHCTooltip}>
+              <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+              </HCTooltip>
+            </div>
           </Form.Item> : ""}
 
         <Form.Item className={styles.submitButtonsForm}>
