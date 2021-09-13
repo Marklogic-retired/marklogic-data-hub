@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Menu, Dropdown, Collapse, Icon, Input, Radio, Table, Tooltip, Switch} from "antd";
+import {Menu, Dropdown, Collapse, Input, Radio, Table, Switch} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {useHistory} from "react-router-dom";
@@ -753,9 +753,10 @@ const MatchingStepDetail: React.FC = () => {
           </div>
           <div><span><b>Enable Threshold Scale </b></span><Switch aria-label="threshold-scale-switch" onChange={(e) => toggleDisplayThresholdTimeline(e)} defaultChecked={false} ></Switch>
             <span>
-              <Tooltip title={MatchingStepTooltips.thresholdScale} placement={"right"}>
-                <Icon type="question-circle" className={styles.scaleTooltip} theme="filled" data-testid={"info-tooltip-threshold"} />
-              </Tooltip><br />
+              <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"}/>
+              </HCTooltip>
+              <br />
             </span></div>
           {displayThresholdTimeline ? renderThresholdTimeline() : renderDefaultThresholdTimeline()}
         </div>
@@ -796,9 +797,10 @@ const MatchingStepDetail: React.FC = () => {
           </div>
           <div><span><b>Enable Ruleset Scale </b></span><Switch aria-label="ruleset-scale-switch" onChange={(e) => toggleDisplayRulesetTimeline(e)} defaultChecked={false} ></Switch>
             <span>
-              <Tooltip title={MatchingStepTooltips.rulesetScale} placement={"right"}>
-                <Icon type="question-circle" className={styles.scaleTooltip} theme="filled" data-testid={`info-tooltip-ruleset`} />
-              </Tooltip><br />
+              <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.scaleTooltip} data-testid={`info-tooltip-ruleset`}/>
+              </HCTooltip>
+              <br />
             </span></div>
           {displayRulesetTimeline ? renderRulesetTimeline() : renderDefaultRulesetTimeline()}
         </div>

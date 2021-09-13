@@ -518,7 +518,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   <QuestionCircleFill color="#7F86B5" size={13}/>
                 </HCTooltip>:
                 <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13}/>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                 </HCTooltip>
             }
           </div>
@@ -593,9 +593,9 @@ const CreateEditStep: React.FC<Props> = (props) => {
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
               onBlur={sendPayload}
-            />&nbsp;&nbsp;
-            <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            />&nbsp;
+            <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
             </HCTooltip>
           </Form.Item> : ""}
 
