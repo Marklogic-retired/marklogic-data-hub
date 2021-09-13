@@ -98,7 +98,12 @@ class ProvenanceWriteQueue {
     }
     for (let recordDetails of recordsQueue) {
       let options = recordDetails.options || {};
-      options.dateTime = String(fn.currentDateTime().add(xdmp.elapsedTime()));
+      let datePortion = recordDetails.id.slice(recordDetails.id.lastIndexOf("#") + 1);
+      if (xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "dateTime", datePortion)) {
+        options.dateTime = datePortion;
+      } else {
+        options.dateTime = String(fn.currentDateTime().add(xdmp.elapsedTime()));
+      }
       // namespaces for user defined provenance types
       options.namespaces = provenanceNamespaces;
 

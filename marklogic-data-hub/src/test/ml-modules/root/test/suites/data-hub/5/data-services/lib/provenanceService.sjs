@@ -10,7 +10,12 @@ function migrateProvenance(endpointConstants, endpointState) {
     return invoke("migrateProvenance.sjs", {endpointConstants, endpointState});
 }
 
+function getProvenanceGraph(documentURI) {
+    return invoke("getProvenanceGraph.sjs", {documentURI});
+}
+
 module.exports = {
     deleteProvenance,
-    migrateProvenance
+    migrateProvenance,
+    getProvenanceGraph
 };
