@@ -18,6 +18,7 @@ import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/toolt
 import StepsConfig from "../../../../config/steps.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 
 interface Props {
   setScrollRef: any;
@@ -1255,7 +1256,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   &nbsp;<Popover
                     content={contextHelp}
                     trigger="click"
-                    placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle}/>
                   </Popover>
                 </span>
               }
@@ -1264,7 +1265,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   &nbsp;<Popover
                     content={uriHelp}
                     trigger="click"
-                    placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle}/>
                   </Popover>
                 </span>
               }
@@ -1312,35 +1313,30 @@ const EntityMapTable: React.FC<Props> = (props) => {
             {row.joinPropertyName !== "" ?
               //icons if relationship is complete with a foreign key
               <div className={styles.dualIconsContainer}>
-                <Tooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
+                <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
                   <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name}/>
-                </Tooltip>
-                <Tooltip title={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} >
+                </HCTooltip>
+                <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom">
                   <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name}/>
-                </Tooltip>
+                </HCTooltip>
               </div>
               :
               //icon if relationship but no foreign key
               <div className={styles.singleIconContainer}>
-                <Tooltip className={styles.relationshipTooltip} title={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
+                <HCTooltip className={styles.relationshipTooltip} text={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
                   <span className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle} data-testid={"relationship-" + row.name}/>
-                </Tooltip>
+                </HCTooltip>
               </div>
             }
           </span>;
         }
         return {
-          children:
-            <div className={styles.typeContainer}>
-              {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
-                <Popover
-                  content={contextHelp}
-                  trigger="click"
-                  placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                </Popover>
-                <p className={styles.typeText}>{dType}</p></div>
-                : renderText}
-            </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
+          children: <div className={styles.typeContainer}>
+            {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
+              content={contextHelp}
+              trigger="click"
+              placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext}/></Popover><p className={styles.typeText}>{dType}</p></div> : renderText}
+          </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
         };
       }
     },
