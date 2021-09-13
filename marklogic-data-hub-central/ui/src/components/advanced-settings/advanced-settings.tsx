@@ -843,9 +843,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             {sourceRecordScopeValue}
           </Select>
           <div className={styles.selectTooltip}>
-            <Tooltip title={tooltips.sourceRecordScope} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </Tooltip>
+            <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+            </HCTooltip>
           </div>
           { sourceRecordScopeToggled ? <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div> : null }
         </Form.Item> : ""}

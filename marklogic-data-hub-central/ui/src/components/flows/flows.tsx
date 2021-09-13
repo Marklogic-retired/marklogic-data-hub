@@ -14,13 +14,11 @@ import Spinner from "react-bootstrap/Spinner";
 import {AuthoritiesContext} from "../../util/authorities";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import {PlayCircleFill, X} from "react-bootstrap-icons";
 import styles from "./flows.module.scss";
 import "./flows.scss";
 import HCCard from "../common/hc-card/hc-card";
 import HCButton from "../common/hc-button/hc-button";
-import {ChevronDown} from "react-bootstrap-icons";
-
+import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown} from "react-bootstrap-icons";
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -777,20 +775,20 @@ const Flows: React.FC<Props> = (props) => {
     } else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
       tooltipText = "Step last ran with errors on " + stepEndTime;
       return (
-        <Tooltip overlayStyle={{maxWidth: "190px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
-          <span onClick={(e) => showStepRunResponse(step)}>
-            <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
-          </span>
-        </Tooltip>
+        <span onClick={(e) => showStepRunResponse(step)}>
+          <HCTooltip text={tooltipText} id="complete-with-errors-tooltip" placement="bottom">
+            <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>
+          </HCTooltip>
+        </span>
       );
     } else {
       tooltipText = "Step last failed on " + stepEndTime;
       return (
-        <Tooltip overlayStyle={{maxWidth: "175px"}} title={tooltipText} placement="bottom" getPopupContainer={() => document.getElementById("flowSettings") || document.body}>
-          <span onClick={(e) => showStepRunResponse(step)}>
-            <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
-          </span>
-        </Tooltip>
+        <span onClick={(e) => showStepRunResponse(step)}>
+          <HCTooltip text={tooltipText} id="step-last-failed-tooltip" placement="bottom">
+            <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>
+          </HCTooltip>
+        </span>
       );
     }
   };
