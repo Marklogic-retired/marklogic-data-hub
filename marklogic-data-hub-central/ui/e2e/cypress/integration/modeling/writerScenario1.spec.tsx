@@ -84,7 +84,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getTypeFromDropdown("string").click();
     propertyModal.getYesRadio("identifier").click();
     confirmationModal.getIdentifierText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.Identifer).click();
+    confirmationModal.getYesButton(ConfirmationType.Identifer);
     propertyModal.getSubmitButton().click();
     propertyTable.getIdentifierIcon("newId").should("not.exist");
     propertyTable.getIdentifierIcon("buyer-id").should("exist");
@@ -121,11 +121,11 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.editProperty("newId");
     propertyModal.getDeleteIcon("newId").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("newId").should("not.exist");
   });
   it("Edit a different entity", () => {
-    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon("Customer")).click();
+    entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.editProperty("nicknames");
     propertyModal.clickCheckbox("facetable");
     propertyModal.clickCheckbox("sortable");
@@ -149,7 +149,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
   });
   it("Save new Buyer entity", {defaultCommandTimeout: 120000}, () => {
     modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");
     confirmationModal.getSaveAllEntityText().should("not.exist");
@@ -164,7 +164,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should("exist");
     modelPage.selectView("table");
-    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon("Customer")).click();
+    entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
     cy.get("[aria-label=\"user-dropdown\"]").trigger("mousedown");
@@ -176,7 +176,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     toolbar.getModelToolbarIcon().click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    entityTypeTable.getExpandEntityIcon("Order").click();
+    entityTypeTable.getExpandEntityIcon("Order");
     propertyTable.getAddPropertyButton("Order").click();
     propertyModal.newPropertyName("orderID");
     propertyModal.openPropertyDropdown();
@@ -194,7 +194,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     toolbar.getModelToolbarIcon().click();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    entityTypeTable.getExpandEntityIcon("Buyer").click();
+    entityTypeTable.getExpandEntityIcon("Buyer");
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.newPropertyName("relProp");
     propertyModal.openPropertyDropdown();
@@ -203,10 +203,10 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.toggleJoinPropertyDropdown();
     propertyModal.checkJoinPropertyDropdownLength(6); // Check for saved (5) and unsaved (1) Order properties
     propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getCancelButton().click();
+    propertyModal.getCancelButton();
   });
   it("Adding property to Person entity", () => {
-    entityTypeTable.getExpandEntityIcon("Person").click();
+    entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.getAddPropertyButton("Person").click();
     propertyModal.newPropertyName("newID");
     propertyModal.openPropertyDropdown();
@@ -228,13 +228,13 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.editProperty("lname");
     propertyModal.getYesRadio("identifier").click();
     confirmationModal.getIdentifierText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.Identifer).click();
+    confirmationModal.getYesButton(ConfirmationType.Identifer);
     propertyModal.getYesRadio("identifier").should("be.checked");
 
     propertyModal.getDeleteIcon("lname").click();
     confirmationModal.getDeletePropertyStepWarnText().should("exist");
     confirmationModal.getNoButton(ConfirmationType.DeletePropertyStepWarn).click();
-    propertyModal.getCancelButton().click();
+    propertyModal.getCancelButton();
     propertyTable.getProperty("lname").should("exist");
   });
   it("Validate Show Steps and Hide Steps", () => {
@@ -253,7 +253,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.contains("merge-person").should("not.exist");
     cy.contains("master-person").should("not.exist");
     cy.contains("Hide Steps...").should("not.exist");
-    propertyModal.getCancelButton().click();
+    propertyModal.getCancelButton();
   });
   it("Delete Entity that is used in other steps", () => {
     entityTypeTable.getDeleteEntityIcon("Person").click();
@@ -269,7 +269,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeTable.getEntity("Person").should("exist");
     //Revert All changes
     // modelPage.getRevertAllButton().click();
-    // confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
+    // confirmationModal.getYesButton(ConfirmationType.RevertAll);
     // confirmationModal.getRevertAllEntityText().should("not.exist");
   });
 });

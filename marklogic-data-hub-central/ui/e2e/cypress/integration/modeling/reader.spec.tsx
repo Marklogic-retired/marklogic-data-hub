@@ -69,11 +69,11 @@ describe("Entity Modeling: Reader Role", () => {
     entityTypeTable.getDeleteEntityIcon("Customer").click({force: true});
     confirmationModal.getDeleteEntityStepText().should("not.exist");
 
-    entityTypeTable.getExpandEntityIcon("Customer").click();
+    entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getAddPropertyButton("Customer").should("be.visible").click({force: true});
     propertyModal.getSubmitButton().should("not.exist");
 
-    propertyTable.getDeletePropertyIcon("Customer", "pin").click({force: true});
+    propertyTable.getDeletePropertyIcon("Customer", "pin");
     confirmationModal.getDeletePropertyStepWarnText().should("not.exist");
 
     propertyTable.getAddPropertyToStructureType("Address").click({force: true});

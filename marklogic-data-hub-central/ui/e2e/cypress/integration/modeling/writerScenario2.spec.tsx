@@ -39,7 +39,6 @@ describe("Entity Modeling: Writer Role", () => {
   });
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteEntities("Patients");
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
@@ -212,37 +211,43 @@ describe("Entity Modeling: Writer Role", () => {
     //Structured Property
     propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "alt_address-streetAlt").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("streetAlt").should("not.exist");
     //Property
-    propertyTable.getDeletePropertyIcon("User3", "alt_address").click();
+    propertyTable.getDeletePropertyIcon("User3", "alt_address");
     confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("alt_address").should("not.exist");
-    propertyTable.getDeletePropertyIcon("User3", "OrderedBy").click();
+    propertyTable.getDeletePropertyIcon("User3", "OrderedBy");
     confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("not.exist");
     //Save Changes
     modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");
     confirmationModal.getSaveAllEntityText().should("not.exist");
-    //Entity
+    // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
+    // confirmationModal.getDeleteEntityText().should("exist");
+    // confirmationModal.getDeleteEntityText().should("not.exist");
+    // entityTypeTable.getEntity("User3").should("not.exist");
+  });
+  it("Delete entity", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.getDeleteEntityIcon("User3").click();
     confirmationModal.getDeleteEntityText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
+    cy.waitForAsyncRequest();
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
     // entityTypeTable.getEntity("User3").should("not.exist");
   });
   // it("Adding property to Order entity", () => {
-  //   entityTypeTable.getExpandEntityIcon("Order").click();
+  //   entityTypeTable.getExpandEntityIcon("Order");
   //   propertyTable.getAddPropertyButton("Order").click();
   //   propertyModal.newPropertyName("orderID");
   //   propertyModal.openPropertyDropdown();
@@ -258,7 +263,7 @@ describe("Entity Modeling: Writer Role", () => {
   //   modelPage.getEntityModifiedAlert().should("exist");
   // });
   // it("Adding property to Person entity", () => {
-  //   entityTypeTable.getExpandEntityIcon("Person").click();
+  //   entityTypeTable.getExpandEntityIcon("Person");
   //   propertyTable.getAddPropertyButton("Person").click();
   //   propertyModal.newPropertyName("personID");
   //   propertyModal.openPropertyDropdown();
@@ -295,9 +300,9 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdown("More date types").click();
     propertyModal.getCascadedTypeFromDropdown("yearMonthDuration").click();
     propertyModal.getSubmitButton().click();
-    propertyTable.getDeletePropertyIcon("Concept", "testing").should("exist").click();
+    propertyTable.getDeletePropertyIcon("Concept", "testing");
     confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("testing").should("not.exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });
@@ -337,7 +342,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.editProperty("patientId");
     propertyModal.getDeleteIcon("patientId").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("patientId").should("not.exist");
   });
   it("Add third property to Patients Entity, Save all the changes and Delete Concept Entity", {defaultCommandTimeout: 120000}, () => {
@@ -354,7 +359,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getSortIcon("health").should("exist");
     //Save Changes
     modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");
     confirmationModal.getSaveAllEntityText().should("not.exist");
@@ -363,43 +368,27 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("health").should("exist");
     propertyTable.getFacetIcon("health").should("exist");
     propertyTable.getSortIcon("health").should("exist");
-    //Delete Entity
+  });
+  it("Delete Concept Entity", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.getDeleteEntityIcon("Concept").click();
-    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     confirmationModal.getDeleteEntityRelationshipText().should("not.exist");
+    cy.waitForAsyncRequest();
     //entityTypeTable.getEntity("Concept").should("not.exist");
   });
-
   it("Delete an entity from graph view", {defaultCommandTimeout: 120000}, () => {
-    modelPage.getAddEntityButton().should("exist").click();
-    entityTypeModal.newEntityName("TestEntity");
-    entityTypeModal.newEntityDescription("An test entity for User");
-    entityTypeModal.getAddButton().click();
-    entityTypeTable.viewEntityInGraphView("TestEntity");
+    entityTypeTable.viewEntityInGraphView("Patients");
+    cy.waitForAsyncRequest();
 
-    graphViewSidePanel.getDeleteIcon("TestEntity").click();
-    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    graphViewSidePanel.getDeleteIcon("Patients").click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     confirmationModal.getDeleteEntityText().should("not.exist");
-    graphViewSidePanel.getSelectedEntityHeading("TestEntity").should("not.exist");
-  });
-  it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
-    // To delete a relation
-    graphVis.getPositionOfEdgeBetween("Person,Patients").then((edgePosition: any) => {
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y));
-    });
-    confirmationModal.deleteRelationship();
-    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyWarn-yes").click());
-    // To verify that property is not visible
-    graphVis.getPositionsOfNodes("Patients").then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions["Patients"];
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y));
-    });
-    graphViewSidePanel.getPropertyName("patientType").should("not.exist");
+    graphViewSidePanel.getSelectedEntityHeading("Patients").should("not.exist");
   });
 
   it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
     //Verifying edit relationship modal
-
+    entityTypeTable.viewEntityInGraphView("Customer");
     //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
@@ -418,12 +407,14 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
     relationshipModal.editJoinProperty("email");
 
-    relationshipModal.confirmationOptions("Save").click({force: true});
+    relationshipModal.confirmationOptions("Save");
+    cy.wait(2000);
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
-    //reopen modal to verify changes were saved and persisted
+  });
+  it("Reopen modal to verify changes were saved and persisted", {defaultCommandTimeout: 120000}, () => {
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+      graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y, {force: true});
     });
 
     relationshipModal.verifyRelationshipValue("usedBy");
@@ -432,7 +423,6 @@ describe("Entity Modeling: Writer Role", () => {
 
     relationshipModal.cancelModal();
   });
-
   it("can enter graph edit mode and add edge relationships via single node click", () => {
 
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
@@ -445,7 +435,7 @@ describe("Entity Modeling: Writer Role", () => {
     //verify create relationship via clicking a node in edit mode
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let personCoordinates: any = nodePositions["Person"];
-      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y);
+      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y, {force: true});
     });
 
     relationshipModal.getModalHeader().should("be.visible");
@@ -460,12 +450,10 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.verifyEntityOption("Customer").should("be.visible");
     relationshipModal.verifyEntityOption("Order").should("be.visible");
     relationshipModal.verifyEntityOption("Client").should("be.visible");
-    relationshipModal.verifyEntityOption("Patients").should("be.visible");
 
     relationshipModal.searchEntityDropdown("ord");
     relationshipModal.verifyEntityOption("Customer").should("not.exist");
     relationshipModal.verifyEntityOption("Client").should("not.exist");
-    relationshipModal.verifyEntityOption("Patients").should("not.exist");
     relationshipModal.verifyEntityOption("Order").should("be.visible");
     relationshipModal.selectTargetEntityOption("Order");
     relationshipModal.editJoinProperty("orderId");
@@ -478,12 +466,12 @@ describe("Entity Modeling: Writer Role", () => {
     //verify relationship was created and properties are present
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
-    entityTypeTable.getExpandEntityIcon("Person").click();
+    entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.editProperty("purchased");
     propertyModal.getYesRadio("multiple").should("be.checked");
     propertyModal.verifyPropertyType("Order");
     propertyModal.verifyJoinProperty("orderId");
-    propertyModal.getCancelButton().click();
+    propertyModal.getCancelButton();
   });
 
   it("can edit graph edit mode and add edge relationships via drag/drop", () => {
@@ -520,7 +508,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("multiple").should("be.checked");
     propertyModal.verifyPropertyType("Client");
     propertyModal.verifyJoinProperty("firstname");
-    propertyModal.getCancelButton().click();
+    propertyModal.getCancelButton();
 
     entityTypeTable.viewEntityInGraphView("Person");
     //re-enter graph edit mode, verify can exit with {esc}
@@ -531,6 +519,21 @@ describe("Entity Modeling: Writer Role", () => {
     graphView.verifyEditInfoMessage().should("not.exist");
   });
 
+  it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
+    // To delete a relation
+    graphVis.getPositionOfEdgeBetween("Person,Client").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y));
+    });
+    confirmationModal.deleteRelationship();
+    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyStepWarn-yes").click());
+    // To verify that property is not visible
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions["Person"];
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y));
+    });
+    graphViewSidePanel.getPropertyName("referredBy").should("not.exist");
+  });
+
   it("Verify the navigation warning on moving away to other tiles, when unpublished changes are available", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.getEntityModifiedAlert().should("exist");
@@ -538,7 +541,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.waitUntil(() => browsePage.getExploreButton()).should("be.visible");
 
     //Come back to Model tile

@@ -8,7 +8,7 @@ class ConfirmationModal {
     return cy.findByLabelText(`confirm-${type}-close`);
   }
   getYesButton(type: ConfirmationType) {
-    return cy.findByLabelText(`confirm-${type}-yes`);
+    cy.findByLabelText(`confirm-${type}-yes`).click();
   }
   getToggleStepsButton() {
     return cy.findByLabelText("toggle-steps");

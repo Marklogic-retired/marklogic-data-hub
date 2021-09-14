@@ -44,7 +44,7 @@ class PropertyModal {
   }
 
   getCancelButton() {
-    return cy.findByLabelText("property-modal-cancel");
+    cy.findByLabelText("property-modal-cancel").click();
   }
 
   getSubmitButton() {

@@ -2,7 +2,8 @@
   "info": {
     "title": "Person",
     "version": "0.0.1",
-    "baseUri": "http://example.org/"
+"baseUri": "http://example.org/",
+"draft": false
   },
   "definitions": {
     "Person": {
@@ -50,7 +51,15 @@
         "DateOfBirth": {
           "datatype": "date"
         }
+},
+"description": ""
       }
+},
+"hubCentral": {
+"modeling": {
+"color": "#EEEFF1",
+"graphX": 159,
+"graphY": 15
     }
   }
 }
