@@ -19,7 +19,7 @@
   },
   "sourceDatabase" : "data-hub-STAGING",
   "collections" : [ "HarmonizeClaimItems", "ClaimItem" ],
-  "targetEntityType" : "http://marklogic.envision.com/ClaimItem-0.0.1/ClaimItem",
+  "targetEntityType" : "http://marklogic.com/envision/ClaimItem-0.0.1/ClaimItem",
   "permissions" : "data-hub-operator,read,data-hub-operator,update",
   "validateEntity" : false,
   "outputFormat" : "json",
