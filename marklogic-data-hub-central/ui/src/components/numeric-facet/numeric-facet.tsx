@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useContext} from "react";
-import {InputNumber} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {UserContext} from "../../util/user-context";
 import styles from "./numeric-facet.module.scss";
@@ -75,20 +74,22 @@ const NumericFacet: React.FC<Props> = (props) => {
   };
 
   const onChangeMinInput = (e) => {
-    if (e && typeof e === "number") {
+    const {value} = e.target;
+    if (value && typeof +value === "number") {
       let isNested = props.name === props.propertyPath ? false : true;
       let modifiedRange = [...range];
-      modifiedRange[0] = e;
+      modifiedRange[0] = +value;
       setRange(modifiedRange);
       props.onChange(props.datatype, props.constraint, modifiedRange, isNested);
     }
   };
 
   const onChangeMaxInput = (e) => {
-    if (e && typeof e === "number") {
+    const {value} = e.target;
+    if (value && typeof +value === "number") {
       let isNested = props.name === props.propertyPath ? false : true;
       let modifiedRange = [...range];
-      modifiedRange[1] = e;
+      modifiedRange[1] = +value;
       setRange(modifiedRange);
       props.onChange(props.datatype, props.constraint, modifiedRange, isNested);
     }
@@ -152,9 +153,13 @@ const NumericFacet: React.FC<Props> = (props) => {
         <HCTooltip text={props.name.replace(/\./g, " > ")} id="facet-name-tooltip" placement="top">{formatTitle()}</HCTooltip>
       </p>
       <div className={styles.numericFacet} data-testid="numeric-slider">
-        <HCSlider minLimit={rangeLimit[0]} maxLimit={rangeLimit[1]} min={range[0]} max={range[1]} onChange={(e) => onChange(e)}/>
-        <div id={"min-numeric-value"}><InputNumber data-testid="numeric-slider-min" className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
-        <div id={"max-numeric-value"}><InputNumber data-testid="numeric-slider-max" className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} /></div>
+        <HCSlider minLimit={rangeLimit[0]} maxLimit={rangeLimit[1]} min={range[0]} max={range[1]} onChange={(e) => onChange(e)} />
+        <div id={"min-numeric-value"} className={styles.minNumericValue}>
+          <input type="number" data-testid="numeric-slider-min" className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
+        </div>
+        <div id={"max-numeric-value"}>
+          <input type="number" data-testid="numeric-slider-max" className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} />
+        </div>
       </div>
     </div>
   );
