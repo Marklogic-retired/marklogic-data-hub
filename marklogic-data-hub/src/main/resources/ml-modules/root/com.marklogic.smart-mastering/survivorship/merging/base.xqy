@@ -64,6 +64,7 @@ declare namespace es = "http://marklogic.com/entity-services";
 declare namespace prov = "http://www.w3.org/ns/prov#";
 declare namespace host = "http://marklogic.com/xdmp/status/host";
 declare namespace xsl = "http://www.w3.org/1999/XSL/Transform";
+declare namespace xsi = "http://www.w3.org/2001/XMLSchema-instance";
 
 declare option xdmp:mapping "false";
 
@@ -1439,9 +1440,10 @@ declare function merge-impl:generate-path-templates($path-properties as map:map*
   for $lower-path in $distinct-paths
   let $path-props := $path-properties[map:get(., 'lowerPath') = $lower-path]
   return
-    <xsl:template>
+    <xsl:template xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       { attribute match { merge-impl:convert-path-to-json($lower-path) }}
       <xsl:copy>
+        <xsl:copy-of select="@* except @xsi:type"/>
         {
           let $values := $path-props ! map:get(., 'values')
           let $values-is-array := $values instance of json:array or $values instance of array-node()
@@ -1453,10 +1455,13 @@ declare function merge-impl:generate-path-templates($path-properties as map:map*
             case array-node()|object-node() return
               xdmp:from-json($values)
             (: JSON specific leaf nodes can't be added directly added to XSLT :)
-            case null-node()|number-node()|boolean-node() return
-              $values ! fn:data(.)
             default return
-              $values
+              let $data-value := fn:data($values)
+              where $data-value
+              return (
+                <xsl:attribute name="xsi:type">{xdmp:type($data-value)}</xsl:attribute>,
+                $data-value
+              )
         }
       </xsl:copy>
     </xsl:template>
