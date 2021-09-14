@@ -42,7 +42,7 @@ describe("Validate persistence across Hub Central", () => {
   it("Go to model tile, expand entity and property tables, and then visit another tile. When returning to the model tile, the expanded rows are persisted.", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
-    entityTypeTable.getExpandEntityIcon("Customer").click();
+    entityTypeTable.getExpandEntityIcon("Customer");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);

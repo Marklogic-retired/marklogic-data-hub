@@ -1,35 +1,62 @@
 .range-input {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .name {
-  font-size: 15px;
-  color: #777777;
-  margin-bottom: 3px;
-  text-overflow: ellipsis;
-  overflow: hidden; 
-  width: 250px; 
-  white-space: nowrap;
+    font-size: 15px;
+    color: #777777;
+    margin-bottom: 3px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 250px;
+    white-space: nowrap;
+}
+
+.minNumericValue {
+    padding: 0 5px;
 }
 
 .applyButtonContainer {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 3px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 3px;
 }
 
 .inputNumber {
-  width: 70px;
-  margin: 0 0 0 5px;
+    width: 70px !important;
+    padding-right: 0;
+    height: 30px;
+    border-radius: 3px;
+    padding: 0.375rem 0.35rem 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #333;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 2px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s;
+    &:focus,
+    &:active,
+    &:hover {
+        color: #333;
+        background-color: #fff;
+        border-color: #9ca2ca;
+        outline: 0;
+        box-shadow: 0 0 0 0.05rem #39449440;
+    }
 }
 
 .numericFacet {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
 .slider {
-  width: 60%;
+    width: 60%;
 }

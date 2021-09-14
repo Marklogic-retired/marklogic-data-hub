@@ -244,7 +244,7 @@ class BrowsePage {
   }
 
   changeNumericSlider(val: string) {
-    cy.get("#min-numeric-value .ant-input-number input").clear().type(val);
+    cy.get("[data-testid=numeric-slider-min]").type("{selectall}").type(val);
   }
 
   getSearchText() {
