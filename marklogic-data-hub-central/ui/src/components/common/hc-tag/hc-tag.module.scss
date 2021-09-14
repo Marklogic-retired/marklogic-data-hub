@@ -1,0 +1,57 @@
+.spanTag {
+	border-radius: 4px;
+	padding: 2px 7px 2px 7px;
+	background-color: #fafafa;
+	border: 1px solid #d9d9d9;
+	font-size: 12px;
+	display: inline-block;
+	white-space: nowrap;
+	line-height: 16px;
+}
+.spanTagInvisible {
+	display: none;
+}
+.spanTagDashed {
+	border: dashed 1px;
+}
+.spanTagBlack {
+	color: #ffffff;
+	background-color: black;
+	border-color: black;
+}
+.spanTagBlue {
+	color: #1890ff;
+	background-color: #e6f7ff;
+	border-color: #91d5ff;
+}
+.spanTagGreen {
+	color: #52c41a;
+	background-color: #f6ffed;
+	border-color: #b7eb8f;
+}
+.spanTagGrey {
+	color: white;
+	background-color: grey;
+	border-color: grey;
+}
+.spanTagMagenta {
+	color: #eb2f96;
+	background-color: #fff0f6;
+	border-color: #ffadd2;
+}
+.spanTagRed {
+	color: #f5222d;
+	background-color: #fff1f0;
+	border-color: #ffa39e;
+}
+.spanTagYellow {
+	color: #fadb14;
+	background-color: #feffe6;
+	border-color: #fffb8f;
+}
+.spanIcon {
+	cursor: pointer;
+	width: 9px;
+	margin-left: 5px;
+	color: #8a8b88;
+}
