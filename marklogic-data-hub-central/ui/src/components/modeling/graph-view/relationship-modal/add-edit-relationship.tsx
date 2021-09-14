@@ -298,7 +298,6 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           toggleLoading(true);
           let entityModified: any = editPropertyUpdateDefinition(sourceEntityIdx, props.relationshipInfo.sourceNodeName, props.relationshipInfo.relationshipName, newEditPropertyOptions);
           updateEntityModified(entityModified);
-          props.updateSavedEntity([entityModified]);
         }
         setErrorMessage("");
         setSubmitClicked(false);
