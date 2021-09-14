@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
 import axios from "axios";
-import {Form, Input, Modal, Tooltip} from "antd";
+import {Form, Input, Modal, Icon, Tooltip} from "antd";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";

@@ -12,7 +12,7 @@ import styles from "./Modeling.module.scss";
 import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
 import {UserContext} from "../util/user-context";
 import {ModelingContext} from "../util/modeling-context";
-import {ModelingMessages, ModelingTooltips} from "../config/tooltips.config";
+import {ModelingTooltips} from "../config/tooltips.config";
 import {AuthoritiesContext} from "../util/authorities";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
