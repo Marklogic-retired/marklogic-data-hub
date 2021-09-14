@@ -1,56 +1,67 @@
 {
-  "info" : {
-    "title" : "ClaimItem",
-    "version" : "0.0.1",
-    "baseUri" : "http://marklogic.envision.com/"
+  "info": {
+    "title": "ClaimItem",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/envision/",
+    "draft": false
   },
-  "definitions" : {
-    "ClaimItem" : {
-      "required" : [ ],
-      "pii" : [ "patient" ],
-      "wordLexicon" : [ ],
-      "properties" : {
-        "claimId" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+  "definitions": {
+    "ClaimItem": {
+      "required": [],
+      "pii": [
+        "patient"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "claimId": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "modifier" : {
-          "datatype" : "array",
-          "items" : {
-            "datatype" : "string",
-            "collation" : "http://marklogic.com/collation/codepoint"
+        "modifier": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
           }
         },
-        "productOrService" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "productOrService": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "provider" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "provider": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "sequence" : {
-          "datatype" : "positiveInteger",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "sequence": {
+          "datatype": "positiveInteger",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "serviceDescription" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "serviceDescription": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "unitPrice" : {
-          "datatype" : "decimal",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "unitPrice": {
+          "datatype": "decimal",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "patient" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "patient": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "hasProvider" : {
-          "datatype" : "string",
+        "hasProvider": {
+          "datatype": "string",
           "relatedEntityType": "http://marklogic.com/envision/Provider-0.0.1/Provider",
           "joinPropertyName": "ProviderName"
         }
-      }
+      },
+      "description": ""
+    }
+  },
+  "hubCentral": {
+    "modeling": {
+      "color": "#EEEFF1",
+      "graphX": 231,
+      "graphY": -72
     }
   }
 }
