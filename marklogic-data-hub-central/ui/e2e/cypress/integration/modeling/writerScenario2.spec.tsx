@@ -133,7 +133,7 @@ describe("Entity Modeling: Writer Role", () => {
     structuredTypeModal.newName("Extra");
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
-    propertyTable.getAddPropertyToStructureType("Extra").click();
+    propertyTable.getAddPropertyToStructureType("Extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("integer").click();
@@ -215,6 +215,7 @@ describe("Entity Modeling: Writer Role", () => {
   });
   it("Delete a property, a structured property and then the entity", {defaultCommandTimeout: 120000}, () => {
     //Structured Property
+    cy.get("[data-row-key*=\"address\"] [aria-label=\"Expand row\"]").click();
     propertyTable.getDeleteStructuredPropertyIcon("User3", "Address", "alt_address-streetAlt").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
@@ -556,7 +557,8 @@ describe("Entity Modeling: Writer Role", () => {
     graphView.verifyEditInfoMessage().should("not.exist");
   });
 
-  it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
+  //TODO: Disabling this block since the above blocks are skipped
+  it.skip("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
     // To delete a relation
     graphVis.getPositionOfEdgeBetween("Person,Client").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y));
