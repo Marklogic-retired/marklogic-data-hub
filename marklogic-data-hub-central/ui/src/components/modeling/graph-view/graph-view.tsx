@@ -242,6 +242,7 @@ const GraphView: React.FC<Props> = (props) => {
           graphEditMode={graphEditMode}
           setGraphEditMode={setGraphEditMode}
           saveEntityCoords={saveEntityCoords}
+          setCoordsChanged={setCoordsChanged}
         />
       </div>
     </div>;

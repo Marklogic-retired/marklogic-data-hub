@@ -9,6 +9,7 @@ import NodeSvg from "./node-svg";
 import graphConfig from "../../../../config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 import {Dropdown, Menu} from "antd";
+import {EntityModified} from "../../../../types/modeling-types";
 
 type Props = {
   entityTypes: any;
@@ -24,6 +25,7 @@ type Props = {
   graphEditMode: any;
   setGraphEditMode: any;
   saveEntityCoords: any;
+  setCoordsChanged: any;
 };
 
 let entityMetadata = {};
@@ -78,20 +80,12 @@ const GraphVis: React.FC<Props> = (props) => {
   // Initialize or update graph
   useEffect(() => {
     if (props.entityTypes) { // && coordsLoaded) {
-      // let counter = 0;
       props.entityTypes.forEach(e => {
-        // counter++;
         if (e.model.hubCentral) {
           let opts = e.model.hubCentral.modeling;
           if (opts.graphX && opts.graphY) {
             if (physicsEnabled) {
               setPhysicsEnabled(false);
-              // if(counter === props.entityTypes.length) {
-              //   setGraphData({
-              //     nodes: getNodes(),
-              //     edges: getEdges()
-              //   });
-              // }
               return false;
             }
           }
@@ -124,19 +118,49 @@ const GraphVis: React.FC<Props> = (props) => {
     return result;
   };
 
-  const saveUnsavedCoords = () => {
-    // TODO use endpoint that saves entire updated model at once
+  const saveUnsavedCoords = async () => {
     if (props.entityTypes) {
       let newCoords = {...coords};
+      let updatedEntityDefinitions: any = [];
       props.entityTypes.forEach(ent => {
         if (!coordsExist(ent.entityName)) {
           let positions = network.getPositions([ent.entityName])[ent.entityName];
           newCoords[ent.entityName] = {graphX: positions.x, graphY: positions.y};
-          props.saveEntityCoords(ent.entityName, positions.x, positions.y);
+          let entityDefinition: EntityModified = getDefinitionsPayload(ent, {graphX: positions.x, graphY: positions.y});
+          updatedEntityDefinitions.push(entityDefinition);
         }
       });
       setCoords(newCoords);
+      if (props.updateSavedEntity && updatedEntityDefinitions.length) {
+        await props.updateSavedEntity(updatedEntityDefinitions);
+        props.setCoordsChanged(true);
+      }
     }
+  };
+
+  const getDefinitionsPayload = (entityModel: any, coordinates: any) => {
+    let updatedDefinitions = {...entityModel.model.definitions};
+    let entityName = entityModel.entityName;
+    let entityTypeDefinition = updatedDefinitions[entityName];
+
+    let hubCentral = entityModel.model.hubCentral ? entityModel.model.hubCentral : {};
+
+    if (hubCentral["modeling"]) {
+      hubCentral.modeling["graphX"] = coordinates.graphX;
+      hubCentral.modeling["graphY"] = coordinates.graphY;
+    } else {
+      hubCentral = {"modeling": {"graphX": coordinates.graphX, "graphY": coordinates.graphY}};
+    }
+
+    updatedDefinitions[entityName] = entityTypeDefinition;
+
+    let modifiedEntityDefinition: EntityModified = {
+      entityName: entityName,
+      modelDefinition: updatedDefinitions,
+      hubCentral: hubCentral
+    };
+
+    return modifiedEntityDefinition;
   };
 
   // Save all unsaved coords

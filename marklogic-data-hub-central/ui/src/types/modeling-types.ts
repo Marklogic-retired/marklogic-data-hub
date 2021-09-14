@@ -87,7 +87,8 @@ export enum PropertyType {
 
 export interface EntityModified {
   entityName: string,
-  modelDefinition: any
+  modelDefinition: any,
+  hubCentral?: any
 }
 
 export interface graphViewOptions {
