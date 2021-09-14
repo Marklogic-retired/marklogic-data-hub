@@ -1,61 +1,70 @@
 {
-  "info" : {
-    "title" : "Provider",
-    "version" : "0.0.1",
-    "baseUri" : "http://marklogic.com/envision/",
-    "description" : "Provider Information"
+  "info": {
+    "title": "Provider",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/envision/",
+    "description": "Provider Information",
+    "draft": false
   },
-  "definitions" : {
-    "Provider" : {
-      "required" : [ ],
-      "pii" : [ ],
-      "wordLexicon" : [ ],
-      "properties" : {
-        "Address1" : {
-          "datatype" : "string",
-          "description" : "1234 Sesame Street",
-          "collation" : "http://marklogic.com/collation/codepoint"
+  "definitions": {
+    "Provider": {
+      "required": [],
+      "pii": [],
+      "wordLexicon": [],
+      "properties": {
+        "Address1": {
+          "datatype": "string",
+          "description": "1234 Sesame Street",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "Address2" : {
-          "datatype" : "string",
-          "description" : "Suite 201",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "Address2": {
+          "datatype": "string",
+          "description": "Suite 201",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "City" : {
-          "datatype" : "string",
-          "description" : "Washington",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "City": {
+          "datatype": "string",
+          "description": "Washington",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "DataGenesis" : {
-          "datatype" : "string",
-          "description" : "Noisy or HandCrafted",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "DataGenesis": {
+          "datatype": "string",
+          "description": "Noisy or HandCrafted",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "DataType" : {
-          "datatype" : "string",
-          "description" : "Self-Descriptive of Document Type (Provider)",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "DataType": {
+          "datatype": "string",
+          "description": "Self-Descriptive of Document Type (Provider)",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "NPI" : {
-          "datatype" : "integer",
-          "description" : "National Provider Identifier",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "NPI": {
+          "datatype": "integer",
+          "description": "National Provider Identifier",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "ProviderName" : {
-          "datatype" : "string",
-          "description" : "Name (Person or Org)",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "ProviderName": {
+          "datatype": "string",
+          "description": "Name (Person or Org)",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "State" : {
-          "datatype" : "string",
-          "description" : "D.C.",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "State": {
+          "datatype": "string",
+          "description": "D.C.",
+          "collation": "http://marklogic.com/collation/codepoint"
         },
-        "Zip" : {
-          "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+        "Zip": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
         }
-      }
+      },
+      "description": ""
+    }
+  },
+  "hubCentral": {
+    "modeling": {
+      "color": "#EEEFF1",
+      "graphX": -140,
+      "graphY": 19
     }
   }
 }
