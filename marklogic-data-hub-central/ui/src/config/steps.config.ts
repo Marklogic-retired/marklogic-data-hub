@@ -13,7 +13,7 @@ const defaultSourceRecordScope = "instanceOnly";
 const defaultBatchSize = 100;
 const defaultSelectedSource = "collections";
 const defaultFieldSeparator = ",";
-const toggleSourceRecordScopeMessage = "Any existing mapping expressions must be adjusted to reflect the new paths to your source fields.";
+const toggleSourceRecordScopeMessage = "Changes to the source record scope affect existing mapping expressions. Adjust existing mapping expressions to reflect the new paths to your source fields.";
 
 const defaultPrimaryUri = "$URI";
 const defaultRelatedUri = (entityName) => `hubURI('${entityName}')`;

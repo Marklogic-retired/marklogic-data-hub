@@ -527,7 +527,9 @@ const AdvancedSettingsTooltips = {
   headers: 'A JSON object that represents additional metadata to add to the header section of the envelope of each record.',
   provGranularity: 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
   validateEntity: 'Choose whether to validate each document against the entity type definition and how to handle documents with errors.',
-  sourceRecordScope: 'Choose whether to access the entire source record or just the instance.',
+  sourceRecordScope: (
+    <span>The scope of the source record you want to map to. Choose <strong>Instance Only</strong> to map to the source instance in your envelope. Choose <strong>Entire Record</strong> to map to any of the source fields in your envelope.</span>
+  ),
   attachSourceDocument: 'Specifies whether the source document should be copied into the mapped entity instance',
   interceptors: 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
