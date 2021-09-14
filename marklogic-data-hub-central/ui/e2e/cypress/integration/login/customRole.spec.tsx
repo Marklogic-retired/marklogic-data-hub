@@ -38,7 +38,7 @@ describe("customRole", () => {
     let entityTypeId = "Customer";
     toolbar.getCurateToolbarIcon().click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "be.visible");
 

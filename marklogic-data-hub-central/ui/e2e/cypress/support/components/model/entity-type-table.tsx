@@ -18,7 +18,7 @@ class EntityTypeTable {
   }
 
   getExpandEntityIcon(entityName: string) {
-    return cy.findByTestId(`mltable-expand-${entityName}`);
+    cy.findByTestId(`mltable-expand-${entityName}`).click();
   }
 
   sortByEntityName() {

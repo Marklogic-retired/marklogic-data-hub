@@ -42,14 +42,14 @@ describe("Validate persistence across Hub Central", () => {
     cy.findByTestId("mltable-expand-Customer").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-shipping-span").should("exist");
     cy.findByTestId("mltable-expand-shipping").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-street-span").should("exist");
@@ -97,7 +97,7 @@ describe("Validate persistence across Hub Central", () => {
   it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();

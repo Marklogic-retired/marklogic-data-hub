@@ -97,7 +97,7 @@ describe("Graph Validations", () => {
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
     relationshipModal.editJoinProperty("email");
 
-    relationshipModal.confirmationOptions("Save").click({force: true});
+    relationshipModal.confirmationOptions("Save");
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
@@ -110,7 +110,7 @@ describe("Graph Validations", () => {
     relationshipModal.verifyJoinPropertyValue("email");
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
 
-    relationshipModal.confirmationOptions("Cancel").click({force: true});
+    relationshipModal.confirmationOptions("Cancel");
 
     //Fetch coordinates of all the nodes in the canvas and then use the response to perform an action (in this case, a click)
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
@@ -144,7 +144,7 @@ describe("Graph Validations", () => {
     relationshipModal.editJoinProperty("customerId");
     relationshipModal.toggleCardinality();
 
-    relationshipModal.confirmationOptions("Save").click({force: true});
+    relationshipModal.confirmationOptions("Save");
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
   });
@@ -187,7 +187,7 @@ describe("Graph Validations", () => {
     // Exit graph view and return
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
 
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("project-diagram");

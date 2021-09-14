@@ -2,7 +2,8 @@
   "info": {
     "title": "Customer",
     "version": "0.0.1",
-    "baseUri": "http://example.org/"
+"baseUri": "http://example.org/",
+"draft": false
   },
   "definitions": {
     "Customer": {
@@ -71,8 +72,9 @@
             "$ref": "http://example.org/Order-0.0.1/Order"
           }
         }
-      }
     },
+"description": ""
+},
     "Address": {
       "required": [ ],
       "pii": [ ],
@@ -113,5 +115,10 @@
         }
       }
     }
+},
+"hubCentral": {
+"modeling": {
+"color": "#EEEFF1"
+}
   }
 }

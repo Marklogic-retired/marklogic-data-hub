@@ -114,7 +114,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     toolbar.getModelToolbarIcon().click();
     toolbar.getCurateToolbarIcon().click();
     confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     toolbar.getRunToolbarIcon().click();
     toolbar.getExploreToolbarIcon().click();
     browsePage.getSelectedEntity().should("contain", "All Entities");

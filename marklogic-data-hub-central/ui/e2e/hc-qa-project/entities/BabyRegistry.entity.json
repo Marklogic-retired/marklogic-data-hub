@@ -2,7 +2,8 @@
   "info": {
     "title": "BabyRegistry",
     "version": "0.0.1",
-    "baseUri": "http://marklogic.com/example/"
+"baseUri": "http://marklogic.com/example/",
+"draft": false
   },
   "definitions": {
     "BabyRegistry": {
@@ -19,7 +20,15 @@
           "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
           "joinPropertyName": "customerId"
         }
+},
+"description": ""
       }
+},
+"hubCentral": {
+"modeling": {
+"color": "#EEEFF1",
+"graphX": 68,
+"graphY": -227
     }
   }
 }

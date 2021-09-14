@@ -63,7 +63,7 @@ class RelationshipModal {
   }
 
   confirmationOptions(option: string) {
-    return cy.findByText(option);
+    cy.findByText(option).click({force: true});
   }
 }
 

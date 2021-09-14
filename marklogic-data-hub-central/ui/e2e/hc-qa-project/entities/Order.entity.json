@@ -2,7 +2,8 @@
   "info": {
     "title": "Order",
     "version": "0.0.1",
-    "baseUri": "http://marklogic.com/example/"
+"baseUri": "http://marklogic.com/example/",
+"draft": false
   },
   "definitions": {
     "Order": {
@@ -30,8 +31,9 @@
         "shippedDate": {
           "datatype": "dateTime"
         }
-      }
     },
+"description": ""
+},
     "Address": {
       "properties": {
         "city": {
@@ -58,5 +60,12 @@
         }
       }
     }
+},
+"hubCentral": {
+"modeling": {
+"color": "#EEEFF1",
+"graphX": -2,
+"graphY": 165
+}
   }
 }

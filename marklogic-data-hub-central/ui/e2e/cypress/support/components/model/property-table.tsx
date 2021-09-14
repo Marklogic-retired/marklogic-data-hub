@@ -51,7 +51,9 @@ class PropertyTable {
   }
 
   editProperty(propertyName: string) {
-    return cy.findByTestId(`${propertyName}-span`).click();
+    cy.findByTestId(`${propertyName}-span`).scrollIntoView().then(() => {
+      cy.findByTestId(`${propertyName}-span`).click({force: true});
+    });
   }
 
   expandStructuredTypeIcon(propertyName: string) {
@@ -59,7 +61,7 @@ class PropertyTable {
   }
 
   getDeletePropertyIcon(entityName: string, propertyName: string) {
-    return cy.findByTestId(`delete-${entityName}-${propertyName}`);
+    return cy.findByTestId(`delete-${entityName}-${propertyName}`).click({force: true});
   }
 
   getDeleteStructuredPropertyIcon(entityName: string, structuredTypeName: string, propertyName: string) {

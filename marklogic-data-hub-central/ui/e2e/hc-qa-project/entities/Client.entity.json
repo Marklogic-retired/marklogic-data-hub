@@ -2,7 +2,8 @@
   "info": {
     "title": "Client",
     "version": "0.0.1",
-    "baseUri": "http://example.org/"
+"baseUri": "http://example.org/",
+"draft": false
   },
   "definitions": {
     "Client": {
@@ -47,7 +48,15 @@
           "datatype": "dateTime",
           "facetable": true
         }
+},
+"description": ""
       }
+},
+"hubCentral": {
+"modeling": {
+"color": "#EEEFF1",
+"graphX": -164,
+"graphY": 23
     }
   }
 }

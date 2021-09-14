@@ -64,7 +64,7 @@ describe("Mapping", () => {
     propertyModal.getSubmitButton().click();
     //Save Changes
     modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll).click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");
     confirmationModal.getSaveAllEntityText().should("not.exist");
