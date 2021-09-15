@@ -62,6 +62,7 @@ task updateVersion {
             "examples/smart-mastering-complete/build.gradle",
             "examples/snapshot-testing/build.gradle",
             "examples/step-interceptors/build.gradle",
+            "examples/SLED/build.gradle",
             "performance-tests/projects/commoncrawl/build.gradle",
         ]
         String sourceVersion = project.hasProperty('sourceVersion') ? project.property('sourceVersion') : ""
