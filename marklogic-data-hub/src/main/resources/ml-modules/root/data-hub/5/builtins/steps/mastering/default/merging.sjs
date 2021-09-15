@@ -51,6 +51,7 @@ function main(content, options, stepExecutionContext) {
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
   const thisMatchSummaryURI = content.uri;
   masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
+  hubUtils.hubTrace("SM-MERGE", `Merge options: ${xdmp.toJsonString(options)}`);
   const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntityType ? `-${options.targetEntityType}` : ''}`;
   const collectionQuery = cts.collectionQuery(matchSummaryCollection);
 

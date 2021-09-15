@@ -72,13 +72,16 @@ declare function collection-impl:build-collection-algorithm-map(
     else
       let $algorithm-map :=
         map:new((
-          let $is-json := $merging-options instance of object-node()
-          let $collection-algorithms := $merging-options/*:algorithms/*:collections
+          xdmp:trace($const:TRACE-MERGE-RESULTS, "build-collection-algorithm-map: " || xdmp:to-json-string($merging-options)),
+          let $is-json := $merging-options instance of object-node() or fn:exists($merging-options/object-node())
+          let $collection-algorithms := $merging-options/(*:algorithms/*:collections|targetCollections)
           for $event-name in $event-names
           let $local-name := fn:local-name-from-QName($event-name)
           let $algorithm-qname := if ($is-json) then $event-name-to-json-QName => map:get($local-name) else $event-name
           let $algorithm-node := $collection-algorithms/*[fn:node-name(.) eq $algorithm-qname]
-          return
+          return (
+            xdmp:trace($const:TRACE-MERGE-RESULTS, "Event '"|| $event-name ||"' QName: "|| fn:string($algorithm-qname)),
+            xdmp:trace($const:TRACE-MERGE-RESULTS, "Event '"|| $event-name ||"' Node: "|| xdmp:to-json-string($algorithm-node)),
             map:entry(
               $local-name,
               fun-ext:function-lookup(
@@ -88,6 +91,7 @@ declare function collection-impl:build-collection-algorithm-map(
                 collection-impl:default-function-lookup(?, 3)
               )
             )
+          )
         ))
       return (
         map:put($_collection-algorithm-cache, $cache-id, $algorithm-map),
@@ -178,8 +182,8 @@ declare function collection-impl:default-collection-handler(
   $collections-by-uri as map:map,
   $event-options as node()?
 ) {
-  if (fn:exists($event-options/*:set//text()[fn:normalize-space(.) ne ''])) then
-    $event-options/*:set//text() ! fn:normalize-space(.)[. ne '']
+  if (fn:exists($event-options/*:set/descendant-or-self::text()[fn:normalize-space(.) ne ''])) then
+    $event-options/*:set/descendant-or-self::text() ! fn:normalize-space(.)[. ne '']
   else (
     let $merge-options := collection-impl:get-options-root($event-options)
     let $match-options := matcher:get-options($merge-options/(merging:match-options|matchOptions), $const:FORMAT-XML)
@@ -199,7 +203,7 @@ declare function collection-impl:default-collection-handler(
               ()
         ))
     let $remove-collections := fn:distinct-values((
-        $event-options/*:remove//text() ! fn:normalize-space(.)[. ne ''],
+        $event-options/*:remove/descendant-or-self::text() ! fn:normalize-space(.)[. ne ''],
         switch ($event-name)
           case $const:ON-ARCHIVE-EVENT return
             coll:content-collections($content-collection-options)
@@ -213,7 +217,7 @@ declare function collection-impl:default-collection-handler(
     return
       (
         $all-collections[fn:not(. = $remove-collections)],
-        $event-options/*:add//text() ! fn:normalize-space(.)[. ne '']
+        $event-options/*:add/descendant-or-self::text() ! fn:normalize-space(.)[. ne '']
       )[. ne '']
   )
 };

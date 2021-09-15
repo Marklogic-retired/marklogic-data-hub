@@ -674,12 +674,13 @@ declare function proc-impl:build-content-objects-from-match-summary(
     $fine-grain-provenance as xs:boolean
 ) as json:array
 {
+  xdmp:trace($const:TRACE-MERGE-RESULTS, "Begin build-content-objects-from-match-summary"),
   let $start-elapsed := xdmp:elapsed-time()
   let $compiled-merge-options := merge-impl:compile-merge-options($merge-options)
   let $target-entity := $compiled-merge-options => map:get("targetEntityType")
   (: get info on how collections should be applied to documents :)
   let $merge-options-node := $compiled-merge-options => map:get("mergeOptionsNode")
-  let $is-hub-central-format := fn:exists($merge-options-node/(mergeRule|targetCollections))
+  let $is-hub-central-format := fn:exists($merge-options-node/(mergeRules|targetCollections))
   let $on-no-match := $compiled-merge-options => map:get("onNoMatch")
   let $on-no-match-fun := coll-impl:on-no-match(?, $on-no-match)
   let $on-archive := $compiled-merge-options => map:get("onArchive")
