@@ -83,17 +83,18 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
   }
   setCollectionDefaults(options, targetEntityType);
 
-  let targetCollections = {};
+  let targetCollections;
+  if (options.mergeOptions) {
+    options.mergeOptions.algorithms = options.mergeOptions.algorithms || {};
+    options.mergeOptions.algorithms.collections = options.mergeOptions.algorithms.collections || {};
+    targetCollections = options.mergeOptions.algorithms.collections;
+  } else {
+    options.targetCollections = options.targetCollections || {};
+    targetCollections = options.targetCollections;
+  }
   ['onMerge', 'onNoMatch', 'onArchive', 'onNotification'].forEach((eventName) => {
     targetCollections[eventName] = targetCollections[eventName] || {};
   });
-  if (options.mergeOptions) {
-    options.mergeOptions.algorithms = options.mergeOptions.algorithms || {};
-    options.mergeOptions.algorithms.collections = Object.assign(targetCollections, options.mergeOptions.algorithms.collections);
-  } else if (options.mergeRules) {
-    options.targetCollections = options.targetCollections || {};
-    options.targetCollections = Object.assign(targetCollections, targetCollections);
-  }
 
   const collections = (options.matchOptions || options.mergeOptions || options).collections;
   const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.content), masteringConsts['CONTENT-COLL']));

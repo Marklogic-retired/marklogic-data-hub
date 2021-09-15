@@ -53,6 +53,41 @@ xdmp.invokeFunction(
           "TestTargetEntityCarryOver",
           optionsWithTargetEntity.mergeOptions.targetEntityType,
           "Child mergeOptions should now have targetEntityType set since that gets passed to the lower-level merging function."));
+    let optionsWithTargetCollections = {
+      targetEntityType: "TestTargetEntityCarryOver",
+      targetCollections: {
+        onNoMatch: { add:["no-match"], remove: ["matched"]},
+        onArchived:{ add:["archived"], remove: ["not-archived"]},
+        onNotification:{ add:["notification"], remove: ["not-notification"]},
+        onMerge:{ add:["merged"], remove: ["not-merged"]}
+      }
+    };
+    let targetCollections = optionsWithTargetCollections.targetCollections;
+    lib.checkOptions(null, optionsWithTargetCollections, null, []);
+    assertions.push(test.assertTrue(
+      targetCollections.onNoMatch.add.includes("no-match"),
+      "Options should retain 'no-match' in onNoMatch.add."));
+    assertions.push(test.assertTrue(
+      targetCollections.onNoMatch.remove.includes("matched"),
+      "Options should retain 'matched' in onNoMatch.remove."));
+    assertions.push(test.assertTrue(
+      targetCollections.onArchived.add.includes("archived"),
+      "Options should retain 'archived' in onArchived.add."));
+    assertions.push(test.assertTrue(
+      targetCollections.onArchived.remove.includes("not-archived"),
+      "Options should retain 'not-archived' in onArchived.remove."));
+    assertions.push(test.assertTrue(
+      targetCollections.onNotification.add.includes("notification"),
+      "Options should retain 'notification' in onNotification.add."));
+    assertions.push(test.assertTrue(
+      targetCollections.onNotification.remove.includes("not-notification"),
+      "Options should retain 'not-notification' in onNotification.remove."));
+    assertions.push(test.assertTrue(
+      targetCollections.onMerge.add.includes("merged"),
+      "Options should retain 'merged' in onNotification.add."));
+    assertions.push(test.assertTrue(
+      targetCollections.onMerge.remove.includes("not-merged"),
+      "Options should retain 'not-merged' in onMerge.remove."));
   },
   {update: 'true', commit: 'auto'}
 );
