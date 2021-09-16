@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
-import {Table} from "antd";
+import {Table, Tooltip} from "antd";
 import {faTrashAlt, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
@@ -257,9 +257,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let entityName = parseText[0];
         let color = parseText[1];
         return (
-          <MLTooltip title={<span>This color is associated with the <b>{entityName}</b> entity type throughout your project.</span>}>
+          <Tooltip title={<span>This color is associated with the <b>{entityName}</b> entity type throughout your project.</span>}>
             <div style={{width: "24px", height: "26px", background: color, marginLeft: "45%"}} data-testid={`${entityName}-${color}-color`}></div>
-          </MLTooltip>
+          </Tooltip>
         );
       }
     },
