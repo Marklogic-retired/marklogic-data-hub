@@ -15,14 +15,16 @@
  */
 'use strict';
 
-const config = require("/com.marklogic.hub/config.sjs")
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const config = require("/com.marklogic.hub/config.sjs");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {}
 
 function post(context, params, input) {
-  let inputOptions = input ? input.toObject() : {};
+  let inputOptions = input ? input.toObject() || {} : {};
   const datahub = DataHubSingleton.instance({
     performanceMetrics: !!inputOptions.performanceMetrics
   });
@@ -30,9 +32,12 @@ function post(context, params, input) {
   let stepNumber = 1;
   let refFlowName = params.flowName;
   let refStepNumber = params.step || '1';
-  let flow = datahub.flow.getFlow(refFlowName);
+  let flow = Artifacts.getFullFlow(refFlowName, refStepNumber);
   let stepRef = flow.steps[refStepNumber];
-  let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+  if (!(stepRef.stepDefinitionType.toLowerCase() === "merging" || stepRef.stepDefinitionType.toLowerCase() === "mastering")) {
+    httpUtils.throwBadRequest(`The step referenced must be a merging step. Step type: ${stepRef.stepDefinitionType}`);
+  }
+  let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType) || {};
   // build combined options
   let flowOptions = flow.options || {};
   let stepRefOptions = stepRef.options || {};
