@@ -18,6 +18,7 @@ import HCDivider from "../../common/hc-divider/hc-divider";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
+import {PlusCircleFill} from "react-bootstrap-icons";
 
 interface Props {
   matchingStepsArray: MatchingStep[];
@@ -277,7 +278,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                 stepToAdd: matchingArtifactName,
                 stepDefinitionType: "matching",
                 existingFlow: false
-              }}}><div className={styles.stepLink} data-testid={`${matchingArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled"/>New flow</div></Link>
+              }}}><div className={styles.stepLink} data-testid={`${matchingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
         </Col>
       </Row>
     </Modal>
@@ -376,7 +377,7 @@ const MatchingCard: React.FC<Props> = (props) => {
           <Col xs={"auto"}>
             <HCCard
               className={styles.addNewCard}>
-              <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew}/></div>
+              <div><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIcon} onClick={OpenAddNew}/></div>
               <br/>
               <p className={styles.addNewContent}>Add New</p>
             </HCCard>
@@ -384,7 +385,7 @@ const MatchingCard: React.FC<Props> = (props) => {
         ) : <Col xs={"auto"}>
           <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><HCCard
             className={styles.addNewCardDisabled}>
-            <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+            <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled}/></div>
             <br/>
             <p className={styles.addNewContent}>Add New</p>
           </HCCard></Tooltip>
