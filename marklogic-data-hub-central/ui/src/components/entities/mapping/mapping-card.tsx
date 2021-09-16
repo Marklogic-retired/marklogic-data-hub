@@ -15,6 +15,7 @@ import {getViewSettings, setViewSettings} from "../../../util/user-context";
 import HCDivider from "../../common/hc-divider/hc-divider";
 import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
+import {PlusCircleFill} from "react-bootstrap-icons";
 
 const {Option} = Select;
 
@@ -314,7 +315,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 targetEntityType: props.entityModel.entityTypeId,
                 existingFlow: false
               }
-            }}><div className={styles.stepLink} data-testid={`${mappingArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled" />New flow</div></Link>
+            }}><div className={styles.stepLink} data-testid={`${mappingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
         </Col>
       </Row>
     </Modal>
@@ -374,14 +375,14 @@ const MappingCard: React.FC<Props> = (props) => {
         {props.canReadWrite ?<Col xs={"auto"}>
           <HCCard
             className={styles.addNewCard}>
-            <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew} /></div>
+            <div><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIcon} onClick={OpenAddNew}/></div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard>
         </Col> : <Col xs={"auto"}>
           <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><HCCard
             className={styles.addNewCardDisabled}>
-            <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled" /></div>
+            <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled}/></div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard></Tooltip>
