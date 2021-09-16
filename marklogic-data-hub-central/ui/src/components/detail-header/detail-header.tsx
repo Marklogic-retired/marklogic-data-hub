@@ -1,7 +1,8 @@
 import React from "react";
-import {Typography, Icon} from "antd";
+import {Typography} from "antd";
 import styles from "./detail-header.module.scss";
 import {dateConverter} from "../../util/date-conversion";
+import {ChevronRight} from "react-bootstrap-icons";
 
 interface Props {
   document: any;
@@ -116,7 +117,7 @@ const DetailHeader: React.FC<Props> = (props) => {
         {primaryKey || id ?
           <>
             <Text data-cy="document-title">{title} </Text>
-            <Icon style={{fontSize: "12px"}} type="right" />
+            <ChevronRight className={styles.arrowRight} />
             {primaryKey ? (
               <>
                 <Text type="secondary"> {primaryKey}: </Text>
