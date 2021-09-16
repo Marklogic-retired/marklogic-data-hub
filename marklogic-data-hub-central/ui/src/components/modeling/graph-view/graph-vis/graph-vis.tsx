@@ -560,7 +560,7 @@ const GraphVis: React.FC<Props> = (props) => {
         }
       }
     },
-    dragEnd: (event) => {
+    dragEnd: async (event) => {
       let {nodes} = event;
       if (nodes.length > 0) {
         let positions = network.getPositions([nodes[0]])[nodes[0]];
@@ -571,25 +571,19 @@ const GraphVis: React.FC<Props> = (props) => {
           setCoords(newCoords);
           props.saveEntityCoords(nodes[0], positions.x, positions.y);
         }
+      } else {
+        if (props.entityTypes) {
+          let updatedEntityDefinitions: any = [];
+          props.entityTypes.forEach(ent => {
+            let entityDefinition: EntityModified = getDefinitionsPayload(ent, {graphX: coords[ent.entityName].graphX + event.event.deltaX, graphY: coords[ent.entityName].graphY + event.event.deltaY});
+            updatedEntityDefinitions.push(entityDefinition);
+          });
+          if (props.updateSavedEntity && updatedEntityDefinitions.length) {
+            await props.updateSavedEntity(updatedEntityDefinitions);
+            props.setCoordsChanged(true);
+          }
+        }
       }
-      // TODO Handle canvas (all nodes, edges) drag
-      // else {
-      //   // On a canvas drag, getPositions() returns old positions so useless
-      //   let positions = network.getPositions();
-      //   console.log("CANVAS dragged", event, positions);
-      //   let ids = Object.keys(coords);
-      //   let newCoords = {};
-      //   // Take current positions and update with drag deltas
-      //   ids.forEach(id => {
-      //     // TODO This gives the wrong results most of the time, unclear why
-      //     let newX = coords[id].graphX + event.event.deltaX;
-      //     let newY = coords[id].graphY + event.event.deltaY;
-      //     newCoords[id] = {graphX: newX, graphY: newY};
-      //     props.saveEntityCoords(id, newX, newY); // Save to db
-      //   });
-      //   setCoords(newCoords);
-      //   // TODO handle zooming, nav button clicks
-      // }
     },
     hoverNode: (event) => {
       event.event.target.style.cursor = "pointer";
