@@ -31,7 +31,7 @@ import HCCard from "../../../common/hc-card/hc-card";
 import Steps from "../../../steps/steps";
 import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
-import {CheckSquareFill, XSquareFill} from "react-bootstrap-icons";
+import {CheckSquareFill, XSquareFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -693,7 +693,7 @@ const MappingStepDetail: React.FC = () => {
   </div> : "";
 
   const expandTableIcon = (
-    <a onClick={() => toggleSourceTable()}><Icon type={tableCollapsed && srcPropertiesXML.length < 1 ? "right" : "down"} /></a>
+    <a onClick={() => toggleSourceTable()}>{tableCollapsed && srcPropertiesXML.length < 1 ? <ChevronRight/> :  <ChevronDown/>}</a>
   );
 
   // Run when mapping details is opened or returned to
@@ -1030,11 +1030,11 @@ const MappingStepDetail: React.FC = () => {
       if (props.expanded) {
         return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="down" /> </a>;
+        }}><ChevronDown /> </a>;
       } else {
         return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="right" data-testid="expandedIcon" /> </a>;
+        }}><ChevronRight data-testid="expandedIcon" /> </a>;
       }
     } else {
       return <span style={{color: "black"}} onClick={e => {
@@ -1281,7 +1281,7 @@ const MappingStepDetail: React.FC = () => {
       visible={colOptMenuVisible}
       placement="bottomRight"
       overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
-        Column Options <Icon type="down" theme="outlined" />
+        Column Options <ChevronDown />
       </a></Dropdown>;
 
 

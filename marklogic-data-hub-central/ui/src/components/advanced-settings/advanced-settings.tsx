@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Form, Input, Icon, Select, Radio, Tooltip} from "antd";
+import {Form, Input, Select, Radio, Tooltip} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
@@ -9,7 +9,7 @@ import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
 import {CurationContext} from "../../util/curation-context";
 import HCAlert from "../common/hc-alert/hc-alert";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
 
@@ -925,12 +925,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         }
         <Form.Item
           label={<span>
-            <Icon
-              type="right"
-              className={styles.rightArrow}
-              onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}
-              rotate={interceptorsExpanded ? 90 : 0}
-            />
+            {interceptorsExpanded ?
+              <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> :
+              <ChevronRight className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> }
             <span aria-label="interceptors-expand" className={styles.expandLabel} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}>Interceptors</span>
           </span>}
           labelAlign="left"
@@ -963,12 +960,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         </div> : ""}
         <Form.Item
           label={<span>
-            <Icon
-              type="right"
-              className={styles.rightArrow}
-              onClick={() => setCustomHookExpanded(!customHookExpanded)}
-              rotate={customHookExpanded ? 90 : 0}
-            />
+            {customHookExpanded ?
+              <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> :
+              <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> }
             <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
             <HCTooltip
               text={tooltips.customHookDeprecated}
