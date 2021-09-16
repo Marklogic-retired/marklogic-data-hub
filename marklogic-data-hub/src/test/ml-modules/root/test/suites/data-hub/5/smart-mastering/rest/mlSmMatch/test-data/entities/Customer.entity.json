@@ -1,0 +1,18 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer": {
+      "required": [],
+      "primaryKey": "customerId",
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        }
+      }
+    }
+  }
+}
