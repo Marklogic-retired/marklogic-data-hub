@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Table, Icon, Modal, Menu, Select, Dropdown, Tooltip} from "antd";
+import {Table, Modal, Menu, Select, Dropdown, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -15,7 +15,7 @@ import {LoadingContext} from "../../util/loading-context";
 import {getViewSettings, setViewSettings} from "../../util/user-context";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import {PlayCircleFill} from "react-bootstrap-icons";
+import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import HCButton from "../common/hc-button/hc-button";
 
 const {Option} = Select;
@@ -261,7 +261,7 @@ const LoadList: React.FC<Props> = (props) => {
                 stepDefinitionType: "ingestion",
                 existingFlow: false
               }
-            }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled" />New flow</div></Link>
+            }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
         </Col>
       </Row>
     </Modal>
