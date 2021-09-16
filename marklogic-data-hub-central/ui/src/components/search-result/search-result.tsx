@@ -4,11 +4,11 @@ import styles from "./search-result.module.scss";
 import ReactHtmlParser from "react-html-parser";
 import {dateConverter} from "../../util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
-import {Icon} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
 import {SearchContext} from "../../util/search-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 
 
 interface Props extends RouteComponentProps {
@@ -77,7 +77,7 @@ const SearchResult: React.FC<Props> = (props) => {
   return (
     <div className={"w-100"}>
       <div className={`d-flex align-items-center ${styles.title}`} onClick={() => showTableEntityProperties()}>
-        <Icon className={styles.expandableIcon} data-cy="expandable-icon" data-testid="expandable-icon" type="right" rotate={show ? 90 : undefined} />
+        {show ? <ChevronDown className={styles.expandableIcon} aria-label="icon: chevron-down" data-cy="expandable-icon" data-testid="expandable-icon"/> : <ChevronRight className={styles.expandableIcon} aria-label="icon: chevron-right" data-cy="expandable-icon" data-testid="expandable-icon" />}
         <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
         {primaryKey && <span data-cy="primary-key" data-testid={"primary-key"} className={styles.primaryKey}>{primaryKey}:</span>}
         <span data-cy="primary-key-value">{primaryKeyValue}</span>

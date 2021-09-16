@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Icon, Switch, Table, Select} from "antd";
+import {Modal, Form, Input, Switch, Table, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -15,7 +15,7 @@ import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import HCAlert from "../../../common/hc-alert/hc-alert";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import HCTag from "../../../common/hc-tag/hc-tag";
 import HCButton from "../../../common/hc-button/hc-button";
 
@@ -1141,11 +1141,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       if (props.expanded) {
         return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="down" /> </a>;
+        }}><ChevronDown /> </a>;
       } else {
         return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="right" data-testid="expandedIcon" /> </a>;
+        }}><ChevronRight data-testid="expandedIcon" /> </a>;
       }
     }
   };
