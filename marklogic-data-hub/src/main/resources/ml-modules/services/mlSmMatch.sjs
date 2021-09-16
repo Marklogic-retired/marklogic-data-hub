@@ -15,6 +15,7 @@
  */
 'use strict';
 
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const config = require("/com.marklogic.hub/config.sjs")
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
@@ -26,7 +27,7 @@ function get(context, params) {
 }
 
 function post(context, params, input) {
-  let inputBody = input ? input.root : {};
+  let inputBody = input ? input.root || {} : {};
   let inputOptions = inputBody.options || {};
   const datahub = DataHubSingleton.instance({
     performanceMetrics: !!inputOptions.performanceMetrics
@@ -41,10 +42,10 @@ function post(context, params, input) {
     httpUtils.throwBadRequestWithArray(['Bad Request', 'A flow name must be provided.']);
   }
   let refStepNumber = params.step || '1';
-  let flow = datahub.flow.getFlow(refFlowName);
+  let flow = Artifacts.getFullFlow(refFlowName, refStepNumber);
   let stepRef = flow.steps[refStepNumber];
-  if (stepRef.stepDefinitionType.toLowerCase() !== 'mastering') {
-    httpUtils.throwBadRequestWithArray(['Bad Request', 'The step must be a mastering step.']);
+  if (!(stepRef.stepDefinitionType.toLowerCase() == 'mastering' || stepRef.stepDefinitionType.toLowerCase() == 'matching')) {
+    httpUtils.throwBadRequestWithArray(['Bad Request', `The step referenced must be a matching step. Step type: ${stepRef.stepDefinitionType}`]);
   }
   let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
   // build combined options
@@ -53,7 +54,7 @@ function post(context, params, input) {
   let stepDetailsOptions = stepDetails.options || {};
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
   let sourceDatabase = combinedOptions.sourceDatabase || config.STAGINGDATABASE;
-  let matchOptions = new NodeBuilder().addNode({ options: combinedOptions.matchOptions }).toNode();
+  let matchOptions = new NodeBuilder().addNode(combinedOptions.matchOptions ? { options: combinedOptions.matchOptions }: combinedOptions).toNode();
   return fn.head(hubUtils.invokeFunction(
     function() {
       let doc = uri ? cts.doc(uri) : inMemDocument;
