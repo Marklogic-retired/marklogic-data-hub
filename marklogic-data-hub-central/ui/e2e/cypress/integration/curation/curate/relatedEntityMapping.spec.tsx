@@ -270,7 +270,7 @@ describe("Mapping", () => {
     cy.get("#entityContainer").scrollTo("bottom",  {ensureScrollable: false});
     mappingStepDetail.entityTitle("Person").should("not.be.visible");
     browsePage.getPaginationPageSizeOptions().then(attr => {
-      attr[0].click();
+      attr[1].click();
     });
     browsePage.getPageSizeOption("10 / page").click({force: true});
     mappingStepDetail.entityTitle("Person").should("be.visible");
