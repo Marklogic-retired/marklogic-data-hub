@@ -340,10 +340,12 @@ const Detail: React.FC<Props> = ({history, location}) => {
                   <AsyncLoader />
                 </div>
                   :
-                  contentType === "json" ?
-                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
-                    :
-                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>)
+                  <div className={styles.documentContainer}>
+                    {contentType === "json" ?
+                      selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
+                      :
+                      selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>)
+                    }</div>
               }
             </div>
           </Content>
