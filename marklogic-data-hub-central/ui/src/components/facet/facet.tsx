@@ -1,5 +1,4 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Icon} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {FacetName} from "./facet-element";
 import styles from "./facet.module.scss";
@@ -8,6 +7,7 @@ import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 
 interface Props {
   name: string;
@@ -170,7 +170,7 @@ const Facet: React.FC<Props> = (props) => {
           >Clear
           </div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(props.name) + "-toggle"}>
-            <Icon className={styles.toggleIcon} type="down" rotate={show ? 0 : -90} />
+            {show ? <ChevronDown className={styles.toggleIcon} aria-label="icon: chevron-down"/> : <ChevronRight className={styles.toggleIcon} aria-label="icon: chevron-right"/>}
           </div>
         </div>
       </div>
