@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
 import {CloseOutlined} from "@ant-design/icons";
-import {Menu, Form, Input} from "antd";
+import {Menu, Form, Input, Tooltip, Icon} from "antd";
 import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
@@ -323,12 +323,21 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       >
         <div className={styles.colorContainer}>
           <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
-          <div>
-            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
-            <MLTooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
-          </div>
+          {!props.canWriteEntityModel && props.canReadEntityModel ?
+            <div>
+              <span className={styles.editIconContainer}><Tooltip title={SecurityTooltips.missingPermission} placement={"top"}><FontAwesomeIcon icon={faPencilAlt} size="sm" className={styles.editIconReadOnly} data-testid={"edit-color-icon-disabled"}/></Tooltip></span>
+              <Tooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </Tooltip>
+            </div>
+            :
+            <div>
+              <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
+              <Tooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </Tooltip>
+            </div>
+          }
         </div>
       </Form.Item>
     </div>
