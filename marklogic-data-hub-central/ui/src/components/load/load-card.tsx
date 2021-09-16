@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
 import styles from "./load-card.module.scss";
 import {Link, useHistory} from "react-router-dom";
-import {Icon, Modal, Select, Tooltip} from "antd";
+import {Modal, Select, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -14,7 +14,7 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import {PlayCircleFill} from "react-bootstrap-icons";
+import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 
 const {Option} = Select;
 
@@ -299,7 +299,7 @@ const LoadCard: React.FC<Props> = (props) => {
                 stepDefinitionType: "ingestion",
                 existingFlow: false
               }
-            }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled" />New flow</div></Link>
+            }}><div className={styles.stepLink} data-testid={`${loadArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
         </Col>
       </Row>
     </Modal>
@@ -357,7 +357,7 @@ const LoadCard: React.FC<Props> = (props) => {
       <Row>
         {props.canReadWrite ? <Col xs={"auto"}>
           <HCCard className={styles.addNewCard}>
-            <div aria-label="add-new-card"><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew}/></div>
+            <div aria-label="add-new-card"><PlusCircleFill className={styles.plusIcon} onClick={OpenAddNew}/></div>
             <br />
             <p className={styles.addNewContent}>Add New</p>
           </HCCard>
@@ -365,7 +365,7 @@ const LoadCard: React.FC<Props> = (props) => {
           <Tooltip title={"Load: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><HCCard
             className={styles.addNewCardDisabled}
             data-testid="disabledAddNewCard">
-            <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+            <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled}/></div>
             <br />
             <p className={styles.addNewContentDisabled}>Add New</p>
           </HCCard></Tooltip>
