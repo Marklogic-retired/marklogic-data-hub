@@ -56,7 +56,7 @@ describe("Search Result view component", () => {
   });
 
   test("Verify expandable icon closes if page number changes", async () => {
-    const {container, rerender, getByTestId} = render(
+    const {rerender, getByTestId, getByLabelText} = render(
       <SearchContext.Provider value={{searchOptions: defaultSearchOptions}}>
         <Router>
           <SearchResult
@@ -68,9 +68,9 @@ describe("Search Result view component", () => {
       </SearchContext.Provider>
     );
     expect(getByTestId("expandable-icon")).toBeInTheDocument();
-    expect(container.querySelector("[data-testid=expandable-icon] > svg")).not.toHaveStyle("transform: rotate(90deg);");
-    fireEvent.click(getByTestId("expandable-icon"));
-    expect(container.querySelector("[data-testid=expandable-icon] > svg")).toHaveStyle("transform: rotate(90deg);");
+    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
+    fireEvent.click(getByLabelText("icon: chevron-right"));
+    expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
 
     rerender(
       <SearchContext.Provider value={{searchOptions: {...defaultSearchOptions, pageNumber: 2}}}>
@@ -84,6 +84,6 @@ describe("Search Result view component", () => {
       </SearchContext.Provider>
     );
 
-    expect(container.querySelector("[data-testid=expandable-icon] > svg")).not.toHaveStyle("transform: rotate(90deg);");
+    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
   });
 });
