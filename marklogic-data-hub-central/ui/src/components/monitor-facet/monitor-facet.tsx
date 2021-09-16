@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Icon, Checkbox} from "antd";
+import {Checkbox} from "antd";
 import styles from "../facet/facet.module.scss";
 import {stringConverter} from "../../util/string-conversion";
 import {MonitorContext} from "../../util/monitor-context";
@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import PopOverSearch from "../pop-over-search/pop-over-search";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
 
 
 
@@ -165,7 +166,7 @@ const MonitorFacet: React.FC<Props> = (props) => {
           <div className={styles.toggle} onClick={() => toggleShow(!show)}
             data-testid={stringConverter(props.displayName) + "-toggle"}
           >
-            <Icon className={styles.toggleIcon} type="down" rotate={show ? 0 : -90} />
+            {show ? <ChevronDown aria-label="icon: chevron-down" className={styles.toggleIcon}/> : <ChevronRight aria-label="icon: chevron-right" className={styles.toggleIcon}/>}
           </div>
         </div>
       </div>
