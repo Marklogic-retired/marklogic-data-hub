@@ -19,6 +19,7 @@ import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
 
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import {PlusCircleFill} from "react-bootstrap-icons";
 interface Props {
   mergingStepsArray: any;
   flows: any;
@@ -276,7 +277,7 @@ const MergingCard: React.FC<Props> = (props) => {
                 stepToAdd: mergingArtifactName,
                 stepDefinitionType: "merging",
                 existingFlow: false
-              }}}><div className={styles.stepLink} data-testid={`${mergingArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled"/>New flow</div></Link>
+              }}}><div className={styles.stepLink} data-testid={`${mergingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
         </Col>
       </Row>
     </Modal>
@@ -375,7 +376,7 @@ const MergingCard: React.FC<Props> = (props) => {
           <Col xs={"auto"}>
             <HCCard
               className={styles.addNewCard}>
-              <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew}/></div>
+              <div><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIcon} onClick={OpenAddNew}/></div>
               <br />
               <p className={styles.addNewContent}>Add New</p>
             </HCCard>
@@ -383,7 +384,7 @@ const MergingCard: React.FC<Props> = (props) => {
         ) : <Col>
           <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><HCCard
             className={styles.addNewCardDisabled}>
-            <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+            <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled} onClick={OpenAddNew}/></div>
             <br/>
             <p className={styles.addNewContent}>Add New</p>
           </HCCard></Tooltip>
