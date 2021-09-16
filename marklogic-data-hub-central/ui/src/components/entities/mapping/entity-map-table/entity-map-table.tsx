@@ -18,7 +18,7 @@ import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/toolt
 import StepsConfig from "../../../../config/steps.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
-import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
+import {QuestionCircleFill, XLg, ChevronDown, ChevronRight} from "react-bootstrap-icons";
 
 interface Props {
   setScrollRef: any;
@@ -330,11 +330,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
       if (props.expanded) {
         return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="down" /> </a>;
+        }}><ChevronDown /></a>;
       } else {
         return <a className={styles.expandIcon} onClick={e => {
           props.onExpand(props.record, e);
-        }}><Icon type="right" data-testid="expandedIcon" /> </a>;
+        }}><ChevronRight data-testid="expandedIcon" /> </a>;
       }
     } else {
       return <span style={{color: "black"}} onClick={e => {
@@ -1068,7 +1068,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}><Icon type={tableCollapsed && entityProperties.length < 1 ? "right" : "down"} /></a>
+    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight/> : <ChevronDown/>}</a>
   );
 
   const topRowDetails = (

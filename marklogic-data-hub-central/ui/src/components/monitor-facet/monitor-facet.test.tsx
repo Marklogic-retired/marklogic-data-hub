@@ -23,13 +23,11 @@ describe("Facet component", () => {
   });
 
   it("Collapse/Expand carets render properly for facet properties", () => {
-    const {getByTestId} = render(<MonitorFacet {...flowNameFacetProps} />);
+    const {getByLabelText} = render(<MonitorFacet {...flowNameFacetProps} />);
 
-    expect(getByTestId("flow-name-toggle")).toBeInTheDocument();
-    expect(document.querySelector("[data-testid=flow-name-toggle] i svg")).toBeInTheDocument();
-    expect(document.querySelector("[data-testid=flow-name-toggle] i svg")).not.toHaveStyle("transform: rotate(-90deg);");
-    fireEvent.click(getByTestId("flow-name-toggle"));
-    expect(document.querySelector("[data-testid=flow-name-toggle] i svg")).toHaveStyle("transform: rotate(-90deg);");
+    expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
+    fireEvent.click(getByLabelText("icon: chevron-down"));
+    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
   });
 
   it("Step Type facets renders properly", async () => {

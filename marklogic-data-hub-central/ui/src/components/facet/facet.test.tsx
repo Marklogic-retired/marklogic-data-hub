@@ -61,13 +61,12 @@ describe("Facet component", () => {
   });
 
   it("Collapse/Expand carets render properly for facet properties", () => {
-    const {getByTestId} = render(<Facet {...facetProps} />);
+    const {getByTestId, getByLabelText} = render(<Facet {...facetProps} />);
 
     expect(getByTestId("sales_region-toggle")).toBeInTheDocument();
-    expect(document.querySelector("[data-testid=sales_region-toggle] i svg")).toBeInTheDocument();
-    expect(document.querySelector("[data-testid=sales_region-toggle] i svg")).not.toHaveStyle("transform: rotate(-90deg);");
-    fireEvent.click(getByTestId("sales_region-toggle"));
-    expect(document.querySelector("[data-testid=sales_region-toggle] i svg")).toHaveStyle("transform: rotate(-90deg);");
+    expect(getByLabelText("icon: chevron-down")).toBeInTheDocument();
+    fireEvent.click(getByLabelText("icon: chevron-down"));
+    expect(getByLabelText("icon: chevron-right")).toBeInTheDocument();
   });
 
   it("Search link shown only when facet number greater than limit", () => {

@@ -1,7 +1,7 @@
 import React from "react";
-import {Icon} from "antd";
 import styles from "./source-navigation.module.scss";
 import HCButton from "../../../common/hc-button/hc-button";
+import {ChevronLeft, ChevronRight} from "react-bootstrap-icons";
 
 interface Props {
   currentIndex: number;
@@ -21,7 +21,7 @@ const SourceNavigation: React.FC<Props> = (props) => {
         onClick={() => props.handleSelection(props.currentIndex - 1)}
         disabled={props.currentIndex === props.startIndex}
       >
-        <Icon type="left" className={styles.navigateIcon} />
+        <ChevronLeft className={styles.navigateIcon} />
       </HCButton>
         &nbsp;
       <div aria-label="uriIndex" className={styles.URI_Index}><p>{props.currentIndex + 1}</p></div>
@@ -33,7 +33,7 @@ const SourceNavigation: React.FC<Props> = (props) => {
         onClick={() => props.handleSelection(props.currentIndex + 1)}
         disabled={props.currentIndex === props.endIndex}
       >
-        <Icon type="right" className={styles.navigateIcon} />
+        <ChevronRight className={styles.navigateIcon} />
       </HCButton>
     </span>
   );
