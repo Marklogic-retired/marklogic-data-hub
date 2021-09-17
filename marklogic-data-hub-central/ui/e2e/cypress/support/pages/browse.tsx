@@ -55,7 +55,7 @@ class BrowsePage {
   }
 
   getDocuments() {
-    return cy.get("#search-results li");
+    return cy.get("#search-results .list-group-item");
   }
 
   getDocument(index: number) {
