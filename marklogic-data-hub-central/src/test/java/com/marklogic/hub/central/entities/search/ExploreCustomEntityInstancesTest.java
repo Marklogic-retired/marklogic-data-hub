@@ -67,7 +67,7 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
     }
 
     private void verifyEntityCountInPrimaryEntityTypes() {
-        JsonNode json = ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
+        JsonNode json = ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes(Boolean.TRUE);
         assertEquals(1, json.size(), "Expecting an array with the single Person entity type in it: " + json.toPrettyString());
         JsonNode personType = json.get(0);
         assertEquals("Person", personType.get("entityName").asText(), "Expected Person: " + personType.toPrettyString());

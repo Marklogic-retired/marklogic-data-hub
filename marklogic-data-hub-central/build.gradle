@@ -226,3 +226,6 @@ task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
 
 build.dependsOn buildRpm
 
+processTestResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
