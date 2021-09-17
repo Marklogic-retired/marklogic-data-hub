@@ -1,19 +1,21 @@
 {
-  "lang": "zxx",
-  "path-namespace": [
-    {
-      "prefix": "es",
-      "namespace-uri": "http://marklogic.com/entity-services"
-    }
-  ],
-  "range-path-index": [
-    {
-      "invalid-values": "reject",
-      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/Person/PrimaryAddress/Address/ZipCode",
-      "range-value-positions": false,
-      "scalar-type": "string",
-      "collation": "http://marklogic.com/collation/"
-    }
-  ],
-  "database-name": "%%mlFinalDbName%%"
+  "lang" : "zxx",
+  "path-namespace" : [ {
+    "prefix" : "es",
+    "namespace-uri" : "http://marklogic.com/entity-services"
+  } ],
+  "range-path-index" : [ {
+    "invalid-values" : "reject",
+    "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Person/FirstName",
+    "range-value-positions" : false,
+    "scalar-type" : "string",
+    "collation" : "http://marklogic.com/collation/codepoint"
+  }, {
+    "invalid-values" : "reject",
+    "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Person/PrimaryAddress/Address/ZipCode",
+    "range-value-positions" : false,
+    "scalar-type" : "string",
+    "collation" : "http://marklogic.com/collation/"
+  } ],
+  "database-name" : "%%mlFinalDbName%%"
 }

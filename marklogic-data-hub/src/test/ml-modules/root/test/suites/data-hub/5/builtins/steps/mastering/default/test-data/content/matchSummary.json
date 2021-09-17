@@ -1,0 +1,24 @@
+{
+  "matchSummary": {
+    "URIsToProcess" : [
+      "/notification.xml",
+      "/merge.json"
+    ],
+    "actionDetails": {
+      "/notification.xml": {
+        "uris": [
+          "doc3",
+          "doc2"
+        ],
+        "action": "notify"
+      },
+      "/merge.json": {
+        "uris": [
+          "otherDoc1",
+          "otherDoc2"
+        ],
+        "action": "merge"
+      }
+    }
+  }
+}

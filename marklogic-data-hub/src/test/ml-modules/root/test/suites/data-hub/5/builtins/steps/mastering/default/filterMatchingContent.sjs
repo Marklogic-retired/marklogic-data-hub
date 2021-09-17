@@ -10,7 +10,7 @@ const content = Sequence.from([
     { uri: 'doc3', context: {originalCollections: [collectionInfo.contentCollection, collectionInfo.archivedCollection]}}
 ]);
 
-const filteredContent = matching.filterContentAlreadyProcessed(content, 'summaryCollection', collectionInfo, "jobIdDoesntMatter").toArray();
+const filteredContent = matching.filterContentAlreadyProcessed(content, 'summaryCollection', collectionInfo, "jobId").toArray();
 
 const assertions = [
     test.assertEqual(1, filteredContent.length, 'Should only have one filtered document left'),
