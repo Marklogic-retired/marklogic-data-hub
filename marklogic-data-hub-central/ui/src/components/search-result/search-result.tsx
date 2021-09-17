@@ -75,10 +75,13 @@ const SearchResult: React.FC<Props> = (props) => {
   }
 
   return (
-    <div style={{width: "100%"}}>
-      <div className={styles.title} onClick={() => showTableEntityProperties()}>
+    <div className={"w-100"}>
+      <div className={`d-flex align-items-center ${styles.title}`} onClick={() => showTableEntityProperties()}>
         <Icon className={styles.expandableIcon} data-cy="expandable-icon" data-testid="expandable-icon" type="right" rotate={show ? 90 : undefined} />
-        <div className={styles.redirectIcons}>
+        <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
+        {primaryKey && <span data-cy="primary-key" data-testid={"primary-key"} className={styles.primaryKey}>{primaryKey}:</span>}
+        <span data-cy="primary-key-value">{primaryKeyValue}</span>
+        <div className={`ms-auto ${styles.redirectIcons}`}>
           <Link to={{pathname: "/tiles/explore/detail", state: {selectedValue: "instance",
             entity: searchOptions.entityTypeIds,
             pageNumber: searchOptions.pageNumber,
@@ -120,9 +123,6 @@ const SearchResult: React.FC<Props> = (props) => {
             </HCTooltip>
           </Link>
         </div>
-        <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
-        {primaryKey && <span data-cy="primary-key" data-testid={"primary-key"} className={styles.primaryKey}>{primaryKey}:</span>}
-        <span data-cy="primary-key-value"> {primaryKeyValue}</span>
       </div>
       <div className={styles.snippet} data-cy="snippet">
         {props.item.matches.length >= 1 && snippet}
