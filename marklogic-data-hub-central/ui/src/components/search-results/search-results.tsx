@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from "react";
-import {List} from "antd";
+import {ListGroup} from "react-bootstrap";
 import SearchResult from "../search-result/search-result";
 import styles from "./search-results.module.scss";
 import {SearchContext} from "../../util/search-context";
@@ -27,20 +27,18 @@ const SearchResults:React.FC<Props> = (props) => {
   }, [props.columns]);
 
   return (
-    <div id="search-results" className={styles.searchResultsContainer}>
-      <List
-        itemLayout="horizontal"
-        dataSource={props.data}
-        renderItem={(item, index) => (
-          <List.Item data-cy={`document-list-item-${index}`}>
+    <div id="search-results" className={`px-2 ${styles.searchResultsContainer}`}>
+      <ListGroup variant="flush">
+        {props.data.map((item, index) => (
+          <ListGroup.Item key={index} data-cy={`document-list-item-${index}`} className={"px-0 py-3"}>
             <SearchResult
               item={item}
               entityDefArray={props.entityDefArray}
               tableView={props.tableView}
             />
-          </List.Item>
-        )}
-      />
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
     </div>
   );
 };
