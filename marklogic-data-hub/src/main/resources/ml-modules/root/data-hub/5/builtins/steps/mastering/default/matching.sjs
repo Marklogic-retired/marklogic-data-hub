@@ -36,12 +36,27 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
   for (let item of content) {
     const collections = item.context ? item.context.originalCollections || [] : [];
     const auditingOrNotificationDoc = collections.includes(collectionInfo.notificationCollection) || collections.includes(collectionInfo.auditingCollection);
-    if (!(cts.exists(cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyValueQuery('uris', item.uri, 'exact')])) ||
-        auditingOrNotificationDoc
-    )) {
-      filteredContent.push(item);
+    // skip auditing or notification documents
+    if (auditingOrNotificationDoc) {
+      auditingNotificationsInSourceQuery = auditingNotificationsInSourceQuery || auditingOrNotificationDoc;
+      continue;
     }
-    auditingNotificationsInSourceQuery = auditingNotificationsInSourceQuery || auditingOrNotificationDoc;
+    // skip documents already set to be merged
+    const actionDetailQuery = cts.andQuery([cts.jsonPropertyValueQuery("uris", item.uri, "exact"),cts.jsonPropertyValueQuery("action", "merge", "exact")]);
+    const documentQuery = cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyScopeQuery("actionDetails",actionDetailQuery)]);
+    if (cts.exists(documentQuery)) {
+      let falsePositive = true;
+      for (const matchedDoc of cts.search(documentQuery)) {
+        if (cts.contains(matchedDoc.xpath("/matchSummary/actionDetails/*"), actionDetailQuery)) {
+          falsePositive = false;
+          break;
+        }
+      }
+      if (!falsePositive) {
+        continue;
+      }
+    }
+    filteredContent.push(item);
   }
   if (auditingNotificationsInSourceQuery) {
     xdmp.log('Mastering auditing and notification documents are included in your source query. For better performance, exclude them from your query.', 'notice');

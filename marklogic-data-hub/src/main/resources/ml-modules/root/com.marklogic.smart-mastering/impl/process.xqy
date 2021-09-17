@@ -822,13 +822,22 @@ declare function proc-impl:build-content-objects-from-match-summary(
                           )
                         )
                     return $custom-action-options
-                  return
+                  let $action-results :=
                       xdmp:apply(
                         $action-func,
                         $uri,
                         $custom-action-options => map:get("match-results"),
                         $custom-action-options => map:get("merge-options")
                       )
+                  return (
+                    $action-results,
+                    if (fn:not(some $output in $action-results satisfies $output => map:get("uri") = $uri)) then (
+                      util-impl:adjust-collections-on-document(
+                          $uri,
+                          $on-no-match-fun
+                      )
+                    ) else ()
+                  )
 
       )
   return (

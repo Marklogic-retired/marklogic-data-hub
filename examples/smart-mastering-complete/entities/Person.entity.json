@@ -36,7 +36,8 @@
       "properties": {
         "FirstName": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
+          "collation": "http://marklogic.com/collation/codepoint",
+          "sortable": true
         },
         "LastName": {
           "datatype": "string",
