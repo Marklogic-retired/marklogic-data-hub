@@ -264,14 +264,25 @@ function findModelReferencesInSteps(entityName, entityTypeId) {
 /**
  * Returns the entity model names that contain a reference to the supplied entityTypeId.
  *
+ * @param referencedEntity an entity IRI that we want to find references to
+ * @param excludedURIs one or more URIs to exclude from the search
+ * @returns {[]}
+ */
+function entityModelsWithReferenceExcludingURIs(referencedEntity, excludedURIs) {
+  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery(getModelCollection()), cts.jsonPropertyValueQuery("$ref",referencedEntity)]), cts.documentQuery(excludedURIs));
+  return cts.search(entityModelQuery).toArray()
+}
+
+/**
+ * Returns the entity model names that contain a reference to the supplied entityTypeId.
+ *
  * @param entityModelUri
  * @param entityTypeId
  * @returns {[]}
  */
 function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   const affectedModels = new Set();
-  const entityModelQuery = cts.andNotQuery(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION), cts.documentQuery(entityModelUri));
-  const entityModels = cts.search(entityModelQuery).toArray();
+  const entityModels = entityModelsWithReferenceExcludingURIs(entityTypeId, entityModelUri);
   entityModels.map(model => model.toObject())
     .forEach(model => {
       Object.keys(model.definitions)
@@ -304,17 +315,24 @@ function findForeignKeyReferencesInOtherModels(entityModel, propertyName){
 }
 
 /**
- * Finds and deletes the properties in all models that refers to the supplied entityTypeId.
+ * Finds and removes the properties in all models that refers to the supplied entityTypeId in memory.
+ * This allows for multiple calls in a singe transaction for publishing.
  *
  * @param entityModelUri
  * @param entityTypeId
+ * @param inMemoryModels model objects stored by modelName to allow multiple updates in a transaction
  */
-function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
+function otherModelsWithModelReferencesRemoved(entityModelUri, entityTypeId, inMemoryModels = {}) {
   const affectedModels = new Set();
-  const entityModelQuery = cts.andNotQuery(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION), cts.documentQuery(entityModelUri));
-  const entityModels = cts.search(entityModelQuery).toArray();
+  const entityModels = entityModelsWithReferenceExcludingURIs(entityTypeId, entityModelUri);
   entityModels.map(model => model.toObject())
     .forEach(model => {
+      const draftUri = getDraftModelUri(model.info.title);
+      if (inMemoryModels[model.info.title]) {
+        model = inMemoryModels[model.info.title];
+      } else if ((fn.docAvailable(draftUri))) {
+        model = cts.doc(draftUri).toObject();
+      }
       Object.keys(model.definitions)
         .forEach(definition => {
           const properties = model.definitions[definition].properties;
@@ -328,13 +346,24 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
         });
     });
 
+  return [...affectedModels];
+}
+
+/**
+ * Finds and deletes the properties in all models that refers to the supplied entityTypeId.
+ *
+ * @param entityModelUri
+ * @param entityTypeId
+ */
+function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
+  const updatedModels = otherModelsWithModelReferencesRemoved(entityModelUri, entityTypeId);
   const permissions = getModelPermissions();
 
   // This does not reuse writeModel because we do not want to hit the xdmp.documentInsert line. This requires the
   // deleteModel.sjs endpoint to then have declareUpdate. But when that is added, the call to deleteDocument then hangs.
   // Applying a Set in case both constants point to the same database.
   const databases = [...new Set([config.STAGINGDATABASE, config.FINALDATABASE])];
-  [...affectedModels].forEach(model => {
+  updatedModels.forEach(model => {
     databases.forEach(db => {
       const entityName = getModelName(model);
       hubUtils.writeDocument(getModelUri(entityName), model, permissions, getModelCollection(), db)
@@ -417,6 +446,7 @@ function publishDraftModels() {
   hubUtils.hubTrace(consts.TRACE_ENTITY,`publishing in database: ${xdmp.databaseName(xdmp.database())}`);
   const draftModels = hubUtils.invokeFunction(() => cts.search(cts.collectionQuery(consts.DRAFT_ENTITY_MODEL_COLLECTION)), xdmp.databaseName(xdmp.database()));
   hubUtils.hubTrace(consts.TRACE_ENTITY,`Publishing draft models: ${xdmp.toJsonString(draftModels)}`);
+  const inMemoryModelsUpdated = {};
   const urisOfModelsBeingDeleted = draftModels.toArray()
     .map((model) => model.toObject())
     .filter((modelObject) => modelObject.info.draftDeleted)
@@ -436,13 +466,23 @@ function publishDraftModels() {
 
       hubUtils.hubTrace(consts.TRACE_ENTITY,`deleting draft model references: ${modelObject.info.title}`);
       const entityURIsToIgnore = urisOfModelsBeingDeleted.concat([entityModelUri]);
-      deleteModelReferencesInOtherModels(entityURIsToIgnore, entityTypeId);
+      // update models in memory with necessary reference updates
+      otherModelsWithModelReferencesRemoved(entityURIsToIgnore, entityTypeId, inMemoryModelsUpdated).forEach((model) => {
+        inMemoryModelsUpdated[model.info.title] = model;
+      });
       hubUtils.hubTrace(consts.TRACE_ENTITY,`deleted draft model references: ${modelObject.info.title}`);
     } else {
-      hubUtils.hubTrace(consts.TRACE_ENTITY,`writing draft model: ${modelObject.info.title}`);
-      writeModel(modelObject.info.title, modelObject);
-      hubUtils.hubTrace(consts.TRACE_ENTITY,`draft model written: ${modelObject.info.title}`);
+      // if the draft changes aren't already picked up by reference updates, add them here.
+      if (!inMemoryModelsUpdated[modelObject.info.title]) {
+        inMemoryModelsUpdated[modelObject.info.title] = modelObject;
+      }
     }
+  }
+  // write all of the affected models out here
+  for (const modelName in inMemoryModelsUpdated) {
+    hubUtils.hubTrace(consts.TRACE_ENTITY,`writing draft model: ${modelName}`);
+    writeModel(modelName, inMemoryModelsUpdated[modelName]);
+    hubUtils.hubTrace(consts.TRACE_ENTITY,`draft model written: ${modelName}`);
   }
   const deleteDraftsOperation = () => {
     hubUtils.hubTrace(consts.TRACE_ENTITY,"deleting draft collection");

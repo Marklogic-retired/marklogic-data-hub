@@ -16,12 +16,18 @@
  */
 package com.marklogic.hub.central.controllers;
 
+import com.fasterxml.jackson.core.sym.Name;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.ForbiddenUserException;
+import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.admin.QueryOptionsManager;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
+import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.managers.ModelManager;
 import com.marklogic.hub.central.schemas.ModelDefinitions;
@@ -40,12 +46,72 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.*;
 
 @Controller
 @RequestMapping("/api/models")
 public class ModelController extends BaseController {
+    ObjectMapper objectMapper = new ObjectMapper();
+    @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation("This retrieves the Hub Central Config for models")
+    public ResponseEntity<?> getHubCentralConfig() {
+        return ResponseEntity.ok(getHubCentralConfigObject());
+    }
+
+    @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.PUT)
+    @ResponseBody
+    @ApiOperation("This sets properties of the Hub Central Config for models")
+    public ResponseEntity<?> setHubCentralConfig(@RequestBody ObjectNode hubCentralConfig) {
+        ObjectNode hubCentralConfigBase = getHubCentralConfigObject();
+        JacksonHandle handle = new JacksonHandle().with(mergeObjects(hubCentralConfigBase, hubCentralConfig));
+        DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
+                .withPermission("hub-central-user", DocumentMetadataHandle.Capability.READ)
+                .withPermission("data-hub-entity-model-writer", DocumentMetadataHandle.Capability.UPDATE);
+        getHubClient().getFinalClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
+        return ResponseEntity.ok("");
+    }
+
+    @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.DELETE)
+    @ResponseBody
+    @ApiOperation("This resets properties of the Hub Central Config for models")
+    public ResponseEntity<?> deleteHubCentralConfig() {
+        getHubClient().getFinalClient().newJSONDocumentManager().delete("/config/hubCentral.json");
+        return ResponseEntity.ok("");
+    }
+
+    private JsonNode mergeObjects(ObjectNode hubCentralConfigBase, ObjectNode hubCentralConfig) {
+        if (hubCentralConfigBase.hasNonNull("modeling")) {
+            ObjectNode modelingBase = (ObjectNode) hubCentralConfigBase.path("modeling");
+            if (!modelingBase.hasNonNull("entities")) {
+                modelingBase.set("entities", objectMapper.createObjectNode());
+            }
+            for (Iterator<Map.Entry<String, JsonNode>> it = hubCentralConfig.get("modeling").fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> propertyEntry = it.next();
+                JsonNode propertyValue = propertyEntry.getValue();
+                String propertyKey = propertyEntry.getKey();
+                if (propertyKey.equals("entities")) {
+                    for (Iterator<Map.Entry<String, JsonNode>> it2 = propertyValue.fields(); it2.hasNext(); ) {
+                        Map.Entry<String, JsonNode> entityPropertyEntry = it2.next();
+                        String entityPropertyKey = entityPropertyEntry.getKey();
+                        JsonNode entityPropertyValue = entityPropertyEntry.getValue();
+                        if (modelingBase.get("entities").has(entityPropertyKey)) {
+                            ((ObjectNode)modelingBase.get("entities").get(entityPropertyKey)).setAll((ObjectNode) entityPropertyValue);
+                        } else {
+                            ((ObjectNode)modelingBase.get("entities")).set(entityPropertyKey, entityPropertyValue);
+                        }
+                    }
+                } else {
+                    modelingBase.set(propertyKey, propertyValue);
+                }
+            }
+            return hubCentralConfigBase;
+        } else {
+            return hubCentralConfig;
+        }
+    }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -241,6 +307,16 @@ public class ModelController extends BaseController {
             queryOptionsManager.writeOptionsAs(optionName, Format.XML, options);
         } catch (Exception e) {
             throw new RuntimeException("Unable to deploy search options file " + optionName + " to " + databaseKind + " database after updating entity models; cause: " + e.getMessage(), e);
+        }
+    }
+
+    private ObjectNode getHubCentralConfigObject() {
+        try {
+            JacksonHandle handle = new JacksonHandle();
+            getHubClient().getFinalClient().newJSONDocumentManager().read("/config/hubCentral.json", handle);
+            return (ObjectNode) handle.get();
+        } catch (Exception e) {
+            return objectMapper.createObjectNode();
         }
     }
 
