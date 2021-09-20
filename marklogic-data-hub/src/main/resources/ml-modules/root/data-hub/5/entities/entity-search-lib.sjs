@@ -44,6 +44,10 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
       httpUtils.throwNotFound(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
     }
 
+    if(!verifyExplorableModel(entityName)) {
+      httpUtils.throwNotFound(`Could not find entity properties as there is no entityTypeDefinition in entity model for name: ${entityName}`);
+    }
+
     const allMetadata = buildAllMetadata("", entityModel, entityName);
     propertyMetadata = allMetadata["allPropertiesMetadata"];
 
@@ -437,7 +441,10 @@ function addGenericEntityProperties(result) {
 }
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {
-  result.primaryKey = getPrimaryValue(entityInstance, entityDef);
+  result.primaryKey = null;
+  if(entityDef) {
+    result.primaryKey = getPrimaryValue(entityInstance, entityDef);
+  }
 
   // no primaryKey in entity instance, so use URI
   if (!result.primaryKey) {
@@ -614,6 +621,18 @@ function getDocumentSize(doc) {
   documentSize["value"] = (bytes / Math.pow(1024, power)).toFixed(0) * 1;
   documentSize["units"] = sizes[power];
   return documentSize;
+}
+
+function verifyExplorableModel(entityName) {
+  if(!entityName) {
+    return true;
+  }
+  const entityModel = entityLib.findModelByEntityName(entityName);
+  if(!entityModel) {
+    return false;
+  }
+  const entityTypes = Object.keys(entityModel.definitions);
+  return entityTypes.includes(entityModel.info.title);
 }
 
 module.exports = {

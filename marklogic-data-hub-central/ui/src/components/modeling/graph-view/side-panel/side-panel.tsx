@@ -66,9 +66,12 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           const entity=modelingOptions.selectedEntity;
           const selectedEntityDetails = await response.data.find(ent => ent.entityName === modelingOptions.selectedEntity);
           if (selectedEntityDetails) {
-            setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
-            setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
-            setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+            if (entity !== undefined && selectedEntityDetails.model.definitions[entity]) {
+              setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
+              setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
+              setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
+            }
+            initializeEntityColor();
           } else {
             // Entity type not found, may have been deleted, unset
             setSelectedEntity(undefined);

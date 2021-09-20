@@ -349,6 +349,10 @@ const GraphVis: React.FC<Props> = (props) => {
   const getEdges = () => {
     let edges: any = [];
     props.entityTypes.forEach((e, i) => {
+      if (!e.model.definitions[e.entityName]) {
+        return [];
+      }
+
       let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
       properties.forEach((p, i) => {
         let pObj = e.model.definitions[e.entityName].properties[p];

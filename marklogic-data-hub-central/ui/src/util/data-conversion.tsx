@@ -97,12 +97,15 @@ export const entityParser = (data: any) => {
       }
     }
 
-    parsedEntity = {
-      name: entityDefinition["name"],
-      info: entity.info,
-      primaryKey: entityDefinition.hasOwnProperty("primaryKey") ? entityDefinition["primaryKey"] : "",
-      properties: properties,
-    };
+    if (entityDefinition) {
+      parsedEntity = {
+        name: entityDefinition["name"],
+        info: entity.info,
+        primaryKey: entityDefinition.hasOwnProperty("primaryKey") ? entityDefinition["primaryKey"] : "",
+        properties: properties,
+      };
+    }
+
     return parsedEntity;
   });
 };
