@@ -895,7 +895,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           colon={false}
         />
         { interceptorsExpanded ? <div className={styles.expandContainer}>
-          <div className={styles.textareaExpandTooltip} id={"interceptorTooltip"}>
+          <div className={styles.textareaExpandTooltip} id={stepType === "mapping" ? "interceptorMapTooltip"  : stepType === "merging" ? "interceptorMergeTooltip" : "interceptorMatchTooltip"}>
             <Popover content={tooltips.interceptors} placement={"right"} overlayStyle={{width: "33vw"}}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </Popover>
