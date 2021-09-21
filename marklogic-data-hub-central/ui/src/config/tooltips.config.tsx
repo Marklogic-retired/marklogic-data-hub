@@ -531,7 +531,8 @@ const AdvancedSettingsTooltips = {
     <span>The scope of the source record you want to map to. Choose <strong>Instance Only</strong> to map to the source instance in your envelope. Choose <strong>Entire Record</strong> to map to any of the source fields in your envelope.</span>
   ),
   attachSourceDocument: 'Specifies whether the source document should be copied into the mapped entity instance',
-  interceptors: <span>  <strong>Syntax:</strong><br/><span style={{fontFamily: "monospace"}}>{'{'}[<br/>&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br/>&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br/>
+  interceptors: <span>An array of JSON objects specifying the custom modules that perform additional processes on a batch.<br/><br/>
+  <strong>Syntax:</strong><br/><span style={{fontFamily: "monospace"}}>{'{'}[<br/>&nbsp;&nbsp;"path": "/uri/of/custom/module/in/modules/database/a.sjs",<br/>&nbsp;&nbsp;"vars":{"{"}"myParameter": "myParameterValue"{"}"},<br/>
   &nbsp;&nbsp;"when": "beforeMain | beforeContentPersisted"<br/>]{'}'}</span><br/><br/><strong>Parameters:</strong><br/>path: The URI of the interceptor module in the MODULES database that the user running the step can read and execute.<br/>
   vars (optional): A JSON object containing parameters to pass to the interceptor.<br/>when: Defines when the interceptor will be invoked. Allowed values are <span style={{fontFamily: "monospace"}}>"beforeMain"</span> or <span style={{fontFamily: "monospace"}}>"beforeContentPersisted"</span>.<br/><br/>
   The module identified by the <span style={{fontFamily: "monospace"}}>"path"</span> property will be invoked via MarkLogic's <a href="https://docs.marklogic.com/xdmp.invoke">xdmp.invoke function</a> with the default arguments for options. The module will be passed two arguments:<br/><br/>
