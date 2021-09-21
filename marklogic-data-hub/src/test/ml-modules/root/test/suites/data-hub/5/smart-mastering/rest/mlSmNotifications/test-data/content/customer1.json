@@ -1,0 +1,15 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1"
+      },
+      "Customer": {
+        "customerId": 1,
+        "fistname": "Test",
+        "lastname": "Unit"
+      }
+    }
+  }
+}

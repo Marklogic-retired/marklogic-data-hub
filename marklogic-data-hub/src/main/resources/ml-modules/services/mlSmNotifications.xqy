@@ -93,9 +93,13 @@ declare function put(
   $input   as document-node()*
 ) as document-node()?
 {
-  let $uris as xs:string* := $input/node()/uris
-  let $status as xs:string? := $input/node()/status
+  let $uris as xs:string* := if (fn:empty(map:get($params, 'uris'))) then $input/node()/uris
+    else map:get($params, 'uris')
+
+  let $status := if (fn:empty(map:get($params, 'status'))) then $input/node()/status
+    else map:get($params, 'status')
   return
+
     if (fn:empty($status)) then
       httputils:throw-bad-request((), "status parameter is required")
     else if (fn:empty($uris)) then

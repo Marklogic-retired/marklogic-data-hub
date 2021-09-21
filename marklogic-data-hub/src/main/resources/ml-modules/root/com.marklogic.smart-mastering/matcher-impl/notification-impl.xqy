@@ -336,7 +336,8 @@ as array-node()
 declare function notify-impl:count-notifications()
 as xs:int
 {
-  xdmp:estimate(fn:collection($const:NOTIFICATION-COLL))
+  let $collections := cts:collection-match($const:NOTIFICATION-COLL)
+  return xdmp:estimate(fn:collection($collections))
 };
 
 (:
@@ -347,7 +348,7 @@ as xs:int
 {
   xdmp:estimate(
     cts:search(
-      fn:collection($const:NOTIFICATION-COLL),
+      fn:collection(cts:collection-match($const:NOTIFICATION-COLL)),
       cts:element-value-query(xs:QName("sm:status"), $const:STATUS-UNREAD))
   )
 };

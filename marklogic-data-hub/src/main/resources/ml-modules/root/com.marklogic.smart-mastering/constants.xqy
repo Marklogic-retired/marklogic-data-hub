@@ -25,7 +25,7 @@ declare variable $MATCH-OPTIONS-COLL as xs:string := "mdm-match-options";
 declare variable $MERGE-OPTIONS-COLL as xs:string := "mdm-merge-options";
 declare variable $MERGED-COLL as xs:string := "mdm-merged";
 declare variable $MODEL-MAPPER-COLL as xs:string := "mdm-model-mapper";
-declare variable $NOTIFICATION-COLL as xs:string := "mdm-notification";
+declare variable $NOTIFICATION-COLL as xs:string := "sm-*-notification";
 declare variable $OPTIONS-COLL as xs:string := "mdm-options";
 
 (: Actions :)
