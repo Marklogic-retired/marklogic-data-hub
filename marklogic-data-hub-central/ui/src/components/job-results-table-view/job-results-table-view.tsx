@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
-import {ClockCircleFilled, CheckCircleFilled, CloseCircleFilled} from "@ant-design/icons";
+import {ClockCircleFilled, CheckCircleFilled} from "@ant-design/icons";
 import {Menu, Popover, Checkbox, Tooltip, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
@@ -11,6 +11,7 @@ import JobResponse from "../job-response/job-response";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
+import {XCircleFill} from "react-bootstrap-icons";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -85,7 +86,7 @@ const JobResultsTableView = (props) => {
         } else {
           return <>
             <HCTooltip text="Completed With Errors" id="complete-errors-tooltip" placement="bottom">
-              <CloseCircleFilled data-testid= "error" style={{color: "#B32424"}}/>
+              <XCircleFill data-testid= "error" style={{color: "#B32424"}}/>
             </HCTooltip>
           </>;
         }

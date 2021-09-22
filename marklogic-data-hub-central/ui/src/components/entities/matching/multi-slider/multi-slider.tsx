@@ -1,9 +1,9 @@
 import React, {useState} from "react";
-import {Icon} from "antd";
 import {Slider, Handles, Ticks, Rail, GetRailProps} from "@marklogic/react-compound-slider";
 import "./multi-slider.scss";
 import {multiSliderTooltips} from "../../../../config/tooltips.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import {XLg} from "react-bootstrap-icons";
 
 const MultiSlider = (props) => {
 
@@ -46,7 +46,7 @@ const MultiSlider = (props) => {
             {options.map((opt, i) => (
               <div className={activeHandleIdOptions["index"] === id.split("-")[1] ? "activeTooltipTextDisplay": "tooltipTextDisplay"} data-testid={`${options[0].prop}-active-tooltip`} key={i}>
                 <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={() => handleEdit({...options[0], sliderType: props.type, index: id.split("-")[1]})}><span>{opt.prop.split(".").join(" > ")}</span> {((opt.rulesetCategory && opt.rulesetCategory === "single") || !opt.rulesetCategory) && opt.type.length ? `-  ${opt.type}` : ""}</span>
-                {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}>X</div>}
+                {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}><XLg className="close" /></div>}
               </div>)
             )}
           </div>
@@ -55,7 +55,7 @@ const MultiSlider = (props) => {
               {options.map((opt, i) => (
                 <div className="tooltipText"  data-testid={`${options[0].prop}-tooltip`} key={i}>
                   <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={() => handleEdit({...options[0], sliderType: props.type, index: id.split("-")[1]})}><span aria-label={((opt.rulesetCategory && opt.rulesetCategory === "single") || !opt.rulesetCategory) && opt.type.length ? `${opt.prop}-${opt.type}`: `${opt.prop}` }>{opt.prop.split(".").join(" > ")}</span>  {((opt.rulesetCategory && opt.rulesetCategory === "single") || !opt.rulesetCategory) && opt.type.length ? `-  ${opt.type}` : ""}</span>
-                  {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}><Icon type="close" /></div>}
+                  {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}><XLg className="close" /></div>}
                 </div>
               ))}
             </div>
