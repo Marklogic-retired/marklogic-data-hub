@@ -12,13 +12,7 @@
     margin: 0 2px 2px 0;
     display: inline-flex !important;
     align-items: center;
-    gap: 10px;
-}
-
-.dateFacet {
-    color: #5b69af;
-    border: 1px solid #5b69af;
-    margin: 2px 2px 2px 0;
+    gap: 8px;
 }
 
 .facetGreyButton {
@@ -29,10 +23,7 @@
     display: inline-flex !important;
     border-style: dashed !important;
     align-items: center;
-    gap: 10px;
-    & > i {
-        margin-top: -1px;
-    }
+    gap: 8px;
 }
 
 .facetGreyButton:hover {
@@ -56,4 +47,8 @@
     &:hover {
         color: var(--hoverColor);
     }
+}
+
+.close {
+    height: 11px;
 }
