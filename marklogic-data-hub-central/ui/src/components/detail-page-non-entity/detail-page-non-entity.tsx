@@ -117,6 +117,40 @@ const DetailPageNonEntity = (props) => {
     }
   ];
 
+  const collectionColumns = [
+    {
+      title: "Collection",
+      dataIndex: "collection",
+      key: "collection",
+    }
+  ];
+
+  const recordMetadataColumns = [
+    {
+      title: "Property",
+      dataIndex: "property",
+      key: "property",
+    },
+    {
+      title: "Value",
+      dataIndex: "value",
+      key: "value",
+    }
+  ];
+
+  const recordPermissionsColumns = [
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
+      title: "Capability",
+      dataIndex: "capability",
+      key: "capability",
+    }
+  ];
+
   const handleMenuSelect = (event) => {
     setSelected(event.key);
 
@@ -235,6 +269,7 @@ const DetailPageNonEntity = (props) => {
 
           <div className={styles.siderContainerNonEntity}>
             <div>URI: <span className={styles.uri} data-testid="non-entity-document-uri">{props.uri}</span></div>
+            <div>Document Quality: <span className={styles.quality} data-testid="non-entity-document-quality">{props.docQuality}</span></div>
             <div className={styles.sourcesMetadataTableContainer}>
               <div className={styles.metadataTableLabel} data-testid="non-entity-sources-label">Sources</div>
               <MLTable
@@ -259,8 +294,36 @@ const DetailPageNonEntity = (props) => {
                 data-testid="history-table"
               />
             </div>
+            {
+              (props.collections) &&
+                <div className={styles.collectionsTableContainer}>
+                  <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
+                  <MLTable bordered dataSource={props.collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table"/>
+                </div>
+            }
+            {
+              (props.recordPermissions) &&
+                <div className={styles.recordPermissionsTableContainer}>
+                  <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
+                  <MLTable bordered dataSource={props.recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table"/>
+                </div>
+            }
+            {
+              (props.recordMetadata) &&
+                <div className={styles.recordMetadataTableContainer}>
+                  <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
+                  <MLTable bordered dataSource={props.recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table"/>
+                </div>
+            }
+            <div className={styles.documentPropertiesContainer}>
+              <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">Document Properties</div>
+              {
+                (props.documentProperties) ?
+                  <pre data-testid="doc-properties-container">{xmlFormatter(props.documentProperties)}</pre>
+                  : <p data-testid="doc-no-properties-message">This document has no properties.</p>
+              }
+            </div>
           </div>
-
         </Sider>
       </Layout>
     </div>

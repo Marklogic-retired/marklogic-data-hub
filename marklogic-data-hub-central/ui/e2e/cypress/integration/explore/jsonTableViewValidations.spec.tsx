@@ -87,11 +87,13 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableViewInstanceIcon().click();
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentEntity().should("contain", "Person");
-    detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "PersonSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
+    detailPage.getMetadataView().should("exist");
+    detailPage.getMetadataView().click();
+    detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     //Verify navigating back from detail view should persist search options
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();

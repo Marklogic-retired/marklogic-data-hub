@@ -94,11 +94,13 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("Navigate to detail page and verify if manage query modal opens up.", () => {
     detailPage.getInstanceView().should("exist");
-    detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "PersonSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
+    detailPage.getMetadataView().should("exist");
+    detailPage.getMetadataView().click();
+    detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getEditQueryIconForFirstRow().should("be.visible");

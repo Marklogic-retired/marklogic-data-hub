@@ -72,12 +72,22 @@ class DocCount extends com.marklogic.gradle.task.HubTask {
 
 task verifyStagingCounts(type: DocCount) {
     client = hubConfig.newStagingClient()
-    script = "cts.estimate(cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON', 'loadPersonXML']))"
+    script = "fn.count(cts.uris('', [], cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON', 'loadPersonXML'])))"
     expected = 40
 }
 
 task verifyFinalCounts(type: DocCount) {
     client = hubConfig.newFinalClient()
-    script = "cts.estimate(cts.collectionQuery(['mdm-dictionary', 'mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON']))"
+    script = "fn.count(cts.uris('', [], cts.collectionQuery(['mdm-dictionary', 'mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON'])))"
     expected = 35
+}
+
+task addDocProperties(type: com.marklogic.gradle.task.ServerEvalTask) {
+    doFirst {
+    client = hubConfig.newFinalClient()
+    xquery = "(" +
+                "xdmp:document-set-properties(\"/xml/customers/CustXMLDoc1.xml\", (<foo />))," +
+                "xdmp:document-set-properties(\"/thesaurus/nicknames.xml\", (<foo />))" +
+             ")"
+    }
 }

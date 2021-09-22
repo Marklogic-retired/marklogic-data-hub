@@ -8,16 +8,16 @@ class DetailPage {
     return cy.get("[data-cy=\"source-view\"]");
   }
 
+  getMetadataView() {
+    return cy.get("[data-cy=\"metadata-view\"]");
+  }
+
   getDocumentEntity() {
     return cy.get("[data-cy=document-title]");
   }
 
   getDocumentID() {
     return cy.get("[data-cy=document-id]");
-  }
-
-  getDocumentUri() {
-    return cy.get("[data-cy=document-uri]");
   }
 
   getDocumentTimestamp() {
@@ -38,6 +38,34 @@ class DetailPage {
 
   getDocumentJSON() {
     return cy.findByTestId("json-container");
+  }
+
+  getDocumentUri() {
+    return cy.findByTestId("document-uri");
+  }
+
+  getDocumentQuality() {
+    return cy.findByTestId("document-quality");
+  }
+
+  getDocumentCollections() {
+    return cy.findByTestId("collections-table");
+  }
+
+  getDocumentPermissions() {
+    return cy.findByTestId("record-permissions-table");
+  }
+
+  getDocumentMetadataValues() {
+    return cy.findByTestId("record-metadata-table");
+  }
+
+  getDocumentProperties() {
+    return cy.findByTestId("doc-properties-container");
+  }
+
+  getDocumentNoPropertiesMessage() {
+    return cy.findByTestId("doc-no-properties-message");
   }
 
   getDocumentXML() {

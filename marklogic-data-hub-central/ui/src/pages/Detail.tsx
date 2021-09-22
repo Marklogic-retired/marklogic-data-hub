@@ -10,14 +10,13 @@ import AsyncLoader from "../components/async-loader/async-loader";
 import {Layout, Menu, PageHeader} from "antd";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
-import {MLTooltip} from "@marklogic/design-system";
+import {faThList, faCode, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {MLTooltip, MLTable} from "@marklogic/design-system";
 import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import DetailPageNonEntity from "../components/detail-page-non-entity/detail-page-non-entity";
 import {SearchContext} from "../util/search-context";
 import {fetchQueries} from "../api/queries";
 import {AuthoritiesContext} from "../util/authorities";
-
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -51,6 +50,12 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const [entityInstanceDocument, setIsEntityInstanceDocument] = useState<boolean | undefined>(undefined);
   const [sourcesTableData, setSourcesTableData] = useState<any[]>([]);
   const [historyData, setHistoryData] = useState<any[]>([]);
+
+  const [collections, setCollections] = useState<any>();
+  const [recordMetadata, setRecordMetadata] = useState<any>();
+  const [recordPermissions, setRecordPermissions] = useState<any>();
+  const [documentProperties, setDocumentProperties] = useState<any>();
+  const [docQuality, setDocQuality] = useState<any>();
 
   const componentIsMounted = useRef(true);
   const authorityService = useContext(AuthoritiesContext);
@@ -115,6 +120,12 @@ const Detail: React.FC<Props> = ({history, location}) => {
           setHistoryData(generateHistoryData(result.data.history));
           setDocumentSize(result.data?.documentSize);
           setIsLoading(false);
+
+          setCollections(generateCollections(result.data.collections));
+          setRecordMetadata(generateMetadata(result.data.recordMetadata));
+          setRecordPermissions(generatePermissions(result.data.permissions));
+          setDocumentProperties(result.data.documentProperties);
+          setDocQuality(result.data.quality);
         }
 
         getSaveQueries();
@@ -208,6 +219,80 @@ const Detail: React.FC<Props> = ({history, location}) => {
       parsedData.push(tableObj);
     });
     return parsedData;
+  };
+
+  const collectionColumns = [
+    {
+      title: "Collection",
+      dataIndex: "collection",
+      key: "collection",
+    }
+  ];
+  const generateCollections = (collections) => {
+    if (collections && collections.length) {
+      let dataSource: any = [];
+      collections.forEach((collection, index) => {
+        let data = {};
+        data["key"] = index;
+        data["collection"] = collection;
+        dataSource.push(data);
+      });
+      return dataSource;
+    }
+  };
+
+  const recordMetadataColumns = [
+    {
+      title: "Property",
+      dataIndex: "property",
+      key: "property",
+    },
+    {
+      title: "Value",
+      dataIndex: "value",
+      key: "value",
+    }
+  ];
+
+  const generateMetadata = (metadata) => {
+    if (metadata) {
+      let dataSource: any = [];
+      Object.keys(metadata).forEach((key, index) => {
+        const data = {};
+        data["key"] = index;
+        data["property"] = key;
+        data["value"] = metadata[key];
+        dataSource.push(data);
+      });
+      return dataSource;
+    }
+  };
+
+  const recordPermissionsColumns = [
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+    },
+    {
+      title: "Capability",
+      dataIndex: "capability",
+      key: "capability",
+    }
+  ];
+
+  const generatePermissions = (permissions) => {
+    if (permissions && permissions.length) {
+      let dataSource: any = [];
+      permissions.forEach((p, index) => {
+        const data = {};
+        data["key"] = index;
+        data["role"] = p.roleName;
+        data["capability"] = p.capability;
+        dataSource.push(data);
+      });
+      return dataSource;
+    }
   };
 
   //Apply user preferences on each page render
@@ -331,23 +416,80 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
                     </MLTooltip>
                   </Menu.Item>
+                  <Menu.Item key="metadata" id="metadata" data-cy="metadata-view">
+                    <MLTooltip title={"Show the metadata"}>
+                      <FontAwesomeIcon icon={faInfoCircle} size="lg" />
+                      <span className={styles.subMenu}>Metadata</span>
+                    </MLTooltip>
+                  </Menu.Item>
+
                 </Menu>
               </div>
             </div>
-            <div>
-              {
-                isLoading || user.error.type === "ALERT" ? <div style={{marginTop: "40px"}}>
-                  <AsyncLoader />
-                </div>
+            <div className={styles.documentContainer}>{(() => {
+              let block;
+              if (isLoading || user.error.type === "ALERT") {
+                block =
+                        <div style={{marginTop: "40px"}}>
+                          <AsyncLoader />
+                        </div>;
+              } else if (selected === "instance") {
+                contentType === "json" ?
+                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />
                   :
-                  <div className={styles.documentContainer}>
-                    {contentType === "json" ?
-                      selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
-                      :
-                      selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>)
-                    }</div>
+                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />;
+              } else if (selected === "metadata") {
+                block =
+                                    <div id="metadata-view">
+                                      <div className={styles.docInfoContainer}>
+                                        <div className={styles.metaItem} data-testid="document-uri">
+                                          <span className={styles.metaLabel}>Document URI:</span>
+                                          <span className={styles.metaValue}>{uri}</span>
+                                        </div>
+                                        <div className={styles.metaItem} data-testid="document-quality">
+                                          <span className={styles.metaLabel}>Document Quality:</span>
+                                          <span className={styles.metaValue}>{docQuality}</span>
+                                        </div>
+                                      </div>
+                                      {
+                                        (collections) &&
+                                          <div className={styles.collectionsTableContainer}>
+                                            <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
+                                            <MLTable bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
+                                          </div>
+                                      }
+                                      {
+                                        (recordPermissions) &&
+                                          <div className={styles.recordPermissionsTableContainer}>
+                                            <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
+                                            <MLTable bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
+                                          </div>
+                                      }
+                                      {
+                                        (recordMetadata) &&
+                                          <div className={styles.recordMetadataTableContainer}>
+                                            <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
+                                            <MLTable bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
+                                          </div>
+                                      }
+                                      <div className={styles.documentPropertiesContainer}>
+                                        <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">Document Properties</div>
+                                        {
+                                          (documentProperties) ?
+                                            <pre data-testid="doc-properties-container">{xmlFormatter(documentProperties)}</pre>
+                                            : <p data-testid="doc-no-properties-message">This document has no properties.</p>
+                                        }
+                                      </div>
+                                    </div>;
+              } else {
+                contentType === "json" ?
+                  block = (data) && <pre data-testid="json-container">{jsonFormatter(data)}</pre>
+                  :
+                  block = (xml) && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>;
               }
-            </div>
+              return block;
+            })()}</div>
+            <div></div>
           </Content>
         </Layout> :
         <DetailPageNonEntity
@@ -363,6 +505,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
           detailPagePreferences={detailPagePreferences}
           documentSize={documentSize}
           database={database}
+          collections={collections}
+          recordMetadata={recordMetadata}
+          recordPermissions={recordPermissions}
+          documentProperties={documentProperties}
+          docQuality={docQuality}
         />
   );
 };

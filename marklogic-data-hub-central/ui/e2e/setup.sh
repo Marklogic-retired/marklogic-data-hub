@@ -38,6 +38,8 @@ fi
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=convertedFlow --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateClientJSON --info --stacktrace
 
+# Add document properites to records for e2e test
+./gradlew addDocProperties -PenvironmentName=$env --info --stacktrace
 
 #Verify flow was run successfully based on record count in staging and final database.
 #The task would fail if there was a count mismatch
