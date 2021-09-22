@@ -1,11 +1,12 @@
 import React, {useContext} from "react";
 import styles from "../selected-facets/selected-facets.module.scss";
-import {Icon, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import {MonitorContext} from "../../util/monitor-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
+import {XLg} from "react-bootstrap-icons";
 
 interface Props {
     selectedFacets: any[];
@@ -74,6 +75,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
         return (
           <HCButton
             size="sm"
+            variant="outline-blue"
             className={styles.facetButton}
             key={index}
             onClick={() => clearMonitorFacet(item.constraint, item.facet)}
@@ -81,7 +83,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
             data-testid={`clear-${item.facet}`}
           >
             {displayName}
-            <Icon type="close"/>
+            <XLg className={styles.close}/>
           </HCButton>
         );
       })}
@@ -103,7 +105,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
               data-testid={`clear-grey-${item.facet}`}
             >
               {displayName}
-              <Icon type="close"/>
+              <XLg className={styles.close}/>
             </HCButton>
           </Tooltip>
         );
