@@ -1,5 +1,5 @@
 import React, {useContext, useEffect} from "react";
-import {Icon, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import {SearchContext} from "../../util/search-context";
 import styles from "./selected-facets.module.scss";
 import moment from "moment";
@@ -7,6 +7,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
+import {XLg} from "react-bootstrap-icons";
 
 
 
@@ -97,15 +98,15 @@ const SelectedFacets: React.FC<Props> = (props) => {
           return (
             <HCButton
               size="sm"
-              variant="outline-light"
-              className={styles.dateFacet}
+              variant="outline-blue"
+              className={styles.facetButton}
               key={index}
               onClick={() => clearDateFacet()}
               data-cy="clear-date-facet"
               data-testid="clear-date-facet"
             >
               {dateValues.join(" ~ ")}
-              <Icon type="close" />
+              <XLg className={styles.closeTime}/>
             </HCButton>
           );
         } else if (item.rangeValues) {
@@ -115,22 +116,22 @@ const SelectedFacets: React.FC<Props> = (props) => {
             return (
               <HCButton
                 size="sm"
-                variant="outline-light"
-                className={styles.dateFacet}
+                variant="outline-blue"
+                className={styles.facetButton}
                 key={index}
                 onClick={() => clearRangeFacet(item.constraint)}
                 data-cy={`clear-${item.rangeValues.lowerBound}`}
                 data-testid={`clear-${item.displayName}`}
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
-                <Icon type="close" />
+                <XLg className={styles.close}/>
               </HCButton>
             );
           } else {
             return (
               <HCButton
                 size="sm"
-                variant="outline-light"
+                variant="outline-blue"
                 className={styles.facetButton}
                 key={index}
                 onClick={() => clearRangeFacet(item.constraint)}
@@ -138,7 +139,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid="clear-range-facet"
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
-                <Icon type="close" />
+                <XLg className={styles.close}/>
               </HCButton>
             );
           }
@@ -146,7 +147,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
         return (
           <HCButton
             size="sm"
-            variant="outline-light"
+            variant="outline-blue"
             className={styles.facetButton}
             key={index}
             onClick={() => clearFacet(item.constraint, item.facet)}
@@ -154,7 +155,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-testid={`clear-${item.facet}`}
           >
             {facetName + ": " + item.facet}
-            <Icon type="close" />
+            <XLg className={styles.close}/>
           </HCButton>
         );
       })}
@@ -172,7 +173,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           return ((unCheckRest(item.constraint, item.facet)) &&
             <HCButton
               size="sm"
-              variant="outline-light"
+              variant="outline-blue"
               className={styles.facetGreyButton}
               key={index}
               onClick={() => clearGreyDateFacet()}
@@ -180,7 +181,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               data-testid="clear-date-facet"
             >
               {dateValues.join(" ~ ")}
-              <Icon type="close" />
+              <XLg className={styles.close}/>
             </HCButton>
           );
         } else if (item.rangeValues) {
@@ -190,21 +191,21 @@ const SelectedFacets: React.FC<Props> = (props) => {
             return ((unCheckRest(item.constraint, item.facet, item.rangeValues)) &&
               <HCButton
                 size="sm"
-                variant="outline-light"
+                variant="outline-blue"
                 className={styles.facetGreyButton}
                 key={index}
                 onClick={() => clearGreyRangeFacet(item.constraint)}
                 data-cy={`clear-grey-${item.rangeValues.lowerBound}`}
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " ~ " + item.rangeValues.upperBound}
-                <Icon type="close" />
+                <XLg className={styles.close}/>
               </HCButton>
             );
           } else {
             return ((unCheckRest(item.constraint, item.facet)) &&
               <HCButton
                 size="sm"
-                variant="outline-light"
+                variant="outline-blue"
                 className={styles.facetGreyButton}
                 key={index}
                 onClick={() => clearGreyRangeFacet(item.constraint)}
@@ -212,7 +213,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid="clear-range-facet"
               >
                 {facetName + ": " + item.rangeValues.lowerBound + " - " + item.rangeValues.upperBound}
-                <Icon type="close" />
+                <XLg className={styles.close}/>
               </HCButton>
             );
           }
@@ -225,7 +226,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
           >
             <HCButton
               size="sm"
-              variant="outline-light"
+              variant="outline-blue"
               className={styles.facetGreyButton}
               key={index}
               onClick={() => clearGreyFacet(item.constraint, item.facet)}
@@ -233,7 +234,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               data-testid={`clear-grey-${item.facet}`}
             >
               {facetName + ": " + item.facet}
-              <Icon type="close" />
+              <XLg className={styles.close}/>
             </HCButton>
           </Tooltip>
         );

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./hc-tag.module.scss";
-import iconCloseTag from "../../../assets/icon_closeTag.svg";
+import {XLg} from "react-bootstrap-icons";
 interface Props {
   label: string;
   ariaLabel?: string;
@@ -27,7 +27,7 @@ const HCTag: React.FC<Props> = (props) => {
       style={props.style}>
       {props.label}
       {(props?.closable || props?.closable === undefined) &&
-        <img src={iconCloseTag} alt={""} data-testid="iconClose-tagComponent" onClick={props?.onClose} className={styles.spanIcon} />
+        <XLg data-testid="iconClose-tagComponent" onClick={props?.onClose} className={styles.spanIcon} />
       }
     </span>
   );
