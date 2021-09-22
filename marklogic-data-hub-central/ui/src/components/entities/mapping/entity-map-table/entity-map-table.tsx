@@ -18,7 +18,7 @@ import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/toolt
 import StepsConfig from "../../../../config/steps.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
 
 interface Props {
   setScrollRef: any;
@@ -1091,7 +1091,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         </div>
         {props.isRelatedEntity ?
           <div className={styles.deleteEntityLink}>
-            <Icon className={styles.deleteTableIcon} type="close" data-testid={props.entityTypeTitle + "-delete"} onClick={(e) => onDelete(props.relatedEntityTypeProperties[props.relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === props.entityMappingId)])} />
+            <XLg className={styles.deleteTableIcon} data-testid={props.entityTypeTitle + "-delete"} onClick={(e) => onDelete(props.relatedEntityTypeProperties[props.relatedEntityTypeProperties.findIndex(object => object["entityMappingId"] === props.entityMappingId)])} />
           </div> : ""
         }
       </div>
