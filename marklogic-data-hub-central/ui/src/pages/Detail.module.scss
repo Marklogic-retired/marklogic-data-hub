@@ -125,6 +125,75 @@
   display: inline-block;
 }
 
+.collectionsTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .collectionsTable {
+    padding-top: 5px;
+  }
+
+  .recordMetadataTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .recordMetadataTable {
+    padding-top: 5px;
+  }
+  .recordPermissionsTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .recordPermissionsTable {
+    padding-top: 5px;
+  }
+
+  .provTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .provTable {
+    padding-top: 5px;
+  }
+
+  .documentPropertiesLabel {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .documentPropertiesContainer {
+    padding-top: 5px;
+  }
+
+.docInfoContainer {
+	padding-top: 8px;
+	padding-bottom: 6px;
+
+	.metaItem {
+		display: inline-block;
+		min-width: 260px;
+	}
+
+	.metaLabel {
+		font-weight: bold;
+		color: #666;
+		padding-right: 8px;
+	}
+
+	.metaValue {
+		padding-right: 15px;
+  }
+  .format {
+    padding-right: 5px;
+    text-transform: uppercase;
+  }
+}
+
 .documentContainer{
   overflow: auto;
  }

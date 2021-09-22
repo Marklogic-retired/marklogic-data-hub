@@ -191,6 +191,8 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
+    detailPage.getMetadataView().should("exist");
+    detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/customers/Cust5.json");
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
@@ -206,6 +208,8 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentSource().should("contain", "PersonSourceName");
     detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
+    detailPage.getMetadataView().should("exist");
+    detailPage.getMetadataView().click();
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());

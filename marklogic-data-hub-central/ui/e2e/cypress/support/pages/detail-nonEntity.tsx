@@ -32,6 +32,30 @@ class DetailPageNonEntity {
     return cy.findByTestId("history-table");
   }
 
+  getDocumentQuality() {
+    return cy.findByTestId("non-entity-document-quality");
+  }
+
+  getDocumentCollections() {
+    return cy.findByTestId("collections-table");
+  }
+
+  getDocumentPermissions() {
+    return cy.findByTestId("record-permissions-table");
+  }
+
+  getDocumentMetadataValues() {
+    return cy.findByTestId("record-metadata-table");
+  }
+
+  getDocumentProperties() {
+    return cy.findByTestId("doc-properties-container");
+  }
+
+  getDocumentNoPropertiesMessage() {
+    return cy.findByTestId("doc-no-properties-message");
+  }
+
 }
 
 const detailPageNonEntity = new DetailPageNonEntity();

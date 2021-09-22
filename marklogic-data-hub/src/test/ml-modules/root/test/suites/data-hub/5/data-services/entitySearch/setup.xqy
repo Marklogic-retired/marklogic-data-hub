@@ -165,3 +165,8 @@ xdmp:document-insert("/exp/doc2",
           => map:with("datahubCreatedInFlow", "my-flow-2")
           => map:with("datahubCreatedByStep", "my-step-2")
         ));
+
+xdmp:document-set-properties(
+         "/exp/doc1",
+         (<priority>1</priority>,
+          <status>unedited</status>));

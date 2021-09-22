@@ -35,33 +35,33 @@
     padding-top: 20px;
   }
 }
-  
+
 .detailContentNonEntityHeader {
   background: #fff;
   display: flex;
   justify-content: space-between;
-  
+
   .backButtonHeader {
     margin-right: 30px;
     display: flex;
   }
-  
+
   .metadataCollapseIconContainer {
-    display: flex; 
+    display: flex;
     align-items: center;
-  
+
     > .metadataCollapseIcon {
-  
+
       .collapseIconsAlignment {
         background-color: #e7e7e8;
         padding: 3px 3px;
         border-radius: 5px 0px 0px 5px;
         cursor: pointer;
       }
-      
+
       .collapseExpandIcons {
         font-size: 16px;
-        color: #000; 
+        color: #000;
       }
     }
   }
@@ -71,7 +71,7 @@
   max-height: 60vh;
   overflow: auto;
 }
-  
+
 .siderParent {
   overflow: auto;
   //height: '77vh',
@@ -82,26 +82,30 @@
 }
 .siderContainerNonEntity {
   padding: 92px 36px 72px 36px;
-  
+
   .uri {
     font-weight: bold;
   }
-  
+
+  .quality {
+    font-weight: bold;
+  }
+
   .metadataTableLabel {
     padding-top: 20px;
     font-size: 16px;
   }
-  
+
   .sourcesMetadataTable {
     padding-top: 5px;
     width: 400px;
-    
+
     & thead > tr > th {
       color: #44499C;
       background-color: #E7E7E8;
     };
   }
-  
+
   .historyMetadataTable {
     padding-top: 5px;
     & thead > tr > th {
@@ -109,7 +113,7 @@
       background-color: #E7E7E8;
     };
   }
-} 
+}
 
 .noneValue {
   color: #CCCCCC;
@@ -147,3 +151,41 @@
 .downloadIcon {
   font-size: 12px;
 }
+
+
+
+.collectionsTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .collectionsTable {
+    padding-top: 5px;
+  }
+
+  .recordMetadataTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .recordMetadataTable {
+    padding-top: 5px;
+  }
+  .recordPermissionsTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+
+  .recordPermissionsTable {
+    padding-top: 5px;
+  }
+
+  .documentPropertiesLabel {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    font-size: 16px;
+  }
+
+  .documentPropertiesContainer {
+    padding-top: 5px;
+  }
