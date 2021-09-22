@@ -138,3 +138,16 @@ $input-border-radius: 2px;
         color: $info;
     }
 }
+
+.btn-outline-blue {
+    color: $info;
+    background-color: transparent;
+    border-color: $info;
+    &:hover {
+        color: $info;
+    }
+}
+
+.btn-sm, .btn-group-sm > .btn {
+    padding: 0.05rem 0.45rem;
+  }
