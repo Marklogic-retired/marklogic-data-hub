@@ -9,12 +9,13 @@ import EntityTypeModal from "../components/modeling/entity-type-modal/entity-typ
 import EntityTypeTable from "../components/modeling/entity-type-table/entity-type-table";
 import styles from "./Modeling.module.scss";
 
-import {deleteEntity, entityReferences, primaryEntityTypes, publishDraftModels, updateEntityModels} from "../api/modeling";
+import {deleteEntity, entityReferences, updateHubCentralConfig, primaryEntityTypes, publishDraftModels, updateEntityModels, getHubCentralConfig} from "../api/modeling";
 import {UserContext} from "../util/user-context";
 import {ModelingContext} from "../util/modeling-context";
 import {ModelingMessages, ModelingTooltips} from "../config/tooltips.config";
 import {AuthoritiesContext} from "../util/authorities";
 import {ConfirmationType} from "../types/common-types";
+import {hubCentralConfig} from "../types/modeling-types";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
 import {faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
@@ -53,6 +54,9 @@ const Modeling: React.FC = () => {
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [arrayValues, setArrayValues] = useState<string[]>([]);
 
+  //hubCentral Config
+  const [hubCentralConfig, sethubCentralConfig] = useState({});
+
 
   useEffect(() => {
     if (canReadEntityModel && modelingOptions.view === "table") {
@@ -63,6 +67,7 @@ const Modeling: React.FC = () => {
   useEffect(() => {
     if (canReadEntityModel) {
       setEntityTypesFromServer();
+      setHubCentralConfigFromServer();
     }
   }, []);
 
@@ -95,6 +100,17 @@ const Modeling: React.FC = () => {
         if (response["data"].length > 0) {
           setEntityTypeNamesArray(entityTypesArray, isDraft);
         }
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const setHubCentralConfigFromServer = async () => {
+    try {
+      const response = await getHubCentralConfig();
+      if (response["status"] === 200) {
+        sethubCentralConfig(response.data);
       }
     } catch (error) {
       handleError(error);
@@ -135,15 +151,31 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const publishHubCentralConfig = async (hubCentralConfig: hubCentralConfig) => {
+    try {
+      let response = await updateHubCentralConfig(hubCentralConfig);
+      if (response["status"] === 200) {
+        await setHubCentralConfigFromServer();
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      toggleRelationshipModal(false);
+      toggleConfirmModal(false);
+    }
+  };
+
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
       setAutoExpand(entityName);
     }
     toggleShowEntityModal(false);
-    await setEntityTypesFromServer();
-    if (!isEditModal && modelingOptions.view === "graph") {
-      setSelectedEntity(entityName);
-    }
+    await setEntityTypesFromServer().then((resp => {
+      if (!isEditModal && modelingOptions.view === "graph") {
+        let isDraft = true;
+        setSelectedEntity(entityName, isDraft);
+      }
+    }));
   };
 
   const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => {
@@ -218,28 +250,6 @@ const Modeling: React.FC = () => {
       }
     }
   };
-
-  // const saveAllEntitiesThenDeleteFromServer = async () => {
-  //   try {
-  //     const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
-  //     if (response["status"] === 200) {
-  //       let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : "";
-  //       try {
-  //         await deleteEntity(entityName);
-  //       } catch (error) {
-  //         handleError(error);
-  //       } finally {
-  //         await setEntityTypesFromServer();
-  //         toggleConfirmModal(false);
-  //         if (modelingOptions.selectedEntity && modelingOptions.selectedEntity === entityName) {
-  //           setSelectedEntity(undefined);
-  //         }
-  //       }
-  //     }
-  //   } catch (error) {
-  //     handleError(error);
-  //   }
-  // };
 
 
   const addButton = <MLButton
@@ -317,11 +327,11 @@ const Modeling: React.FC = () => {
               <p>{tiles.model.intro}</p>
               {viewSwitch}
             </div>
-            {modelingOptions.isModified && (
+            {modelingOptions.isModified ? (
               <div className={modelingOptions.isModified ? styles.alertContainer : ""}><MLAlert
                 type="info" aria-label="entity-modified-alert" showIcon
                 message={ModelingMessages.entityEditedAlert}/></div>
-            )}
+            ) : ""}
             <div>
               <div className={styles.header}>
                 <h1>Entity Types</h1>
@@ -394,6 +404,8 @@ const Modeling: React.FC = () => {
               setEntityTypesFromServer={setEntityTypesFromServer}
               toggleConfirmModal={toggleConfirmModal}
               setConfirmType={setConfirmType}
+              hubCentralConfig={hubCentralConfig}
+              updateHubCentralConfig={publishHubCentralConfig}
             />
           </>
         }
@@ -407,6 +419,7 @@ const Modeling: React.FC = () => {
             updateEntities={setEntityTypesFromServer}
             updateSavedEntity={saveAllEntitiesToServer}
             autoExpand={autoExpand}
+            hubCentralConfig={hubCentralConfig}
           />
         </div> : ""}
         <ConfirmationModal
@@ -427,6 +440,7 @@ const Modeling: React.FC = () => {
           namespace={namespace}
           prefix={prefix}
           color={color}
+          updateHubCentralConfig={publishHubCentralConfig}
         />
       </div>
     );

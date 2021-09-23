@@ -13,6 +13,7 @@ import {UserContext} from "../../../../util/user-context";
 import {TwitterPicker} from "react-color";
 import graphConfig from "../../../../config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
+import {defaultHubCentralConfig} from "../../../../config/modeling.config";
 
 type Props = {
   entityTypes: any;
@@ -22,6 +23,9 @@ type Props = {
   canReadEntityModel: any;
   updateEntities: any;
   updateSavedEntity: (entity: EntityModified) => void;
+  hubCentralConfig: any;
+  updateHubCentralConfig: (hubCentralConfig: any) => void;
+  getColor: any;
 };
 
 const DEFAULT_TAB = "properties";
@@ -65,11 +69,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
             setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
             setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
-            if (selectedEntityDetails.model.hubCentral && selectedEntityDetails.model.hubCentral.modeling.color) {
-              setColorSelected(entity !== undefined && selectedEntityDetails.model.hubCentral.modeling.color);
-            } else {
-              setColorSelected("#EEEFF1");
-            }
           } else {
             // Entity type not found, may have been deleted, unset
             setSelectedEntity(undefined);
@@ -78,6 +77,15 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       }
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const initializeEntityColor = () => {
+    let entColor = props.getColor(modelingOptions.selectedEntity);
+    if (entColor) {
+      setColorSelected(entColor);
+    } else {
+      setColorSelected("#EEEFF1");
     }
   };
 
@@ -115,7 +123,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const handlePropertyUpdate = async (event) => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, colorSelected);
+        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix);
         if (response["status"] === 200) {
           setErrorServer("");
         }
@@ -153,6 +161,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     if (modelingOptions.selectedEntity) {
       setErrorServer("");
       getEntityInfo();
+      initializeEntityColor();
     }
   }, [modelingOptions.selectedEntity]);
 
@@ -165,11 +174,10 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     setColorSelected(color.hex);
     try {
       if (modelingOptions.selectedEntity !== undefined) {
-        const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix, color.hex);
-        props.updateEntities();
-        if (response["status"] === 200) {
-          setErrorServer("");
-        }
+        let colorPayload = defaultHubCentralConfig;
+        colorPayload.modeling.entities[modelingOptions.selectedEntity] = {color: color.hex};
+        props.updateHubCentralConfig(colorPayload);
+        setErrorServer("");
       }
     } catch (error) {
       if (error.response.status === 400) {

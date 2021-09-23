@@ -9,7 +9,8 @@ import NodeSvg from "./node-svg";
 import graphConfig from "../../../../config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
 import {Dropdown, Menu} from "antd";
-import {EntityModified} from "../../../../types/modeling-types";
+import {defaultHubCentralConfig} from "../../../../config/modeling.config";
+import * as _ from "lodash";
 
 type Props = {
   entityTypes: any;
@@ -24,8 +25,11 @@ type Props = {
   canWriteEntityModel: any;
   graphEditMode: any;
   setGraphEditMode: any;
-  saveEntityCoords: any;
+  //saveEntityCoords: any;
   setCoordsChanged: any;
+  hubCentralConfig: any;
+  updateHubCentralConfig: (hubCentralConfig: any) => void;
+  getColor: any;
 };
 
 let entityMetadata = {};
@@ -37,7 +41,27 @@ const GraphVis: React.FC<Props> = (props) => {
   const graphType = "shape";
 
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
-  const [physicsEnabled, setPhysicsEnabled] = useState(true);
+
+  const entitiesConfigExist = () => {
+    return !props.hubCentralConfig?.modeling?.entities ? false : true;
+  };
+
+  const coordinatesExist = () => {
+    let coordsExist = false;
+    if (entitiesConfigExist()) {
+      let allEntityCoordinates = props.hubCentralConfig["modeling"]["entities"];
+      for (const entity of Object.keys(allEntityCoordinates)) {
+        if (allEntityCoordinates[entity]) {
+          if (allEntityCoordinates[entity].graphX && allEntityCoordinates[entity].graphY) {
+            coordsExist = true;
+            break;
+          }
+        }
+      }
+    }
+    return coordsExist;
+  };
+  const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
   //const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   let testingMode = true; // Should be used further to handle testing only in non-production environment
@@ -62,41 +86,55 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Load coords *once* on init
   useEffect(() => {
-    if (!coordsLoaded && props.entityTypes.length > 0) {
-      let newCoords = {};
-      props.entityTypes.forEach(e => {
-        if (e.model.hubCentral) {
-          let opts = e.model.hubCentral.modeling;
-          if (opts.graphX && opts.graphY) {
-            newCoords[e.entityName] = {graphX: opts.graphX, graphY: opts.graphY};
-          }
+    if (!coordsLoaded) {
+      if (entitiesConfigExist()) {
+        if (Object.keys(props.hubCentralConfig["modeling"]["entities"]).length) {
+          let newCoords = {};
+          let allCoordinates = props.hubCentralConfig["modeling"]["entities"];
+          Object.keys(allCoordinates).forEach(entity => {
+            let entityCoordinates = allCoordinates[entity];
+            if (entityCoordinates.graphX && entityCoordinates.graphY) {
+              newCoords[entity] = {graphX: entityCoordinates.graphX, graphY: entityCoordinates.graphY};
+            }
+          });
+          setCoords(newCoords);
+          setCoordsLoaded(true);
         }
+      }
+    } else {
+      setGraphData({
+        nodes: getNodes(),
+        edges: getEdges()
       });
-      setCoords(newCoords);
-      setCoordsLoaded(true);
     }
-  }, [props.entityTypes]);
+  }, [props.hubCentralConfig]);
+
+  useEffect(() => {
+    if (modelingOptions.view === "graph") {
+      if (network && coordsLoaded) {
+        initializeZoomScale();
+      }
+    }
+  }, [network, modelingOptions.view]);
 
   // Initialize or update graph
   useEffect(() => {
-    if (props.entityTypes) { // && coordsLoaded) {
-      props.entityTypes.forEach(e => {
-        if (e.model.hubCentral) {
-          let opts = e.model.hubCentral.modeling;
-          if (opts.graphX && opts.graphY) {
-            if (physicsEnabled) {
-              setPhysicsEnabled(false);
-              return false;
-            }
-          }
+    if (props.entityTypes && props.hubCentralConfig) {
+      if (coordinatesExist()) {
+        if (physicsEnabled) {
+          setPhysicsEnabled(false);
         }
-      });
+      }
 
       setGraphData({
         nodes: getNodes(),
         edges: getEdges()
       });
 
+      //Initialize graph zoom scale
+      if (network) {
+        initializeZoomScale();
+      }
       //setSaveAllCoords(true);
       return () => {
         setClickedNode(undefined);
@@ -106,13 +144,21 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
 
+  const initializeZoomScale = () => {
+    if (props.hubCentralConfig?.modeling?.scale) {
+      network.moveTo({scale: props.hubCentralConfig.modeling["scale"]});
+    }
+  };
+
   const coordsExist = (entityName) => {
     let result = false;
-    const index = props.entityTypes.map(e => e.entityName).indexOf(entityName);
-    if (index >= 0 && props.entityTypes[index].model.hubCentral) {
-      if (props.entityTypes[index].model.hubCentral.modeling.graphX &&
-          props.entityTypes[index].model.hubCentral.modeling.graphY) {
-        result = true;
+    if (entitiesConfigExist()) {
+      let entities = props.hubCentralConfig["modeling"]["entities"];
+      if (entities[entityName]) {
+        if (entities[entityName].graphX &&
+          entities[entityName].graphY) {
+          result = true;
+        }
       }
     }
     return result;
@@ -121,55 +167,21 @@ const GraphVis: React.FC<Props> = (props) => {
   const saveUnsavedCoords = async () => {
     if (props.entityTypes) {
       let newCoords = {...coords};
-      let updatedEntityDefinitions: any = [];
+      let updatedHubCentralConfig: any = defaultHubCentralConfig;
       props.entityTypes.forEach(ent => {
         if (!coordsExist(ent.entityName)) {
           let positions = network.getPositions([ent.entityName])[ent.entityName];
           newCoords[ent.entityName] = {graphX: positions.x, graphY: positions.y};
-          let entityDefinition: EntityModified = getDefinitionsPayload(ent, {graphX: positions.x, graphY: positions.y});
-          updatedEntityDefinitions.push(entityDefinition);
+          updatedHubCentralConfig["modeling"]["entities"][ent.entityName] = {graphX: positions.x, graphY: positions.y};
         }
       });
       setCoords(newCoords);
-      if (props.updateSavedEntity && updatedEntityDefinitions.length) {
-        await props.updateSavedEntity(updatedEntityDefinitions);
+      if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
+        await props.updateHubCentralConfig(updatedHubCentralConfig);
         props.setCoordsChanged(true);
       }
     }
   };
-
-  const getDefinitionsPayload = (entityModel: any, coordinates: any) => {
-    let updatedDefinitions = {...entityModel.model.definitions};
-    let entityName = entityModel.entityName;
-    let entityTypeDefinition = updatedDefinitions[entityName];
-
-    let hubCentral = entityModel.model.hubCentral ? entityModel.model.hubCentral : {};
-
-    if (hubCentral["modeling"]) {
-      hubCentral.modeling["graphX"] = coordinates.graphX;
-      hubCentral.modeling["graphY"] = coordinates.graphY;
-    } else {
-      hubCentral = {"modeling": {"graphX": coordinates.graphX, "graphY": coordinates.graphY}};
-    }
-
-    updatedDefinitions[entityName] = entityTypeDefinition;
-
-    let modifiedEntityDefinition: EntityModified = {
-      entityName: entityName,
-      modelDefinition: updatedDefinitions,
-      hubCentral: hubCentral
-    };
-
-    return modifiedEntityDefinition;
-  };
-
-  // Save all unsaved coords
-  // useEffect(() => {
-  //   if (saveAllCoords && network) {
-  //     saveUnsavedCoords();
-  //   }
-  //   setSaveAllCoords(false);
-  // }, [saveAllCoords]);
 
   const escFunction = useCallback((event) => {
     if (event.keyCode === 27) {
@@ -214,7 +226,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Focus on the selected nodes in filter input
   useEffect(() => {
-    if (network) {
+    if (network && props.isEntitySelected) {
       network.focus(props.entitySelected);
     }
   }, [network, props.isEntitySelected]);
@@ -249,23 +261,6 @@ const GraphVis: React.FC<Props> = (props) => {
     return ReactDOMServer.renderToString(icon);
   };
 
-  const getColor = (entityName) => {
-    let color = "#EEEFF1";
-    let entityIndex = props.entityTypes.findIndex(obj => obj.entityName === entityName);
-    if (props.entityTypes[entityIndex].model.hubCentral && props.entityTypes[entityIndex].model.hubCentral.modeling["color"]&& props.filteredEntityTypes.length > 0 && !props.filteredEntityTypes.includes("a")) {
-      if (props.filteredEntityTypes.includes(entityName)) {
-        color = props.entityTypes[entityIndex].model.hubCentral.modeling["color"];
-      } else {
-        color = "#F5F5F5";
-      }
-    } else if (props.entityTypes[entityIndex].model.hubCentral && props.entityTypes[entityIndex].model.hubCentral.modeling["color"]) {
-      color = props.entityTypes[entityIndex].model.hubCentral.modeling["color"];
-    } else {
-      color = "#EEEFF1";
-    }
-    return color;
-  };
-
   // TODO remove when num instances is retrieved from db
   const getNumInstances = (entityName) => {
     let num = -123;
@@ -289,8 +284,8 @@ const GraphVis: React.FC<Props> = (props) => {
           ),
           title: e.entityName + " tooltip text", // TODO use entity description
           color: {
-            background: getColor(e.entityName),
-            border: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : getColor(e.entityName),
+            background: props.getColor(e.entityName),
+            border: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : props.getColor(e.entityName),
           },
           borderWidth: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? 3 : 0,
           // physics: {
@@ -303,7 +298,7 @@ const GraphVis: React.FC<Props> = (props) => {
                 values.borderColor = graphConfig.nodeStyles.selectColor;
                 values.borderWidth = 3;
               } else if (selected) {
-                values.color = getColor(id);
+                values.color = props.getColor(id);
                 values.borderColor = graphConfig.nodeStyles.selectColor;
                 values.borderWidth = 3;
               } else if (hovering) {
@@ -322,7 +317,7 @@ const GraphVis: React.FC<Props> = (props) => {
       });
     } else if (graphType === "image") { // TODO for custom SVG node, not currently used
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
-        const node = new NodeSvg(e.entityName, getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
+        const node = new NodeSvg(e.entityName, props.getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
         return {
           id: e.entityName,
           label: "",
@@ -429,12 +424,12 @@ const GraphVis: React.FC<Props> = (props) => {
     if (node2 === "Select target entity type*") {
       targetNodeColor = "#ececec";
     } else {
-      targetNodeColor = getColor(targetNodeName);
+      targetNodeColor = props.getColor(targetNodeName);
     }
     return {
       edgeId: edgeInfo,
       sourceNodeName: sourceNodeName,
-      sourceNodeColor: getColor(sourceNodeName),
+      sourceNodeColor: props.getColor(sourceNodeName),
       targetNodeName: targetNodeName,
       targetNodeColor: targetNodeColor,
       relationshipName: edgeInfo.split("-")[0],
@@ -528,6 +523,12 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [clickedNode]);
 
+  const handleZoom = _.debounce((event) => {
+    let ZoomScalePayload = defaultHubCentralConfig;
+    ZoomScalePayload.modeling["scale"] =  event.scale;
+    props.updateHubCentralConfig(ZoomScalePayload);
+  }, 400);
+
   const events = {
     select: (event) => {
       if (!props.graphEditMode) {
@@ -564,22 +565,24 @@ const GraphVis: React.FC<Props> = (props) => {
       let {nodes} = event;
       if (nodes.length > 0) {
         let positions = network.getPositions([nodes[0]])[nodes[0]];
-        // console.info("NODE dragged", event, positions);
         if (positions && positions.x && positions.y) {
           let newCoords = {...coords};
           newCoords[nodes[0]] = {graphX: positions.x, graphY: positions.y};
           setCoords(newCoords);
-          props.saveEntityCoords(nodes[0], positions.x, positions.y);
+          //props.saveEntityCoords(nodes[0], positions.x, positions.y);
+          let coordsPayload = defaultHubCentralConfig;
+          coordsPayload.modeling.entities[nodes[0]] =  {graphX: positions.x, graphY: positions.y};
+          props.updateHubCentralConfig(coordsPayload);
         }
       } else {
-        if (props.entityTypes) {
-          let updatedEntityDefinitions: any = [];
-          props.entityTypes.forEach(ent => {
-            let entityDefinition: EntityModified = getDefinitionsPayload(ent, {graphX: coords[ent.entityName].graphX + event.event.deltaX, graphY: coords[ent.entityName].graphY + event.event.deltaY});
-            updatedEntityDefinitions.push(entityDefinition);
+        if (entitiesConfigExist()) {
+          let updatedHubCentralConfig: any = defaultHubCentralConfig;
+          let entitiesConfig = props.hubCentralConfig["modeling"]["entities"];
+          Object.keys(entitiesConfig).forEach(entityName => {
+            updatedHubCentralConfig["modeling"]["entities"][entityName] = {graphX: coords[entityName].graphX + event.event.deltaX, graphY: coords[entityName].graphY + event.event.deltaY};
           });
-          if (props.updateSavedEntity && updatedEntityDefinitions.length) {
-            await props.updateSavedEntity(updatedEntityDefinitions);
+          if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
+            await props.updateHubCentralConfig(updatedHubCentralConfig);
             props.setCoordsChanged(true);
           }
         }
@@ -610,6 +613,10 @@ const GraphVis: React.FC<Props> = (props) => {
         if (positions && Object.keys(positions).length) {
           saveUnsavedCoords();
           setHasStabilized(true);
+          if (physicsEnabled) {
+            setPhysicsEnabled(false);
+            return false;
+          }
         }
         if (modelingOptions.selectedEntity) {
           try { // Visjs might not have new entity yet, catch error
@@ -639,9 +646,11 @@ const GraphVis: React.FC<Props> = (props) => {
         setClickedNode(undefined);
         setMenuPosition({});
       }
+    },
+    zoom: (event) => {
+      handleZoom(event);
     }
   };
-
 
   return (
     <div id="graphVis">

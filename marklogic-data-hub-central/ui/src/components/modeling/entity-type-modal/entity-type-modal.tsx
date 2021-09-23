@@ -1,15 +1,15 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import axios from "axios";
 import {Form, Icon, Input, Modal} from "antd";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../../util/user-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {updateModelInfo} from "../../../api/modeling";
+import {createEntityType, updateModelInfo} from "../../../api/modeling";
 import {MLTooltip} from "@marklogic/design-system";
 import {TwitterPicker} from "react-color";
 import graphConfig from "../../../config/graph-vis.config";
+import {defaultHubCentralConfig} from "../../../config/modeling.config";
 
 
 type Props = {
@@ -22,6 +22,7 @@ type Props = {
   color: string;
   toggleModal: (isVisible: boolean) => void;
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
+  updateHubCentralConfig: (hubCentralConfig: any) => void;
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
@@ -36,11 +37,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [errorName, setErrorName] = useState("");
   const [, toggleIsNameDisabled] = useState(true);
   const [description, setDescription] = useState("");
+  const [descriptionTouched, setisDescriptionTouched] = useState(false);
   const [namespace, setNamespace] = useState("");
+  const [namespaceTouched, setisNamespaceTouched] = useState(false);
   const [prefix, setPrefix] = useState("");
+  const [prefixTouched, setisPrefixTouched] = useState(false);
   const [errorServer, setErrorServer] = useState(""); // Uncategorized errors from backend
   const [loading, toggleLoading] = useState(false);
   const [colorSelected, setColorSelected] = useState("#EEEFF1");
+  const [colorTouched, setisColorTouched] = useState(false);
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [eventValid, setEventValid] = useState(false);
   const node: any = useRef();
@@ -79,12 +84,27 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       setName(event.target.value);
     }
     if (event.target.id === "description") {
+      if (event.target.value !== props.description) {
+        setisDescriptionTouched(true);
+      } else {
+        setisDescriptionTouched(false);
+      }
       setDescription(event.target.value);
     }
     if (event.target.id === "namespace") {
+      if (event.target.value !== props.namespace) {
+        setisNamespaceTouched(true);
+      } else {
+        setisNamespaceTouched(false);
+      }
       setNamespace(event.target.value);
     }
     if (event.target.id === "prefix") {
+      if (event.target.value !== props.prefix) {
+        setisPrefixTouched(true);
+      } else {
+        setisPrefixTouched(false);
+      }
       setPrefix(event.target.value);
     }
   };
@@ -128,9 +148,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     return result;
   };
 
-  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string, color: string) => {
+  const updateEntityDescription = async (name: string, description: string, namespace: string, prefix: string) => {
     try {
-      const response = await updateModelInfo(name, description, namespace, prefix, color);
+      const response = await updateModelInfo(name, description, namespace, prefix);
       if (response["status"] === 200) {
         props.updateEntityTypesAndHideModal(name, description);
       }
@@ -142,26 +162,27 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       } else {
         handleError(error);
       }
-      toggleLoading(false);
     }
   };
 
-  const createEntityType = async (name: string, description: string) => {
+  const updateHubCentralConfig = async (entityName, color) => {
+    let colorPayload = defaultHubCentralConfig;
+    colorPayload.modeling.entities[entityName] = {color: color};
+    props.updateHubCentralConfig(colorPayload);
+  };
+
+  const addNewEntityType = async (name: string, description: string) => {
     try {
       const payload = {
         name: name,
         description: description,
         namespace: namespace,
-        namespacePrefix: prefix,
-        hubCentral: {
-          modeling: {
-            color: colorSelected
-          }
-        }
+        namespacePrefix: prefix
       };
-      const response = await axios.post("/api/models", payload);
+      const response = await createEntityType(payload);
       if (response["status"] === 201) {
         props.updateEntityTypesAndHideModal(name, description);
+        await updateHubCentralConfig(name, colorSelected);
       }
     } catch (error) {
       if (error.response.status === 400) {
@@ -175,19 +196,47 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   };
 
+  const entityPropertiesEdited = () => {
+    return (descriptionTouched || namespaceTouched || prefixTouched);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (entityPropertiesEdited()) {
+        await updateEntityDescription(name, description, namespace, prefix);
+      }
+      if (colorTouched) {
+        await updateHubCentralConfig(name, colorSelected);
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        if (error.response.data.hasOwnProperty("message")) {
+          setErrorServer(error["response"]["data"]["message"]);
+        }
+      } else {
+        handleError(error);
+      }
+    } finally {
+      toggleLoading(false);
+      if (props.isVisible) {
+        props.toggleModal(false);
+      }
+    }
+  };
+
   const onOk = (event) => {
     setErrorName("");
     setErrorServer("");
     event.preventDefault();
     if (props.isEditModal) {
       toggleLoading(true);
-      updateEntityDescription(name, description, namespace, prefix, colorSelected);
+      handleSubmit();
     } else {
       if (!NAME_REGEX.test(name)) {
         setErrorName(ModelingTooltips.nameRegex);
       } else {
         toggleLoading(true);
-        createEntityType(name, description);
+        addNewEntityType(name, description);
       }
     }
   };
@@ -207,6 +256,11 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const handleColorChange = async (color, event) => {
+    if (color.hex !== props.color) {
+      setisColorTouched(true);
+    } else {
+      setisColorTouched(false);
+    }
     setColorSelected(color.hex);
   };
 

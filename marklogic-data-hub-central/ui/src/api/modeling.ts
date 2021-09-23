@@ -5,22 +5,17 @@ export const primaryEntityTypes = async () => {
   return await axios.get(`/api/models/primaryEntityTypes?includeDrafts=true`);
 };
 
+export const createEntityType = async (entityPayload: any) => {
+  return await axios.post("/api/models", entityPayload);
+};
+
 export const updateModelInfo = async (name: string, description: string,
-  namespace: string, prefix: string, color: string, graphX?: number, graphY?: number) => {
+  namespace: string, prefix: string) => {
   let payload = {
     description: description,
     namespace: namespace,
-    namespacePrefix: prefix,
-    hubCentral: {
-      modeling: {
-        color: color
-      }
-    }
+    namespacePrefix: prefix
   };
-  if (graphX && graphY) {
-    payload.hubCentral.modeling["graphX"] = graphX;
-    payload.hubCentral.modeling["graphY"] = graphY;
-  }
   return await axios.put(`/api/models/${name}/info`, payload);
 };
 
@@ -42,4 +37,12 @@ export const updateEntityModels = async (entityModifiedArray: EntityModified[]) 
 
 export const publishDraftModels = async () => {
   return await axios.put(`/api/models/publishDraftModels`);
+};
+
+export const getHubCentralConfig = async () => {
+  return await axios.get(`/api/models/hubCentralConfig`);
+};
+
+export const updateHubCentralConfig = async (hubCentralConfig: any) => {
+  return await axios.put(`/api/models/hubCentralConfig`, hubCentralConfig);
 };

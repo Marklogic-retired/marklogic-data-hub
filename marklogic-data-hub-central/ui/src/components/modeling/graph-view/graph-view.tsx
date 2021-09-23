@@ -11,7 +11,6 @@ import SplitPane from "react-split-pane";
 import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
-import {updateModelInfo} from "../../../api/modeling";
 import {ConfirmationType} from "../../../types/common-types";
 
 type Props = {
@@ -28,27 +27,11 @@ type Props = {
   setEntityTypesFromServer: any;
   toggleConfirmModal: any;
   setConfirmType: any;
+  hubCentralConfig: any;
+  updateHubCentralConfig: (hubCentralConfig: any) => void;
 };
 
 const GraphView: React.FC<Props> = (props) => {
-
-  const saveEntityCoords = async (entityName, x, y) => {
-    const index = props.entityTypes.map(e => e.entityName).indexOf(entityName);
-    if (index >= 0) {
-      let def = props.entityTypes[index].model.definitions[entityName];
-      let colorDef = props.entityTypes[index].model.hubCentral?.modeling?.color;
-      await updateModelInfo(
-        entityName,
-        def.description ? def.description : "",
-        def.namespace ? def.namespace : "",
-        def.namespacePrefix ? def.namespacePrefix : "",
-        colorDef ? colorDef : "#EEEFF1",
-        x,
-        y
-      );
-      setCoordsChanged(true);
-    }
-  };
 
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
   const [filterMenuSuggestions, setFilterMenuSuggestions] = useState(["a"]);
@@ -59,7 +42,7 @@ const GraphView: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (coordsChanged) {
-      props.setEntityTypesFromServer();
+      //props.setEntityTypesFromServer();
       setCoordsChanged(false);
     }
   }, [coordsChanged]);
@@ -221,6 +204,26 @@ const GraphView: React.FC<Props> = (props) => {
     props.deleteEntityType(selectedEntity);
   };
 
+  const colorExistsForEntity = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
+  };
+
+  const getColor = (entityName) => {
+    let color = "#EEEFF1";
+    if (colorExistsForEntity(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
+      if (filterMenuSuggestions && filterMenuSuggestions.includes(entityName)) {
+        color = props.hubCentralConfig.modeling.entities[entityName]["color"];
+      } else {
+        color = "#F5F5F5";
+      }
+    } else if (colorExistsForEntity(entityName)) {
+      color = props.hubCentralConfig.modeling.entities[entityName]["color"];
+    } else {
+      color = "#EEEFF1";
+    }
+    return color;
+  };
+
   const graphViewMainPanel =
     <div className={styles.graphViewContainer}>
       <div className={styles.graphHeader}>
@@ -241,8 +244,11 @@ const GraphView: React.FC<Props> = (props) => {
           canWriteEntityModel={props.canWriteEntityModel}
           graphEditMode={graphEditMode}
           setGraphEditMode={setGraphEditMode}
-          saveEntityCoords={saveEntityCoords}
+          //saveEntityCoords={saveEntityCoords}
           setCoordsChanged={setCoordsChanged}
+          hubCentralConfig={props.hubCentralConfig}
+          updateHubCentralConfig={props.updateHubCentralConfig}
+          getColor={getColor}
         />
       </div>
     </div>;
@@ -279,6 +285,9 @@ const GraphView: React.FC<Props> = (props) => {
           canWriteEntityModel={props.canWriteEntityModel}
           updateEntities={props.updateEntities}
           updateSavedEntity={props.updateSavedEntity}
+          hubCentralConfig={props.hubCentralConfig}
+          updateHubCentralConfig={props.updateHubCentralConfig}
+          getColor={getColor}
         />
       </SplitPane> //: graphViewMainPanel
   //)

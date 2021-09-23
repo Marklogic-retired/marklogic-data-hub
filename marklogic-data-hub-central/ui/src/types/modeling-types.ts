@@ -7,7 +7,7 @@ export interface ModelingContextInterface {
   clearEntityModified: () => void;
   setEntityPropertiesNamesArray: (entityDefinitionsArray: any[]) => void;
   setView: (view: string) => void;
-  setSelectedEntity: (entityName: string | undefined) => void;
+  setSelectedEntity: (entityName: string | undefined, isDraft?: boolean) => void;
   setGraphViewOptions: (graphViewOptions: graphViewOptions) => void;
   closeSidePanelInGraphView: () => void;
 }
@@ -94,4 +94,8 @@ export interface EntityModified {
 export interface graphViewOptions {
   view: string,
   selectedEntity: string
+}
+export interface hubCentralConfig {
+  modeling: any;
+  scale?: any;
 }
