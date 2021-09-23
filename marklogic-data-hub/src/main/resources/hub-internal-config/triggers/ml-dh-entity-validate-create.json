@@ -17,7 +17,7 @@
   "module-root": "/",
   "enabled": true,
   "recursive": true,
-  "task-priority": "normal",
+  "task-priority": "higher",
   "permission": [
     {
       "role-name": "%%mlFlowDeveloperRole%%",
