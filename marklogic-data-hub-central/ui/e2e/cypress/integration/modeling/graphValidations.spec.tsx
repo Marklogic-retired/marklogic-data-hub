@@ -14,6 +14,16 @@ import graphVis from "../../support/components/model/graph-vis";
 import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Graph Validations", () => {
+  //Setup hubCentral config for testing
+  before(() => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
+    cy.waitForAsyncRequest();
+    cy.setupHubCentralConfig();
+    cy.waitForAsyncRequest();
+  });
   //login with valid account
   beforeEach(() => {
     cy.visit("/");

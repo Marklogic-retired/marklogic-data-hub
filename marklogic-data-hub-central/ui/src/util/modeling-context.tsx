@@ -35,8 +35,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [modelingOptions, setModelingOptions] = useState<ModelingOptionsInterface>(DEFAULT_MODELING_OPTIONS);
 
-  const setEntityTypeNamesArray = (entityTypeNamesArray: any[], isModified: boolean) => {
-    setModelingOptions({...modelingOptions, entityTypeNamesArray, isModified});
+  const setEntityTypeNamesArray = async (entityTypeNamesArray: any[], isModified: boolean) => {
+    setModelingOptions({...modelingOptions, entityTypeNamesArray, isModified: isModified});
   };
 
   const toggleIsModified = (isModified: boolean) => {
@@ -76,7 +76,6 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
         entityPropertiesNamesArray.push(property.name);
       });
     });
-
     setModelingOptions({...modelingOptions, entityPropertiesNamesArray});
   };
 
@@ -84,12 +83,15 @@ const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
     setModelingOptions({...modelingOptions, view: view});
   };
 
-  const setSelectedEntity = (selectedEntity: string | undefined) => {
-    setModelingOptions({
+  const setSelectedEntity = (selectedEntity: string | undefined, isDraft?: boolean) => {
+    let options = {
       ...modelingOptions,
       selectedEntity: selectedEntity
-      //openSidePanelInGraphView: true
-    });
+    };
+    if (isDraft) {
+      options["isModified"] = isDraft;
+    }
+    setModelingOptions(options);
   };
 
   const setGraphViewOptions = (graphViewOptions: graphViewOptions) => {

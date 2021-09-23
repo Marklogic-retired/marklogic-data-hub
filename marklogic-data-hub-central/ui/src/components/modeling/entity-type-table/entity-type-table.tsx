@@ -24,6 +24,7 @@ type Props = {
   editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified) => void;
+  hubCentralConfig: any;
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
@@ -301,10 +302,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const getEntityTypeProp = (entityName: any, prop: string) => {
     const entity = allEntityTypes.find(e => e.entityName === entityName);
     if (prop === "color") {
-      return (entity.hasOwnProperty("model") &&
-      entity.model.hasOwnProperty("hubCentral") &&
-      entity.model.hubCentral.hasOwnProperty("modeling") &&
-      entity.model.hubCentral.modeling.hasOwnProperty(prop)) ? entity.model.hubCentral.modeling[prop]: "#EEEFF1";
+      return colorExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: "#EEEFF1";
     }
     return (entity.hasOwnProperty("model") &&
       entity.model.hasOwnProperty("definitions") &&
@@ -335,12 +333,16 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   };
 
+  const colorExistsForEntity = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
+  };
+
   const renderTableData = allEntityTypes.map((entity) => {
     let result = {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
-      color: entity.model.hubCentral && entity.model.hubCentral.modeling.color ? (entity.entityName + "," + entity.model.hubCentral.modeling.color) : (entity.entityName + "," + "#EEEEFF1"),
+      color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEEFF1"),
       actions: entity.entityName,
       definitions: entity.model.definitions
     };

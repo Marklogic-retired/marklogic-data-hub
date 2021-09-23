@@ -11,6 +11,7 @@ import {
   createModelErrorResponsePrefix,
   createModelResponse
 } from "../../../assets/mock-data/modeling/modeling";
+import {defaultHubCentralConfig} from "../../../config/modeling.config";
 
 jest.mock("axios");
 const axiosMock = axios as jest.Mocked<typeof axios>;
@@ -30,8 +31,11 @@ const defaultModalOptions = {
   name: "",
   description: "",
   namespace: "",
-  prefix: ""
+  prefix: "",
+  updateHubCentralConfig: jest.fn()
 };
+
+let hubCentralConfig = defaultHubCentralConfig;
 
 describe("EntityTypeModal Component", () => {
   afterEach(() => {
@@ -53,13 +57,13 @@ describe("EntityTypeModal Component", () => {
     );
 
     let url = "/api/models";
-    let payload = {"name": "AnotherModel", "description": "Testing", "namespace": "", "namespacePrefix": "", "hubCentral": {"modeling": {"color": "#cee0ed"}}};
+    let payload = {"name": "AnotherModel", "description": "Testing", "namespace": "", "namespacePrefix": ""};
 
     expect(getByText("Add Entity Type")).toBeInTheDocument();
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
 
-    //modify the entity color via color picker and verify it is sent in payload
+    //modify the entity color via color picker and verify it is sent in hub central config payload
     userEvent.click(getByTestId("edit-color-icon"));
     userEvent.click(getByTitle("#CEE0ED"));
 
@@ -72,6 +76,12 @@ describe("EntityTypeModal Component", () => {
     });
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
+
+    //Verify the hubCentral payload
+    hubCentralConfig.modeling.entities["AnotherModel"] = {color: "#cee0ed"};
+
+    expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledWith(hubCentralConfig);
+    expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledTimes(1);
   });
 
   test("Adding an invalid Entity name shows error message", async () => {
@@ -100,7 +110,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "", "namespacePrefix": "", "hubCentral": {"modeling": {"color": "#EEEFF1"}}};
+    let payload = {"name": "Testing", "description": "", "namespace": "", "namespacePrefix": ""};
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -143,7 +153,7 @@ describe("EntityTypeModal Component", () => {
     );
 
     let url = "/api/models/ModelName/info";
-    let payload = {"description": "Updated Description", "namespace": "http://example.org/updated", "namespacePrefix": "updated", "hubCentral": {"modeling": {"color": "#f8f8de"}}};
+    let payload = {"description": "Updated Description", "namespace": "http://example.org/updated", "namespacePrefix": "updated"};
 
     userEvent.clear(getByPlaceholderText(placeholders.description));
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -162,6 +172,12 @@ describe("EntityTypeModal Component", () => {
     });
     expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.put).toHaveBeenCalledTimes(1);
+
+    //Verify the hubCentral payload
+    hubCentralConfig.modeling.entities["ModelName"] = {color: "#f8f8de"};
+
+    expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledWith(hubCentralConfig);
+    expect(defaultModalOptions.updateHubCentralConfig).toHaveBeenCalledTimes(1);
   });
 
   test("Submitting invalid namespace shows error message", async () => {
@@ -174,7 +190,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "badURI", "namespacePrefix": "test", "hubCentral": {"modeling": {"color": "#EEEFF1"}}};
+    let payload = {"name": "Testing", "description": "", "namespace": "badURI", "namespacePrefix": "test"};
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
@@ -200,7 +216,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
     let url = "/api/models";
-    let payload = {"name": "Testing", "description": "", "namespace": "http://example.org/test", "namespacePrefix": "xml", "hubCentral": {"modeling": {"color": "#EEEFF1"}}};
+    let payload = {"name": "Testing", "description": "", "namespace": "http://example.org/test", "namespacePrefix": "xml"};
 
 
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);

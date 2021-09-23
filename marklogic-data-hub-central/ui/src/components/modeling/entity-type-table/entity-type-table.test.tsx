@@ -14,6 +14,7 @@ import {
 
 import {
   getEntityTypes,
+  hubCentralConfig,
   referencePayloadEmpty,
   referencePayloadForeignKey,
   referencePayloadSteps
@@ -46,6 +47,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={jest.fn()}
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={{}}
         />
       </Router>);
 
@@ -66,6 +68,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={jest.fn()}
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
         />
       </Router>);
 
@@ -151,6 +154,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={editMock}
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
         />
       </Router>);
 
@@ -177,6 +181,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={jest.fn()}
           updateEntities={updateMock}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
         />
       </Router>);
 
@@ -247,6 +252,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={jest.fn()}
           updateEntities={updateMock}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
         />
       </Router>);
 
@@ -278,6 +284,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={jest.fn()}
           updateEntities={updateMock}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
         />
       </Router>);
 
@@ -326,6 +333,7 @@ describe("EntityTypeModal Component", () => {
             editEntityTypeDescription={jest.fn()}
             updateEntities={jest.fn()}
             updateSavedEntity={jest.fn()}
+            hubCentralConfig={hubCentralConfig}
           />
         </Router>
       </ModelingContext.Provider>
@@ -353,6 +361,7 @@ describe("EntityTypeModal Component", () => {
           editEntityTypeDescription={jest.fn()}
           updateEntities={jest.fn()}
           updateSavedEntity={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
         />
       </Router>);
 
@@ -376,6 +385,7 @@ describe("EntityTypeModal Component", () => {
             editEntityTypeDescription={jest.fn()}
             updateEntities={updateMock}
             updateSavedEntity={jest.fn()}
+            hubCentralConfig={hubCentralConfig}
           />
         </Router>
       </ModelingContext.Provider>

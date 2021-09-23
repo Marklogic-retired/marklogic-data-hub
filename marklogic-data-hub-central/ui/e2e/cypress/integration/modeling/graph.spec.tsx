@@ -17,6 +17,16 @@ const entityName = "GraphEntity";
 const entityDescription = "Graph entity description";
 
 describe("Entity Modeling: Graph View", () => {
+  //Setup hubCentral config for testing
+  before(() => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    LoginPage.postLogin();
+    cy.waitForAsyncRequest();
+    cy.setupHubCentralConfig();
+    cy.waitForAsyncRequest();
+  });
   //login with valid account
   beforeEach(() => {
     cy.visit("/");

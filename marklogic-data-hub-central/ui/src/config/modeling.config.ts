@@ -141,3 +141,9 @@ export const MORE_DATE_TYPES = {
 export const DROPDOWN_PLACEHOLDER = (key) => { return { label: '---------------------', value: key, disabled: true };};
 
 export const defaultModelingView = "graph";
+
+export const defaultHubCentralConfig = {
+  "modeling": {
+    "entities": {}
+  }
+}

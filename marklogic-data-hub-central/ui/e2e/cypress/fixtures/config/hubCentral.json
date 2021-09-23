@@ -1,0 +1,31 @@
+{
+  "modeling": {
+    "entities": {
+      "BabyRegistry": {
+        "color": "#EEEFF1",
+        "graphX": 68,
+        "graphY": -227
+      },
+      "Client": {
+        "color": "#EEEFF1",
+        "graphX": -164,
+        "graphY": 23
+      },
+      "Customer": {
+        "color": "#EEEFF1",
+        "graphX": -158,
+        "graphY": -159
+      },
+      "Order": {
+        "color": "#EEEFF1",
+        "graphX": -2,
+        "graphY": 165
+      },
+      "Person": {
+        "color": "#EEEFF1",
+        "graphX": 159,
+        "graphY": 15
+      }
+    }
+  }
+}

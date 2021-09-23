@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import GraphView from "./graph-view";
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import {getEntityTypes} from "../../../assets/mock-data/modeling/modeling";
+import {getEntityTypes, hubCentralConfig} from "../../../assets/mock-data/modeling/modeling";
 import {isModified} from "../../../assets/mock-data/modeling/modeling-context-mock";
 import "jest-canvas-mock";
 
@@ -35,6 +35,8 @@ describe("Graph View Component", () => {
         toggleRelationshipModal={jest.fn()}
         updateSavedEntity={jest.fn()}
         setEntityTypesFromServer={jest.fn()}
+        hubCentralConfig={hubCentralConfig}
+        updateHubCentralConfig={jest.fn()}
       />
     </ModelingContext.Provider>
     );
@@ -55,6 +57,8 @@ describe("Graph View Component", () => {
           toggleRelationshipModal={jest.fn()}
           updateSavedEntity={jest.fn()}
           setEntityTypesFromServer={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
+          updateHubCentralConfig={jest.fn()}
         />
       </ModelingContext.Provider>
     );

@@ -268,3 +268,13 @@ Cypress.Commands.add("getAttached", selector => {
     expect(Cypress.dom.isDetached($el)).to.be.false;
   }).then(() => cy.wrap($el));
 });
+
+Cypress.Commands.add("setupHubCentralConfig", () => {
+  cy.fixture("config/hubCentral.json").then((hubCentralConfig) => {
+    cy.request({
+      method: "PUT",
+      url: `/api/models/hubCentralConfig`,
+      body: hubCentralConfig
+    });
+  });
+});
