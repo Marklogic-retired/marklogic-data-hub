@@ -6,4 +6,4 @@ import module namespace trgr = 'http://marklogic.com/xdmp/triggers' at '/MarkLog
 
 declare variable $trgr:uri as xs:string external;
 
-entityTrigger:entity-validate($trgr:uri, fn:false())
+entityTrigger:entity-validate($trgr:uri)

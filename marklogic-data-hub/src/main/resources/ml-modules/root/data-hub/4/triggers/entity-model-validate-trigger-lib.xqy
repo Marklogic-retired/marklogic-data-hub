@@ -11,7 +11,7 @@ import module namespace httputils="http://marklogic.com/data-hub/http-utils"
 
 declare variable $ENTITY-MODEL-COLLECTION as xs:string := "http://marklogic.com/entity-services/models";
 
-declare function entity-validate($entity-uri as xs:string, $is-draft as xs:boolean) {
+declare function entity-validate($entity-uri as xs:string) {
   let $uber-model :=
     try {
       let $entity-def := fn:doc($entity-uri)/object-node()
@@ -49,8 +49,8 @@ declare function entity-validate($entity-uri as xs:string, $is-draft as xs:boole
         let $ref := $prop => map:get("$ref")
         (: build external URI for refenced entity :)
         let $entity-uri :=
-          (: if it is a draft, ignore empty references :)
-          if ($is-draft and fn:string($ref) eq "") then
+          (: ignore empty references, datatype string allows use to accept any value until reference is added :)
+          if (fn:string($ref) eq "") then
             (
               map:delete($prop, "$ref"),
               map:put($prop, "datatype", "string")
