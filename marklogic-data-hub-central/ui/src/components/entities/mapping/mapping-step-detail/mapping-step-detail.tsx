@@ -15,7 +15,7 @@ import SplitPane from "react-split-pane";
 import {getMappingArtifactByMapName, getMappingFunctions, getMappingRefs, updateMappingArtifact} from "../../../../api/mapping";
 import {MappingStep, StepType} from "../../../../types/curation-types";
 import {AuthoritiesContext} from "../../../../util/authorities";
-import {convertDateFromISO, extractCollectionFromSrcQuery, getInitialChars, getLastChars} from "../../../../util/conversionFunctions";
+import {convertDateFromISO, extractCollectionFromSrcQuery, getInitialChars} from "../../../../util/conversionFunctions";
 import {CurationContext} from "../../../../util/curation-context";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import {xmlParserForMapping} from "../../../../util/record-parser";
