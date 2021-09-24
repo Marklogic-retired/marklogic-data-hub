@@ -1,9 +1,10 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Popover, Input, Icon, Checkbox} from "antd";
+import {Popover, Input, Checkbox} from "antd";
 import styles from "./pop-over-search.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
+import {CheckSquare} from "react-bootstrap-icons";
 
 interface Props {
   referenceType: string;
@@ -112,7 +113,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       </div>
       <hr/>
       <div className={styles.checkIcon} data-testid="check-icon">
-        <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
+        <CheckSquare aria-label="icon: check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
       </div>
     </div>
   );
