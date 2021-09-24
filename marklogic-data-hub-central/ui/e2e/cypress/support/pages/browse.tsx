@@ -675,7 +675,7 @@ class BrowsePage {
   }
 
   backToResults() {
-    cy.get(".ant-page-header-back-button").click({force: true});
+    cy.get("#back-button").click({force: true});
   }
 
   sliderMinimum() {
