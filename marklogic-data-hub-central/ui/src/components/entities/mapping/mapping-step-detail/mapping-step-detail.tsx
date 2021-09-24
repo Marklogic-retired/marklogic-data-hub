@@ -31,6 +31,7 @@ import HCCard from "../../../common/hc-card/hc-card";
 import Steps from "../../../steps/steps";
 import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
+import {CheckSquareFill} from "react-bootstrap-icons";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -688,7 +689,7 @@ const MappingStepDetail: React.FC = () => {
       className={styles.uri}>{!showEditURIOption ? <span data-testid={"uri-edit"} className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 32, "...")}</span></span> :
         <span className={styles.showingEditContainer}>URI: <span data-testid={"uri-edit"} className={styles.showingEditIcon}>{getLastChars(sourceURI, 32, "...")} <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}
         /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
-      <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} /></span></div>}
+      <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<CheckSquareFill aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} /></span></div>}
   </div> : "";
 
   const expandTableIcon = (
