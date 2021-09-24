@@ -7,7 +7,7 @@ describe("Page Header component tests", () => {
 
   test("Verify the title displays", () => {
     render(<CustomPageHeader title={"mapCustomersJSON"} handleOnBack={handleOnBackMock} />);
-    expect(document.querySelector(".ant-page-header-heading-title")).toHaveTextContent("mapCustomersJSON");
+    expect(document.querySelector(".header-heading-title")).toHaveTextContent("mapCustomersJSON");
   });
 
   test("Verify handleOnBack is called on click", () => {
