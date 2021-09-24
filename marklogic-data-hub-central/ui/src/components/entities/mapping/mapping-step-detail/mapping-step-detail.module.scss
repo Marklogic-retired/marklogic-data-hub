@@ -395,14 +395,16 @@ hr {
     cursor: pointer;
 }
 
-.checkIcon{
-    background-color: #7F86B5;
+.checkIcon {
+    fill: #7F86B5;
     border-radius: 3px;
-    padding: 2px 2px;
-    color: #ffffff;
     cursor: pointer;
+    font-size: 18px;
+    margin-top: 4px;
 }
-.closeIcon{
+
+
+.closeIcon {
     background-color: #7F86B5;
     color: #ffffff;
     border-radius: 3px;
@@ -412,6 +414,7 @@ hr {
 
 .docLinksUl{
     padding-left: 1vw;
+    z-index: -1;
 }
 
 .spinRunning {
