@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Icon, Button} from "antd";
+import {Modal, Button} from "antd";
 import {Accordion} from "react-bootstrap";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
@@ -18,6 +18,7 @@ import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import HCDivider from "../common/hc-divider/hc-divider";
 import {ExclamationCircleFill} from "react-bootstrap-icons";
+import {CheckCircle} from "react-bootstrap-icons";
 
 type Props = {
   openJobResponse: boolean;
@@ -122,7 +123,7 @@ const JobResponse: React.FC<Props> = (props) => {
         const stepIsFinished = stepResponse.stepEndTime && stepResponse.stepEndTime !== "N/A";
         if (stepIsFinished) {
           if (stepResponse.success) {
-            return <div  className={styles.stepResponse} key={"success-" + index}><Icon type="check-circle" className={styles.successfulRun} theme="filled"/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>;
+            return <div className={styles.stepResponse} key={"success-" + index}><CheckCircle className={styles.successfulRun}/><strong className={styles.stepName}>{stepResponse.stepName}</strong></div>;
           } else {
             const errors = getErrors(stepResponse);
             return <div className={styles.errorStepResponse} key={"failed-" + index}>

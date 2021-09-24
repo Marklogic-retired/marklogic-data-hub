@@ -308,21 +308,21 @@ const DetailPageNonEntity = (props) => {
               (props.collections) &&
                 <div className={styles.collectionsTableContainer}>
                   <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                  <MLTable bordered dataSource={props.collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table"/>
+                  <Table bordered dataSource={props.collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table"/>
                 </div>
             }
             {
               (props.recordPermissions) &&
                 <div className={styles.recordPermissionsTableContainer}>
                   <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                  <MLTable bordered dataSource={props.recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table"/>
+                  <Table bordered dataSource={props.recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table"/>
                 </div>
             }
             {
               (props.recordMetadata) &&
                 <div className={styles.recordMetadataTableContainer}>
                   <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                  <MLTable bordered dataSource={props.recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table"/>
+                  <Table bordered dataSource={props.recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table"/>
                 </div>
             }
             <div className={styles.documentPropertiesContainer}>
