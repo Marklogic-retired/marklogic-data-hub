@@ -7,7 +7,8 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Layout, Menu, PageHeader, Tooltip} from "antd";
+import {Layout, Menu, Tooltip} from "antd";
+import {Row, Col} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
@@ -16,6 +17,7 @@ import DetailPageNonEntity from "../components/detail-page-non-entity/detail-pag
 import {SearchContext} from "../util/search-context";
 import {fetchQueries} from "../api/queries";
 import {AuthoritiesContext} from "../util/authorities";
+import {ArrowLeftShort} from "react-bootstrap-icons";
 
 
 interface Props extends RouteComponentProps<any> { }
@@ -304,13 +306,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
       entityInstanceDocument ?
         <Layout>
           <Content className={styles.detailContent}>
-            <div id="back-button" style={{marginLeft: "-23px"}} onClick={() => history.push(selectedSearchOptions)}>
-              <PageHeader
-                title={<span className={styles.title}>Back to results</span>}
-                data-cy="back-button"
-                onBack={() => history.push(selectedSearchOptions)}
-              />
-            </div>
+            <Row id="back-button" className={"py-4 header-heading-title"} onClick={() => history.push(selectedSearchOptions)}>
+              <Col>
+                <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}><ArrowLeftShort aria-label="Back" className={"d-inline-block me-2 fs-2 header-back-button"} />Back to results</span>
+              </Col>
+            </Row>
             <div className={styles.header}>
               <div className={styles.heading}>
                 {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences["sources"]} />}

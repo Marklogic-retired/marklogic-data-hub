@@ -1,5 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Layout, PageHeader, Menu, Icon, Table} from "antd";
+import {Layout, Menu, Icon, Table} from "antd";
+import {Row, Col} from "react-bootstrap";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -10,6 +11,7 @@ import {updateUserPreferences} from "../../services/user-preferences";
 import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
 import {getRecord} from "../../api/record";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {ArrowLeftShort} from "react-bootstrap-icons";
 
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
@@ -213,13 +215,11 @@ const DetailPageNonEntity = (props) => {
       <Layout>
         <Content className={styles.detailContentNonEntityInstance}>
           <div className={styles.detailContentNonEntityHeader}>
-            <span id="back-button" className={styles.backButtonHeader} onClick={() => history.push(props.selectedSearchOptions)} >
-              <PageHeader
-                title={<span className={styles.title}>Back to results</span>}
-                data-testid="back-button"
-                onBack={() => history.push(props.selectedSearchOptions)}
-              />
-            </span>
+            <Row id="back-button" className={"p-4 header-heading-title"} onClick={() => history.push(props.selectedSearchOptions)}>
+              <Col>
+                <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}><ArrowLeftShort aria-label="Back" className={"d-inline-block me-2 fs-2 header-back-button"} />Back to results</span>
+              </Col>
+            </Row>
             <span className={styles.metadataCollapseIconContainer}>
               {metadataCollapse ? <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleLeft} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-collapsed" /></span>{" Metadata"}</span></span> :
                 <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleRight} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-expanded" /></span>{" Metadata"}</span></span>}
