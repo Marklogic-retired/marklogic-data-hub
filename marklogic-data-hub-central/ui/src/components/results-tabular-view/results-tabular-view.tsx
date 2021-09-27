@@ -10,6 +10,7 @@ import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {MLTable} from "@marklogic/design-system";
 
 /* eslint-disable */
 interface Props {
@@ -426,7 +427,7 @@ const ResultsTabularView = (props) => {
         </div> : ""}
       </div>
       <div className={styles.tabular}>
-        <Table bordered
+        <MLTable bordered
           data-testid="result-table"
           rowKey="uri"
           dataSource={props.isLoading ? [] : dataSource}
