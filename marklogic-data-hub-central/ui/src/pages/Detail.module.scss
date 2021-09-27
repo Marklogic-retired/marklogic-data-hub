@@ -59,14 +59,14 @@
   justify-content: space-between;
 
   .backButtonHeader {
-    //border: 1px solid red; 
+    //border: 1px solid red;
     margin-right: 30px;
     display: flex;
     //width: 60%;
   }
 
   .documentMetadataContainer {
-    display: flex; 
+    display: flex;
     align-items: center;
 
     > .metadataCollapseIcon {
@@ -77,10 +77,10 @@
         border-radius: 5px 0px 0px 5px;
         cursor: pointer;
       }
-    
+
       .collapseExpandIcons{
         font-size: 16px;
-        color: #000; 
+        color: #000;
       }
     }
   }
@@ -126,6 +126,5 @@
 }
 
 .documentContainer{
-  max-height: 57vh;
   overflow: auto;
  }

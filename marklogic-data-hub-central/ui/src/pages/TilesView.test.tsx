@@ -60,7 +60,8 @@ describe("Tiles View component tests for Developer user", () => {
   });
 
   test("Verify tiles can be closed", () => {
-    const tools = Object.keys(tiles);
+    // Only check tiles with toolbar buttons
+    const tools: String[] = Object.keys(tiles).filter(key => tiles[key].toolbar);
     const {getByLabelText} = render(<Router history={history}>
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <TilesView/>

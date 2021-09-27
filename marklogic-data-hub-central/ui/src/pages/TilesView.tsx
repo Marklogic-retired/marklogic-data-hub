@@ -21,7 +21,7 @@ import MergingStepDetail from "../components/entities/merging/merging-step-detai
 import {ConfigProvider} from "antd";
 import MappingStepDetail from "../components/entities/mapping/mapping-step-detail/mapping-step-detail";
 
-export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor";
+export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "detail";
 export type IconType = "fa" | "custom";
 interface TileItem {
     title: string;
@@ -59,7 +59,8 @@ const TilesView = (props) => {
     model: <Modeling />,
     curate: setCurateView(),
     run: <Run />,
-    explore: location.pathname.startsWith("/tiles/explore/detail") ? <Detail /> : <Browse/>,
+    explore: <Browse/>,
+    detail: <Detail />,
     monitor: <Monitor />
   };
 
@@ -88,6 +89,7 @@ const TilesView = (props) => {
     curate: auth.canReadMapping() || auth.canWriteMapping() || auth.canReadMatchMerge() || auth.canWriteMatchMerge() || auth.canReadCustom(),
     run: auth.canReadFlow() || auth.canWriteFlow(),
     explore: true,
+    detail: true,
     monitor: auth.canAccessMonitor()
     // TODO - Needs to be updated if there are any changes in authorities for Explorer
     // explore: auth.canReadFlow() || auth.canWriteFlow(),

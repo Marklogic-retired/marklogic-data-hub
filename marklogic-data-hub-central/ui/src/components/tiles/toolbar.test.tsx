@@ -12,9 +12,16 @@ import tiles from "../../config/tiles.config";
 describe("Toolbar component", () => {
 
   it("renders with clickable tools", () => {
-    const tools = Object.keys(tiles);
-    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={tools}/></Router>);
+    let tools: string[] = [];
 
+    // Only add items that should appear in toolbar
+    for (let key of Object.keys(tiles)) {
+      if (tiles[key].toolbar) {
+        tools.push(key);
+      }
+    }
+
+    const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={tools}/></Router>);
     expect(getByLabelText("toolbar")).toBeInTheDocument();
 
     tools.forEach((tool, i) => {
