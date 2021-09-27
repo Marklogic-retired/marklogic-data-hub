@@ -308,7 +308,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
 
         // Wait for post-commit triggers to finish
         waitForTasksToFinish();
-
+        waitForReindex(getHubClient(), getHubConfig().getDbName(DatabaseKind.FINAL));
     }
 
     // Update app config's config and modules dirs when not already in the hub config's project dir.
@@ -337,6 +337,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
             .deploy(getHubConfig().getAppConfig());
         // Wait for post-commit triggers to finish
         waitForTasksToFinish();
+        waitForReindex(getHubClient(), getHubConfig().getDbName(DatabaseKind.FINAL));
     }
 
     protected boolean isVersionCompatibleWith520Roles() {

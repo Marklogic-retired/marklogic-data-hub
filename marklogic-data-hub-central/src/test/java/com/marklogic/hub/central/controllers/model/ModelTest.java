@@ -447,4 +447,13 @@ public class ModelTest extends AbstractHubCentralTest {
         new DeployDatabaseFieldCommand().execute(newCommandContext());
         runAsTestUserWithRoles("hub-central-entity-model-writer");
     }
+
+    protected void publishDraftModels() {
+        if (isVersionCompatibleWith520Roles()) {
+            runAsDataHubDeveloper();
+        } else {
+            runAsAdmin();
+        }
+        assertDoesNotThrow(() -> controller.publishDraftModels(), "Should publish the deleted draft with no issues.");
+    }
 }
