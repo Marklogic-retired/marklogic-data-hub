@@ -396,20 +396,20 @@ const MergingStepDetail: React.FC = () => {
           <div className={styles.stepText}>Define merge strategies</div>
         </div>
         <div className={styles.greyContainer}>
-          <div className={styles.textContainer}>
+          <div className={"d-flex mb-2 justify-content-between"}>
             <p>A <span className={styles.italic}>merge strategy</span><span> defines how to combine the property values of
               candidate entities, but the merge strategy is not active until assigned to a merge rule.
               A merge strategy can be assigned to multiple
               merge rules.</span>
             </p>
-          </div>
-          <div className={styles.addButtonContainer}>
-            <HCButton aria-label="add-merge-strategy" variant="primary"  className={styles.addMergeButton} onClick={() => {
-              toggleCreateEditStrategyModal(true);
-              toggleIsEditStrategy(false);
-              setCurrentStrategyName("");
-            }
-            }>Add</HCButton>
+            <div>
+              <HCButton aria-label="add-merge-strategy" variant="primary"  className={styles.addMergeButton} onClick={() => {
+                toggleCreateEditStrategyModal(true);
+                toggleIsEditStrategy(false);
+                setCurrentStrategyName("");
+              }
+              }>Add</HCButton>
+            </div>
           </div>
           <div>
             <Table
@@ -438,10 +438,10 @@ const MergingStepDetail: React.FC = () => {
           <div className={styles.stepText}>Add merge rules</div>
         </div>
         <div className={styles.greyContainer}>
-          <div className={styles.textContainer}>
-            <div className={styles.mergeDefinition}><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
-            </p></div>
-            <div className={styles.addButtonContainer}>
+          <div className={"d-flex mb-2 justify-content-between"}>
+            <p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
+            </p>
+            <div>
               <HCButton aria-label="add-merge-rule" variant="primary"  className={styles.addMergeButton} onClick={() => {
                 toggleCreateEditRuleModal(true);
                 toggleIsEditRule(false);
