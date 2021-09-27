@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DeleteModelTest extends AbstractHubCentralTest {
+public class DeleteModelTest extends ModelTest {
 
     @Autowired
     ModelController controller;
@@ -34,12 +34,12 @@ public class DeleteModelTest extends AbstractHubCentralTest {
         verifyEntity2BasedArtifactsExist();
         getModelReferences();
         deleteEntity2Model();
-        publishDraftModel();
+        publishDraftModels();
         verifyEntity2BasedArtifactsDontExist();
         verifyReferencesToEntity2DontExistInEntity1();
 
         deleteEntity1Model();
-        publishDraftModel();
+        publishDraftModels();
     }
 
     private void getModelReferences() {
@@ -65,11 +65,6 @@ public class DeleteModelTest extends AbstractHubCentralTest {
         runAsDataHubDeveloper();
         waitForTasksToFinish();
         runAsTestUserWithRoles("hub-central-entity-model-writer");
-    }
-
-    private void publishDraftModel() {
-        runAsDataHubDeveloper();
-        assertDoesNotThrow(() -> controller.publishDraftModels(), "Should publish the deleted draft with no issues.");
     }
 
     private void removeReferencesToEntity() {

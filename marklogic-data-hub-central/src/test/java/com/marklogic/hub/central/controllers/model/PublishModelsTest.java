@@ -16,7 +16,7 @@ public class PublishModelsTest extends ModelTest {
         updateModelInfo();
         assertEquals(1, getFinalDocCount(draftEntityCollection), "There should be one entity in draft");
         assertEquals(0, getFinalDocCount(entityCollection), "There should be no entities published yet");
-        controller.publishDraftModels();
+        publishDraftModels();
         assertEquals(1, getFinalDocCount(entityCollection), "There should be one entity published");
         assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft after publishing");
     }
@@ -29,7 +29,7 @@ public class PublishModelsTest extends ModelTest {
         deleteModel();
         assertEquals(1, getFinalDocCount(draftEntityCollection), "There should be one entity in draft");
         assertEquals(0, getFinalDocCount(entityCollection), "There should be no entities published yet");
-        controller.publishDraftModels();
+        publishDraftModels();
         assertEquals(0, getFinalDocCount(entityCollection), "There should be no entities published");
         assertEquals(0, getFinalDocCount(draftEntityCollection), "There should be no entities in draft after publishing");
     }
