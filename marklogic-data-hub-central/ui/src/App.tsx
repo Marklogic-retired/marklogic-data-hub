@@ -143,7 +143,7 @@ const App: React.FC<Props> = ({history, location}) => {
                         <TilesView id="explore"/>
                       </PrivateRoute>
                       <PrivateRoute path="/tiles/explore/detail">
-                        <TilesView id="explore"/>
+                        <TilesView id="detail"/>
                       </PrivateRoute>
                       <PrivateRoute path="/tiles/monitor">
                         <TilesView id="monitor"/>

@@ -1,6 +1,6 @@
 import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram } from "@fortawesome/free-solid-svg-icons";
 
-export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore' | 'monitor';;
+export type TileId =  'load' | 'model' | 'curate' | 'run' | 'explore' | 'monitor' | 'detail';
 export type IconType = 'fa' | 'custom';
 export type ControlType = 'menu' | 'newTab' | 'maximize' | 'minimize' | 'close';
 
@@ -13,7 +13,8 @@ interface TileItem {
     border: string;
     controlColor: string;
     controls: ControlType[];
-    intro: string;
+    intro?: string;
+    toolbar: boolean;
 }
 
 const tiles: Record<TileId, TileItem>  = {
@@ -27,6 +28,7 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['close'],
         intro: 'Create and configure steps that ingest raw data from multiple sources.',
+        toolbar: true
     },
     model: {
         title: 'Model',
@@ -38,6 +40,7 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['close'],
         intro: 'Define the entity models that describe and standardize your data. You need these entity models to curate your data.',
+        toolbar: true
     },
     curate: {
         title: 'Curate',
@@ -49,6 +52,7 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['close'],
         intro: 'Create and configure steps that curate and refine your data. The Mapping step associates a field in your raw data with a property in your entity model. The Matching step identifies possible duplicate documents. The Merging step combines identified duplicates or performs other actions.',
+        toolbar: true
     },
     run: {
         title: 'Run',
@@ -60,6 +64,7 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['close'],
         intro: 'Create flows, add your existing steps to flows, and run them.',
+        toolbar: true
     },
     explore: {
         title: 'Explore',
@@ -71,6 +76,7 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['menu', 'close'],
         intro: 'Search, filter, review, and export your data.',
+        toolbar: true
     },
     monitor: {
         title: 'Monitor',
@@ -82,6 +88,18 @@ const tiles: Record<TileId, TileItem>  = {
         controlColor: '#777',
         controls: ['menu', 'close'],
         intro: 'Monitor Flows and Steps',
+        toolbar: true
+    },
+    detail: {
+        title: 'Explore',
+        iconType: 'custom',
+        icon: 'exploreIcon',
+        color: '#376F63',
+        bgColor: '#F4F6F8',
+        border: '#BFBFBF',
+        controlColor: '#777',
+        controls: ['menu', 'close'],
+        toolbar: false
     }
 };
 

@@ -17,7 +17,14 @@ interface Props {
 
 const Toolbar: React.FC<Props> = (props) => {
 
-  const tiles = props.tiles; // config/tiles.config.ts
+  const allTiles = props.tiles; // config/tiles.config.ts
+  const tiles: any = {};
+  // Filter out tiles that should not be displayed in the toolbar.
+  for (let key of Object.keys(allTiles)) {
+    if (allTiles[key].toolbar) {
+      tiles[key] = allTiles[key];
+    }
+  }
 
   // array of references used to set focus
   let tileRefs : any[] = [];
@@ -158,7 +165,8 @@ const Toolbar: React.FC<Props> = (props) => {
             </div>
           );
         }
-      })}
+      }
+      )}
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={ConfirmationType.NavigationWarn}
