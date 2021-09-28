@@ -233,12 +233,20 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");
     confirmationModal.getSaveAllEntityText().should("not.exist");
+    entityTypeTable.viewEntityInGraphView("User3");
+    //To verify tooltip over particular node
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let customerCoordinates: any = nodePositions["User3"];
+      graphVis.getGraphVisCanvas().click(customerCoordinates.x, customerCoordinates.y);
+      cy.findByText("An entity for User").should("exist");
+    });
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
     // entityTypeTable.getEntity("User3").should("not.exist");
   });
   it("Delete entity", {defaultCommandTimeout: 120000}, () => {
+    modelPage.selectView("table");
     entityTypeTable.getDeleteEntityIcon("User3").click();
     confirmationModal.getDeleteEntityText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);

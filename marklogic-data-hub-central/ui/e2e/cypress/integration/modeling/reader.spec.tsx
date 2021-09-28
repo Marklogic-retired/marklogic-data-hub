@@ -94,7 +94,6 @@ describe("Entity Modeling: Reader Role", () => {
   });
 
   it("can navigate to graph view from table view", () => {
-    // Should be updated once the dummy entity links are replaced by actual graph nodes.
     entityTypeTable.viewEntityInGraphView("Customer");
 
     // To verify modeling info is rendered properly in graph view
@@ -110,18 +109,18 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
     graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
 
-    //verify cannot edit without permissions
+    //To verify cannot edit without permissions
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
     });
     relationshipModal.getModalHeader().should("not.exist");
 
-    //Properties tab should display property table
+    //To verify properties tab should display property table
     graphViewSidePanel.getPropertyTableHeader("propertyName").should("be.visible");
     graphViewSidePanel.getPropertyTableHeader("type").should("be.visible");
     graphViewSidePanel.getPropertyTableHeader("delete").should("be.visible");
 
-    //Verify table is populated with Customer properties
+    //To verify table is populated with Customer properties
     graphViewSidePanel.getPropertyName("customerId").should("be.visible");
     graphViewSidePanel.getPropertyName("name").should("be.visible");
     graphViewSidePanel.getPropertyName("email").should("be.visible");
@@ -133,7 +132,7 @@ describe("Entity Modeling: Reader Role", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
 
-    //Verify Pan and Zoom in buttons are rendered properly
+    //To verify Pan and Zoom in buttons are rendered properly
     cy.get(".vis-zoomOut").should("be.visible");
     cy.get(".vis-zoomIn").should("be.visible");
     cy.get(".vis-up").should("be.visible");
@@ -141,5 +140,6 @@ describe("Entity Modeling: Reader Role", () => {
     cy.get(".vis-zoomExtends").should("be.visible");
     cy.get(".vis-right").should("be.visible");
     cy.get(".vis-left").should("be.visible");
+
   });
 });
