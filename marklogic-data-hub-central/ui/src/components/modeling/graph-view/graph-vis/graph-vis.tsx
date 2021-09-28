@@ -261,6 +261,11 @@ const GraphVis: React.FC<Props> = (props) => {
     return ReactDOMServer.renderToString(icon);
   };
 
+  const getDescription = (entityName) => {
+    let entityIndex = props.entityTypes.findIndex(obj => obj.entityName === entityName);
+    return props.entityTypes[entityIndex].model.definitions[entityName].description;
+  };
+
   // TODO remove when num instances is retrieved from db
   const getNumInstances = (entityName) => {
     let num = -123;
@@ -282,7 +287,6 @@ const GraphVis: React.FC<Props> = (props) => {
             "<b>", e.entityName, "</b>\n",
             // "<code>", getNumInstances(e.entityName).toString(), "</code>"
           ),
-          title: e.entityName + " tooltip text", // TODO use entity description
           color: {
             background: props.getColor(e.entityName),
             border: e.entityName === modelingOptions.selectedEntity && props.entitySelected ? graphConfig.nodeStyles.selectColor : props.getColor(e.entityName),
@@ -313,15 +317,22 @@ const GraphVis: React.FC<Props> = (props) => {
           tmp.x = coords[e.entityName].graphX;
           tmp.y = coords[e.entityName].graphY;
         }
+        if (getDescription(e.entityName) && getDescription(e.entityName).length > 0) {
+          tmp.title = getDescription(e.entityName);
+        }
         return tmp;
       });
     } else if (graphType === "image") { // TODO for custom SVG node, not currently used
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
         const node = new NodeSvg(e.entityName, props.getColor(e.entityName), getNumInstances(e.entityName), getIcon(e.entityName));
+        let tempTitle;
+        if (getDescription(e.entityName) && getDescription(e.entityName).length) {
+          tempTitle = getDescription(e.entityName);
+        }
         return {
           id: e.entityName,
           label: "",
-          title: e.entityName + " tooltip text",
+          title: tempTitle,
           image: "data:image/svg+xml;charset=utf-8," + node.getSvg(),
           shape: "image"
         };
