@@ -23,7 +23,6 @@ import {getMappingArtifactByMapName, updateMappingArtifact, getMappingFunctions,
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.config";
 import arrayIcon from "../../../../assets/icon_array.png";
-import relatedEntityIcon from "../../../../assets/icon_related_entities.png";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 import {paginationMapping, mappingColors} from "../../../../config/mapping.config";
@@ -1400,7 +1399,6 @@ const MappingStepDetail: React.FC = () => {
             </MLButton>
           </span>
           <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key Relationship</i></div>
-          <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related Entity</div>
           <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
           <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
         </div>

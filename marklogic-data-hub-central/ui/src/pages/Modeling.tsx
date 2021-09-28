@@ -19,7 +19,6 @@ import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
 import {faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
 import arrayIcon from "../assets/icon_array.png";
-import relatedEntityIcon from "../assets/icon_related_entities.png";
 import GraphView from "../components/modeling/graph-view/graph-view";
 import {defaultModelingView} from "../config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
@@ -331,10 +330,6 @@ const Modeling: React.FC = () => {
                     <div data-testid="foreignKeyIconLegend" className={styles.legendText}>
                       <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign
                                             Key Relationship
-                    </div>
-                    <div data-testid="relatedEntityIconLegend" className={styles.legendText}><img
-                      className={styles.relatedIcon} src={relatedEntityIcon} alt={""}/> Related
-                                            Entity
                     </div>
                     <div data-testid="multipleIconLegend" className={styles.legendText}><img
                       className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple
