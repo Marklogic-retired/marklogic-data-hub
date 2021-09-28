@@ -1,5 +1,5 @@
 import React, {CSSProperties, useContext, useState, useEffect} from "react";
-import {Button, AutoComplete, Dropdown, Icon, Menu, Input, Tooltip} from "antd";
+import {Button, AutoComplete, Dropdown, Menu, Input, Tooltip} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
@@ -13,7 +13,7 @@ import {ConfirmationType} from "../../../types/common-types";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../common/hc-button/hc-button";
 import HCAlert from "../../common/hc-alert/hc-alert";
-import {ChevronDown} from "react-bootstrap-icons";
+import {ChevronDown, Search} from "react-bootstrap-icons";
 
 type Props = {
   entityTypes: any;
@@ -91,7 +91,7 @@ const GraphView: React.FC<Props> = (props) => {
     aria-label="graph-view-filter-autoComplete"
     placeholder={"Filter"}
   >
-    <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined" />} size="small"></Input>
+    <Input aria-label="graph-view-filter-input" suffix={<Search className={styles.searchIcon} />} size="small"></Input>
   </AutoComplete>;
 
   const handleAddMenu = (event) => {
