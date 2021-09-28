@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Layout, Menu, Icon, Table} from "antd";
 import {Row, Col} from "react-bootstrap";
+import {Layout, Menu, Table} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -11,7 +11,7 @@ import {updateUserPreferences} from "../../services/user-preferences";
 import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
 import {getRecord} from "../../api/record";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import {ArrowLeftShort} from "react-bootstrap-icons";
+import {ArrowLeftShort, Download} from "react-bootstrap-icons";
 
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
@@ -227,7 +227,7 @@ const DetailPageNonEntity = (props) => {
           </div>
           <div>{nonEntityMenu()}</div>
           <div className={styles.download}>
-            <a data-testid="download-link" onClick={download}><Icon type="download" className={styles.downloadIcon} /> <span>{displayFileSize()}</span></a>
+            <a data-testid="download-link" onClick={download}><Download className={styles.downloadIcon}/> <span>{displayFileSize()}</span></a>
           </div>
           <div className={styles.documentContainer}>
             <div className={styles.contentElements}>{contentElements}</div>

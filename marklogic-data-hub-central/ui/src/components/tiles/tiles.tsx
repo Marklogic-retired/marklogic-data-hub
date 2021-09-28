@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Mosaic, MosaicWindow} from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
-import {ArrowsAltOutlined, ShrinkOutlined, CloseOutlined} from "@ant-design/icons";
+import {CloseOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import styles from "./tiles.module.scss";
@@ -16,6 +16,7 @@ import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
+import {ArrowsAngleContract, ArrowsAngleExpand} from "react-bootstrap-icons";
 
 interface Props {
   id: string;
@@ -170,13 +171,13 @@ const Tiles: React.FC<Props> = (props) => {
           {showControl("maximize") ? (
             <i className={styles.ant} aria-label={"maximize"} style={{color: options["controlColor"]}} onClick={onClickMaximize}>
               <HCTooltip text="Maximize" id="maximize-tooltip" placement="bottom">
-                <ArrowsAltOutlined />
+                <ArrowsAngleExpand />
               </HCTooltip>
             </i>) : null}
           {showControl("minimize") ? (
             <i className={styles.ant} aria-label={"minimize"} style={{color: options["controlColor"]}} onClick={onClickMinimize}>
               <HCTooltip text="Minimize" id="minimize-tooltip" placement="bottom">
-                <ShrinkOutlined />
+                <ArrowsAngleContract />
               </HCTooltip>
             </i>) : null}
           {showControl("close") ? (
