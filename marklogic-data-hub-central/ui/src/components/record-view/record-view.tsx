@@ -4,7 +4,6 @@ import {Popover} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {FileOutlined} from "@ant-design/icons";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import ReactHtmlParser from "react-html-parser";
 import {Link} from "react-router-dom";
@@ -16,7 +15,7 @@ import {SearchContext} from "../../util/search-context";
 import {getRecord} from "../../api/record";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {Download} from "react-bootstrap-icons";
+import {Download, FileEarmark} from "react-bootstrap-icons";
 import HCCard from "../common/hc-card/hc-card";
 
 const RecordCardView = (props) => {
@@ -67,7 +66,7 @@ const RecordCardView = (props) => {
     } else if ("binary" === item.format) {
       return (
         <div className={styles.binaryCard} >
-          <FileOutlined className={styles.binaryIcon} />
+          <FileEarmark className={styles.binaryIcon} />
           <div className={styles.binaryText} data-testid={item.uri + "-noPreview"}> No preview available</div>
         </div>
       );
