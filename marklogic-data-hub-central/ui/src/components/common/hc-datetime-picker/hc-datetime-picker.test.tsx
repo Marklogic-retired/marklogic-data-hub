@@ -34,6 +34,7 @@ test("should default start date to today's date  ", () => {
   fireEvent.click(datePickerElement);
 
   const activeDate = getAllByText((_content, element) => element?.classList !== null && element?.classList?.contains("active") || false);
-  expect(activeDate.length).toBeGreaterThanOrEqual(2);
+  expect(activeDate.length).toBeGreaterThanOrEqual(1);
   expect(activeDate[0].className.includes("start-date")).toBe(true);
+  expect(activeDate[0].textContent).toEqual(`${new Date().getDate()}`);
 });

@@ -31,7 +31,7 @@ import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.c
 import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
-import {CheckSquareFill, XSquareFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
+import {CheckSquareFill, XSquareFill, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -885,7 +885,7 @@ const MappingStepDetail: React.FC = () => {
           size="sm"
           className={styles.searchSubmitButton}
         >
-          <Icon type="search" theme="outlined" /> Search
+          <Search className={styles.searchIcon}/> Search
         </HCButton>
       </div>
     ),
