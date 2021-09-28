@@ -46,6 +46,15 @@
 
   .hostIcon, .usernameIcon, .passwordIcon {
     color: rgba(0,0,0,.25);
+    margin-left: -2px;
+  }
+  
+  .usernameIcon {
+    font-size: 17px;
+  }
+
+  .passwordIcon {
+    font-size: 15px;
   }
 
   .formLabel {

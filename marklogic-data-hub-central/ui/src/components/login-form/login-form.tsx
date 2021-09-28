@@ -1,11 +1,12 @@
 import React, {useContext, useState} from "react";
-import {Form, Icon, Input} from "antd";
+import {Form, Input} from "antd";
 import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
 import HCAlert from "../common/hc-alert/hc-alert";
 import {Spinner} from "react-bootstrap";
 import HCButton from "../common/hc-button/hc-button";
+import {Lock, Person} from "react-bootstrap-icons";
 
 const LoginForm: React.FC = () => {
 
@@ -83,7 +84,7 @@ const LoginForm: React.FC = () => {
           >
             <Input
               id="username"
-              prefix={<Icon type="user" className={styles.usernameIcon} />}
+              prefix={<Person className={styles.usernameIcon} />}
               placeholder="Enter username"
               value={username}
               onChange={handleChange}
@@ -98,7 +99,7 @@ const LoginForm: React.FC = () => {
           >
             <Input
               id="password"
-              prefix={<Icon type="lock" className={styles.passwordIcon} />}
+              prefix={<Lock className={styles.passwordIcon} />}
               placeholder="Enter password"
               type="password"
               value={password}
