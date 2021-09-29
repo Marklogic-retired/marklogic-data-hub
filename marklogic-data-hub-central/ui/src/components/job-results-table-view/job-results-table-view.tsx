@@ -2,7 +2,8 @@ import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
 import {ClockCircleFilled, CheckCircleFilled} from "@ant-design/icons";
-import {Menu, Popover, Checkbox, Tooltip, Table} from "antd";
+import {Menu, Popover, Tooltip, Table} from "antd";
+import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
@@ -186,15 +187,15 @@ const JobResultsTableView = (props) => {
       <div className={styles.content}>
         <Menu>
           {Object.keys(checkedAttributes).map(attribute => (
-            <Menu.Item key={attribute} className={styles.DropdownMenuItem}><Checkbox
-              data-testid={`columnOptionsCheckBox-${attribute}`}
-              key={attribute}
-              value={attribute}
-              onChange={handleColOptionsChecked}
-              defaultChecked={true}
-              className={styles.checkBoxItem}
-              checked={checkedAttributes[attribute]}
-            >{columnOptionsLabel[attribute]}</Checkbox></Menu.Item>
+            <Menu.Item key={attribute} className={styles.DropdownMenuItem}>
+              <HCCheckbox
+                id={`column-${attribute}-id`}
+                handleClick={handleColOptionsChecked}
+                value={attribute}
+                label={columnOptionsLabel[attribute]}
+                checked={checkedAttributes[attribute]}
+                dataTestId={`columnOptionsCheckBox-${attribute}`}/>
+            </Menu.Item>
           ))}
         </Menu>
       </div>
