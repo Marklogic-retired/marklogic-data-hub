@@ -1398,8 +1398,10 @@ const MappingStepDetail: React.FC = () => {
                                 Test
             </MLButton>
           </span>
-          <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key Relationship</i></div>
-          <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
+          <span className={styles.modeledRelationshipIcon}/>
+          <div data-testid="relationshipIconLegend" className={styles.legendText}>Modeled Relationship</div>
+          <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key</i></div>
+          <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple Values</div>
           <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
         </div>
 

@@ -25,7 +25,7 @@ describe("Graph Modeling Properties Tab Component", () => {
 
     //Legend should be hidden by default with "Show Legend >>" link visible
     expect(getByTestId("showLegendLink")).toBeInTheDocument();
-
+    expect(queryByTestId("relationshipIconLegend")).not.toBeInTheDocument();
     expect(queryByTestId("foreignKeyIconLegend")).not.toBeInTheDocument();
     expect(queryByTestId("multipleIconLegend")).not.toBeInTheDocument();
     expect(queryByTestId("structuredIconLegend")).not.toBeInTheDocument();
@@ -35,7 +35,7 @@ describe("Graph Modeling Properties Tab Component", () => {
     fireEvent.click(getByTestId("showLegendLink"));
     expect(getByTestId("hideLegendLink")).toBeInTheDocument();
     expect(queryByTestId("showLegendLink")).not.toBeInTheDocument();
-
+    expect(queryByTestId("relationshipIconLegend")).toBeInTheDocument();
     expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
     expect(getByTestId("multipleIconLegend")).toBeInTheDocument();
     expect(getByTestId("structuredIconLegend")).toBeInTheDocument();

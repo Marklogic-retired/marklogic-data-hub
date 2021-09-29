@@ -151,7 +151,7 @@ describe("Property Modal Component", () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
 
-    const {getByPlaceholderText, getByText, getAllByText, getByLabelText} =  render(
+    const {getByPlaceholderText, getByText, getAllByText, getByLabelText, getByTestId} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -182,25 +182,34 @@ describe("Property Modal Component", () => {
     expect(screen.queryByLabelText("Facet")).toBeNull();
     //expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
 
-    expect(getByLabelText("joinProperty-select")).toBeInTheDocument();
+    //join Property field should be contained in "now or later" box
+    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
+
+    //field should be empty and contain placeholder text
+    expect(getByText("Select foreign key")).toBeInTheDocument();
+    fireEvent.mouseOver(getByTestId("foreign-key-tooltip"));
+    await wait(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
+
+    expect(getByLabelText("foreignKey-select")).toBeInTheDocument();
+
     //Join property select field should disappear after selecting a different property type like string
     userEvent.click(getByLabelText("icon: close-circle")); //clear "Customer" from property field
     userEvent.click(getByPlaceholderText("Select the property type"));
     userEvent.click(getByText("string"));
-    expect(screen.queryByLabelText("joinProperty-select")).toBeNull();
+    expect(screen.queryByLabelText("foreignKey-select")).toBeNull();
 
     //Try selection of a structured type after selecting related entity type again, join property select should disappear
     userEvent.click(getByLabelText("icon: close-circle")); //clear "string" from property field
     userEvent.click(getByPlaceholderText("Select the property type"));
     userEvent.click(getByText("Related Entity"));
     userEvent.click(getAllByText("Customer")[1]);
-    expect(getByLabelText("joinProperty-select")).toBeInTheDocument();
+    expect(getByLabelText("foreignKey-select")).toBeInTheDocument();
 
     userEvent.click(getByLabelText("icon: close-circle")); //clear "Customer" from property field
     userEvent.click(getByPlaceholderText("Select the property type"));
     userEvent.click(getByText("Structured"));
     userEvent.click(getByText("Address"));
-    expect(screen.queryByLabelText("joinProperty-select")).toBeNull();
+    expect(screen.queryByLabelText("foreignKey-select")).toBeNull();
 
     //Now go back to related entity type to populate
     userEvent.click(getByLabelText("icon: close-circle")); //clear "Address" from property field
@@ -209,7 +218,7 @@ describe("Property Modal Component", () => {
     userEvent.click(getAllByText("Customer")[1]);
 
     // Choose join property after menu is populated
-    userEvent.click(getByLabelText("joinProperty-select"));
+    userEvent.click(getByLabelText("foreignKey-select"));
     expect(mockPrimaryEntityTypes).toBeCalledTimes(3);
     await wait(() => userEvent.click(getByText("customerId")));
 
@@ -392,7 +401,8 @@ describe("Property Modal Component", () => {
     expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
 
     // Choose join property after menu is populated
-    userEvent.click(getByLabelText("joinProperty-select"));
+    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
+    userEvent.click(getByLabelText("foreignKey-select"));
     expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
     await wait(() => userEvent.click(getByText("customerId")));
 
@@ -629,8 +639,9 @@ describe("Property Modal Component", () => {
     expect(getByText("Edit Property")).toBeInTheDocument();
 
     // Change Join Property
+    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
     expect(getByText("customerId")).toBeInTheDocument();
-    userEvent.click(getByLabelText("joinProperty-select"));
+    userEvent.click(getByLabelText("foreignKey-select"));
     await wait(() => userEvent.click(getByText("name")));
 
     const multipleRadio = screen.getByLabelText("multiple-yes");

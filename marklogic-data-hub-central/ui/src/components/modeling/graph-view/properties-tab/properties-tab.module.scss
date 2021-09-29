@@ -13,6 +13,33 @@
     }
   }
 
+  .legendTextLast {
+    font-size: 14px;
+    img, svg {
+      margin-right: 2px;
+    }    
+  }
+
+  .hideLegendLink {
+    margin-left: 20px;
+  }
+
+  .relationshipLegendText {
+    font-size: 14px;
+    margin-right: 18px;
+    margin-left: 20px;
+  }
+
+  .modeledRelationshipIcon::before {
+    content: "\e95e";
+    font-family: MLCustomFont;
+    font-size: 19px;
+    left: 9px;
+    margin-top: -3px;
+    color: #57c2da;
+    position: absolute;
+  }
+  
   .foreignKeyLegendText {
     font-size: 14px;
     margin-right: 18px;

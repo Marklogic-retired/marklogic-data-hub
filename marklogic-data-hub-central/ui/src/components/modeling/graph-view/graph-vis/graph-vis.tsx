@@ -375,7 +375,7 @@ const GraphVis: React.FC<Props> = (props) => {
             from: e.entityName,
             to: parts[parts.length - 1],
             label: p,
-            id: p + "-" + pObj.joinPropertyName + "-edge",
+            id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName,
             title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
             arrows: {
               to: {
@@ -407,7 +407,7 @@ const GraphVis: React.FC<Props> = (props) => {
             from: e.entityName,
             to: parts[parts.length - 1],
             label: p,
-            id: p + "-" + pObj.items.joinPropertyName + "-edge",
+            id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
             title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
             arrowStrikethrough: false,
             arrows: {
@@ -447,8 +447,8 @@ const GraphVis: React.FC<Props> = (props) => {
       sourceNodeColor: props.getColor(sourceNodeName),
       targetNodeName: targetNodeName,
       targetNodeColor: targetNodeColor,
-      relationshipName: edgeInfo.split("-")[0],
-      joinPropertyName: edgeInfo.split("-")[1]
+      relationshipName: edgeInfo.length > 0 ? edgeInfo.split("-")[1] : "",
+      joinPropertyName: edgeInfo.length > 0 ? edgeInfo.split("-")[4] : ""
     };
   };
 

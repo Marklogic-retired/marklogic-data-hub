@@ -167,6 +167,7 @@ describe("RTL Source-to-entity map tests", () => {
     });
 
     //verify legend visibility
+    expect(getByTestId("relationshipIconLegend")).toBeInTheDocument();
     expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
     expect(getByTestId("multipleIconLegend")).toBeInTheDocument();
     expect(getByTestId("structuredIconLegend")).toBeInTheDocument();

@@ -12,7 +12,7 @@ describe("Add Edit Relationship component", () => {
     jest.clearAllMocks();
   });
 
-  test("Verify Edit Relationship dialog renders correctly", () => {
+  test("Verify Edit Relationship dialog renders correctly", async () => {
     const updateSavedEntity = jest.fn(() => {});
     const {getByText, getByTestId, getByLabelText, queryByLabelText, queryByText, queryByTestId} = render(
       <AddEditRelationship
@@ -43,14 +43,20 @@ describe("Add Edit Relationship component", () => {
     fireEvent.click(getByTestId("cardinalityButton"));
     expect(getByTestId("oneToManyIcon")).toBeInTheDocument();
 
-    //join property dropdown is populated and can be changed
+    //foreign key is populated, so "Optional" is expanded and field is visible by default and populated and can be changed
+    expect(getByText("Optional")).toBeInTheDocument();
+    expect(queryByText("You can select the foreign key now or later:")).toBeInTheDocument();
+
+    fireEvent.mouseOver(getByTestId("foreign-key-tooltip"));
+    await wait(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
+
     let joinPropertySelection = getByText(
       (_content, element) =>
         element.className !== null &&
         element.className === "ant-select-selection-selected-value");
 
     expect(joinPropertySelection).toHaveTextContent("customerId");
-    fireEvent.click(getByTestId("join-property-dropdown"));
+    fireEvent.click(getByTestId("foreignKey-dropdown"));
     expect(getByLabelText("name-option")).toBeInTheDocument();
     expect(getByLabelText("email-option")).toBeInTheDocument();
     expect(getByLabelText("pin-option")).toBeInTheDocument();
@@ -90,7 +96,7 @@ describe("Add Edit Relationship component", () => {
 
   test("Verify Add Relationship dialog renders correctly", () => {
     const updateSavedEntity = jest.fn(() => {});
-    const {getByText, getByTestId, getByLabelText} = render(
+    const {getByText, getByTestId, getByLabelText, queryByText} = render(
       <AddEditRelationship
         openRelationshipModal={true}
         setOpenRelationshipModal={jest.fn()}
@@ -112,6 +118,17 @@ describe("Add Edit Relationship component", () => {
     //source node name and placeholder target node name displayed
     expect(getByTestId("BabyRegistry-sourceNodeName")).toHaveTextContent("BabyRegistry");
     expect(getByTestId("Select target entity type*-targetNodeName")).toHaveTextContent("Select target entity type*");
+
+    //foreign key is hidden under "Optional" line at first
+    expect(getByText("Optional")).toBeInTheDocument();
+    expect(queryByText("You can select the foreign key now or later:")).not.toBeInTheDocument();
+
+    //expand "Optional" line
+    fireEvent.click(getByText("Optional"));
+
+    //foreign key dropdown is empty with placeholder
+    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
+    expect(getByText("Select foreign key")).toBeInTheDocument();
 
     //verify error message upon Save click with no selected entity, entity selection tested in e2e
     fireEvent.click(getByText("Add"));

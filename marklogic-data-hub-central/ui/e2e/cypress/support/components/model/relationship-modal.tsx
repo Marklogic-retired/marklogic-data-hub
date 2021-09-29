@@ -8,8 +8,12 @@ class RelationshipModal {
     return cy.get("#relationship").should("have.value", relationshipName);
   }
 
-  verifyJoinPropertyValue(joinPropertyValue: string) {
-    return cy.get(".ant-select-selection-selected-value").should("have.text", joinPropertyValue);
+  verifyForeignKeyValue(foreignKeyValue: string) {
+    return cy.get(".ant-select-selection-selected-value").should("have.text", foreignKeyValue);
+  }
+
+  verifyForeignKeyPlaceholder() {
+    return cy.get(".ant-select-selection__placeholder").should("be.visible");
   }
 
   editRelationshipName(relationshipName: string) {
@@ -45,9 +49,13 @@ class RelationshipModal {
     cy.findByTestId("cardinalityButton").click({force: true});
   }
 
-  editJoinProperty(joinPropertyName: string) {
-    cy.findByTestId("join-property-dropdown").click();
-    cy.findByLabelText(`${joinPropertyName}-option`).click();
+  editForeignKey(foreignKeyName: string) {
+    cy.findByTestId("foreignKey-dropdown").click();
+    cy.findByLabelText(`${foreignKeyName}-option`).click();
+  }
+
+  toggleOptional() {
+    return cy.findByText("Optional").click();
   }
 
   cancelModal() {

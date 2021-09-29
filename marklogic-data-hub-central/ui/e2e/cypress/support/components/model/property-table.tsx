@@ -67,6 +67,14 @@ class PropertyTable {
   getDeleteStructuredPropertyIcon(entityName: string, structuredTypeName: string, propertyName: string) {
     return cy.findAllByTestId(`delete-${entityName}-${structuredTypeName}-${propertyName}`).eq(0);
   }
+
+  verifyRelationshipIcon(propertyName: string) {
+    return cy.findByTestId(`relationship-${propertyName}`);
+  }
+
+  verifyForeignKeyIcon(propertyName: string) {
+    return cy.findByTestId(`foreign-${propertyName}`);
+  }
 }
 
 const propertyTable = new PropertyTable();

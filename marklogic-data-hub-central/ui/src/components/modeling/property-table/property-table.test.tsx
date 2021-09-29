@@ -395,7 +395,7 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getAllByText("Customer")[1]);
 
     // Choose join property after menu is populated
-    userEvent.click(getByLabelText("joinProperty-select"));
+    userEvent.click(getByLabelText("foreignKey-select"));
     expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
     await waitFor(() => userEvent.click(getAllByText("customerId")[1]));
 
@@ -405,7 +405,10 @@ describe("Entity Modeling Property Table Component", () => {
 
     expect(getByText("customerRelationship")).toBeInTheDocument();
     fireEvent.mouseOver((getByTestId("foreign-customerRelationship")));
-    await waitFor(() => expect(document.querySelector("#tooltip-customerRelationship")).toBeInTheDocument());
+    await waitFor(() => expect(document.querySelector("#foreignKeyTooltip-customerRelationship")).toBeInTheDocument());
+
+    fireEvent.mouseOver((getByTestId("relationship-customerRelationship")));
+    await waitFor(() => expect(document.querySelector("#relationshipTooltip-customerRelationship")).toBeInTheDocument());
     expect(screen.getByText("array (Customer)")).toBeInTheDocument();
 
     userEvent.clear(screen.getByLabelText("input-name"));

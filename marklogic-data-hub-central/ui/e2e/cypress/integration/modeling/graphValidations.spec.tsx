@@ -102,14 +102,14 @@ describe("Graph Validations", () => {
 
     //edit properties should be populated
     relationshipModal.verifyRelationshipValue("ownedBy");
-    relationshipModal.verifyJoinPropertyValue("customerId");
+    relationshipModal.verifyForeignKeyValue("customerId");
     relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
 
     //modify properties and save
     relationshipModal.editRelationshipName("usedBy");
     relationshipModal.toggleCardinality();
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
-    relationshipModal.editJoinProperty("email");
+    relationshipModal.editForeignKey("email");
 
     relationshipModal.confirmationOptions("Save");
     cy.waitForAsyncRequest();
@@ -121,7 +121,7 @@ describe("Graph Validations", () => {
     });
 
     relationshipModal.verifyRelationshipValue("usedBy");
-    relationshipModal.verifyJoinPropertyValue("email");
+    relationshipModal.verifyForeignKeyValue("email");
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
 
     relationshipModal.confirmationOptions("Cancel");
@@ -155,7 +155,7 @@ describe("Graph Validations", () => {
     relationshipModal.getModalHeader().should("be.visible");
 
     relationshipModal.editRelationshipName("ownedBy");
-    relationshipModal.editJoinProperty("customerId");
+    relationshipModal.editForeignKey("customerId");
     relationshipModal.toggleCardinality();
 
     relationshipModal.confirmationOptions("Save");

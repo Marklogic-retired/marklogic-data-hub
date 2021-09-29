@@ -28,16 +28,19 @@ const PropertiesTab: React.FC<Props> = (props) => {
     <div>
       {showLegend ?
         <div className={styles.legend}>
+          <span className={styles.modeledRelationshipIcon}/>
+          <div data-testid="relationshipIconLegend" className={styles.relationshipLegendText}> Modeled Relationship
+          </div>
           <div data-testid="foreignKeyIconLegend" className={styles.foreignKeyLegendText}>
-            <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key Relationship
+            <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key
           </div>
           <div data-testid="multipleIconLegend" className={styles.legendText}>
-            <img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple
+            <img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple Values
           </div>
-          <div data-testid="structuredIconLegend" className={styles.legendText}>
+          <div data-testid="structuredIconLegend" className={styles.legendTextLast}>
             <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type
           </div>
-          <a data-testid="hideLegendLink" onClick={() => toggleLegend()}>Hide Legend &lt;&lt;</a>
+          <a data-testid="hideLegendLink" onClick={() => toggleLegend()} className={styles.hideLegendLink}>Hide Legend &lt;&lt;</a>
         </div>
         :
         <a data-testid="showLegendLink" onClick={() => toggleLegend()}>Show Legend &gt;&gt;</a>
