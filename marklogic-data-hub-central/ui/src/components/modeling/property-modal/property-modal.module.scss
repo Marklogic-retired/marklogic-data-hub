@@ -25,6 +25,15 @@
   color: #7F86B5;
 }
 
+.formCheck { 
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.formCheckLabel{ 
+  color: #333333;
+}
+
 .radioQuestionIcon {
   right: 0px;
 }

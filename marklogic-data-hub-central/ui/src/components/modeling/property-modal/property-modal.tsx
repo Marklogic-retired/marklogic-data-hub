@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Radio, Cascader, Select, Checkbox} from "antd";
+import {Modal, Form, Input, Radio, Cascader, Select} from "antd";
+import FormCheck from "react-bootstrap/FormCheck";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -743,14 +744,19 @@ const PropertyModal: React.FC<Props> = (props) => {
         labelAlign="left"
         colon={false}
       >
-        <Checkbox
-          id={checkbox.value}
-          checked={selectedPropertyOptions[checkbox.value]}
-          onChange={(event) => onCheckboxChange(event, checkbox.value)}
-        >{checkbox.label}</Checkbox>
-        <HCTooltip text={checkbox.tooltip} id={checkbox.value+"-tooltip"} placement="top">
-          <QuestionCircleFill color="#7F86B5" size={13} className={styles.checkboxQuestionIcon}/>
-        </HCTooltip>
+        <FormCheck id={checkbox.value} className={styles.formCheck}>
+          <FormCheck.Input
+            type="checkbox"
+            value={checkbox.value}
+            checked={selectedPropertyOptions[checkbox.value]}
+            style={{marginTop: "-0.25em"}}
+            onChange={(event) => onCheckboxChange(event, checkbox.value)}
+          />
+          <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
+          <HCTooltip text={checkbox.tooltip} id={checkbox.value+"-tooltip"} placement="top">
+            <QuestionCircleFill color="#7F86B5" size={13} />
+          </HCTooltip>
+        </FormCheck>
       </Form.Item>
     );
   });

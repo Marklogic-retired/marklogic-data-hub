@@ -1,6 +1,7 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Table, Icon, Input, Checkbox, Alert} from "antd";
+import {Table, Icon, Input, Alert} from "antd";
+import HCCheckbox from "../../../common/hc-checkbox/hc-checkbox";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -1264,14 +1265,15 @@ const MappingStepDetail: React.FC = () => {
           key={entLabel}
           eventKey={entLabel}
           className={styles.DropdownMenuItem}>
-          <Checkbox
-            data-testid={`columnOptionsCheckBox-${entLabel}`}
-            key={entLabel}
+          <HCCheckbox
+            id={entLabel + "-checkbox-id"}
+            handleClick={handleColOptionsChecked}
             value={entLabel}
-            onChange={handleColOptionsChecked}
-            defaultChecked={true}
-            className={`${styles.checkBoxItem} w-100`}
-          >{columnOptionsLabel[entLabel]}</Checkbox></Dropdown.Item>
+            label={columnOptionsLabel[entLabel]}
+            checked={checkedEntityColumns[entLabel]}
+            dataTestId={`columnOptionsCheckBox-${entLabel}`}
+          />
+        </Dropdown.Item>
       ))}
     </Dropdown.Menu>
   );
