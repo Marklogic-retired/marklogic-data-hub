@@ -1,8 +1,6 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Icon, Modal, Menu, Dropdown, Tooltip} from "antd";
-import {Accordion, Card} from "react-bootstrap";
+import {Icon, Modal, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCog} from "@fortawesome/free-solid-svg-icons";    // eslint-disable-line @typescript-eslint/no-unused-vars
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
 import NewFlowDialog from "./new-flow-dialog/new-flow-dialog";
@@ -20,6 +18,8 @@ import "./flows.scss";
 import HCCard from "../common/hc-card/hc-card";
 import HCButton from "../common/hc-button/hc-button";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown} from "react-bootstrap-icons";
+import {Accordion, Card, Dropdown} from "react-bootstrap";
+
 
 enum ReorderFlowOrderDirection {
   LEFT = "left",
@@ -101,7 +101,7 @@ const Flows: React.FC<Props> = (props) => {
   const [hasQueriedInitialJobData, setHasQueriedInitialJobData] = useState(false);
   const [selectedStepOptions, setSelectedStepOptions] = useState<any>({}); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [currentFlowName, setCurrentFlowName] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [selectedStepDetails, setSelectedStepDetails]= useState<any>([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
+  const [selectedStepDetails, setSelectedStepDetails] = useState<any>([{stepName: "", stepNumber: -1, stepDefinitionType: "", isChecked: false}]);
   const [runFlowClicked, setRunFlowClicked] = useState(false);
   const location = useLocation();
 
@@ -517,76 +517,88 @@ const Flows: React.FC<Props> = (props) => {
   // };
   */
 
-  const stepMenu = (flowName) => {
-    return (
-      <Menu>
-        <Menu.ItemGroup title="Load">
-          {props.steps && props.steps["ingestionSteps"] && props.steps["ingestionSteps"].length > 0 ? props.steps["ingestionSteps"].map((elem, index) => (
-            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
-              <div
-                onClick={() => { handleStepAdd(elem.name, flowName, "ingestion"); }}
-              >{elem.name}</div>
-            </Menu.Item>
-          )) : null}
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="Map">
-          {props.steps && props.steps["mappingSteps"] && props.steps["mappingSteps"].length > 0 ? props.steps["mappingSteps"].map((elem, index) => (
-            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
-              <div
-                onClick={() => { handleStepAdd(elem.name, flowName, "mapping"); }}
-              >{elem.name}</div>
-            </Menu.Item>
-          )) : null}
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="Match">
-          {props.steps && props.steps["matchingSteps"] && props.steps["matchingSteps"].length > 0 ? props.steps["matchingSteps"].map((elem, index) => (
-            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
-              <div
-                onClick={() => { handleStepAdd(elem.name, flowName, "matching"); }}
-              >{elem.name}</div>
-            </Menu.Item>
-          )) : null}
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="Merge">
-          {props.steps && props.steps["mergingSteps"] && props.steps["mergingSteps"].length > 0 ? props.steps["mergingSteps"].map((elem, index) => (
-            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
-              <div
-                onClick={() => { handleStepAdd(elem.name, flowName, "merging"); }}
-              >{elem.name}</div>
-            </Menu.Item>
-          )) : null}
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="Master">
-          {props.steps && props.steps["masteringSteps"] && props.steps["masteringSteps"].length > 0 ? props.steps["masteringSteps"].map((elem, index) => (
-            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
-              <div
-                onClick={() => { handleStepAdd(elem.name, flowName, "mastering"); }}
-              >{elem.name}</div>
-            </Menu.Item>
-          )) : null}
-        </Menu.ItemGroup>
-        <Menu.ItemGroup title="Custom">
-          {props.steps && props.steps["customSteps"] && props.steps["customSteps"].length > 0 ? props.steps["customSteps"].map((elem, index) => (
-            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
-              <div
-                onClick={() => { handleStepAdd(elem.name, flowName, "custom"); }}
-              >{elem.name}</div>
-            </Menu.Item>
-          )) : null}
-        </Menu.ItemGroup>
-      </Menu>
-    );
-  };
+
+  const stepMenu = (flowName, i) => (
+
+    <Dropdown align="end" >
+      <Dropdown.Toggle data-testid={`addStep-${flowName}`} aria-label={`addStep-${flowName}`} disabled={!props.canWriteFlow} variant="outline-light" className={props.canWriteFlow ? styles.stepMenu : styles.stepMenuDisabled}>
+        {
+          props.canWriteFlow ?
+            <>Add Step<ChevronDown className="ms-2" /> </>
+            :
+            <HCTooltip text={SecurityTooltips.missingPermission} id="add-step-disabled-tooltip" placement="bottom">
+              <span aria-label={"addStepDisabled-" + i}>Add Step<ChevronDown className="ms-2" /> </span>
+            </HCTooltip>
+        }
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Header className="py-0 px-2 fs-6">Load</Dropdown.Header>
+        {props.steps && props.steps["ingestionSteps"] && props.steps["ingestionSteps"].length > 0 ? props.steps["ingestionSteps"].map((elem, index) => (
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+            <div
+              onClick={() => { handleStepAdd(elem.name, flowName, "ingestion"); }}
+            >{elem.name}</div>
+          </Dropdown.Item>
+        )) : null}
+
+        <Dropdown.Header className="py-0 px-2 fs-6">Map</Dropdown.Header>
+        {props.steps && props.steps["mappingSteps"] && props.steps["mappingSteps"].length > 0 ? props.steps["mappingSteps"].map((elem, index) => (
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+            <div
+              onClick={() => { handleStepAdd(elem.name, flowName, "mapping"); }}
+            >{elem.name}</div>
+          </Dropdown.Item>
+        )) : null}
+
+        <Dropdown.Header className="py-0 px-2 fs-6">Match</Dropdown.Header>
+        {props.steps && props.steps["matchingSteps"] && props.steps["matchingSteps"].length > 0 ? props.steps["matchingSteps"].map((elem, index) => (
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+            <div
+              onClick={() => { handleStepAdd(elem.name, flowName, "matching"); }}
+            >{elem.name}</div>
+          </Dropdown.Item>
+        )) : null}
+
+        <Dropdown.Header className="py-0 px-2 fs-6">Merge</Dropdown.Header>
+        {props.steps && props.steps["mergingSteps"] && props.steps["mergingSteps"].length > 0 ? props.steps["mergingSteps"].map((elem, index) => (
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+            <div
+              onClick={() => { handleStepAdd(elem.name, flowName, "merging"); }}
+            >{elem.name}</div>
+          </Dropdown.Item>
+        )) : null}
+
+        <Dropdown.Header className="py-0 px-2 fs-6">Master</Dropdown.Header>
+        {props.steps && props.steps["masteringSteps"] && props.steps["masteringSteps"].length > 0 ? props.steps["masteringSteps"].map((elem, index) => (
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+            <div
+              onClick={() => { handleStepAdd(elem.name, flowName, "mastering"); }}
+            >{elem.name}</div>
+          </Dropdown.Item>
+        )) : null}
+
+        <Dropdown.Header className="py-0 px-2 fs-6">Custom</Dropdown.Header>
+        {props.steps && props.steps["customSteps"] && props.steps["customSteps"].length > 0 ? props.steps["customSteps"].map((elem, index) => (
+          <Dropdown.Item key={index} aria-label={`${elem.name}-to-flow`}>
+            <div
+              onClick={() => { handleStepAdd(elem.name, flowName, "custom"); }}
+            >{elem.name}</div>
+          </Dropdown.Item>
+        )) : null}
+      </Dropdown.Menu>
+    </Dropdown>
+  );
 
   const panelActions = (name, i) => (
     <div
+      className={styles.panelActionsContainer}
       id="panelActions"
-      className={"d-flex p-2"}
       onClick={event => {
         event.stopPropagation(); // Do not trigger collapse
         event.preventDefault();
       }}
     >
+      {stepMenu(name, i)}
       {/* Commenting out for DHFPROD-7820, remove unfinished run flow epic stories from 5.6
       <span id="stepsDropdown" className={styles.hoverColor}>
         <Dropdown.Button
@@ -600,33 +612,6 @@ const Flows: React.FC<Props> = (props) => {
           <span className={styles.runIconAlign}><Icon type="play-circle" theme="filled"  className={styles.runIcon}/></span>
           <span className={styles.runFlowLabel}>Run Flow</span>
         </Dropdown.Button></span> */}
-      <Dropdown
-        overlay={stepMenu(name)}
-        trigger={["click"]}
-        disabled={!props.canWriteFlow}
-        overlayClassName="stepMenu"
-      >
-        {props.canWriteFlow ?
-          <HCButton
-            className={styles.addStep}
-            variant="outline-light"
-            aria-label={`addStep-${name}`}
-            style={{}}
-          >Add Step<ChevronDown className="ms-2" /></HCButton>
-          :
-          <HCTooltip text={SecurityTooltips.missingPermission} id="add-step-disabled-tooltip" placement="bottom">
-            <span className={`me-3 ${styles.disabledCursor}`}>
-              <HCButton
-                className={styles.addStep}
-                aria-label={"addStepDisabled-" + i}
-                style={{backgroundColor: "#f5f5f5", borderColor: "#f5f5f5", pointerEvents: "none"}}
-                variant="primary"
-                disabled={!props.canWriteFlow}
-              >Add Step  <ChevronDown className="ms-2" /></HCButton>
-            </span>
-          </HCTooltip>
-        }
-      </Dropdown>
       <span className={styles.deleteFlow}>
         {props.canWriteFlow ?
           <HCTooltip text="Delete Flow" id="disabled-trash-tooltip" placement="bottom">
@@ -718,8 +703,8 @@ const Flows: React.FC<Props> = (props) => {
             setFileList([]);
           });
       } else {
-        let stepNumbers=[{}];
-        for (let i=0;i<selectedStepDetails.length;i++) {
+        let stepNumbers = [{}];
+        for (let i = 0; i < selectedStepDetails.length; i++) {
           stepNumbers.push(selectedStepDetails[i]);
         }
         stepNumbers.shift();
@@ -767,7 +752,7 @@ const Flows: React.FC<Props> = (props) => {
       return (
         <HCTooltip text={tooltipText} id="success-tooltip" placement="bottom">
           <span onClick={(e) => showStepRunResponse(step)}>
-            <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`}/></i>
+            <i><FontAwesomeIcon aria-label="icon: check-circle" icon={faCheckCircle} className={styles.successfulRun} size="lg" data-testid={`check-circle-${step.stepName}`} /></i>
           </span>
         </HCTooltip>
       );
@@ -832,9 +817,9 @@ const Flows: React.FC<Props> = (props) => {
       }
     }
 
-    let steps : string[] = [];
+    let steps: string[] = [];
     for (let i = 0; i < newSteps.length; i++) {
-      newSteps[i].stepNumber = String(i+1);
+      newSteps[i].stepNumber = String(i + 1);
       steps.push(newSteps[i].stepId);
     }
 
@@ -896,7 +881,7 @@ const Flows: React.FC<Props> = (props) => {
                             role="button"
                             onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.LEFT)}
                             onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.LEFT)}
-                            tabIndex={0}/>
+                            tabIndex={0} />
                         </i>
                       </HCTooltip>
                     </div>
@@ -918,7 +903,7 @@ const Flows: React.FC<Props> = (props) => {
                             role="button"
                             onClick={() => reorderFlow(index, flowName, ReorderFlowOrderDirection.RIGHT)}
                             onKeyDown={(e) => reorderFlowKeyDownHandler(e, index, flowName, ReorderFlowOrderDirection.RIGHT)}
-                            tabIndex={0}/>
+                            tabIndex={0} />
                         </i>
                       </HCTooltip>
                     }

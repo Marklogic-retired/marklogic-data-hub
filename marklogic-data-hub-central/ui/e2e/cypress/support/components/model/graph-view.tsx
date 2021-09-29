@@ -4,7 +4,7 @@ class GraphView {
   }
 
   getAddButton() {
-    return cy.findByLabelText("add-entity-type-relationship");
+    return cy.get(`[aria-label="add-entity-type-relationship"] > button`);
   }
 
   addNewRelationship() {

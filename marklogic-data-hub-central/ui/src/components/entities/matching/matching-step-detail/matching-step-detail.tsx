@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Menu, Dropdown, Input, Radio, Table, Switch} from "antd";
+import {Input, Radio, Table, Switch} from "antd";
 import {useHistory} from "react-router-dom";
 import {Row, Col, Accordion, Card} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -7,7 +7,6 @@ import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import HCCard from "../../../common/hc-card/hc-card";
 import CustomPageHeader from "../../page-header/page-header";
-
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import RulesetMultipleModal from "../ruleset-multiple-modal/ruleset-multiple-modal";
 import NumberIcon from "../../../number-icon/number-icon";
@@ -29,6 +28,7 @@ import HCButton from "../../../common/hc-button/hc-button";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import styles from "./matching-step-detail.module.scss";
+import {DropdownButton, Dropdown} from "react-bootstrap";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -107,17 +107,6 @@ const MatchingStepDetail: React.FC = () => {
   const [thresholdItems, setThresholdItems] = useState<any[]>([]);
   const [displayRulesetTimeline, toggleDisplayRulesetTimeline] = useState(false);
   const [displayThresholdTimeline, toggleDisplayThresholdTimeline] = useState(false);
-
-  const menu = (
-    <Menu>
-      <Menu.Item key="singlePropertyRuleset">
-        <span onClick={() => addNewSingleRuleset()} aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
-      </Menu.Item>
-      <Menu.Item key="multiPropertyRuleset">
-        <span onClick={() => addNewMultipleRuleset()} aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
-      </Menu.Item>
-    </Menu>
-  );
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -681,6 +670,31 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
+  const handleAddMenu = (key) => {
+    if (key === "singlePropertyRuleset") {
+      addNewSingleRuleset();
+    }
+    if (key === "multiPropertyRuleset") {
+      addNewMultipleRuleset();
+    }
+  };
+
+  const addButton = (
+    <DropdownButton
+      aria-label="add-ruleset"
+      id="add-ruleset"
+      align="end"
+      title={<>Add<ChevronDown className="ms-2" /></>}
+      onSelect={handleAddMenu}>
+      <Dropdown.Item eventKey="singlePropertyRuleset">
+        <span aria-label={"singlePropertyRulesetOption"}>Add ruleset for a single property</span>
+      </Dropdown.Item>
+      <Dropdown.Item eventKey="multiPropertyRuleset">
+        <span aria-label={"multiPropertyRulesetOption"}>Add ruleset for multiple properties</span>
+      </Dropdown.Item>
+    </DropdownButton>
+  );
+
 
   return (
     <>
@@ -783,21 +797,14 @@ const MatchingStepDetail: React.FC = () => {
             </div>
             <div
               id="panelActionsMatch"
+              className={styles.panelActionsMatch}
               onClick={event => {
                 event.stopPropagation(); // Do not trigger collapse
                 event.preventDefault();
               }}
             >
-              <Dropdown
-                overlay={menu}
-                trigger={["click"]}
-                overlayClassName="stepMenu"
-              >
-                <div className={styles.addButtonContainer}>
-                  <HCButton aria-label="add-ruleset" variant="primary">
-                    Add
-                    <ChevronDown className="ms-2"/></HCButton>
-                </div></Dropdown></div>
+              {addButton}
+            </div>
           </div>
           <div><span><b>Enable Ruleset Scale </b></span><Switch aria-label="ruleset-scale-switch" onChange={(e) => toggleDisplayRulesetTimeline(e)} defaultChecked={false} ></Switch>
             <span>
@@ -893,9 +900,9 @@ const MatchingStepDetail: React.FC = () => {
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                 </HCTooltip>
               </span>
-              <div aria-label="allDataContent"><br />
+              <span aria-label="allDataContent"><br />
                 Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
-              </div>
+              </span>
             </Radio>
           </Radio.Group>
           <div className={styles.testButton}>

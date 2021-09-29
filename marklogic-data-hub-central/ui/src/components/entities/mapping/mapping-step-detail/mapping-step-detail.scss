@@ -53,3 +53,13 @@
 .Resizer.vertical {
   border-style: dashed !important;
 }
+
+
+#columnOptionsSelectorButton {
+    text-decoration: none !important;
+    outline: none;
+    box-shadow: none;
+    &:active,&:focus {
+      box-shadow: none;
+    }
+}

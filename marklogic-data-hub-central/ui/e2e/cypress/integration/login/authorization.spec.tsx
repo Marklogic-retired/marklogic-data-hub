@@ -234,7 +234,7 @@ describe("login", () => {
     toolbar.getModelToolbarIcon().trigger("mouseover").click();
     cy.url().should("include", "/tiles/model");
     tiles.getModelTile().should("exist");
-    cy.get("[aria-label=\"user-dropdown\"]").trigger("mousedown");
+    cy.get(`[aria-label="user-dropdown"]`).click();
     cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
 
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
