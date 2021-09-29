@@ -103,7 +103,12 @@
 }
 
 .dropdownMenu {
-    right: '80px';
+    overflow-y: visible !important;
+}
+.DropdownMenuItem {
+    &:active {
+        background-color: transparent !important;
+    }
 }
 
 .flowSelect {

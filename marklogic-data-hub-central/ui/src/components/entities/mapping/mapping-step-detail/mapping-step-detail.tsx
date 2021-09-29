@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Table, Icon, Input, Dropdown, Menu, Checkbox, Alert} from "antd";
+import {Table, Icon, Input, Checkbox, Alert} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -32,6 +32,7 @@ import Steps from "../../../steps/steps";
 import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
 import {CheckSquareFill, XSquareFill, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
+import {Dropdown} from "react-bootstrap";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -1256,33 +1257,35 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const columnOptionsDropdown = (
-    <div className={styles.menuParentDiv}>
-      <Menu onClick={handleColOptMenuClick}>
-        {Object.keys(checkedEntityColumns).map(entLabel => (
-          <Menu.Item key={entLabel}
-            className={styles.DropdownMenuItem}><Checkbox
-              data-testid={`columnOptionsCheckBox-${entLabel}`}
-              key={entLabel}
-              value={entLabel}
-              onChange={handleColOptionsChecked}
-              defaultChecked={true}
-              className={styles.checkBoxItem}
-            >{columnOptionsLabel[entLabel]}</Checkbox></Menu.Item>
-        ))}
-      </Menu>
-    </div>
+    <Dropdown.Menu variant="secondary">
+      {Object.keys(checkedEntityColumns).map(entLabel => (
+        <Dropdown.Item
+          as="span"
+          key={entLabel}
+          eventKey={entLabel}
+          className={styles.DropdownMenuItem}>
+          <Checkbox
+            data-testid={`columnOptionsCheckBox-${entLabel}`}
+            key={entLabel}
+            value={entLabel}
+            onChange={handleColOptionsChecked}
+            defaultChecked={true}
+            className={`${styles.checkBoxItem} w-100`}
+          >{columnOptionsLabel[entLabel]}</Checkbox></Dropdown.Item>
+      ))}
+    </Dropdown.Menu>
   );
 
   const columnOptionsSelector =
-    <Dropdown overlay={columnOptionsDropdown}
-      className={styles.dropdownHover}
-      trigger={["click"]}
-      onVisibleChange={handleColOptMenuVisibleChange}
-      visible={colOptMenuVisible}
-      placement="bottomRight"
-      overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
-        Column Options <ChevronDown />
-      </a></Dropdown>;
+      <Dropdown autoClose="outside" onToggle={handleColOptMenuVisibleChange} show={colOptMenuVisible} onSelect={handleColOptMenuClick}>
+        <Dropdown.Toggle id="columnOptionsSelectorButton" className={styles.columnOptionsSelector} variant="link">
+          <>
+            <span> Column Options</span>
+            <ChevronDown className="ms-2"/>
+          </>
+        </Dropdown.Toggle>
+        {columnOptionsDropdown}
+      </Dropdown>;
 
 
   //Collapse all-Expand All button
@@ -1570,8 +1573,8 @@ const MappingStepDetail: React.FC = () => {
               </div>
               <div ref={dummyNode}></div>
               <div className={styles.columnOptionsSelectorContainer}>
-                <span className={styles.entityCollapseButtons}><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
                 <span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span>
+                <span className={styles.entityCollapseButtons}><ExpandCollapse handleSelection={(id) => handleEntityExpandCollapse(id)} currentSelection={""} /></span>
               </div>
               <EntityMapTable
                 setScrollRef={setRef}

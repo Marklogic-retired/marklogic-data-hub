@@ -246,7 +246,7 @@ describe("Graph view page", () => {
     expect(getByLabelText("switch-view-graph")).toBeChecked(); // Graph view is checked by default.
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByLabelText("graph-view-filter-input")).toBeInTheDocument();
-    userEvent.click(getByLabelText("add-entity-type-relationship"));
+    userEvent.click(getByText("Add"));
     await waitFor(() => {
       expect(getByLabelText("add-entity-type")).toBeInTheDocument();
       expect(getByLabelText("add-relationship")).toBeInTheDocument();

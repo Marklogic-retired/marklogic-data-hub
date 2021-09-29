@@ -1,157 +1,155 @@
 .pageHeader {
-  padding-bottom: 10px;
+    padding-bottom: 10px;
 }
 
 .headerDescription {
-  padding: 0 0 10px 57px;
+    padding: 0 0 10px 57px;
 }
 
 .stepNumberContainer {
-  display: flex;
-  margin-bottom: 10px;
+    display: flex;
+    margin-bottom: 10px;
 
-  .stepText {
-    margin: 8px 0 0 12px;
-  }
+    .stepText {
+        margin: 8px 0 0 12px;
+    }
 }
 
 .matchingDetailContainer {
-  padding: 20px;
+    padding: 20px;
 
-  .bold {
-    font-weight: bold;
-  }
+    .bold {
+        font-weight: bold;
+    }
 
-  .italic {
-    font-style: italic;
-  }
+    .italic {
+        font-style: italic;
+    }
 
-  .greyContainer {
-    padding: 10px;
-    margin-left: 2%;
-    margin-bottom: 35px;
-    border-radius: 5px;
-    background-color: #f1f1f1;
-  }
+    .greyContainer {
+        padding: 10px;
+        margin-left: 2%;
+        margin-bottom: 35px;
+        border-radius: 5px;
+        background-color: #f1f1f1;
+    }
 
-  .topHeader {
-    display: grid;
-    grid-template-columns: 90% 10%;
-  }
+    .topHeader {
+        display: grid;
+        grid-template-columns: 90% 10%;
+    }
 
-  .textContainer {
-    display: flex;
-  }
+    .textContainer {
+        display: flex;
+    }
 
-  .addButtonContainer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 4px;
-  }
+    .addButtonContainer {
+        text-align: end;
+    }
 
-  .link {
-    margin-left: 10px;
-    color: #5B69AF;
-    cursor: pointer;
-  }
+    .link {
+        margin-left: 10px;
+        color: #5b69af;
+        cursor: pointer;
+    }
 
-  .hideText {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    .hideText {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  .showText {
-    white-space: normal;
-    overflow: inherit;
-    text-overflow: inherit;
-  }
+    .showText {
+        white-space: normal;
+        overflow: inherit;
+        text-overflow: inherit;
+    }
 
-  .matchCombinationsExpandedContainer {
-      padding: 10px;
-      margin-left: 2%;
-      margin-bottom: 35px;
-      border-radius: 5px;
-      background-color: #E5E7F0;
-      min-height: 20em;
-  }
+    .matchCombinationsExpandedContainer {
+        padding: 10px;
+        margin-left: 2%;
+        margin-bottom: 35px;
+        border-radius: 5px;
+        background-color: #e5e7f0;
+        min-height: 20em;
+    }
 
-  .matchCombinationsCollapsedContainer {
-      padding: 10px;
-      margin-left: 2%;
-      margin-bottom: 35px;
-      border-radius: 5px;
-      background-color: #E5E7F0;
-      overflow: auto;
-      height: 20em;
+    .matchCombinationsCollapsedContainer {
+        padding: 10px;
+        margin-left: 2%;
+        margin-bottom: 35px;
+        border-radius: 5px;
+        background-color: #e5e7f0;
+        overflow: auto;
+        height: 20em;
     }
 
     .matchCombinationsHeading {
-      font-size: 16px;
-      font-weight: bold;
-      padding-bottom: 17px;
-      margin-left: 0.7vw;
+        font-size: 16px;
+        font-weight: bold;
+        padding-bottom: 17px;
+        margin-left: 0.7vw;
     }
 
     .matchCombinationsColsContainer {
-      display: flex;
+        display: flex;
 
-      .matchCombinationsCardStyle {
-        width: 35em;
-        min-height: 6em;
-        text-align: left;
-        align-content: left;
-        background-color: #E5E7F0;
-        border: 1px dashed #CCCCCC;
+        .matchCombinationsCardStyle {
+            width: 35em;
+            min-height: 6em;
+            text-align: left;
+            align-content: left;
+            background-color: #e5e7f0;
+            border: 1px dashed #cccccc;
 
-        .colsWithoutDivider {
-          min-width: fit-content;
-          white-space: normal;
-          margin-top: -10px;
-          margin-left: -10px;
+            .colsWithoutDivider {
+                min-width: fit-content;
+                white-space: normal;
+                margin-top: -10px;
+                margin-left: -10px;
 
-          .combinationlabel {
-            font-weight: 500;
-            padding-bottom: 15px;
-          }
+                .combinationlabel {
+                    font-weight: 500;
+                    padding-bottom: 15px;
+                }
+            }
+
+            .colsWithSingleMatch {
+                min-width: fit-content;
+                white-space: normal;
+            }
+
+            .period {
+                height: 6px;
+                width: 6px;
+                margin-left: 2px;
+                margin-right: 2px;
+                background-color: #6a77b4;
+                border-radius: 50%;
+                display: inline-block;
+            }
         }
-
-        .colsWithSingleMatch {
-          min-width: fit-content;
-          white-space: normal;
-        }
-
-        .period {
-          height: 6px;
-          width: 6px;
-          margin-left: 2px;
-          margin-right: 2px;
-          background-color: #6A77B4;
-          border-radius: 50%;
-          display: inline-block;
-        }
-      }
     }
-  }
+}
 
 .footer {
-  display: flex;
-  justify-content: flex-end;
+    display: flex;
+    justify-content: flex-end;
 
-  .saveButton {
-    margin-left: 5px;
-  }
+    .saveButton {
+        margin-left: 5px;
+    }
 }
 
 .deleteMessage {
-  margin: 4% 0 8% 0;
+    margin: 4% 0 8% 0;
 }
 
 .addIcon {
     cursor: pointer;
     font-size: 21px;
     margin-left: 6px;
-    color: #5B69AF;
+    color: #5b69af;
     &:hover {
         color: var(--hoverColor);
     }
@@ -187,7 +185,7 @@
 }
 
 .testButton {
-   margin-top: 2vh;
+    margin-top: 2vh;
 }
 
 .questionCircle {
@@ -195,7 +193,7 @@
     vertical-align: top;
     margin-top: 3px;
     margin-left: 5px;
-    color: #7F86B5;
+    color: #7f86b5;
 }
 
 .UriTable {
@@ -226,11 +224,11 @@
 }
 
 .deleteIcon {
-    color: #B32424;
+    color: #b32424;
     font-size: 21px;
     cursor: pointer;
     padding-bottom: 2px;
-    &:hover{
+    &:hover {
         color: var(--hoverColor) !important;
     }
 }
@@ -261,13 +259,13 @@
 .noMatchedDataContent {
     margin-top: 1vh;
     :before {
-        content:"•";
+        content: "•";
         color: #333;
         padding-right: 5px;
     }
 }
 .radioTitle {
- margin-top: 1vh;
+    margin-top: 1vh;
 }
 
 .borders {
@@ -296,7 +294,7 @@
 }
 
 .duplicateUriWarning {
-    color: #B32424;
+    color: #b32424;
     margin: 1vh 0vh -0.5vh 1.3vw;
 }
 
@@ -335,7 +333,7 @@
 }
 
 .structuredIcon {
-    color: #5B69AF;
+    color: #5b69af;
     font-size: 14px;
 }
 
@@ -375,9 +373,13 @@
     float: right;
 }
 
-.scaleTooltip{
+.scaleTooltip {
     font-size: 12px;
     margin-left: 5px;
-    color: #7F86B5;
+    color: #7f86b5;
     cursor: pointer;
+}
+
+.panelActionsMatch {
+    text-align: end;
 }

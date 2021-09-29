@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout, Menu, Dropdown} from "antd";
+import {Layout, Menu} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
@@ -14,6 +14,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {faQuestionCircle, faUser} from "@fortawesome/free-regular-svg-icons";
 import HCButton from "../common/hc-button/hc-button";
+import {Dropdown} from "react-bootstrap";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -177,28 +178,29 @@ const Header:React.FC<Props> = (props) => {
         {/* <Menu.Item>
           <Tooltip title="Settings"><Icon type="setting"/></Tooltip>
         </Menu.Item> */}
-        <Dropdown overlay={userMenu} className={styles.userDropDown} visible={showUserDropdown}>
-          {/*
-            to revert to previous behavior of open/close on hover, remove visible={...} property from above
-            to allow open/close on click, add trigger={['click'], ['hover']} property (DO NOT ADD 'contextmenu'!)
-            note that this disables open/close on enter key
-          */}
-          <span
-            aria-label="user-dropdown" tabIndex={1} ref={userDropdownRef} onKeyDown={userIconKeyDownHandler}
-            onMouseDown={userDropdownClickHandler}
-          >
-            {/*
-              possible modifications
-                hover: onMouseOver={toggleUserDropdown(true)}  not used; makes dropdown feel clunky
-                un-hover: onMouseOut={toggleUserDropdown(false)}  DO NOT USE: impossible to click on the logout button
-            */}
-            <HCTooltip text="User" id="user-tooltip" placement="bottom">
-              <i>
-                <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user"/>
-              </i>
-            </HCTooltip>
-          </span>
-        </Dropdown>
+        <Menu.Item>
+          <Dropdown align="end" className="d-inline me-4" autoClose={false} show={showUserDropdown}>
+            <Dropdown.Toggle
+              className="mx-3"
+              as="span"
+              aria-label="user-dropdown"
+              id="user-dropdown"
+              tabIndex={1}
+              ref={userDropdownRef}
+              onKeyDown={userIconKeyDownHandler}
+              onMouseDown={userDropdownClickHandler}
+            >
+              <HCTooltip text="User" id="user-tooltip" placement="bottom">
+                <i>
+                  <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user" />
+                </i>
+              </HCTooltip>
+            </Dropdown.Toggle>
+            <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
+              <Dropdown.Item className="p-0 m-0 pt-4 bg-transparent">{userMenu}</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </Menu.Item>
       </Menu>
     </div>;
   } else {

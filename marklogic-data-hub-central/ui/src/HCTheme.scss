@@ -154,6 +154,9 @@ $input-border-radius: 2px;
 
 .cursor-pointer {
     cursor: pointer;
+  }
+.dropdown-toggle::after {
+    display:none !important;
 }
 .daterangepicker {
     font-family: $font-family-sans-serif;
