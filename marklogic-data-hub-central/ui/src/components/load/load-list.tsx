@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Table, Modal, Menu, Select, Dropdown, Tooltip} from "antd";
+import {Table, Modal, Select, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -17,6 +17,7 @@ import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import HCButton from "../common/hc-button/hc-button";
+import {Dropdown} from "react-bootstrap";
 
 const {Option} = Select;
 
@@ -314,43 +315,57 @@ const LoadList: React.FC<Props> = (props) => {
     </Modal>
   );
 
-  const menu = (name) => (
-    <Menu className={styles.dropdownMenu}>
-      <Menu.Item key="0">
-        {<Link data-testid="link" id="tiles-run-add" to={
-          {
-            pathname: "/tiles/run/add",
-            state: {
-              stepToAdd: name,
-              stepDefinitionType: "ingestion",
-              viewMode: "list",
-              pageSize: loadingOptions.pageSize,
-              page: loadingOptions.pageNumber,
-              sortOrderInfo: sortedInfo,
-              existingFlow: false
-            }
-          }}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
-      </Menu.Item>
-      <Menu.Item key="1">
-        <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
-          <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
-            <Select
-              className={styles.flowSelect}
-              value={selected[name] ? selected[name] : undefined}
-              onChange={(flowName) => handleSelect({flowName: flowName, loadName: name})}
-              placeholder="Select Flow"
-              defaultActiveFirstOption={false}
-              disabled={!props.canWriteFlow}
-              data-testid={`${name}-flowsList`}
-            >
-              {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
-                <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
-              )) : null}
-            </Select>
+  const addToFlow = (name) => (
+    <Dropdown align="end" className="d-inline" autoClose="outside">
+      <Dropdown.Toggle
+        as="span"
+        aria-label="user-dropdown">
+        { props.canWriteFlow ?
+          <Tooltip title={"Add to Flow"} placement="bottom">
+            <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"}></span>
+          </Tooltip>
+          :
+          <Tooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}>
+            <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span>
+          </Tooltip>}
+      </Dropdown.Toggle>
+      <Dropdown.Menu className={styles.dropdownMenu}>
+        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0">
+          {<Link data-testid="link" id="tiles-run-add" to={
+            {
+              pathname: "/tiles/run/add",
+              state: {
+                stepToAdd: name,
+                stepDefinitionType: "ingestion",
+                viewMode: "list",
+                pageSize: loadingOptions.pageSize,
+                page: loadingOptions.pageNumber,
+                sortOrderInfo: sortedInfo,
+                existingFlow: false
+              }
+            }}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
+        </Dropdown.Item>
+        <Dropdown.Item className={styles.DropdownMenuItem} eventKey="1" key="1">
+          <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
+            <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+              <Select
+                className={styles.flowSelect}
+                value={selected[name] ? selected[name] : undefined}
+                onChange={(flowName) => handleSelect({flowName: flowName, loadName: name})}
+                placeholder="Select Flow"
+                defaultActiveFirstOption={false}
+                disabled={!props.canWriteFlow}
+                data-testid={`${name}-flowsList`}
+              >
+                {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
+                  <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
+                )) : null}
+              </Select>
+            </div>
           </div>
-        </div>
-      </Menu.Item>
-    </Menu>
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 
 
@@ -439,9 +454,7 @@ const LoadList: React.FC<Props> = (props) => {
               </i>
             </HCTooltip>
           }
-          <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={["click"]} disabled={!props.canWriteFlow} placement="bottomCenter">
-            {props.canWriteFlow ? <Tooltip title={"Add to Flow"} placement="bottom"><span className={"AddToFlowIcon"} aria-label={row.name + "-add-icon"}></span></Tooltip> : <Tooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}><span aria-label={row.name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span></Tooltip>}
-          </Dropdown>
+          {addToFlow(row.name)}
           {/* <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></Tooltip> */}
                     &nbsp;
           {props.canReadWrite ?
