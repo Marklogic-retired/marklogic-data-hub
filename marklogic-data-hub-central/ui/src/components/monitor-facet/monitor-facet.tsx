@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Checkbox} from "antd";
+import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import styles from "../facet/facet.module.scss";
 import {stringConverter} from "../../util/string-conversion";
 import {MonitorContext} from "../../util/monitor-context";
@@ -118,17 +118,15 @@ const MonitorFacet: React.FC<Props> = (props) => {
   const checkBoxRender =  checkedFacets.slice(0, showFacets).map((facet, index) => {
     return (
       <div key={"facet" + index} className={styles.checkContainer}>
-        <Checkbox
+        <HCCheckbox
+          id={"facet" + index}
+          handleClick={(e) => handleClick(e)}
           value={facet.value}
-          onChange={(e) => handleClick(e)}
+          label={facet.value}
           checked={checked.includes(facet.value)}
-          className={styles.value}
-          //index={index}
-          key={index}
-          data-testid={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
-        >
-          <HCTooltip text={facet.value} id="facet-value-tooltip" placement="top"><span>{facet.value}</span></HCTooltip>
-        </Checkbox>
+          dataTestId={`${stringConverter(props.displayName)}-${facet.value}-checkbox`}
+          tooltip={facet.value}
+        />
       </div>
     );
   });
