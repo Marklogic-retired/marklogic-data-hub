@@ -156,18 +156,39 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: <span aria-label="type-header">Type</span>,
       dataIndex: "type",
-      width: 125,
+      width: 145,
       render: (text, record) => {
         let renderText = text;
-        if (record.joinPropertyName && record.joinPropertyType) {
-          let tooltip = ModelingTooltips.foreignKeyModeling(record.joinPropertyType, record.joinPropertyName, text, record.delete, record.propertyName);
-          renderText =
-          <span>
-            {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-            <MLTooltip title={tooltip} id={"tooltip-" + record.propertyName} >
-              <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/>
-            </MLTooltip>
-          </span>;
+        if (record.joinPropertyType) {
+          if (record.joinPropertyName) {
+            //relationship complete with foreign key populated
+            let foreignKeyTooltip = ModelingTooltips.foreignKeyModeling(record.joinPropertyType, record.joinPropertyName, record.delete);
+            let completeRelationshipTooltip = ModelingTooltips.completeRelationship(record.joinPropertyType, record.delete);
+            renderText =
+              <div>
+                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
+                <div className={styles.dualIconsContainer}>
+                  <MLTooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} >
+                    <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName}/>
+                  </MLTooltip>
+                  <MLTooltip title={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName} >
+                    <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/>
+                  </MLTooltip>
+                </div>
+              </div>;
+          } else {
+            //relationship complete with no foreign key populated
+            let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
+            renderText =
+            <span>
+              {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
+              <div className={styles.relationshipIconContainer}>
+                <MLTooltip className={styles.relationshipTooltip} title={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} >
+                  <span className={styles.modeledRelationshipIconNoKey} data-testid={"relationship-" + record.propertyName}/>
+                </MLTooltip>
+              </div>
+            </span>;
+          }
         }
         return renderText;
       }
@@ -284,7 +305,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: <span aria-label="add-header">Add</span>,
       dataIndex: "add",
-      width: 75,
+      width: 45,
       render: text => {
         let textParse = text && text.split(",");
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
@@ -501,7 +522,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     let parseKey = record.key.split(",");
     let propertyType = PropertyType.Basic;
     let newStructuredTypes: StructuredTypeOptions = DEFAULT_STRUCTURED_TYPE_OPTIONS;
-    let relationshipType = record.joinPropertyName;
+    let relationshipType = record.joinPropertyType;
 
     if (record.hasOwnProperty("structured")) {
       if (record.hasOwnProperty("add")) {

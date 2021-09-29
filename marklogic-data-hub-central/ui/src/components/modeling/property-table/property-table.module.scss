@@ -76,6 +76,40 @@
   color: #cccccc;
 }
 
+.modeledRelationshipIconNoKey::before {
+  content: "\e95e";
+  font-family: MLCustomFont;
+  font-size: 19px;
+  margin-left: -8px;
+  margin-top: -3px;
+  color: #57c2da;
+  position: absolute;
+}
+
+.modeledRelationshipIcon::before {
+  content: "\e95e";
+  font-family: MLCustomFont;
+  font-size: 19px;
+  margin-left: -8px;
+  margin-top: -3px;
+  color: #57c2da;
+  position: absolute;
+}
+
+.relationshipTooltip {
+  margin-left: 13px;
+}
+
+.dualIconsContainer {
+  width: 45px;
+  display: inline-block;
+}
+
+.relationshipIconContainer {
+  width: 35px;
+  display: inline-block;
+}
+
 .disabledButton {
   cursor: not-allowed;
 }
@@ -88,8 +122,8 @@
   }
 }
 
-.foreignKeyIcon {
+.foreignKeyRelationshipIcon {
   color: #37AA6C;
   font-size: 14px;
-  margin-left: 5px;
+  margin-left: 16px;
 }

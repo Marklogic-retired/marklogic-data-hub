@@ -57,24 +57,28 @@ class PropertyModal {
     return cy.findByLabelText("toggle-steps");
   }
 
-  getJoinPropertyDropdown() {
-    return  cy.findByPlaceholderText("Select a join property");
+  getForeignKeyDropdown() {
+    return  cy.findByPlaceholderText("Select foreign key");
   }
-  toggleJoinPropertyDropdown() {
-    cy.findByLabelText("joinProperty-select").trigger("mouseover").click();
+  toggleForeignKeyDropdown() {
+    cy.findByLabelText("foreignKey-select").trigger("mouseover").click();
   }
-  getJoinProperty(propertyName: string) {
+  getForeignKey(propertyName: string) {
     return cy.waitUntil(() => cy.findByLabelText(`${propertyName}-option`));
   }
-  checkJoinPropertyDropdownLength(len: number) {
+  checkForeignKeyDropdownLength(len: number) {
     return cy.get(".ant-select-dropdown-menu").find("li").should("have.length", len);
   }
 
   verifyPropertyType(entityType: string) {
     return cy.get(".ant-cascader-picker-label").should("have.text", entityType);
   }
-  verifyJoinProperty(propertyName: string) {
+  verifyForeignKey(propertyName: string) {
     return cy.get(".ant-select-selection-selected-value").should("have.text", propertyName);
+  }
+
+  verifyForeignKeyPlaceholder() {
+    return cy.get(".ant-select-selection__placeholder").should("be.visible");
   }
 
   verifySameNamePropertyError(errorName: string) {

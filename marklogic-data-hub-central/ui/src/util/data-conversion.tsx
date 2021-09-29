@@ -376,8 +376,10 @@ export const definitionsParser = (definitions: any): Definition[] => {
 
             if (defProp["datatype"] === "array") {
               if (defProp["items"].hasOwnProperty("$ref")) {
+                if (defProp["items"]["$ref"] === "") {
+                  property.datatype = "";
                 // Array of Structured/Entity type
-                if (defProp["items"]["$ref"].split("/")[1] === "definitions") {
+                } else if (defProp["items"]["$ref"].split("/")[1] === "definitions") {
                   property.datatype = "structured";
                 } else {
                   property.datatype = defProp["items"]["$ref"].split("/").pop();
@@ -397,7 +399,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
               }
             }
 
-          } else if (defProp["$ref"]) {
+          } else if (defProp["$ref"] !== "") {
             let refSplit = defProp["$ref"].split("/");
             if (refSplit[1] === "definitions") {
               // Structured type
@@ -407,8 +409,10 @@ export const definitionsParser = (definitions: any): Definition[] => {
               property.datatype = refSplit[refSplit.length - 1];
             }
             property.ref = defProp["$ref"];
+          } else {
+            property.datatype = "";
+            property.ref = "";
           }
-
           entityProperties.push(property);
         }
       } else {

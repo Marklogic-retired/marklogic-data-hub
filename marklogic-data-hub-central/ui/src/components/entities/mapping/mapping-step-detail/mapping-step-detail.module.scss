@@ -461,11 +461,21 @@ hr {
 
   .legendText {
     font-size: 14px;
-    margin-left: 18px;
-    margin-right: 10px;
+    margin-right: 18px;
     img, svg {
       margin-right: 2px;
     }
+  }
+
+
+  .modeledRelationshipIcon::before {
+    content: "\e95e";
+    font-family: MLCustomFont;
+    font-size: 19px;
+    margin-left: -26px;
+    margin-top: -3px;
+    color: #57c2da;
+    position: absolute;
   }
 
   .foreignKeyIcon {

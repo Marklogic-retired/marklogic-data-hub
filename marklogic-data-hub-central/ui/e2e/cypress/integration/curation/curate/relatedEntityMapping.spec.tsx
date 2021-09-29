@@ -59,8 +59,8 @@ describe("Mapping", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("id").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
     //Save Changes
     modelPage.getPublishButton().click();

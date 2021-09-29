@@ -118,8 +118,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
 const layout = {
-  labelCol: {span: 8},
-  wrapperCol: {span: 16},
+  labelCol: {span: 7},
+  wrapperCol: {span: 17},
 };
 
 const PropertyModal: React.FC<Props> = (props) => {
@@ -146,7 +146,6 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [showJoinProperty, toggleShowJoinProperty] = useState(false);
   const [joinDisplayValue, setJoinDisplayValue] = useState<string | undefined>(undefined);
   const [joinProperties, setJoinProperties] = useState<any[]>([]);
-  const [joinErrorMessage, setJoinErrorMessage] = useState("");
 
   const [dropdownOptions, setDropdownOptions] = useState<any[]>(DEFAULT_DROPDOWN_OPTIONS);
   const [radioValues, setRadioValues] = useState<any[]>([]);
@@ -210,7 +209,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         toggleShowConfigurationOptions(showConfigOptions);
         toggleShowJoinProperty(showJoinProp);
         setTypeDisplayValue(typeDisplayValue);
-        setJoinDisplayValue(joinDisplayValue);
+        setJoinDisplayValue(joinDisplayValue === "" ? undefined : joinDisplayValue);
         setSelectedPropertyOptions(props.editPropertyOptions.propertyOptions);
       } else {
         let modalTitle = "Add Property";
@@ -343,7 +342,6 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
     setTypeErrorMessage("");
     setJoinDisplayValue(undefined);
-    setJoinErrorMessage("");
   };
 
   const onSubmit = (event) => {
@@ -358,8 +356,6 @@ const PropertyModal: React.FC<Props> = (props) => {
           setErrorMessage("name-error");
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
-        } else if (selectedPropertyOptions.propertyType === "relatedEntity" && selectedPropertyOptions.joinPropertyName === "") {
-          setJoinErrorMessage("Join property is required");
         } else {
 
           let definitionName = props.entityName;
@@ -386,11 +382,9 @@ const PropertyModal: React.FC<Props> = (props) => {
             isEdit: true,
             propertyOptions: selectedPropertyOptions
           };
-
           props.editPropertyUpdateDefinition(definitionName, props.editPropertyOptions.name, newEditPropertyOptions);
           setErrorMessage("");
           setTypeErrorMessage("");
-          setJoinErrorMessage("");
           props.toggleModal(false);
           refreshSessionTime();
         }
@@ -401,14 +395,11 @@ const PropertyModal: React.FC<Props> = (props) => {
           setErrorMessage("name-error");
         } else if (selectedPropertyOptions.type === "") {
           setTypeErrorMessage("Type is required");
-        } else if (selectedPropertyOptions.propertyType === "relatedEntity" && selectedPropertyOptions.joinPropertyName === "") {
-          setJoinErrorMessage("Join property is required");
         } else {
           let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
           props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions);
           setErrorMessage("");
           setTypeErrorMessage("");
-          setJoinErrorMessage("");
           props.toggleModal(false);
           refreshSessionTime();
         }
@@ -684,7 +675,6 @@ const PropertyModal: React.FC<Props> = (props) => {
     setJoinDisplayValue(value);
     const type = joinProperties.find(prop => prop["value"] === value).type;
     setSelectedPropertyOptions({...selectedPropertyOptions, joinPropertyName: value, joinPropertyType: type});
-    setJoinErrorMessage("");
   };
 
   const onRadioChange = (event, radioName) => {
@@ -791,7 +781,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       closable={true}
       title={modalTitle}
       maskClosable={false}
-      width="600px"
+      width="680px"
       style={{top: 30}}
       onCancel={onCancel}
       footer={modalFooter}
@@ -882,9 +872,10 @@ const PropertyModal: React.FC<Props> = (props) => {
           </span>}
           colon={false}
           labelAlign="left"
-          wrapperCol={{span: 14}}
+          wrapperCol={{span: 15}}
           validateStatus={typeErrorMessage ? "error" : ""}
           help={typeErrorMessage}
+          id="type-container"
         >
           <Cascader
             aria-label="type-dropdown"
@@ -897,32 +888,25 @@ const PropertyModal: React.FC<Props> = (props) => {
         </Form.Item>
 
         { showJoinProperty && (
-          <Form.Item
-            className={styles.formItem}
-            label={<span>
-              Join Property:&nbsp;<span className={styles.asterisk}>*</span>
-              &nbsp;
-            </span>}
-            colon={false}
-            labelAlign="left"
-            wrapperCol={{span: 14}}
-            validateStatus={joinErrorMessage ? "error" : ""}
-            help={joinErrorMessage}
-          >
-            <Select
-              placeholder="Select the join property"
-              onChange={onJoinPropertyChange}
-              value={joinDisplayValue}
-              aria-label="joinProperty-select"
-            >
-              {joinProperties.length > 0 && joinProperties.map((prop, index) => (
-                <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
-              ))}
-            </Select>
-            <MLTooltip title={ModelingTooltips.joinProperty}>
-              <Icon type="question-circle" className={styles.icon} theme="filled" />
-            </MLTooltip>
-          </Form.Item>
+          <div className={styles.joinPropertyContainer}>
+            <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
+            <div className={styles.joinPropertyInput}>
+              <Select
+                placeholder="Select foreign key"
+                onChange={onJoinPropertyChange}
+                value={joinDisplayValue}
+                aria-label="foreignKey-select"
+                className={styles.joinPropertyDropdown}
+              >
+                {joinProperties.length > 0 && joinProperties.map((prop, index) => (
+                  <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
+                ))}
+              </Select>
+              <MLTooltip title={ModelingTooltips.foreignKeyInfo}>
+                <Icon data-testid={"foreign-key-tooltip"} type="question-circle" className={styles.joinPropertyHelpIcon} theme="filled" />
+              </MLTooltip>
+            </div>
+          </div>
         ) }
 
         {renderRadios}

@@ -8,7 +8,7 @@ import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
 import oneToOneIcon from "../../../../assets/one-to-one.svg";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt, faChevronDown, faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
@@ -49,7 +49,6 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const [oneToManySelected, setOneToManySelected] = useState(false); //set default value when editing
   const [errorMessage, setErrorMessage] = useState("");
   const [targetNodeJoinProperties, setTargetNodeJoinProperties] = useState<any[]>([]);
-  const [defaultCardinality, setDefaultCardinality] = useState(false);
   const {modelingOptions, updateEntityModified} = useContext(ModelingContext);
   const [loading, toggleLoading] = useState(false);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -62,23 +61,31 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const [emptyTargetEntity, setEmptyTargetEntity] = useState(false);
   const [displayEntityList, setDisplayEntityList] = useState(false);
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
+  const [optionalCollapsed, setOptionalCollapsed] = useState(true);
+  const [cardinalityToggled, setCardinalityToggled] = useState(false);
 
 
   const initRelationship = (sourceEntityIdx) => {
     let sourceEntityDetails = props.entityTypes[sourceEntityIdx];
     if (props.relationshipInfo.relationshipName !== "") {
       setRelationshipName(props.relationshipInfo.relationshipName);
+      setErrorMessage("");
     } else {
+      setRelationshipName("");
       setErrorMessage(ModelingTooltips.relationshipEmpty);
     }
-    setJoinPropertyValue(props.relationshipInfo.joinPropertyName);
+    if (props.relationshipInfo.joinPropertyName && props.relationshipInfo.joinPropertyName !== "undefined") {
+      setJoinPropertyValue(props.relationshipInfo.joinPropertyName);
+      setOptionalCollapsed(false);
+    } else {
+      setJoinPropertyValue("");
+    }
     setTargetEntityName(props.relationshipInfo.targetNodeName);
     setTargetEntityColor(props.relationshipInfo.targetNodeColor);
     setOneToManySelected(false);
 
     if (sourceEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName].properties[props.relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
       //set cardinality selection to "multiple"
-      setDefaultCardinality(true);
       setOneToManySelected(true);
     }
   };
@@ -109,7 +116,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const getPropertyType = (joinPropName, targetNodeName) => {
     let targetEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === targetNodeName);
     let targetEntityDetails = props.entityTypes[targetEntityIdx];
-    return targetEntityDetails.model.definitions[targetNodeName].properties[joinPropName].datatype;
+    if (joinPropName && joinPropName !== "") {
+      return targetEntityDetails.model.definitions[targetNodeName].properties[joinPropName].datatype;
+    } else {
+      return "";
+    }
   };
 
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
@@ -119,26 +130,46 @@ const AddEditRelationship: React.FC<Props> = (props) => {
 
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
-      return {
-        datatype: propertyOptions.joinPropertyType,
-        relatedEntityType: externalEntity.entityTypeId,
-        joinPropertyName: propertyOptions.joinPropertyName,
-        //joinPropertyType: propertyOptions.joinPropertyType
-      };
-
-    } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
-      return {
-        datatype: "array",
-        facetable: facetable,
-        sortable: sortable,
-        items: {
+      if (propertyOptions.joinPropertyType === "") {
+        return {
+          datatype: "string",
+          relatedEntityType: externalEntity.entityTypeId,
+          joinPropertyName: propertyOptions.joinPropertyName,
+          $ref: ""
+        };
+      } else {
+        return {
           datatype: propertyOptions.joinPropertyType,
           relatedEntityType: externalEntity.entityTypeId,
           joinPropertyName: propertyOptions.joinPropertyName,
-          //joinPropertyType: propertyOptions.joinPropertyType
-        }
-      };
+        };
+      }
+
+    } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
+      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
+      if (propertyOptions.joinPropertyType === "") {
+        return {
+          datatype: "array",
+          facetable: facetable,
+          sortable: sortable,
+          items: {
+            datatype: "string",
+            relatedEntityType: externalEntity.entityTypeId,
+            joinPropertyName: propertyOptions.joinPropertyName,
+          }
+        };
+      } else {
+        return {
+          datatype: "array",
+          facetable: facetable,
+          sortable: sortable,
+          items: {
+            datatype: propertyOptions.joinPropertyType,
+            relatedEntityType: externalEntity.entityTypeId,
+            joinPropertyName: propertyOptions.joinPropertyName,
+          }
+        };
+      }
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && !multiple) {
       return {
@@ -261,6 +292,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       setTargetEntityColor("");
       setJoinPropertyValue("");
       setRelationshipName("");
+      setCardinalityToggled(false);
+      setOptionalCollapsed(true);
     }
   };
 
@@ -291,7 +324,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         };
 
         //do not enter loading save if no changes have been made
-        if (joinPropertyValue === props.relationshipInfo.joinPropertyName && relationshipName === props.relationshipInfo.relationshipName && defaultCardinality === oneToManySelected) {
+        if (joinPropertyValue === props.relationshipInfo.joinPropertyName && relationshipName === props.relationshipInfo.relationshipName && !cardinalityToggled) {
           toggleLoading(false);
           props.setOpenRelationshipModal(false);
         } else {
@@ -299,6 +332,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           let entityModified: any = editPropertyUpdateDefinition(sourceEntityIdx, props.relationshipInfo.sourceNodeName, props.relationshipInfo.relationshipName, newEditPropertyOptions);
           updateEntityModified(entityModified);
         }
+        setCardinalityToggled(false);
+        setOptionalCollapsed(true);
         setErrorMessage("");
         setSubmitClicked(false);
       }
@@ -374,6 +409,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     } else {
       setOneToManySelected(true);
     }
+    setCardinalityToggled(!cardinalityToggled);
   };
 
   const handleChange = (event) => {
@@ -428,6 +464,10 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     setDisplayEntityList(!displayEntityList);
   };
 
+  const toggleOptionalIcon = () => {
+    setOptionalCollapsed(!optionalCollapsed);
+  };
+
   const menu = (
     <DropDownWithSearch
       displayMenu={displaySourceMenu}
@@ -444,17 +484,17 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     />
   );
 
-  const joinPropertyDropdown = (
+  const foreignKeyDropdown = (
     <Select
-      placeholder="Join Property"
-      id="join-property-dropdown"
-      data-testid="join-property-dropdown"
+      placeholder="Select foreign key"
+      id="foreignKey-dropdown"
+      data-testid="foreignKey-dropdown"
       disabled={emptyTargetEntity}
       value={joinPropertyValue ? joinPropertyValue : undefined}
       onChange={value => handleOptionSelect(value)}
-      className={styles.joinPropertyDropdown}
+      className={styles.foreignKeyDropdown}
       showArrow={true}
-      size={"small"}
+      size={"default"}
     >
       {
         targetNodeJoinProperties.length > 0 && targetNodeJoinProperties.map((prop, index) => (
@@ -587,16 +627,10 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
           </MLButton>
         </MLTooltip>
-        <div className={styles.joinPropertyDropdownContainer}>
-          {joinPropertyDropdown}
-          <MLTooltip title={ModelingTooltips.joinPropertyInfo} placement={"bottom"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-          </MLTooltip>
-        </div>
         <div className={styles.nodeDisplay}>
           <span className={styles.nodeLabel}>TARGET</span>
           <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-            <Card style={{width: 204, backgroundColor: targetEntityColor}}>
+            <Card style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
               <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
             </Card>
             {!props.isEditing ?
@@ -612,6 +646,26 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           {submitClicked && emptyTargetEntity ? <span className={styles.targetEntityErrorMsg}>{ModelingTooltips.targetEntityEmpty}</span> : null}
         </div>
       </div>
+      <div className={styles.toggleOptional}>
+        {optionalCollapsed ?
+          <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronRight} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
+          :
+          <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronDown} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
+        }
+        <span className={styles.optionalText} onClick = {(e) => toggleOptionalIcon()}>Optional</span>
+      </div>
+      { !optionalCollapsed && (
+        <div className={styles.foreignKeyContainer}>
+          <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
+          <div className={styles.foreignKeyDropdownContainer}>
+            {foreignKeyDropdown}
+            <MLTooltip title={ModelingTooltips.foreignKeyInfo} placement={"bottom"}>
+              <Icon type="question-circle" data-testid={"foreign-key-tooltip"}className={styles.foreignKeyQuestionCircle} theme="filled"/>
+            </MLTooltip>
+          </div>
+        </div>
+      )
+      }
       <div className={styles.requiredFootnote}>* Required</div>
     </div>
     <ConfirmationModal

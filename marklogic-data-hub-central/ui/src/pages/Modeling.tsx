@@ -300,10 +300,10 @@ const Modeling: React.FC = () => {
       tabIndex={0}
     >
       <MLRadio.MLButton aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
-        <i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i>
+        <MLTooltip title={"Graph View"}><i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i></MLTooltip>
       </MLRadio.MLButton>
       <MLRadio.MLButton aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
-        <i>{<FontAwesomeIcon icon={faTable}/>}</i>
+        <MLTooltip title={"Table View"}><i>{<FontAwesomeIcon icon={faTable}/>}</i></MLTooltip>
       </MLRadio.MLButton>
     </MLRadio.MLGroup>
   </div>;
@@ -327,14 +327,16 @@ const Modeling: React.FC = () => {
                 <h1>Entity Types</h1>
                 <div className={styles.buttonContainer}>
                   <div className={styles.legend}>
+                    <span className={styles.modeledRelationshipIcon}/>
+                    <div data-testid="relationshipIconLegend" className={styles.legendText}>Modeled Relationship
+                    </div>
                     <div data-testid="foreignKeyIconLegend" className={styles.legendText}>
-                      <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign
-                                            Key Relationship
+                      <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key
                     </div>
                     <div data-testid="multipleIconLegend" className={styles.legendText}><img
-                      className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple
+                      className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple Values
                     </div>
-                    <div data-testid="structuredIconLegend" className={styles.legendText}>
+                    <div data-testid="structuredIconLegend" className={styles.legendTextLast}>
                       <FontAwesomeIcon className={styles.structuredIcon}
                         icon={faLayerGroup}/> Structured Type
                     </div>

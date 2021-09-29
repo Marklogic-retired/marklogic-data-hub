@@ -56,8 +56,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("id").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("id").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("user").should("exist");
@@ -101,8 +101,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("customerId").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("customerId").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").should("not.exist");
@@ -200,9 +200,9 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Order").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.checkJoinPropertyDropdownLength(6); // Check for saved (5) and unsaved (1) Order properties
-    propertyModal.toggleJoinPropertyDropdown();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.checkForeignKeyDropdownLength(6); // Check for saved (5) and unsaved (1) Order properties
+    propertyModal.toggleForeignKeyDropdown();
     propertyModal.getCancelButton();
   });
   it("Adding property to Person entity", () => {

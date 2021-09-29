@@ -67,13 +67,29 @@ const ModelingTooltips = {
   },
 
     /* Foreign key relationship in modeling tile*/
-    foreignKeyModeling: function (relatedEntityName, joinPropertyName, type, sourceEntityName, propertyName) {
+    foreignKeyModeling: function (relatedEntityName, joinPropertyName, sourceEntityName) {
       return (
           <span>
-              Using the <strong>{joinPropertyName}</strong> property (<strong>{type}</strong>), the <strong>{propertyName}</strong> property creates a foreign key relationship between <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.
+              The <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types are connected using the <strong>{joinPropertyName}</strong> property.
            </span>
       )
-  },
+    },
+    /*Relationship withoout Foreign Key in modeling tile*/  
+    relationshipNoForeignKey: function (relatedEntityName, sourceEntityName) {
+      return(
+          <span>
+            There is a relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.<br/>To connect the entity types using a foreign key, go to the <strong>Model</strong> screen and then add a foreign key to the relationship.
+          </span>
+      )
+    },
+
+    completeRelationship: function (relatedEntityName, sourceEntityName) {
+      return(
+          <span>
+            There is a relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.
+          </span>
+      )
+    },
 
   publish: "Publishing will apply your changes to the application. Changes are saved automatically.",
 
@@ -81,14 +97,14 @@ const ModelingTooltips = {
   exportGraph: "Export graph to PNG",
   relationshipEmpty: "Relationship name is required",
   targetEntityEmpty: "Target entity type is required",
-  joinPropertyInfo: "Select a property in the target entity type to connect the source and target entity types. A join property cannot be a structured type property, array, or unpublished property.",
+  foreignKeyInfo: "A foreign key is a property that can be used to connect two entity types in a relationship. Select a property in the target entity type to connect the source and target entity types. A foreign key cannot allow multiple values, be a structured type property, or be an unpublished property.",
   deleteRelationshipIcon: "Delete this relationship",
   editModeInfo: <span>To add a relationship between entity types, drag the source entity type to the target entity type. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
-  addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and join property. You are not required to specify a join property to save the relationship.<br /><strong>Note:</strong> You cannot publish relationships with missing join properties.</span>,
+  addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and join property. You are not required to specify a join property to save the relationship.</span>,
   relationshipNameInfo: function (entityName) {
     return (
       <span>
-        The name that identifies the relationship between the source and target entities. Relationship names must begin with a letter and can contain letters, numbers, hyphens, and underscores.
+        The name that identifies the relationship between the source and target entity types. The relationship is saved as a property in the <strong>{entityName}</strong> entity type.<br/>Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Names cannot use the same name as an existing property or structured type.
       </span>
     )
   },

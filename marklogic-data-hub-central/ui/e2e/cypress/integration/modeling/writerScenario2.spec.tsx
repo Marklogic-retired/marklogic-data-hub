@@ -105,9 +105,9 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("nicknames").should("not.be.enabled");
-    propertyModal.getJoinProperty("customerId").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("nicknames").should("not.be.enabled");
+    propertyModal.getForeignKey("customerId").click();
     propertyModal.getSubmitButton().click();
   });
   it("Add properties to nested structured type", () => {
@@ -172,8 +172,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("Address").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("Address").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("pii").should("not.exist");
@@ -194,16 +194,16 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.expandStructuredTypeIcon("alt_address").click();
     propertyTable.getProperty("alt_address-streetAlt").should("exist");
   });
-  it("Add join property with type as Related Entity", () => {
+  it("Add foreign key with type as Related Entity", () => {
     propertyTable.getAddPropertyButton("User3").click();
     propertyModal.newPropertyName("OrderedBy");
-    propertyModal.getJoinPropertyDropdown().should("not.exist");
+    propertyModal.getForeignKeyDropdown().should("not.exist");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("nicknames").should("not.be.enabled");
-    propertyModal.getJoinProperty("customerId").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("nicknames").should("not.be.enabled");
+    propertyModal.getForeignKey("customerId").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("OrderedBy").should("exist");
   });
@@ -287,8 +287,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Order").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("orderId").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("orderId").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("order").should("exist");
@@ -327,8 +327,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleJoinPropertyDropdown();
-    propertyModal.getJoinProperty("id").click();
+    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("personType").should("exist");
   });
@@ -398,14 +398,14 @@ describe("Entity Modeling: Writer Role", () => {
 
     //edit properties should be populated
     relationshipModal.verifyRelationshipValue("ownedBy");
-    relationshipModal.verifyJoinPropertyValue("customerId");
+    relationshipModal.verifyForeignKeyValue("customerId");
     relationshipModal.verifyCardinality("oneToOneIcon").should("be.visible");
 
     //modify properties and save
     relationshipModal.editRelationshipName("usedBy");
     relationshipModal.toggleCardinality();
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
-    relationshipModal.editJoinProperty("email");
+    relationshipModal.editForeignKey("email");
 
     relationshipModal.confirmationOptions("Save");
     cy.wait(2000);
@@ -418,12 +418,12 @@ describe("Entity Modeling: Writer Role", () => {
     });
 
     relationshipModal.verifyRelationshipValue("usedBy");
-    relationshipModal.verifyJoinPropertyValue("email");
+    relationshipModal.verifyForeignKeyValue("email");
     relationshipModal.verifyCardinality("oneToManyIcon").should("be.visible");
 
     relationshipModal.cancelModal();
   });
-  it("can enter graph edit mode and add edge relationships via single node click", () => {
+  it("can enter graph edit mode and add edge relationships (no foreign key scenario) via single node click", () => {
 
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     cy.waitForAsyncRequest();
@@ -456,7 +456,8 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.verifyEntityOption("Client").should("not.exist");
     relationshipModal.verifyEntityOption("Order").should("be.visible");
     relationshipModal.selectTargetEntityOption("Order");
-    relationshipModal.editJoinProperty("orderId");
+    relationshipModal.toggleOptional();
+    relationshipModal.verifyForeignKeyPlaceholder();
     relationshipModal.editRelationshipName("purchased");
     relationshipModal.toggleCardinality();
 
@@ -470,11 +471,15 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.editProperty("purchased");
     propertyModal.getYesRadio("multiple").should("be.checked");
     propertyModal.verifyPropertyType("Order");
-    propertyModal.verifyJoinProperty("orderId");
+    propertyModal.verifyForeignKeyPlaceholder();
     propertyModal.getCancelButton();
+
+    //verify helpful icon present on the property, should show relationship icon but no foreign key
+    propertyTable.verifyRelationshipIcon("purchased").should("exist");
+    propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
   });
 
-  it("can edit graph edit mode and add edge relationships via drag/drop", () => {
+  it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
 
     entityTypeTable.viewEntityInGraphView("Person");
     graphView.getAddButton().click();
@@ -494,8 +499,11 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.verifyTargetEntity("Client").should("be.visible");
 
     //add relationship properties and save
-    relationshipModal.editJoinProperty("firstname");
     relationshipModal.editRelationshipName("referredBy");
+
+    //open Optional line to edit foreign key field
+    relationshipModal.toggleOptional();
+    relationshipModal.editForeignKey("firstname");
     relationshipModal.toggleCardinality();
     relationshipModal.addRelationshipSubmit();
     cy.waitForAsyncRequest();
@@ -507,8 +515,12 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.editProperty("referredBy");
     propertyModal.getYesRadio("multiple").should("be.checked");
     propertyModal.verifyPropertyType("Client");
-    propertyModal.verifyJoinProperty("firstname");
+    propertyModal.verifyForeignKey("firstname");
     propertyModal.getCancelButton();
+
+    //verify helpful icon present on the property, should show BOTH relationship icon and foreign key
+    propertyTable.verifyRelationshipIcon("referredBy").should("exist");
+    propertyTable.verifyForeignKeyIcon("referredBy").should("exist");
 
     entityTypeTable.viewEntityInGraphView("Person");
     //re-enter graph edit mode, verify can exit with {esc}
