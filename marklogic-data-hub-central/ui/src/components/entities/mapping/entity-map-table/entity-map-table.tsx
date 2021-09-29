@@ -1,8 +1,9 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Popover, Input, Select, Dropdown, Modal, Tooltip} from "antd";
+import {Table, Popover, Input, Select, Modal, Tooltip} from "antd";
 import Spinner from "react-bootstrap/Spinner";
+import {ButtonGroup, Dropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
@@ -943,36 +944,55 @@ const EntityMapTable: React.FC<Props> = (props) => {
     if (!row.isProperty) {
       // Context and URI version
       return (
-        <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-          <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
-            <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
-              <FontAwesomeIcon
-                icon={faList}
-                size="lg"
-                data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon`}
-                className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
-                onClick={(e) => handleSourceList(row)}
-              />
-            </i>
-          </Tooltip>
+
+        <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
+          disabled={!props.canReadWrite}>
+          <Dropdown.Toggle id="functionIcon" variant="outline-light" className={styles.sourceDrop} disabled={!props.canReadWrite}
+            size="sm">
+            <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+              <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
+                <FontAwesomeIcon
+                  icon={faList}
+                  size="lg"
+                  data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon`}
+                  className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
+                  onClick={(e) => handleSourceList(row)}
+                />
+              </i>
+            </Tooltip>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
+            <Dropdown.Item className={styles.dropdownMenuItem}>
+              {sourceMenu}
+            </Dropdown.Item>
+          </Dropdown.Menu>
         </Dropdown>
       );
     } else {
       // Property version (different testid)
       // TODO refactor tests to allow consistent testid values across source menus
       return (
-        <Dropdown overlay={sourceMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-          <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
-            <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
-              <FontAwesomeIcon
-                icon={faList}
-                size="lg"
-                data-testid={`${row.name.split("/").pop()}-listIcon`}
-                className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
-                onClick={(e) => handleSourceList(row)}
-              />
-            </i>
-          </Tooltip>
+        <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
+          disabled={!props.canReadWrite}>
+          <Dropdown.Toggle id="functionIcon" variant="outline-light" className={styles.sourceDrop} disabled={!props.canReadWrite}
+            size="sm">
+            <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+              <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
+                <FontAwesomeIcon
+                  icon={faList}
+                  size="lg"
+                  data-testid={`${row.name.split("/").pop()}-listIcon`}
+                  className={props.canReadWrite ? styles.listIcon : styles.disabledListIcon}
+                  onClick={(e) => handleSourceList(row)}
+                />
+              </i>
+            </Tooltip>
+          </Dropdown.Toggle>
+          <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
+            <Dropdown.Item className={styles.dropdownMenuItem}>
+              {sourceMenu}
+            </Dropdown.Item>
+          </Dropdown.Menu>
         </Dropdown>
       );
     }
@@ -994,18 +1014,29 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const functionDropdown = (row) => {
     return (
-      <Dropdown overlay={functionMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-        <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
-          <HCButton
-            id="functionIcon"
-            data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
-            className={styles.functionIcon}
-            size="sm"
-            variant="outline-light"
-            onClick={(e) => handleFunctionsList(row.name)}
-            disabled={!props.canReadWrite}
-          >fx</HCButton>
-        </Tooltip>
+      <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
+        onToggle={(show) => {
+          show && handleFunctionsList(row.name);
+        }}
+        disabled={!props.canReadWrite}>
+
+        <Dropdown.Toggle id="functionIcon"
+          data-testid={`${row.name.split("/").pop()}-${row.key}-functionIcon`}
+          className={styles.functionIcon}
+          disabled={!props.canReadWrite}
+          size="sm"
+          variant="outline-light">
+          <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
+         fx
+          </Tooltip>
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
+          <Dropdown.Item className={styles.dropdownMenuItem}>
+            {functionMenu}
+          </Dropdown.Item>
+        </Dropdown.Menu>
+
       </Dropdown>
     );
   };
@@ -1026,18 +1057,30 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const refDropdown = (row) => {
     return (
-      <Dropdown overlay={refMenu} trigger={["click"]} disabled={!props.canReadWrite}>
-        <Tooltip title={props.canReadWrite && "Reference"} placement="bottom">
-          <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
-            <FontAwesomeIcon
-              icon={faTerminal}
-              size="lg"
-              data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon`}
-              className={props.canReadWrite ? styles.refIcon : styles.disabledRefIcon}
-              onClick={(e) => handleRefList(row.name)}
-            />
-          </i>
-        </Tooltip>
+      <Dropdown className="ms-2" as={ButtonGroup} autoClose="outside"
+        disabled={true}>
+
+        <Dropdown.Toggle id="functionIcon" className={styles.refDrop} disabled={!props.canReadWrite}
+          size="sm" variant="outline-light">
+          <Tooltip title={props.canReadWrite && "Reference"} placement="bottom">
+            <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
+              <FontAwesomeIcon
+                icon={faTerminal}
+                size="lg"
+                data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon`}
+                className={props.canReadWrite ? styles.refIcon : styles.disabledRefIcon}
+                onClick={(e) => handleRefList(row.name)}
+              />
+            </i>
+          </Tooltip>
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
+          <Dropdown.Item className={styles.dropdownMenuItem}>
+            {refMenu}
+          </Dropdown.Item>
+        </Dropdown.Menu>
+
       </Dropdown>
     );
   };
@@ -1425,7 +1468,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   });
 
   return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
-    <div id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
+    <div className={styles.tableContainer} id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
       <Table
         pagination={false}
         className={tableCSS}
@@ -1444,7 +1487,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       />
     </div>
     {entityProperties.length > 0 ?
-      <div id="lowerTable">
+      <div className={styles.tableContainer} id="lowerTable">
         <Table
           pagination={paginationFunction}
           className={tableCSS}

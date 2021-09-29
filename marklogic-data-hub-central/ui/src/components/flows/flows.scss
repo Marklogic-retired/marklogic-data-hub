@@ -34,3 +34,12 @@
         padding: 0 15px;
     }
 }
+
+.dropdown-menu {
+    &.show {
+        &.dropdown-menu-end {
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+    }
+}
