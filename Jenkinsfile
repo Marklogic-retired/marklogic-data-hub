@@ -535,7 +535,7 @@ void cypressE2EOnPremMacTests(String type,String mlVersion){
       cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
       sed -i '.bak' "s#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g" setup.sh
       ./setup.sh dhs=false mlHost=$HOSTNAME mlSecurityUsername=admin mlSecurityPassword=admin
-      npm run cy:run 2>&1 | tee -a e2e_err.log
+      npm run cy:run-chrome 2>&1 | tee -a e2e_err.log
 
    '''
 
