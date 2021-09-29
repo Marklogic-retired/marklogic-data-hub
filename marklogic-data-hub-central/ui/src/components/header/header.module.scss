@@ -149,7 +149,7 @@ div.iconsContainer {
 
 div.userMenu {
   position: relative;
-  top: 17px;
+  // top: 17px;
   width: 200px;
   background-color: white;
   border: solid 1px #aaa;
@@ -158,13 +158,12 @@ div.userMenu {
   padding: 10px;
   div.username {
     width: 100%;
-    padding: 10px 0 10px 0;
     font-weight: bold;
     text-align: center;
   }
   div.logout {
     width: 100%;
-    padding: 10px 0 20px 0;
+    padding-bottom: 20px;
     text-align: center;
     button {
       color:#ffffff;

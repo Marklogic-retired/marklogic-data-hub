@@ -296,3 +296,25 @@
 .settingsIcon {
     color: #3b458f;
 }
+
+.panelActionsContainer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: -4px;
+}
+.stepMenu {
+    &>.dropdown-menu {
+        max-height: 50vh;
+        overflow: scroll;
+    }
+}
+.stepMenuDisabled {
+  pointer-events: auto !important;
+  &:hover {
+    color: #cccc !important;
+    background-color: transparent !important;
+    border-color: #cccc !important;
+  }
+}
