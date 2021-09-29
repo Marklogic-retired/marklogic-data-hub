@@ -315,3 +315,44 @@
   display : flex;
   justify-content: center;
 }
+
+.dropdownMenuItem {
+  background-color: transparent !important;
+}
+
+.tableContainer {
+  [class~=ant-table-body]{
+    overflow: visible !important;
+  }
+}
+
+
+.sourceDrop { 
+  cursor: pointer;
+  width: 22px;
+  height: 20px;
+  padding: 0 !important;
+  margin-top: 5px;
+  border: 0 !important;
+   svg {
+     margin-top: 0 !important;
+   }
+  &:hover{
+    color: var(--hoverColor);
+  }
+
+}
+
+.refDrop {
+  cursor: pointer;
+  width: 22px;
+  height: 20px;
+  padding: 0 !important;
+   margin-top: 5px;
+   svg {
+     margin-top: 0 !important;
+   }
+  &:hover{
+    color: var(--hoverColor);
+  }
+}

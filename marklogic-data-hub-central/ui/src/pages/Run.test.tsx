@@ -850,9 +850,8 @@ describe("Verify Add Step function", () => {
     expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
 
     // Click Add Step menu
-    expect(getByLabelText("addStepDisabled-0")).toBeInTheDocument();
-    let addStep = getByText("Add Step");
-    fireEvent.click(addStep);
+    expect(getByLabelText("addStep-testFlow")).toBeInTheDocument();
+    fireEvent.click(getByText("Add Step"));
     expect(queryByText(data.steps.data["ingestionSteps"][0].name)).not.toBeInTheDocument();
 
   });

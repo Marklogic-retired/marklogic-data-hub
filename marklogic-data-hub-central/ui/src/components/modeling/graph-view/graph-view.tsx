@@ -1,5 +1,5 @@
 import React, {CSSProperties, useContext, useState, useEffect} from "react";
-import {Button, AutoComplete, Dropdown, Menu, Input, Tooltip} from "antd";
+import {AutoComplete, Input, Tooltip} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
@@ -14,6 +14,7 @@ import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../common/hc-button/hc-button";
 import HCAlert from "../../common/hc-alert/hc-alert";
 import {ChevronDown, Search} from "react-bootstrap-icons";
+import {Dropdown, DropdownButton} from "react-bootstrap";
 
 type Props = {
   entityTypes: any;
@@ -94,54 +95,40 @@ const GraphView: React.FC<Props> = (props) => {
     <Input aria-label="graph-view-filter-input" suffix={<Search className={styles.searchIcon} />} size="small"></Input>
   </AutoComplete>;
 
-  const handleAddMenu = (event) => {
-    if (event.key === "addNewEntityType") {
+  const handleAddMenu = (key) => {
+    if (key === "addNewEntityType") {
       props.toggleShowEntityModal(true);
       props.toggleIsEditModal(false);
-    } else if (event.key === "addNewRelationship") {
+    } else if (key === "addNewRelationship") {
       // TODO open Add Relationship dialog
       // console.log("addNewRelationship", event);
     }
   };
 
-  const addMenu = (
-    <Menu onClick={handleAddMenu}>
-      <Menu.Item key="addNewEntityType">
-        <span aria-label={"add-entity-type"}>Add new entity type</span>
-      </Menu.Item>
-      <Menu.Item key="addNewRelationship" onClick={() => setGraphEditMode(true)}>
-        <span aria-label={"add-relationship"}>Add new relationship</span>
-      </Menu.Item>
-    </Menu>
-  );
-
   const addButton = (
-    <Dropdown
-      overlay={addMenu}
-      trigger={["click"]}
-      overlayClassName={styles.stepMenu}
-      placement="bottomRight"
-      disabled={!props.canWriteEntityModel}
-    >
-      <div className={styles.addButtonContainer}>
-        <HCButton
-          aria-label="add-entity-type-relationship"
-          variant="primary"
-          size="sm"
-          disabled={!props.canWriteEntityModel}
-          className={!props.canWriteEntityModel ? styles.disabledPointerEvents : undefined}>
-          <span className={styles.addButtonText}>Add</span>
-          <ChevronDown className="ms-2" />
-        </HCButton>
-      </div>
-    </Dropdown>
+    <DropdownButton
+      aria-label="add-entity-type-relationship"
+      align="end"
+      size="sm"
+      className="me-2"
+      title={<span>Add<ChevronDown className="ms-2" /></span>}
+      onSelect={handleAddMenu}
+      disabled={!props.canWriteEntityModel}>
+      <Dropdown.Item eventKey="addNewEntityType">
+        <span aria-label={"add-entity-type"}>Add new entity type</span>
+      </Dropdown.Item>
+      <Dropdown.Item eventKey="addNewRelationship" onClick={() => setGraphEditMode(true)}>
+        <span aria-label={"add-relationship"}>Add new relationship</span>
+      </Dropdown.Item>
+    </DropdownButton>
   );
 
-  const publishButton = <Button
+  const publishButton = <HCButton
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
     aria-label="publish-to-database"
-    size="small"
+    size="sm"
+    variant="outline-light"
     onClick={() => {
       props.setConfirmType(ConfirmationType.PublishAll);
       props.toggleConfirmModal(true);
@@ -150,7 +137,7 @@ const GraphView: React.FC<Props> = (props) => {
       <PublishToDatabaseIcon style={publishIconStyle} />
       <span className={styles.publishButtonText}>Publish</span>
     </span>
-  </Button>;
+  </HCButton>;
 
   const headerButtons = <span className={styles.buttons}>
     {graphEditMode ?

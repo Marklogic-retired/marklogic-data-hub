@@ -1,5 +1,5 @@
 import React from "react";
-import {render, cleanup, waitForElement} from "@testing-library/react";
+import {render, cleanup, waitForElement, getByTestId} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 import {UserContext} from "../../util/user-context";
@@ -14,7 +14,7 @@ describe("Header component", () => {
 
   afterEach(cleanup);
 
-  test("should render correctly when a user is not logged in", () => {
+  test.only("should render correctly when a user is not logged in", () => {
 
     const {getByText, getByLabelText, queryByText} = render(
       <Router>
@@ -96,7 +96,7 @@ describe("Header component", () => {
     const element_title = getByLabelText("title-link");
     const element_service = getByLabelText("service-details");
     const element_help = getByLabelText("help-link");
-    const element_user = getByLabelText("user-dropdown");
+    const element_user = getByTestId("user-dropdown");
 
     const header = [element_logo, element_title, element_service, element_help, element_user];
 

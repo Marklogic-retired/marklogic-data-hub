@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Radio, Tooltip, Button} from "antd";
+import {Radio, Tooltip} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -267,26 +267,27 @@ const Modeling: React.FC = () => {
   >Add</HCButton>;
 
   const publishIconStyle: CSSProperties = {
-    width: "18px",
-    height: "18px",
+    width: "15px",
+    height: "15px",
     fill: "currentColor"
   };
 
-  const publishButton = <span className={styles.publishButtonParent}><Button
+  const publishButton = <span className={styles.publishButtonParent}><HCButton
     className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
     disabled={!modelingOptions.isModified}
     aria-label="publish-to-database"
+    variant="outline-light"
     onClick={() => {
       setConfirmType(ConfirmationType.PublishAll);
       toggleConfirmModal(true);
     }}
-    size="small"
+    size="sm"
   >
     <span className={styles.publishButtonContainer}>
       <PublishToDatabaseIcon style={publishIconStyle} />
       <span className={styles.publishButtonText}>Publish</span>
     </span>
-  </Button>
+  </HCButton>
   </span>;
 
   const handleViewChange = (view) => {

@@ -131,22 +131,23 @@
     }
 
     > .columnOptionsSelectorContainer {
-        display: inline-block;
-        min-width: 1000px;
-        margin-bottom: 10px;
-
-        > .columnOptionsSelector{
-            float: right;
-            margin: 15px 15px 0px 0px;
-        }
+       display: flex;
+       align-items: flex-end;
+       justify-content: flex-end;
+       gap: 15px;
+       margin-bottom: 5px;
+       margin-right: 15px;
 
         > .entityCollapseButtons{
-            float: right;
-            margin-top: 10px;
-            padding-right: 15px;
+            margin-bottom: 8px;
+            
+        }
+        > .columnOptionsSelector {
+            text-decoration: none !important;
         }
     }
 }
+
 
 .sourceButtons{
   display: flex;
@@ -175,9 +176,13 @@ padding-bottom: 9px;
 }
 
 .DropdownMenuItem {
-    display: flex;
-    vertical-align: middle;
+    display: flex !important;
+    align-items: center;
     max-height: 3vh;
+    
+    &:active {
+        background-color: transparent !important;
+    }
 }
 
 .columnSelectorOverlay{

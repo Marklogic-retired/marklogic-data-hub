@@ -87,7 +87,8 @@ describe("Matching Step Detail view component", () => {
     expect(queryByLabelText("ruleset-scale-switch")).toBeChecked();
     expect(getByTestId("active-ruleset-timeline")).toBeInTheDocument();
 
-    userEvent.click(getByLabelText("add-ruleset"));
+
+    userEvent.click(document.querySelector("#add-ruleset"));
     expect(getByLabelText("multiPropertyRulesetOption")).toBeInTheDocument();
     userEvent.click(getByLabelText("singlePropertyRulesetOption"));
 
