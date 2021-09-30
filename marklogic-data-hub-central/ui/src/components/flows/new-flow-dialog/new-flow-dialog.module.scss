@@ -25,18 +25,10 @@
     color: #DB4f59;
 }
 
-.submitButtonsForm{
-    text-align: right;
-    top: -15px;
-    margin-bottom: -15px;
-    margin-right: 5px;
-}
-
-.submitButtons{
-    text-align: right;
-    width: 162%;
-}
-
-.input{
-    width: 95%;
+.validationError {
+    line-height: normal;
+    padding-top: 5px;
+    padding-left: 1px;
+    padding-bottom: 1px;
+    color: #DB4f59;
 }

@@ -68,7 +68,7 @@ describe("Load component", () => {
     expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
     expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
 
-    expect(await(waitForElement(() => getByText("Target Database")))).toBeInTheDocument();
+    expect(await(waitForElement(() => getByText("Target Database:")))).toBeInTheDocument();
     expect(getByLabelText("headers-textarea")).toBeDisabled();
     fireEvent.click(getByText("Interceptors"));
     expect(getByLabelText("interceptors-textarea")).toBeDisabled();
