@@ -27,7 +27,7 @@ class PropertyTable {
   }
 
   getMultipleIcon(propertyName: string) {
-    return cy.findByTestId(`multiple-${propertyName}`);
+    return cy.findByTestId(`multiple-icon-${propertyName}`);
   }
 
   getSortIcon(propertyName: string) {

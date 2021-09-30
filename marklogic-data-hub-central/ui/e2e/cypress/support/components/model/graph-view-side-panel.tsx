@@ -69,6 +69,13 @@ class GraphViewSidePanel {
     return cy.get(".ant-select-dropdown--single").click();
   }
 
+  getPropertyTypeIcon(icon:string, property:string) {
+    return cy.findByTestId(`${icon}-${property}`).trigger("mouseover");
+  }
+
+  getIconTooltip(tooltip: string) {
+    return cy.findByText(`${tooltip}`).should("be.visible");
+  }
 }
 
 const graphViewSidePanel = new GraphViewSidePanel();

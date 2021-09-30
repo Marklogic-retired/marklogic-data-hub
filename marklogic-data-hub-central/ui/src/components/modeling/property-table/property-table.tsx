@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {MLButton, MLTable, MLTooltip} from "@marklogic/design-system";
-import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey} from "@fortawesome/free-solid-svg-icons";
+import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
 import styles from "./property-table.module.scss";
@@ -26,6 +26,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
+import arrayIcon from "../../../assets/icon_array.png";
 
 let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);
@@ -131,12 +132,10 @@ const PropertyTable: React.FC<Props> = (props) => {
       render: (text, record) => {
         let renderText = text;
         let recordKey = "";
-
         if (record.hasOwnProperty("structured")) {
           let recordArray = record.key.split(",");
           recordKey = recordArray[0] + "-";
         }
-
         if (props.canWriteEntityModel && props.canReadEntityModel) {
           renderText = <span
             data-testid={`${recordKey}` + text + "-span"}
@@ -146,9 +145,28 @@ const PropertyTable: React.FC<Props> = (props) => {
               editPropertyShowModal(text, record);
             }}>
             {text}
+            {record.multiple === record.propertyName &&
+              <MLTooltip title={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
+              </MLTooltip>}
+            {record.structured === record.type &&
+              <MLTooltip title={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
+              </MLTooltip>
+            }
           </span>;
         } else {
-          renderText = <span data-testid={text + "-span"}>{text}</span>;
+          renderText = <span data-testid={text + "-span"} aria-label={"Property-name"}>{text}
+            {record.multiple === record.propertyName &&
+              <MLTooltip title={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
+              </MLTooltip>}
+            {record.structured === record.type &&
+              <MLTooltip title={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
+                <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
+              </MLTooltip>
+            }
+          </span>;
         }
         return renderText;
       }
@@ -168,11 +186,15 @@ const PropertyTable: React.FC<Props> = (props) => {
               <div>
                 {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
                 <div className={styles.dualIconsContainer}>
-                  <MLTooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} >
-                    <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName}/>
+                  <MLTooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip}
+                    data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + record.propertyName}>
+                    <span className={styles.modeledRelationshipIcon}
+                      data-testid={"relationship-" + record.propertyName}/>
                   </MLTooltip>
-                  <MLTooltip title={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName} >
-                    <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName}/>
+                  <MLTooltip title={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName}>
+                    <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey}
+                      data-testid={"foreign-" + record.propertyName}/>
                   </MLTooltip>
                 </div>
               </div>;
@@ -180,15 +202,23 @@ const PropertyTable: React.FC<Props> = (props) => {
             //relationship complete with no foreign key populated
             let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
             renderText =
-            <span>
-              {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
-              <div className={styles.relationshipIconContainer}>
-                <MLTooltip className={styles.relationshipTooltip} title={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} >
-                  <span className={styles.modeledRelationshipIconNoKey} data-testid={"relationship-" + record.propertyName}/>
-                </MLTooltip>
-              </div>
-            </span>;
+              <span>
+                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
+                <div className={styles.relationshipIconContainer}>
+                  <MLTooltip className={styles.relationshipTooltip} title={tooltip} data-testid={"relationship-tooltip"}
+                    id={"relationshipTooltip-" + record.propertyName}>
+                    <span className={styles.modeledRelationshipIconNoKey}
+                      data-testid={"relationship-" + record.propertyName}/>
+                  </MLTooltip>
+                </div>
+              </span>;
           }
+        }
+        if (record.multiple === record.propertyName) {
+          renderText =
+          <span>
+            {renderText} [ ]
+          </span>;
         }
         return renderText;
       }

@@ -59,7 +59,7 @@
   }
 }
 
-.iconTrashSidePanel { 
+.iconTrashSidePanel {
   cursor: pointer;
   font-size: 21px;
   margin-left: 11px;
@@ -94,6 +94,7 @@
   margin-top: -3px;
   color: #57c2da;
   position: absolute;
+  cursor: pointer;
 }
 
 .relationshipTooltip {
@@ -126,4 +127,19 @@
   color: #37AA6C;
   font-size: 14px;
   margin-left: 16px;
+  cursor: pointer;
+}
+
+.arrayImage {
+  margin-left: 5px;
+  margin-bottom: 1px;
+  cursor: pointer;
+}
+
+.structuredIcon {
+  color: #5B69AF;
+  font-size: 14px;
+  margin-left: 5px;
+  margin-bottom: -1px;
+  cursor: pointer;
 }
