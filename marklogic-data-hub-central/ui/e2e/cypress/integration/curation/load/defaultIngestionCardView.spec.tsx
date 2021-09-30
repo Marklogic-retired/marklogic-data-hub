@@ -72,7 +72,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.switchEditAdvanced().click(); // Advanced tab
     loadPage.selectTargetDB("STAGING");
     loadPage.targetCollectionInput().type("e2eTestCollection{enter}test1{enter}test2{enter}");
-    cy.findByText("Default Collections").click();
+    cy.findByText("Default Collections:").click();
     loadPage.defaultCollections(stepName).should("be.visible");
     loadPage.setTargetPermissions("data-hub-common,read,data-hub-common,update");
     loadPage.selectProvGranularity("Off");
@@ -227,6 +227,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.editStepInCardView(stepName).click();
     loadPage.selectSourceFormat("TEXT");
     loadPage.selectTargetFormat("TEXT");
+    cy.wait(2000);
     loadPage.saveButton().click();
     cy.wait(2000);
     cy.waitForAsyncRequest();

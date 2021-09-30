@@ -69,7 +69,7 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.switchEditAdvanced().click();  // Advanced tab
     loadPage.selectTargetDB("FINAL");
     loadPage.targetCollectionInput().type("e2eTestCollection{enter}test1{enter}test2{enter}");
-    cy.findByText("Default Collections").click();
+    cy.findByText("Default Collections:").click();
     loadPage.defaultCollections(stepName).should("be.visible");
     loadPage.appendTargetPermissions("data-hub-common,update");
     loadPage.selectProvGranularity("Off");
@@ -172,7 +172,7 @@ describe("Validate CRUD functionality from list view", () => {
     // Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
     // cancel (instead of letting run)
-    loadPage.cancelButton().click({force: true});
+    cy.findByLabelText("Cancel").click({force: true});
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
