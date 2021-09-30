@@ -749,7 +749,7 @@ const MatchingStepDetail: React.FC = () => {
               >Add</MLButton>
             </div>
           </div>
-          <div><span><b>Enable Threshold Scale </b></span><Switch aria-label="threshold-scale-switch" onChange={(e) => toggleDisplayThresholdTimeline(e)} defaultChecked={false} ></Switch>
+          <div><span className={styles.editingLabel}><b>Edit Thresholds</b></span><Switch aria-label="threshold-scale-switch" onChange={(e) => toggleDisplayThresholdTimeline(e)} defaultChecked={false} ></Switch>
             <span>
               <MLTooltip title={MatchingStepTooltips.thresholdScale} placement={"right"}>
                 <Icon type="question-circle" className={styles.scaleTooltip} theme="filled" data-testid={"info-tooltip-threshold"}/>
@@ -792,7 +792,7 @@ const MatchingStepDetail: React.FC = () => {
                     <DownOutlined /></MLButton>
                 </div></Dropdown></div>
           </div>
-          <div><span><b>Enable Ruleset Scale </b></span><Switch aria-label="ruleset-scale-switch"  onChange={(e) => toggleDisplayRulesetTimeline(e)} defaultChecked={false} ></Switch>
+          <div><span className={styles.editingLabel}><b>Edit Rulesets</b></span><Switch aria-label="ruleset-scale-switch"  onChange={(e) => toggleDisplayRulesetTimeline(e)} defaultChecked={false} ></Switch>
             <span>
               <MLTooltip title={MatchingStepTooltips.rulesetScale} placement={"right"}>
                 <Icon type="question-circle" className={styles.scaleTooltip} theme="filled" data-testid={`info-tooltip-ruleset`}/>
