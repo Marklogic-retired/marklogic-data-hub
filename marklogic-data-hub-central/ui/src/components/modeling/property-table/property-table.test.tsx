@@ -154,7 +154,7 @@ describe("Entity Modeling Property Table Component", () => {
   test("Property Table renders with structured and external datatypes, no writer role", async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const {getByText, getByTestId, getAllByText, getAllByTestId, getByLabelText, queryByTestId} =  render(
+    const {getByText, getByTestId, getAllByText, getAllByTestId, getByLabelText, queryByTestId, getAllByLabelText} =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={false}
@@ -167,18 +167,18 @@ describe("Entity Modeling Property Table Component", () => {
 
     expect(getByLabelText("Customer-add-property")).toBeDisabled();
     expect(getByTestId("identifier-customerId")).toBeInTheDocument();
-    expect(getByTestId("multiple-orders")).toBeInTheDocument();
+    expect(getAllByTestId("multiple-icon-orders")[0]).toBeInTheDocument();
     expect(getAllByTestId("add-struct-Address")).toHaveLength(2);
     expect(queryByTestId("customerId-customerId-span")).toBeNull();
 
-    expect(getByText("Order")).toBeInTheDocument();
+    expect(getAllByLabelText("Property-name")[0]).toBeInTheDocument();
     expect(getByText("integer")).toBeInTheDocument();
     expect(getByText("birthDate")).toBeInTheDocument();
     expect(getByText("billing")).toBeInTheDocument();
     expect(getByText("shipping")).toBeInTheDocument();
 
-    expect(getAllByText("string")).toHaveLength(3);
-    expect(getAllByText("Address")).toHaveLength(2);
+    expect(getAllByText("string")).toHaveLength(2);
+    expect(getAllByText("Address")).toHaveLength(1);
 
     // Table expansion shipping property -> Address Structure type
     const shippingExpandIcon = getByTestId("mltable-expand-shipping");
@@ -217,7 +217,7 @@ describe("Entity Modeling Property Table Component", () => {
 
     expect(getAllByText("fiveDigit")).toHaveLength(2);
     expect(getAllByText("plusFour")).toHaveLength(2);
-    expect(getAllByText("string")).toHaveLength(13);
+    expect(getAllByText("string")).toHaveLength(10);
   });
 
   test("can add sortable and facetable Property to the table", async () => {

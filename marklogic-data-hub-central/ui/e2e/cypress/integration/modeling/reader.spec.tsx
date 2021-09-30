@@ -125,6 +125,12 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getPropertyName("name").should("be.visible");
     graphViewSidePanel.getPropertyName("email").should("be.visible");
 
+    //Verify property type icons and respective tooltips
+    graphViewSidePanel.getPropertyTypeIcon("multiple-icon", "shipping");
+    graphViewSidePanel.getIconTooltip("Multiple");
+    graphViewSidePanel.getPropertyTypeIcon("structured", "shipping");
+    graphViewSidePanel.getIconTooltip("Structured Type");
+
     graphViewSidePanel.closeSidePanel();
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
 
