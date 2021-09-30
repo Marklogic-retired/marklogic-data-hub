@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Form, Input, Modal, Tooltip, Icon} from "antd";
+import {Input, Modal, Tooltip, Icon} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -29,10 +30,6 @@ type Props = {
 const EntityTypeModal: React.FC<Props> = (props) => {
   const {handleError} = useContext(UserContext);
   const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
-  const layout = {
-    labelCol: {span: 6},
-    wrapperCol: {span: 18},
-  };
 
   const [name, setName] = useState("");
   const [errorName, setErrorName] = useState("");
@@ -246,11 +243,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     props.toggleModal(false);
   };
 
-  const formItemLayout = {
-    labelCol: {span: 5},
-    wrapperCol: {span: 18}
-  };
-
   const handleEditColorMenu = () => {
     setEventValid(prev => true);
     setDisplayColorPicker(!displayColorPicker);
@@ -282,111 +274,98 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       maskClosable={false}
     >
       <Form
-        {...layout}
         id="entity-type-form"
         onSubmit={onOk}
       >
-        <Form.Item
-          className={styles.formItem}
-          {...formItemLayout}
-          label={<span>
-            Name:&nbsp;{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={(errorName || isErrorOfType("name") ? "error" : "")}
-          help={errorName}
-        >
-          {props.isEditModal ? <span>{name}</span> : <Input
-            id="entity-name"
-            placeholder="Enter name"
-            className={styles.input}
-            value={name}
-            onChange={handleChange}
-            onBlur={handleChange}
-          />}
-          {props.isEditModal ? null : <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
-            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-          </HCTooltip>}
-        </Form.Item>
-
-        <Form.Item
-          label={<span className={styles.label}>Description:</span>}
-          {...formItemLayout}
-          labelAlign="left"
-          className={styles.formItem}
-          colon={false}
-        >
-          <Input
-            id="description"
-            placeholder="Enter description"
-            className={styles.input}
-            value={description}
-            onChange={handleChange}
-            onBlur={handleChange}
-          />
-          <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
-            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-          </HCTooltip>
-        </Form.Item>
-
-        <Form.Item
-          label="Namespace URI:"
-          labelAlign="left"
-          style={{marginLeft: 7, marginBottom: 0}}
-          {...formItemLayout}
-        >
-          <Form.Item
-            style={{display: "inline-block"}}
-            validateStatus={isErrorOfType("namespace") ? "error" : ""}
-          >
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}</FormLabel>
+          <Col>
+            <Row>
+              <Col className={(errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex")}>
+                {props.isEditModal ? <span>{name}</span> : <Input
+                  id="entity-name"
+                  placeholder="Enter name"
+                  value={name}
+                  onChange={handleChange}
+                  onBlur={handleChange}
+                />}
+                <div className={"p-2 d-flex"}>
+                  {props.isEditModal ? null : <HCTooltip text={ModelingTooltips.nameRegex} id="entity-name-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" size={13} />
+                  </HCTooltip>}
+                </div>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {errorName}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <Col className={"d-flex"}>
             <Input
-              id="namespace"
-              placeholder="Example: http://example.org/es/gs"
-              className={styles.input}
-              value={namespace}
+              id="description"
+              placeholder="Enter description"
+              value={description}
               onChange={handleChange}
               onBlur={handleChange}
-              style={{width: "250px"}}
             />
-          </Form.Item>
-          <span className={styles.prefixLabel}>Prefix:</span>
-          <Form.Item
-            className={styles.formItem}
-            colon={false}
-            style={{display: "inline-block"}}
-            validateStatus={isErrorOfType("namespacePrefix") ? "error" : ""}
-          >
-            <Input
-              id="prefix"
-              placeholder="Example: esgs"
-              className={styles.input}
-              value={prefix}
-              onChange={handleChange}
-              onBlur={handleChange}
-              style={{width: "120px"}}
-            />
-            <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
-              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-            </HCTooltip>
-          </Form.Item>
-          { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
-        </Form.Item>
-        <Form.Item
-          label="Color:"
-          labelAlign="left"
-          style={{marginLeft: 7, marginBottom: 0}}
-          {...formItemLayout}
-        >
-          <div className={styles.colorContainer}>
-            <div data-testid={`${name}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
-            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
-            <Tooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </Tooltip>
-          </div>
-        </Form.Item>
+            <div className={"p-2 d-flex align-items-center"}>
+              <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top">
+                <QuestionCircleFill color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Namespace URI:"}</FormLabel>
+          <Col>
+            <Row>
+              <Col className={"d-flex"}>
+                <Input
+                  id="namespace"
+                  placeholder="Example: http://example.org/es/gs"
+                  value={namespace}
+                  onChange={handleChange}
+                  onBlur={handleChange}
+                />
+                <FormLabel className={"ps-4 pe-2 m-0 d-flex align-items-center"}>{"Prefix:"}</FormLabel>
+                <Input
+                  id="prefix"
+                  placeholder="Example: esgs"
+                  className={styles.input}
+                  value={prefix}
+                  onChange={handleChange}
+                  onBlur={handleChange}
+                  style={{width: "120px"}}
+                />
+                <div className={"p-2 d-flex align-items-center"}>
+                  <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" size={13} />
+                  </HCTooltip>
+                </div>
+              </Col>
+              <Col xs={12} className={"d-flex"}>
+                { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Color:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <div className={styles.colorContainer}>
+              <div data-testid={`${name}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
+              <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
+            </div>
+            <div className={"p-2 d-flex align-items-center"}>
+              <Tooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+              </Tooltip>
+            </div>
+          </Col>
+        </Row>
       </Form>
       {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
     </Modal>
