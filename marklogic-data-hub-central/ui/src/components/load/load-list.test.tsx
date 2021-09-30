@@ -165,13 +165,13 @@ describe("Load data component", () => {
     let targetCollection = getByTitle("addedCollection"); // Additional target collection (Added by user)
 
     // Advanced settings values
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(targetCollection).toBeInTheDocument(); //Should be available in the document
     expect(targetCollection).not.toBe(stepName); //Should not be same as the default collection
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect(getByTestId("defaultCollections-" + stepName)).toBeInTheDocument();
     expect(queryByTitle(stepName)).not.toBeInTheDocument();  // The default collection should not be a part of the Target Collection list
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue("35");
 
     // Update permissions

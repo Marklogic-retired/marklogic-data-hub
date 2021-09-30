@@ -128,24 +128,24 @@ describe("Custom Card component", () => {
     expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
 
     // Advanced settings values
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getByText("db1")).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText("db2")).toBeInTheDocument();
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
     expect(getByPlaceholderText("Please enter batch size")).toBeDisabled();
-    expect(getByText("Target Collections")).toBeInTheDocument();
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect(getByTestId("defaultCollections-Customer")).toBeInTheDocument();
     expect(getByTestId("defaultCollections-mapCustomerJSON")).toBeInTheDocument();
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("role1,read,role2,update");
     expect(getByPlaceholderText("Please enter target permissions")).toBeDisabled();
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
-    expect(getByText("Additional Settings")).toBeInTheDocument();
+    expect(getByText("Additional Settings:")).toBeInTheDocument();
 
     fireEvent.click(getByLabelText("Close"));
     await wait(() => {
@@ -193,35 +193,35 @@ describe("Custom Card component", () => {
     expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
 
     // Advanced settings values
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getByLabelText("sourceDatabase-select")).toBeEnabled();
     expect(getByText("db1")).toBeInTheDocument();
 
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText("db2")).toBeInTheDocument();
     expect(getByLabelText("targetDatabase-select")).toBeEnabled();
 
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
     expect(getByPlaceholderText("Please enter batch size")).toBeEnabled();
 
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByLabelText("additionalColl-select")).toBeEnabled();
 
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect(getByTestId("defaultCollections-Customer")).toBeInTheDocument();
     expect(getByTestId("defaultCollections-mapCustomerJSON")).toBeInTheDocument();
 
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("role1,read,role2,update");
     expect(getByPlaceholderText("Please enter target permissions")).toBeEnabled();
 
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByLabelText("provGranularity-select")).toBeEnabled();
 
     expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
-    expect(getByText("Additional Settings")).toBeInTheDocument();
+    expect(getByText("Additional Settings:")).toBeInTheDocument();
 
     fireEvent.click(getByLabelText("Close"));
     await wait(() => {

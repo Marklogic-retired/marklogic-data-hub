@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Form, Input, Select, Radio, Tooltip} from "antd";
+import {Input, Select, Radio, Tooltip} from "antd";
+import {Form, Row, Col, FormLabel} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
@@ -559,16 +560,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setSourceRecordScope(value);
     }
   };
-  const formItemLayout = {
-    labelCol: {
-      xs: {span: 24},
-      sm: {span: 7},
-    },
-    wrapperCol: {
-      xs: {span: 24},
-      sm: {span: 15},
-    },
-  };
 
   const sourceDbOptions = databaseOptions.map(d => <Option data-testid={`sourceDbOptions-${d}`} key={d}>{d}</Option>);
   const targetDbOptions = databaseOptions.map(d => <Option data-testid={`targetDbOptions-${d}`} key={d}>{d}</Option>);
@@ -603,442 +594,490 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           );
         })
       ) : null : null}
-      <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>
-        {isCustomIngestion ? <Form.Item
-          label={<span>Step Definition Name</span>}
-          labelAlign="left"
-          className={styles.formItem}>
-          <div >{stepDefinitionName}</div>
-        </Form.Item> : null}
-        {usesSourceDatabase ? <Form.Item
-          label={<span>Source Database</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Select
-            id="sourceDatabase"
-            placeholder="Please select source database"
-            value={sourceDatabase}
-            onChange={handleSourceDatabase}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-            aria-label="sourceDatabase-select"
-            onBlur={sendPayload}
-          >
-            {sourceDbOptions}
-          </Select>
-          <div className={styles.selectHCTooltip}>
-            <HCTooltip
-              text={tooltips.sourceDatabase}
-              id="source-database-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-        </Form.Item> : null
-        }<Form.Item
-          label={<span>Target Database</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Select
-            id="targetDatabase"
-            placeholder="Please select target database"
-            value={targetDatabase}
-            onChange={handleTargetDatabase}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-            aria-label="targetDatabase-select"
-            onBlur={sendPayload}
-          >
-            {targetDbOptions}
-          </Select>
-          <div className={styles.selectHCTooltip}>
-            <HCTooltip
-              text={tooltips.targetDatabase}
-              id="target-database-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-        </Form.Item>
-        {usesAdvancedTargetCollections ? <Form.Item
-          label={<span>Target Collections:</span>}
-          labelAlign="left"
-          labelCol={
-            {span: 24}
-          }
-          wrapperCol={
-            {offset: 1, span: 22}
-          }
-        >
-          <AdvancedTargetCollections
-            defaultTargetCollections={defaultTargetCollections}
-            targetCollections={targetCollections}
-            setTargetCollections={handleAdvancedTargetCollections}
-            canWrite={canReadWrite} />
-        </Form.Item> :
-          <Form.Item
-            label={<span>Target Collections</span>}
-            labelAlign="left"
-            className={styles.formItemTargetCollections}
-          >
-            <Select
-              id="additionalColl"
-              mode="tags"
-              style={{width: "100%"}}
-              placeholder="Please add target collections"
-              value={additionalCollections}
-              disabled={!canReadWrite}
-              onChange={handleAddColl}
-              className={styles.inputWithTooltip}
-              aria-label="additionalColl-select"
-              onBlur={sendPayload}
-            >
-              {additionalCollections.map((col) => {
-                return <Option value={col} key={col} label={col}>{col}</Option>;
-              })}
-            </Select>
-            <div className={styles.inputHCTooltip}>
-              <HCTooltip
-                text={tooltips.additionalCollections}
-                id="additional-coll-tooltip"
-                placement="left"
-              >
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-              </HCTooltip>
-            </div>
-          </Form.Item>}
-        {usesAdvancedTargetCollections ? null : <Form.Item
-          label={<span className={styles.defaultCollectionsLabel}>Default Collections</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => { return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>; })}</div>
-        </Form.Item>}
-        <Form.Item
-          label={<span>Target Permissions</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Input
-            id="targetPermissions"
-            placeholder="Please enter target permissions"
-            value={targetPermissions}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-          />
-          <div className={styles.inputHCTooltip}>
-            <HCTooltip
-              text={tooltips.targetPermissions}
-              id="target-permissions-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-          <div className={styles.validationError} data-testid="validationError">
-            {permissionValidationError}
-          </div>
-        </Form.Item>
-        {usesTargetFormat ? <Form.Item
-          label={<span>Target Format</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Select
-            id="targetFormat"
-            placeholder="Please select target format"
-            value={targetFormat}
-            onChange={handleTargetFormat}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-            aria-label="targetFormat-select"
-            onBlur={sendPayload}
-          >
-            {targetFormatOptions}
-          </Select>
-          <div className={styles.inputHCTooltip}>
-            <HCTooltip
-              text={tooltips.targetFormat}
-              id="target-format-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-        </Form.Item> : null}
-        <Form.Item
-          label={<span>Provenance Granularity</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Select
-            id="provGranularity"
-            placeholder="Please select provenance granularity"
-            value={provGranularity}
-            onChange={handleProvGranularity}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-            aria-label="provGranularity-select"
-            onBlur={sendPayload}
-          >
-            {provGranOpts}
-          </Select>
-          <div className={styles.selectHCTooltip}>
-            <HCTooltip
-              text={tooltips.provGranularity}
-              id="prov-granularity-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-        </Form.Item>
-        {stepType === "mapping" ? <Form.Item
-          label={<span>Entity Validation</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Select
-            id="validateEntity"
-            placeholder="Please select Entity Validation"
-            value={validateEntity}
-            onChange={handleValidateEntity}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-            aria-label="validateEntity-select"
-            onBlur={sendPayload}
-          >
-            {valEntityOpts}
-          </Select>
-          <div className={styles.selectHCTooltip}>
-            <HCTooltip
-              text={tooltips.validateEntity}
-              id="validate-entity-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-        </Form.Item> : ""}
-        {   stepType === "mapping" ? <Form.Item
-          label={<span>Source Record Scope</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Select
-            id="sourceRecordScope"
-            placeholder="Please select Source Record Scope"
-            value={sourceRecordScope}
-            onChange={handleSourceRecordScope}
-            disabled={!canReadWrite}
-            className={styles.inputWithTooltip}
-            aria-label="sourceRecordScope-select"
-          >
-            {sourceRecordScopeValue}
-          </Select>
-          <div className={styles.selectHCTooltip}>
-            <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13}/>
-            </HCTooltip>
-          </div>
-          { sourceRecordScopeToggled ? <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div> : null }
-        </Form.Item> : ""}
-        {   stepType === "mapping" ? <Form.Item
-          label={<span>Attach Source Document</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Radio.Group onChange={handleChange} name="attachSourceDocument" value={attachSourceDocument}>
-            <Radio value={true} data-testid="attachmentTrue">Yes</Radio>
-            <Radio value={false} data-testid="attachmentFalse">No</Radio>
-          </Radio.Group>
-          <HCTooltip
-            text={tooltips.attachSourceDocument}
-            id="attach-source-document-tooltip"
-            placement="left"
-          >
-            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-          </HCTooltip>
-        </Form.Item>: ""}
-        <Form.Item
-          label={<span>Batch Size</span>}
-          labelAlign="left"
-          className={styles.formItem}
-        >
-          <Input
-            id="batchSize"
-            placeholder="Please enter batch size"
-            value={batchSize}
-            onChange={handleChange}
-            disabled={!canReadWrite}
-            className={styles.inputBatchSize}
-            onBlur={sendPayload}
-          />
-          <div className={styles.inputHCTooltip}>
-            <HCTooltip
-              text={tooltips.batchSize}
-              id="batch-size-tooltip"
-              placement="right"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-        </Form.Item>
-        {usesHeaders ?
-          <>
-            <Form.Item
-              label={<span>Header Content</span>}
-              labelAlign="left"
-              className={styles.formItem}
-            >
-              <TextArea
-                id="headers"
-                placeholder="Please enter header content"
-                value={headers}
-                onChange={handleChange}
-                onBlur={handleBlur}
+      <Form onSubmit={handleSubmit}>
+        {isCustomIngestion ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Step Definition Name:"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              {stepDefinitionName}
+            </Col>
+          </Row> : null
+        }
+        {usesSourceDatabase ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Source Database:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Select
+                id="sourceDatabase"
+                placeholder="Please select source database"
+                value={sourceDatabase}
+                onChange={handleSourceDatabase}
                 disabled={!canReadWrite}
-                className={styles.textarea}
-                rows={6}
-                aria-label="headers-textarea"
-                style={!headersValid ? {border: "solid 1px #C00"} : {}}
-              />
-              { !headersValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
-              <div className={styles.textareaHCTooltip}>
+                className={styles.inputWithTooltip}
+                aria-label="sourceDatabase-select"
+                onBlur={sendPayload}
+              >
+                {sourceDbOptions}
+              </Select>
+              <div className={"p-2 d-flex"}>
                 <HCTooltip
-                  text={tooltips.headers}
-                  id="headers-tooltip"
+                  text={tooltips.sourceDatabase}
+                  id="source-database-tooltip"
                   placement="left"
                 >
                   <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
                 </HCTooltip>
               </div>
-            </Form.Item>
-          </>
-          : null
+            </Col>
+          </Row> : null
         }
-        <Form.Item
-          label={<span>
-            {interceptorsExpanded ?
-              <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> :
-              <ChevronRight className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> }
-            <span aria-label="interceptors-expand" className={styles.expandLabel} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}>Interceptors</span>
-          </span>}
-          labelAlign="left"
-          className={styles.formItem}
-          colon={false}
-        />
-        {interceptorsExpanded ? <div className={styles.expandContainer}>
-          <div className={styles.textareaExpandTooltip}>
-            <HCTooltip
-              text={tooltips.interceptors}
-              id="interceptors-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-          <TextArea
-            id="interceptors"
-            placeholder="Please enter interceptor content"
-            value={interceptors}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={!canReadWrite}
-            className={styles.textareaExpand}
-            rows={6}
-            aria-label="interceptors-textarea"
-            style={!interceptorsValid ? {border: "solid 1px #C00"} : {}}
-          />
-          {!interceptorsValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null}
-        </div> : ""}
-        <Form.Item
-          label={<span>
-            {customHookExpanded ?
-              <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> :
-              <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> }
-            <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
-            <HCTooltip
-              text={tooltips.customHookDeprecated}
-              id="custom-hook-deprecated-tooltip"
-              placement="left"
-            >
-              <span className={styles.deprecatedLabel}>DEPRECATED</span>
-            </HCTooltip>
-          </span>}
-          labelAlign="left"
-          className={styles.formItem}
-          colon={false}
-        />
-        {customHookExpanded ? <div className={styles.expandContainer}>
-          <div className={styles.textareaExpandTooltip}>
-            <HCTooltip
-              text={tooltips.customHook}
-              id="custom-hook-tooltip"
-              placement="left"
-            >
-              <QuestionCircleFill color="#7F86B5" size={13} />
-            </HCTooltip>
-          </div>
-          <TextArea
-            id="customHook"
-            placeholder="Please enter custom hook content"
-            value={customHook}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={!canReadWrite}
-            className={styles.textareaExpand}
-            rows={6}
-            aria-label="customHook-textarea"
-            style={!customHookValid ? {border: "solid 1px #C00"} : {}}
-          />
-          {!customHookValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null}
-        </div> : ""}
-        {stepType === "custom" || isCustomIngestion ?
-          <Form.Item
-            label={<span>Additional Settings</span>}
-            labelAlign="left"
-            className={styles.formItem}
-          >
-            <TextArea
-              id="additionalSettings"
-              placeholder="Please enter additional settings"
-              value={additionalSettings}
-              onChange={handleChange}
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Target Database:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Select
+              id="targetDatabase"
+              placeholder="Please select target database"
+              value={targetDatabase}
+              onChange={handleTargetDatabase}
               disabled={!canReadWrite}
-              className={styles.textarea}
-              rows={6}
-              aria-label="options-textarea"
-              onBlur={handleBlur}
-            />
-            { !additionalSettingsValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
-            <div className={styles.selectHCTooltip}>
+              className={styles.inputWithTooltip}
+              aria-label="targetDatabase-select"
+              onBlur={sendPayload}
+            >
+              {targetDbOptions}
+            </Select>
+            <div className={"p-2 d-flex"}>
               <HCTooltip
-                text={props.tooltipsData.additionalSettings}
-                id="additional-settings-tooltip"
+                text={tooltips.targetDatabase}
+                id="target-database-tooltip"
                 placement="left"
               >
                 <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
               </HCTooltip>
             </div>
-          </Form.Item> : null
+          </Col>
+        </Row>
+        {usesAdvancedTargetCollections ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
+            <Col className={"d-flex"} data-testid={"target-collections"}>
+              <AdvancedTargetCollections
+                defaultTargetCollections={defaultTargetCollections}
+                targetCollections={targetCollections}
+                setTargetCollections={handleAdvancedTargetCollections}
+                canWrite={canReadWrite} />
+            </Col>
+          </Row> :
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
+            <Col className={"d-flex"} data-testid={"target-collections"}>
+              <Select
+                id="additionalColl"
+                mode="tags"
+                style={{width: "100%"}}
+                placeholder="Please add target collections"
+                value={additionalCollections}
+                disabled={!canReadWrite}
+                onChange={handleAddColl}
+                className={styles.inputWithTooltip}
+                aria-label="additionalColl-select"
+                onBlur={sendPayload}
+              >
+                {additionalCollections.map((col) => {
+                  return <Option value={col} key={col} label={col}>{col}</Option>;
+                })}
+              </Select>
+              <div className={"p-2 d-flex"}>
+                <HCTooltip
+                  text={tooltips.additionalCollections}
+                  id="additional-coll-tooltip"
+                  placement="left"
+                >
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
         }
-        <Form.Item className={styles.submitButtonsForm}>
-          <div className={styles.submitButtons}>
-            <HCButton size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-            {!canReadWrite || !isFormValid() ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
-              <span className={styles.disabledCursor}>
-                <HCButton size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
-              </span>
-            </Tooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
-          </div>
-        </Form.Item>
+        {usesAdvancedTargetCollections ? null :
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} className={"text-end"}>{"Default Collections:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <div className={"p-2 d-flex"}>
+                <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => { return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>; })}</div>
+              </div>
+            </Col>
+          </Row>
+        }
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Target Permissions:"}</FormLabel>
+          <Col>
+            <Row>
+              <Col xs={12} className={"d-flex"}>
+                <Input
+                  id="targetPermissions"
+                  placeholder="Please enter target permissions"
+                  value={targetPermissions}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={!canReadWrite}
+                  className={styles.inputWithTooltip}
+                />
+                <div className={"p-2 d-flex"}>
+                  <HCTooltip
+                    text={tooltips.targetPermissions}
+                    id="target-permissions-tooltip"
+                    placement="left"
+                  >
+                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  </HCTooltip>
+                </div>
+              </Col>
+              <Col xs={12} className={styles.validationError} data-testid="validationError">
+                {permissionValidationError}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        {usesTargetFormat ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Target Format:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Select
+                id="targetFormat"
+                placeholder="Please select target format"
+                value={targetFormat}
+                onChange={handleTargetFormat}
+                disabled={!canReadWrite}
+                className={styles.inputWithTooltip}
+                aria-label="targetFormat-select"
+                onBlur={sendPayload}
+              >
+                {targetFormatOptions}
+              </Select>
+              <div className={"p-2 d-flex"}>
+                <HCTooltip
+                  text={tooltips.targetFormat}
+                  id="target-format-tooltip"
+                  placement="left"
+                >
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row> : null
+        }
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} className={"pe-0"}>{"Provenance Granularity:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Select
+              id="provGranularity"
+              placeholder="Please select provenance granularity"
+              value={provGranularity}
+              onChange={handleProvGranularity}
+              disabled={!canReadWrite}
+              className={styles.inputWithTooltip}
+              aria-label="provGranularity-select"
+              onBlur={sendPayload}
+            >
+              {provGranOpts}
+            </Select>
+            <div className={"p-2 d-flex"}>
+              <HCTooltip
+                text={tooltips.provGranularity}
+                id="prov-granularity-tooltip"
+                placement="left"
+              >
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        {stepType === "mapping" ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Entity Validation:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Select
+                id="validateEntity"
+                placeholder="Please select Entity Validation"
+                value={validateEntity}
+                onChange={handleValidateEntity}
+                disabled={!canReadWrite}
+                className={styles.inputWithTooltip}
+                aria-label="validateEntity-select"
+                onBlur={sendPayload}
+              >
+                {valEntityOpts}
+              </Select>
+              <div className={"p-2 d-flex"}>
+                <HCTooltip
+                  text={tooltips.validateEntity}
+                  id="validate-entity-tooltip"
+                  placement="left"
+                >
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row> : ""
+        }
+        {stepType === "mapping" ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} className={"pe-0"}>{"Source Record Scope:"}</FormLabel>
+            <Col>
+              <Row>
+                <Col xs={12} className={"d-flex"}>
+                  <Select
+                    id="sourceRecordScope"
+                    placeholder="Please select Source Record Scope"
+                    value={sourceRecordScope}
+                    onChange={handleSourceRecordScope}
+                    disabled={!canReadWrite}
+                    className={styles.inputWithTooltip}
+                    aria-label="sourceRecordScope-select"
+                  >
+                    {sourceRecordScopeValue}
+                  </Select>
+                  <div className={"p-2 d-flex"}>
+                    <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13}/>
+                    </HCTooltip>
+                  </div>
+                </Col>
+                { sourceRecordScopeToggled ?
+                  <Col xs={12}>
+                    <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div>
+                  </Col> : null
+                }
+              </Row>
+            </Col>
+          </Row> : ""
+        }
+        {stepType === "mapping" ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Attach Source Document:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Radio.Group onChange={handleChange} name="attachSourceDocument" value={attachSourceDocument} className={"d-flex align-items-center"}>
+                <Radio value={true} data-testid="attachmentTrue">Yes</Radio>
+                <Radio value={false} data-testid="attachmentFalse">No</Radio>
+              </Radio.Group>
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip
+                  text={tooltips.attachSourceDocument}
+                  id="attach-source-document-tooltip"
+                  placement="left"
+                >
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row> : ""
+        }
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Batch Size:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Input
+              id="batchSize"
+              placeholder="Please enter batch size"
+              value={batchSize}
+              onChange={handleChange}
+              disabled={!canReadWrite}
+              className={styles.inputBatchSize}
+              onBlur={sendPayload}
+            />
+            <div className={"p-2 d-flex"}>
+              <HCTooltip
+                text={tooltips.batchSize}
+                id="batch-size-tooltip"
+                placement="right"
+              >
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        {usesHeaders ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Header Content:"}</FormLabel>
+            <Col>
+              <Row>
+                <Col className={"d-flex"}>
+                  <TextArea
+                    id="headers"
+                    placeholder="Please enter header content"
+                    value={headers}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    disabled={!canReadWrite}
+                    className={styles.textarea}
+                    rows={6}
+                    aria-label="headers-textarea"
+                    style={!headersValid ? {border: "solid 1px #C00"} : {}}
+                  />
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip
+                      text={tooltips.headers}
+                      id="headers-tooltip"
+                      placement="left"
+                    >
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                { !headersValid ?
+                  <Col xs={12}>
+                    <div className={styles.invalid}>{invalidJSONMessage}</div>
+                  </Col> : null
+                }
+              </Row>
+            </Col>
+          </Row> : null
+        }
+        <Row className={"mb-3"}>
+          <Col className={"d-flex"}>
+            <span>
+              {interceptorsExpanded ?
+                <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> :
+                <ChevronRight className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> }
+              <span aria-label="interceptors-expand" className={styles.expandLabel} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}>Interceptors</span>
+            </span>
+          </Col>
+        </Row>
+        {interceptorsExpanded ?
+          <Row className={"mb-3"}>
+            <Col>
+              <Row>
+                <Col className={"d-flex"}>
+                  <TextArea
+                    id="interceptors"
+                    placeholder="Please enter interceptor content"
+                    value={interceptors}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    disabled={!canReadWrite}
+                    className={"ms-4"}
+                    rows={6}
+                    aria-label="interceptors-textarea"
+                    style={!interceptorsValid ? {border: "solid 1px #C00"} : {}}
+                  />
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip
+                      text={tooltips.interceptors}
+                      id="interceptors-tooltip"
+                      placement="left"
+                    >
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                {!interceptorsValid ?
+                  <Col xs={12}>
+                    <div className={styles.invalidExpand}>{invalidJSONMessage}</div>
+                  </Col> : null
+                }
+              </Row>
+            </Col>
+          </Row> : ""
+        }
+        <Row className={"mb-3"}>
+          <Col className={"d-flex"}>
+            <span>
+              {customHookExpanded ?
+                <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> :
+                <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> }
+              <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
+              <HCTooltip
+                text={tooltips.customHookDeprecated}
+                id="custom-hook-deprecated-tooltip"
+                placement="left"
+              >
+                <span className={styles.deprecatedLabel}>DEPRECATED</span>
+              </HCTooltip>
+            </span>
+          </Col>
+        </Row>
+        {customHookExpanded ?
+          <Row className={"mb-3"}>
+            <Col>
+              <Row>
+                <Col className={"d-flex"}>
+                  <TextArea
+                    id="customHook"
+                    placeholder="Please enter custom hook content"
+                    value={customHook}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    disabled={!canReadWrite}
+                    className={"ms-4"}
+                    rows={6}
+                    aria-label="customHook-textarea"
+                    style={!customHookValid ? {border: "solid 1px #C00"} : {}}
+                  />
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip
+                      text={tooltips.customHook}
+                      id="custom-hook-tooltip"
+                      placement="left"
+                    >
+                      <QuestionCircleFill color="#7F86B5" size={13} />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                <Col xs={12}>
+                  {!customHookValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null}
+                </Col>
+              </Row>
+            </Col>
+          </Row> : ""
+        }
+        {stepType === "custom" || isCustomIngestion ?
+          <Row>
+            <FormLabel column lg={3}>{"Additional Settings:"}</FormLabel>
+            <Col>
+              <Row>
+                <Col className={"d-flex"}>
+                  <TextArea
+                    id="additionalSettings"
+                    placeholder="Please enter additional settings"
+                    value={additionalSettings}
+                    onChange={handleChange}
+                    disabled={!canReadWrite}
+                    className={styles.textarea}
+                    rows={6}
+                    aria-label="options-textarea"
+                    onBlur={handleBlur}
+                  />
+                  <div className={"p-2 d-flex"}>
+                    <HCTooltip
+                      text={props.tooltipsData.additionalSettings}
+                      id="additional-settings-tooltip"
+                      placement="left"
+                    >
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                {!additionalSettingsValid ?
+                  <Col xs={12}>
+                    <div className={styles.invalid}>{invalidJSONMessage}</div>
+                  </Col> : null
+                }
+              </Row>
+            </Col>
+          </Row> : null
+        }
+        <Row className={"mt-4"}>
+          <Col className={"d-flex"}>
+            <div className={styles.submitButtons}>
+              <HCButton aria-label="Cancel" variant="outline-light" size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
+              {!canReadWrite || !isFormValid() ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+                <span className={styles.disabledCursor}>
+                  <HCButton size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
+                </span>
+              </Tooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
+            </div>
+          </Col>
+        </Row>
       </Form>
     </div>
   );
