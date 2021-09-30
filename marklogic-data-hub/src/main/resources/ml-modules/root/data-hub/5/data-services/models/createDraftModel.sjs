@@ -35,7 +35,12 @@ if (name == null) {
   httpUtils.throwBadRequest("The model must have an info object with a title property");
 }
 
-if (fn.docAvailable(entityLib.getModelUri(name)) || fn.docAvailable(entityLib.getDraftModelUri(name))) {
+const entityModel = entityLib.findDraftModelByEntityName(name)
+if (entityModel) {
+  if(!entityModel.info.draftDeleted) {
+    httpUtils.throwBadRequest(`An entity type already exists with a name of ${name}`);
+  }
+} else if (fn.docAvailable(entityLib.getModelUri(name))) {
   httpUtils.throwBadRequest(`An entity type already exists with a name of ${name}`);
 }
 
