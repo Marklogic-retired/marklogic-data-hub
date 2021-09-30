@@ -540,7 +540,6 @@ function findEntityIdentifiers(uris, entityType) {
 }
 
 module.exports = {
-  deleteModel,
   deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
   findModelReferencesInSteps,
