@@ -226,16 +226,16 @@ describe("Steps settings component", () => {
     expect(getByTestId("defaultCollections-" + testName)).toBeInTheDocument();
 
     // Check other defaults
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText(StepsConfig.stagingDb)).toBeInTheDocument();
-    expect(getByText("Target Collections")).toBeInTheDocument();
-    const targetColl = document.querySelector((".formItemTargetCollections .ant-select-search__field"))!;
+    expect(getByText("Target Collections:")).toBeInTheDocument();
+    const targetColl = document.querySelector(("[data-testid=\"target-collections\"] .ant-select-search__field"))!;
     expect(targetColl).toBeEmpty();
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Off")).toBeInTheDocument();
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     expect(getByLabelText("headers-textarea")).toBeEmpty();
     // Open text areas that are closed by default
@@ -279,19 +279,19 @@ describe("Steps settings component", () => {
     expect(getByTestId("defaultCollections-" + testEntity)).toBeInTheDocument();
 
     // Check other defaults
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getByText(StepsConfig.stagingDb)).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText(StepsConfig.finalDb)).toBeInTheDocument();
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
-    expect(getByText("Target Format")).toBeInTheDocument();
+    expect(getByText("Target Format:")).toBeInTheDocument();
     expect(getByText(StepsConfig.defaultTargetFormat)).toBeInTheDocument();
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Off")).toBeInTheDocument();
-    expect(getByText("Entity Validation")).toBeInTheDocument();
+    expect(getByText("Entity Validation:")).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     expect(getByLabelText("headers-textarea")).toBeEmpty();
     // Open text areas that are closed by default
@@ -333,15 +333,15 @@ describe("Steps settings component", () => {
     expect(getByTestId("defaultCollections-" + testName)).toBeInTheDocument();
 
     // Check other defaults
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getAllByText(StepsConfig.finalDb)[0]).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getAllByText(StepsConfig.finalDb)[1]).toBeInTheDocument();
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Off")).toBeInTheDocument();
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default
     fireEvent.click(getByText("Interceptors"));
@@ -381,16 +381,16 @@ describe("Steps settings component", () => {
     fireEvent.click(getByText("Advanced"));
 
     // Check other defaults
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getAllByText(StepsConfig.finalDb)[0]).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getAllByText(StepsConfig.finalDb)[1]).toBeInTheDocument();
     expect(getByLabelText("advanced-target-collections")).toBeInTheDocument();
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Off")).toBeInTheDocument();
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default
     fireEvent.click(getByText("Interceptors"));
