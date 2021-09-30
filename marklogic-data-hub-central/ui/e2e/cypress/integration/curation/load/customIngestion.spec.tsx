@@ -31,7 +31,7 @@ describe("Custom Ingestion", () => {
     loadPage.editStepInCardView(loadStep).click();
     loadPage.switchEditAdvanced().click(); // Advanced tab
     //custom ingestion steps have step definition name
-    cy.findByText("Step Definition Name").should("exist");
+    cy.findByText("Step Definition Name:").should("exist");
     loadPage.cancelSettings(loadStep).click();
     toolbar.getRunToolbarIcon().click();
     //Run the ingest with JSON

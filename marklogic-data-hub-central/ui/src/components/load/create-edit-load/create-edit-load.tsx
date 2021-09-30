@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Select, Tooltip} from "antd";
+import {Input, Select, Tooltip} from "antd";
+import {Form, Row, Col, FormLabel} from "react-bootstrap";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
 import StepsConfig from "../../../config/steps.config";
@@ -401,17 +402,6 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const formItemLayout = {
-    labelCol: {
-      xs: {span: 24},
-      sm: {span: 7},
-    },
-    wrapperCol: {
-      xs: {span: 28},
-      sm: {span: 15},
-    },
-  };
-
   const soptions = Object.keys(srcOptions).map(d => <Select.Option key={srcOptions[d]}>{d}</Select.Option>);
   const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
   const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
@@ -419,203 +409,240 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   return (
     <div className={styles.newDataLoadForm}>
       <div className={styles.newLoadCardTitle} aria-label={"newLoadCardTitle"}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
-      <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
-        <Form.Item label={<span>
-          Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-
-          &nbsp;
-        </span>} labelAlign="left"
-        validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
-        help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
-        >
-          {tobeDisabled ? <Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}> <Input
-            id="name"
-            placeholder="Enter name"
-            value={stepName}
-            onChange={handleChange}
-            disabled={tobeDisabled}
-            className={styles.input}
-            onBlur={sendPayload}
-          /></Tooltip> : <Input
-            id="name"
-            placeholder="Enter name"
-            value={stepName}
-            onChange={handleChange}
-            disabled={tobeDisabled}
-            className={styles.input}
-            onBlur={sendPayload}
-          />}
-          <span className={styles.questionMarkIcon}>
-            <HCTooltip text={NewLoadTooltips.name} id="name-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </span>
-        </Form.Item>
-        <Form.Item label={<span>
-          Description:&nbsp;
-        </span>} labelAlign="left">
-          <Input
-            id="description"
-            placeholder="Enter description"
-            value={description}
-            onChange={handleChange}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-            onBlur={sendPayload}
-          /><span className={styles.questionMarkIcon}><HCTooltip text={NewLoadTooltips.description} id="description-tooltip" placement="left">
-            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-          </HCTooltip></span>
-        </Form.Item>
-        <Form.Item label={<span>
-          Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-        </span>} labelAlign="left">
-          <Select
-            id="sourceFormat"
-            showSearch
-            placeholder="Enter source format"
-            optionFilterProp="children"
-            value={srcFormat}
-            onChange={handleSrcFormat}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: "95%"}}
-            onBlur={sendPayload}
-          >
-            {soptions}
-          </Select>
-          <span className={styles.questionMarkIcon}>
-            <HCTooltip text={NewLoadTooltips.sourceFormat} id="source-format-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </span>
-        </Form.Item>
-        {srcFormat === "csv" ? <Form.Item label={<span>
-          Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-        </span>} labelAlign="left">
-          <span><Select
-            id="fieldSeparator"
-            showSearch
-            placeholder="Choose Field Separator"
-            optionFilterProp="children"
-            value={fieldSeparator}
-            onChange={handleFieldSeparator}
-            style={{width: 120}}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            onBlur={sendPayload}
-          >
-            {fsoptions}
-          </Select></span>
-          &nbsp;&nbsp;
-          <span>{fieldSeparator === "Other" ? <span><Input
-            id="otherSeparator"
-            value={otherSeparator}
-            onChange={handleOtherSeparator}
-            style={{width: 75}}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            onBlur={sendPayload}
-          />&nbsp;&nbsp;<HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="top">
-            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-          </HCTooltip></span> : <span>&nbsp;&nbsp;<HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="right">
-            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-          </HCTooltip></span>}</span>
-        </Form.Item> : ""}
-        <Form.Item label={<span>
-          Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-        </span>} labelAlign="left">
-          <Select
-            id="targetFormat"
-            placeholder="Enter target format"
-            value={tgtFormat}
-            onChange={handleTgtFormat}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: "95%"}}
-            onBlur={sendPayload}>
-            {toptions}
-          </Select>
-          <span className={styles.questionMarkIcon}>
-            <HCTooltip text={NewLoadTooltips.targetFormat} id="target-format-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </span>
-        </Form.Item>
-        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
-          Source Name:&nbsp;
-        </span>} labelAlign="left">
-          <Input
-            id="sourceName"
-            placeholder="Enter Source Name"
-            value={sourceName}
-            onChange={handleChange}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-            onBlur={sendPayload}
-          />
-          <span className={styles.questionMarkIcon}>
-            <HCTooltip text={NewLoadTooltips.sourceName} id="source-name-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </span>
-        </Form.Item>}
-        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
-          Source Type:&nbsp;
-        </span>} labelAlign="left">
-          <Input
-            id="sourceType"
-            placeholder="Enter Source Type"
-            value={sourceType}
-            onChange={handleChange}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-            onBlur={sendPayload}
-          />
-          <span className={styles.questionMarkIcon}>
-            <HCTooltip text={NewLoadTooltips.sourceType} id="source-type-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </span>
-        </Form.Item>}
-        <Form.Item label={<span>
-          Target URI Prefix:&nbsp;
-        </span>} labelAlign="left">
-          <Input
-            id="outputUriPrefix"
-            placeholder="Enter URI Prefix"
-            value={outputUriPrefix}
-            onChange={handleOutputUriPrefix}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-            onBlur={sendPayload}
-          />
-          <span className={styles.questionMarkIcon}>
-            <HCTooltip text={NewLoadTooltips.outputURIPrefix} id="output-uri-refix-tooltip" placement="left">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-            </HCTooltip>
-          </span>
-        </Form.Item>
-
-        <Form.Item className={styles.submitButtonsForm}>
-          <div className={styles.submitButtons}>
-            <HCButton aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
-            &nbsp;&nbsp;
-            {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
-              className={styles.disabledSaveButton}
-              aria-label="Save"
-              size="sm"
-              variant="primary"
-              type="submit"
-              disabled={true}
-              onClick={handleSubmit}
-            >Save</HCButton></span></HCTooltip> :
-              <HCButton
+      <Form onSubmit={handleSubmit} data-testid={"create-edit-load-form"}>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
+                {tobeDisabled ?
+                  <Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}>
+                    <span className={"w-100"}>
+                      <Input
+                        id="name"
+                        placeholder="Enter name"
+                        value={stepName}
+                        onChange={handleChange}
+                        disabled={tobeDisabled}
+                        onBlur={sendPayload}
+                      />
+                    </span>
+                  </Tooltip> :
+                  <Input
+                    id="name"
+                    placeholder="Enter name"
+                    value={stepName}
+                    onChange={handleChange}
+                    disabled={tobeDisabled}
+                    onBlur={sendPayload}
+                  />
+                }
+                <div className={"p-2 d-flex"}>
+                  <HCTooltip text={NewLoadTooltips.name} id="name-tooltip" placement="left">
+                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  </HCTooltip>
+                </div>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Input
+              id="description"
+              placeholder="Enter description"
+              value={description}
+              onChange={handleChange}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              className={styles.input}
+              onBlur={sendPayload}
+            />
+            <div className={"p-2 d-flex"}>
+              <HCTooltip text={NewLoadTooltips.description} id="description-tooltip" placement="left">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Source Format:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+          <Col className={"d-flex"}>
+            <Select
+              id="sourceFormat"
+              showSearch
+              placeholder="Enter source format"
+              optionFilterProp="children"
+              value={srcFormat}
+              onChange={handleSrcFormat}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              style={{width: "95%"}}
+              onBlur={sendPayload}
+            >
+              {soptions}
+            </Select>
+            <div className={"p-2 d-flex"}>
+              <HCTooltip text={NewLoadTooltips.sourceFormat} id="source-format-tooltip" placement="left">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        {srcFormat === "csv" ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Field Separator:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+            <Col className={"d-flex"}>
+              <Select
+                id="fieldSeparator"
+                showSearch
+                placeholder="Choose Field Separator"
+                optionFilterProp="children"
+                value={fieldSeparator}
+                onChange={handleFieldSeparator}
+                style={{width: 120}}
+                disabled={props.canReadOnly && !props.canReadWrite}
+                onBlur={sendPayload}
+              >
+                {fsoptions}
+              </Select>
+              {fieldSeparator === "Other" ?
+                <>
+                  <div className={"d-flex ms-2"}>
+                    <Input
+                      id="otherSeparator"
+                      value={otherSeparator}
+                      onChange={handleOtherSeparator}
+                      style={{width: 75}}
+                      disabled={props.canReadOnly && !props.canReadWrite}
+                      onBlur={sendPayload}
+                    />
+                  </div>
+                  <div className={"p-2 d-flex"}>
+                    <HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="top">
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                    </HCTooltip>
+                  </div>
+                </>
+                :
+                <div className={"p-2 d-flex"}>
+                  <HCTooltip text={NewLoadTooltips.fieldSeparator} id="field-separator-tooltip" placement="right">
+                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                  </HCTooltip>
+                </div>
+              }
+            </Col>
+          </Row> : ""
+        }
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Target Format:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+          <Col className={"d-flex"}>
+            <Select
+              id="targetFormat"
+              placeholder="Enter target format"
+              value={tgtFormat}
+              onChange={handleTgtFormat}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              style={{width: "95%"}}
+              onBlur={sendPayload}>
+              {toptions}
+            </Select>
+            <div className={"p-2 d-flex"}>
+              <HCTooltip text={NewLoadTooltips.targetFormat} id="target-format-tooltip" placement="left">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) &&
+          <Row  className={"mb-3"}>
+            <FormLabel column lg={3}>{"Source Name:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Input
+                id="sourceName"
+                placeholder="Enter Source Name"
+                value={sourceName}
+                onChange={handleChange}
+                disabled={props.canReadOnly && !props.canReadWrite}
+                className={styles.input}
+                onBlur={sendPayload}
+              />
+              <div className={"p-2 d-flex"}>
+                <HCTooltip text={NewLoadTooltips.sourceName} id="source-name-tooltip" placement="left">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+        }
+        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) &&
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Source Type:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Input
+                id="sourceType"
+                placeholder="Enter Source Type"
+                value={sourceType}
+                onChange={handleChange}
+                disabled={props.canReadOnly && !props.canReadWrite}
+                className={styles.input}
+                onBlur={sendPayload}
+              />
+              <div className={"p-2 d-flex"}>
+                <HCTooltip text={NewLoadTooltips.sourceType} id="source-type-tooltip" placement="left">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+        }
+        <Row className={"mb-4"}>
+          <FormLabel column lg={3}>{"Target URI Prefix:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Input
+              id="outputUriPrefix"
+              placeholder="Enter URI Prefix"
+              value={outputUriPrefix}
+              onChange={handleOutputUriPrefix}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              className={styles.input}
+              onBlur={sendPayload}
+            />
+            <div className={"p-2 d-flex"}>
+              <HCTooltip text={NewLoadTooltips.outputURIPrefix} id="output-uri-refix-tooltip" placement="left">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col className={"d-flex"}>
+            <div className={styles.submitButtons}>
+              <HCButton aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
+              &nbsp;&nbsp;
+              {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
+                className={styles.disabledSaveButton}
                 aria-label="Save"
                 size="sm"
                 variant="primary"
                 type="submit"
-                disabled={false}
+                disabled={true}
                 onClick={handleSubmit}
-                onFocus={sendPayload}
-              >Save</HCButton>}
-          </div>
-        </Form.Item>
+              >Save</HCButton></span></HCTooltip> :
+                <HCButton
+                  aria-label="Save"
+                  size="sm"
+                  variant="primary"
+                  type="submit"
+                  disabled={false}
+                  onClick={handleSubmit}
+                  onFocus={sendPayload}
+                >Save</HCButton>}
+            </div>
+          </Col>
+        </Row>
       </Form>
     </div>
   );

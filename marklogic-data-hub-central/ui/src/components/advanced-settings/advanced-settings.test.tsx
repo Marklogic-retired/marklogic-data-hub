@@ -27,28 +27,28 @@ describe("Advanced step settings", () => {
     );
 
     //'Step Definition Name' should be present only for custom ingestion steps
-    expect(queryByText("Step Definition Name")).not.toBeInTheDocument();
+    expect(queryByText("Step Definition Name:")).not.toBeInTheDocument();
 
-    expect(queryByText("Source Database")).not.toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(queryByText("Source Database:")).not.toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText("data-hub-STAGING")).toBeInTheDocument();
 
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect((await(waitForElement(() => getAllByText("AdvancedLoad")))).length > 0);
 
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
 
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Coarse-grained")).toBeInTheDocument();
 
-    expect(queryByText("Entity Validation")).not.toBeInTheDocument();
-    expect(queryByText("Source Record Scope")).not.toBeInTheDocument();
+    expect(queryByText("Entity Validation:")).not.toBeInTheDocument();
+    expect(queryByText("Source Record Scope:")).not.toBeInTheDocument();
 
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
 
-    expect(getByText("Header Content")).toBeInTheDocument();
+    expect(getByText("Header Content:")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
     expect(getByText("Interceptors")).toBeInTheDocument();
@@ -70,25 +70,25 @@ describe("Advanced step settings", () => {
       <AdvancedSettings {...data.advancedCustomLoad} />
     );
 
-    expect(queryByText("Source Database")).not.toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(queryByText("Source Database:")).not.toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText("data-hub-STAGING")).toBeInTheDocument();
 
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect(getAllByText(data.advancedCustomLoad.stepData.collections[0]).length > 0);
 
-    expect(getByText("Step Definition Name")).toBeInTheDocument();
+    expect(getByText("Step Definition Name:")).toBeInTheDocument();
 
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
 
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Coarse-grained")).toBeInTheDocument();
 
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
 
-    expect(getByText("Header Content")).toBeInTheDocument();
+    expect(getByText("Header Content:")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
     expect(getByText("Interceptors")).toBeInTheDocument();
@@ -111,37 +111,37 @@ describe("Advanced step settings", () => {
       <AdvancedSettings {...data.advancedMapping} />
     );
 
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getByText("data-hub-STAGING")).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText("data-hub-FINAL")).toBeInTheDocument();
 
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect((await(waitForElement(() => getAllByText("AdvancedMapping")))).length > 0);
 
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
 
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
 
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Coarse-grained")).toBeInTheDocument();
 
-    expect(getByText("Entity Validation")).toBeInTheDocument();
+    expect(getByText("Entity Validation:")).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
 
-    expect(getByText("Source Record Scope")).toBeInTheDocument();
+    expect(getByText("Source Record Scope:")).toBeInTheDocument();
     expect(getByText("Instance only")).toBeInTheDocument();
 
-    expect(getByText("Attach Source Document")).toBeInTheDocument();
+    expect(getByText("Attach Source Document:")).toBeInTheDocument();
     const radio = getByLabelText("No");
 
     expect(radio["value"]).toBe("false");
     fireEvent.change(radio, {target: {value: "true"}});
     expect(radio["value"]).toBe("true");
 
-    expect(getByText("Header Content")).toBeInTheDocument();
+    expect(getByText("Header Content:")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
     expect(getByText("Interceptors")).toBeInTheDocument();
@@ -162,20 +162,20 @@ describe("Advanced step settings", () => {
       <AdvancedSettings {...data.advancedMatching} />
     );
 
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getAllByText("data-hub-FINAL")[0]).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getAllByText("data-hub-FINAL")[1]).toBeInTheDocument();
 
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
 
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
 
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
 
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Fine-grained")).toBeInTheDocument();
 
     expect(getByText("Interceptors")).toBeInTheDocument();
@@ -198,9 +198,9 @@ describe("Advanced step settings", () => {
       <AdvancedSettings {...data.advancedMerging} />
     );
 
-    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getByText("Source Database:")).toBeInTheDocument();
     expect(getAllByText("data-hub-FINAL")[0]).toBeInTheDocument();
-    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getAllByText("data-hub-FINAL")[1]).toBeInTheDocument();
 
     expect(getByText("Target Collections:")).toBeInTheDocument();
@@ -247,11 +247,11 @@ describe("Advanced step settings", () => {
     expect(getByText("sm-Test-notification")).toBeInTheDocument();
     expect(getByText("notification")).toBeInTheDocument();
 
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
 
-    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByText("Batch Size:")).toBeInTheDocument();
 
-    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Provenance Granularity:")).toBeInTheDocument();
     expect(getByText("Fine-grained")).toBeInTheDocument();
 
     expect(getByText("Interceptors")).toBeInTheDocument();

@@ -11,17 +11,16 @@
   margin-right: 6px;
 }
 
-.input {
-  position: relative;
-  width: 444px;
-}
-
 .icon {
   position: absolute;
   top: 0px;
   right: -20px;
   font-size: 12px;
   color: #7F86B5;
+}
+
+.editIconContainer {
+  padding-top: 4px;
 }
 
 .editIcon {
@@ -37,8 +36,6 @@
 .questionCircle {
 font-size: 12px;
 vertical-align: top;
-margin-top: 10px;
-margin-left: 10px;
 color: #7F86B5;
 }
 
@@ -71,4 +68,12 @@ color: #7F86B5;
   line-height: 20px;
   margin-top: -153px;
   margin-bottom: 0;
+}
+
+.validationError {
+  line-height: normal;
+  padding-top: 5px;
+  padding-left: 1px;
+  padding-bottom: 1px;
+  color: #DB4f59;
 }

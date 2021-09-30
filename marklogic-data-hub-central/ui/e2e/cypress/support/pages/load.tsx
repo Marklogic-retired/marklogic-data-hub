@@ -152,7 +152,7 @@ class LoadPage {
   }
 
   cancelButton() {
-    return cy.findByLabelText("Cancel");
+    return cy.findByTestId("create-edit-load-form").findByLabelText("Cancel");
   }
 
   confirmationOptions(option: string) {
@@ -164,7 +164,7 @@ class LoadPage {
   }
 
   saveButton() {
-    return cy.findByLabelText("Save");
+    return cy.findByTestId("create-edit-load-form").findByLabelText("Save");
   }
 
   /**

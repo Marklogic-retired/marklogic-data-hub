@@ -30,6 +30,9 @@ $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, system-ui,
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji" !default;
 
+// Label
+$label-font-size: 14px;
+
 // Alert
 $alert-padding-y: 0.7rem;
 $alert-padding-x: 0.7rem;
@@ -170,4 +173,9 @@ $input-border-radius: 2px;
     .drp-selected {
         display: none;
     }
+}
+
+.form-label {
+    color: $text-color;
+    font-size: $font-size-base;
 }
