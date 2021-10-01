@@ -301,14 +301,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
                 "exception to propagate; cause: " + ex.getMessage(), ex);
         }
 
-        commands.add(new LoadUserArtifactsCommand(hubConfig));
-
-        deployer.setCommands(commands);
-        deployer.deploy(hubConfig.getAppConfig());
-
-        // Wait for post-commit triggers to finish
-        waitForTasksToFinish();
-        waitForReindex(getHubClient(), getHubConfig().getDbName(DatabaseKind.FINAL));
+        installUserArtifacts();
     }
 
     // Update app config's config and modules dirs when not already in the hub config's project dir.
@@ -426,10 +419,10 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     }
 
     protected void waitForReindex(HubClient hubClient, String database){
-        String query = "(\n" +
+        String query = "fn:not((\n" +
             "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
             "  return xdmp:forest-status($forest-id)//*:reindexing\n" +
-            ") = fn:true()";
+            ") = fn:true())";
         waitForQueryToBeTrue(hubClient, query, "Reindexing " + database + " database");
     }
 

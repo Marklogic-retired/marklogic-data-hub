@@ -162,19 +162,18 @@ public abstract class AbstractHubClientTest extends TestObject {
     }
 
     protected void waitForRebalance(HubClient hubClient, String database){
-        String query = "(\n" +
+        String query = "fn:not((\n" +
                 "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
                 "  return xdmp:forest-status($forest-id)//*:rebalancing\n" +
-                ") = fn:true()";
+                ") = fn:true())";
         waitForQueryToBeTrue(hubClient, query, "Rebalancing " + database + " database");
     }
 
     protected void waitForQueryToBeTrue(HubClient hubClient, String query, String message){
         boolean currentStatus;
-        int attempts = 125;
+        int attempts = 100;
         boolean previousStatus = false;
         do{
-            sleep(200L);
             currentStatus = Boolean.parseBoolean(hubClient.getStagingClient().newServerEval().xquery(query).evalAs(String.class));
             if(currentStatus){
                 logger.info(message);
@@ -187,6 +186,7 @@ public abstract class AbstractHubClientTest extends TestObject {
                 previousStatus = currentStatus;
             }
             attempts--;
+            sleep(250);
         }
         while(attempts > 0);
         if(currentStatus){
