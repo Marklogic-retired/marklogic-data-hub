@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useLayoutEffect, CSSProperties, useCallback} from "react";
+import React, {useState, useEffect, useContext, useLayoutEffect, useCallback} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
 import {ModelingContext} from "../../../../util/modeling-context";
@@ -62,14 +62,12 @@ const GraphVis: React.FC<Props> = (props) => {
     return coordsExist;
   };
   const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
-  //const [physicsEnabled, setPhysicsEnabled] = useState(false);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
-  const [menuPosition, setMenuPosition] = useState({});
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
   //const [saveAllCoords, setSaveAllCoords] = useState(false);
@@ -112,7 +110,7 @@ const GraphVis: React.FC<Props> = (props) => {
   useEffect(() => {
     if (modelingOptions.view === "graph") {
       if (network && coordsLoaded) {
-        initializeZoomScale();
+        initializeScaleAndViewPosition();
       }
     }
   }, [network, modelingOptions.view]);
@@ -131,22 +129,29 @@ const GraphVis: React.FC<Props> = (props) => {
         edges: getEdges()
       });
 
-      //Initialize graph zoom scale
+      //Initialize graph zoom scale and view position
       if (network) {
-        initializeZoomScale();
+        initializeScaleAndViewPosition();
       }
       //setSaveAllCoords(true);
       return () => {
         setClickedNode(undefined);
-        setMenuPosition({});
         setContextMenuVisible(false);
       };
     }
   }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
 
-  const initializeZoomScale = () => {
-    if (props.hubCentralConfig?.modeling?.scale) {
-      network.moveTo({scale: props.hubCentralConfig.modeling["scale"]});
+  const initializeScaleAndViewPosition = () => {
+    if (props.hubCentralConfig?.modeling) {
+      let model = props.hubCentralConfig.modeling;
+      let moveToConfig = {};
+      if (model.scale) {
+        moveToConfig["scale"] = model.scale;
+      }
+      if (model.viewPosition && Object.keys(model.viewPosition).length) {
+        moveToConfig["position"] = model.viewPosition;
+      }
+      network.moveTo(moveToConfig);
     }
   };
 
@@ -495,25 +500,23 @@ const GraphVis: React.FC<Props> = (props) => {
     },
   };
 
-  const menuClick = (event) => {
-    // TODO do something useful
+  const menuClick = async (event) => {
     setContextMenuVisible(false);
     if (event.key === "1") {
       if (network) {
-        network.focus(clickedNode);
+        await network.focus(clickedNode);
+        let viewPosition: any = await network.getViewPosition();
         setClickedNode(undefined);
+        let viewPositionPayload = defaultHubCentralConfig;
+        viewPositionPayload.modeling["viewPosition"] =  viewPosition;
+        props.updateHubCentralConfig(viewPositionPayload);
       }
     }
   };
 
-  const contextMenu: CSSProperties = {
-    top: menuPosition["top"],
-    left: menuPosition["left"]
-  };
-
   const menu = () => {
     return (
-      <Menu id="contextMenu" style={contextMenu} onClick={menuClick}>
+      <Menu id="contextMenu" onClick={menuClick}>
         { clickedNode &&
       <Menu.Item key="1" data-testid={`centerOnEntityType-${clickedNode}`}>
         Center on entity type
@@ -531,7 +534,7 @@ const GraphVis: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    if (clickedNode && menuPosition) {
+    if (clickedNode) {
       setContextMenuVisible(true);
     } else {
       setContextMenuVisible(false);
@@ -594,8 +597,11 @@ const GraphVis: React.FC<Props> = (props) => {
           let updatedHubCentralConfig: any = defaultHubCentralConfig;
           let entitiesConfig = props.hubCentralConfig["modeling"]["entities"];
           Object.keys(entitiesConfig).forEach(entityName => {
-            updatedHubCentralConfig["modeling"]["entities"][entityName] = {graphX: coords[entityName].graphX + event.event.deltaX, graphY: coords[entityName].graphY + event.event.deltaY};
+            if (coords[entityName]) {
+              updatedHubCentralConfig["modeling"]["entities"][entityName] = {graphX: coords[entityName].graphX + event.event.deltaX, graphY: coords[entityName].graphY + event.event.deltaY};
+            }
           });
+          updatedHubCentralConfig["modeling"]["viewPosition"] = {};
           if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
             await props.updateHubCentralConfig(updatedHubCentralConfig);
             props.setCoordsChanged(true);
@@ -646,20 +652,14 @@ const GraphVis: React.FC<Props> = (props) => {
       let nodeId = network.getNodeAt(event.pointer.DOM);
       if (nodeId) {
         event.event.preventDefault();
-        let canvasCoord = network.getPosition(nodeId);
-        let DOMCoordinates = network.canvasToDOM({x: canvasCoord.x, y: canvasCoord.y});
-        //let DOMCoordinates = event.pointer.DOM;
-        setMenuPosition({left: DOMCoordinates.x, top: DOMCoordinates.y + 40});
         setClickedNode(nodeId);
       } else {
         setClickedNode(undefined);
-        setMenuPosition({});
       }
     },
     dragging: (event) => {
       if (clickedNode) {
         setClickedNode(undefined);
-        setMenuPosition({});
       }
     },
     zoom: (event) => {
@@ -675,12 +675,14 @@ const GraphVis: React.FC<Props> = (props) => {
         visible={contextMenuVisible}
         //placement="topRight"
       >
-        <Graph
-          graph={graphData}
-          options={options}
-          events={events}
-          getNetwork={initNetworkInstance}
-        />
+        <div>
+          <Graph
+            graph={graphData}
+            options={options}
+            events={events}
+            getNetwork={initNetworkInstance}
+          />
+        </div>
       </Dropdown>
       <AddEditRelationship
         openRelationshipModal={openRelationshipModal}
