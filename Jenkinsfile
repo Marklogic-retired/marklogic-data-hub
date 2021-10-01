@@ -702,6 +702,37 @@ void postStage(String status){
     }
 }
 
+void postTestsSuccess(){
+println("Core Unit Tests Completed")
+                    script{
+                    env.TESTS_PASSED=true
+                    def email;
+                    if(env.CHANGE_AUTHOR){
+                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                     email=getEmailFromGITUser author
+                    }else{
+                    	email=Email
+                    }
+                    sendMail email,'<h3>All the Core Unit Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
+                    }
+}
+
+void postTestsUnstable(){
+println("Unit Tests Failed")
+                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
+                      archiveArtifacts artifacts: 'MLLogs/**/*'
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR){
+                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	 email=getEmailFromGITUser author
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'<h3>Some of the  Core Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
+                      }
+}
+
 pipeline{
 	agent none;
 	options {
@@ -741,35 +772,12 @@ pipeline{
 			steps{Tests()}
 			post{
                   success {
-                    println("Core Unit Tests Completed")
-                    script{
-                    env.TESTS_PASSED=true
-                    def email;
-                    if(env.CHANGE_AUTHOR){
-                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                     email=getEmailFromGITUser author
-                    }else{
-                    	email=Email
-                    }
-                    sendMail email,'<h3>All the Core Unit Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
-                    }
+                    postTestsSuccess()
                    }
                    unstable {
-                      println("Unit Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
-                      script{
-                      def email;
-                    if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
-                    }else{
-                    email=Email
-                    }
-                      sendMail email,'<h3>Some of the  Core Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
-                      }
+                        postTestsUnstable()
                   }
-                  }
+            }
 		}
         stage('Unit-Tests'){
 		agent { label 'dhfLinuxAgent'}
@@ -779,35 +787,12 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("Unit Tests Completed")
-                    script{
-                    env.UNIT_TESTS_PASSED=true
-                    def email;
-                    if(env.CHANGE_AUTHOR){
-                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                     email=getEmailFromGITUser author
-                    }else{
-                    	email=Email
-                    }
-                    sendMail email,'<h3>All the Unit Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for  $BRANCH_NAME Passed'
-                    }
+                    postTestsSuccess()
                    }
                    unstable {
-                      println("Unit Tests Failed")
-                      sh 'mkdir -p MLLogs;cp -r /var/opt/MarkLogic/Logs/* $WORKSPACE/MLLogs/'
-                      archiveArtifacts artifacts: 'MLLogs/**/*'
-                      script{
-                      def email;
-                    if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
-                    }else{
-                    email=Email
-                    }
-                      sendMail email,'<h3>Some of the  Unit Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'Unit Tests for $BRANCH_NAME Failed'
-                      }
+                      postTestsUnstable()
                   }
-                  }
+             }
 		}
 		stage('cypresse2e'){
         when {
@@ -1357,15 +1342,15 @@ pipeline{
                     }
                 }
 
-                /*
-                stage('10.0-3-MAC-On-Prem'){
+
+                stage('10.0-7-MAC-On-Prem'){
                     agent { label 'osx-i64-10-test-2'}
                     environment{
                         M2_LOCAL_REPO="$WORKSPACE/repository"
                     }
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremMacTests("Release","10.0-3")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremMacTests("Release","10.0-7.3")}
                     }}
                     post{
                         success {
@@ -1378,7 +1363,7 @@ pipeline{
                         }
                     }
                 }
-
+                /*
                 stage('10.0-3-Win12-On-Prem'){
                     agent { label 'dhfWin12'}
                     environment{
