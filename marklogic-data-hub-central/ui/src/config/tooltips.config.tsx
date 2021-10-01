@@ -697,7 +697,7 @@ const AdvCustomTooltips = {
 };
 
 const ToolbarBulbIconInfo = {
-    modelingInfo: <div><strong>Modeling is the first step in effective data curation.</strong><br/><br/>
+    modelingInfo: <div><strong>Effective data curation begins with defining an entity model.</strong><br/><br/>
     A model is composed of one or more entity types, which represent the high-level business objects in your enterprise. Employee, product, purchase order, and department are all examples of entity types. Each entity type is composed of properties. Properties can have single or multiple values, and you can arrange them in a flat or hierarchical structure.<br/><br/>
     Unlike relational models, you do not have to worry about building the perfect model upfront; you can <strong>evolve the model</strong> as you learn more about your data or bring in new data. As your business needs change, it’s normal to add new properties to existing entity types, or add new entity types entirely.<br/><br/>
     The entity type is comprised of properties, which can be of any of the following types:<br/><br/>
@@ -710,11 +710,11 @@ const ToolbarBulbIconInfo = {
       <span style={{fontSize:"larger"}}><strong>Ready to get started?</strong></span><br/><br/>
       To understand exactly what Data Hub Central can do for you, first try to get a very simple use case working. When you are happy with the results, you can build on it to satisfy all your requirements.<br/><br/>
       <div style={{display: "flex"}}><div className={"modelIconHeader"} style={{color: "#999999"}}></div><div>Start by creating a simple entity type from the <strong>Model</strong> screen. The entity type defines the standard structures to be populated with values from your source file. Add just a few properties to start.</div></div><br/>
-      <div style={{display: "flex"}}><div style={{display: "flex", flexDirection:"column"}}><div className={"loadIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"runIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"exploreIconHeader"} style={{color: "#999999"}}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a mapping step from the <strong>Curate</strong> screen. The mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br/><br/></div></div>
-      Once you are happy with the way the data from your first source system looks, you are ready to load and map data from additional sources. You will need to create a new load and mapping steps for each new source.<br/><br/>
+      <div style={{display: "flex"}}><div style={{display: "flex", flexDirection:"column"}}><div className={"loadIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"runIconHeader"} style={{color: "#999999", marginBottom:"1.2vh"}}></div><div className={"exploreIconHeader"} style={{color: "#999999"}}></div></div>      <div>      Next, load some data from your first source system and map it to the entity type. Start by loading one source file by creating and running a Load step from the <strong>Load</strong> screen. Once you have loaded the file, create and run a Mapping step from the <strong>Curate</strong> screen. The Mapping step transforms the data from your source file to the structure defined in your entity type. Once you have this working, add the rest of the properties to your entity type and map to them. You can view and export the final data from the <strong>Explore</strong> screen.<br/><br/></div></div>
+      Once you are happy with the way the data from your first source system looks, you are ready to load and map data from additional sources. You will need to create a new Load and Mapping step for each new source.<br/><br/>
       After you have finished mapping, if there are duplicate records from various sources that you would like to merge, do the following from the <strong>Curate</strong> screen:<br/>
-      &nbsp;&nbsp;1. Create a match step to identify the duplicates.<br/>
-      &nbsp;&nbsp;2. Create a merge step to merge duplicates.
+      &nbsp;&nbsp;1. Create a Matching step to identify the duplicates.<br/>
+      &nbsp;&nbsp;2. Create a Merging step to merge duplicates.
   </div>
 }
 
