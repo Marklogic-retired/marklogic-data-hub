@@ -355,7 +355,7 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("patientId").should("not.exist");
   });
-  it("Add third property to Patients Entity, Save all the changes and Delete Concept Entity", {defaultCommandTimeout: 120000}, () => {
+  it("Add third property to Patients Entity, publish the changes", {defaultCommandTimeout: 120000}, () => {
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();
@@ -384,21 +384,27 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     confirmationModal.getDeleteEntityRelationshipText().should("not.exist");
     cy.waitForAsyncRequest();
-    //entityTypeTable.getEntity("Concept").should("not.exist");
+    entityTypeTable.getEntity("Concept").should("not.exist");
   });
-  it("Delete an entity from graph view", {defaultCommandTimeout: 120000}, () => {
+  it("Delete an entity from graph view and publish the changes", {defaultCommandTimeout: 120000}, () => {
     entityTypeTable.viewEntityInGraphView("Patients");
     cy.waitForAsyncRequest();
 
     graphViewSidePanel.getDeleteIcon("Patients").click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
     confirmationModal.getDeleteEntityText().should("not.exist");
+    cy.waitForAsyncRequest();
     graphViewSidePanel.getSelectedEntityHeading("Patients").should("not.exist");
+    //Publish the changes
+    modelPage.getPublishButton().click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll);
+    cy.waitForAsyncRequest();
+    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getSaveAllEntityText().should("not.exist");
+    modelPage.getEntityModifiedAlert().should("not.exist");
   });
 
   it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
-    //Verifying edit relationship modal
-    entityTypeTable.viewEntityInGraphView("Customer");
     //Fetching the edge coordinates between two nodes and later performing some action on it like hover or click
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));

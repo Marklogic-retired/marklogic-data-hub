@@ -29,25 +29,30 @@ describe("customRole", () => {
     cy.loginAsTestUserWithRoles("hc-custom-role").withUI()
       .url().should("include", "/tiles");
 
-    toolbar.getLoadToolbarIcon().click();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitForAsyncRequest();
     loadPage.loadView("th-large").should("be.visible");
 
-    toolbar.getModelToolbarIcon().click();
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    cy.waitForAsyncRequest();
     tiles.getModelTile().should("exist");
 
     let entityTypeId = "Customer";
-    toolbar.getCurateToolbarIcon().click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => confirmationModal.getNavigationWarnText()).should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "be.visible");
 
     const flowName = "personJSON";
-    toolbar.getRunToolbarIcon().click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitForAsyncRequest();
     runPage.createFlowButton().should("be.disabled");
     cy.findByText(flowName).should("be.visible");
 
-    toolbar.getExploreToolbarIcon().click();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitForAsyncRequest();
     cy.findByText("Search, filter, review, and export your data.");
 
   });

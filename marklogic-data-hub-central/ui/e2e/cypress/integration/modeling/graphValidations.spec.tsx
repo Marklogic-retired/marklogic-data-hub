@@ -163,11 +163,11 @@ describe("Graph Validations", () => {
     relationshipModal.getModalHeader().should("not.exist");
   });
 
-  it("can center on entity type in graph view", () => {
+  it("can center on entity type in graph view and persist the layout", () => {
     modelPage.selectView("project-diagram");
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions["Person"];
-      graphVis.getGraphVisCanvas().rightclick(orderCoordinates.x, orderCoordinates.y);
+      let personCoordinates: any = nodePositions["Person"];
+      graphVis.getGraphVisCanvas().rightclick(personCoordinates.x, personCoordinates.y);
       graphVis.getCenterOnEntityTypeOption("Person").trigger("mouseover").click();
 
       //Clicking on center of the canvas, should click on Person entity node.
@@ -178,7 +178,25 @@ describe("Graph Validations", () => {
       graphViewSidePanel.getPropertiesTab().should("be.visible");
       graphViewSidePanel.getEntityTypeTab().should("be.visible");
       graphViewSidePanel.getDeleteIcon("Person").should("be.visible");
+      graphViewSidePanel.closeSidePanel();
     });
+
+    // Exit graph view and return
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    confirmationModal.getNavigationWarnText().should("be.visible");
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("project-diagram");
+
+    //Clicking on center of the canvas again to verify we click again on Person entity node.
+    graphVis.getGraphVisCanvas().click();
+
+    //Verify the side panel content for selected entity
+    graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
+    graphViewSidePanel.getPropertiesTab().should("be.visible");
+    graphViewSidePanel.getEntityTypeTab().should("be.visible");
+    graphViewSidePanel.getDeleteIcon("Person").should("be.visible");
   });
 
   it("can select all available nodes in graph view, locations persist", () => {
