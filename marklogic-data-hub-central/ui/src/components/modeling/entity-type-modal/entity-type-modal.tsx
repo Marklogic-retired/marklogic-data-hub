@@ -296,7 +296,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 </div>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {errorName}
+                {errorName || (errorServer ? errorServer : null)}
               </Col>
             </Row>
           </Col>
@@ -345,9 +345,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                     <QuestionCircleFill color="#7F86B5" size={13} />
                   </HCTooltip>
                 </div>
-              </Col>
-              <Col xs={12} className={"d-flex"}>
-                { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
               </Col>
             </Row>
           </Col>

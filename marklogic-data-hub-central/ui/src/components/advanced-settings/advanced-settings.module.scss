@@ -1,3 +1,5 @@
+@import "../../HCTheme.scss";
+
 .settingsContainer {
     header {
         width: 100%;
@@ -32,7 +34,7 @@
 }
 
 .asterisk{
-    color: #DB4f59;
+    color: $danger;
 }
 
 .saveButton{
@@ -150,11 +152,7 @@ span.readOnlyLabel {
     width: 95% !important;
 }
 .validationError {
-    line-height: normal;
-    padding-top: 5px;
-    padding-left: 1px;
-    padding-bottom: 1px;
-    color: #DB4f59;
+    @extend .validationError;
 }
 .textareaExpand {
     width: 85% !important;
@@ -168,11 +166,11 @@ span.readOnlyLabel {
 }
 
 .invalid {
-    color: #C00;
+    color: $danger;
     margin-left: 1px;
 }
 .invalidExpand {
-    color: #C00;
+    color: $danger;
     margin-left: 24px;
 }
 
@@ -194,8 +192,8 @@ span.readOnlyLabel {
 
 .deprecatedLabel {
     font-size: 9px;
-    color: #B32424;
-    border: 1px solid #B32424;
+    color: $danger;
+    border: 1px solid $danger;
     border-radius: 4px;
     margin-left: 0.5vw;
     padding: 3px;

@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Switch, Select} from "antd";
+import {Modal, Input, Switch, Select} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ruleset-single-modal.module.scss";
@@ -31,11 +32,6 @@ type Props = {
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
   properties: []
-};
-
-const layout = {
-  labelCol: {span: 8},
-  wrapperCol: {span: 16},
 };
 
 const MATCH_TYPE_OPTIONS = [
@@ -526,174 +522,186 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const renderSynonymOptions = (
     <>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          Thesaurus URI:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={thesaurusErrorMessage ? "error" : ""}
-        help={thesaurusErrorMessage}
-      >
-        <Input
-          id="thesaurus-uri-input"
-          aria-label="thesaurus-uri-input"
-          placeholder="Enter thesaurus URI"
-          className={styles.input}
-          value={thesaurusValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.thesaurusUri} id="thesaurus-uri-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>Filter:</span>}
-        colon={false}
-        labelAlign="left"
-      >
-        <Input
-          id="filter-input"
-          aria-label="filter-input"
-          placeholder="Enter a node in the thesaurus to use as a filter"
-          className={styles.input}
-          value={filterValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.filter} id="filter-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Thesaurus URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={thesaurusErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="thesaurus-uri-input"
+                aria-label="thesaurus-uri-input"
+                placeholder="Enter thesaurus URI"
+                className={styles.input}
+                value={thesaurusValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={MatchingStepTooltips.thesaurusUri} id="thesaurus-uri-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {thesaurusErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Filter:"}</FormLabel>
+        <Col className={"d-flex"}>
+          <Input
+            id="filter-input"
+            aria-label="filter-input"
+            placeholder="Enter a node in the thesaurus to use as a filter"
+            className={styles.input}
+            value={filterValue}
+            onChange={handleInputChange}
+            onBlur={handleInputChange}
+          />
+          <div className={"p-2 d-flex align-items-center"}>
+            <HCTooltip text={MatchingStepTooltips.filter} id="filter-tooltip" placement="top">
+              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+            </HCTooltip>
+          </div>
+        </Col>
+      </Row>
     </>
   );
 
   const renderDoubleMetaphoneOptions = (
     <>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          Dictionary URI:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={dictionaryErrorMessage ? "error" : ""}
-        help={dictionaryErrorMessage}
-      >
-        <Input
-          id="dictionary-uri-input"
-          aria-label="dictionary-uri-input"
-          placeholder="Enter dictionary URI"
-          className={styles.input}
-          value={dictionaryValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.dictionaryUri} id="dictionary-uri-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          Distance Threshold:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={distanceThresholdErrorMessage ? "error" : ""}
-        help={distanceThresholdErrorMessage}
-      >
-        <Input
-          id="distance-threshold-input"
-          aria-label="distance-threshold-input"
-          placeholder="Enter distance threshold"
-          className={styles.input}
-          value={distanceThresholdValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.distanceThreshold} id="distance-threshold-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Dictionary URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={dictionaryErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="dictionary-uri-input"
+                aria-label="dictionary-uri-input"
+                placeholder="Enter dictionary URI"
+                className={styles.input}
+                value={dictionaryValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={MatchingStepTooltips.dictionaryUri} id="dictionary-uri-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {dictionaryErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Distance Threshold:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={distanceThresholdErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="distance-threshold-input"
+                aria-label="distance-threshold-input"
+                placeholder="Enter distance threshold"
+                className={styles.input}
+                value={distanceThresholdValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={MatchingStepTooltips.distanceThreshold} id="distance-threshold-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {distanceThresholdErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
     </>
   );
 
   const renderCustomOptions = (
     <>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          URI:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={uriErrorMessage ? "error" : ""}
-        help={uriErrorMessage}
-      >
-        <Input
-          id="uri-input"
-          aria-label="uri-input"
-          placeholder="Enter URI"
-          className={styles.input}
-          value={uriValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.uri} id="uri-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          Function:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={functionErrorMessage ? "error" : ""}
-        help={functionErrorMessage}
-      >
-        <Input
-          id="function-input"
-          aria-label="function-input"
-          placeholder="Enter a function"
-          className={styles.input}
-          value={functionValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.function} id="function-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>Namespace:</span>}
-        colon={false}
-        labelAlign="left"
-      >
-        <Input
-          id="namespace-input"
-          aria-label="namespace-input"
-          placeholder="Enter a namespace"
-          className={styles.input}
-          value={namespaceValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-        </HCTooltip>
-      </Form.Item>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={uriErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="uri-input"
+                aria-label="uri-input"
+                placeholder="Enter URI"
+                className={styles.input}
+                value={uriValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={MatchingStepTooltips.uri} id="uri-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {uriErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Function:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={functionErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="function-input"
+                aria-label="function-input"
+                placeholder="Enter a function"
+                className={styles.input}
+                value={functionValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={MatchingStepTooltips.function} id="function-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {functionErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Namespace:"}</FormLabel>
+        <Col className={"d-flex"}>
+          <Input
+            id="namespace-input"
+            aria-label="namespace-input"
+            placeholder="Enter a namespace"
+            className={styles.input}
+            value={namespaceValue}
+            onChange={handleInputChange}
+            onBlur={handleInputChange}
+          />
+          <div className={"p-2 d-flex align-items-center"}>
+            <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-tooltip" placement="top">
+              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+            </HCTooltip>
+          </div>
+        </Col>
+      </Row>
     </>
   );
 
@@ -756,58 +764,62 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       onCancel={closeModal}
     >
       <Form
-        {...layout}
         id="matching-single-ruleset"
         onSubmit={onSubmit}
       >
-        <Form.Item>
-          <span className={styles.reduceWeightText}>Reduce Weight</span>
-          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
-          <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
-            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-          </HCTooltip>
-        </Form.Item>
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Property to Match:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={propertyTypeErrorMessage ? "error" : ""}
-          help={propertyTypeErrorMessage}
-        >
-          <EntityPropertyTreeSelect
-            propertyDropdownOptions={entityTypeDefinition.properties}
-            entityDefinitionsArray={curationOptions.entityDefinitionsArray}
-            value={selectedProperty}
-            onValueSelected={onPropertySelect}
-          />
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <Switch onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+            <div className={"p-2 d-flex align-items-center"}>
+              <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
+                <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
 
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Match Type:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={matchTypeErrorMessage ? "error" : ""}
-          help={matchTypeErrorMessage}
-        >
-          <Select
-            aria-label="match-type-dropdown"
-            className={styles.matchTypeSelect}
-            size="default"
-            placeholder="Select match type"
-            onSelect={onMatchTypeSelect}
-            value={matchType}
-          >
-            {renderMatchOptions}
-          </Select>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Property to Match:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={propertyTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <EntityPropertyTreeSelect
+                  propertyDropdownOptions={entityTypeDefinition.properties}
+                  entityDefinitionsArray={curationOptions.entityDefinitionsArray}
+                  value={selectedProperty}
+                  onValueSelected={onPropertySelect}
+                />
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {propertyTypeErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Match Type:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Select
+                  aria-label="match-type-dropdown"
+                  className={styles.matchTypeSelect}
+                  size="default"
+                  placeholder="Select match type"
+                  onSelect={onMatchTypeSelect}
+                  value={matchType}
+                >
+                  {renderMatchOptions}
+                </Select>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {matchTypeErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
         {matchType === "synonym" && renderSynonymOptions}
         {matchType === "doubleMetaphone" && renderDoubleMetaphoneOptions}

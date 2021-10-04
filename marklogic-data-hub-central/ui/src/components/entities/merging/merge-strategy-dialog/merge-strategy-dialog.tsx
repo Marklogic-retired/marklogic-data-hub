@@ -1,7 +1,8 @@
 import {
   Modal,
-  Form, Input, Radio, Select
+  Input, Radio, Select
 } from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
@@ -48,11 +49,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
   const dropdownTypes = ["Length"].concat(props.sourceNames);
   const dropdownTypeOptions = dropdownTypes.map(elem => <Option data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</Option>);
-
-  const layout = {
-    labelCol: {span: 4},
-    wrapperCol: {span: 20},
-  };
 
   const handleChange = (event) => {
     if (event.target.id === "strategy-name") {
@@ -343,67 +339,70 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     >
       <Form
         name="basic"
-        {...layout}
       >
-        <Form.Item
-          colon={false}
-          label={<span className={styles.text}>
-            Strategy Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-          </span>}
-          labelAlign="left"
-          validateStatus={strategyNameErrorMessage ? "error" : ""}
-          help={strategyNameErrorMessage}
-        >
-          <Input
-            id="strategy-name"
-            value={strategyName}
-            placeholder={"Enter strategy name"}
-            onChange={handleChange}
-          />
-        </Form.Item>
-        <Form.Item
-          colon={false}
-          label="Max Values:"
-          labelAlign="left"
-        >
-          <Radio.Group value={radioValuesOptionClicked} onChange={handleChange} name={"maxValues"}>
-            <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
-              <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-              </HCTooltip>
-            </Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item
-          colon={false}
-          label="Max Sources:"
-          labelAlign="left"
-        >
-          <Radio.Group value={radioSourcesOptionClicked} onChange={handleChange} name={"maxSources"}>
-            <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
-              <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-              </HCTooltip>
-            </Radio>
-          </Radio.Group>
-        </Form.Item>
-        <Form.Item
-          colon={false}
-          label="Default Strategy?"
-          validateStatus={defaultStrategyErrorMessage ? "error" : ""}
-          help={defaultStrategyErrorMessage}
-          labelAlign="left"
-        >
-          <Radio.Group value={radioDefaultOptionClicked} onChange={handleChange} name={"defaultYesNo"}>
-            <Radio value={1} >Yes</Radio>
-            <Radio value={2} >No</Radio>
-          </Radio.Group>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Strategy Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={strategyNameErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="strategy-name"
+                  value={strategyName}
+                  placeholder={"Enter strategy name"}
+                  onChange={handleChange}
+                />
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {strategyNameErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Radio.Group value={radioValuesOptionClicked} onChange={handleChange} name={"maxValues"}>
+              <Radio value={1} > All</Radio>
+              <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
+                <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Radio.Group value={radioSourcesOptionClicked} onChange={handleChange} name={"maxSources"}>
+              <Radio value={1} > All</Radio>
+              <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
+                <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Default Strategy?"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <Row>
+              <Col className={defaultStrategyErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Radio.Group value={radioDefaultOptionClicked} onChange={handleChange} name={"defaultYesNo"}>
+                  <Radio value={1} >Yes</Radio>
+                  <Radio value={2} >No</Radio>
+                </Radio.Group>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {defaultStrategyErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
           <div>
-            <p className={styles.priorityText}>
+            <p className={`d-flex align-items-center ${styles.priorityText}`}>
               Priority Order
               <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
                 <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
@@ -429,12 +428,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging} />
           </div>
         </div>}
-        <Form.Item className={styles.submitButtonsForm}>
-          <div className={styles.submitButtons}>
-            <HCButton aria-label={"cancel-merge-strategy"} variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-            <HCButton aria-label={"confirm-merge-strategy"} id={"saveButton"} variant="primary" onClick={handleSubmit} >Save</HCButton>
-          </div>
-        </Form.Item>
+        <Row className={`my-3 ${styles.submitButtonsForm}`}>
+          <Col className={"d-flex"}>
+            <div className={styles.submitButtons}>
+              <HCButton aria-label={"cancel-merge-strategy"} variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
+              <HCButton aria-label={"confirm-merge-strategy"} id={"saveButton"} variant="primary" onClick={handleSubmit} >Save</HCButton>
+            </div>
+          </Col>
+        </Row>
       </Form>
       {discardChanges}
     </Modal>
