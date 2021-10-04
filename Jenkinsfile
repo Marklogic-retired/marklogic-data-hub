@@ -705,7 +705,6 @@ void postStage(String status){
 void postTestsSuccess(){
 println("Core Unit Tests Completed")
                     script{
-                    env.TESTS_PASSED=true
                     def email;
                     if(env.CHANGE_AUTHOR){
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
@@ -772,6 +771,7 @@ pipeline{
 			steps{Tests()}
 			post{
                   success {
+                  script{env.TESTS_PASSED=true}
                     postTestsSuccess()
                    }
                    unstable {
@@ -787,6 +787,7 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
+                  script{ env.UNIT_TESTS_PASSED=true }
                     postTestsSuccess()
                    }
                    unstable {
