@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Form, Input, Switch, Table, Select} from "antd";
+import {Modal, Input, Switch, Table, Select} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -27,11 +28,6 @@ type Props = {
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
   properties: []
-};
-
-const layout = {
-  labelCol: {span: 2},
-  wrapperCol: {span: 16},
 };
 
 const MATCH_TYPE_OPTIONS = [
@@ -708,7 +704,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       paddingTop: "6px",
       paddingLeft: "2px",
       paddingBottom: "4px",
-      color: "#DB4f59",
+      color: "#B32424",
       wordBreak: "break-all",
       marginLeft: ["distance-threshold-input", "function-input"].includes(fieldType) ? "15px" : "0px",
     };
@@ -1170,48 +1166,53 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       {modalTitle}
 
       <Form
-        {...layout}
         id="matching-multiple-ruleset"
         onSubmit={onSubmit}
       >
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Ruleset Name:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={rulesetNameErrorMessage ? "error" : ""}
-          help={rulesetNameErrorMessage}
-        >
-          <Input
-            id="rulesetName-input"
-            aria-label="rulesetName-input"
-            placeholder="Enter ruleset name"
-            className={styles.rulesetName}
-            value={rulesetName}
-            onChange={(e) => handleInputChange(e, "")}
-            onBlur={(e) => handleInputChange(e, "")}
-          />
-        </Form.Item>
-        <Form.Item>
-          <span className={styles.reduceWeightText}>Reduce Weight</span>
-          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
-          <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
-            <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
-          </HCTooltip>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={"auto"}>{"Ruleset Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="rulesetName-input"
+                  aria-label="rulesetName-input"
+                  placeholder="Enter ruleset name"
+                  className={styles.rulesetName}
+                  value={rulesetName}
+                  onChange={(e) => handleInputChange(e, "")}
+                  onBlur={(e) => handleInputChange(e, "")}
+                />
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {rulesetNameErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={"auto"} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+            <div className={"p-2 d-flex"}>
+              <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
 
-        <Form.Item>
-          <span className={styles.matchOnText}>Match on:</span>
-          <span className={styles.matchOnTagsContainer}>{displayMatchOnTags()}</span>
-          {!selectedRowKeys.length && saveClicked ? noPropertyCheckedErrorMessage : null}
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={"auto"}>{"Match on:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <span className={styles.matchOnTagsContainer}>{displayMatchOnTags()}</span>
+            {!selectedRowKeys.length && saveClicked ? noPropertyCheckedErrorMessage : null}
+          </Col>
+        </Row>
 
         <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-          <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} /> Multiple</div>
-          <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> Structured Type</div>
+          <div className={`d-flex align-items-center ${styles.legendText}`}><img className={"me-1"} src={arrayIcon} /> Multiple</div>
+          <div className={`d-flex align-items-center ${styles.legendText}`}><FontAwesomeIcon className={`me-1 ${styles.structuredIcon}`} icon={faLayerGroup} /> Structured Type</div>
           <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
         </div>
 

@@ -1,3 +1,5 @@
+@import "../../../../HCTheme.scss";
+
 .modalTitleLegend {
   display: flex;
   justify-content: flex-end;
@@ -25,15 +27,12 @@
 }
 
 .icon {
-  position: absolute;
-  top: 4px;
-  right: -20px;
   font-size: 12px;
   color: #7F86B5;
 }
 
 .asterisk {
-  color: #B32424;
+  color: $danger;
 }
 
 .footer {
@@ -54,12 +53,9 @@
   font-weight: 900;
 }
 
-.reduceToggle {
-  margin-left: 12px !important;
-}
 .trashIcon {
     font-size: 20px;
-    color: #B32424;
+    color: $danger;
     &:hover{
         color: var(--hoverColor);
     }
@@ -68,4 +64,8 @@
 .editFooter{
   display: flex;
   justify-content: space-between;
+}
+
+.validationError {
+  @extend .validationError;
 }
