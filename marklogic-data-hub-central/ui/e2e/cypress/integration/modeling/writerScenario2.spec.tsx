@@ -227,12 +227,6 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     cy.waitForAsyncRequest();
     propertyTable.getProperty("OrderedBy").should("not.exist");
-    //Save Changes
-    modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getSaveAllEntityText().should("not.exist");
     entityTypeTable.viewEntityInGraphView("User3");
     //To verify tooltip over particular node
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
@@ -240,6 +234,13 @@ describe("Entity Modeling: Writer Role", () => {
       graphVis.getGraphVisCanvas().click(customerCoordinates.x, customerCoordinates.y);
       cy.findByText("An entity for User").should("exist");
     });
+    //Save Changes
+    // TODO Make shortcut for publishing current model
+    modelPage.getPublishButton().click();
+    confirmationModal.getYesButton(ConfirmationType.PublishAll);
+    cy.waitForAsyncRequest();
+    confirmationModal.getSaveAllEntityText().should("exist");
+    confirmationModal.getSaveAllEntityText().should("not.exist");
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
@@ -498,6 +499,8 @@ describe("Entity Modeling: Writer Role", () => {
   it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
 
     entityTypeTable.viewEntityInGraphView("Person");
+
+    //add first relationship
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();
     graphView.verifyEditInfoMessage().should("be.visible");
@@ -525,6 +528,38 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
+    //add second relationship
+    graphView.getAddButton().click();
+    graphView.addNewRelationship().click();
+    graphView.verifyEditInfoMessage().should("be.visible");
+
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let PersonCoordinates: any = nodePositions["Person"];
+      let ClientCoordinates: any = nodePositions["Client"];
+      graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
+      graphVis.getGraphVisCanvas().trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+      graphVis.getGraphVisCanvas().trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+    });
+
+    //relationship modal should open with proper source and target nodes in place
+    relationshipModal.verifySourceEntity("Person").should("be.visible");
+    relationshipModal.verifyTargetEntity("Client").should("be.visible");
+
+    //add relationship properties and save
+    relationshipModal.editRelationshipName("recommendedBy");
+
+    //open Optional line to edit foreign key field
+    relationshipModal.toggleOptional();
+    relationshipModal.editForeignKey("lastname");
+    relationshipModal.toggleCardinality();
+    relationshipModal.addRelationshipSubmit();
+    cy.waitForAsyncRequest();
+    relationshipModal.getModalHeader().should("not.exist");
+
+    //Both the relationship names must be available
+    cy.contains("referredBy");
+    cy.contains("recommendedBy");
+
     //verify relationship was created and properties are present
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
@@ -547,7 +582,7 @@ describe("Entity Modeling: Writer Role", () => {
     graphView.verifyEditInfoMessage().should("not.exist");
   });
 
-  it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
+  it("Delete relationships from graph view", {defaultCommandTimeout: 120000}, () => {
     // To delete a relation
     graphVis.getPositionOfEdgeBetween("Person,Client").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y));
@@ -560,6 +595,19 @@ describe("Entity Modeling: Writer Role", () => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y));
     });
     graphViewSidePanel.getPropertyName("referredBy").should("not.exist");
+
+    // To delete another relation
+    graphVis.getPositionOfEdgeBetween("Person,Client").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y));
+    });
+    confirmationModal.deleteRelationship();
+    cy.waitUntil(() => cy.findByLabelText("confirm-deletePropertyStepWarn-yes").click());
+    // To verify that property is not visible
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      let personCoordinates: any = nodePositions["Person"];
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y));
+    });
+    graphViewSidePanel.getPropertyName("recommendedBy").should("not.exist");
   });
 
   it("Verify the navigation warning on moving away to other tiles, when unpublished changes are available", {defaultCommandTimeout: 120000}, () => {
