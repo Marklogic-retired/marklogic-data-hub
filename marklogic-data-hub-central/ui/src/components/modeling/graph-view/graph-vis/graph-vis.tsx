@@ -353,13 +353,45 @@ const GraphVis: React.FC<Props> = (props) => {
       values.color = "#7FADE3";
 
       //change one to many image
-      if (values.arrowStrikethrough === false) {
+      if (values.toArrowSrc === graphConfig.customEdgeSVG.oneToMany) {
         values.toArrowSrc = graphConfig.customEdgeSVG.oneToManyHover;
       } else {
       //change one to one image
         values.toArrowSrc = graphConfig.customEdgeSVG.oneToOneHover;
       }
     }
+  };
+
+  // Handle multiple edges between nodes:
+  // 1. Count how many same edges were drawn before current edge
+  // 2. Check if previous edge is in same or reversed direction
+  //    (so we can draw it the correct way, CW or CCW)
+  const getSmoothOpts = (to, from, edges) => {
+    let count = 0;
+    let reversed;
+    edges.forEach((edge, i) => {
+      if (to === edge.to && from === edge.from) {
+        count++;
+        // This works so...
+        reversed = (reversed === undefined) ? false : reversed;
+      } else if (from === edge.to && to === edge.from) {
+        count++;
+        reversed = (reversed === undefined) ? true : reversed;
+      }
+    });
+    // Space out same edges using visjs "smooth" options
+    let space = 0.16;
+    let type = "";
+    if (!reversed) {
+      type = (count % 2 === 0) ? "curvedCW" : "curvedCCW";
+    } else {
+      type = (count % 2 === 0) ? "curvedCCW" : "curvedCW";
+    }
+    return {
+      enabled: (count > 0),
+      type: type,
+      roundness: (count % 2 === 0) ? (space * count / 2) : (space * (count + 1) / 2)
+    };
   };
 
   const getEdges = () => {
@@ -389,10 +421,6 @@ const GraphVis: React.FC<Props> = (props) => {
                 type: "image"
               }
             },
-            endPointOffset: {
-              from: -500,
-              to: -500
-            },
             arrowStrikethrough: true,
             color: "#666",
             font: {
@@ -402,7 +430,8 @@ const GraphVis: React.FC<Props> = (props) => {
               label: onChosen,
               edge: onChosen,
               node: false
-            }
+            },
+            smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
           });
         //for one to many edges
         } else if (pObj.items?.relatedEntityType) {
@@ -414,7 +443,7 @@ const GraphVis: React.FC<Props> = (props) => {
             label: p,
             id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
             title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
-            arrowStrikethrough: false,
+            arrowStrikethrough: true,
             arrows: {
               to: {
                 enabled: true,
@@ -428,7 +457,8 @@ const GraphVis: React.FC<Props> = (props) => {
               label: onChosen,
               edge: onChosen,
               node: false
-            }
+            },
+            smooth: getSmoothOpts(e.entityName, parts[parts.length - 1], edges)
           });
         }
       });
