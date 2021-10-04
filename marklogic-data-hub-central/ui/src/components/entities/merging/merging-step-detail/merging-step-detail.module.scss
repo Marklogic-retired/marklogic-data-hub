@@ -1,3 +1,5 @@
+@import "../../../../HCTheme.scss";
+
 .pageHeader {
     padding-bottom: 10px;
 }
@@ -73,7 +75,7 @@
 }
 
 .enabledDeleteIcon{
-    color:#B32424
+    color: $danger;
 }
 
 .priorityOrderContainer{

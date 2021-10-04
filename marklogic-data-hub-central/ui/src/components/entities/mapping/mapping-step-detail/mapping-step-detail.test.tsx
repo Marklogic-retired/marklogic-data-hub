@@ -904,15 +904,15 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("Order-settings-title")).toBeInTheDocument();
 
     //verify Target Collections
-    expect(getByText("Target Collections")).toBeInTheDocument();
+    expect(getByText("Target Collections:")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
 
     //verify Default Collections
-    expect(getByText("Default Collections")).toBeInTheDocument();
+    expect(getByText("Default Collections:")).toBeInTheDocument();
     expect(getByText("Order")).toBeInTheDocument();
 
     //verify Target Permissions
-    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByText("Target Permissions:")).toBeInTheDocument();
     fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-operator"}});
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-operator");
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));

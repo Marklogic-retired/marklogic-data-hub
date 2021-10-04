@@ -1,3 +1,5 @@
+@import "../../../HCTheme.scss";
+
 .modal {
     &.modal-header {
     border-bottom: 0 none;
@@ -22,13 +24,9 @@
 }
 
 .asterisk{
-    color: #DB4f59;
+    color: $danger;
 }
 
 .validationError {
-    line-height: normal;
-    padding-top: 5px;
-    padding-left: 1px;
-    padding-bottom: 1px;
-    color: #DB4f59;
+    @extend .validationError;
 }

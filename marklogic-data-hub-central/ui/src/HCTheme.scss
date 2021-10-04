@@ -179,3 +179,11 @@ $input-border-radius: 2px;
     color: $text-color;
     font-size: $font-size-base;
 }
+
+.validationError {
+    line-height: normal;
+    padding-top: 5px;
+    padding-left: 1px;
+    padding-bottom: 1px;
+    color: $danger;
+  }

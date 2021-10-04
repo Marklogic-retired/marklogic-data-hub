@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Select} from "antd";
+import {Modal, Input, Select} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./threshold-modal.module.scss";
 
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
@@ -19,11 +20,6 @@ type Props = {
   isVisible: boolean;
   editThreshold: any;
   toggleModal: (isVisible: boolean) => void;
-};
-
-const layout = {
-  labelCol: {span: 8},
-  wrapperCol: {span: 16},
 };
 
 const THRESHOLD_TYPE_OPTIONS = [
@@ -348,73 +344,77 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const renderCustomOptions = (
     <>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          URI:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={uriErrorMessage ? "error" : ""}
-        help={uriErrorMessage}
-      >
-        <Input
-          id="uri-input"
-          aria-label="uri-input"
-          placeholder="Enter URI"
-          className={styles.input}
-          value={uriValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={NewMatchTooltips.uri} id="uri-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>
-          Function:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>}
-        colon={false}
-        labelAlign="left"
-        validateStatus={functionErrorMessage ? "error" : ""}
-        help={functionErrorMessage}
-      >
-        <Input
-          id="function-input"
-          aria-label="function-input"
-          placeholder="Enter a function"
-          className={styles.input}
-          value={functionValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={NewMatchTooltips.function} id="function-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        className={styles.formItem}
-        label={<span>Namespace:</span>}
-        colon={false}
-        labelAlign="left"
-      >
-        <Input
-          id="namespace-input"
-          aria-label="namespace-input"
-          placeholder="Enter a namespace"
-          className={styles.input}
-          value={namespaceValue}
-          onChange={handleInputChange}
-          onBlur={handleInputChange}
-        />
-        <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top">
-          <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-        </HCTooltip>
-      </Form.Item>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"URI:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={uriErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="uri-input"
+                aria-label="uri-input"
+                placeholder="Enter URI"
+                className={styles.input}
+                value={uriValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={NewMatchTooltips.uri} id="uri-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {uriErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Function:"}<span className={styles.asterisk}>*</span></FormLabel>
+        <Col>
+          <Row>
+            <Col className={functionErrorMessage ? "d-flex has-error" : "d-flex"}>
+              <Input
+                id="function-input"
+                aria-label="function-input"
+                placeholder="Enter a function"
+                className={styles.input}
+                value={functionValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={NewMatchTooltips.function} id="function-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+            <Col xs={12} className={styles.validationError}>
+              {functionErrorMessage}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row className={"mb-3"}>
+        <FormLabel column lg={3}>{"Namespace:"}</FormLabel>
+        <Col className={"d-flex"}>
+          <Input
+            id="namespace-input"
+            aria-label="namespace-input"
+            placeholder="Enter a namespace"
+            className={styles.input}
+            value={namespaceValue}
+            onChange={handleInputChange}
+            onBlur={handleInputChange}
+          />
+          <div className={"p-2 d-flex"}>
+            <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top">
+              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+            </HCTooltip>
+          </div>
+        </Col>
+      </Row>
     </>
   );
 
@@ -458,56 +458,53 @@ const ThresholdModal: React.FC<Props> = (props) => {
       onCancel={closeModal}
     >
       <Form
-        {...layout}
         id="match-threshold"
         onSubmit={onSubmit}
       >
-
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Name:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={nameErrorMessage ? "error" : ""}
-          help={nameErrorMessage}
-        >
-          <Input
-            id="name-input"
-            aria-label="name-input"
-            placeholder="Enter threshold name"
-            className={styles.input}
-            value={nameValue}
-            onChange={handleInputChange}
-            onBlur={handleInputChange}
-          />
-        </Form.Item>
-
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Action:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={actionTypeErrorMessage ? "error" : ""}
-          help={actionTypeErrorMessage}
-        >
-          <Select
-            aria-label={"threshold-select"}
-            className={styles.matchTypeSelect}
-            size="default"
-            placeholder="Select action"
-            defaultValue="''"
-            onSelect={onMatchTypeSelect}
-            value={actionType}
-          >
-            {renderThresholdOptions}
-          </Select>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={nameErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="name-input"
+                  aria-label="name-input"
+                  placeholder="Enter threshold name"
+                  className={styles.input}
+                  value={nameValue}
+                  onChange={handleInputChange}
+                  onBlur={handleInputChange}
+                />
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {nameErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Action:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={actionTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Select
+                  aria-label={"threshold-select"}
+                  className={styles.matchTypeSelect}
+                  size="default"
+                  placeholder="Select action"
+                  defaultValue="''"
+                  onSelect={onMatchTypeSelect}
+                  value={actionType}
+                >
+                  {renderThresholdOptions}
+                </Select>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {actionTypeErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
         {actionType === "custom" && renderCustomOptions}
         {modalFooter}
