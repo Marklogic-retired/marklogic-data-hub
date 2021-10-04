@@ -32,6 +32,8 @@ public interface HubClient {
 
     DatabaseClient getStagingClient();
 
+    DatabaseClient getStagingClient(String databaseName);
+
     DatabaseClient getFinalClient();
 
     DatabaseClient getJobsClient();
