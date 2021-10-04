@@ -182,7 +182,7 @@ describe("RTL Source-to-entity map tests", () => {
   test("RTL tests with entire source record", async () => {
     mockGetMapArtifactByName.mockResolvedValue({...mappingStep.artifacts[0], "sourceRecordScope": "entireRecord"});
     mockGetUris.mockResolvedValue({status: 200, data: ["/dummy/uri/person-101.json"]});
-    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
+    mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblingsEntireRecord});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
 
     let getByText;

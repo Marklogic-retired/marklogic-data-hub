@@ -121,12 +121,12 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
     }
 
     @Test
-    void nonExistentTestingDoc() throws Exception {
+    void nonExistentDoc() throws Exception {
         runAsDataHubDeveloper();
         installProjectInFolder("test-projects/reference-project");
         loginAsTestUserWithRoles("hub-central-mapping-reader");
         final String uri = "/uri/to/non-existent/doc.json";
-        mockMvc.perform(get(PATH + "/{stepName}/testingDoc", "testMap")
+        mockMvc.perform(get(PATH + "/{stepName}/doc", "testMap")
             .param("docUri", uri)
             .session(mockHttpSession))
             .andDo(result -> {
@@ -147,12 +147,12 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
     }
 
     @Test
-    void existentTestingDoc() throws Exception {
+    void existentDoc() throws Exception {
         runAsDataHubDeveloper();
         installProjectInFolder("test-projects/reference-project");
         loginAsTestUserWithRoles("hub-central-mapping-reader");
         final String uri = "/entities/Customer.entity.json"; // not a data file per se but in reference-project.
-        mockMvc.perform(get(PATH + "/{stepName}/testingDoc", "testMap")
+        mockMvc.perform(get(PATH + "/{stepName}/doc", "testMap")
             .param("docUri", uri)
             .session(mockHttpSession))
             .andDo(result -> {
@@ -171,6 +171,11 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
         writeStagingXmlDoc("/testDoc1.xml", "<test>12</test>", "content");
         loginAsTestUserWithRoles("hub-central-developer");
 
+        final String expectedResponse = "{\"data\":{\"test\":12}," +
+            "\"namespaces\":{\"entity-services\":\"http://marklogic.com/entity-services\"}," +
+            "\"format\":\"XML\"," +
+            "\"sourceProperties\":[{\"name\":\"test\",\"xpath\":\"/test\",\"struct\":false,\"level\":0}]}";
+
         mockMvc.perform(get(PATH + "/{stepName}/doc", "testMap")
                 .param("docUri", uri)
                 .session(mockHttpSession))
@@ -178,8 +183,7 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
                 assertEquals(200, response.getStatus());
-                assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                    "<test>12</test>", response.getContentAsString());
+                assertEquals(expectedResponse, response.getContentAsString());
             });
     }
 

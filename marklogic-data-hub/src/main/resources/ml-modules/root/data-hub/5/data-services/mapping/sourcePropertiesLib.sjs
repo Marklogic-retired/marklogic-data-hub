@@ -15,7 +15,7 @@
  */
 'use strict';
 
-// Build and return the sourceProperties portion/array of getDocumentForTesting's return.
+// Build and return the sourceProperties portion/array of getDocument's return.
 function buildSourceProperties(sourceData, isJson) {
   const outputArr = [];
   addSourceProperties(sourceData, isJson, outputArr, '', 0)
@@ -95,7 +95,7 @@ function isAtomic(value) {
 
 function isArray(value) {
   // False negatives from Array.isArray(value)
-  return value && value.hasOwnProperty('0');
+  return value && value.hasOwnProperty('0') && typeof value !== 'string';
 }
 
 exports.buildSourceProperties = buildSourceProperties;

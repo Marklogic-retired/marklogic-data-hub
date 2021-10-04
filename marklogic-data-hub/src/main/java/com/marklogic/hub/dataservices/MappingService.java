@@ -52,7 +52,6 @@ public interface MappingService {
             private BaseProxy.DBFunctionRequest req_testMapping;
             private BaseProxy.DBFunctionRequest req_getDocument;
             private BaseProxy.DBFunctionRequest req_getUris;
-            private BaseProxy.DBFunctionRequest req_getDocumentForTesting;
             private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
             private BaseProxy.DBFunctionRequest req_getMappingFunctions;
 
@@ -70,8 +69,6 @@ public interface MappingService {
                     "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getUris = this.baseProxy.request(
                     "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_getDocumentForTesting = this.baseProxy.request(
-                    "getDocumentForTesting.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_generateMappingTransforms = this.baseProxy.request(
                     "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
@@ -126,22 +123,6 @@ public interface MappingService {
             }
 
             @Override
-            public java.lang.String getDocument(String stepName, String uri) {
-                return getDocument(
-                    this.req_getDocument.on(this.dbClient), stepName, uri
-                    );
-            }
-            private java.lang.String getDocument(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
-              return BaseProxy.TextDocumentType.toString(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
-                          BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri))
-                          ).responseSingle(false, Format.TEXT)
-                );
-            }
-
-            @Override
             public com.fasterxml.jackson.databind.JsonNode getUris(String stepName, Integer limit) {
                 return getUris(
                     this.req_getUris.on(this.dbClient), stepName, limit
@@ -158,12 +139,12 @@ public interface MappingService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(String stepName, String uri) {
-                return getDocumentForTesting(
-                    this.req_getDocumentForTesting.on(this.dbClient), stepName, uri
+            public com.fasterxml.jackson.databind.JsonNode getDocument(String stepName, String uri) {
+                return getDocument(
+                    this.req_getDocument.on(this.dbClient), stepName, uri
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
+            private com.fasterxml.jackson.databind.JsonNode getDocument(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
@@ -226,16 +207,7 @@ public interface MappingService {
     com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
 
   /**
-   * Gets the document based on the given URI from the source database associated with the given step name
-   *
-   * @param stepName	provides input
-   * @param uri	provides input
-   * @return	as output
-   */
-    java.lang.String getDocument(String stepName, String uri);
-
-  /**
-   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 
+   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter
    *
    * @param stepName	provides input
    * @param limit	provides input
@@ -250,20 +222,20 @@ public interface MappingService {
    * @param uri	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(String stepName, String uri);
+    com.fasterxml.jackson.databind.JsonNode getDocument(String stepName, String uri);
 
   /**
    * Generates a transform in the modules database for each legacy mapping or mapping step
    *
-   * 
-   * 
+   *
+   *
    */
     void generateMappingTransforms();
 
   /**
    * Invokes the getMappingFunctions operation on the database server
    *
-   * 
+   *
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getMappingFunctions();

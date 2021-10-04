@@ -6,7 +6,7 @@ const xmlToJson = require('/data-hub/5/data-services/mapping/xmlToJsonForMapping
 
 const assertions = [];
 
-const result = utils.invokeService(utils.STEP_NAME, '/content/sampleCustomerDoc.xml');
+const result = utils.invokeService(utils.STEP_NAME1, '/content/sampleCustomerDoc.xml');
 const orderProp = result.data['OrderNS:Order'];
 let markupScenariosProp;
 if (orderProp) {
@@ -14,6 +14,7 @@ if (orderProp) {
 }
 
 const expectedNamespaces = {
+  "entity-services":"http://marklogic.com/entity-services",
   "OD": "https://www.w3schools.com/OD",
   "OtherNS": "https://www.w3schools.com/OtherNS",
   "Wash": "https://www.w3schools.com/Washington",

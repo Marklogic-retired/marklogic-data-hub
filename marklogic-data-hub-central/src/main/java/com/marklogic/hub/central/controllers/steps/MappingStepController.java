@@ -82,27 +82,11 @@ public class MappingStepController extends BaseController {
         return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/{stepName}/doc",method = RequestMethod.GET)
-    @ResponseBody
-    @ApiOperation("Returns a document as a string of JSON or XML")
-    @Secured("ROLE_readMapping")
-    public ResponseEntity<String> getDoc(@PathVariable String stepName, @RequestParam String docUri) {
-        HttpHeaders headers = new HttpHeaders();
-        String body = MappingService.on(getHubClient().getStagingClient()).getDocument(stepName, docUri);
-        if (body.startsWith("<")) {
-            headers.setContentType(MediaType.APPLICATION_XML);
-        }
-        else {
-            headers.setContentType(MediaType.APPLICATION_JSON);
-        }
-        return new ResponseEntity<>(body, headers, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/{stepName}/testingDoc", method = RequestMethod.GET)
+    @RequestMapping(value = "/{stepName}/doc", method = RequestMethod.GET)
     @ApiOperation(value = "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.")
     @Secured("ROLE_readMapping")
-    public ResponseEntity<JsonNode> getDocumentForTesting(@PathVariable String stepName, @RequestParam String docUri) {
-        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getDocumentForTesting(stepName, docUri));
+    public ResponseEntity<JsonNode> getDocument(@PathVariable String stepName, @RequestParam String docUri) {
+        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getDocument(stepName, docUri));
     }
 
     private StepService newService() {
