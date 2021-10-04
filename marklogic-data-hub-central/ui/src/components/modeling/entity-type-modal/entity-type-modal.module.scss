@@ -1,3 +1,5 @@
+@import "../../../HCTheme.scss";
+
 .formItem {
   display: flex;
   margin-left: 7px;
@@ -64,19 +66,15 @@ color: #7F86B5;
 }
 
 .asterisk {
-  color: #B32424;
+  color: $danger;
 }
 
 .errorServer {
-  color: #B32424;
+  color: $danger;
   line-height: 20px;
   margin-bottom: -16px;
 }
 
 .validationError {
-  line-height: normal;
-  padding-top: 5px;
-  padding-left: 1px;
-  padding-bottom: 1px;
-  color: #DB4f59;
+  @extend .validationError;
 }

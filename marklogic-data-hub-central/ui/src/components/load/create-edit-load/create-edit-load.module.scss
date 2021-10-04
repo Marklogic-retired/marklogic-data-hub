@@ -1,3 +1,5 @@
+@import "../../../HCTheme.scss";
+
 .modal {
     &.modal-header {
     border-bottom: 0 none;
@@ -22,7 +24,7 @@
 }
 
 .asterisk{
-    color: #DB4f59;
+    color: $danger;
 }
 
 .upload {
@@ -67,12 +69,12 @@ span.readOnlyLabel {
 .fileUploadErrorContainer{
     margin-top: 10px;
     margin-bottom: 0px;
-    color: #DB4f59;
+    color: $danger;
     line-height: 4px;
     padding-left: 4px;
     .fileUploadError{
         margin: 0;
-        color: #DB4f59;
+        color: $danger;
     }
 }
 
@@ -111,9 +113,5 @@ span.readOnlyLabel {
 }
 
 .validationError {
-    line-height: normal;
-    padding-top: 5px;
-    padding-left: 1px;
-    padding-bottom: 1px;
-    color: #DB4f59;
+    @extend .validationError;
 }
