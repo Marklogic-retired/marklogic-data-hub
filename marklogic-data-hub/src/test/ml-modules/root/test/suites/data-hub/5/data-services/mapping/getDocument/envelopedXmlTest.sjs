@@ -5,10 +5,11 @@ const utils = require('/test/suites/data-hub/5/data-services/lib/mappingService.
 
 const assertions = [];
 
-const result = utils.invokeService(utils.STEP_NAME, '/content/envelopedCustomerDoc.xml');
+const result = utils.invokeService(utils.STEP_NAME1, '/content/envelopedCustomerDoc.xml');
 const data = result.data;
 
 const expectedNamespaces = {
+  "entity-services":"http://marklogic.com/entity-services",
   "OrderNS":"https://www.w3schools.com/OrderNS"
 }
 

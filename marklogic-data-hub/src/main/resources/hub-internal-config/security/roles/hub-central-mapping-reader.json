@@ -4,7 +4,8 @@
   "role": [
     "hub-central-user",
     "data-hub-entity-model-reader",
-    "data-hub-mapping-reader"
+    "data-hub-mapping-reader",
+    "data-hub-step-definition-reader"
   ],
   "privilege": [
     {

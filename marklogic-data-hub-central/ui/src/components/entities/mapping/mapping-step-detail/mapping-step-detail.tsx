@@ -15,7 +15,6 @@ import SourceNavigation from "../source-navigation/source-navigation";
 import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {useHistory} from "react-router-dom";
 import {getUris, getDoc} from "../../../../util/search-service";
-import {xmlParserForMapping} from "../../../../util/record-parser";
 import {CurationContext} from "../../../../util/curation-context";
 import {AuthoritiesContext} from "../../../../util/authorities";
 import {MappingStep, StepType} from "../../../../types/curation-types";
@@ -244,33 +243,26 @@ const MappingStepDetail: React.FC = () => {
       let srcDocResp = await getDoc(stepName, uri);
 
       if (srcDocResp && srcDocResp.data && srcDocResp.status === 200) {
-        let parsedDoc: any;
-        if (typeof(srcDocResp.data) === "string") {
-          parsedDoc = getParsedXMLDoc(srcDocResp);
+        let parsedDoc: any = srcDocResp.data.data;
+        if (srcDocResp.data.format === "XML") {
           setSourceFormat("xml");
         } else {
-          parsedDoc = srcDocResp.data;
           setSourceFormat("json");
         }
-        if (parsedDoc["envelope"]) {
-          if (parsedDoc["envelope"].hasOwnProperty("@xmlns")) {
 
-            let nmspcURI = parsedDoc["envelope"]["@xmlns"];
-            let indCheck = nmspcURI.lastIndexOf("/");
-            let ind = indCheck !== -1 ? indCheck + 1 : 0;
-            let nmspcString = nmspcURI.slice(ind);
-            namespaceString = nmspcString;
-            nmspaces = {...nmspaces, [namespaceString]: nmspcURI};
-            setNamespaces({...namespaces, [namespaceString]: nmspcURI});
-          }
+        if (srcDocResp.data.namespaces) {
+          Object.keys(srcDocResp.data.namespaces).forEach(key => {
+            nmspaces = {...nmspaces, [key]: srcDocResp.data.namespaces[key]};
+            setNamespaces({...namespaces, [key]: srcDocResp.data.namespaces[key]});
+          });
         }
         let nestedDoc: any = [];
-        let docRoot = mappingStep.sourceRecordScope === "entireRecord" ?  parsedDoc : parsedDoc["envelope"]["instance"] ;
-        let sDta = generateNestedDataSource(docRoot, nestedDoc);
+        let sDta = generateNestedDataSource(parsedDoc, nestedDoc);
         setSourceData([]);
         setSourceData([...sDta]);
-        setSrcPropertiesXML(sDta[0].children);
-        if (typeof(srcDocResp.data) === "string") {
+
+        if (srcDocResp.data.format === "XML") {
+          setSrcPropertiesXML(sDta[0].children);
           updateMappingWithNamespaces(mappingStep);
         }
       }
@@ -278,18 +270,13 @@ const MappingStepDetail: React.FC = () => {
     } catch (error)  {
       setIsLoading(false);
       setDocNotFound(true);
-      if (error.response.data.message.includes("Interceptor execution failed")) {
+      if (error.response.data && error.response.data.message.includes("Interceptor execution failed")) {
         setInterceptorExecutionError(error.response.data.message);
       } else {
         let message = error;//.response.data.message;
         console.error("Error While loading the Doc from URI!", message);
       }
     }
-  };
-
-  const getParsedXMLDoc = (xmlDoc) => {
-    let parsedDoc = xmlParserForMapping(xmlDoc.data);
-    return parsedDoc;
   };
 
   const setMappingFunctions = async () => {

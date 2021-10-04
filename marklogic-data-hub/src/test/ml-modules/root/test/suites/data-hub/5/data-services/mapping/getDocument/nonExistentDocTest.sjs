@@ -8,7 +8,7 @@ const uri = '/uri/to/non-existent/doc.json';
 
 // Using try/catch as an alternative to test.assertThrowsError*().
 try {
-  utils.invokeService(utils.STEP_NAME, uri);
+  utils.invokeService(utils.STEP_NAME1, uri);
   assertions.push(test.fail('Exception not thrown when attempting to process a non-existent document.'));
 } catch (e) {
   assertions.push(test.assertTrue(e.data && Array.isArray(e.data) && e.data.length === 2,
