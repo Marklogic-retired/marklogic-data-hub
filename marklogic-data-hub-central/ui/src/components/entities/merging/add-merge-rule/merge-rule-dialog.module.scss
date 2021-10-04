@@ -1,3 +1,4 @@
+@import "../../../../HCTheme.scss";
 
 .addMergeRuleForm{
     margin-top: 15px;
@@ -41,7 +42,7 @@
 }
 
 .asterisk{
-    color: #DB4f59;
+    color: $danger;
 }
 
 .formItem {
@@ -98,4 +99,8 @@
 
 .alertMessage {
     font-weight: bold;
+}
+
+.validationError {
+    @extend .validationError;
 }

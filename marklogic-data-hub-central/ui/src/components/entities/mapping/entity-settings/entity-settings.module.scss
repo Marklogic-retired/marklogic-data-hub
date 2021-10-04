@@ -1,3 +1,5 @@
+@import "../../../../HCTheme.scss";
+
 .entitySettings {
   width: 570px;
   padding: 4px 4px 4px 4px;
@@ -55,7 +57,6 @@
 .questionCircle {
   font-size: 12px;
   vertical-align: top;
-  margin-top: 6px;
   color: #7f86b5;
 }
 
@@ -75,11 +76,7 @@
 }
 
 .validationError {
-  line-height: normal;
-  padding-top: 5px;
-  padding-left: 1px;
-  padding-bottom: 1px;
-  color: #db4f59;
+  @extend .validationError;
 }
 
 .saveButton {
