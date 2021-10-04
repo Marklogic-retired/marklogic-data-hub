@@ -1,18 +1,16 @@
+@import "../../../../HCTheme.scss";
 
 .matchTypeSelect {
   width: 400px !important;
 }
 
 .icon {
-  position: absolute;
-  top: 0px;
-  right: -20px;
   font-size: 12px;
   color: #7F86B5;
 }
 
 .asterisk {
-  color: #B32424;
+  color: $danger;
 }
 
 .footer {
@@ -31,7 +29,7 @@
 
 .trashIcon {
     font-size: 20px;
-    color: #B32424;
+    color: $danger;
     &:hover{
         color: var(--hoverColor);
     }
@@ -42,4 +40,6 @@
     justify-content: space-between;
 }
 
-
+.validationError {
+  @extend .validationError;
+}

@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
-import {Form, Input, Select, Popover} from "antd";
+import {Input, Select, Popover} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../../../config/messages.config";
@@ -32,17 +33,6 @@ const EntitySettings: React.FC<Props> = (props) => {
   const [targetPermissions, setTargetPermissions] = useState(defaultTargetPermissions);
   const [targetPermissionsValid, setTargetPermissionsValid] = useState(true);
   const [permissionValidationError, setPermissionValidationError] = useState<any>(null);
-
-  const formItemLayout = {
-    labelCol: {
-      xs: {span: 24},
-      sm: {span: 7},
-    },
-    wrapperCol: {
-      xs: {span: 24},
-      sm: {span: 15},
-    },
-  };
 
   useEffect(() => {
     getSettings();
@@ -170,75 +160,80 @@ const EntitySettings: React.FC<Props> = (props) => {
         <p>Specify additional collections and modify the default permissions for entity instances associated with this entity.</p>
       </div>
       <div className={styles.entitySettingsForm}>
-        <Form {...formItemLayout} onSubmit={handleSubmit} colon={true} >
-          <Form.Item
-            label={<span>Target Collections</span>}
-            labelAlign="left"
-            className={styles.formItemTargetCollections}
-          >
-            <Select
-              id="additionalColl"
-              mode="tags"
-              style={{width: "100%"}}
-              placeholder="Please add target collections"
-              value={additionalCollections}
-              disabled={!canReadWrite}
-              onChange={handleAddColl}
-              className={styles.inputWithTooltip}
-              aria-label="additionalColl-select"
-            >
-              {additionalCollections.map((col) => {
-                return <Option value={col} key={col} label={col}>{col}</Option>;
-              })}
-            </Select>
-            <div className={styles.inputTooltip}>
-              <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
-                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
-              </HCTooltip>
-            </div>
-          </Form.Item>
-          <Form.Item
-            label={<span className={styles.defaultCollectionsLabel}>Default Collections</span>}
-            labelAlign="left"
-            className={styles.formItem}
-          >
-            <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => { return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>; })}</div>
-          </Form.Item>
-          <Form.Item
-            label={<span>Target Permissions</span>}
-            labelAlign="left"
-            className={styles.formItem}
-          >
-            <Input
-              id="targetPermissions"
-              placeholder="Please enter target permissions"
-              data-testid={`${props.entityTitle}-targetPermissions`}
-              value={targetPermissions}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={!canReadWrite}
-              className={styles.inputWithTooltip}
-              onPressEnter={(e) => e.key === "Enter" && e.preventDefault()}
-            />
-            <div className={styles.inputTooltip}>
-              <HCTooltip text={tooltips.targetPermissions} id="target-permissions-tooltip" placement="left">
-                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
-              </HCTooltip>
-            </div>
-            <div className={styles.validationError} aria-label={`${props.entityTitle}-validationError`} data-testid="validationError">
-              {permissionValidationError}
-            </div>
-          </Form.Item>
-          <Form.Item className={styles.submitButtonsForm}>
-            <div className={styles.submitButtons}>
-              <HCButton variant="outline-light" data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-              {!canReadWrite || !targetPermissionsValid ? <HCTooltip text={tooltips.missingPermission} id="missing-permissions-tooltip" placement="bottom-end">
-                <span className={styles.disabledCursor}>
-                  <HCButton id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
-                </span>
-              </HCTooltip> : <HCButton id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false}>Save</HCButton>}
-            </div>
-          </Form.Item>
+        <Form onSubmit={handleSubmit} >
+          <Row className={"mb-3"}>
+            <FormLabel column lg={4}>{"Target Collections:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Select
+                id="additionalColl"
+                mode="tags"
+                style={{width: "100%"}}
+                placeholder="Please add target collections"
+                value={additionalCollections}
+                disabled={!canReadWrite}
+                onChange={handleAddColl}
+                className={styles.inputWithTooltip}
+                aria-label="additionalColl-select"
+              >
+                {additionalCollections.map((col) => {
+                  return <Option value={col} key={col} label={col}>{col}</Option>;
+                })}
+              </Select>
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={4}>{"Default Collections:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => { return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>; })}</div>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={4}>{"Target Permissions:"}</FormLabel>
+            <Col>
+              <Row>
+                <Col className={"d-flex"}>
+                  <Input
+                    id="targetPermissions"
+                    placeholder="Please enter target permissions"
+                    data-testid={`${props.entityTitle}-targetPermissions`}
+                    value={targetPermissions}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    disabled={!canReadWrite}
+                    className={styles.inputWithTooltip}
+                    onPressEnter={(e) => e.key === "Enter" && e.preventDefault()}
+                  />
+                  <div className={"p-2 d-flex align-items-center"}>
+                    <HCTooltip text={tooltips.targetPermissions} id="target-permissions-tooltip" placement="left">
+                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                <Col xs={12}>
+                  <div className={styles.validationError} aria-label={`${props.entityTitle}-validationError`} data-testid="validationError">
+                    {permissionValidationError}
+                  </div>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <Col className={styles.submitButtonsForm}>
+              <div className={styles.submitButtons}>
+                <HCButton variant="outline-light" data-testid={`cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
+                {!canReadWrite || !targetPermissionsValid ? <HCTooltip text={tooltips.missingPermission} id="missing-permissions-tooltip" placement="bottom-end">
+                  <span className={styles.disabledCursor}>
+                    <HCButton id={"saveButton"} className={styles.saveButton} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
+                  </span>
+                </HCTooltip> : <HCButton id={"saveButton"} data-testid={`save-settings`} aria-label={`${props.entityTitle}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false}>Save</HCButton>}
+              </div>
+            </Col>
+          </Row>
         </Form>
       </div>
     </div>
