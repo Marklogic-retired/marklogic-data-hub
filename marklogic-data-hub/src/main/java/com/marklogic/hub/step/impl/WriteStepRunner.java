@@ -446,9 +446,10 @@ public class WriteStepRunner implements StepRunner {
 
         Vector<String> errorMessages = new Vector<>();
 
+        // Optimize for Hub databases associated with Hub app servers, but allow other values
         dataMovementManager = destinationDatabase.equals(hubClient.getDbName(DatabaseKind.FINAL)) ?
             hubClient.getFinalClient().newDataMovementManager() :
-            hubClient.getStagingClient().newDataMovementManager();
+            hubClient.getStagingClient(destinationDatabase).newDataMovementManager();
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 

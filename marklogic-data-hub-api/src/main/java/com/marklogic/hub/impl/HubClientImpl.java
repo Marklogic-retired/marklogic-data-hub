@@ -25,6 +25,7 @@ import java.util.Map;
 
 public class HubClientImpl implements HubClient {
 
+    private final HubClientConfig hubClientConfig;
     private String username;
     private DatabaseClient stagingClient;
     private DatabaseClient finalClient;
@@ -34,6 +35,7 @@ public class HubClientImpl implements HubClient {
     private ManageClient manageClient;
 
     public HubClientImpl(HubClientConfig hubClientConfig) {
+        this.hubClientConfig = hubClientConfig;
         username = hubClientConfig.getUsername();
         stagingClient = hubClientConfig.newStagingClient(null);
         finalClient = hubClientConfig.newFinalClient(null);
@@ -56,6 +58,11 @@ public class HubClientImpl implements HubClient {
     @Override
     public DatabaseClient getStagingClient() {
         return stagingClient;
+    }
+
+    @Override
+    public DatabaseClient getStagingClient(String databaseName) {
+        return hubClientConfig.newStagingClient(databaseName);
     }
 
     @Override
