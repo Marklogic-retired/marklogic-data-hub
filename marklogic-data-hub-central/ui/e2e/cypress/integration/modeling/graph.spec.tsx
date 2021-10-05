@@ -58,7 +58,7 @@ describe("Entity Modeling: Graph View", () => {
       graphVis.getGraphVisCanvas().click(nodePositions["Person"].x, nodePositions["Person"].y);
     });
     // Verify entity is shown in side panel
-    graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
+    graphViewSidePanel.getSelectedEntityHeading("Person").should("exist");
 
   });
   it("can create a new entity in graph view, showing its details in side panel", () => {

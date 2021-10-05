@@ -588,9 +588,9 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [clickedNode]);
 
-  const handleZoom = _.debounce((event) => {
+  const handleZoom = _.debounce((event, scale) => {
     let ZoomScalePayload = defaultHubCentralConfig;
-    ZoomScalePayload.modeling["scale"] =  event.scale;
+    ZoomScalePayload.modeling["scale"] = scale > 0 ? scale : event.scale;
     props.updateHubCentralConfig(ZoomScalePayload);
   }, 400);
 
@@ -714,8 +714,21 @@ const GraphVis: React.FC<Props> = (props) => {
         setClickedNode(undefined);
       }
     },
-    zoom: (event) => {
-      handleZoom(event);
+    zoom: async (event) => {
+      let networkScale: any = await network.getScale();
+      if (network) {
+        if (networkScale >= graphConfig.scale.min) {
+          network.moveTo({
+            scale: graphConfig.scale.min
+          });
+        }
+        if (networkScale <= graphConfig.scale.max) {
+          network.moveTo({
+            scale: graphConfig.scale.max
+          });
+        }
+      }
+      handleZoom(event, networkScale);
     },
     release: (event) => {
       if (!props.graphEditMode) {
