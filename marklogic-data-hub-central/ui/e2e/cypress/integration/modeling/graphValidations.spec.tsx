@@ -92,10 +92,10 @@ describe("Graph Validations", () => {
       graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y);
     });
     //Verifying the content of side panel
-    graphViewSidePanel.getSelectedEntityHeading("Order").should("be.visible");
+    graphViewSidePanel.getSelectedEntityHeading("Order").should("exist");
     graphViewSidePanel.getPropertiesTab().should("be.visible");
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
-    graphViewSidePanel.getDeleteIcon("Order").should("be.visible");
+    graphViewSidePanel.getDeleteIcon("Order").should("exist");
 
 
     //Verifying relationship modal

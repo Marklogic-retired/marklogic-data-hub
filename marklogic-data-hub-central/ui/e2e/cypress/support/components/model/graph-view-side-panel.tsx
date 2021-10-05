@@ -74,7 +74,7 @@ class GraphViewSidePanel {
   }
 
   getIconTooltip(tooltip: string) {
-    return cy.findByText(`${tooltip}`).should("be.visible");
+    return cy.waitUntil(() => cy.findAllByText(`${tooltip}`));
   }
 }
 

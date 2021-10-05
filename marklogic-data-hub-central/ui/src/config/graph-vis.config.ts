@@ -53,6 +53,11 @@ const nodeStyles: any = {
   selectColor: "#5B69AF"
 }
 
+const scale: any = {
+    min: 6.5,
+    max: 0.15
+}
+
 const colorOptionsArray : string[] = [
   "#D5D3DD",	"#CEE0ED",	"#D9F5F0",	"#C9EBC4",	"#FFF0A3",	"#F6D4A7",	"#E7B8B2",	"#EEC5D4",	"#D6D7D9",
   "#EAE9EE",	"#E6EFF6",	"#E1F3EC",	"#E4F5E1",	"#FFF8D1",	"#FAE9D3",	"#F3DBD8",	"#F6E2E9",	"#E3E4E5",
@@ -136,4 +141,5 @@ export default {
     customEdgeSVG,
     sampleMetadata,
     colorOptionsArray,
+    scale,
 };

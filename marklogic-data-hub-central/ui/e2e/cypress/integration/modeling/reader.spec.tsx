@@ -125,11 +125,16 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getPropertyName("name").should("be.visible");
     graphViewSidePanel.getPropertyName("email").should("be.visible");
 
-    //Verify property type icons and respective tooltips
-    graphViewSidePanel.getPropertyTypeIcon("multiple-icon", "shipping");
-    graphViewSidePanel.getIconTooltip("Multiple");
-    graphViewSidePanel.getPropertyTypeIcon("structured", "shipping");
-    graphViewSidePanel.getIconTooltip("Structured Type");
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let personCoordinates: any = nodePositions["Order"];
+      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y, {force: true});
+    });
+
+    // Verify property type icons and respective tooltips
+    graphViewSidePanel.getPropertyTypeIcon("multiple-icon", "orderDetails");
+    graphViewSidePanel.getIconTooltip("Multiple").should("exist");
+    graphViewSidePanel.getPropertyTypeIcon("structured", "address");
+    graphViewSidePanel.getIconTooltip("Structured Type").should("exist");
 
     //To verify cannot edit Entity Type tab without permissions (except color)
     graphViewSidePanel.getEntityTypeTab().click();
