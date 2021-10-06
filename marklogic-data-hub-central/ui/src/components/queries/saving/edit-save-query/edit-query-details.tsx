@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input} from "antd";
+import {Modal, Input} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
@@ -41,17 +42,12 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     }
   }, [props.currentQuery]);
 
-  const layout = {
-    labelCol: {span: 6},
-    wrapperCol: {span: 18},
-  };
-
-
   const onCancel = () => {
     props.setEditQueryDetailVisibility();
   };
 
-  const onOk = async (queryName, queryDescription, currentQuery) => {
+  const onOk = async (event: { preventDefault: () => void; }, queryName, queryDescription, currentQuery) => {
+    if (event) event.preventDefault();
     try {
       currentQuery.savedQuery.name = queryName.trim();
       currentQuery.savedQuery.description = queryDescription;
@@ -94,50 +90,48 @@ const EditQueryDetails: React.FC<Props> = (props) => {
       footer={null}
       destroyOnClose={true}
     >
-      <Form
-        name="basic"
-        {...layout}
-      >
-        <Form.Item
-          colon={false}
-          label={<span className={styles.text}>
-            Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-          </span>}
-          labelAlign="left"
-          validateStatus={errorMessage ? "error" : ""}
-          help={errorMessage}
-        >
-          <Input
-            id="edit-query-detail-name"
-            value={queryName}
-            placeholder={"Enter new query name"}
-            onChange={handleChange}
-          />
-        </Form.Item>
-        <Form.Item
-          colon={false}
-          label="Description:"
-          labelAlign="left"
-        >
-          <Input
-            id="edit-query-detail-description"
-            value={queryDescription}
-            onChange={handleChange}
-            placeholder={"Enter new query description"}
-          />
-        </Form.Item>
-        <Form.Item>
-          <div className={styles.submitButtons}>
+      <Form name="basic" className={"container-fluid"} >
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="edit-query-detail-name"
+                  value={queryName}
+                  placeholder={"Enter new query name"}
+                  onChange={handleChange}
+                />
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {errorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Input
+              id="edit-query-detail-description"
+              value={queryDescription}
+              onChange={handleChange}
+              placeholder={"Enter new query description"}
+            />
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <Col className={"d-flex justify-content-end"}>
             <HCButton variant="outline-light" id="edit-query-detail-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
             &nbsp;&nbsp;
             <HCButton variant="primary"
               type="submit"
               disabled={queryName.length === 0}
-              onClick={() => onOk(queryName, queryDescription, props.currentQuery)}
+              onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)}
               id="edit-query-detail-button">Save
             </HCButton>
-          </div>
-        </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
