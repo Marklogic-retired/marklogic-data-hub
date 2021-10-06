@@ -576,6 +576,40 @@ void cypressE2EOnPremWinTests(String type,String mlVersion){
 
 }
 
+void cypressE2EOnPremWinChromeTests(String type,String mlVersion){
+
+    copyMSI type,mlVersion;
+    def pkgOutput=bat(returnStdout:true , script: '''
+	                    cd xdmp/src
+	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
+	                    echo %name%
+	                    ''').trim().split();
+    def pkgLoc=pkgOutput[pkgOutput.size()-1]
+    gitCheckout 'ml-builds','https://github.com/marklogic/MarkLogic-Builds','master'
+    def bldOutput=bat(returnStdout:true , script: '''
+        	           cd ml-builds/scripts/lib/
+        	           CD
+        	        ''').trim().split();
+    def bldPath=bldOutput[bldOutput.size()-1]
+    setupMLWinCluster bldPath,pkgLoc
+    copyArtifacts filter: '**/*central*.war', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+
+    bat '''
+	    for /f "delims=" %%a in ('dir /s /b *.war') do set "name=%%~a"
+	    start java -jar %name%
+	'''
+
+    //wait for prem to start
+    timeout(10) {waitUntil initialRecurrencePeriod: 15000, { bat(script: 'jps | grep war', returnStatus: true) == 0 }}
+
+    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub & gradlew.bat -g ./cache-build clean publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO"
+    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e &sed -i 's#gradlew #gradlew -Dmaven.repo.local=$M2_LOCAL_REPO -g ./cache-build #g' setup.sh &sh setup.sh dhs=false mlHost=%COMPUTERNAME% mlSecurityUsername=admin mlSecurityPassword=admin"
+    bat "set PATH=C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot\\bin;$PATH & cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e & npm run cy:run-chrome 2>&1 | tee -a e2e_err.log"
+
+    junit '**/e2e/**/*.xml'
+
+}
+
 void mergePR(){
     withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
         script{
@@ -1343,7 +1377,7 @@ pipeline{
                     }
                 }
 
-
+/*
                 stage('10.0-7-MAC-On-Prem'){
                     agent { label 'osx-i64-10-test-2'}
                     environment{
@@ -1364,19 +1398,19 @@ pipeline{
                         }
                     }
                 }
-                /*
-                stage('10.0-3-Win12-On-Prem'){
-                    agent { label 'dhfWin12'}
+                */
+
+                stage('10.0-7.3-Win10-On-Prem-chrome'){
+                    agent { label 'sel-w10v-90-8'}
                     environment{
                         JAVA_HOME="C:\\Program Files (x86)\\OpenJDK\\jdk-8.0.262.10-hotspot"
                         M2_LOCAL_REPO="$WORKSPACE/repository"
                         NODE_JS="C:\\Program Files\\nodejs"
-                        PATH="$JAVA_HOME;$NODE_JS;$PATH"
                     }
 
                     steps{
                      timeout(time: 3,  unit: 'HOURS'){
-                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinTests("Release","10.0-3")}
+                        catchError(buildResult: 'SUCCESS', catchInterruptions: true, stageResult: 'FAILURE'){cypressE2EOnPremWinChromeTests("Release","10.0-7.3")}
                     }}
                    post{
                         success {
@@ -1389,7 +1423,6 @@ pipeline{
                         }
                     }
                 }
-                 */
 
             }}
 
