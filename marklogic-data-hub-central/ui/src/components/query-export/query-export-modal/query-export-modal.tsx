@@ -1,5 +1,6 @@
 import React, {useState, useContext} from "react";
-import {Modal, Form, Input, Radio, Table} from "antd";
+import {Modal, Input, Radio, Table} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "../../../util/search-context";
@@ -58,16 +59,6 @@ const QueryExportModal = (props) => {
     setValue(e.target.value);
   };
 
-  const layout = {
-    labelCol: {span: 4},
-    wrapperCol: {span: 16},
-  };
-
-  const layoutInput = {
-    labelCol: {span: 11},
-    wrapperCol: {span: 11},
-  };
-
   return (
     <Modal
       title="Export"
@@ -81,11 +72,7 @@ const QueryExportModal = (props) => {
       maskClosable={false}
       destroyOnClose={true}
     >
-      <Form
-        {...layout}
-        name="basic"
-        data-testid="query-export-form"
-      >
+      <Form name="basic" data-testid="query-export-form" className={"container-fluid"} >
         {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
 
         <div>
@@ -102,31 +89,27 @@ const QueryExportModal = (props) => {
 
         <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
 
-        <Form.Item
-          colon={false}
-          label="Rows:"
-          labelAlign="left"
-          className={styles.text}
-        >
-          <Radio.Group className={styles.radio} value={value} onChange={onChange}>
-            <Radio value={1}> All</Radio>
-            <br />
-            <Radio value={2}> Limited set of the first rows returned</Radio>
-          </Radio.Group>
-        </Form.Item>
+        <Row>
+          <FormLabel column lg={2}>{"Rows:"}</FormLabel>
+          <Col className={"d-flex"}>
+            <Radio.Group className={styles.radio} value={value} onChange={onChange}>
+              <Radio value={1}> All</Radio>
+              <br />
+              <Radio value={2}> Limited set of the first rows returned</Radio>
+            </Radio.Group>
+          </Col>
+        </Row>
       </Form>
       <Form
-        {...layoutInput}
         name="basic"
       >
-        {value === 2 && <div style={{marginLeft: "10px", marginBottom: "-25px"}}>
-          <Form.Item
-            colon={false}
-            label="Maximum rows:"
-            className={styles.text}
-          ><Input data-testid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
-          </Form.Item>
-        </div>
+        {value === 2 &&
+          <Row>
+            <FormLabel column lg={"auto"} className={"offset-4"}>{"Maximum rows:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Input data-testid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
+            </Col>
+          </Row>
         }
       </Form>
 

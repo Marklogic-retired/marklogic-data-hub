@@ -153,7 +153,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               </HCTooltip>}
             {record.structured === record.type &&
               <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
+                <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
               </HCTooltip>
             }
           </span>;
@@ -165,7 +165,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               </HCTooltip>}
             {record.structured === record.type &&
               <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} />
+                <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
               </HCTooltip>
             }
           </span>;

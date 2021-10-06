@@ -118,12 +118,12 @@ describe("Mapping", () => {
     mappingStepDetail.successMessage().should("exist");
     mappingStepDetail.successMessage().should("not.exist");
     // Test expresssions
-    cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
-    mappingStepDetail.testMap().click({force: true});
+    cy.waitUntil(() => mappingStepDetail.testMap()).should("be.enabled");
+    mappingStepDetail.testMap().click();
+    cy.waitForAsyncRequest();
     mappingStepDetail.validateMapValue("Person", "id", "444-44-4440");
-    mappingStepDetail.validateMapValue("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
-    mappingStepDetail.getURIValue("Relation (relatedTo Person)").trigger("mouseover");
-    cy.contains("/Relation/444-44-4440.json");
+    mappingStepDetail.validateMapValueString("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
+    mappingStepDetail.validateMapURIValue("Relation (relatedTo Person)", "/Relation/444-44-4440.j...");
 
     //Will be validated in unit test
     //mappingStepDetail.getURIValue("Relation (relatedTo Person)", "/Relation/444-44-4440.json");

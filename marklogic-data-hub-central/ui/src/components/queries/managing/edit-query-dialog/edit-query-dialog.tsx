@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input} from "antd";
+import {Modal, Input} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
@@ -37,11 +38,6 @@ const EditQueryDialog = (props) => {
     }
 
   }, [props.query]);
-
-  const layout = {
-    labelCol: {span: 8},
-    wrapperCol: {span: 16},
-  };
 
   const onOk = () => {
     props.setEditModalVisibility(false);
@@ -110,50 +106,47 @@ const EditQueryDialog = (props) => {
         maskClosable={false}
       >
         <p className={styles.title}>{"Edit Query"}</p>
-        <Form
-          {...layout}
-          name="basic"
-        >
-          <Form.Item
-            style={{color: "blue"}}
-            colon={false}
-            label={<span className={styles.text}>
-                            Query Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-            </span>}
-            labelAlign="left"
-            validateStatus={errorMessage ? "error" : ""}
-            help={errorMessage}
-          >
-            <Input
-              id="name"
-              placeholder="Edit name"
-              value={queryName}
-              onChange={handleChange}
-              className={styles.text}
-            />
-          </Form.Item>
-          <Form.Item
-            colon={false}
-            label={<span className={styles.text}>
-                            Description:
-            </span>} labelAlign="left"
-          >
-            <Input
-              id="description"
-              placeholder="Edit description"
-              value={queryDescription}
-              onChange={handleChange}
-              className={styles.text}
-            />
-          </Form.Item>
-          <Form.Item
-            className={styles.submitButtonsForm}>
-            <div className={styles.submitButtons}>
-              <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</HCButton>
-                            &nbsp;&nbsp;
-              <HCButton variant="primary" type="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</HCButton>
-            </div>
-          </Form.Item>
+        <Form name="basic" className={"container-fluid"}>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Query Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                  <Input
+                    id="name"
+                    placeholder="Edit name"
+                    value={queryName}
+                    onChange={handleChange}
+                    className={styles.text}
+                  />
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <Input
+                id="description"
+                placeholder="Edit description"
+                value={queryDescription}
+                onChange={handleChange}
+                className={styles.text}
+              />
+            </Col>
+          </Row>
+          <Row className={`mb-3 ${styles.submitButtonsForm}`}>
+            <Col className={"d-flex"}>
+              <div className={styles.submitButtons}>
+                <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</HCButton>
+                              &nbsp;&nbsp;
+                <HCButton variant="primary" type="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</HCButton>
+              </div>
+            </Col>
+          </Row>
         </Form>
       </Modal>
     </div>

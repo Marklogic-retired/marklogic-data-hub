@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Table, Input, Alert, Icon} from "antd";
+import {Table, Input, Alert} from "antd";
 import HCCheckbox from "../../../common/hc-checkbox/hc-checkbox";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
