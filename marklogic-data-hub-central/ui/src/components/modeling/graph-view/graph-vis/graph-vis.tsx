@@ -268,7 +268,8 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const getDescription = (entityName) => {
     let entityIndex = props.entityTypes.findIndex(obj => obj.entityName === entityName);
-    return props.entityTypes[entityIndex].model.definitions[entityName].description;
+    return props.entityTypes[entityIndex].model.definitions[entityName] ?
+      props.entityTypes[entityIndex].model.definitions[entityName].description : "";
   };
 
   // TODO remove when num instances is retrieved from db
