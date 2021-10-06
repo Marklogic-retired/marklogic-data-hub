@@ -126,7 +126,7 @@ describe("Mapping", () => {
     mappingStepDetail.successMessage().should("not.exist");
     // Test expresssions
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
-    mappingStepDetail.testMap().click();
+    mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.validateMapValue("Person", "id", "444-44-4440");
     mappingStepDetail.validateMapValue("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
     mappingStepDetail.getURIValue("Relation (relatedTo Person)").trigger("mouseover");

@@ -1,3 +1,9 @@
+@font-face {
+  font-family: 'MLCustomFont';
+  src: url('../../..//fonts/ML_IconFont.ttf') format('truetype');
+  src: url('../../../fonts/icomoon.ttf') format('truetype');
+}
+
 .legend {
   display: flex;
   justify-content: flex-start;
@@ -5,7 +11,16 @@
   margin-bottom: 15px;
   flex-wrap: wrap;
 
-  .legendText {
+  .foreignKeyLegendText {
+    font-size: 14px;
+    font-style: italic;
+    margin-right: 18px;
+    img, svg {
+      margin-right: 2px;
+    }
+  }
+
+  .multipleLegendText {
     font-size: 14px;
     margin-right: 18px;
     img, svg {
@@ -13,41 +28,41 @@
     }
   }
 
-  .legendTextLast {
+  .relationshipLegendText {
+    font-size: 14px;
+    font-style: italic;
+    margin-right: 18px;
+    margin-left: 23px;
+    img, svg {
+      margin-right: 2px;
+    }
+  }
+
+  .structuredLegendText {
     font-size: 14px;
     img, svg {
       margin-right: 2px;
-    }    
-  }
-
-  .hideLegendLink {
-    margin-left: 20px;
-  }
-
-  .relationshipLegendText {
-    font-size: 14px;
-    margin-right: 18px;
-    margin-left: 20px;
+    }
   }
 
   .modeledRelationshipIcon::before {
     content: "\e95e";
     font-family: MLCustomFont;
     font-size: 19px;
-    left: 9px;
+    margin-left: -26px;
     margin-top: -3px;
     color: #57c2da;
     position: absolute;
-  }
-  
-  .foreignKeyLegendText {
-    font-size: 14px;
-    margin-right: 18px;
+    padding-left: 25px;
   }
 
   .foreignKeyIcon {
     color: #37AA6C;
     font-size: 14px;
+  }
+
+  .relatedIcon {
+    margin-bottom: 4px
   }
 
   .structuredIcon {
@@ -58,4 +73,5 @@
   .arrayImage {
     margin-bottom: 4px
   }
+
 }

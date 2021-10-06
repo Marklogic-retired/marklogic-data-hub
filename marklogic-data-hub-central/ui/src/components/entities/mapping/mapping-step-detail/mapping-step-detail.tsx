@@ -5,8 +5,8 @@ import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faSearch, faCog, faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
-import {getInitialChars, convertDateFromISO, getLastChars, extractCollectionFromSrcQuery} from "../../../../util/conversionFunctions";
+import {faPencilAlt, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
+import {getInitialChars, convertDateFromISO, extractCollectionFromSrcQuery} from "../../../../util/conversionFunctions";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
@@ -22,7 +22,7 @@ import {MappingStep, StepType} from "../../../../types/curation-types";
 import {getMappingArtifactByMapName, updateMappingArtifact, getMappingFunctions, getMappingRefs} from "../../../../api/mapping";
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.config";
-import arrayIcon from "../../../../assets/icon_array.png";
+import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 import {paginationMapping, mappingColors} from "../../../../config/mapping.config";
@@ -679,12 +679,20 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
-    {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(mapData["sourceQuery"], 32, "...")}</div>}
-    {!editingURI ? <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)}
-      className={styles.uri}>{!showEditURIOption ? <span data-testid={"uri-edit"} className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 32, "...")}</span></span> :
-        <span className={styles.showingEditContainer}>URI: <span data-testid={"uri-edit"} className={styles.showingEditIcon}>{getLastChars(sourceURI, 32, "...")} <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}
-        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
-      <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/></span></div>}
+    {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {mapData["sourceQuery"]}</div>}
+    {!editingURI ?
+      <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>
+        {!showEditURIOption ?
+          <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>
+          :
+          <div><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}</span></span><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}/></i></div>}
+      </div>
+      :
+      <div className={styles.inputURIContainer}>URI:
+        <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-block", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
+          <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/>
+        </span>
+      </div>}
   </div> : "";
 
   const expandTableIcon = (
@@ -1384,27 +1392,20 @@ const MappingStepDetail: React.FC = () => {
 
       <div className={styles.srcDetails}>{srcDetails}</div>
       <div className={styles.mapContainer}>
-        <div className={styles.legend}>
-          <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
-            <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
-            <span className={styles.stepSettingsLabel}>Step Settings</span>
-          </div>
-          <span className={styles.clearTestIcons} id="ClearTestButtons">
-            <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
-                                Clear
-            </MLButton>
-                        &nbsp;&nbsp;
-            <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
-                                Test
-            </MLButton>
-          </span>
-          <span className={styles.modeledRelationshipIcon}/>
-          <div data-testid="relationshipIconLegend" className={styles.legendText}>Modeled Relationship</div>
-          <div data-testid="foreignKeyIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> <i>Foreign Key</i></div>
-          <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple Values</div>
-          <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+        <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
+          <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
+          <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
-
+        <span className={styles.clearTestIcons} id="ClearTestButtons">
+          <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+                                Clear
+          </MLButton>
+                        &nbsp;&nbsp;
+          <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(sourceURI)}>
+                                Test
+          </MLButton>
+        </span>
+        <div className={styles.legendContainer}><ModelingLegend/></div>
         <div className={styles.header}>
           {errorInSaving ? success() : <span className={styles.noMessage}></span>}
         </div>
