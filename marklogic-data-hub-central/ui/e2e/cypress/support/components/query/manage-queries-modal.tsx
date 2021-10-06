@@ -42,8 +42,12 @@ class ManageQuery {
     return cy.get("[data-icon=file-export]");
   }
 
-  getErrorMessage() {
+  getErrorMessageAnt() {
     return cy.get(".ant-form-explain");
+  }
+
+  getErrorMessage() {
+    return cy.get("[class*='validationError']");
   }
 
   getEditQueryIconForFirstRow() {

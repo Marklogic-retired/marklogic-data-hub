@@ -69,12 +69,12 @@ class GraphViewSidePanel {
     return cy.get(".ant-select-dropdown--single").click();
   }
 
-  getPropertyTypeIcon(icon:string, property:string) {
-    return cy.findByTestId(`${icon}-${property}`).trigger("mouseover");
+  getPropertyTypeIcon(icon: string, property: string) {
+    return cy.findByTestId(`${icon}-${property}`);
   }
 
-  getIconTooltip(tooltip: string) {
-    return cy.findByText(`${tooltip}`).should("be.visible");
+  getIconTooltip(property: string, tooltip: string) {
+    return cy.get(`#tooltip-${property}`).findByText(`${tooltip}`).should("be.visible");
   }
 }
 
