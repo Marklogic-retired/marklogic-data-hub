@@ -110,13 +110,18 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     // browsePage.getDatabaseButton("final").should("have.attr", "checked");
   });
   it("Verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations", () => {
-    toolbar.getLoadToolbarIcon().click();
-    toolbar.getModelToolbarIcon().click();
-    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitForAsyncRequest();
     confirmationModal.getNavigationWarnText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
-    toolbar.getRunToolbarIcon().click();
-    toolbar.getExploreToolbarIcon().click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
