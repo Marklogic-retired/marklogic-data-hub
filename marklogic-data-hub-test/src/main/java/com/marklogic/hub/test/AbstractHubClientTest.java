@@ -170,28 +170,21 @@ public abstract class AbstractHubClientTest extends TestObject {
     }
 
     protected void waitForQueryToBeTrue(HubClient hubClient, String query, String message){
-        boolean currentStatus;
+        boolean currentStatus = false;
         int attempts = 100;
-        boolean previousStatus = false;
         do{
             currentStatus = Boolean.parseBoolean(hubClient.getStagingClient().newServerEval().xquery(query).evalAs(String.class));
             if(currentStatus){
-                logger.info(message);
-            }
-            if(!currentStatus && previousStatus){
                 logger.info("Finished: " + message);
                 return;
-            }
-            else{
-                previousStatus = currentStatus;
+            } else {
+                logger.info(message);
             }
             attempts--;
             sleep(250);
         }
         while(attempts > 0);
-        if(currentStatus){
-            logger.warn(message + " is taking more than 25 seconds");
-        }
+        logger.warn(message + " is taking more than 25 seconds");
     }
 
     protected JsonNode getStagingDoc(String uri) {
