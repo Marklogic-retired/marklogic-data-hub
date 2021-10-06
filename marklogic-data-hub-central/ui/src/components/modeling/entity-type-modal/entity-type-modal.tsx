@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Input, Modal, Tooltip, Icon} from "antd";
+import {Input, Modal, Tooltip} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -360,7 +360,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             </div>
             <div className={"p-2 d-flex align-items-center"}>
               <Tooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13}/>
               </Tooltip>
             </div>
           </Col>

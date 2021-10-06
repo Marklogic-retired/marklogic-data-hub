@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Table, Icon, Input, Alert} from "antd";
+import {Table, Input, Alert} from "antd";
 import HCCheckbox from "../../../common/hc-checkbox/hc-checkbox";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
@@ -32,7 +32,7 @@ import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.c
 import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
-import {ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, Search, ExclamationCircleFill, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
@@ -711,7 +711,7 @@ const MappingStepDetail: React.FC = () => {
       :
       <div className={styles.inputURIContainer}>URI:
         <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-block", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
-          <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)}/>
+          <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} />
         </span>
       </div>}
   </div> : "";
@@ -1491,7 +1491,7 @@ const MappingStepDetail: React.FC = () => {
                         closable={false}
                         message={<span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br/><br/> <b>Error Details:</b> <br/> {interceptorExecutionError}</span>}
                         showIcon={true}
-                        icon={<Icon type="exclamation-circle" className={styles.interceptorFailureIcon} theme="filled"/>}
+                        icon={<ExclamationCircleFill className={styles.interceptorFailureIcon}/>}
                         type="info"
                       />
                     </div>
@@ -1504,7 +1504,7 @@ const MappingStepDetail: React.FC = () => {
                           closable={true}
                           message={<span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span>}
                           showIcon={true}
-                          icon={<Icon type="exclamation-circle" className={styles.interceptorSuccessIcon} theme="filled"/>}
+                          icon={<ExclamationCircleFill className={styles.interceptorSuccessIcon}/>}
                           type="info"
                         /> : null}
                       <div className={styles.sourceButtons}>

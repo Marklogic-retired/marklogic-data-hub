@@ -17,8 +17,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
 import HCDivider from "../common/hc-divider/hc-divider";
-import {ExclamationCircleFill} from "react-bootstrap-icons";
-import {CheckCircle} from "react-bootstrap-icons";
+import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 
 type Props = {
   openJobResponse: boolean;
@@ -123,11 +122,11 @@ const JobResponse: React.FC<Props> = (props) => {
         const stepIsFinished = stepResponse.stepEndTime && stepResponse.stepEndTime !== "N/A";
         if (stepIsFinished) {
           if (stepResponse.success) {
-            return <div className={styles.stepResponse} key={"success-" + index}><CheckCircle className={styles.successfulRun}/><strong className={styles.stepName}>{stepResponse.stepName}</strong></div>;
+            return <div className={styles.stepResponse} key={"success-" + index}><CheckCircleFill className={styles.successfulRun}/><strong className={styles.stepName}>{stepResponse.stepName}</strong></div>;
           } else {
             const errors = getErrors(stepResponse);
             return <div className={styles.errorStepResponse} key={"failed-" + index}>
-              <div><ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/> <strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
+              <div><ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unsuccessfulRun}/><strong className={styles.stepName}>{stepResponse.stepName}</strong></div>
               <Accordion className={"w-100"} flush>
                 <Accordion.Item eventKey={stepResponse.stepName + "-errors"}>
                   <div className={"p-0 d-flex"}>
@@ -153,7 +152,7 @@ const JobResponse: React.FC<Props> = (props) => {
           }
         } else {
           return <div className={styles.stepResponse} key={"running-" + index}>&nbsp;&nbsp;<strong className={styles.stepName}>{stepResponse.stepName || stepResponse.status}</strong> <span className={styles.running}>
-            <Spinner animation="border" data-testid="spinner" variant="primary" /> <span className={styles.runningLabel}>Running...</span>
+            <Spinner className="spinner-border-sm" animation="border" data-testid="spinner" variant="primary" /> <span className={styles.runningLabel}>Running...</span>
           </span></div>;
         }
       });
