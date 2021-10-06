@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter as Router} from "react-router-dom";
-import {render, fireEvent} from "@testing-library/react";
+import {render} from "@testing-library/react";
 import PropertiesTab from "./properties-tab";
 
 import {
@@ -23,23 +23,11 @@ describe("Graph Modeling Properties Tab Component", () => {
         />
       </Router>);
 
-    //Legend should be hidden by default with "Show Legend >>" link visible
-    expect(getByTestId("showLegendLink")).toBeInTheDocument();
-    expect(queryByTestId("relationshipIconLegend")).not.toBeInTheDocument();
-    expect(queryByTestId("foreignKeyIconLegend")).not.toBeInTheDocument();
-    expect(queryByTestId("multipleIconLegend")).not.toBeInTheDocument();
-    expect(queryByTestId("structuredIconLegend")).not.toBeInTheDocument();
-    expect(queryByTestId("hideLegendLink")).not.toBeInTheDocument();
+    //Legend should be visible
 
-    //toggle link to show legend
-    fireEvent.click(getByTestId("showLegendLink"));
-    expect(getByTestId("hideLegendLink")).toBeInTheDocument();
-    expect(queryByTestId("showLegendLink")).not.toBeInTheDocument();
     expect(queryByTestId("relationshipIconLegend")).toBeInTheDocument();
     expect(getByTestId("foreignKeyIconLegend")).toBeInTheDocument();
     expect(getByTestId("multipleIconLegend")).toBeInTheDocument();
     expect(getByTestId("structuredIconLegend")).toBeInTheDocument();
-    expect(getByTestId("hideLegendLink")).toBeInTheDocument();
-
   });
 });

@@ -150,7 +150,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     curatePage.dataPresent().should("be.visible");
     // Test the mappings
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
-    mappingStepDetail.testMap().click();
+    mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.validateMapValue("Order", "orderId", "10259");
     mappingStepDetail.validateMapValue("Order", "address", "");
     mappingStepDetail.validateMapValue("Order", "city", "Houston");
@@ -184,7 +184,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     // Open step details and switch to Advanced tab in step settings
     curatePage.openStepDetails(mapStep);
     cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
-    mappingStepDetail.testMap().click();
+    mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.validateMapValue("Order", "orderId", "10259");
     mappingStepDetail.stepSettingsLink().click();
     curatePage.switchEditAdvanced().click();

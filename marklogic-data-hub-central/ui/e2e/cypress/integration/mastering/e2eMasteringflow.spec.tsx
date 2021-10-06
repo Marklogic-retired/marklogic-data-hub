@@ -169,7 +169,7 @@ describe("Validate E2E Mastering Flow", () => {
     // Test the mappings
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));
     cy.waitUntil(() => mappingStepDetail.expandEntity()).click();
-    mappingStepDetail.testMap().click();
+    mappingStepDetail.testMap().click({force: true});
     mappingStepDetail.goBackToCurateHomePage();
   });
   it("Add Map step to existing flow Run", {defaultCommandTimeout: 120000}, () => {

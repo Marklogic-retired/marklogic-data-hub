@@ -18,9 +18,8 @@ import {ConfirmationType} from "../types/common-types";
 import {hubCentralConfig} from "../types/modeling-types";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
-import {faLayerGroup, faKey} from "@fortawesome/free-solid-svg-icons";
-import arrayIcon from "../assets/icon_array.png";
 import GraphView from "../components/modeling/graph-view/graph-view";
+import ModelingLegend from "../components/modeling/modeling-legend/modeling-legend";
 import {defaultModelingView} from "../config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
 
@@ -336,21 +335,7 @@ const Modeling: React.FC = () => {
               <div className={styles.header}>
                 <h1>Entity Types</h1>
                 <div className={styles.buttonContainer}>
-                  <div className={styles.legend}>
-                    <span className={styles.modeledRelationshipIcon}/>
-                    <div data-testid="relationshipIconLegend" className={styles.legendText}>Modeled Relationship
-                    </div>
-                    <div data-testid="foreignKeyIconLegend" className={styles.legendText}>
-                      <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey}/> Foreign Key
-                    </div>
-                    <div data-testid="multipleIconLegend" className={styles.legendText}><img
-                      className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple Values
-                    </div>
-                    <div data-testid="structuredIconLegend" className={styles.legendTextLast}>
-                      <FontAwesomeIcon className={styles.structuredIcon}
-                        icon={faLayerGroup}/> Structured Type
-                    </div>
-                  </div>
+                  <ModelingLegend/>
                   <div style={{float: "right"}}>
                     {canWriteEntityModel ?
                       <MLTooltip title={ModelingTooltips.addNewEntity}>

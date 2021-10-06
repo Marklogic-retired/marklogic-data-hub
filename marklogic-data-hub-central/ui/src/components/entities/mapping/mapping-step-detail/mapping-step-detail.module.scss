@@ -306,6 +306,7 @@ hr {
   display: inline-block;
 }
 .srcDetails {
+    z-index: 999;
     font-size: 14px;
     padding-left: 25px;
     margin-bottom: -50px;
@@ -351,7 +352,7 @@ hr {
 }
 .uriEditing{
     display: inline-block;
-    width: 265px;
+    width: auto;
 }
 
 .sourceQuery{
@@ -364,14 +365,16 @@ hr {
 
 .showingEditContainer{
   position: absolute;
-  margin-top: -4px;
 }
 .showingEditIcon{
-    padding: 5px 3px;
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 3px;
+    padding-left: 3px;
     border: 1px solid #E9F7FE;
     color: #394494;
 }
-.notShowingEditIcon{
+.notShowingEditContainer{
     padding-top: 10px;
     padding-right: 2.3em;
     padding-left: 3px;
@@ -379,6 +382,7 @@ hr {
 }
 
 .URItext{
+    margin-left: 4px;
     color: #394494;
 }
 
@@ -387,8 +391,9 @@ hr {
     color: #394494;
     background-color: #b9daed;
     padding: 5px 3px 5px 3px;
-    margin-bottom: -2px;
     margin-right: -3px;
+    margin-top: -4px;
+    margin-left: 13.75%;
     cursor: pointer;
 }
 
@@ -431,9 +436,8 @@ hr {
 
   .stepSettingsLink {
     position: absolute;
-    bottom: 75px;
-    padding-right: 27px;
-    right: 22px;
+    bottom: 93%;
+    right: 30px;
     color: #44499C;
     cursor: pointer;
     .stepSettingsLabel {
@@ -445,55 +449,18 @@ hr {
     }
 }
 
-.legend {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: -80px;
+
+.clearTestIcons{
+  right: 1.2%;
+  bottom: 87%;
+  padding-right: 10px;
+  position: absolute;
+}
+
+.legendContainer {
+  margin-bottom: -95px;
   padding-top: 20px;
-  padding-right: 40px;
+  padding-right: 55px;
+  left: 63%;
   position: relative;
-
-  .clearTestIcons{
-    bottom: 80%;
-    padding-right: 10px;
-    position: absolute;
-  }
-
-  .legendText {
-    font-size: 14px;
-    margin-right: 18px;
-    img, svg {
-      margin-right: 2px;
-    }
-  }
-
-
-  .modeledRelationshipIcon::before {
-    content: "\e95e";
-    font-family: MLCustomFont;
-    font-size: 19px;
-    margin-left: -26px;
-    margin-top: -3px;
-    color: #57c2da;
-    position: absolute;
-  }
-
-  .foreignKeyIcon {
-    color: #37AA6C;
-    font-size: 14px;
-  }
-
-  .relatedIcon {
-    margin-bottom: 4px
-  }
-
-  .structuredIcon {
-    color: #5B69AF;
-    font-size: 14px;
-  }
-
-  .arrayImage {
-    margin-bottom: 4px
-  }
-
 }
