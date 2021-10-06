@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
 import Flows from "../components/flows/flows";
-import {Modal, Icon} from "antd";
+import {Modal} from "antd";
 import {Accordion} from "react-bootstrap";
 import axios from "axios";
 import {AuthoritiesContext} from "../util/authorities";
@@ -13,8 +13,7 @@ import {MissingPagePermission} from "../config/messages.config";
 import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "../../src/components/job-response/job-response";
 import HCButton from "../components/common/hc-button/hc-button";
-import {ExclamationCircleFill} from "react-bootstrap-icons";
-
+import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 interface PollConfig {
     interval: number;
     retryLimit: number;
@@ -252,8 +251,8 @@ const Run = (props) => {
 
   function showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber) {
     Modal.success({
-      title: <div><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p></div>,
-      icon: <Icon type="check-circle" theme="filled"/>,
+      title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p>,
+      icon: <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle"/>,
       okText: "Close",
       okType: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ? "default" : stepType.toLowerCase() === "ingestion" ? "default" : "primary",
       mask: false,

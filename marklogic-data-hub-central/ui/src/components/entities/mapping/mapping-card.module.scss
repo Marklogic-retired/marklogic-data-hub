@@ -97,19 +97,23 @@
 }
 
 .disabledIcon {
-    font-size: 19px;
+    font-size: 20px;
     opacity: 0.5;
     padding-bottom: 2px;
     cursor: not-allowed !important;
 }
 
 .runIcon {
-    font-size: 19px;
-    padding-top: 2px;
+    font-size: 20px;
     &:hover{
         color: var(--hoverColor);
     }
+}
 
+.disabledRunIcon {
+    font-size: 20px;
+    opacity: 0.5;
+    cursor: not-allowed !important;
 }
 
 .flowSelectGrid {

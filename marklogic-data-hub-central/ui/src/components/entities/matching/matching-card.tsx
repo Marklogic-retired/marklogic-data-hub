@@ -1,6 +1,6 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Icon, Select, Modal, Tooltip} from "antd";
+import {Select, Modal, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,7 +18,7 @@ import HCDivider from "../../common/hc-divider/hc-divider";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
-import {PlusCircleFill} from "react-bootstrap-icons";
+import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 
 interface Props {
   matchingStepsArray: MatchingStep[];
@@ -345,12 +345,14 @@ const MatchingCard: React.FC<Props> = (props) => {
       props.canWriteMatchMerge ? (
         <Tooltip title={"Run"} placement="bottom">
           <i aria-label="icon: run">
-            <Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={step.name+"-run"} onClick={() => handleStepRun(step.name)}/></i>
+            <PlayCircleFill className={styles.runIcon} data-testid={step.name+"-run"} onClick={() => handleStepRun(step.name)}/>
+          </i>
         </Tooltip>
       ) : (
         <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
-          <i role="disabled-run-matching button" data-testid={step.name+"-disabled-run"}>
-            <Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i>
+          <i aria-label="icon: run">
+            <PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-matching button" data-testid={step.name+"-disabled-run"} onClick={(event) => event.preventDefault()}/>
+          </i>
         </Tooltip>
       ),
 
