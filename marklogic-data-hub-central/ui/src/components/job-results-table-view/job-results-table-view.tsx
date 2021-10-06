@@ -1,7 +1,6 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
-import {ClockCircleFilled, CheckCircleFilled} from "@ant-design/icons";
 import {Menu, Popover, Tooltip, Table} from "antd";
 import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -12,7 +11,7 @@ import JobResponse from "../job-response/job-response";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
-import {XCircleFill} from "react-bootstrap-icons";
+import {CheckCircleFill, ClockFill, XCircleFill} from "react-bootstrap-icons";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -74,14 +73,14 @@ const JobResultsTableView = (props) => {
         if (status === "running" || /^running/.test(status)) {
           return <>
             <HCTooltip text="Running" id="running-tooltip" placement="bottom">
-              <ClockCircleFilled data-testid= "progress" style={{color: "#5B69AF"}}/>
+              <ClockFill data-testid= "progress" style={{color: "#5B69AF"}}/>
             </HCTooltip>
           </>;
 
         } else if (status === "finished") {
           return <>
             <HCTooltip text="Completed Successfully" id="complete-success-tooltip" placement="bottom">
-              <CheckCircleFilled data-testid= "success" style={{color: "#389E0D"}}/>
+              <CheckCircleFill data-testid= "success" style={{color: "#389E0D"}}/>
             </HCTooltip>
           </>;
         } else {

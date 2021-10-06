@@ -1,5 +1,5 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Icon, Modal, Tooltip} from "antd";
+import {Modal, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
@@ -954,7 +954,7 @@ const Flows: React.FC<Props> = (props) => {
                       aria-label={"runStepDisabled-" + step.stepName}
                       data-testid={"runStepDisabled-" + stepNumber}
                     >
-                      <Icon type="play-circle" theme="filled" />
+                      <PlayCircleFill size={20}/>
                     </div>
                   }
                   {props.canWriteFlow ?
