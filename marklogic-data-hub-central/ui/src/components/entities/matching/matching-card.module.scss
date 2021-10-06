@@ -167,8 +167,7 @@ margin-bottom: 10px;
 }
 
 .runIcon {
-  font-size: 19px;
-  padding-top: 2px;
+  font-size: 20px;
     &:hover{
         color: var(--hoverColor);
     }
@@ -202,9 +201,8 @@ margin-bottom: 10px;
 }
 
 .disabledRunIcon {
-  font-size: 19px;
+  font-size: 20px;
   opacity: 0.5;
-  padding-bottom: 2px;
   cursor: not-allowed !important;
 }
 

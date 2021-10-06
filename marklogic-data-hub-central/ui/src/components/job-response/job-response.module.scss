@@ -20,11 +20,20 @@
         color: $danger;
     }
 
-  .unSuccessfulRun {
+  .successfulRun {
+    display: inline-block;
+    color: #008000;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 6px;
+  }
+
+  .unsuccessfulRun {
     display: inline-block;
     color: $danger;
     font-size: 20px;
     cursor: pointer;
+    margin-right: 6px;
   }
 
   .stepResponse {
