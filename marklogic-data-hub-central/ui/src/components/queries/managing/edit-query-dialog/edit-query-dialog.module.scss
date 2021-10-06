@@ -1,4 +1,4 @@
-@import "../../../../theme/HCVariables.scss";
+@import "../../../../theme/HCUtils.scss";
 
 .asterisk{
     color: $danger;
@@ -27,3 +27,7 @@
     font-size :14px;
     color: #333333;
 }
+
+.validationError {
+    @extend .validationError;
+  }
