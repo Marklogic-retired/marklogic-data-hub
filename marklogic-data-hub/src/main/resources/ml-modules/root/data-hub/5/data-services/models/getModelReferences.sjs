@@ -36,10 +36,10 @@ if (!entityModel) {
 }
 
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
-const entityModelUri = entityLib.getModelUri(entityName);
+const entityModelUris = [entityLib.getModelUri(entityName),entityLib.getDraftModelUri(entityName)];
 
 const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
-const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUri, entityTypeId);
+const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUris, entityTypeId);
 const entityNamesWithForeignKeyReferences = entityLib.findForeignKeyReferencesInOtherModels(entityModel, propertyName);
 const result = {stepNames, entityNames, entityNamesWithForeignKeyReferences};
 

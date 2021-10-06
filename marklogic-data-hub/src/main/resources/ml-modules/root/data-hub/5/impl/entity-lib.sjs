@@ -269,7 +269,7 @@ function findModelReferencesInSteps(entityName, entityTypeId) {
  * @returns {[]}
  */
 function entityModelsWithReferenceExcludingURIs(referencedEntity, excludedURIs) {
-  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery(getModelCollection()), cts.jsonPropertyValueQuery("$ref",referencedEntity)]), cts.documentQuery(excludedURIs));
+  const entityModelQuery = cts.andNotQuery(cts.andQuery([cts.collectionQuery([getModelCollection(),getDraftModelCollection()]), cts.jsonPropertyValueQuery("$ref",referencedEntity)]), cts.documentQuery(excludedURIs));
   return cts.search(entityModelQuery).toArray()
 }
 
@@ -282,36 +282,42 @@ function entityModelsWithReferenceExcludingURIs(referencedEntity, excludedURIs) 
  */
 function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
   const affectedModels = new Set();
-  const entityModels = entityModelsWithReferenceExcludingURIs(entityTypeId, entityModelUri);
-  entityModels.map(model => model.toObject())
-    .forEach(model => {
-      Object.keys(model.definitions)
-        .forEach(definition => {
-          const properties = model.definitions[definition].properties;
-          Object.keys(properties)
-            .some(property => {
-              if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
-                affectedModels.add(getModelName(model));
-              }
-            });
-        });
-    });
+  const entityModels = entityModelsWithReferenceExcludingURIs(entityTypeId, entityModelUri).map(model => model.toObject());
+  const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
+    entityModels
+      .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
+      .forEach(model => {
+        const modelName = getModelName(model);
+        Object.keys(model.definitions)
+          .forEach(definition => {
+            const properties = model.definitions[definition].properties;
+            Object.keys(properties)
+              .some(property => {
+                if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
+                  affectedModels.add(modelName);
+                }
+              });
+          });
+      });
 
   return [...affectedModels];
 }
 
 function findForeignKeyReferencesInOtherModels(entityModel, propertyName){
+  const affectedModels = new Set();
   const entityTypeId = getEntityTypeId(entityModel, entityModel.info.title);
   const queries = [];
-  queries.push(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION));
+  queries.push(cts.collectionQuery([getDraftModelCollection(),getModelCollection()]));
   queries.push(cts.jsonPropertyValueQuery("relatedEntityType", entityTypeId, "case-insensitive"));
   if(propertyName){
     queries.push(cts.jsonPropertyValueQuery("joinPropertyName", propertyName, "case-insensitive"));
   }
-  const entityModelsWithForeignKeyReferences = cts.search(cts.andQuery(queries)).toArray().map(entityModel =>{
-    return entityModel.toObject().info.title;
-  });
-  return entityModelsWithForeignKeyReferences;
+  const entityModels = cts.search(cts.andQuery(queries)).toArray().map(entityModel => entityModel.toObject());
+  const entityModelsToBeDeleted = entityModels.filter((model) => model.info.draftDeleted).map((model) => getModelName(model));
+  entityModels
+    .filter((model) => !entityModelsToBeDeleted.includes(getModelName(model)))
+    .forEach((model) => affectedModels.add(getModelName(model)));
+  return [...affectedModels];
 }
 
 /**
