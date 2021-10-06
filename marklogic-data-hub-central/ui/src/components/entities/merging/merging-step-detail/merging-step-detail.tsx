@@ -14,13 +14,12 @@ import {faTrashAlt, faCheck} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
-import {RightOutlined, DownOutlined} from "@ant-design/icons";
 import {Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import HCButton from "../../../common/hc-button/hc-button";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
@@ -422,9 +421,9 @@ const MergingStepDetail: React.FC = () => {
               expandIcon={(expandProps) => {
                 if (expandProps.record.priorityOrder) {
                   return (expandProps.expanded ? (
-                    <DownOutlined onClick={e => expandProps.onExpand(expandProps.record, e)} />
+                    <ChevronDown aria-label="down" onClick={e => expandProps.onExpand(expandProps.record, e)} />
                   ) : (
-                    <RightOutlined onClick={e => expandProps.onExpand(expandProps.record, e)} />
+                    <ChevronRight aria-label="right" onClick={e => expandProps.onExpand(expandProps.record, e)} />
                   )
                   );
                 } else { return (false); }

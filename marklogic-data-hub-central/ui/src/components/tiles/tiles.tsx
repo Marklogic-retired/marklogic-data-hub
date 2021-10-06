@@ -1,7 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import {Mosaic, MosaicWindow} from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
-import {CloseOutlined} from "@ant-design/icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import styles from "./tiles.module.scss";
@@ -16,7 +15,7 @@ import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
-import {ArrowsAngleContract, ArrowsAngleExpand} from "react-bootstrap-icons";
+import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
 
 interface Props {
   id: string;
@@ -184,7 +183,7 @@ const Tiles: React.FC<Props> = (props) => {
             <i className={styles.close} aria-label={"close"} style={{color: options["controlColor"]}} tabIndex={0}
               onClick={onClickClose} onMouseDown={onClickClose} onKeyDown={onKeyDownClose}>
               <HCTooltip text="Close" id="close-tooltip" placement="bottom">
-                <CloseOutlined />
+                <XLg aria-label="close"/>
               </HCTooltip>
             </i>
           ) : null}

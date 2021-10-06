@@ -170,8 +170,7 @@
 }
 
 .runIcon {
-  font-size: 19px;
-  padding-top: 2px;
+  font-size: 20px;
   &:hover{
       color: var(--hoverColor);
     }
@@ -205,10 +204,8 @@
 }
 
 .disabledRunIcon {
-  font-size: 19px;
-  opacity: 0.5;
-  padding-bottom: 2px;
-  cursor: not-allowed !important;
+  font-size: 20px;
+  opacity: 0.5;  cursor: not-allowed !important;
 }
 
 .stepDetails{
