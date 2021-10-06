@@ -1,13 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
 import {Modal, Input, Select, Icon, Card, Dropdown, Tooltip} from "antd";
-import {DownOutlined} from "@ant-design/icons";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
 import oneToOneIcon from "../../../../assets/one-to-one.svg";
-import {faTrashAlt, faChevronDown, faChevronRight} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt, faExclamationCircle, faChevronDown, faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
@@ -20,8 +19,7 @@ import {
   EntityModified
 } from "../../../../types/modeling-types";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import {QuestionCircleFill} from "react-bootstrap-icons";
-import {faExclamationCircle} from "@fortawesome/free-solid-svg-icons";
+import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
 import HCButton from "../../../common/hc-button/hc-button";
 
 type Props = {
@@ -642,7 +640,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
               <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
                 <span className={styles.dropdownArrow}>
                   {
-                    <DownOutlined data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
+                    <ChevronDown className={styles.dropdownMenuIcon} data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
                   }
                 </span>
               </Dropdown>

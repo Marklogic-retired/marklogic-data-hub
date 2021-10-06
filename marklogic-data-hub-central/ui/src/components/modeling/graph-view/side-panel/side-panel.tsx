@@ -3,8 +3,7 @@ import styles from "./side-panel.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
-import {CloseOutlined} from "@ant-design/icons";
-import {Menu, Form, Input, Tooltip, Icon} from "antd";
+import {Menu, Form, Input} from "antd";
 import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
@@ -14,7 +13,7 @@ import graphConfig from "../../../../config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
 
 type Props = {
   entityTypes: any;
@@ -282,17 +281,17 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
           {!props.canWriteEntityModel && props.canReadEntityModel ?
             <div>
-              <span className={styles.editIconContainer}><Tooltip title={SecurityTooltips.missingPermission} placement={"top"}><FontAwesomeIcon icon={faPencilAlt} size="sm" className={styles.editIconReadOnly} data-testid={"edit-color-icon-disabled"}/></Tooltip></span>
-              <Tooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </Tooltip>
+              <span className={styles.editIconContainer}><HCTooltip text={SecurityTooltips.missingPermission} id="color-selector" placement="top"><FontAwesomeIcon icon={faPencilAlt} size="sm" className={styles.editIconReadOnly} data-testid={"edit-color-icon-disabled"}/></HCTooltip></span>
+              <HCTooltip text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} id="color-selector-disabled" placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
+              </HCTooltip>
             </div>
             :
             <div>
               <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
-              <Tooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </Tooltip>
+              <HCTooltip text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} id="color-selector" placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon}/>
+              </HCTooltip>
             </div>
           }
         </div>
@@ -324,7 +323,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         </HCTooltip></span>
         <span><i className={styles.close} aria-label={"closeGraphViewSidePanel"}
           onClick={props.onCloseSidePanel}>
-          <CloseOutlined />
+          <XLg />
         </i></span>
       </div>
       <div className={styles.tabs}>

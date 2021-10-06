@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Form, Input, Icon, Radio, AutoComplete, Tooltip, Popover} from "antd";
+import {Form, Input, Radio, AutoComplete, Tooltip, Popover} from "antd";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
@@ -9,7 +9,7 @@ import {StepType} from "../../../types/curation-types";
 import {CurationContext} from "../../../util/curation-context";
 import HCAlert from "../../common/hc-alert/hc-alert";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-import {QuestionCircleFill} from "react-bootstrap-icons";
+import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import HCButton from "../../common/hc-button/hc-button";
 import {FormControl} from "react-bootstrap";
 
@@ -556,11 +556,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
             <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip" />
           </HCTooltip>
 
-          {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
+          {selectedSource === "collection" ? <div><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
             dataSource={collectionOptions}
             aria-label="collection-input"
-            placeholder={<span>Enter collection name<Icon className={styles.searchIcon} type="search" theme="outlined" /></span>}
+            placeholder={<span>Enter collection name<Search className={styles.searchIcon} /></span>}
             value={collections}
             disabled={!props.canReadWrite}
             onSearch={handleSearch}
@@ -569,7 +569,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
             onBlur={sendPayload}
           >
             {/* {collectionsList} */}
-          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined" /> : ""}</span></div> : <span>
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ?  <Search className={styles.searchIcon} /> : ""}</span></div> : <span>
             <FormControl as="textarea"
               id="srcQuery"
               placeholder="Enter source query"

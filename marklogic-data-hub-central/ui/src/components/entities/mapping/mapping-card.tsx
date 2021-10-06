@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./mapping-card.module.scss";
-import {Icon, Modal, Select, Tooltip} from "antd";
+import {Modal, Select, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -15,7 +15,7 @@ import {getViewSettings, setViewSettings} from "../../../util/user-context";
 import HCDivider from "../../common/hc-divider/hc-divider";
 import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
-import {PlusCircleFill} from "react-bootstrap-icons";
+import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 
 const {Option} = Select;
 
@@ -393,7 +393,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     actions={[
                       <Tooltip title={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openMapStepDetails(elem.name, index)} data-testid={`${elem.name}-stepDetails`} /></i></Tooltip>,
                       <Tooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name + "-edit"} onClick={() => OpenStepSettings(index)} /></i></Tooltip>,
-                      props.canReadWrite ? <Tooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name + "-run"} onClick={() => handleStepRun(elem.name)} /></i></Tooltip> : <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name + "-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon} /></i></Tooltip>,
+                      props.canReadWrite ? <Tooltip title={"Run"} placement="bottom"><i aria-label="icon:run"><PlayCircleFill className={styles.runIcon} data-testid={elem.name + "-run"} onClick={() => handleStepRun(elem.name)} /></i></Tooltip> : <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i aria-label="icon: run"><PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-mapping button" data-testid={elem.name + "-disabled-run"} onClick={(event) => event.preventDefault()}/></i></Tooltip>,
                       props.canReadWrite ? <Tooltip title={"Delete"} placement="bottom"><i key="last" role="delete-mapping button" data-testid={elem.name + "-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" /></i></Tooltip> : <Tooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-delete-mapping button" data-testid={elem.name + "-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg" /></i></Tooltip>,
                     ]}
                     className={styles.cardStyle}
