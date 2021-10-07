@@ -1,4 +1,5 @@
 const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
+const coreSjs = require('/data-hub/5/mapping-functions/core.sjs');
 const test = require("/test/test-helper.xqy");
 
 function testMemoryLookup() {
@@ -12,7 +13,17 @@ function testMemoryLookup() {
     test.assertEqual("world", core.memoryLookup('AnObject', dictionary).hello),
 
     // invalid JSON
-    test.assertThrowsError(xdmp.function(xs.QName('core.memoryLookup')), 'val',"{'not valid': ''}", null)
+    test.assertThrowsError(xdmp.function(xs.QName('core.memoryLookup')), 'val',"{'not valid': ''}", null),
+
+    test.assertEqual('Non-Binary', coreSjs.memoryLookup('NB', dictionary)),
+    test.assertEqual('Woman', coreSjs.memoryLookup('W', dictionary)),
+    test.assertEqual('Man', coreSjs.memoryLookup('m', dictionary)),
+    test.assertEqual(3, coreSjs.memoryLookup("Number", dictionary)),
+    test.assertEqual(null, coreSjs.memoryLookup('none', dictionary)),
+    test.assertEqual("world", coreSjs.memoryLookup('AnObject', dictionary).hello),
+
+    // invalid JSON
+    test.assertThrowsError(xdmp.function(xs.QName('coreSjs.memoryLookup')), 'val',"{'not valid': ''}", null)
   ];
 }
 
