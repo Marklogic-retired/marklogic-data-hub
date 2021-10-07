@@ -1,11 +1,11 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Popover, Input, Checkbox} from "antd";
+import {Popover, Checkbox} from "antd";
 import styles from "./pop-over-search.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
-
+import HCInput from "../common/hc-input/hc-input";
 interface Props {
   referenceType: string;
   entityTypeId: any;
@@ -107,7 +107,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const content = (
     <div className={styles.popover}>
-      <Input placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
+      <HCInput placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
       <div className={styles.scrollOptions}>
         {renderCheckBoxGroup}
       </div>
@@ -120,6 +120,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   return (
     <Popover
+      style={{padding: "40px !important", backgroundColor: "red !important"}}
       placement="leftTop"
       content={content}
       trigger="click"

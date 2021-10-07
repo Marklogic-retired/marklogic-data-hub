@@ -1,3 +1,5 @@
+@import ".../../../../theme/HCTheme.scss"; 
+
 .container {
     display: flex;
     flex-direction: column;
@@ -169,7 +171,7 @@
 
   .searchBar {
     top: -1px;
-    width: 700px;
+    width: 700px !important;
   }
 
   .querySelector {
@@ -178,4 +180,19 @@
 
   .iconDropdownContainer {
     display: flex;
+  }
+
+  .selectEntityMenu > div {
+    background-color: $info;
+    border-color: $info; 
+  }
+
+  .selectEntityMenu:focus > div {
+    box-shadow: none;
+    border: 0px;
+  }
+
+  .selectEntityMenu:hover > div {
+    box-shadow: none;
+    border-color: $info; 
   }

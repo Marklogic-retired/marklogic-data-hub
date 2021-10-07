@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Table, Input, Alert} from "antd";
+import {Table, Alert} from "antd";
 import HCCheckbox from "../../../common/hc-checkbox/hc-checkbox";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
@@ -33,6 +33,7 @@ import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
 import {ChevronDown, ChevronRight, Search, ExclamationCircleFill, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
+import HCInput from "../../../common/hc-input/hc-input";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -697,7 +698,7 @@ const MappingStepDetail: React.FC = () => {
       </div>
       :
       <div className={styles.inputURIContainer}>URI:
-        <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-block", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
+        <span><HCInput data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-flex", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></HCInput>&nbsp;
           <XLg aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<CheckSquare aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} />
         </span>
       </div>}
@@ -877,17 +878,18 @@ const MappingStepDetail: React.FC = () => {
   const getColumnFilterProps = dataIndex => ({
     filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
       <div className={styles.filterContainer}>
-        <Input
+        <HCInput
           ref={node => {
             searchInput = node;
           }}
-          data-testid={`searchInput-${dataIndex}`}
+          dataTestid={`searchInput-${dataIndex}`}
           placeholder={`Search name`}
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
+          onPressEnter={(enter) => enter ? selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false : null}
           className={styles.searchInput}
         />
+        <div style={{height: 8}}></div>
         <HCButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} variant="outline-light" size="sm" className={styles.resetButton}>Reset</HCButton>
         <HCButton
           data-testid={`submitSearch-${dataIndex}`}
