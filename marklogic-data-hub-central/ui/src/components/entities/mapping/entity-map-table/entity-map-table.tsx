@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Popover, Input, Select, Modal, Tooltip} from "antd";
+import {Table, Popover, Input, Select, Modal, Tooltip, Icon} from "antd";
 import Spinner from "react-bootstrap/Spinner";
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -20,7 +20,7 @@ import StepsConfig from "../../../../config/steps.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
-
+import {FormControl} from "react-bootstrap";
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -70,7 +70,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
   const {Option} = Select;
-  const {TextArea} = Input;
   let searchInput: any;
   let tempMapExp: any = {};
   let mapExpUI: any = {};
@@ -429,7 +428,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           size="sm"
           className={styles.searchSubmitButton}
         >
-          <Search className={styles.searchIcon}/> Search
+          <Search className={styles.searchIcon} /> Search
         </HCButton>
       </div>
     ),
@@ -937,7 +936,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       propName={sourcePropName}
       handleDropdownMenu={handleSourceList}
       indentList={sourceIndentForDropDown}
-      modelling={false}/>
+      modelling={false} />
   );
 
   const sourceDropdown = (row) => {
@@ -1027,7 +1026,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           size="sm"
           variant="outline-light">
           <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
-         fx
+            fx
           </Tooltip>
         </Dropdown.Toggle>
 
@@ -1111,7 +1110,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight/> : <ChevronDown/>}</a>
+    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight /> : <ChevronDown />}</a>
   );
 
   const topRowDetails = (
@@ -1299,7 +1298,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   &nbsp;<Popover
                     content={contextHelp}
                     trigger="click"
-                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
                   </Popover>
                 </span>
               }
@@ -1308,7 +1307,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   &nbsp;<Popover
                     content={uriHelp}
                     trigger="click"
-                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
                   </Popover>
                 </span>
               }
@@ -1332,53 +1331,53 @@ const EntityMapTable: React.FC<Props> = (props) => {
           let completeRelationshipTooltip = ModelingTooltips.completeRelationship(relatedEntityName, props.entityTypeTitle);
           let incompleteRelationshipTooltip = ModelingTooltips.relationshipNoForeignKey(relatedEntityName, props.entityTypeTitle);
           renderText =
-          <span className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
-            {expanded && row.joinPropertyName !== "" ?
-              //if multiple and has foreign key, show context help
-              <div className={styles.typeContainer}>
-                <div className={styles.typeContextContainer}>
-                  <span className={styles.typeContext}>Context</span>&nbsp;
-                  <Popover
-                    content={contextHelp}
-                    trigger="click"
-                    placement="right">
-                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                  </Popover>
-                  <p className={styles.typeText}>{dType}</p>
+            <span className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
+              {expanded && row.joinPropertyName !== "" ?
+                //if multiple and has foreign key, show context help
+                <div className={styles.typeContainer}>
+                  <div className={styles.typeContextContainer}>
+                    <span className={styles.typeContext}>Context</span>&nbsp;
+                    <Popover
+                      content={contextHelp}
+                      trigger="click"
+                      placement="right">
+                      <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                    </Popover>
+                    <p className={styles.typeText}>{dType}</p>
+                  </div>
                 </div>
-              </div>
-              :
-              row.joinPropertyName !== "" ?
-                renderText //show data type if not multiple but has foreign key
                 :
-                renderText = relatedEntityName //if no foreign key
-            }
-            {row.joinPropertyName !== "" ?
-              //icons if relationship is complete with a foreign key
-              <div className={styles.dualIconsContainer}>
-                <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
-                  <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name}/>
-                </HCTooltip>
-                <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom">
-                  <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name}/>
-                </HCTooltip>
-              </div>
-              :
-              //icon if relationship but no foreign key
-              <div className={styles.singleIconContainer}>
-                <HCTooltip className={styles.relationshipTooltip} text={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
-                  <span className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle} data-testid={"relationship-" + row.name}/>
-                </HCTooltip>
-              </div>
-            }
-          </span>;
+                row.joinPropertyName !== "" ?
+                  renderText //show data type if not multiple but has foreign key
+                  :
+                  renderText = relatedEntityName //if no foreign key
+              }
+              {row.joinPropertyName !== "" ?
+                //icons if relationship is complete with a foreign key
+                <div className={styles.dualIconsContainer}>
+                  <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
+                    <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name} />
+                  </HCTooltip>
+                  <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom">
+                    <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
+                  </HCTooltip>
+                </div>
+                :
+                //icon if relationship but no foreign key
+                <div className={styles.singleIconContainer}>
+                  <HCTooltip className={styles.relationshipTooltip} text={incompleteRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
+                    <span className={expanded ? styles.modeledRelationshipIcon : styles.modeledRelationshipIconSingle} data-testid={"relationship-" + row.name} />
+                  </HCTooltip>
+                </div>
+              }
+            </span>;
         }
         return {
           children: <div className={styles.typeContainer}>
             {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
               content={contextHelp}
               trigger="click"
-              placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext}/></Popover><p className={styles.typeText}>{dType}</p></div> : renderText}
+              placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} /></Popover><p className={styles.typeText}>{dType}</p></div> : renderText}
           </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
         };
       }
@@ -1399,54 +1398,61 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           if (row.key > 100 && row.name !== "more" && row.name !== "less") {
             if (row.name === "Context" && !row.isProperty) {
-              return {children: <div className={!directRelation ? styles.relatedMapExpParentContainer: styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <TextArea
-                  id={"mapexpression"+row.name.split("/").pop()}
-                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
-                  style={mapExpressionStyle(row.name, false)}
-                  onClick={handleClickInTextArea}
-                  value={expressionContext}
-                  onChange={(e) => handleExpressionContext(row, e)}
-                  onBlur={handleExpSubmit}
-                  autoSize={{minRows: 1}}
-                  disabled={!props.canReadWrite}></TextArea>
-                <span>{sourceDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
+              return {
+                children: <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+                  <FormControl as="textarea"
+                    id={"mapexpression" + row.name.split("/").pop()}
+                    data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                    style={mapExpressionStyle(row.name, false)}
+                    onClick={handleClickInTextArea}
+                    value={expressionContext}
+                    onChange={(e) => handleExpressionContext(row, e)}
+                    onBlur={handleExpSubmit}
+                    disabled={!props.canReadWrite}
+                    className={styles.genericTextArea}
+                  />
+                  <span>{sourceDropdown(row)}</span>
+                </div>
+                {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}
+              };
             } else if (row.name === "URI" && !row.isProperty) {
-              return {children: <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <TextArea
-                  id={"mapexpression"+row.name.split("/").pop()}
-                  data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop()+`-mapexpression`}
-                  style={mapExpressionStyle(row.name, false)}
-                  onClick={handleClickInTextArea}
-                  value={uriExpression}
-                  onChange={(e) => handleUri(row, e)}
-                  onBlur={handleExpSubmit}
-                  autoSize={{minRows: 1}}
-                  disabled={!props.canReadWrite}></TextArea>
-                <span>{sourceDropdown(row)}</span>
-                <span>{functionDropdown(row)}</span>
-                <span>{refDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name+"-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}};
+              return {
+                children: <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+                  <FormControl as="textarea"
+                    id={"mapexpression" + row.name.split("/").pop()}
+                    data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
+                    style={mapExpressionStyle(row.name, false)}
+                    onClick={handleClickInTextArea}
+                    value={uriExpression}
+                    onChange={(e) => handleUri(row, e)}
+                    onBlur={handleExpSubmit}
+                    disabled={!props.canReadWrite}
+                    className={styles.genericTextArea} />
+                  <span>{sourceDropdown(row)}</span>
+                  <span>{functionDropdown(row)}</span>
+                  <span>{refDropdown(row)}</span>
+                </div>
+                {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}
+              };
             } else {
-              return {children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <TextArea
-                  id={"mapexpression"+row.name.split("/").pop()}
-                  data-testid={row.name.split("/").pop()+"-mapexpression"}
-                  style={mapExpressionStyle(row.name, true)}
-                  onClick={handleClickInTextArea}
-                  value={mapExp[row.name]}
-                  onChange={(e) => handleMapExp(row, e)}
-                  onBlur={handleExpSubmit}
-                  autoSize={{minRows: 1}}
-                  disabled={!props.canReadWrite}></TextArea>
-                <span>{sourceDropdown(row)}</span>
-                <span>{functionDropdown(row)}</span>
-                <span>{refDropdown(row)}</span>
-              </div>
-              {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>, props: {colSpan: 1}
+              return {
+                children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
+                  <FormControl as="textarea"
+                    id={"mapexpression" + row.name.split("/").pop()}
+                    data-testid={row.name.split("/").pop() + "-mapexpression"}
+                    style={mapExpressionStyle(row.name, true)}
+                    onClick={handleClickInTextArea}
+                    value={mapExp[row.name]}
+                    onChange={(e) => handleMapExp(row, e)}
+                    onBlur={handleExpSubmit}
+                    disabled={!props.canReadWrite}
+                    className={styles.genericTextArea}
+                  />
+                  <span>{sourceDropdown(row)}</span>
+                  <span>{functionDropdown(row)}</span>
+                  <span>{refDropdown(row)}</span>
+                </div>
+                {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>, props: {colSpan: 1}
               };
             }
           } else if (row.name !== "more" && row.name !== "less") {
