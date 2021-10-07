@@ -1,9 +1,9 @@
-
 import React, {useState, useEffect} from "react";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import {XCircleFill} from "react-bootstrap-icons";
-import styles from "./hc-input.module.scss";
+import {XCircleFill, Search} from "react-bootstrap-icons";
+import styles from "./hc-search.module.scss";
+
 interface Props {
   id?: string;
   value?: any;
@@ -31,9 +31,11 @@ interface Props {
   error?: boolean;
   errorMessage?: string;
   classNameErrorMessage?: string;
+  enterButton?: boolean | React.ReactNode;
+  onSearch?: any;
 }
 
-function HCInput(props: Props) {
+function HCSearch(props: Props) {
 
   const [showIconClear, setShowIconClear] = useState(false);
   const [count, setCount] = useState(0);
@@ -70,7 +72,7 @@ function HCInput(props: Props) {
     if (onBlur) { onBlur(event); }
   };
 
-  useEffect(() => { if (props?.value) setMessage(props.value); }, [props?.value]);
+  useEffect(() => { if (props?.value) { setMessage(props.value); if (props?.allowClear) { setShowIconClear(true); } } }, [props?.value]);
 
   return (
     <>
@@ -90,18 +92,18 @@ function HCInput(props: Props) {
           id={props?.id}
           value={message}
           className={[props?.classNameFull, styles.noBorders].join(" ")}
-          style={{paddingLeft: 5}}
+          style={{paddingLeft: 10, fontSize: 16}}
           size={props?.size}
           placeholder={props?.placeholder}
           type={props?.type}
           min={props?.min}
           aria-label={props?.ariaLabel}
-          data-testid={props?.dataTestid ? props.dataTestid : "hc-input-component"}
+          data-testid={props?.dataTestid ? props.dataTestid : "hc-inputSearch-component"}
           data-cy={props?.dataCy}
           onBlur={(event) => handleOnBlur(event, props?.onBlur)}
           onFocus={(event) => handleOnFocus(event, props?.onFocus)}
           onChange={(event) => handleMessage(event, props?.onChange)}
-          onKeyPress={(event) => props?.onPressEnter ? handleKeyPressEnter(event) ? props?.onPressEnter(true) : false : props?.onKeyPress}
+          onKeyPress={(event) => props?.onPressEnter ? handleKeyPressEnter(event) ? props?.onPressEnter(true, message) : false : props?.onKeyPress}
           ref={props?.ref}
           disabled={props?.disabled}
         />
@@ -110,24 +112,37 @@ function HCInput(props: Props) {
           style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
           className={[props.classNameFull, styles.noBorders].join(" ")}
         >
-          {showIconClear ? <XCircleFill className={styles.cleanIcon} onClick={() => { if (showIconClear) setMessage(""); setShowIconClear(false); }} data-testid={"hc-input-allowClear"} />
+          {showIconClear ? <XCircleFill className={styles.cleanIcon} onClick={() => { if (showIconClear) setMessage(""); setShowIconClear(false); return props?.onSearch(""); }} data-testid={"hc-input-allowClear"} />
             : <XCircleFill className={styles.cleanIconHide} />}</InputGroup.Text>
         }
 
-        {!props?.allowClear && !props?.disabled && props?.error && <InputGroup.Text
+        {!props?.allowClear && !props?.disabled && <InputGroup.Text
           style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
           className={[props.classNameFull, styles.noBorders].join(" ")}
         >
-          {props?.error && !showIconClear? <XCircleFill className={styles.warningIcon} />
+          {props?.error && !showIconClear ? <XCircleFill className={styles.warningIcon} />
             : null}</InputGroup.Text>
         }
 
         {props?.suffix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-suffix"} >
           {props.suffix}</InputGroup.Text> : null}
+
+        {<InputGroup.Text style={{backgroundColor: !props?.disabled && props?.enterButton ? "#394494" : "transparent", cursor: "pointer"}}
+          className={[props.classNameFull, styles.noBorders, !props?.enterButton ? "" : props?.enterButton === true ? styles.enterButton : styles.searchWord].join(" ")}
+          data-testid={"hc-inputSearch-btn"}
+          onClick={() => props?.onSearch ? props?.onSearch(message) : false}
+        >
+          {props?.enterButton === true ?
+            <Search className={styles.searchIcon} data-testid={"hc-inputSearch-btn1"} />
+            : props?.enterButton ? props?.enterButton :
+              <Search className={styles.searchIconGrey} data-testid={"hc-inputSearch-btn2"} />
+          }
+        </InputGroup.Text>}
+
       </InputGroup>
       {props?.errorMessage && !showIconClear && <span className={[styles.errorMessage, props?.classNameErrorMessage].join(" ")}>{props.errorMessage}</span>}
     </>
   );
 }
 
-export default HCInput;
+export default HCSearch;

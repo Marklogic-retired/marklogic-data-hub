@@ -57,7 +57,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getStagingDatabaseButton().click();
     cy.waitForAsyncRequest();
     browsePage.search("Adams");
-    cy.get(".ant-input-search-button").click();
+    cy.get("[data-testid='hc-inputSearch-btn']").click();
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "Adams");

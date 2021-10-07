@@ -18,3 +18,28 @@
 .iconDropdownContainer {
   display: flex;
 }
+
+.selectEntityMenu > div {
+  background-color: #5B69AF;
+  border-color: #5B69AF;
+  height: 100% !important;
+}
+
+.selectEntityMenu:focus > div {
+  box-shadow: none;
+  border: 0px;
+}
+
+.selectEntityMenu:hover > div {
+  box-shadow: none;
+  border-color: #5B69AF; 
+}
+
+.selectEntityMenu > div > div{
+height: 100%;
+display: flex;
+align-items: center;
+}
+
+.colors {
+background-color: "blue !important";  }
