@@ -2496,7 +2496,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     expect(getByText("/dummy/uri/person-101.json")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("uri-edit"));
     fireEvent.click(getByTestId("pencil-icon"));
-    fireEvent.change(getByTestId("uri-input"), {target: {value: "/dummy/uri/person-102.json"}});
+    fireEvent.change(getByTestId("hc-input-component"), {target: {value: "/dummy/uri/person-102.json"}});
     fireEvent.click(getByLabelText("icon: close"));
     expect(getByText("/dummy/uri/person-101.json")).toBeInTheDocument();
 
@@ -2504,7 +2504,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     expect(getByText("/dummy/uri/person-101.json")).toBeInTheDocument();
     fireEvent.mouseOver(getByTestId("uri-edit"));
     fireEvent.click(getByTestId("pencil-icon"));
-    fireEvent.change(getByTestId("uri-input"), {target: {value: "/dummy/uri/person-102.json"}});
+    fireEvent.change(getByTestId("hc-input-component"), {target: {value: "/dummy/uri/person-102.json"}});
     fireEvent.click(getByLabelText("icon: check"));
     await (waitForElement(() => getByText("/dummy/uri/person-102.json")));
     expect(getByText("/dummy/uri/person-102.json")).toBeInTheDocument();

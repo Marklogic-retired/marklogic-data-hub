@@ -2,7 +2,9 @@
   height: auto;
   max-height: 400px;
   overflow-y: auto;
-  overflow-x: hidden
+  overflow-x: hidden;
+  border: '1px solid #d9d9d9 !important';
+  border-radius: 4px !important;
 }
 
 .checkIcon {
@@ -28,4 +30,8 @@ hr {
 .scrollOptions {
   overflow: auto;
   height: 79px;
+}
+
+.ant-popover-inner-content {
+  padding: 0px;
 }

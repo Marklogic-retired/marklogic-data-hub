@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {Card, Select, Input, Radio, Tooltip} from "antd";
+import {Card, Select, Radio, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import styles from "./zero-state-explorer.module.scss";
@@ -12,6 +12,7 @@ import tiles from "../../config/tiles.config";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCCard from "../common/hc-card/hc-card";
 import HCButton from "../common/hc-button/hc-button";
+import HCInput from "../common/hc-input/hc-input";
 
 const ZeroStateExplorer = (props) => {
   const {
@@ -90,8 +91,9 @@ const ZeroStateExplorer = (props) => {
 
   const entityMenu = (
     <Select
+      className={styles.selectEntityMenu}
       defaultValue="All Entities"
-      style={{width: 250}}
+      style={{width: 250, borderRadius: "4px 0px 0px 4px"}}
       id="entity-select"
       data-testid="entity-select"
       value={dropDownValue}
@@ -182,14 +184,14 @@ const ZeroStateExplorer = (props) => {
                 <Row>
                   <Col xs={12}>
                     <div className={styles.input}>
-                      <Input
+                      <HCInput
                         className={styles.searchBar}
                         placeholder="Enter text to search for"
                         addonBefore={entityMenu}
                         onChange={onChange}
                         allowClear
-                        data-cy="search-bar"
-                        data-testid="search-bar"
+                        dataCy="search-bar"
+                        dataTestid="search-bar"
                       />
                     </div>
                   </Col>
