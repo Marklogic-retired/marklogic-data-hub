@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Input, Radio, Table, Switch} from "antd";
+import {Radio, Table, Switch} from "antd";
 import {useHistory} from "react-router-dom";
 import {Row, Col, Accordion, Card} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -29,6 +29,7 @@ import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import styles from "./matching-step-detail.module.scss";
 import {DropdownButton, Dropdown} from "react-bootstrap";
+import HCInput from "../../../common/hc-input/hc-input";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -100,7 +101,8 @@ const MatchingStepDetail: React.FC = () => {
   const [uris, setUris] = useState<string[]>([]);
   const [previewMatchedData, setPreviewMatchedData] = useState(-1);
   const [expandRuleset, setExpandRuleset] = useState(false);
-
+  const [colourElementAdded, setColourElementAdded] = useState(false);
+  const [colourElementAdded2, setColourElementAdded2] = useState(false);
 
   //To handle timeline display
   const [rulesetItems, setRulesetItems] = useState<any[]>([]);
@@ -149,6 +151,9 @@ const MatchingStepDetail: React.FC = () => {
       toggleDisplayRulesetTimeline(false);
     }*/
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
+
+  useEffect(() => { setColourElementAdded(false); }, [uriContent]);
+  useEffect(() => { setColourElementAdded2(false); }, [uriContent2]);
 
   const handleMatchingActivity = async (matchStepName) => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
@@ -249,9 +254,9 @@ const MatchingStepDetail: React.FC = () => {
       let data = [...UriTableData];
       data.push({uriContent});
       setUriTableData(data);
-      setUriContent("");
       setDuplicateUriWarning(false);
       setSingleUriWarning(false);
+      setColourElementAdded(true);
     }
   };
 
@@ -271,9 +276,9 @@ const MatchingStepDetail: React.FC = () => {
       let data = [...UriTableData2];
       data.push({uriContent2});
       setUriTableData2(data);
-      setUriContent2("");
       setDuplicateUriWarning2(false);
       setSingleUriWarning2(false);
+      setColourElementAdded2(true);
     }
   };
 
@@ -836,15 +841,18 @@ const MatchingStepDetail: React.FC = () => {
                     <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                   </HCTooltip><br />
                 </span>
-                <Input
-                  placeholder="Enter URI or Paste URIs"
-                  className={styles.uriInput}
-                  value={uriContent}
-                  onChange={handleUriInputChange}
-                  aria-label="UriOnlyInput"
-                  disabled={inputUriDisabled}
-                />
-                <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon" />
+                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
+                  <HCInput
+                    placeholder="Enter URI or Paste URIs"
+                    className={styles.uriInput}
+                    value={uriContent}
+                    onChange={handleUriInputChange}
+                    ariaLabel="UriOnlyInput"
+                    disabled={inputUriDisabled}
+                    classNameFull={colourElementAdded ? styles.uriInputColor: ""}
+                  />
+                  <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon" />
+                </div>
                 {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
                 {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
                 <div className={styles.UriTable}>
@@ -871,15 +879,18 @@ const MatchingStepDetail: React.FC = () => {
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                 </HCTooltip>
               </span><br />
-              <Input
-                placeholder="Enter URI or Paste URIs"
-                className={styles.uriInput}
-                value={uriContent2}
-                onChange={handleUriInputChange2}
-                aria-label="UriInput"
-                disabled={inputUriDisabled2}
-              />
-              <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon" />
+              <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
+                <HCInput
+                  placeholder="Enter URI or Paste URIs"
+                  className={styles.uriInput}
+                  value={uriContent2}
+                  onChange={handleUriInputChange2}
+                  ariaLabel="UriInput"
+                  disabled={inputUriDisabled2}
+                  classNameFull={colourElementAdded2 ? styles.uriInputColor: ""}
+                />
+                <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon" />
+              </div>
               {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
               {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
               <div className={styles.UriTable}>
@@ -900,9 +911,9 @@ const MatchingStepDetail: React.FC = () => {
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
                 </HCTooltip>
               </span>
-              <span aria-label="allDataContent"><br />
+              <div aria-label="allDataContent" className={styles.allDataContent}>
                 Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
-              </span>
+              </div>
             </Radio>
           </Radio.Group>
           <div className={styles.testButton}>

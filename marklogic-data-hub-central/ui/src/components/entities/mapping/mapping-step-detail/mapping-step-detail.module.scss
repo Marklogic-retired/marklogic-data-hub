@@ -350,9 +350,11 @@ hr {
     text-align: left;
     width: 105%;
 }
+
 .uriEditing{
-    display: inline-block;
-    width: auto;
+    width: 265px !important;
+    margin-left: 5px;
+    margin-right: 2px;
 }
 
 .sourceQuery{

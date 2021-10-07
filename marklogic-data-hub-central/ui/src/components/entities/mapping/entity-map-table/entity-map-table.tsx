@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Popover, Input, Select, Modal, Tooltip, Icon} from "antd";
+import {Table, Popover, Select, Modal, Tooltip, Icon} from "antd";
 import Spinner from "react-bootstrap/Spinner";
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -21,6 +21,7 @@ import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {FormControl} from "react-bootstrap";
+import HCInput from "../../../common/hc-input/hc-input";
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -407,17 +408,18 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const getColumnFilterProps = dataIndex => ({
     filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
       <div className={styles.filterContainer}>
-        <Input
+        <HCInput
           ref={node => {
             searchInput = node;
           }}
-          data-testid={`searchInput-${dataIndex}`}
+          dataTestid={`searchInput-${dataIndex}`}
           placeholder={`Search name`}
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
           onPressEnter={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
           className={styles.searchInput}
         />
+        <div style={{height: 8}}></div>
         <HCButton data-testid={`ResetSearch-${dataIndex}`} variant="outline-light" onClick={() => handleSearchReset(clearFilters, dataIndex)} size="sm" className={styles.resetButton}>
           Reset
         </HCButton>
