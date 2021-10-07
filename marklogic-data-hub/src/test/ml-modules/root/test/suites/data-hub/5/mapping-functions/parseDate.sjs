@@ -1,4 +1,5 @@
 const core = require('/data-hub/5/mapping-functions/core-functions.xqy');
+const coreSjs = require('/data-hub/5/mapping-functions/core.sjs');
 const test = require("/test/test-helper.xqy");
 const serverTimezone = sem.timezoneString(fn.currentDateTime());
 
@@ -16,7 +17,19 @@ function testParseDate() {
     test.assertEqual(null, core.parseDate(null, "MM-DD-YYYY")),
     test.assertEqual(null, core.parseDate(undefined, "MM-DD-YYYY")),
     test.assertEqual(null, core.parseDate("", "MM-DD-YYYY")),
-    test.assertEqual(null, core.parseDate(" ", "MM-DD-YYYY"))
+    test.assertEqual(null, core.parseDate(" ", "MM-DD-YYYY")),
+
+    test.assertEqual(expectedDate, coreSjs.parseDate("01/06/2014", "MM/DD/YYYY")),
+    test.assertEqual(expectedDate, coreSjs.parseDate("06/01/2014","DD/MM/YYYY")),
+    test.assertEqual(expectedDate, coreSjs.parseDate("01.06.2014","MM.DD.YYYY")),
+    test.assertEqual(expectedDate, coreSjs.parseDate("06.01.2014", "DD.MM.YYYY")),
+    test.assertEqual(expectedDate, coreSjs.parseDate("20140106", "YYYYMMDD")),
+    test.assertEqual(expectedDate, coreSjs.parseDate("Jan 06, 2014", "Mon DD, YYYY")),
+
+    test.assertEqual(null, coreSjs.parseDate(null, "MM-DD-YYYY")),
+    test.assertEqual(null, coreSjs.parseDate(undefined, "MM-DD-YYYY")),
+    test.assertEqual(null, coreSjs.parseDate("", "MM-DD-YYYY")),
+    test.assertEqual(null, coreSjs.parseDate(" ", "MM-DD-YYYY"))
   ];
 }
 
@@ -36,7 +49,21 @@ function testMoreParseDate() {
     test.assertEqual(expectedDate1996, core.parseDate("1996.07.16", "yyyy.MM.dd")),
 
     test.assertEqual(null, core.parseDate("07.16.1996", "Mon DD,YYYY")),
-    test.assertEqual(null, core.parseDate("notADate", "Mon DD,YYYY"))
+    test.assertEqual(null, core.parseDate("notADate", "Mon DD,YYYY")),
+
+    test.assertEqual(expectedDate2018, coreSjs.parseDate("01-02-2018", "MM-DD-YYYY")),
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("Jul 16, 1996", "Mon DD, YYYY")),
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("Jul 16,1996", "Mon DD, YYYY")),
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("Jul 16, 1996", "Mon DD,YYYY")),
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("Jul 16,1996", "Mon DD,YYYY")),
+
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("16 Jul 1996", "DD Mon YYYY")),
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("16-Jul-1996", "DD-Mon-YYYY")),
+
+    test.assertEqual(expectedDate1996, coreSjs.parseDate("1996.07.16", "yyyy.MM.dd")),
+
+    test.assertEqual(null, coreSjs.parseDate("07.16.1996", "Mon DD,YYYY")),
+    test.assertEqual(null, coreSjs.parseDate("notADate", "Mon DD,YYYY"))
   ];
 }
 

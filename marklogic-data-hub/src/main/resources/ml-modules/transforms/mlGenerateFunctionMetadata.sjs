@@ -9,7 +9,9 @@ function mlGenerateFunctionMetadata(context, params, content) {
   const uri = context.uri;
   const match = new RegExp('^(.*)\.(sjs|mjs|xqy)$').exec(uri);
 
-  if (match !== null) {
+  // The core.sjs is intended to be a pass through to support upgrades. Function Metadata is not generated so that there is no
+  // overlap with the core mapping functions written in XQuery. Mappings may not behave correctly as a result
+  if (match !== null && uri !== "/data-hub/5/mapping-functions/core.sjs") {
     const uriVal = match[1];
     const metadataXml = generateMetadata(uri);
 
