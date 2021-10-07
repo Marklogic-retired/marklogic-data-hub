@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Modal, Input, Select, Icon, Card, Dropdown, Tooltip} from "antd";
+import {Modal, Select, Icon, Card, Dropdown, Tooltip} from "antd";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
@@ -21,6 +21,7 @@ import {
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
 import HCButton from "../../../common/hc-button/hc-button";
+import HCInput from "../../../common/hc-input/hc-input";
 
 type Props = {
   openRelationshipModal: boolean;
@@ -602,16 +603,15 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           </Card>
         </div>
         <div className={styles.relationshipInputContainer}>
-          <Input
+          <HCInput
             id="relationship"
             placeholder="Relationship*"
             value={relationshipName}
             onChange={handleChange}
-            size={"small"}
-            // disabled={!canReadWrite}
+            size={"sm"}
             className={styles.relationshipInput}
-            aria-label="relationship-textarea"
-            style={errorMessage && submitClicked? {border: "solid 1px #C00"} : {}}
+            ariaLabel="relationship-textarea"
+            style={errorMessage && submitClicked ? {border: "solid 1px #C00"} : {}}
           />
           {errorMessage && submitClicked?
             <HCTooltip text={errorMessage} id="exclamation-tooltip" placement={"bottom-end"}>
@@ -623,7 +623,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         </div>
         <hr className={styles.horizontalLine}></hr>
         <Tooltip title={ModelingTooltips.cardinalityButton} placement={"bottom"}>
-          <HCButton className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
+          <HCButton variant="onlined-light" className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
             {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
           </HCButton>
         </Tooltip>
