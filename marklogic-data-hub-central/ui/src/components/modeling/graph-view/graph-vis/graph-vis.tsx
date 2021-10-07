@@ -25,11 +25,12 @@ type Props = {
   canWriteEntityModel: any;
   graphEditMode: any;
   setGraphEditMode: any;
-  //saveEntityCoords: any;
   setCoordsChanged: any;
   hubCentralConfig: any;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   getColor: any;
+  splitPaneResized: any;
+  setSplitPaneResized: any;
 };
 
 let entityMetadata = {};
@@ -84,21 +85,20 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Load coords *once* on init
   useEffect(() => {
-    if (!coordsLoaded) {
+    if (!coordsLoaded && entitiesConfigExist()) {
+      let newCoords = {};
       if (entitiesConfigExist()) {
-        if (Object.keys(props.hubCentralConfig["modeling"]["entities"]).length) {
-          let newCoords = {};
-          let allCoordinates = props.hubCentralConfig["modeling"]["entities"];
-          Object.keys(allCoordinates).forEach(entity => {
-            let entityCoordinates = allCoordinates[entity];
-            if (entityCoordinates.graphX && entityCoordinates.graphY) {
-              newCoords[entity] = {graphX: entityCoordinates.graphX, graphY: entityCoordinates.graphY};
-            }
-          });
-          setCoords(newCoords);
-          setCoordsLoaded(true);
-        }
+        let allCoordinates = props.hubCentralConfig["modeling"]["entities"];
+
+        Object.keys(allCoordinates).forEach(entity => {
+          let entityCoordinates = allCoordinates[entity];
+          if (entityCoordinates.graphX && entityCoordinates.graphY) {
+            newCoords[entity] = {graphX: entityCoordinates.graphX, graphY: entityCoordinates.graphY};
+          }
+        });
       }
+      setCoords(newCoords);
+      setCoordsLoaded(true);
     } else {
       setGraphData({
         nodes: getNodes(),
@@ -117,7 +117,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   // Initialize or update graph
   useEffect(() => {
-    if (props.entityTypes && props.hubCentralConfig) {
+    if (props.entityTypes) {
       if (coordinatesExist()) {
         if (physicsEnabled) {
           setPhysicsEnabled(false);
@@ -140,6 +140,16 @@ const GraphVis: React.FC<Props> = (props) => {
       };
     }
   }, [props.entityTypes, props.filteredEntityTypes.length, coordsLoaded]);
+
+  useEffect(() => {
+    if (props.splitPaneResized) {
+      setGraphData({
+        nodes: getNodes(),
+        edges: getEdges()
+      });
+      props.setSplitPaneResized(false);
+    }
+  }, [props.splitPaneResized]);
 
   const initializeScaleAndViewPosition = () => {
     if (props.hubCentralConfig?.modeling) {
@@ -167,6 +177,10 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     }
     return result;
+  };
+
+  const selectedEntityExists = () => {
+    return props.entityTypes.some(e => e.entityName === modelingOptions.selectedEntity);
   };
 
   const saveUnsavedCoords = async () => {
@@ -240,10 +254,12 @@ const GraphVis: React.FC<Props> = (props) => {
   useEffect(() => {
     if (network && modelingOptions.selectedEntity) {
       // Ensure entity exists
-      if (props.entityTypes.some(e => e.entityName === modelingOptions.selectedEntity)) {
+      if (selectedEntityExists()) {
         // Persist selection and coords
         network.selectNodes([modelingOptions.selectedEntity]);
-        saveUnsavedCoords();
+        if (entitiesConfigExist()) {
+          saveUnsavedCoords();
+        }
       } else {
         // Entity type not found, unset in context
         setSelectedEntity(undefined);
@@ -578,6 +594,29 @@ const GraphVis: React.FC<Props> = (props) => {
     props.updateHubCentralConfig(ZoomScalePayload);
   }, 400);
 
+  const updateConfigOnNavigation = _.debounce(async (event) => {
+    let {nodes} = event;
+    if (!nodes.length || modelingOptions.selectedEntity) {
+      if (entitiesConfigExist()) {
+        let scale: any = await network.getScale();
+        let viewPosition: any = await network.getViewPosition();
+        let updatedHubCentralConfig: any = defaultHubCentralConfig;
+        let entitiesConfig = props.hubCentralConfig["modeling"]["entities"];
+        Object.keys(entitiesConfig).forEach(entityName => {
+          if (coords[entityName]) {
+            updatedHubCentralConfig["modeling"]["entities"][entityName] = {graphX: coords[entityName].graphX, graphY: coords[entityName].graphY};
+          }
+        });
+        updatedHubCentralConfig["modeling"]["scale"] = scale;
+        updatedHubCentralConfig["modeling"]["viewPosition"] = viewPosition;
+        if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
+          await props.updateHubCentralConfig(updatedHubCentralConfig);
+          props.setCoordsChanged(true);
+        }
+      }
+    }
+  }, 400);
+
   const events = {
     select: (event) => {
       if (!props.graphEditMode) {
@@ -589,7 +628,6 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     },
     click: (event) => {
-      // console.info("CLICK", event);
       //if click is on an edge
       if (event.edges.length > 0 && event.nodes.length < 1 && props.canWriteEntityModel) {
         let connectedNodes = network.getConnectedNodes(event.edges[0]);
@@ -618,25 +656,9 @@ const GraphVis: React.FC<Props> = (props) => {
           let newCoords = {...coords};
           newCoords[nodes[0]] = {graphX: positions.x, graphY: positions.y};
           setCoords(newCoords);
-          //props.saveEntityCoords(nodes[0], positions.x, positions.y);
           let coordsPayload = defaultHubCentralConfig;
           coordsPayload.modeling.entities[nodes[0]] =  {graphX: positions.x, graphY: positions.y};
           props.updateHubCentralConfig(coordsPayload);
-        }
-      } else {
-        if (entitiesConfigExist()) {
-          let updatedHubCentralConfig: any = defaultHubCentralConfig;
-          let entitiesConfig = props.hubCentralConfig["modeling"]["entities"];
-          Object.keys(entitiesConfig).forEach(entityName => {
-            if (coords[entityName]) {
-              updatedHubCentralConfig["modeling"]["entities"][entityName] = {graphX: coords[entityName].graphX + event.event.deltaX, graphY: coords[entityName].graphY + event.event.deltaY};
-            }
-          });
-          updatedHubCentralConfig["modeling"]["viewPosition"] = {};
-          if (props.updateHubCentralConfig && Object.keys(updatedHubCentralConfig["modeling"]["entities"]).length) {
-            await props.updateHubCentralConfig(updatedHubCentralConfig);
-            props.setCoordsChanged(true);
-          }
         }
       }
     },
@@ -660,9 +682,8 @@ const GraphVis: React.FC<Props> = (props) => {
       if (hasStabilized) return;
       if (network) {
         let positions = network.getPositions();
-        // console.info("STABILIZED", event, positions);
         // When graph is stabilized, nodePositions no longer empty
-        if (positions && Object.keys(positions).length) {
+        if (positions && Object.keys(positions).length && !Object.keys(coords).length) {
           saveUnsavedCoords();
           setHasStabilized(true);
           if (physicsEnabled) {
@@ -670,7 +691,7 @@ const GraphVis: React.FC<Props> = (props) => {
             return false;
           }
         }
-        if (modelingOptions.selectedEntity) {
+        if (modelingOptions.selectedEntity && selectedEntityExists()) {
           try { // Visjs might not have new entity yet, catch error
             network.selectNodes([modelingOptions.selectedEntity]);
           } catch (err) {
@@ -695,6 +716,16 @@ const GraphVis: React.FC<Props> = (props) => {
     },
     zoom: (event) => {
       handleZoom(event);
+    },
+    release: (event) => {
+      if (!props.graphEditMode) {
+        let targetClassName = event.event.target.className;
+        let usingNavigationButtons = targetClassName || event.event.deltaX || event.event.deltaY ? true : false;
+        let usingZoomButtons = targetClassName === "vis-button vis-zoomOut" || targetClassName === "vis-button vis-zoomIn";
+        if (usingNavigationButtons && !usingZoomButtons) {
+          updateConfigOnNavigation(event);
+        }
+      }
     }
   };
 
@@ -704,7 +735,6 @@ const GraphVis: React.FC<Props> = (props) => {
         overlay={menu}
         trigger={["contextMenu"]}
         visible={contextMenuVisible}
-        //placement="topRight"
       >
         <div>
           <Graph

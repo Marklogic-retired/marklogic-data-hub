@@ -234,13 +234,9 @@ describe("Entity Modeling: Writer Role", () => {
       graphVis.getGraphVisCanvas().click(customerCoordinates.x, customerCoordinates.y);
       cy.findByText("An entity for User").should("exist");
     });
+
     //Save Changes
-    // TODO Make shortcut for publishing current model
-    modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getSaveAllEntityText().should("not.exist");
+    cy.publishEntityModel();
     // TODO These break since we do not delete entity until publishing now. To fix with UI changes.
     // confirmationModal.getDeleteEntityText().should("exist");
     // confirmationModal.getDeleteEntityText().should("not.exist");
@@ -369,12 +365,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getFacetIcon("health").should("exist");
     propertyTable.getSortIcon("health").should("exist");
     //Save Changes
-    modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getSaveAllEntityText().should("not.exist");
-    modelPage.getEntityModifiedAlert().should("not.exist");
+    cy.publishEntityModel();
+
     propertyTable.getProperty("patientId").should("not.exist");
     propertyTable.getProperty("health").should("exist");
     propertyTable.getFacetIcon("health").should("exist");
@@ -397,12 +389,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.waitForAsyncRequest();
     graphViewSidePanel.getSelectedEntityHeading("Patients").should("not.exist");
     //Publish the changes
-    modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getSaveAllEntityText().should("not.exist");
-    modelPage.getEntityModifiedAlert().should("not.exist");
+    cy.publishEntityModel();
   });
 
   it("Edit a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
@@ -479,6 +466,7 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.toggleCardinality();
 
     relationshipModal.addRelationshipSubmit();
+    cy.waitForAsyncRequest();
     relationshipModal.getModalHeader().should("not.exist");
 
     //verify relationship was created and properties are present
@@ -499,8 +487,8 @@ describe("Entity Modeling: Writer Role", () => {
   it("can edit graph edit mode and add edge relationships (with foreign key scenario) via drag/drop", () => {
 
     entityTypeTable.viewEntityInGraphView("Person");
-
-    //add first relationship
+    cy.wait(2000);
+    cy.waitForAsyncRequest();
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();
     graphView.verifyEditInfoMessage().should("be.visible");
@@ -574,6 +562,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyForeignKeyIcon("referredBy").should("exist");
 
     entityTypeTable.viewEntityInGraphView("Person");
+    cy.waitForAsyncRequest();
     //re-enter graph edit mode, verify can exit with {esc}
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();

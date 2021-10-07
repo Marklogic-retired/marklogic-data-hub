@@ -16,6 +16,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
+    cy.setupHubCentralConfig();
+    cy.waitForAsyncRequest();
   });
   beforeEach(() => {
     cy.loginAsDeveloper().withRequest();

@@ -106,5 +106,7 @@ declare namespace Cypress {
       getAttached(selector: any): Chainable<Element>
 
       setupHubCentralConfig(): Chainable<Element>
+
+      publishEntityModel(): Chainable<Element>
     }
   }
