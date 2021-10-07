@@ -13,8 +13,8 @@ import HCAlert from "../common/hc-alert/hc-alert";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
+import {FormControl} from "react-bootstrap";
 
-const {TextArea} = Input;
 const {Option} = Select;
 
 type Props = {
@@ -281,20 +281,20 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   //Check if Delete Confirmation dialog should be opened or not.
   const hasFormChanged = () => {
     if (!sourceDatabaseTouched
-        && !targetDatabaseTouched
-        && !addCollTouched
-        && !advancedTargetCollectionsTouched
-        && !targetPermissionsTouched
-        && !headersTouched
-        && !targetFormatTouched
-        && !provGranularityTouched
-        && !validateEntityTouched
-        && !attachSourceDocumentTouched
-        && !sourceRecordScopeTouched
-        && !batchSizeTouched
-        && !interceptorsTouched
-        && !customHookTouched
-        && !additionalSettingsTouched
+      && !targetDatabaseTouched
+      && !addCollTouched
+      && !advancedTargetCollectionsTouched
+      && !targetPermissionsTouched
+      && !headersTouched
+      && !targetFormatTouched
+      && !provGranularityTouched
+      && !validateEntityTouched
+      && !attachSourceDocumentTouched
+      && !sourceRecordScopeTouched
+      && !batchSizeTouched
+      && !interceptorsTouched
+      && !customHookTouched
+      && !additionalSettingsTouched
     ) {
       return false;
     } else {
@@ -335,7 +335,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     return payload;
   };
 
-  const handleSubmit = async (event: {preventDefault: () => void;}) => {
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
 
     // Parent handles saving of all tabs
@@ -840,11 +840,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                   </Select>
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
-                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13}/>
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
                     </HCTooltip>
                   </div>
                 </Col>
-                { sourceRecordScopeToggled ?
+                {sourceRecordScopeToggled ?
                   <Col xs={12}>
                     <div className={styles.toggleSourceScopeMsg}>{toggleSourceRecordScopeMessage}</div>
                   </Col> : null
@@ -902,7 +902,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <TextArea
+                  <FormControl as="textarea"
                     id="headers"
                     placeholder="Please enter header content"
                     value={headers}
@@ -924,7 +924,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                     </HCTooltip>
                   </div>
                 </Col>
-                { !headersValid ?
+                {!headersValid ?
                   <Col xs={12}>
                     <div className={styles.invalid}>{invalidJSONMessage}</div>
                   </Col> : null
@@ -937,8 +937,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Col className={"d-flex"}>
             <span>
               {interceptorsExpanded ?
-                <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> :
-                <ChevronRight className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}/> }
+                <ChevronDown className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)} /> :
+                <ChevronRight className={styles.rightArrow} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)} />}
               <span aria-label="interceptors-expand" className={styles.expandLabel} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}>Interceptors</span>
             </span>
           </Col>
@@ -948,14 +948,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <TextArea
+                  <FormControl as="textarea"
                     id="interceptors"
                     placeholder="Please enter interceptor content"
                     value={interceptors}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     disabled={!canReadWrite}
-                    className={"ms-4"}
+                    className={styles.textareaExpand}
                     rows={6}
                     aria-label="interceptors-textarea"
                     style={!interceptorsValid ? {border: "solid 1px #C00"} : {}}
@@ -983,8 +983,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Col className={"d-flex"}>
             <span>
               {customHookExpanded ?
-                <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> :
-                <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)}/> }
+                <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} /> :
+                <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} />}
               <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
               <HCTooltip
                 text={tooltips.customHookDeprecated}
@@ -1001,14 +1001,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <TextArea
+                  <FormControl as="textarea"
                     id="customHook"
                     placeholder="Please enter custom hook content"
                     value={customHook}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     disabled={!canReadWrite}
-                    className={"ms-4"}
+                    className={styles.textareaExpand}
                     rows={6}
                     aria-label="customHook-textarea"
                     style={!customHookValid ? {border: "solid 1px #C00"} : {}}
@@ -1036,7 +1036,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <TextArea
+                  <FormControl as="textarea"
                     id="additionalSettings"
                     placeholder="Please enter additional settings"
                     value={additionalSettings}
