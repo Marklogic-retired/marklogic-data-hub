@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Select, Input} from "antd";
+import {Select} from "antd";
 import styles from "./search-bar.module.scss";
 import {SearchContext} from "../../util/search-context";
 import HCDivider from "../common/hc-divider/hc-divider";
-
+import HCSearch from "../common/hc-search/hc-search";
 interface Props {
   entities: any;
   cardView: boolean;
@@ -11,7 +11,6 @@ interface Props {
 }
 
 const SearchBar: React.FC<Props> = props => {
-  const {Search} = Input;
   const {Option} = Select;
   const {searchOptions, setQuery, setNextEntity} = useContext(SearchContext);
   const [searchString, setSearchString] = useState(searchOptions.query);
@@ -48,9 +47,10 @@ const SearchBar: React.FC<Props> = props => {
     <div>
       <Select
         id="entity-select"
-        style={{width: 180}}
+        style={{width: 180, height: "100%"}}
         value={dropDownValue}
         onChange={value => handleOptionSelect(value)}
+        className={styles.selectEntityMenu}
       >
         {options}
       </Select>
@@ -92,17 +92,19 @@ const SearchBar: React.FC<Props> = props => {
   return (
     <div className={styles.searchBar}>
       <div className={styles.searchInput}>
-        <Search
+        <HCSearch
           value={searchString}
           onChange={onChange}
           addonBefore={entityMenu}
           placeholder="Enter text to search for"
           enterButton="Search"
-          size="large"
+          size="lg"
           allowClear
           onSearch={value => handleSearch(value)}
-          data-cy="search-bar"
-          data-testid="search-bar"
+          dataCy="search-bar"
+          dataTestid="search-bar"
+          classNameFull={styles.colors}
+          onPressEnter={(enter, value) => enter ? handleSearch(value): false}
         />
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Popover, Tree, Input, Tooltip} from "antd";
+import {Popover, Tree, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import styles from "./column-selector.module.scss";
@@ -7,7 +7,7 @@ import {treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibi
 import {SearchContext} from "../../util/search-context";
 import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-
+import HCSearch from "../common/hc-search/hc-search";
 import HCButton from "../common/hc-button/hc-button";
 
 interface Props {
@@ -22,7 +22,6 @@ interface Props {
 
 const ColumnSelector: React.FC<Props> = (props) => {
   const {TreeNode} = Tree;
-  const {Search} = Input;
   const {
     setSelectedTableProperties,
   } = useContext(SearchContext);
@@ -144,7 +143,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const content = (
     <div data-testid="column-selector-popover" className={styles.popover}>
       <header>
-        <Search style={{marginBottom: 8}} placeholder="Search" onChange={onChange} />
+        <HCSearch style={{marginBottom: 8}} placeholder="Search" onChange={onChange} />
       </header>
       <div className={styles.content}>
         <Tree

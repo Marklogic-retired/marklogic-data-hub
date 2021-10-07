@@ -243,7 +243,7 @@ class BrowsePage {
   //search bar
   search(str: string) {
     cy.get("[data-cy=search-bar]").clear().type(str);
-    cy.get(".ant-input-search-button").click();
+    cy.get("[data-testid='hc-inputSearch-btn']").click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -645,7 +645,7 @@ class BrowsePage {
   }
 
   clearSearchText() {
-    cy.get(".ant-input-clear-icon").click();
+    cy.get("*[class^=\"hc-search_cleanIcon\"]").click();
   }
 
   getPaginationPageSizeOptions() {
