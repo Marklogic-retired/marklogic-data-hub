@@ -117,6 +117,7 @@ span.readOnlyLabel {
 .textarea {
     width: 95% !important;
     margin-top: 6px;
+    border-radius: 4px !important;
 }
 .textareaTooltip {
     position: absolute;
@@ -157,6 +158,8 @@ span.readOnlyLabel {
 .textareaExpand {
     width: 85% !important;
     margin-left: 24px;
+    border-radius: 4px !important;
+    width: 100% !important;
 }
 .textareaExpandTooltip {
     position: absolute;
