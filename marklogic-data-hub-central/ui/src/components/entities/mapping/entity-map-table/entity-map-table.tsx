@@ -20,7 +20,7 @@ import StepsConfig from "../../../../config/steps.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
-
+import {FormControl} from "react-bootstrap";
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -70,7 +70,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
   const {Option} = Select;
-  const {TextArea} = Input;
   let searchInput: any;
   let tempMapExp: any = {};
   let mapExpUI: any = {};
@@ -429,7 +428,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           size="sm"
           className={styles.searchSubmitButton}
         >
-          <Search className={styles.searchIcon}/> Search
+          <Search className={styles.searchIcon} /> Search
         </HCButton>
       </div>
     ),
@@ -937,7 +936,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       propName={sourcePropName}
       handleDropdownMenu={handleSourceList}
       indentList={sourceIndentForDropDown}
-      modelling={false}/>
+      modelling={false} />
   );
 
   const sourceDropdown = (row) => {
@@ -1027,7 +1026,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           size="sm"
           variant="outline-light">
           <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
-         fx
+            fx
           </Tooltip>
         </Dropdown.Toggle>
 
@@ -1111,7 +1110,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   );
 
   const expandTableIcon = (
-    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight/> : <ChevronDown/>}</a>
+    <a className={styles.tableExpandIcon} onClick={() => toggleEntityTable()}>{tableCollapsed && entityProperties.length < 1 ? <ChevronRight /> : <ChevronDown />}</a>
   );
 
   const topRowDetails = (
@@ -1299,7 +1298,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   &nbsp;<Popover
                     content={contextHelp}
                     trigger="click"
-                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
                   </Popover>
                 </span>
               }
@@ -1308,7 +1307,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   &nbsp;<Popover
                     content={uriHelp}
                     trigger="click"
-                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
                   </Popover>
                 </span>
               }
@@ -1346,7 +1345,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
             {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
               content={contextHelp}
               trigger="click"
-              placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext}/></Popover><p className={styles.typeText}>{dType}</p></div> : renderText}
+              placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} /></Popover><p className={styles.typeText}>{dType}</p></div> : renderText}
           </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
         };
       }
@@ -1364,9 +1363,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
       render: (text, row, index) => {
         if (row.key > 100 && row.name !== "more" && row.name !== "less") {
           if (row.name === "Context" && !row.isProperty) {
+
+
             return {
               children: <div className={!directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <TextArea
+                <FormControl as="textarea"
                   id={"mapexpression" + row.name.split("/").pop()}
                   data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
                   style={mapExpressionStyle(row.name, false)}
@@ -1374,8 +1375,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   value={expressionContext}
                   onChange={(e) => handleExpressionContext(row, e)}
                   onBlur={handleExpSubmit}
-                  autoSize={{minRows: 1}}
-                  disabled={!props.canReadWrite}></TextArea>
+                  disabled={!props.canReadWrite}
+                  className={styles.genericTextArea}
+                />
                 <span>{sourceDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>, props: {colSpan: 1}
@@ -1383,7 +1385,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           } else if (row.name === "URI" && !row.isProperty) {
             return {
               children: <div className={props.isRelatedEntity && !directRelation ? styles.relatedMapExpParentContainer : styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <TextArea
+                <FormControl as="textarea"
                   id={"mapexpression" + row.name.split("/").pop()}
                   data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + `-mapexpression`}
                   style={mapExpressionStyle(row.name, false)}
@@ -1391,8 +1393,8 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   value={uriExpression}
                   onChange={(e) => handleUri(row, e)}
                   onBlur={handleExpSubmit}
-                  autoSize={{minRows: 1}}
-                  disabled={!props.canReadWrite}></TextArea>
+                  disabled={!props.canReadWrite}
+                  className={styles.genericTextArea} />
                 <span>{sourceDropdown(row)}</span>
                 <span>{functionDropdown(row)}</span>
                 <span>{refDropdown(row)}</span>
@@ -1402,7 +1404,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           } else {
             return {
               children: <div className={styles.mapExpParentContainer}><div className={styles.mapExpressionContainer}>
-                <TextArea
+                <FormControl as="textarea"
                   id={"mapexpression" + row.name.split("/").pop()}
                   data-testid={row.name.split("/").pop() + "-mapexpression"}
                   style={mapExpressionStyle(row.name, true)}
@@ -1410,8 +1412,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   value={mapExp[row.name]}
                   onChange={(e) => handleMapExp(row, e)}
                   onBlur={handleExpSubmit}
-                  autoSize={{minRows: 1}}
-                  disabled={!props.canReadWrite}></TextArea>
+                  disabled={!props.canReadWrite}
+                  className={styles.genericTextArea}
+                />
                 <span>{sourceDropdown(row)}</span>
                 <span>{functionDropdown(row)}</span>
                 <span>{refDropdown(row)}</span>

@@ -16,7 +16,7 @@ import SplitPane from "react-split-pane";
 import {getMappingArtifactByMapName, getMappingFunctions, getMappingRefs, updateMappingArtifact} from "../../../../api/mapping";
 import {MappingStep, StepType} from "../../../../types/curation-types";
 import {AuthoritiesContext} from "../../../../util/authorities";
-import {convertDateFromISO, extractCollectionFromSrcQuery, getInitialChars, getLastChars} from "../../../../util/conversionFunctions";
+import {convertDateFromISO, extractCollectionFromSrcQuery, getInitialChars} from "../../../../util/conversionFunctions";
 import {CurationContext} from "../../../../util/curation-context";
 import {getMappingValidationResp, getNestedEntities} from "../../../../util/manageArtifacts-service";
 import {xmlParserForMapping} from "../../../../util/record-parser";
@@ -32,7 +32,7 @@ import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.c
 import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
 import HCButton from "../../../common/hc-button/hc-button";
-import {CheckSquareFill, XSquareFill, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
