@@ -436,16 +436,16 @@ describe("Advanced step settings", () => {
     expect(document.querySelector("#additionalColl")).toHaveClass("ant-select-disabled");
     expect(getByPlaceholderText("Please enter target permissions")).toBeDisabled();
     expect(getByPlaceholderText("Please enter batch size")).toBeDisabled();
-    expect(document.querySelector("#headers")).toHaveClass("ant-input-disabled");
+    expect(document.querySelector("#headers")).toHaveAttribute("disabled");
     expect(document.querySelector("#targetFormat")).toHaveClass("ant-select-disabled");
     expect(document.querySelector("#provGranularity")).toHaveClass("ant-select-disabled");
     expect(document.querySelector("#validateEntity")).toHaveClass("ant-select-disabled");
 
     fireEvent.click(getByText("Interceptors"));
-    expect(document.querySelector("#interceptors")).toHaveClass("ant-input-disabled");
+    expect(document.querySelector("#interceptors")).toHaveAttribute("disabled");
 
     fireEvent.click(getByText("Custom Hook"));
-    expect(document.querySelector("#customHook")).toHaveClass("ant-input-disabled");
+    expect(document.querySelector("#customHook")).toHaveAttribute("disabled");
 
     fireEvent.mouseOver(getByText("Save"));
     await wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
