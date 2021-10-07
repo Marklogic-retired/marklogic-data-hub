@@ -1,7 +1,7 @@
 /// <reference types="cypress"/>
 
 import {Application} from "../../../support/application.config";
-import {confirmationModal, toolbar} from "../../../support/components/common";
+import {toolbar} from "../../../support/components/common";
 import {
   entityTypeModal,
   entityTypeTable,
@@ -19,7 +19,6 @@ import browsePage from "../../../support/pages/browse";
 import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 import modelPage from "../../../support/pages/model";
-import {ConfirmationType} from "../../../support/types/modeling-types";
 
 
 describe("Mapping", () => {
@@ -63,12 +62,7 @@ describe("Mapping", () => {
     propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
     //Save Changes
-    modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getSaveAllEntityText().should("not.exist");
-    modelPage.getEntityModifiedAlert().should("not.exist");
+    cy.publishEntityModel();
     propertyTable.getForeignIcon("relatedTo").should("exist");
   });
   it("Create new mapping in Curate", () => {

@@ -148,11 +148,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.getCancelButton().click();
   });
   it("Save new Buyer entity", {defaultCommandTimeout: 120000}, () => {
-    modelPage.getPublishButton().click();
-    confirmationModal.getYesButton(ConfirmationType.PublishAll);
-    cy.waitForAsyncRequest();
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getSaveAllEntityText().should("not.exist");
+    cy.publishEntityModel();
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
     modelPage.getEntityModifiedAlert().should("not.exist");

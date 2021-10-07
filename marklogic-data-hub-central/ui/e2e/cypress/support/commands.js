@@ -30,6 +30,9 @@ import "cypress-file-upload";
 import "cypress-wait-until";
 import "cypress-file-upload";
 require("cypress-plugin-tab");
+import {confirmationModal} from "../support/components/common/index";
+import {ConfirmationType} from "../support/types/modeling-types";
+import modelPage from "../support/pages/model";
 
 //cy.fixture('users/developer.json').as('developer')
 
@@ -277,4 +280,13 @@ Cypress.Commands.add("setupHubCentralConfig", () => {
       body: hubCentralConfig
     });
   });
+});
+
+Cypress.Commands.add("publishEntityModel", () => {
+  modelPage.getPublishButton().click();
+  confirmationModal.getYesButton(ConfirmationType.PublishAll);
+  cy.waitForAsyncRequest();
+  confirmationModal.getSaveAllEntityText().should("exist");
+  confirmationModal.getSaveAllEntityText().should("not.exist");
+  modelPage.getEntityModifiedAlert().should("not.exist");
 });

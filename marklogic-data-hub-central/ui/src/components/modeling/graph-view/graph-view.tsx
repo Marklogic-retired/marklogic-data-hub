@@ -39,6 +39,7 @@ const GraphView: React.FC<Props> = (props) => {
   const [isEntityFiltered, setIsEntityFiltered] = useState(false);
   const [graphEditMode, setGraphEditMode] = useState(false);
   const [coordsChanged, setCoordsChanged] = useState(false);
+  const [splitPaneResized, setSplitPaneResized] = useState(false);
 
   useEffect(() => {
     if (coordsChanged) {
@@ -244,27 +245,22 @@ const GraphView: React.FC<Props> = (props) => {
           canWriteEntityModel={props.canWriteEntityModel}
           graphEditMode={graphEditMode}
           setGraphEditMode={setGraphEditMode}
-          //saveEntityCoords={saveEntityCoords}
           setCoordsChanged={setCoordsChanged}
           hubCentralConfig={props.hubCentralConfig}
           updateHubCentralConfig={props.updateHubCentralConfig}
           getColor={getColor}
+          splitPaneResized={splitPaneResized}
+          setSplitPaneResized={setSplitPaneResized}
         />
       </div>
     </div>;
 
-  // const entityTypeExistsInDatabase = (entityName, entityTypesArray) => {
-  //   let entityValidation = entityTypesArray.find((obj) => obj.name === entityName);
-  //   return !entityValidation ? false : true;
-  // };
-
-  // const isSelectedEntityTypeValid = () => {
-  //   return modelingOptions.selectedEntity && entityTypeExistsInDatabase(modelingOptions.selectedEntity, modelingOptions.entityTypeNamesArray);
-  // };
+  const handleSplitPaneResize = () => {
+    setSplitPaneResized(true);
+  };
 
   return (
     !modelingOptions.selectedEntity ? graphViewMainPanel :
-      // (isSelectedEntityTypeValid() ?
       <SplitPane
         style={splitStyle}
         paneStyle={splitPaneStyles.pane}
@@ -275,22 +271,24 @@ const GraphView: React.FC<Props> = (props) => {
         split="vertical"
         primary="first"
         defaultSize="70%"
+        onDragFinished={handleSplitPaneResize}
       >
         {graphViewMainPanel}
-        <GraphViewSidePanel
-          entityTypes={props.entityTypes}
-          onCloseSidePanel={onCloseSidePanel}
-          deleteEntityClicked={deleteEntityClicked}
-          canReadEntityModel={props.canReadEntityModel}
-          canWriteEntityModel={props.canWriteEntityModel}
-          updateEntities={props.updateEntities}
-          updateSavedEntity={props.updateSavedEntity}
-          hubCentralConfig={props.hubCentralConfig}
-          updateHubCentralConfig={props.updateHubCentralConfig}
-          getColor={getColor}
-        />
-      </SplitPane> //: graphViewMainPanel
-  //)
+        <div>
+          <GraphViewSidePanel
+            entityTypes={props.entityTypes}
+            onCloseSidePanel={onCloseSidePanel}
+            deleteEntityClicked={deleteEntityClicked}
+            canReadEntityModel={props.canReadEntityModel}
+            canWriteEntityModel={props.canWriteEntityModel}
+            updateEntities={props.updateEntities}
+            updateSavedEntity={props.updateSavedEntity}
+            hubCentralConfig={props.hubCentralConfig}
+            updateHubCentralConfig={props.updateHubCentralConfig}
+            getColor={getColor}
+          />
+        </div>
+      </SplitPane>
   );
 };
 
