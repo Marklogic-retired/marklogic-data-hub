@@ -3,46 +3,46 @@
 .sidePanel {
     padding: 10px 10px;
     max-height: 63vh;
-    .selectedEntityHeading{
-      font-size: 22px;
-      color: #333333;
-      padding-right: 10px;
+    .selectedEntityHeading {
+        font-size: 22px;
+        color: #333333;
+        padding-right: 10px;
     }
 
     .deleteIcon {
-      color: #5B69AF;
-      font-size: 24px;
+        color: #5b69af;
+        font-size: 24px;
     }
 
     .deleteIconDisabled {
-      color: #cccccc;
-      font-size: 24px;
+        color: #cccccc;
+        font-size: 24px;
     }
 
     .deleteIcon:hover {
-      color:var(--hoverColor);
-      cursor: pointer;
+        color: var(--hoverColor);
+        cursor: pointer;
     }
 
-    .deleteIconDisabled:hover{
-      cursor: not-allowed;
+    .deleteIconDisabled:hover {
+        cursor: not-allowed;
     }
 
     .close {
-      position: relative;
-      float: right;
-      font-size: 20px;
-      height: 28px;
-      cursor: pointer;
+        position: relative;
+        float: right;
+        font-size: 20px;
+        height: 28px;
+        cursor: pointer;
     }
 
     .tabs {
-      padding: 10px 0px 10px 0px;
-      .sidePanelTabLabel {
-        font-size: 18px;
-      }
+        padding: 10px 0px 10px 0px;
+        .sidePanelTabLabel {
+            font-size: 18px;
+        }
     }
-  }
+}
 
 .formItem {
     display: flex;
@@ -55,23 +55,23 @@
     top: 0px;
     right: -20px;
     font-size: 12px;
-    color: #7F86B5;
+    color: #7f86b5;
 }
 
 .colorsIcon {
-  position: absolute;
-  top: 12px;
-  margin-left: 11px;
+    position: absolute;
+    top: 12px;
+    margin-left: 11px;
 }
 
 .editIconReadOnly {
-  font-size: 27px;
-  color: #cccccc;
-  background-color: #f8f8f8;
-  padding: 5px 3px 5px 3px;
-  margin-bottom: -2px;
-  margin-right: -3px;
-  cursor: not-allowed;
+    font-size: 27px;
+    color: #cccccc;
+    background-color: #f8f8f8;
+    padding: 5px 3px 5px 3px;
+    margin-bottom: -2px;
+    margin-right: -3px;
+    cursor: not-allowed;
 }
 
 .editIcon {
@@ -89,11 +89,11 @@
 }
 
 .questionCircle {
-  font-size: 12px;
-  vertical-align: top;
-  margin-top: 10px;
-  margin-left: 10px;
-  color: #7F86B5;
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 10px;
+    margin-left: 10px;
+    color: #7f86b5;
 }
 
 .colorContainer {
@@ -113,7 +113,7 @@
 .colorPickerContainer {
     width: 276px;
     margin-top: 5px;
-    margin-left: 26%
+    margin-left: 26%;
 }
 
 .prefixTooltipIcon {
@@ -121,7 +121,7 @@
     top: -7px;
     right: -23px;
     font-size: 12px;
-    color: #7F86B5;
+    color: #7f86b5;
 }
 .prefixLabel {
     display: inline-flex;
@@ -148,4 +148,45 @@
     color: $danger;
     line-height: 20px;
     margin-left: 1.5vw;
+}
+
+ul.tabsContainer {
+    width: 100%;
+    margin-left: .5rem !important;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    margin-left: 0;
+
+    button.tab {
+        border: 0 !important;
+        border-bottom: 2px solid transparent !important;
+        margin-right: -1px;
+        &:hover {
+            border-bottom: 2px solid $info !important;
+            color: $info !important;
+        }
+    }
+}
+
+button.tab {
+    color: $text-color !important;
+    transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+        border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+    padding: 10px 20px !important;
+    height: 49px;
+    display: flex;
+    align-items: center;
+    &.active {
+        border-bottom: 2px solid $info !important;
+        color: $info !important;
+    }
+    > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 14px;
+    }
 }

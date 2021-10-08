@@ -1,199 +1,238 @@
 @font-face {
-  font-family: 'MLCustomFont';
-  src: url('../fonts/ML_IconFont.ttf') format('truetype');
-  src: url('../fonts/icomoon.ttf') format('truetype');
+    font-family: "MLCustomFont";
+    src: url("../fonts/ML_IconFont.ttf") format("truetype");
+    src: url("../fonts/icomoon.ttf") format("truetype");
 }
+@import "../theme/HCTheme.scss";
 
 .header {
-  display: flex;
-  margin-bottom: 20px;
+    display: flex;
+    margin-bottom: 20px;
 }
 
 .heading {
-  display: flex;
-  justify-content: flex-start;
-  width: 85%;
+    display: flex;
+    justify-content: flex-start;
+    flex: 1;
 }
 
 .title {
-  color: #5B69AF;
-  cursor: pointer;
+    color: #5b69af;
+    cursor: pointer;
 }
 
 .menu {
-  width: 15%;
-  display: flex;
-  justify-content: flex-end;
-  font-size: 14px;
-  font-weight: bold;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .detailContent {
-  background: #fff;
-  padding: 18px 36px;
+    background: #fff;
+    padding: 18px 36px;
+}
+
+ul.tabsContainer {
+    width: 100%;
+    margin-right: 1rem;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-end;
+
+    button.tabActive {
+        border: 0 !important;
+        border-bottom: 2px solid transparent !important;
+        margin-right: -1px;
+        &:hover {
+            border-bottom: 2px solid $info !important;
+            color: $info !important;
+        }
+    }
+}
+
+button.tabActive {
+    color: $text-color !important;
+    transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+        border-color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    padding: 10px 20px !important;
+    height: 49px;
+    display: flex;
+    align-items: center;
+    &.active {
+        border-bottom: 2px solid $info !important;
+        color: $info !important;
+    }
+    > span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 14px;
+    }
 }
 
 .subMenu {
-  padding: 10px;
-  font-size: 18px;
+    // padding: 10px;
+    font-size: 18px;
 }
 
-.contentHeader{
-  background-color: #fff;
-  border-right: 1px solid grey;
+.contentHeader {
+    background-color: #fff;
+    border-right: 1px solid grey;
 }
 
 .detailContentNonEntityInstance {
-  background: #fff;
-  padding: 18px 0px;
-  max-height: 100vh;
-  //border-right: 1px solid grey;
-  //box-shadow: 2px 0px red;
+    background: #fff;
+    padding: 18px 0px;
+    max-height: 100vh;
+    //border-right: 1px solid grey;
+    //box-shadow: 2px 0px red;
 }
 
 .detailContentNonEntityHeader {
-  background: #fff;
-  //padding: 18px 0px;
-  //border: 1px solid red;
-  display: flex;
-  justify-content: space-between;
-
-  .backButtonHeader {
+    background: #fff;
+    //padding: 18px 0px;
     //border: 1px solid red;
-    margin-right: 30px;
     display: flex;
-    //width: 60%;
-  }
+    justify-content: space-between;
 
-  .documentMetadataContainer {
-    display: flex;
-    align-items: center;
-
-    > .metadataCollapseIcon {
-
-      .collapseIconsAlignment{
-        background-color: #e7e7e8;
-        padding: 3px 3px;
-        border-radius: 5px 0px 0px 5px;
-        cursor: pointer;
-      }
-
-      .collapseExpandIcons{
-        font-size: 16px;
-        color: #000;
-      }
+    .backButtonHeader {
+        //border: 1px solid red;
+        margin-right: 30px;
+        display: flex;
+        //width: 60%;
     }
-  }
+
+    .documentMetadataContainer {
+        display: flex;
+        align-items: center;
+
+        > .metadataCollapseIcon {
+            .collapseIconsAlignment {
+                background-color: #e7e7e8;
+                padding: 3px 3px;
+                border-radius: 5px 0px 0px 5px;
+                cursor: pointer;
+            }
+
+            .collapseExpandIcons {
+                font-size: 16px;
+                color: #000;
+            }
+        }
+    }
 }
 
 .siderParent {
-  overflow: auto;
-  //height: '77vh',
-  height : 82vh;
-  background-color: #fff;
-  border-left: 1px solid #777777;
-  box-shadow: -1px 0px 4px #777777;
+    overflow: auto;
+    //height: '77vh',
+    height: 82vh;
+    background-color: #fff;
+    border-left: 1px solid #777777;
+    box-shadow: -1px 0px 4px #777777;
 }
-.siderContainerNonEntity{
-  padding: 72px 36px;
+.siderContainerNonEntity {
+    padding: 72px 36px;
 
-  .uri {
-    font-weight: bold;
-  }
+    .uri {
+        font-weight: bold;
+    }
 
-  .metadataTableLabel{
-    padding-top: 20px;
-  }
+    .metadataTableLabel {
+        padding-top: 20px;
+    }
 
-  .sourcesMetadataTable{
-    padding-top: 5px;
-    width: 400px;
-  }
+    .sourcesMetadataTable {
+        padding-top: 5px;
+        width: 400px;
+    }
 
-  .historyMetadataTable{
-    padding-top: 5px;
-  }
+    .historyMetadataTable {
+        padding-top: 5px;
+    }
 }
 
 .jsonIcon:before {
-  content: "\e94c";
-  font-family: MLCustomFont;
-  font-size: 24px;
-  position: relative;
-  font-weight: 200;
-  top: 4px;
-  display: inline-block;
+    content: "\e94c";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    font-weight: 200;
+    display: inline-block;
 }
 
 .collectionsTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .collectionsTable {
+.collectionsTable {
     padding-top: 5px;
-  }
+}
 
-  .recordMetadataTableLabel {
+.recordMetadataTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .recordMetadataTable {
+.recordMetadataTable {
     padding-top: 5px;
-  }
-  .recordPermissionsTableLabel {
+}
+.recordPermissionsTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .recordPermissionsTable {
+.recordPermissionsTable {
     padding-top: 5px;
-  }
+}
 
-  .provTableLabel {
+.provTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .provTable {
+.provTable {
     padding-top: 5px;
-  }
+}
 
-  .documentPropertiesLabel {
+.documentPropertiesLabel {
     padding-top: 20px;
     padding-bottom: 20px;
     font-size: 16px;
-  }
-
-  .documentPropertiesContainer {
-    padding-top: 5px;
-  }
-
-.docInfoContainer {
-	padding-top: 8px;
-	padding-bottom: 6px;
-
-	.metaItem {
-		display: inline-block;
-		min-width: 260px;
-	}
-
-	.metaLabel {
-		font-weight: bold;
-		color: #666;
-		padding-right: 8px;
-	}
-
-	.metaValue {
-		padding-right: 15px;
-  }
-  .format {
-    padding-right: 5px;
-    text-transform: uppercase;
-  }
 }
 
-.documentContainer{
-  overflow: auto;
- }
+.documentPropertiesContainer {
+    padding-top: 5px;
+}
+
+.docInfoContainer {
+    padding-top: 8px;
+    padding-bottom: 6px;
+
+    .metaItem {
+        display: inline-block;
+        min-width: 260px;
+    }
+
+    .metaLabel {
+        font-weight: bold;
+        color: #666;
+        padding-right: 8px;
+    }
+
+    .metaValue {
+        padding-right: 15px;
+    }
+    .format {
+        padding-right: 5px;
+        text-transform: uppercase;
+    }
+}
+
+.documentContainer {
+    overflow: auto;
+}

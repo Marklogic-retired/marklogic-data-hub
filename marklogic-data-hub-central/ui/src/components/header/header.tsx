@@ -1,20 +1,19 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout, Menu} from "antd";
+import {Layout} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
 import SystemInfo from "./system-info";
-import {Image} from "react-bootstrap";
+import {Image, Nav, NavDropdown} from "react-bootstrap";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {QuestionCircle} from "react-bootstrap-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import {faQuestionCircle, faUser} from "@fortawesome/free-regular-svg-icons";
+import {faUser} from "@fortawesome/free-regular-svg-icons";
 import HCButton from "../common/hc-button/hc-button";
-import {Dropdown} from "react-bootstrap";
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -146,83 +145,60 @@ const Header:React.FC<Props> = (props) => {
   let globalIcons;
   if (user.authenticated) {
     globalIcons =
-    <div className={styles.iconsContainerAuth}>
-      <Menu
-        id="global-icons"
-        className={styles.globalIcons}
-        mode="horizontal"
-        theme="dark"
-      >
-        <Menu.Item>
-          <HCTooltip text={infoContainer} id="info-tooltip" placement="bottom-end" className={styles.infoTooltip}>
-            <i id="service-name" aria-label="service-details" tabIndex={1} ref={serviceNameRef}
-              onMouseDown={serviceNameClickHandler} onKeyDown={serviceNameKeyDownHandler}>
-              <FontAwesomeIcon icon={faInfoCircle} size="2x" aria-label="icon: info-circle"/>
+      <Nav id="global-icons" className={styles.iconsContainerAuth}>
+
+        <Nav.Item>
+          <Nav.Link>
+            <HCTooltip text={infoContainer} id="info-tooltip" placement="bottom-end" className={styles.infoTooltip}>
+              <i id="service-name" aria-label="service-details" tabIndex={1} ref={serviceNameRef}
+                onMouseDown={serviceNameClickHandler} onKeyDown={serviceNameKeyDownHandler}>
+                <FontAwesomeIcon icon={faInfoCircle} size="2x" aria-label="icon: info-circle" />
+              </i>
+            </HCTooltip>
+          </Nav.Link>
+        </Nav.Item>
+
+        <Nav.Item tabIndex={-1}>
+          <div className={styles.vertical}></div>
+        </Nav.Item>
+
+        <Nav.Item>
+          <Nav.Link id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
+            tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler} as="a">
+            <HCTooltip text="Help" id="help-tooltip" placement="bottom">
+              <QuestionCircle color={"rgba(255, 255, 255, 0.65)"} size={24} aria-label="icon: question-circle" />
+            </HCTooltip></Nav.Link>
+        </Nav.Item>
+        <NavDropdown autoClose={false} title={
+          <HCTooltip text="User" id="user-tooltip" placement="bottom">
+            <i>
+              <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user" />
             </i>
           </HCTooltip>
-        </Menu.Item>
-        <div className={styles.vertical}></div>
-        {/* <Menu.Item>
-          <Tooltip title="Search"><Icon type="search"/></Tooltip>
-        </Menu.Item> */}
-        <Menu.Item>
-          <HCTooltip text="Help" id="help-tooltip" placement="bottom">
-            <div className={styles.helpIconContainer}>
-              <a id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
-                tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler}>
-                <FontAwesomeIcon color={"rgba(255, 255, 255, 0.65)"} icon={faQuestionCircle} size="2x" aria-label="icon: question-circle"/>
-              </a>
-            </div>
-          </HCTooltip>
-        </Menu.Item>
-        {/* <Menu.Item>
-          <Tooltip title="Settings"><Icon type="setting"/></Tooltip>
-        </Menu.Item> */}
-        <Menu.Item>
-          <Dropdown align="end" className="d-inline me-4" autoClose={false} show={showUserDropdown}>
-            <Dropdown.Toggle
-              className="mx-3"
-              as="span"
-              aria-label="user-dropdown"
-              id="user-dropdown"
-              tabIndex={1}
-              ref={userDropdownRef}
-              onKeyDown={userIconKeyDownHandler}
-              onMouseDown={userDropdownClickHandler}
-            >
-              <HCTooltip text="User" id="user-tooltip" placement="bottom">
-                <i>
-                  <FontAwesomeIcon icon={faUser} size="2x" aria-label="icon: user" />
-                </i>
-              </HCTooltip>
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
-              <Dropdown.Item className="p-0 m-0 pt-4 bg-transparent">{userMenu}</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </Menu.Item>
-      </Menu>
-    </div>;
+        }
+        className={styles.userDrop}
+        id="user-dropdown">
+          <NavDropdown.Item
+            as="span"
+            className="bg-transparent p-0 m-0"
+            ref={userDropdownRef}
+            onKeyDown={userIconKeyDownHandler}
+            onMouseDown={userDropdownClickHandler}>
+            {userMenu}
+          </NavDropdown.Item>
+
+        </NavDropdown>
+      </Nav>;
   } else {
-    globalIcons =
-    <div className={styles.iconsContainer}>
-      <Menu
-        id="global-icons"
-        className={styles.globalIcons}
-        mode="horizontal"
-        theme="dark"
-      >
-        <Menu.Item>
-          <HCTooltip text="Help" id="help-tooltip" placement="bottom">
-            <div className={styles.helpIconContainer}>
-              <a id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>
-                <QuestionCircle color={"rgba(255, 255, 255, 0.65)"} size={24} aria-label="icon: question-circle"/>
-              </a>
-            </div>
-          </HCTooltip>
-        </Menu.Item>
-      </Menu>
-    </div>;
+    globalIcons =(
+      <Nav id="global-icons" className={styles.iconsContainer}>
+        <Nav.Item>
+          <Nav.Link id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>
+            <HCTooltip text="Help" id="help-tooltip" placement="bottom">
+              <QuestionCircle color={"rgba(255, 255, 255, 0.65)"} size={24} aria-label="icon: question-circle" />
+            </HCTooltip></Nav.Link>
+        </Nav.Item>
+      </Nav>);
   }
 
   const handleHomeClick = (event) => {

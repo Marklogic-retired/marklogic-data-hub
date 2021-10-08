@@ -26,6 +26,10 @@
     display: flex;
     vertical-align: middle;
     max-height: 4vh;
+    height: 40px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    padding: 0 16px;
     &:hover{
         background-color: #E9F7FE;
     }
