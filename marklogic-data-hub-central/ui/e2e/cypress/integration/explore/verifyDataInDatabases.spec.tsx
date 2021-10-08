@@ -2,10 +2,11 @@
 
 import browsePage from "../../support/pages/browse";
 import {Application} from "../../support/application.config";
-import {toolbar} from "../../support/components/common";
+import {confirmationModal, toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
+import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Verify All Data for final/staging databases and non-entity detail page", () => {
 
@@ -121,6 +122,12 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitForAsyncRequest();
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
@@ -186,7 +193,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
       browsePage.waitForSpinnerToDisappear();
       browsePage.getFinalDatabaseButton().click();
       browsePage.waitForSpinnerToDisappear();
-      cy.contains("Showing 1-20 of "+val+" results", {timeout: 5000});
+      cy.contains("Showing 1-20 of " + val + " results", {timeout: 5000});
       browsePage.getTotalDocuments().should("be.equal", val);
     });
   });

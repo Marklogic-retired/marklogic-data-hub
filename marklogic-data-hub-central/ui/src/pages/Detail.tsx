@@ -7,8 +7,8 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Layout, Menu, Tooltip, Table} from "antd";
-import {Row, Col} from "react-bootstrap";
+import {Layout, Tooltip, Table} from "antd";
+import {Row, Col, Tabs, Tab} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode, faInfoCircle} from "@fortawesome/free-solid-svg-icons";
@@ -354,13 +354,13 @@ const Detail: React.FC<Props> = ({history, location}) => {
     }
   };
 
-  const handleClick = (event) => {
-    setSelected(event.key);
+  const handleClick = (key) => {
+    setSelected(key);
 
     //Set the selected view property in user preferences.
     let preferencesObject = {
       ...detailPagePreferences,
-      selected: event.key
+      selected: key
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -401,40 +401,40 @@ const Detail: React.FC<Props> = ({history, location}) => {
                 {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences["sources"]} />}
               </div>
               <div id="menu" className={styles.menu}>
-                <Menu id="subMenu" onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
-                  <Menu.Item key="instance" id="instance" data-cy="instance-view">
-                    <Tooltip title={"Show the processed data"}>
+                <Tabs onSelect={(event) => handleClick(event)} variant="tabs" className={styles.tabsContainer}>
+                  <Tab eventKey="instance" id="instance" data-cy="instance-view" tabClassName={`${styles.tabActive} ${selected === "instance" && styles.active}`}
+                    title={<Tooltip title={"Show the processed data"}>
                       <FontAwesomeIcon icon={faThList} size="lg" />
                       <span className={styles.subMenu}>Instance</span>
-                    </Tooltip>
-                  </Menu.Item>
-                  <Menu.Item key="full" id="full" data-cy="source-view">
-                    <Tooltip title={"Show the complete " + contentType.toUpperCase()} >
+                    </Tooltip>}>
+                  </Tab>
+                  <Tab eventKey="full" id="full" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "full" && styles.active}`}
+                    title={<Tooltip title={"Show the complete " + contentType.toUpperCase()} >
                       {contentType.toUpperCase() === "XML" ?
                         <FontAwesomeIcon icon={faCode} size="lg" />
                         :
                         <span className={styles.jsonIcon}></span>
                       }
                       <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
-                    </Tooltip>
-                  </Menu.Item>
-                  <Menu.Item key="metadata" id="metadata" data-cy="metadata-view">
+                    </Tooltip>}>
+                  </Tab>
+                  <Tab eventKey="metadata" id="metadata" data-cy="metadata-view" tabClassName={`${styles.tabActive} ${selected === "metadata" && styles.active}`} title={
                     <Tooltip title={"Show the metadata"}>
                       <FontAwesomeIcon icon={faInfoCircle} size="lg" />
                       <span className={styles.subMenu}>Metadata</span>
                     </Tooltip>
-                  </Menu.Item>
-
-                </Menu>
+                  }>
+                  </Tab>
+                </Tabs>
               </div>
             </div>
             <div className={styles.documentContainer}>{(() => {
               let block;
               if (isLoading || user.error.type === "ALERT") {
                 block =
-                        <div style={{marginTop: "40px"}}>
-                          <AsyncLoader />
-                        </div>;
+                  <div style={{marginTop: "40px"}}>
+                    <AsyncLoader />
+                  </div>;
               } else if (selected === "instance") {
                 contentType === "json" ?
                   block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />
@@ -442,47 +442,47 @@ const Detail: React.FC<Props> = ({history, location}) => {
                   block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />;
               } else if (selected === "metadata") {
                 block =
-                                    <div id="metadata-view">
-                                      <div className={styles.docInfoContainer}>
-                                        <div className={styles.metaItem} data-testid="document-uri">
-                                          <span className={styles.metaLabel}>Document URI:</span>
-                                          <span className={styles.metaValue}>{uri}</span>
-                                        </div>
-                                        <div className={styles.metaItem} data-testid="document-quality">
-                                          <span className={styles.metaLabel}>Document Quality:</span>
-                                          <span className={styles.metaValue}>{docQuality}</span>
-                                        </div>
-                                      </div>
-                                      {
-                                        (collections) &&
-                                          <div className={styles.collectionsTableContainer}>
-                                            <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                                            <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
-                                          </div>
-                                      }
-                                      {
-                                        (recordPermissions) &&
-                                          <div className={styles.recordPermissionsTableContainer}>
-                                            <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                                            <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
-                                          </div>
-                                      }
-                                      {
-                                        (recordMetadata) &&
-                                          <div className={styles.recordMetadataTableContainer}>
-                                            <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                                            <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
-                                          </div>
-                                      }
-                                      <div className={styles.documentPropertiesContainer}>
-                                        <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">Document Properties</div>
-                                        {
-                                          (documentProperties) ?
-                                            <pre data-testid="doc-properties-container">{xmlFormatter(documentProperties)}</pre>
-                                            : <p data-testid="doc-no-properties-message">This document has no properties.</p>
-                                        }
-                                      </div>
-                                    </div>;
+                  <div id="metadata-view">
+                    <div className={styles.docInfoContainer}>
+                      <div className={styles.metaItem} data-testid="document-uri">
+                        <span className={styles.metaLabel}>Document URI:</span>
+                        <span className={styles.metaValue}>{uri}</span>
+                      </div>
+                      <div className={styles.metaItem} data-testid="document-quality">
+                        <span className={styles.metaLabel}>Document Quality:</span>
+                        <span className={styles.metaValue}>{docQuality}</span>
+                      </div>
+                    </div>
+                    {
+                      (collections) &&
+                      <div className={styles.collectionsTableContainer}>
+                        <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
+                        <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
+                      </div>
+                    }
+                    {
+                      (recordPermissions) &&
+                      <div className={styles.recordPermissionsTableContainer}>
+                        <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
+                        <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
+                      </div>
+                    }
+                    {
+                      (recordMetadata) &&
+                      <div className={styles.recordMetadataTableContainer}>
+                        <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
+                        <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
+                      </div>
+                    }
+                    <div className={styles.documentPropertiesContainer}>
+                      <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">Document Properties</div>
+                      {
+                        (documentProperties) ?
+                          <pre data-testid="doc-properties-container">{xmlFormatter(documentProperties)}</pre>
+                          : <p data-testid="doc-no-properties-message">This document has no properties.</p>
+                      }
+                    </div>
+                  </div>;
               } else {
                 contentType === "json" ?
                   block = (data) && <pre data-testid="json-container">{jsonFormatter(data)}</pre>

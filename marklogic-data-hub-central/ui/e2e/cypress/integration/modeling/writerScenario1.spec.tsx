@@ -163,7 +163,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeTable.getExpandEntityIcon("Customer");
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
-    cy.get("[aria-label=\"user-dropdown\"]").trigger("mousedown");
+    cy.get("#user-dropdown").click();
     cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
     cy.location("pathname").should("eq", "/");
   });
