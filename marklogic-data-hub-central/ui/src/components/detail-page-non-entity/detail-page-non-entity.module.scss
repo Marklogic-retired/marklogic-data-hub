@@ -1,191 +1,194 @@
 .title {
-  color: #5B69AF;
-  cursor: pointer;
+    color: #5b69af;
+    cursor: pointer;
 }
 .menu {
-  width: 13.3em;
-  padding-left: 40px;
-  font-size: 14px;
-  font-weight: bold;
+    width: 13.3em;
+    padding-left: 40px;
+    font-size: 14px;
+    font-weight: bold;
 
-  .fileSearchIcon {
-    font-size: 20px;
-  }
+    .fileSearchIcon {
+        font-size: 20px;
+    }
 }
 
 .subMenu {
-  padding: 10px;
-  font-size: 18px;
+    padding: 10px;
+    font-size: 18px;
 }
 
 .detailContentNonEntityInstance {
-  background: #fff;
-  padding: 18px 0px;
-  max-height: 100vh;
-
-  .detailContent {
     background: #fff;
-    padding: 18px 36px;
-  }
+    padding: 18px 0px;
+    max-height: 100vh;
 
-  .contentElements {
-    width: 90%;
-    min-width: 40em;
-    padding-left: 40px;
-    padding-top: 20px;
-  }
+    .detailContent {
+        background: #fff;
+        padding: 18px 36px;
+    }
+
+    .contentElements {
+        width: 90%;
+        min-width: 40em;
+        padding-left: 40px;
+        padding-top: 20px;
+    }
 }
 
 .detailContentNonEntityHeader {
-  background: #fff;
-  display: flex;
-  justify-content: space-between;
-
-  .backButtonHeader {
-    margin-right: 30px;
+    background: #fff;
     display: flex;
-  }
+    justify-content: space-between;
 
-  .metadataCollapseIconContainer {
-    display: flex;
-    align-items: center;
-
-    > .metadataCollapseIcon {
-
-      .collapseIconsAlignment {
-        background-color: #e7e7e8;
-        padding: 3px 3px;
-        border-radius: 5px 0px 0px 5px;
-        cursor: pointer;
-      }
-
-      .collapseExpandIcons {
-        font-size: 16px;
-        color: #000;
-      }
+    .backButtonHeader {
+        margin-right: 30px;
+        display: flex;
     }
-  }
+
+    .metadataCollapseIconContainer {
+        display: flex;
+        align-items: center;
+
+        > .metadataCollapseIcon {
+            .collapseIconsAlignment {
+                background-color: #e7e7e8;
+                padding: 3px 3px;
+                border-radius: 5px 0px 0px 5px;
+                cursor: pointer;
+            }
+
+            .collapseExpandIcons {
+                font-size: 16px;
+                color: #000;
+            }
+        }
+    }
 }
 
 .documentContainer {
-  max-height: 60vh;
-  overflow: auto;
+    max-height: 60vh;
+    overflow: auto;
 }
 
 .siderParent {
-  overflow: auto;
-  //height: '77vh',
-  height : 82vh;
-  background-color: #fff;
-  border-left: 1px solid #777777;
-  box-shadow: -1px 0px 4px #777777;
+    overflow: auto;
+    //height: '77vh',
+    height: 82vh;
+    background-color: #fff;
+    border-left: 1px solid #777777;
+    box-shadow: -1px 0px 4px #777777;
 }
 .siderContainerNonEntity {
-  padding: 92px 36px 72px 36px;
+    padding: 92px 36px 72px 36px;
 
-  .uri {
-    font-weight: bold;
-  }
+    .uri {
+        font-weight: bold;
+    }
 
-  .quality {
-    font-weight: bold;
-  }
+    .quality {
+        font-weight: bold;
+    }
 
-  .metadataTableLabel {
-    padding-top: 20px;
-    font-size: 16px;
-  }
+    .metadataTableLabel {
+        padding-top: 20px;
+        font-size: 16px;
+    }
 
-  .sourcesMetadataTable {
-    padding-top: 5px;
-    width: 400px;
+    .sourcesMetadataTable {
+        padding-top: 5px;
+        width: 400px;
 
-    & thead > tr > th {
-      color: #44499C;
-      background-color: #E7E7E8;
-    };
-  }
+        & thead > tr > th {
+            color: #44499c;
+            background-color: #e7e7e8;
+        }
+    }
 
-  .historyMetadataTable {
-    padding-top: 5px;
-    & thead > tr > th {
-      color: #44499C;
-      background-color: #E7E7E8;
-    };
-  }
+    .historyMetadataTable {
+        padding-top: 5px;
+        & thead > tr > th {
+            color: #44499c;
+            background-color: #e7e7e8;
+        }
+    }
 }
 
 .noneValue {
-  color: #CCCCCC;
+    color: #cccccc;
 }
 
 .validValue {
-  width: 100%;
-  display: inline-flex;
-  vertical-align: top;
-  align-items: flex-start;
+    width: 100%;
+    display: inline-flex;
+    vertical-align: top;
+    align-items: flex-start;
 }
 
 .textContainer {
-  width: 100%;
+    width: 100%;
 }
 
 .menuText {
-  width: 13.3em;
-  padding-left: 40px;
-  font-size: 14px;
-  font-weight: bold;
+    width: 13.3em;
+    padding-left: 40px;
+    font-size: 14px;
+    font-weight: bold;
 
-  .fileSearchIcon {
-    font-size: 20px;
-  }
+    .fileSearchIcon {
+        font-size: 20px;
+    }
 }
 
 .download {
-  font-size: 12px;
-  color: #5B69AF;
-  margin-left: 40px;
-  margin-top: 20px;
+    font-size: 12px;
+    color: #5b69af;
+    margin-left: 40px;
+    margin-top: 20px;
 }
 
 .downloadIcon {
-  font-size: 12px;
+    font-size: 12px;
 }
-
-
 
 .collectionsTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .collectionsTable {
+.collectionsTable {
     padding-top: 5px;
-  }
+}
 
-  .recordMetadataTableLabel {
+.recordMetadataTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .recordMetadataTable {
+.recordMetadataTable {
     padding-top: 5px;
-  }
-  .recordPermissionsTableLabel {
+}
+.recordPermissionsTableLabel {
     padding-top: 20px;
     font-size: 16px;
-  }
+}
 
-  .recordPermissionsTable {
+.recordPermissionsTable {
     padding-top: 5px;
-  }
+}
 
-  .documentPropertiesLabel {
+.documentPropertiesLabel {
     padding-top: 20px;
     padding-bottom: 20px;
     font-size: 16px;
-  }
+}
 
-  .documentPropertiesContainer {
+.documentPropertiesContainer {
     padding-top: 5px;
-  }
+}
+
+.tabActive {
+    border: 0 !important;
+    border-bottom: 2px solid #5b69af !important;
+    color: #5b69af !important;
+}

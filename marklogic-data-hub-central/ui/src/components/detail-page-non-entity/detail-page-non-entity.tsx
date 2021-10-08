@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Row, Col} from "react-bootstrap";
-import {Layout, Menu, Table} from "antd";
+import {Row, Col, Tab, Tabs} from "react-bootstrap";
+import {Layout, Table} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -159,13 +159,14 @@ const DetailPageNonEntity = (props) => {
     }
   ];
 
-  const handleMenuSelect = (event) => {
-    setSelected(event.key);
+
+  const handleMenuSelect = (key) => {
+    setSelected(key);
 
     //Set the selected view property in user preferences.
     let preferencesObject = {
       ...props.detailPagePreferences,
-      selected: event.key
+      selected: key
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -187,29 +188,33 @@ const DetailPageNonEntity = (props) => {
   const contentElements = props.isLoading || user.error.type === "ALERT" ? <div style={{marginTop: "40px"}}><AsyncLoader /></div> : displayRecord(props.contentType);
 
   const viewSelector = <div id="menu" className={styles.menu}>
-    <Menu id="subMenu" onClick={(event) => handleMenuSelect(event)} mode="horizontal" selectedKeys={["record"]}>
-      <Menu.Item key="record" id="record" data-testid="record-view">
-        <HCTooltip text="Show the complete record" id="complete-record-tooltip" placement="top">
-          <span>
-            <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
-            <span className={styles.subMenu}>Record</span>
-          </span>
-        </HCTooltip>
-      </Menu.Item>
-    </Menu>
+    <Tabs onSelect={(event) => handleMenuSelect(event)}  className="border-0 ms-0">
+      <Tab eventKey="record" key="record" id="record" data-testid="record-view" tabClassName={`${styles.tabActive} ${selected === "record" && styles.active}`}
+        title={
+          <HCTooltip text="Show the complete record" id="complete-record-tooltip" placement="top">
+            <span>
+              <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
+              <span className={styles.subMenu}>Record</span>
+            </span>
+          </HCTooltip>
+        }>
+      </Tab>
+    </Tabs>
   </div>;
 
   const textViewSelector = <div id="menu" className={styles.menuText}>
-    <Menu id="subMenu" mode="horizontal" selectedKeys={["record"]}>
-      <Menu.Item key="record" id="record" data-cy="source-view">
-        <HCTooltip text="Show the complete record" id="show-complete-record-tooltip" placement="top">
-          <span>
-            <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
-            <span className={styles.subMenu}>Record</span>
-          </span>
-        </HCTooltip>
-      </Menu.Item>
-    </Menu>
+    <Tabs>
+      <Tab eventKey="record" id="record" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "record" && styles.active}`}
+        title={
+          <HCTooltip text="Show the complete record" id="show-complete-record-tooltip" placement="top">
+            <span>
+              <i><FontAwesomeIcon icon={faCode} size="lg" /></i>
+              <span className={styles.subMenu}>Record</span>
+            </span>
+          </HCTooltip>
+        }>
+      </Tab>
+    </Tabs>
   </div>;
 
   const nonEntityMenu = () => {
