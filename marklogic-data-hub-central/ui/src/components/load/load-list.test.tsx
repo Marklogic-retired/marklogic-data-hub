@@ -140,8 +140,8 @@ describe("Load data component", () => {
     await wait(() => {
       fireEvent.click(getByText(data.loadData.data[0].name));
     });
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("nav-link active");
 
     // Basic settings values
     expect(getAllByText("testLoad")[0]).toBeInTheDocument();
@@ -154,8 +154,8 @@ describe("Load data component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
     let saveButton = getAllByText("Save"); // Each tab has a Save button
     expect(saveButton.length > 0);
     let stepName = loadData.loads.data[0].name;

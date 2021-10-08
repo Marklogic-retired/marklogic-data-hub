@@ -1,5 +1,8 @@
 import React, {useState, useEffect} from "react";
-import {Modal, Tabs} from "antd";
+import {Modal} from "antd";
+import Tabs from "react-bootstrap/Tabs";
+import Tab from "react-bootstrap/Tab";
+import TabPane from "react-bootstrap/TabContainer";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
@@ -11,8 +14,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ErrorTooltips} from "../../config/tooltips.config";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-
-const {TabPane} = Tabs;
 
 interface Props {
     isEditing: boolean;
@@ -231,36 +232,39 @@ const Steps: React.FC<Props> = (props) => {
         <div className={styles.title}>{getTitle()}</div>
       </header>
       <div className={styles.tabs}>
-        <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
-
-          <TabPane tab={(
+        <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} onSelect={handleTabChange}>
+          <Tab title={(
             <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span>Basic</span></HCTooltip>
-          )} key="1" disabled={!isValid && currentTab !== "1"}>
-            {getCreateEditStep(props.activityType)}
-          </TabPane>
-          <TabPane tab={(
-            <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span>Advanced</span></HCTooltip>
-          )} key="2" disabled={!isValid && currentTab !== "2"} forceRender={true}>
-            <AdvancedSettings
-              tabKey="2"
-              tooltipsData={props.tooltipsData}
-              isEditing={props.isEditing}
-              openStepSettings={props.openStepSettings}
-              setOpenStepSettings={props.setOpenStepSettings}
-              stepData={props.stepData}
-              updateStep={updateStep}
-              activityType={props.activityType}
-              canWrite={props.canWrite}
-              currentTab={currentTab}
-              setIsValid={setIsValid}
-              resetTabs={resetTabs}
-              setHasChanged={setHasAdvancedChanged}
-              setPayload={setAdvancedPayload}
-              createStep={createStep}
-              onCancel={onCancel}
-              defaultCollections={defaultCollections}
-            />
-          </TabPane>
+          )} key="1" eventKey="1" disabled={!isValid && currentTab !== "1"}>
+            <TabPane mountOnEnter={false}>
+              {getCreateEditStep(props.activityType)}
+            </TabPane>
+          </Tab>
+          <Tab title={(
+            <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="advanced-tooltip" placement="bottom"><span>Advanced</span></HCTooltip>
+          )} key="2" eventKey="2" disabled={!isValid && currentTab !== "2"}>
+            <TabPane>
+              <AdvancedSettings
+                tabKey="2"
+                tooltipsData={props.tooltipsData}
+                isEditing={props.isEditing}
+                openStepSettings={props.openStepSettings}
+                setOpenStepSettings={props.setOpenStepSettings}
+                stepData={props.stepData}
+                updateStep={updateStep}
+                activityType={props.activityType}
+                canWrite={props.canWrite}
+                currentTab={currentTab}
+                setIsValid={setIsValid}
+                resetTabs={resetTabs}
+                setHasChanged={setHasAdvancedChanged}
+                setPayload={setAdvancedPayload}
+                createStep={createStep}
+                onCancel={onCancel}
+                defaultCollections={defaultCollections}
+              />
+            </TabPane>
+          </Tab>
         </Tabs>
       </div>
       {/* Step Details link for Mapping steps */}
