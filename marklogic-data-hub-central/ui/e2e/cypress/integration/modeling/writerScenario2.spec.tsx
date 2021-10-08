@@ -313,7 +313,24 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getProperty("testing").should("not.exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });
+  it("Create an entity with name having more than 20 chars", () => {
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
+    modelPage.selectView("table");
+    entityTypeTable.waitForTableToLoad();
+    modelPage.getAddEntityButton().should("exist").click();
+    entityTypeModal.newEntityName("ThisIsVeryLongNameHavingMoreThan20Characters");
+    entityTypeModal.newEntityDescription("entity description");
+    cy.waitUntil(() => entityTypeModal.getAddButton().click());
+    entityTypeTable.viewEntityInGraphView("ThisIsVeryLongNameHavingMoreThan20Characters");
+    graphVis.getPositionsOfNodes().then((nodePositions: any) => {
+      let longNameCoordinates: any = nodePositions["ThisIsVeryLongNameHavingMoreThan20Characters"];
+      graphVis.getGraphVisCanvas().click(longNameCoordinates.x, longNameCoordinates.y);
+      // Node shows full name on hover
+      cy.findByText("ThisIsVeryLongNameHavingMoreThan20Characters").should("exist");
+    });
+  });
   it("Create another entity Patients and add a property", {defaultCommandTimeout: 120000}, () => {
+    modelPage.selectView("table");
     modelPage.getAddEntityButton().should("exist").click();
     entityTypeModal.newEntityName("Patients");
     entityTypeModal.newEntityDescription("An entity for patients");

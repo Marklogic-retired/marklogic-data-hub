@@ -301,12 +301,16 @@ const GraphVis: React.FC<Props> = (props) => {
     let nodes;
     if (graphType === "shape") {
       nodes = props.entityTypes && props.entityTypes?.map((e) => {
+        let entityName =  e.entityName;
+        if (e.entityName.length > 20) {
+          entityName=entityName.substring(0, 20) + "...";
+        }
         let label = "";
         let tmp = {
           ...graphConfig.defaultNodeProps,
           id: e.entityName,
           label: label.concat(
-            "<b>", e.entityName, "</b>\n",
+            "<b>", entityName, "</b>\n",
             // "<code>", getNumInstances(e.entityName).toString(), "</code>"
           ),
           color: {
@@ -339,8 +343,11 @@ const GraphVis: React.FC<Props> = (props) => {
           tmp.x = coords[e.entityName].graphX;
           tmp.y = coords[e.entityName].graphY;
         }
+        if (e.entityName.length > 20) {
+          tmp.title =  e.entityName;
+        }
         if (getDescription(e.entityName) && getDescription(e.entityName).length > 0) {
-          tmp.title = getDescription(e.entityName);
+          tmp.title = e.entityName.length > 20 ? tmp.title +  "\n" + getDescription(e.entityName) : getDescription(e.entityName);
         }
         return tmp;
       });
