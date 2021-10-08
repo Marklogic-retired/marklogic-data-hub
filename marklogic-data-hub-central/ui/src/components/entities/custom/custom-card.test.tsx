@@ -109,8 +109,8 @@ describe("Custom Card component", () => {
     });
 
     expect(getByText("Custom Step Settings")).toBeInTheDocument();
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     // Basic settings values
     expect(getByPlaceholderText("Enter name")).toHaveValue("customJSON");
@@ -124,8 +124,8 @@ describe("Custom Card component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
 
     // Advanced settings values
     expect(getByText("Source Database:")).toBeInTheDocument();
@@ -174,8 +174,8 @@ describe("Custom Card component", () => {
     });
 
     expect(getByText("Custom Step Settings")).toBeInTheDocument();
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     // Basic settings values
     expect(getByPlaceholderText("Enter name")).toHaveValue("customJSON");
@@ -189,8 +189,8 @@ describe("Custom Card component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
 
     // Advanced settings values
     expect(getByText("Source Database:")).toBeInTheDocument();
