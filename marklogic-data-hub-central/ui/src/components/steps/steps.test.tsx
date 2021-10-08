@@ -29,8 +29,8 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Default Basic tab
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
     expect(baseElement.querySelector("#name")).toHaveValue("AdvancedLoad");
     // Other Basic settings details tested in create-edit-*.test.tsx
 
@@ -38,8 +38,8 @@ describe("Steps settings component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
     // Other Advanced settings details tested in advanced-settings.test.tsx
 
@@ -53,8 +53,8 @@ describe("Steps settings component", () => {
     await wait(() => {
       fireEvent.click(getByText("Basic"));
     });
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     fireEvent.click(getAllByLabelText("Cancel")[0]);
 
@@ -99,8 +99,8 @@ describe("Steps settings component", () => {
     expect(detailsLink.onclick).toHaveBeenCalledTimes(1);
 
     // Default Basic tab
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     // Switch to Advanced tab, create error, verify other tab disabled
     await wait(() => {
@@ -114,7 +114,7 @@ describe("Steps settings component", () => {
     //TODO: Test with reference rather than hardcoded string.
     expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
 
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link disabled");
     fireEvent.mouseOver(getByText("Basic"));
     wait(() => expect(screen.getByText(ErrorTooltips.disabledTab)).toBeInTheDocument());
 
@@ -125,7 +125,7 @@ describe("Steps settings component", () => {
     getByPlaceholderText("Please enter target permissions").blur();
     expect(getByTestId("validationError")).toHaveTextContent("");
 
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link disabled");
 
     // Close dialog, verify discard changes confirm dialog
     await wait(() => {
@@ -208,8 +208,8 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Advanced tab disabled since Basic tab has empty required fields
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link disabled");
 
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
@@ -257,8 +257,8 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Advanced tab disabled since Basic tab has empty required fields
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link disabled");
 
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
@@ -312,8 +312,8 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Advanced tab disabled since Basic tab has empty required fields
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link disabled");
 
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
@@ -361,8 +361,8 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Advanced tab disabled since Basic tab has empty required fields
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link disabled");
 
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
