@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {useLocation} from "react-router-dom";
-import {Menu, Modal} from "antd";
-import {Row, Col, Accordion, Card} from "react-bootstrap";
+import {Modal} from "antd";
+import {Row, Col, Accordion, Card, Tabs, Tab} from "react-bootstrap";
 import axios from "axios";
 import {createStep, updateStep, getSteps, deleteStep} from "../../api/steps";
 import {sortStepsByUpdated} from "../../util/conversionFunctions";
@@ -446,20 +446,12 @@ const EntityTiles = (props) => {
                 </Accordion.Button>
               </Card.Header>
               <Accordion.Body>
-                <Menu mode="horizontal" defaultSelectedKeys={[`map-${entityType}`]} selectedKeys={viewData}>
-                  {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index, "map", entityType)}>
-                              Map
-                  </Menu.Item>: null}
-                  {props.canReadMatchMerge ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index, "match", entityType)}>
-                              Match
-                  </Menu.Item>: null}
-                  {props.canReadMatchMerge ? <Menu.Item data-testid={`${entityType}-Merge`} key={`merge-${entityType}`} onClick={() => updateView(index, "merge", entityType)}>
-                              Merge
-                  </Menu.Item>: null}
-                  {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index, "custom", entityType)}>
-                              Custom
-                  </Menu.Item>: null}
-                </Menu>
+                <Tabs defaultActiveKey={`map-${entityType}`} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
+                  {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`}  title="Map" tabClassName={`curateTab`}/>: null}
+                  {props.canReadMatchMerge ? <Tab  id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`}  title="Match" tabClassName={`curateTab`}/>: null}
+                  {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`}   title="Merge" tabClassName={`curateTab`}/>: null}
+                  {props.canReadCustom ? <Tab id={`${entityType}-Custom`} data-testid={`${entityType}-Custom`} eventKey="custom" key={`custom-${entityType}`}   title="Custom" tabClassName={`curateTab`}/>: null}
+                </Tabs>
                 {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId), matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), mergingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
               </Accordion.Body>
             </Card>
