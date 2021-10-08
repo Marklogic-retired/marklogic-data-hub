@@ -1,0 +1,14 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1"
+      },
+      "Customer": {
+        "customerId": 1,
+        "customerName": ["Robert"]
+      }
+    }
+  }
+}

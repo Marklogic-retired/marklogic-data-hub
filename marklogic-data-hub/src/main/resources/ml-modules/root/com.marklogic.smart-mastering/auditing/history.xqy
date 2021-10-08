@@ -35,16 +35,23 @@ declare function history:property-history(
 ) as map:map
 {
   let $document-auditing := auditing:auditing-receipts-for-doc-uri($doc-uri, ())
-  let $properties :=
-    if (fn:exists($properties)) then
-      $properties
-    else
-      fn:distinct-values($document-auditing/prov:hadMember/prov:entity/prov:type)
+  let $all-properties := fn:distinct-values($document-auditing/prov:hadMember/prov:entity/prov:type)
   return
     map:new(
-      for $property in $properties
+      for $property in $all-properties
+      let $property-label :=
+        if (fn:matches($property, "^/?\(es:envelope\|envelope\)/\(es:instance\|instance\)/")) then
+          fn:string-join(
+              for $property-part at $pos in fn:tokenize(fn:replace($property, "^/?\(es:envelope\|envelope\)/\(es:instance\|instance\)/", ""),"/")[.]
+              where ($pos mod 2) = 0
+              return $property-part,
+              "."
+          )
+        else
+          $property
+      where fn:empty($properties) or $properties = ($property, $property-label)
       return
-        map:entry($property,
+        map:entry($property-label,
           map:new((
             let $prop-details := $document-auditing/prov:hadMember/prov:entity[prov:type eq $property]
             let $distinct-prop-values :=
