@@ -699,7 +699,7 @@ const MappingStepDetail: React.FC = () => {
         {!showEditURIOption ?
           <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>
           :
-          <div><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}</span></span><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}/></i></div>}
+          <div className={styles.uriHoverContainer}><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}<i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}/></i></span></span></div>}
       </div>
       :
       <div className={styles.inputURIContainer}>URI:
@@ -891,14 +891,14 @@ const MappingStepDetail: React.FC = () => {
           placeholder={`Search name`}
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
           className={styles.searchInput}
         />
         <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>Reset</MLButton>
         <MLButton
           data-testid={`submitSearch-${dataIndex}`}
           type="primary"
-          onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
           size="small"
           className={styles.searchSubmitButton}
         >

@@ -446,7 +446,7 @@ describe("Property Modal Component", () => {
 
     fireEvent.submit(screen.getByLabelText("structured-input-name"));
 
-    expect(getByText("Product")).toBeInTheDocument();
+    expect(getByText("Structured: Product")).toBeInTheDocument();
 
     const multipleRadio = screen.getByLabelText("multiple-yes");
     fireEvent.change(multipleRadio, {target: {value: "yes"}});
@@ -637,6 +637,7 @@ describe("Property Modal Component", () => {
     expect(queryByText("Hide Steps...")).toBeNull();
 
     expect(getByText("Edit Property")).toBeInTheDocument();
+    expect(getByText("Relationship: Customer")).toBeInTheDocument();
 
     // Change Join Property
     expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();

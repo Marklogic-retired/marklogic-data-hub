@@ -201,6 +201,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.toggleForeignKeyDropdown();
     propertyModal.getCancelButton();
   });
+
   it("Adding property to Person entity", () => {
     entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.getAddPropertyButton("Person").click();

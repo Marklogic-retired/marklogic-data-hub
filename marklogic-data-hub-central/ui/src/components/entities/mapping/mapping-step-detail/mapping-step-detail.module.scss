@@ -386,14 +386,21 @@ hr {
     color: #394494;
 }
 
+.uriHoverContainer {
+    display: flex;
+    flex-direction: row;
+}
+
 .editIcon{
-    font-Size: 27px;
+    display: relative;
+    justify-content: flex-end;
+    font-Size: 24px;
     color: #394494;
     background-color: #b9daed;
     padding: 5px 3px 5px 3px;
-    margin-right: -3px;
+    margin-left: 5px;
+    margin-right: -6px;
     margin-top: -4px;
-    margin-left: 13.75%;
     cursor: pointer;
 }
 
