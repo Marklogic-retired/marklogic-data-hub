@@ -881,7 +881,19 @@ const PropertyModal: React.FC<Props> = (props) => {
             aria-label="type-dropdown"
             placeholder="Select the property type"
             options={dropdownOptions}
-            displayRender={ label => { return label[label.length-1]; } }
+            displayRender={ label => {
+              if (label[label.length - 1]) {
+                if (label[0] === "Related Entity") {
+                  return "Relationship: " + label[label.length - 1];
+                } else if (label[0] === "Structured") {
+                  return "Structured: " + label[label.length - 1];
+                } else {
+                  return label[label.length - 1];
+                }
+              } else {
+                return label[label.length - 1];
+              }
+            }}
             onChange={onPropertyTypeChange}
             value={typeDisplayValue}
           />

@@ -492,7 +492,7 @@ describe("Entity Modeling: Writer Role", () => {
     entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.editProperty("purchased");
     propertyModal.getYesRadio("multiple").should("be.checked");
-    propertyModal.verifyPropertyType("Order");
+    propertyModal.verifyPropertyType("Relationship: Order");
     propertyModal.verifyForeignKeyPlaceholder();
     propertyModal.getCancelButton();
 
@@ -570,7 +570,7 @@ describe("Entity Modeling: Writer Role", () => {
     entityTypeTable.waitForTableToLoad();
     propertyTable.editProperty("referredBy");
     propertyModal.getYesRadio("multiple").should("be.checked");
-    propertyModal.verifyPropertyType("Client");
+    propertyModal.verifyPropertyType("Relationship: Client");
     propertyModal.verifyForeignKey("firstname");
     propertyModal.getCancelButton();
 

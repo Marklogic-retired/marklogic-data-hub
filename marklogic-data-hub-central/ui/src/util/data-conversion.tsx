@@ -370,7 +370,6 @@ export const definitionsParser = (definitions: any): Definition[] => {
             // Handle join props if present
             property.relatedEntityType = defProp["relatedEntityType"];
             property.joinPropertyName = defProp["joinPropertyName"];
-
             if (defProp["relatedEntityType"]) {
               // Parse type from relatedEntityType URI
               let typeSplit = defProp["relatedEntityType"].split("/");

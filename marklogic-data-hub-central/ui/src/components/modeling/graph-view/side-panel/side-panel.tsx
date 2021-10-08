@@ -258,6 +258,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           id="description"
           data-testid="description"
           placeholder="Enter description"
+          disabled={props.canReadEntityModel && !props.canWriteEntityModel}
           className={styles.descriptionInput}
           value={selectedEntityDescription}
           onChange={handlePropertyChange}
@@ -281,6 +282,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             id="namespace"
             data-testid="namespace"
             placeholder="Example: http://example.org/es/gs"
+            disabled={props.canReadEntityModel && !props.canWriteEntityModel}
             className={styles.input}
             value={selectedEntityNamespace}
             onChange={handlePropertyChange}
@@ -299,6 +301,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               id="prefix"
               data-testid="prefix"
               placeholder="Example: esgs"
+              disabled={props.canReadEntityModel && !props.canWriteEntityModel}
               className={styles.prefixInput}
               value={selectedEntityNamespacePrefix}
               onChange={handlePropertyChange}
@@ -319,21 +322,12 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       >
         <div className={styles.colorContainer}>
           <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
-          {!props.canWriteEntityModel && props.canReadEntityModel ?
-            <div>
-              <span className={styles.editIconContainer}><MLTooltip title={SecurityTooltips.missingPermission} placement={"top"}><FontAwesomeIcon icon={faPencilAlt} size="sm" className={styles.editIconReadOnly} data-testid={"edit-color-icon-disabled"}/></MLTooltip></span>
-              <MLTooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </MLTooltip>
-            </div>
-            :
-            <div>
-              <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
-              <MLTooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
-                <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-              </MLTooltip>
-            </div>
-          }
+          <div>
+            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
+            <MLTooltip title={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement={"right"}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+            </MLTooltip>
+          </div>
         </div>
       </Form.Item>
     </div>

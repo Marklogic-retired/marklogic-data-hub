@@ -412,7 +412,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           placeholder={`Search name`}
           value={selectedKeys[0]}
           onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
           className={styles.searchInput}
         />
         <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
@@ -421,7 +421,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         <MLButton
           data-testid={`submitSearch-${dataIndex}`}
           type="primary"
-          onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false}
           size="small"
           className={styles.searchSubmitButton}
         >
