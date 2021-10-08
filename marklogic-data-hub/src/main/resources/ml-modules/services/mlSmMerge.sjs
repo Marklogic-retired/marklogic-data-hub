@@ -46,9 +46,7 @@ function post(context, params, input) {
   let sourceDatabase = combinedOptions.sourceDatabase || config.STAGINGDATABASE;
 
   combinedOptions.fullOutput = true;
-  if (params.preview === "true") {
-    combinedOptions.writeStepOutput = false;
-  }
+  combinedOptions.writeStepOutput = params.preview !== "true";
   combinedOptions.acceptsBatch = true;
   let jobId = params["job-id"];
   let uris = hubUtils.normalizeToArray(params.uri);

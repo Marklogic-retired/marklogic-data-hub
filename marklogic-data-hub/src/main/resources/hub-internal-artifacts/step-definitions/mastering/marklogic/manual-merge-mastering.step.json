@@ -8,6 +8,7 @@
   "batchSize" : 100,
   "threadCount" : 4,
   "options": {
+    "acceptsBatch": true,
     "stepUpdate": true,
     "sourceDatabase": "data-hub-FINAL",
     "targetDatabase": "data-hub-FINAL",
