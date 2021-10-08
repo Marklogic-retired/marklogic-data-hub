@@ -505,6 +505,21 @@ const MatchingStepDetail: React.FC = () => {
     await updateMatchingArtifact(stepArtifact);
   };
 
+  const timelineOrder = (a, b) => {
+    let aParts = a.value.split(":");
+    let bParts = b.value.split(":");
+    // If weights not equal
+    if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+      // By weight
+      return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+    } else {
+      // Else alphabetically
+      let aUpper = a.value.toUpperCase();
+      let bUpper = b.value.toUpperCase();
+      return (aUpper < bUpper) ? 1 : (aUpper > bUpper) ? -1 : 0;
+    }
+  };
+
   const rulesetOptions:any = {
     max: 120,
     min: -20,
@@ -563,7 +578,8 @@ const MatchingStepDetail: React.FC = () => {
         }
       }
     },
-    maxMinorChars: 4
+    maxMinorChars: 4,
+    order: timelineOrder
   };
 
   const thresholdOptions:any = {
@@ -620,7 +636,8 @@ const MatchingStepDetail: React.FC = () => {
         return "<div data-testid=\"threshold"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1] + "</div></div>";
       }
     },
-    maxMinorChars: 4
+    maxMinorChars: 4,
+    order: timelineOrder
   };
 
   const renderRulesetTimeline = () => {
