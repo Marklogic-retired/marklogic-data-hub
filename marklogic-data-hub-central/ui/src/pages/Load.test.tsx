@@ -50,8 +50,8 @@ describe("Load component", () => {
       await fireEvent.click(getByText("testLoad"));
     });
     expect(getByText("Loading Step Settings")).toBeInTheDocument();
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     // Basic settings
     expect(getByPlaceholderText("Enter name")).toHaveValue("testLoad");
@@ -65,8 +65,8 @@ describe("Load component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
 
     expect(await(waitForElement(() => getByText("Target Database:")))).toBeInTheDocument();
     expect(getByLabelText("headers-textarea")).toBeDisabled();
@@ -114,8 +114,8 @@ describe("Load component", () => {
       await fireEvent.click(getByText("testLoad"));
     });
     expect(getByText("Loading Step Settings")).toBeInTheDocument();
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).not.toHaveClass("nav-link active");
 
     // Basic settings
     expect(getByPlaceholderText("Enter name")).toHaveValue("testLoad");
@@ -129,8 +129,8 @@ describe("Load component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("button")).not.toHaveClass("nav-link active");
+    expect(getByText("Advanced").closest("button")).toHaveClass("nav-link active");
     expect(getByLabelText("headers-textarea")).not.toBeDisabled();
     fireEvent.click(getByText("Interceptors"));
     expect(getByLabelText("interceptors-textarea")).not.toBeDisabled();
