@@ -1,12 +1,45 @@
-.ant-tabs .ant-tabs-content {
-    margin-top: 30px;
-}
-
-.ant-tabs-top-bar {
-    width: 190px;
-    margin-left: 430px;
-}
+@import "../../HCTheme.scss";
 
 .basicTooltip, .advTooltip {
     max-width: 100%;
-  }
+}
+
+.nav-tabs {
+    width: 173px;
+    margin-left: 430px;
+    justify-content: space-around;
+
+    .nav-link, .nav-item.show .nav-link {
+        border: none !important;
+        border-bottom: #e8e8e8;
+        color: $text-color !important;
+        font-size: 16px;
+        padding: 16px;     
+
+        &.active {
+            color: $info !important;
+            border-bottom: 2px solid $info !important;
+            font-weight: 500;
+        }
+        &:not(.active) {
+            margin-left: -7px !important;
+        }
+    }
+
+    .nav-item:last-child .nav-link {
+        margin-left: 1px !important;
+    }
+}
+
+.nav-link.disabled {
+    color: #ccc !important;
+    cursor: not-allowed !important;
+    pointer-events: initial !important;
+}
+
+.tab-content {
+    .active {
+        margin-left: inherit !important;
+        padding-top: 30px;
+    }
+}
