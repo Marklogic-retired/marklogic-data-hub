@@ -47,16 +47,21 @@ function addRelatedMappableEntities(entityContext, entitiesNotToExpand, entityRe
     if (entityPropertyValue["relatedEntityType"] || (entityPropertyValue.items && entityPropertyValue.items["relatedEntityType"])) {
       let relatedEntityType = entityPropertyValue["relatedEntityType"] ? entityPropertyValue["relatedEntityType"] : entityPropertyValue.items["relatedEntityType"];
       let relatedEntityName = relatedEntityType.substring(relatedEntityType.lastIndexOf('/') + 1);
-      let joinPropertyName = entityPropertyValue["joinPropertyName"] ? entityPropertyValue["joinPropertyName"] : entityPropertyValue.items["joinPropertyName"]
+      let joinPropertyName = null;
+      if (entityPropertyValue["joinPropertyName"] != "") {
+        joinPropertyName = entityPropertyValue["joinPropertyName"] ? entityPropertyValue["joinPropertyName"] : entityPropertyValue.items["joinPropertyName"]
+      }
       if(relatedEntityName==targetEntityName){
-        const targetEntityResponse = responseArray.find(response => response.entityType == targetEntityName);
-        if(!entityHasMultipleForeignKey(targetEntityResponse, entityName)){
-          const entityMappingId =  targetEntityName + "." + joinPropertyName + ":" + entityName;
-          const mappingTitle = entityName + " (" + entityPropertyName + " "+ relatedEntityName + ")";
-          entityResponseObject.entityMappingId = entityMappingId;
-          entityResponseObject.mappingTitle = mappingTitle;
-          setRelatedEntityMappings(targetEntityResponse, mappingTitle, entityMappingId);
-          pathSoFar = targetEntityName + "." + joinPropertyName;
+        if(joinPropertyName){
+          const targetEntityResponse = responseArray.find(response => response.entityType == targetEntityName);
+          if(!entityHasMultipleForeignKey(targetEntityResponse, entityName)){
+            const entityMappingId =  targetEntityName + "." + joinPropertyName + ":" + entityName;
+            const mappingTitle = entityName + " (" + entityPropertyName + " "+ relatedEntityName + ")";
+            entityResponseObject.entityMappingId = entityMappingId;
+            entityResponseObject.mappingTitle = mappingTitle;
+            setRelatedEntityMappings(targetEntityResponse, mappingTitle, entityMappingId);
+            pathSoFar = targetEntityName + "." + joinPropertyName;
+          }
         }
       }
       else if(!entitiesNotToExpand.includes(relatedEntityName)){
