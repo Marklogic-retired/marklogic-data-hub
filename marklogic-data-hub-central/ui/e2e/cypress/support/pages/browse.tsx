@@ -514,10 +514,6 @@ class BrowsePage {
     return this.getSaveQueriesDropdown().invoke("text");
   }
 
-  getErrorMessageAnt() {
-    return cy.get(".ant-form-explain");
-  }
-
   getErrorMessage() {
     return cy.get("[class*='validationError']");
   }

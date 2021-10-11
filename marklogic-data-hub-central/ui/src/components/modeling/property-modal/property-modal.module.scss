@@ -1,4 +1,4 @@
-@import "../../../theme/HCVariables.scss";
+@import "../../../theme/HCUtils.scss";
 
 .formItem, .formItemEntityType {
   display: flex;
@@ -20,9 +20,6 @@
 }
 
 .icon, .radioQuestionIcon, .checkboxQuestionIcon {
-  position: absolute;
-  top: 3px;
-  right: -20px;
   font-size: 12px;
   color: #7F86B5;
 }
@@ -30,9 +27,9 @@
 .joinPropertyContainer {
   display: flex;
   flex-direction: column;
-  width: 394px;
+  width: 390px;
   height: 90px;
-  margin-left: 188px;
+  margin-left: 164px;
   border: 1px dashed lightgrey;
 }
 
@@ -69,12 +66,6 @@
   color: #333333;
 }
 
-.radioQuestionIcon {
-  right: 0px;
-  margin-top: 3px;
-  margin-right: -5px;
-}
-
 .checkboxQuestionIcon {
   right: -7px;
 }
@@ -102,7 +93,6 @@
 }
 
 .warningContainer {
-  width: 98%;
   margin: auto;
 }
 
@@ -127,3 +117,6 @@
    }
  }
 
+ .validationError {
+  @extend .validationError;
+}

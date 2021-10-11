@@ -3,7 +3,9 @@ import styles from "./side-panel.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
-import {Form, Input} from "antd";
+// import {CloseOutlined} from "@ant-design/icons";
+import {Input} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
@@ -49,16 +51,6 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const node: any = useRef();
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
-
-  const layout = {
-    labelCol: {span: 6},
-    wrapperCol: {span: 18},
-  };
-
-  const formItemLayout = {
-    labelCol: {span: 5},
-    wrapperCol: {span: 18}
-  };
 
   const handleTabChange = (key) => {
     setCurrentTab(key);
@@ -236,101 +228,90 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
 
   const displayPanelContent = () => {
     return currentTab === "entityType" ? <div>
-      <Form
-        {...layout}
-      >
-        <Form.Item
-          className={styles.formItem}
-          {...formItemLayout}
-          label={<span>
-          Name
-          </span>} labelAlign="left">
-          <span className={styles.entityName} data-testid={modelingOptions.selectedEntity}>{modelingOptions.selectedEntity}</span>
-        </Form.Item>
-      </Form>
-      <Form.Item
-        label={<span>Description:</span>}
-        {...formItemLayout}
-        labelAlign="left"
-        className={styles.formItem}
-        colon={false}
-      >
-        <Input
-          id="description"
-          data-testid="description"
-          placeholder="Enter description"
-          disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-          className={styles.descriptionInput}
-          value={selectedEntityDescription}
-          onChange={handlePropertyChange}
-          onBlur={onSubmit}
-        />
-        <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top-end">
-          <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
-        </HCTooltip>
-      </Form.Item>
-      <Form.Item
-        label="Namespace URI:"
-        labelAlign="left"
-        style={{marginLeft: 7, marginBottom: 0}}
-        {...formItemLayout}
-      >
-        <Form.Item
-          style={{display: "inline-block"}}
-          validateStatus={isErrorOfType("namespace") ? "error" : ""}
-        >
-          <Input
-            id="namespace"
-            data-testid="namespace"
-            placeholder="Example: http://example.org/es/gs"
-            disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-            className={styles.input}
-            value={selectedEntityNamespace}
-            onChange={handlePropertyChange}
-            onBlur={onSubmit}
-            style={{width: "8.9vw", marginLeft: "1.5vw"}}
-          />
-        </Form.Item>
-        <span className={styles.prefixLabel}><span style={{marginRight: "1vw"}}>Prefix:</span>
-          <Form.Item
-            className={styles.formItem}
-            colon={false}
-            style={{display: "inline-block"}}
-            validateStatus={isErrorOfType("namespacePrefix") ? "error" : ""}
-          >
+      <Form className={"container-fluid"}>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}</FormLabel>
+          <Col className={"d-flex align-items-center"} data-testid={modelingOptions.selectedEntity}>
+            {modelingOptions.selectedEntity}
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <Col className={"d-flex"}>
             <Input
-              id="prefix"
-              data-testid="prefix"
-              placeholder="Example: esgs"
+              id="description"
+              data-testid="description"
               disabled={props.canReadEntityModel && !props.canWriteEntityModel}
-              className={styles.prefixInput}
-              value={selectedEntityNamespacePrefix}
+              placeholder="Enter description"
+              value={selectedEntityDescription}
               onChange={handlePropertyChange}
               onBlur={onSubmit}
-              style={{width: "96px", verticalAlign: "text-bottom"}}
             />
-            <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="left">
-              <QuestionCircleFill color="#7F86B5" size={13} className={styles.prefixTooltipIcon} data-testid="entityPrefixTooltip" />
-            </HCTooltip>
-          </Form.Item></span>
-        { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
-      </Form.Item>
-      <Form.Item
-        label="Color:"
-        labelAlign="left"
-        style={{marginLeft: 7, marginBottom: 0}}
-        {...formItemLayout}
-      >
-        <div className={styles.colorContainer}>
-          <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
-          <div>
-            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"} /></span>
-            <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement="right">
-              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
-            </HCTooltip>
-          </div>
-        </div>
-      </Form.Item>
+            <div className={"p-2 d-flex align-items-center"}>
+              <HCTooltip text={ModelingTooltips.entityDescription} id="description-tooltip" placement="top-end">
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid="entityDescriptionTooltip" />
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Namespace URI:"}</FormLabel>
+          <Col>
+            <Row>
+              <Col className={isErrorOfType("namespace") ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="namespace"
+                  data-testid="namespace"
+                  placeholder="Example: http://example.org/es/gs"
+                  disabled={props.canReadEntityModel && !props.canWriteEntityModel}
+                  className={styles.input}
+                  value={selectedEntityNamespace}
+                  onChange={handlePropertyChange}
+                  onBlur={onSubmit}
+                />
+              </Col>
+              <Col className={"col-auto pe-4"}>
+                <span className={styles.prefixLabel}>Prefix:</span>
+              </Col>
+              <Col className={isErrorOfType("namespacePrefix") ? "d-flex col-auto pe-2 has-error" : "d-flex col-auto pe-2"}>
+                <Input
+                  id="prefix"
+                  data-testid="prefix"
+                  placeholder="Example: esgs"
+                  className={styles.prefixInput}
+                  disabled={props.canReadEntityModel && !props.canWriteEntityModel}
+                  value={selectedEntityNamespacePrefix}
+                  onChange={handlePropertyChange}
+                  onBlur={onSubmit}
+                  style={{width: "108px", verticalAlign: "text-bottom"}}
+                />
+              </Col>
+              <div className={"col-auto p-1 ps-0 pe-3 me-1 align-items-center"}>
+                <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="left">
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid="entityPrefixTooltip" />
+                </HCTooltip>
+              </div>
+              <Col xs={12} className={styles.validationError}>
+                { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Color:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <div className={styles.colorContainer}>
+              <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected}}></div>
+              <div className={"d-flex align-items-center"}>
+                <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"} /></span>
+                <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
+                </HCTooltip>
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </Form>
     </div>
       :
       <PropertiesTab

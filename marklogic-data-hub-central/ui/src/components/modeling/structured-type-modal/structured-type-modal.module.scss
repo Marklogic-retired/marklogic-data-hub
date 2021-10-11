@@ -1,4 +1,4 @@
-@import "../../../theme/HCVariables.scss";
+@import "../../../theme/HCUtils.scss";
 
 .formItem {
   display: flex;
@@ -12,9 +12,6 @@
 }
 
 .icon {
-  position: absolute;
-  top: 0px;
-  right: -20px;
   font-size: 12px;
   color: #5B69AF;
 }
@@ -26,4 +23,8 @@
 .modalFooter {
   display: flex;
   justify-content: flex-end;
+}
+
+.validationError {
+  @extend .validationError;
 }

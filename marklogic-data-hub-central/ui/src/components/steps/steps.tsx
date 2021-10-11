@@ -220,7 +220,7 @@ const Steps: React.FC<Props> = (props) => {
   return <Modal
     visible={props.openStepSettings}
     title={null}
-    width="700px"
+    width="740px"
     onCancel={() => onCancel()}
     className={styles.StepsModal}
     footer={null}

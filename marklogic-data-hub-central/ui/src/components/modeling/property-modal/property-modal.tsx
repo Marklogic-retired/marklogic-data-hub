@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Radio, Cascader, Select} from "antd";
-import FormCheck from "react-bootstrap/FormCheck";
+import {Modal, Input, Radio, Cascader, Select} from "antd";
+import {Row, Col, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -119,11 +119,6 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
 };
 
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
-
-const layout = {
-  labelCol: {span: 7},
-  wrapperCol: {span: 17},
-};
 
 const PropertyModal: React.FC<Props> = (props) => {
   const {handleError} = useContext(UserContext);
@@ -705,49 +700,47 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const renderRadios = radioValues.length > 0 && radioValues.map((radio, index) => {
     return (
-      <Form.Item
-        key={index}
-        label={radio.label}
-        labelAlign="left"
-        className={styles.formItem}
-      >
-        <Radio.Group
-          onChange={(event) => onRadioChange(event, radio.value)}
-          value={selectedPropertyOptions[radio.value]}
-        >
-          <Radio aria-label={radio.value + "-yes"} value={"yes"}>Yes</Radio>
-          <Radio aria-label={radio.value + "-no"} value={"no"}>No</Radio>
-        </Radio.Group>
-        <HCTooltip text={radio.tooltip} id={radio.value+"-tooltip"} placement="top">
-          <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon}/>
-        </HCTooltip>
-      </Form.Item>
+      <Row className={"mb-3"} key={index}>
+        <FormLabel column lg={3}>{`${radio.label}:`}</FormLabel>
+        <Col className={"d-flex align-items-center"}>
+          <Radio.Group
+            onChange={(event) => onRadioChange(event, radio.value)}
+            value={selectedPropertyOptions[radio.value]}
+          >
+            <Radio aria-label={radio.value + "-yes"} value={"yes"}>Yes</Radio>
+            <Radio aria-label={radio.value + "-no"} value={"no"}>No</Radio>
+          </Radio.Group>
+          <div className={"p-2 d-flex align-items-center"}>
+            <HCTooltip text={radio.tooltip} id={radio.value+"-tooltip"} placement="top">
+              <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon}/>
+            </HCTooltip>
+          </div>
+        </Col>
+      </Row>
     );
   });
 
   const renderCheckboxes = ALL_CHECKBOX_DISPLAY_VALUES.map((checkbox, index) => {
     return (
-      <Form.Item
-        key={index}
-        className={styles.formItemCheckbox}
-        label={" "}
-        labelAlign="left"
-        colon={false}
-      >
-        <FormCheck id={checkbox.value} className={styles.formCheck}>
-          <FormCheck.Input
-            type="checkbox"
-            value={checkbox.value}
-            checked={selectedPropertyOptions[checkbox.value]}
-            style={{marginTop: "-0.25em"}}
-            onChange={(event) => onCheckboxChange(event, checkbox.value)}
-          />
-          <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
-          <HCTooltip text={checkbox.tooltip} id={checkbox.value+"-tooltip"} placement="top">
-            <QuestionCircleFill color="#7F86B5" size={13} />
-          </HCTooltip>
-        </FormCheck>
-      </Form.Item>
+      <Row className={"mb-3"} key={index}>
+        <FormLabel column lg={3}>{" "}</FormLabel>
+        <Col className={"d-flex"}>
+          <FormCheck id={checkbox.value} className={styles.formCheck}>
+            <FormCheck.Input
+              type="checkbox"
+              value={checkbox.value}
+              checked={selectedPropertyOptions[checkbox.value]}
+              onChange={(event) => onCheckboxChange(event, checkbox.value)}
+            />
+            <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
+          </FormCheck>
+          <div className={"p-2 ps-4 d-flex align-items-center"}>
+            <HCTooltip text={checkbox.tooltip} id={checkbox.value+"-tooltip"} placement="top">
+              <QuestionCircleFill color="#7F86B5" size={13} />
+            </HCTooltip>
+          </div>
+        </Col>
+      </Row>
     );
   });
 
@@ -817,94 +810,92 @@ const PropertyModal: React.FC<Props> = (props) => {
         </div>
       }
       <Form
-        {...layout}
         id="property-form"
         onSubmit={onSubmit}
+        className={"container-fluid"}
       >
-        <Form.Item
-          className={styles.formItemEntityType}
-          label={<span>Entity Type:</span>}
-          colon={false}
-          labelAlign="left"
-        >
-          <span>{props.entityName}</span>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Entity Type:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            {props.entityName}
+          </Col>
+        </Row>
 
         { props.structuredTypeOptions.isStructured
           && selectedPropertyOptions.type !== props.structuredTypeOptions.name
           && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name && (
-          <Form.Item
-            className={styles.formItemEntityType}
-            label={<span>Structured Type:</span>}
-            colon={false}
-            labelAlign="left"
-          >
-            <span id="structured-label">{structuredTypeLabel}</span>
-          </Form.Item>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Structured Type:"}</FormLabel>
+            <Col id="structured-label" className={"d-flex align-items-center"}>
+              {structuredTypeLabel}
+            </Col>
+          </Row>
         )}
 
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Name:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={errorMessage ? "error" : ""}
-          help={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(name) : errorMessage}
-        >
-          <Input
-            id="property-name"
-            aria-label="input-name"
-            placeholder="Enter the property name"
-            className={styles.input}
-            value={name}
-            onChange={handleInputChange}
-            onBlur={handleInputChange}
-          />
-          <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
-            <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon}/>
-          </HCTooltip>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}</FormLabel>
+          <Col>
+            <Row>
+              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="property-name"
+                  aria-label="input-name"
+                  placeholder="Enter the property name"
+                  className={styles.input}
+                  value={name}
+                  onChange={handleInputChange}
+                  onBlur={handleInputChange}
+                />
+                <div className={"p-2 d-flex align-items-center"}>
+                  <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon}/>
+                  </HCTooltip>
+                </div>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {errorMessage === "name-error" ? <span data-testid="property-name-error">A property or structured type are already using the name <b>{name}</b>. A property cannot use the same name as an existing property or structured type.</span> : errorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Type:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          wrapperCol={{span: 15}}
-          validateStatus={typeErrorMessage ? "error" : ""}
-          help={typeErrorMessage}
-          id="type-container"
-        >
-          <Cascader
-            aria-label="type-dropdown"
-            placeholder="Select the property type"
-            options={dropdownOptions}
-            displayRender={ label => {
-              if (label[label.length - 1]) {
-                if (label[0] === "Related Entity") {
-                  return "Relationship: " + label[label.length - 1];
-                } else if (label[0] === "Structured") {
-                  return "Structured: " + label[label.length - 1];
-                } else {
-                  return label[label.length - 1];
-                }
-              } else {
-                return label[label.length - 1];
-              }
-            }}
-            onChange={onPropertyTypeChange}
-            value={typeDisplayValue}
-          />
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} htmlFor={"type-container"}>{"Type:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={typeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                <Cascader
+                  aria-label="type-dropdown"
+                  placeholder="Select the property type"
+                  options={dropdownOptions}
+                  displayRender={ label => {
+                    if (label[label.length - 1]) {
+                      if (label[0] === "Related Entity") {
+                        return "Relationship: " + label[label.length - 1];
+                      } else if (label[0] === "Structured") {
+                        return "Structured: " + label[label.length - 1];
+                      } else {
+                        return label[label.length - 1];
+                      }
+                    } else {
+                      return label[label.length - 1];
+                    }
+                  }}
+                  onChange={onPropertyTypeChange}
+                  value={typeDisplayValue}
+                  className={styles.input}
+                  style={{"width": "390px"}}
+                />
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {typeErrorMessage}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
 
         { showJoinProperty && (
-          <div className={styles.joinPropertyContainer}>
+          <div className={`mb-3 ${styles.joinPropertyContainer}`}>
             <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
             <div className={styles.joinPropertyInput}>
               <Select
@@ -918,9 +909,11 @@ const PropertyModal: React.FC<Props> = (props) => {
                   <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
                 ))}
               </Select>
-              <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
-              </HCTooltip>
+              <div className={"d-flex p-2 align-items-center"}>
+                <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />
+                </HCTooltip>
+              </div>
             </div>
           </div>
         ) }
