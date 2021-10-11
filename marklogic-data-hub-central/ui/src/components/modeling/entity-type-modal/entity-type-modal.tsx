@@ -276,6 +276,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       <Form
         id="entity-type-form"
         onSubmit={onOk}
+        className={"container-fluid"}
       >
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Name:"}{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}</FormLabel>
@@ -356,7 +357,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               <div data-testid={`${name}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
               <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
             </div>
-            <div className={"p-2 d-flex align-items-center"}>
+            <div className={"p-2 ps-3 d-flex align-items-center"}>
               <Tooltip title={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
                 <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13}/>
               </Tooltip>
