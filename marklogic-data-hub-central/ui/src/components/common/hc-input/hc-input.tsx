@@ -1,7 +1,8 @@
+
 import React, {useState, useEffect} from "react";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import {XCircleFill, ExclamationCircle} from "react-bootstrap-icons";
+import {XCircleFill} from "react-bootstrap-icons";
 import styles from "./hc-input.module.scss";
 interface Props {
   id?: string;
@@ -79,7 +80,7 @@ function HCInput(props: Props) {
             props?.error ? styles.inputGroupWrapperError :
               focusedInput ? styles.inputGroupWrapperFocus : styles.inputGroupWrapper].join(" ")}>
 
-        {props?.prefix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : "", width: 30}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-prefix"}>{props.prefix}
+        {props?.prefix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-prefix"}>{props.prefix}
         </InputGroup.Text> : null}
 
         {props?.addonBefore ? typeof props.addonBefore === "string" ? <InputGroup.Text data-testid={"hc-input-addonBefore"}>{props.addonBefore}</InputGroup.Text> :
@@ -110,8 +111,17 @@ function HCInput(props: Props) {
           className={[props.classNameFull, styles.noBorders].join(" ")}
         >
           {showIconClear ? <XCircleFill className={styles.cleanIcon} onClick={() => { if (showIconClear) setMessage(""); setShowIconClear(false); }} data-testid={"hc-input-allowClear"} />
-            : props?.error ? <ExclamationCircle className={styles.warningIcon} /> : <XCircleFill className={styles.cleanIconHide} />}</InputGroup.Text>
+            : <XCircleFill className={styles.cleanIconHide} />}</InputGroup.Text>
         }
+
+        {!props?.allowClear && !props?.disabled && <InputGroup.Text
+          style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
+          className={[props.classNameFull, styles.noBorders].join(" ")}
+        >
+          {props?.error && !showIconClear? <XCircleFill className={styles.warningIcon} />
+            : null}</InputGroup.Text>
+        }
+
         {props?.suffix ? <InputGroup.Text style={{backgroundColor: !props?.disabled ? "white" : ""}} className={[props.classNameFull, styles.noBorders].join(" ")} data-testid={"hc-input-suffix"} >
           {props.suffix}</InputGroup.Text> : null}
       </InputGroup>

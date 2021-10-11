@@ -1,4 +1,7 @@
+@import "../../theme/HCUtils.scss";
+
   .loginForm {
+    width: 320px;
     margin: 20px 0 20px;
   }
 
@@ -89,4 +92,19 @@
       background-color: rgba(255, 255, 255, 0.6);
   }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active
+{
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+}
 
+input {
+  filter: none;
+}
+
+.validationError{
+  @extend .validationError;
+  height: 24px;
+}

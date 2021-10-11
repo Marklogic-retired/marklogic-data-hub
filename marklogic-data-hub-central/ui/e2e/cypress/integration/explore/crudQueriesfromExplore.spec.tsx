@@ -103,7 +103,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getEditSaveChangesFormName().clear();
     browsePage.getEditSaveChangesFormName().type("new-query");
     browsePage.getEditSaveChangesButton().click();
-    browsePage.getErrorMessageAnt().should("contain", "You already have a saved query with a name of new-query");
+    browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking save modal icon
     browsePage.getSaveModalIcon().click();
