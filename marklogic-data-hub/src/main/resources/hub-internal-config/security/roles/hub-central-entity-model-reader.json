@@ -3,6 +3,7 @@
   "description": "Permits reading entity models in Hub Central",
   "role": [
     "hub-central-user",
+    "data-hub-common-writer",
     "data-hub-entity-model-reader"
   ]
 }

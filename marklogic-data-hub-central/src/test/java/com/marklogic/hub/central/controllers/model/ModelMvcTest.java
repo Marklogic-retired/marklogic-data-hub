@@ -35,16 +35,15 @@ public class ModelMvcTest extends AbstractMvcTest {
 
     /**
      * This test the hubCentralConfig endpoint.
-     *
+     * Note: Despite there being a write operations, it was agreed the hub-central-entity-model-reader should be able to adjust
+     *    the visual configuration per DHFPROD-7990
      * @throws Exception
      */
     @Test
     void testHubCentralConfig() throws Exception {
-        loginAsTestUserWithRoles("hub-central-entity-model-writer");
+        loginAsTestUserWithRoles("hub-central-entity-model-reader");
         putJson("/api/models/hubCentralConfig", "{ \"modeling\": { \"scale\": 1.2, \"entities\": {\"Customer\":{\"x\":1}} }}").andExpect(status().isOk());
         putJson("/api/models/hubCentralConfig", "{ \"modeling\": { \"entities\": {\"Order\":{}, \"Customer\":{\"y\":2}} }}").andExpect(status().isOk());
-
-        loginAsTestUserWithRoles("hub-central-entity-model-reader");
 
         getJson("/api/models/hubCentralConfig").andExpect(status().isOk()).andExpect((result -> {
             JsonNode resp = parseJsonResponse(result);
@@ -54,7 +53,6 @@ public class ModelMvcTest extends AbstractMvcTest {
             assertTrue(resp.path("modeling").path("entities").hasNonNull("Order"));
             assertTrue(resp.path("modeling").hasNonNull("scale"));
         }));
-        loginAsTestUserWithRoles("hub-central-entity-model-writer");
         delete("/api/models/hubCentralConfig").andExpect(status().isOk());
         getJson("/api/models/hubCentralConfig").andExpect(status().isOk()).andExpect((result -> {
             JsonNode resp = parseJsonResponse(result);

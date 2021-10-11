@@ -64,12 +64,16 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.PUT)
     @ResponseBody
     @ApiOperation("This sets properties of the Hub Central Config for models")
+    /* Note: Despite this being a write operation, it was agreed the hub-central-entity-model-reader should be able to adjust
+     *   the visual configuration per DHFPROD-7990
+     */
+    @Secured("ROLE_readEntityModel")
     public ResponseEntity<?> setHubCentralConfig(@RequestBody ObjectNode hubCentralConfig) {
         ObjectNode hubCentralConfigBase = getHubCentralConfigObject();
         JacksonHandle handle = new JacksonHandle().with(mergeObjects(hubCentralConfigBase, hubCentralConfig));
         DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
                 .withPermission("hub-central-user", DocumentMetadataHandle.Capability.READ)
-                .withPermission("data-hub-entity-model-writer", DocumentMetadataHandle.Capability.UPDATE);
+                .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE);
         getHubClient().getFinalClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
         return ResponseEntity.ok("");
     }
@@ -77,6 +81,8 @@ public class ModelController extends BaseController {
     @RequestMapping(value = "/hubCentralConfig", method = RequestMethod.DELETE)
     @ResponseBody
     @ApiOperation("This resets properties of the Hub Central Config for models")
+    // See setHubCentralConfig comment
+    @Secured("ROLE_readEntityModel")
     public ResponseEntity<?> deleteHubCentralConfig() {
         getHubClient().getFinalClient().newJSONDocumentManager().delete("/config/hubCentral.json");
         return ResponseEntity.ok("");
