@@ -568,7 +568,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
   const sourceRecordScopeValue = Object.keys(sourceRecordScopeOptions).map((d, index) => <Option data-testid={`sourceRecordScopeOptions-${index}`} key={sourceRecordScopeOptions[d]}>{d}</Option>);
   return (
-    <div className={styles.newDataForm}>
+    <div>
       {(stepType === "matching" || stepType === "merging") ? curationOptions.activeStep.hasWarnings.length > 0 ? (
         curationOptions.activeStep.hasWarnings.map((warning, index) => {
           let description;
@@ -594,7 +594,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           );
         })
       ) : null : null}
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className={"container-fluid"}>
         {isCustomIngestion ?
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Step Definition Name:"}</FormLabel>
@@ -855,7 +855,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         }
         {stepType === "mapping" ?
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Attach Source Document:"}</FormLabel>
+            <FormLabel column lg={3} className={"pe-0"}>{"Attach Source Document:"}</FormLabel>
             <Col className={"d-flex"}>
               <Radio.Group onChange={handleChange} name="attachSourceDocument" value={attachSourceDocument} className={"d-flex align-items-center"}>
                 <Radio value={true} data-testid="attachmentTrue">Yes</Radio>

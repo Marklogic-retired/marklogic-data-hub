@@ -1,4 +1,4 @@
-@import "../../../../theme/HCVariables.scss";
+@import "../../../../theme/HCUtils.scss";
 
 .sidePanel {
     padding: 10px 10px;
@@ -51,21 +51,16 @@
 }
 
 .icon {
-    position: absolute;
-    top: 0px;
-    right: -20px;
     font-size: 12px;
     color: #7f86b5;
 }
 
 .colorsIcon {
-    position: absolute;
-    top: 12px;
-    margin-left: 11px;
+  margin-left: 12px;
 }
 
 .editIconReadOnly {
-    font-size: 27px;
+    font-size: 26px;
     color: #cccccc;
     background-color: #f8f8f8;
     padding: 5px 3px 5px 3px;
@@ -75,7 +70,7 @@
 }
 
 .editIcon {
-    font-size: 27px;
+    font-size: 26px;
     color: #394494;
     background-color: #f8f8f8;
     padding: 5px 3px 5px 3px;
@@ -89,17 +84,16 @@
 }
 
 .questionCircle {
-    font-size: 12px;
-    vertical-align: top;
-    margin-top: 10px;
-    margin-left: 10px;
-    color: #7f86b5;
+  font-size: 12px;
+  vertical-align: top;
+  margin-top: 8px;
+  margin-left: 10px;
+  color: #7F86B5;
 }
 
 .colorContainer {
     display: flex;
     flex-direction: row;
-    margin-left: 8%;
     margin-top: 2px;
 }
 
@@ -116,28 +110,9 @@
     margin-left: 26%;
 }
 
-.prefixTooltipIcon {
-    position: absolute;
-    top: -7px;
-    right: -23px;
-    font-size: 12px;
-    color: #7f86b5;
-}
 .prefixLabel {
     display: inline-flex;
-    width: 2.85vw;
     line-height: 32px;
-    margin-left: 0.55vw;
-    margin-right: 0.4vw;
-}
-
-.descriptionInput {
-    margin-left: 1.5vw;
-    width: 17.8vw;
-}
-
-.entityName {
-    margin-left: 1.5vw;
 }
 
 .prefixInput {
@@ -189,4 +164,8 @@ button.tab {
         gap: 10px;
         font-size: 14px;
     }
+}
+
+.validationError {
+  @extend .validationError;
 }
