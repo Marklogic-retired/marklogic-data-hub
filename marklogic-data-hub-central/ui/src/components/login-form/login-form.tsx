@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {Form, Input} from "antd";
+import {Row, Col, Form} from "react-bootstrap";
 import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
@@ -7,6 +7,7 @@ import HCAlert from "../common/hc-alert/hc-alert";
 import {Spinner} from "react-bootstrap";
 import HCButton from "../common/hc-button/hc-button";
 import {Lock, Person} from "react-bootstrap-icons";
+import HCInput from "../common/hc-input/hc-input";
 
 const LoginForm: React.FC = () => {
 
@@ -74,39 +75,41 @@ const LoginForm: React.FC = () => {
       </div>
 
       <div className={styles.loginForm}>
-        <Form onSubmit={handleSubmit} className={styles.loginForm}>
-
-          <Form.Item
-            className={styles.username}
-            hasFeedback
-            validateStatus={(username || !isUsernameTouched) ? "" : "error"}
-            help={(username || !isUsernameTouched) ? "" : "Username is required"}
-          >
-            <Input
-              id="username"
-              prefix={<Person className={styles.usernameIcon} />}
-              placeholder="Enter username"
-              value={username}
-              onChange={handleChange}
-              onBlur={handleChange}
-            />
-          </Form.Item>
-          <Form.Item
-            className={styles.password}
-            hasFeedback
-            validateStatus={(password || !isPasswordTouched) ? "" : "error"}
-            help={(password || !isPasswordTouched) ? "" : "Password is required"}
-          >
-            <Input
-              id="password"
-              prefix={<Lock className={styles.passwordIcon} />}
-              placeholder="Enter password"
-              type="password"
-              value={password}
-              onChange={handleChange}
-              onBlur={handleChange}
-            />
-          </Form.Item>
+        <Form onSubmit={handleSubmit} className={`container-fluid ${styles.loginForm}`}>
+          <Row className={"mb-2"}>
+            <Col>
+              <HCInput
+                id="username"
+                prefix={<Person className={styles.usernameIcon} />}
+                placeholder="Enter username"
+                classNameFull={"bg-white"}
+                value={username}
+                onChange={handleChange}
+                onBlur={handleChange}
+                error={(username || !isUsernameTouched) ? false : true}
+              />
+            </Col>
+            <Col lg={12} className={`d-block text-start ${styles.validationError}`}>
+              {(username || !isUsernameTouched) ? "" : "Username is required"}
+            </Col>
+          </Row>
+          <Row className={"mb-2"}>
+            <Col>
+              <HCInput
+                id="password"
+                prefix={<Lock className={styles.passwordIcon} />}
+                placeholder="Enter password"
+                type="password"
+                value={password}
+                onChange={handleChange}
+                onBlur={handleChange}
+                error={(password || !isPasswordTouched) ? false : true}
+              />
+            </Col>
+            <Col lg={12} className={`d-block text-start ${styles.validationError}`}>
+              {(password || !isPasswordTouched) ? "" : "Password is required"}
+            </Col>
+          </Row>
           { /* <div className={styles.help}>
             <span className={styles.remember}>
               <Checkbox className={styles.rememberCheck}>Remember me</Checkbox>
@@ -115,15 +118,17 @@ const LoginForm: React.FC = () => {
               Forgot password?
             </a>
           </div> */ }
-          <Form.Item className={styles.loginButton}>
-            <HCButton
-              id="submit"
-              variant="primary"
-              type="submit"
-            >
-              Log In
-            </HCButton>
-          </Form.Item>
+          <Row>
+            <Col className={`d-flex ${styles.loginButton}`}>
+              <HCButton
+                id="submit"
+                variant="primary"
+                type="submit"
+              >
+                Log In
+              </HCButton>
+            </Col>
+          </Row>
         </Form>
         {isLoading && <div className={styles.loginSpinner}><Spinner animation="border" variant="primary" /></div>}
       </div>

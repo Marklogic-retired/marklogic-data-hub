@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Form, Input, Radio, AutoComplete, Tooltip, Popover} from "antd";
+import {Input, Radio, AutoComplete, Tooltip, Popover} from "antd";
+import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
@@ -11,7 +12,6 @@ import HCAlert from "../../common/hc-alert/hc-alert";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import HCButton from "../../common/hc-button/hc-button";
-import {FormControl} from "react-bootstrap";
 
 type Props = {
   tabKey: string;
@@ -32,17 +32,6 @@ type Props = {
   setPayload: any;
   onCancel: any;
 }
-
-const formItemLayout = {
-  labelCol: {
-    xs: {span: 24},
-    sm: {span: 7},
-  },
-  wrapperCol: {
-    xs: {span: 24},
-    sm: {span: 15},
-  },
-};
 
 const srcTypeOptions = [
   {label: "Collection", value: "collection"},
@@ -457,162 +446,166 @@ const CreateEditStep: React.FC<Props> = (props) => {
           );
         })
       ) : null : null}
-      <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
-        <Form.Item label={<span>
-          Name:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>} labelAlign="left"
-        validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
-        help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
-        >
-          {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
-            id="name"
-            placeholder="Enter name"
-            value={stepName}
-            onChange={handleChange}
-            disabled={tobeDisabled}
-            className={styles.input}
-            onBlur={sendPayload}
-          /></Tooltip> : <Input
-            id="name"
-            placeholder="Enter name"
-            value={stepName}
-            onChange={handleChange}
-            disabled={tobeDisabled}
-            className={styles.input}
-            onBlur={sendPayload}
-          />}&nbsp;&nbsp;
-          <div className={styles.inputHCTooltip}>
-            {props.stepType === StepType.Mapping ?
-              <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-              </HCTooltip> :
-              props.stepType === StepType.Matching ?
-                <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip> :
-                <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip>
-            }
-          </div>
-        </Form.Item>
-        <Form.Item label={<span>
-          Description:
-          &nbsp;
-        </span>} labelAlign="left">
-          <Input
-            id="description"
-            placeholder="Enter description"
-            value={description}
-            onChange={handleChange}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-            onBlur={sendPayload}
-          />&nbsp;&nbsp;
-          <div className={styles.inputHCTooltip}>
-            {props.stepType === StepType.Mapping ?
-              <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-              </HCTooltip> :
-              props.stepType === StepType.Matching ?
-                <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip> :
-                <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip>
-            }
-          </div>
-        </Form.Item>
-
-        <Form.Item label={<span>
-          Source Query:&nbsp;<span className={styles.asterisk}>*</span>
-          &nbsp;
-        </span>} labelAlign="left"
-        validateStatus={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "error"}
-        help={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "Collection or Query is required"}
-        >
-
-          <Radio.Group
-            id="srcType"
-            options={srcTypeOptions}
-            onChange={handleSelectedSource}
-            value={selectedSource}
-            disabled={!props.canReadWrite}
-          >
-          </Radio.Group>
-
-          <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover"}>
-            <Popover
-              content={collectionQueryInfo}
-              trigger="hover"
-              placement="left"
-            >
-              <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip" />
-            </Popover></span>
-
-          <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
-            <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip" />
-          </HCTooltip>
-
-          {selectedSource === "collection" ? <div><span className={styles.srcCollectionInput}><AutoComplete
-            id="collList"
-            dataSource={collectionOptions}
-            aria-label="collection-input"
-            placeholder={<span>Enter collection name<Search className={styles.searchIcon} /></span>}
-            value={collections}
-            disabled={!props.canReadWrite}
-            onSearch={handleSearch}
-            onFocus={handleFocus}
-            onChange={handleTypeaheadChange}
-            onBlur={sendPayload}
-          >
-            {/* {collectionsList} */}
-          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ?  <Search className={styles.searchIcon} /> : ""}</span></div> : <span>
-            <FormControl as="textarea"
-              id="srcQuery"
-              placeholder="Enter source query"
-              value={srcQuery}
-              onChange={handleChange}
-              disabled={!props.canReadWrite}
-              className={styles.input}
-              onBlur={sendPayload}
-              style={{borderRadius: 4, border: ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "1px solid #B32424"}}
-            />
-          </span>}
-        </Form.Item>
-        {props.stepType === StepType.Merging ?
-          <Form.Item label={<span>
-            Timestamp Path:
-            &nbsp;
-          </span>} labelAlign="left"
-          className={styles.timestamp}>
+      <Form onSubmit={handleSubmit} className={"container-fluid"}>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
+                {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}><div className={"d-flex w-100"}><Input
+                  id="name"
+                  placeholder="Enter name"
+                  value={stepName}
+                  onChange={handleChange}
+                  disabled={tobeDisabled}
+                  onBlur={sendPayload}
+                /></div></Tooltip> : <Input
+                  id="name"
+                  placeholder="Enter name"
+                  value={stepName}
+                  onChange={handleChange}
+                  disabled={tobeDisabled}
+                  onBlur={sendPayload}
+                />}
+                <div className={"p-2 d-flex align-items-center"}>
+                  { props.stepType === StepType.Mapping ?
+                    <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                    </HCTooltip>:
+                    props.stepType === StepType.Matching ?
+                      <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
+                        <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                      </HCTooltip>:
+                      <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
+                        <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                      </HCTooltip>
+                  }
+                </div>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Description:"}</FormLabel>
+          <Col className={"d-flex"}>
             <Input
-              id="timestamp"
-              placeholder="Enter path to the timestamp"
-              value={timestamp}
+              id="description"
+              placeholder="Enter description"
+              value={description}
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
-              className={styles.input}
               onBlur={sendPayload}
-            />&nbsp;&nbsp;
-            <div className={styles.inputHCTooltip}>
-              <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
-              </HCTooltip>
+            />
+            <div className={"p-2 d-flex align-items-center"}>
+              { props.stepType === StepType.Mapping ?
+                <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                </HCTooltip>:
+                props.stepType === StepType.Matching ?
+                  <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                  </HCTooltip>:
+                  <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                  </HCTooltip>
+              }
             </div>
-          </Form.Item> : ""}
+          </Col>
+        </Row>
 
-        <Form.Item className={styles.submitButtonsForm}>
-          <div className={styles.submitButtons}>
-            <HCButton data-testid={`${props.stepType}-dialog-cancel`} variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
-            &nbsp;&nbsp;
-            {!props.canReadWrite ? <Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
-              <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></Tooltip>
-              : <HCButton variant="primary" size="sm" type="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</HCButton>}
-          </div>
-        </Form.Item>
+        <Row className={"mb-4"}>
+          <FormLabel column lg={3}>{"Source Query:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col>
+            <Row>
+              <Col className={"d-flex mb-3"}>
+                <Radio.Group
+                  id="srcType"
+                  options={srcTypeOptions}
+                  onChange={handleSelectedSource}
+                  value={selectedSource}
+                  disabled={!props.canReadWrite}
+                >
+                </Radio.Group>
+
+                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" }>
+                  <Popover
+                    content={collectionQueryInfo}
+                    trigger="hover"
+                    placement="left"
+                  >
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
+                  </Popover></span>
+
+                <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
+                </HCTooltip>
+              </Col>
+              <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
+                {selectedSource === "collection" ? <div className={"position-relative w-100 pe-3"}><AutoComplete
+                  id="collList"
+                  //mode="tags"
+                  dataSource={collectionOptions}
+                  aria-label="collection-input"
+                  placeholder={"Enter collection name"}
+                  value={collections}
+                  disabled={!props.canReadWrite}
+                  onSearch={handleSearch}
+                  onFocus={handleFocus}
+                  onChange={handleTypeaheadChange}
+                  onBlur={sendPayload}
+                >
+                  {/* {collectionsList} */}
+                </AutoComplete>{props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
+                  id="srcQuery"
+                  placeholder="Enter source query"
+                  value={srcQuery}
+                  onChange={handleChange}
+                  disabled={!props.canReadWrite}
+                  className={styles.input}
+                  onBlur={sendPayload}
+                  style={{borderRadius: 4, border: ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "1px solid #B32424"}}
+                /></div>}
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "Collection or Query is required"}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        {props.stepType === StepType.Merging ?
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Timestamp Path:"}</FormLabel>
+            <Col className={`d-flex ${styles.timestamp}`}>
+              <Input
+                id="timestamp"
+                placeholder="Enter path to the timestamp"
+                value={timestamp}
+                onChange={handleChange}
+                disabled={props.canReadOnly && !props.canReadWrite}
+                className={styles.input}
+                onBlur={sendPayload}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row> : ""}
+        <Row className={"mb-3"}>
+          <Col className={"d-flex justify-content-end"}>
+            <div className={styles.submitButtons}>
+              <HCButton data-testid={`${props.stepType}-dialog-cancel`} variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
+              &nbsp;&nbsp;
+              {!props.canReadWrite ? <Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
+                <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></Tooltip>
+                : <HCButton variant="primary" size="sm" type="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</HCButton>}
+            </div>
+          </Col>
+        </Row>
       </Form>
     </div>
   );

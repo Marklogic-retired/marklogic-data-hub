@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useContext} from "react";
-import {Form, Input, Modal} from "antd";
+import {Input, Modal} from "antd";
+import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./structured-type-modal.module.scss";
 
 import {ModelingContext} from "../../../util/modeling-context";
@@ -18,10 +19,6 @@ type Props = {
 
 const StructuredTypeModal: React.FC<Props> = (props) => {
   const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
-  const layout = {
-    labelCol: {span: 6},
-    wrapperCol: {span: 18},
-  };
 
   const {modelingOptions} = useContext(ModelingContext);
 
@@ -103,34 +100,36 @@ A structured type cannot use the same name as an existing structured type.</span
       footer={modalFooter}
     >
       <Form
-        {...layout}
         id="structured-type-form"
         onSubmit={onSubmit}
+        className={"container-fluid"}
       >
-        <Form.Item
-          className={styles.formItem}
-          label={<span>
-            Name:&nbsp;<span className={styles.asterisk}>*</span>
-            &nbsp;
-          </span>}
-          colon={false}
-          labelAlign="left"
-          validateStatus={errorMessage ? "error" : ""}
-          help={getErrorMessage()}
-        >
-          <Input
-            id="structured-name"
-            placeholder="Enter name"
-            aria-label="structured-input-name"
-            className={styles.input}
-            value={name}
-            onChange={handleChange}
-            onBlur={handleChange}
-          />
-          <HCTooltip text={ModelingTooltips.nameRegex} id="structured-name-tooltip" placement="top">
-            <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-          </HCTooltip>
-        </Form.Item>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+          <Col lg={9}>
+            <Row>
+              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                <Input
+                  id="structured-name"
+                  placeholder="Enter name"
+                  aria-label="structured-input-name"
+                  className={styles.input}
+                  value={name}
+                  onChange={handleChange}
+                  onBlur={handleChange}
+                />
+                <div className={"p-2 d-flex align-items-center"}>
+                  <HCTooltip text={ModelingTooltips.nameRegex} id="structured-name-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                  </HCTooltip>
+                </div>
+              </Col>
+              <Col xs={12} className={styles.validationError}>
+                {getErrorMessage()}
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Form>
     </Modal>
   );
