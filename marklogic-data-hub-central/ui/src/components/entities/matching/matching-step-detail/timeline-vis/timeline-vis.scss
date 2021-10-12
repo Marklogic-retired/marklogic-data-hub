@@ -1,4 +1,5 @@
 /*Vis-timeline styles*/
+@import "../../../../../theme/HCVariables.scss";
 
 .vis-item{
     background-color: #444 !important;
@@ -55,7 +56,7 @@
     height: 18px;
     border-radius: 12px;
     position: relative;
-    color: #B32424 ;
+    color: $danger ;
     font-size: 12px;
     font-weight: bold;
     margin-left:11px;

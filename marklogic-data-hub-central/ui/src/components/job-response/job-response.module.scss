@@ -1,3 +1,5 @@
+@import "../../theme/HCVariables.scss";
+
 .jobResponseContainer {
     header {
         width: 100%;
@@ -15,12 +17,12 @@
         padding-top: 5px;
         padding-left: 1px;
         padding-bottom: 1px;
-        color: #B32424;
+        color: $danger;
     }
 
   .unSuccessfulRun {
     display: inline-block;
-    color: #B32424;
+    color: $danger;
     font-size: 20px;
     cursor: pointer;
   }
