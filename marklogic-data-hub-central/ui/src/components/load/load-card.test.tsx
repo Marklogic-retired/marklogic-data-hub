@@ -8,6 +8,7 @@ import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {SecurityTooltips} from "../../config/tooltips.config";
+import moment from "moment";
 jest.mock("axios");
 
 const mockHistoryPush = jest.fn();
@@ -50,7 +51,9 @@ describe("Load Card component", () => {
     expect(getByText("Add New")).toBeInTheDocument();
     expect(getByText("testLoadXML")).toBeInTheDocument();
     expect(getByLabelText("testLoadXML-sourceFormat")).toBeInTheDocument();
-    expect(getByText("Last Updated: 04/15/2020 2:22PM")).toBeInTheDocument();
+    let ts: string = data.loadData.data[1].lastUpdated; // "2020-04-15T14:22:54.057519-07:00"
+    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    expect(getByText("Last Updated: " + tsExpected)).toBeInTheDocument(); // "Last Updated: 04/15/2020 2:22PM"
 
     fireEvent.mouseOver(getByText("testLoadXML")); // Hover over the Load Card to get more options
 
@@ -218,7 +221,9 @@ describe("Load Card component", () => {
     expect(getByText("Add New")).toBeInTheDocument();
     expect(getByText("testLoadXML")).toBeInTheDocument();
     expect(getByLabelText("testLoadXML-sourceFormat")).toBeInTheDocument();
-    expect(getByText("Last Updated: 04/15/2020 2:22PM")).toBeInTheDocument();
+    let ts: string = data.loadData.data[1].lastUpdated; // "2020-04-15T14:22:54.057519-07:00"
+    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    expect(getByText("Last Updated: " + tsExpected)).toBeInTheDocument(); // "Last Updated: 04/15/2020 2:22PM"
 
     fireEvent.mouseOver(getByText("testLoadXML")); // Hover over the Load Card to get more options
 

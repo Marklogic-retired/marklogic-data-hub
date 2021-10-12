@@ -10,6 +10,7 @@ import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {validateTableRow} from "../../util/test-utils";
 import {SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
+import moment from "moment";
 
 jest.mock("axios");
 
@@ -54,7 +55,9 @@ describe("Load data component", () => {
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].targetFormat)).toBeInTheDocument();
-    expect(dataRow.getByText("04/15/2020 2:22PM")).toBeInTheDocument();
+    let ts: string = data.loadData.data[1].lastUpdated; // "2020-04-15T14:22:54.057519-07:00"
+    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    expect(dataRow.getByText(tsExpected)).toBeInTheDocument(); // "04/15/2020 2:22PM"
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-delete`)).toBeInTheDocument();
 
     // check if delete tooltip appears

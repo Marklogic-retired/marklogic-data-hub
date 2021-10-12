@@ -18,6 +18,8 @@ import {act} from "react-dom/test-utils";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {createMemoryHistory} from "history";
+import moment from "moment";
+import curateData from "../assets/mock-data/curation/flows.data";
 
 jest.mock("axios");
 jest.setTimeout(30000);
@@ -437,7 +439,10 @@ describe("Verify step display", () => {
     expect(getByText("XML")).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
     expect(notification).toBeInTheDocument();
     fireEvent.mouseOver(notification);
-    expect(await(waitForElement(() => getByText("Step last ran successfully on 7/13/2020, 11:54:06 PM")))).toBeInTheDocument();
+    let ts: string = curateData.flowsXMLLatestJob.data.steps[0].stepEndTime; // "2020-07-13T23:54:06.30257-07:00"
+    let dateExpected: string = moment(ts).format("M/D/YYYY");
+    let timeExpected: string = moment(ts).format("h:mm:ss A");
+    expect(await(waitForElement(() => getByText("Step last ran successfully on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran successfully on 7/13/2020, 11:54:06 PM"
   });
 
   test("Verify a mapping step's notification shows up correctly", async () => {
@@ -450,7 +455,10 @@ describe("Verify step display", () => {
     let notification = await(waitForElement(() => getByLabelText("icon: exclamation-circle")));
     expect(notification).toBeInTheDocument();
     fireEvent.mouseOver(notification);
-    expect(await(waitForElement(() => getByText("Step last ran with errors on 4/4/2020, 1:17:45 AM")))).toBeInTheDocument();
+    let ts: string = curateData.jobRespFailedWithError.data.stepResponses["1"].stepEndTime; // "2020-04-04T01:17:45.012137-07:00"
+    let dateExpected: string = moment(ts).format("M/D/YYYY");
+    let timeExpected: string = moment(ts).format("H:mm:ss A");
+    expect(await(waitForElement(() => getByText("Step last ran with errors on " + dateExpected + ", " + timeExpected)))).toBeInTheDocument(); // "Step last ran with errors on 4/4/2020, 1:17:45 AM"
 
     fireEvent.click(notification);
     // New Modal with Error message, uri and details is opened

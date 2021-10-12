@@ -10,6 +10,7 @@ import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 import {CurationContext} from "../../../util/curation-context";
 import {customerMappingStep} from "../../../assets/mock-data/curation/curation-context-mock";
+import moment from "moment";
 
 jest.mock("axios");
 
@@ -245,9 +246,13 @@ describe("Mapping Card component", () => {
     // Check if the card is rendered properly
     expect(getByText("Add New")).toBeInTheDocument();
     expect(getByText("Mapping1")).toBeInTheDocument();
-    expect(getByText("Last Updated: 04/24/2020 1:21PM")).toBeInTheDocument();
+    let ts: string = mapping[0].lastUpdated; // "2020-04-24T13:21:00.169198-07:00"
+    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    expect(getByText("Last Updated: " + tsExpected)).toBeInTheDocument(); // "Last Updated: 04/24/2020 1:21PM"
     expect(getByText("Mapping2")).toBeInTheDocument();
-    expect(getByText("Last Updated: 10/01/2020 2:38AM")).toBeInTheDocument();
+    let ts2: string = mapping[1].lastUpdated; // "2020-10-01T02:38:00.169198-07:00"
+    let tsExpected2: string = moment(ts2).format("MM/DD/YYYY h:mmA");
+    expect(getByText("Last Updated: " + tsExpected2)).toBeInTheDocument(); // "Last Updated: 10/01/2020 2:38AM"
 
     // Hover for options
     fireEvent.mouseOver(getByText("Mapping2"));
@@ -385,7 +390,9 @@ describe("Mapping Card component", () => {
 
     //Check if the card is rendered properly
     expect(getByText("Add New")).toBeInTheDocument();
-    expect(getByText("Last Updated: 04/24/2020 1:21PM")).toBeInTheDocument();
+    let ts: string = mapping[0].lastUpdated; // "2020-04-24T13:21:00.169198-07:00"
+    let tsExpected: string = moment(ts).format("MM/DD/YYYY h:mmA");
+    expect(getByText("Last Updated: " + tsExpected)).toBeInTheDocument(); // "Last Updated: 04/24/2020 1:21PM"
 
     fireEvent.mouseOver(getByText("Mapping1")); // Hover over the Map Card to get more options
 
