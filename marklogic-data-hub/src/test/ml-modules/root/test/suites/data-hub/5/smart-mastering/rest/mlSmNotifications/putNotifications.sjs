@@ -32,7 +32,7 @@ const validNotificationsParams = { status: "read", uris: "/content/notification1
 const validResults = mlSmNotificationsRest.put(context, validNotificationsParams, emptyDocument);
 
 assertions.push(
-  test.assertTrue(validResults.success,"Merge should be successful"),
+  test.assertTrue(validResults.success,"Merge should be successful")
 );
 
 const inputDocument = new NodeBuilder().startDocument();
@@ -42,7 +42,7 @@ const nodeInput = inputDocument.endDocument().toNode();
 const inputResults = mlSmNotificationsRest.put(context, {} , nodeInput);
 
 assertions.push(
-  test.assertTrue(inputResults.success,"Merge should be successful"),
+  test.assertTrue(inputResults.success,"Merge should be successful")
 );
 
 assertions;

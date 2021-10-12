@@ -87,16 +87,17 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
         assertEquals("/person1990.json", results.get(0).get("uri").asText());
         assertEquals("/person1991.json", results.get(1).get("uri").asText());
 
-        // Verify an entity-specific facet
-        JsonNode statusFacet = response.get("facets").get("Person.status");
-        assertNotNull(statusFacet, "Expecting Person.status facet to exist; response: " + response.toPrettyString());
-        assertEquals(1, statusFacet.get("facetValues").size(), "Expecting the status value to be returned; this ensures " +
-            "that both the database indexes and the range constraints were modified to conform to the project-specific path " +
-            "of /customEnvelope/Person/status/value instead of assuming the ES-specific path");
-        assertEquals("Active", statusFacet.get("facetValues").get(0).get("name").asText());
-        assertEquals(2, statusFacet.get("facetValues").get(0).get("count").asInt(), "Expecting a count of 2 since each of " +
-            "the 2 persons has a status of 'Active'");
-
+        if (supportsRangeIndexConstraints()) {
+            // Verify an entity-specific facet
+            JsonNode statusFacet = response.get("facets").get("Person.status");
+            assertNotNull(statusFacet, "Expecting Person.status facet to exist; response: " + response.toPrettyString());
+            assertEquals(1, statusFacet.get("facetValues").size(), "Expecting the status value to be returned; this ensures " +
+                    "that both the database indexes and the range constraints were modified to conform to the project-specific path " +
+                    "of /customEnvelope/Person/status/value instead of assuming the ES-specific path");
+            assertEquals("Active", statusFacet.get("facetValues").get(0).get("name").asText());
+            assertEquals(2, statusFacet.get("facetValues").get(0).get("count").asInt(), "Expecting a count of 2 since each of " +
+                    "the 2 persons has a status of 'Active'");
+        }
         // Verify entity-specific property values
         ArrayNode entityProps = (ArrayNode) results.get(0).get("entityProperties");
         assertEquals(3, entityProps.size(), "Expecting name, status, and birthYear properties, since those are the 3 " +
@@ -183,8 +184,10 @@ public class ExploreCustomEntityInstancesTest extends AbstractHubCentralTest {
             options.getElementValue("/s:options/s:operator/s:state[@name = 'Person_birthYearAscending']/s:sort-order/s:path-index"));
         assertEquals("/customEnvelope/Person/birthYear/value",
             options.getElementValue("/s:options/s:operator/s:state[@name = 'Person_birthYearDescending']/s:sort-order/s:path-index"));
-        assertEquals("/customEnvelope/Person/status/value",
-            options.getElementValue("/s:options/s:constraint[@name = 'Person.status']/s:range/s:path-index"));
+        if (supportsRangeIndexConstraints()) {
+            assertEquals("/customEnvelope/Person/status/value",
+                    options.getElementValue("/s:options/s:constraint[@name = 'Person.status']/s:range/s:path-index"));
+        }
     }
 
     private void verifyDatabaseIndexesWereModified() {
