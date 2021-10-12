@@ -1,3 +1,5 @@
+@import "../../../../theme/HCVariables.scss";
+
 .pageHeader {
     padding-bottom: 10px;
 }
@@ -224,7 +226,7 @@
 }
 
 .deleteIcon {
-    color: #b32424;
+    color: $danger;
     font-size: 21px;
     cursor: pointer;
     padding-bottom: 2px;
@@ -294,7 +296,7 @@
 }
 
 .duplicateUriWarning {
-    color: #b32424;
+    color: $danger;
     margin: 1vh 0vh -0.5vh 1.3vw;
 }
 
