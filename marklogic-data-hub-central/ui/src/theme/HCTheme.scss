@@ -1,67 +1,6 @@
-$primary: #394494;
-$secondary: #993366;
-$success: #389e0d;
-$info: #5b69af;
-$warning: #ce8406;
-$danger: #b32424;
-$light: #cccc;
-$dark: #343a40;
 
-$text-color: #333;
-$alert-text-color: #333;
-
-// this is used to map colors. change accordingly.
-$theme-colors: (
-    primary: $primary,
-    secondary: $secondary,
-    success: $success,
-    info: $info,
-    warning: $warning,
-    danger: $danger,
-    light: $light,
-    dark: $dark,
-);
-
-//fonts
-$body-color: $text-color !default;
-$font-size-base: 0.875rem !default;
-$font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, system-ui,
-    -apple-system, "Segoe UI", Roboto, "Noto Sans", "Liberation Sans",
-    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-    "Noto Color Emoji" !default;
-
-// Label
-$label-font-size: 14px;
-
-// Alert
-$alert-padding-y: 0.7rem;
-$alert-padding-x: 0.7rem;
-$alert-bg-scale: -90% !default;
-$alert-border-scale: -50% !default;
-$alert-color-scale: 70.9 !default;
-
-// Tooltip
-$tooltip-bg: #373737 !default;
-$tooltip-opacity: 1 !default;
-$tooltip-max-width: 250px !default;
-
-//accordion
-$accordion-button-padding-y: 0.5rem !default;
-$accordion-button-focus-box-shadow: shade-color($secondary, 10%) !default;
-$accordion-icon-width: 0.875rem;
-$accordion-icon-transform: rotate(0deg) !default;
-$accordion-icon-after-transform: rotate(-90deg) !default;
-
-//Form
-$input-btn-focus-width: 0.05rem;
-$btn-padding-y: 0.282rem !default;
-$btn-padding-x: 0.938rem !default;
-$input-btn-padding-y-sm: 0rem !default;
-$input-btn-padding-x-sm: 0.7rem !default;
-$input-btn-font-size-sm: 0.875rem !default;
-$input-border-color: #ccc;
-$input-border-width: 1px;
-$input-border-radius: 2px;
+// Import HC variables
+@import "HCVariables.scss";
 
 // Import Bootstrap and its default variables
 @import "~bootstrap/scss/bootstrap.scss";
@@ -179,11 +118,3 @@ $input-border-radius: 2px;
     color: $text-color;
     font-size: $font-size-base;
 }
-
-.validationError {
-    line-height: normal;
-    padding-top: 5px;
-    padding-left: 1px;
-    padding-bottom: 1px;
-    color: $danger;
-  }
