@@ -1,3 +1,5 @@
+@import "../../../theme/HCVariables.scss";
+
 .icon, .multipleIcon, .wildcardIcon, .facetIcon, .sortIcon {
   font-size: 20px;
   color: #333333;
@@ -53,7 +55,7 @@
   cursor: pointer;
   font-size: 21px;
   margin-left: 11px;
-  color: #B32424;
+  color: $danger;
   &:hover{
       color:var(--hoverColor) !important;
   }
