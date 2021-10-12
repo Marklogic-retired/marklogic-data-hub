@@ -461,3 +461,8 @@ ul.ant-cascader-menu:nth-child(2) {
 #entitySettings .ant-popover-arrow {
   display: none !important;
 }
+
+/* hover style for color picker */
+.twitter-picker div:nth-child(3) span div:hover {
+  border: solid #5B69AF 2px;
+}
