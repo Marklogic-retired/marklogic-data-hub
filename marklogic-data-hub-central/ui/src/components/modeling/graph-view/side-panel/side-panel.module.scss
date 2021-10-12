@@ -1,3 +1,5 @@
+@import "../../../../theme/HCVariables.scss";
+
 .sidePanel {
     padding: 10px 10px;
     max-height: 63vh;
@@ -137,7 +139,7 @@
 }
 
 .errorServer {
-    color: #B32424;
+    color: $danger;
     line-height: 20px;
     margin-left: 1.5vw;
 }
