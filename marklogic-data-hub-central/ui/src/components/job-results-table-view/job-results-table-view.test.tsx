@@ -4,6 +4,7 @@ import {BrowserRouter as Router} from "react-router-dom";
 import JobResultsTableView from "./job-results-table-view";
 import {jobResults} from "../../assets/mock-data/monitor/job-results";
 import {validateTableRow} from "../../util/test-utils";
+import moment from "moment";
 
 
 describe("Job results Table view component", () => {
@@ -26,7 +27,9 @@ describe("Job results Table view component", () => {
     //check table data is rendered correctly
     expect(getByText("mapClientJSON")).toBeInTheDocument();
     expect(getByText("mapping")).toBeInTheDocument();
-    expect(getByText("2021-04-21 20:37")).toBeInTheDocument();
+    let ts: string = jobResults.results[0].startTime; // "2021-04-21T20:37:42.962833-05:00"
+    let tsExpected: string = moment(ts).format("YYYY-MM-DD HH:mm");
+    expect(getByText(tsExpected)).toBeInTheDocument(); // "2021-04-21 20:37"
     expect(getByText("0s 66ms")).toBeInTheDocument();
     expect(getByText("pari")).toBeInTheDocument();
 

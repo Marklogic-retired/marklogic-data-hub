@@ -8,6 +8,8 @@ import Load from "./Load";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getViewSettings} from "../util/user-context";
+import moment from "moment";
+import loadData from "../assets/mock-data/curation/ingestion.data";
 
 jest.mock("axios");
 jest.setTimeout(30000);
@@ -205,14 +207,18 @@ describe("Load component", () => {
     expect(getByText("testLoad")).toBeInTheDocument();
     expect(getByText("Test JSON.")).toBeInTheDocument();
     expect(getAllByText("json").length > 0);
-    expect(getByText("01/01/2000 4:00AM")).toBeInTheDocument();
+    let ts: string = loadData.loads.data[0].lastUpdated; // "2000-01-01T12:00:00.000000-00:00"
+    let tsExpected: string = moment(ts).format("MM/DD/YYYY H:mmA");
+    expect(getByText(tsExpected)).toBeInTheDocument(); // "01/01/2000 4:00AM"
     expect(getByLabelText("icon: delete")).toBeInTheDocument();
 
     // Check card view
     fireEvent.click(getByLabelText("switch-view-card"));
     expect(getByText("testLoad")).toBeInTheDocument();
     expect(getByText("JSON")).toBeInTheDocument();
-    expect(getByText("Last Updated: 01/01/2000 4:00AM")).toBeInTheDocument();
+    let ts2: string = loadData.loads.data[0].lastUpdated; // "2000-01-01T12:00:00.000000-00:00"
+    let tsExpected2: string = moment(ts2).format("MM/DD/YYYY H:mmA");
+    expect(getByText("Last Updated: " + tsExpected2)).toBeInTheDocument(); // "Last Updated: 01/01/2000 4:00AM"
     expect(getByTestId("testLoad-edit")).toBeInTheDocument();
     expect(getByLabelText("icon: delete")).toBeInTheDocument();
 
