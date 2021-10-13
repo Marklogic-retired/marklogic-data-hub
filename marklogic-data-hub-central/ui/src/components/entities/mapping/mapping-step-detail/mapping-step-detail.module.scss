@@ -1,37 +1,37 @@
 @font-face {
-    font-family: "MLCustomFont";
-    src: url("../../../../fonts/icomoon.ttf") format("truetype");
+	font-family: 'MLCustomFont';
+	src: url('../../../../fonts/icomoon.ttf') format('truetype');
 }
 
-.mapContainer {
+.mapContainer{
     height: auto;
     width: 95.6vw;
 }
 
-.header {
-    display: inline-flex;
+.header{
+    display:inline-flex;
 }
 
-.headerTitle {
+.headerTitle{
     font-size: 1.5em;
     width: fit-content;
 }
 
-.saveMessage {
+.saveMessage{
     border: 1px solid #ff0000;
     margin-left: 60em;
 }
-.noMessage {
+.noMessage{
     padding: 16.5px 0vh;
 }
-.parentContainer {
+.parentContainer{
     display: flex;
     flex-direction: row;
     padding-bottom: 1vh;
     padding-right: 40px;
 }
 
-.sourceContainer {
+.sourceContainer{
     width: auto;
     height: auto;
     flex: 4;
@@ -44,22 +44,22 @@
     overflow-y: auto;
 }
 
-.sourceTable {
-    & thead > tr > th {
-        background-color: #eeeeee;
+.sourceTable{
+      & thead > tr > th {
+        background-color: #EEEEEE;
         line-height: 2px;
-    }
-    & tbody > tr > td {
-        background-color: #fafafa;
+      };
+      & tbody > tr > td {
+        background-color: #FAFAFA;
         line-height: 2px;
     }
 }
 
-.sourceTableRows {
+.sourceTableRows{
     line-height: 1px;
 }
 
-.sourceName {
+.sourceName{
     white-space: nowrap;
 }
 
@@ -72,7 +72,7 @@
     margin-left: -2px;
 }
 
-.sourceTitle {
+.sourceTitle{
     font-size: 16px;
     margin-top: 8px;
     margin-bottom: -10px;
@@ -85,7 +85,7 @@
 .searchInput {
     min-width: 8vw;
     margin-bottom: 8px;
-    display: block;
+    display: block
 }
 .resetButton {
     width: 90px;
@@ -93,21 +93,15 @@
 }
 
 .searchSubmitButton {
-    width: 90px;
-}
-
-.searchIcon {    
-    font-size: 11px;
-    margin-top: -4px;
-    margin-right: 3px;
+    width: 90px
 }
 
 .highlightStyle {
     background-color: #ffc069;
-    padding: 0px;
+    padding: 0px
 }
 
-.entityContainer {
+.entityContainer{
     width: 100%;
     flex: 9;
     display: flex;
@@ -117,11 +111,11 @@
     word-break: break-all;
     height: calc(100vh - 315px);
     overflow-y: auto;
-    > .entityDetails {
+    > .entityDetails{
         display: inline-block;
         vertical-align: middle;
         margin-bottom: 3px;
-        > .entityTypeTitle {
+        > .entityTypeTitle{
             float: left;
             margin-top: -10px;
             white-space: nowrap;
@@ -131,23 +125,22 @@
     }
 
     > .columnOptionsSelectorContainer {
-       display: flex;
-       align-items: flex-end;
-       justify-content: flex-end;
-       gap: 15px;
-       margin-bottom: 5px;
-       margin-right: 15px;
+        display: inline-block;
+        min-width: 1000px;
+        margin-bottom: 10px;
+
+        > .columnOptionsSelector{
+            float: right;
+            margin: 15px 15px 0px 0px;
+        }
 
         > .entityCollapseButtons{
-            margin-bottom: 8px;
-            
-        }
-        > .columnOptionsSelector {
-            text-decoration: none !important;
+            float: right;
+            margin-top: 10px;
+            padding-right: 15px;
         }
     }
 }
-
 
 .sourceButtons{
   display: flex;
@@ -155,19 +148,19 @@
   margin-top: -25px;
 }
 
-.navigationButtons {
-    width: 100%;
+.navigationButtons{
+  width: 100%;
 }
 
-.navigationButtonsError {
-    width: 100%;
-    margin-right: 50px;
+.navigationButtonsError{
+  width: 100%;
+  margin-right: 50px;
 }
 
-.sourceCollapseButtons {
-    width: 100%;
-    padding-top: 23px;
-    padding-bottom: 9px;
+.sourceCollapseButtons{
+width: 100%;
+padding-top: 23px;
+padding-bottom: 9px;
 }
 
 > .expandCollapseBtn {
@@ -176,28 +169,24 @@
 }
 
 .DropdownMenuItem {
-    display: flex !important;
-    align-items: center;
+    display: flex;
+    vertical-align: middle;
     max-height: 3vh;
-    
-    &:active {
-        background-color: transparent !important;
-    }
 }
 
-.columnSelectorOverlay {
+.columnSelectorOverlay{
     border: 1px solid rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-.dropdownHover {
-    &:hover {
+.dropdownHover{
+    &:hover{
         color: var(--hoverColor);
     }
 }
 
-.checkBoxItem {
+.checkBoxItem{
     line-height: 2vh;
     margin-top: 4px;
 }
@@ -219,13 +208,13 @@ hr {
     }
 }
 
-.mapExpression {
+.mapExpression{
     width: 100%;
     line-height: 1px;
     vertical-align: top;
 }
 
-.entityIcon:before {
+.entityIcon:before{
     content: "\e93b";
     font-family: MLCustomFont;
     color: #394494;
@@ -242,8 +231,8 @@ hr {
 }
 
 .interceptorSuccessAlert {
-    background-color: #eff0f7;
-    border: 1px solid #5b69af;
+    background-color: #EFF0F7;
+    border: 1px solid #5B69AF;
     width: 100%;
     z-index: 999;
     padding-right: 1px;
@@ -253,16 +242,16 @@ hr {
     margin-bottom: -32px;
     margin-top: -26px;
     position: relative;
-}
+  }
 
 .failedInterceptorContainer {
-    margin-top: 140px;
+    margin-top: 140px
 }
 
 .interceptorFailureAlert {
     margin-top: -30px;
-    background-color: #ffcdcd;
-    border: 1px solid #ff2727;
+    background-color: #FFCDCD;
+    border: 1px solid #FF2727;
     width: 100%;
     padding-right: 20px;
     padding-left: 35px;
@@ -277,7 +266,7 @@ hr {
 }
 
 .interceptorSuccessIcon {
-    color: #5b69af !important;
+    color: #5B69AF !important;
     font-size: 16px !important;
     left: 11px !important;
 }
@@ -292,29 +281,29 @@ hr {
 .emptyText {
     word-break: keep-all;
 }
-.testButtons {
+.testButtons{
     align-items: flex-end;
     float: right;
 }
-.entityDetails {
+.entityDetails{
     align-items: flex-start;
     float: left;
 }
-.sourceDetails {
+.sourceDetails{
     position: relative;
     margin-top: -19px;
     margin-bottom: -21px;
 }
 .sourceDataIcon:before {
-    content: "\e934";
-    font-family: MLCustomFont;
-    color: #394494;
-    font-size: 24px;
-    position: relative;
-    font-weight: 200;
-    top: 4px;
-    padding-right: 3px;
-    display: inline-block;
+  content: "\e934";
+  font-family: MLCustomFont;
+  color: #394494;
+  font-size: 24px;
+  position: relative;
+  font-weight: 200;
+  top: 4px;
+  padding-right: 3px;
+  display: inline-block;
 }
 .srcDetails {
     z-index: 999;
@@ -322,11 +311,8 @@ hr {
     padding-left: 25px;
     margin-bottom: -50px;
 }
-.dataPresent {
-    z-index: 1;
-}
 
-.sourceValue {
+.sourceValue{
     margin-top: -6px;
     margin-bottom: -20px;
     white-space: pre;
@@ -335,67 +321,67 @@ hr {
     line-height: normal;
 }
 
-.namespace {
-    color: #5b69af;
+.namespace{
+    color: #5B69AF;
     cursor: pointer;
 }
 
-.toolTipForValues {
+.toolTipForValues{
     cursor: pointer;
 }
 
 .questionCircle {
     font-size: 12px;
-    color: #7f86b5;
+    color: #7F86B5;
 }
 
-.expandIcon {
+.expandIcon{
     margin-left: -16px;
-    vertical-align: middle;
+    vertical-align:middle;
     text-align: left;
     font-size: 13px;
     padding-right: 1px;
 }
 
-.inputURIContainer {
+.inputURIContainer{
     padding-top: 10px;
     margin-left: -4px;
     vertical-align: middle;
     text-align: left;
     width: 105%;
 }
-.uriEditing {
+.uriEditing{
     display: inline-block;
     width: auto;
 }
 
-.sourceQuery {
+.sourceQuery{
     padding-top: 4px;
 }
-.uri {
+.uri{
     padding: 4px 0px;
-    height: 32px;
+    height : 32px;
 }
 
-.showingEditContainer {
-    position: absolute;
+.showingEditContainer{
+  position: absolute;
 }
-.showingEditIcon {
+.showingEditIcon{
     padding-top: 5px;
     padding-right: 5px;
     padding-bottom: 3px;
     padding-left: 3px;
-    border: 1px solid #e9f7fe;
+    border: 1px solid #E9F7FE;
     color: #394494;
 }
-.notShowingEditContainer {
+.notShowingEditContainer{
     padding-top: 10px;
     padding-right: 2.3em;
     padding-left: 3px;
     margin-left: -3px;
 }
 
-.URItext {
+.URItext{
     margin-left: 4px;
     color: #394494;
 }
@@ -418,23 +404,23 @@ hr {
     cursor: pointer;
 }
 
-.checkIcon {
-    fill: #7F86B5;
+.checkIcon{
+    background-color: #7F86B5;
     border-radius: 3px;
+    padding: 2px 2px;
+    color: #ffffff;
     cursor: pointer;
-    font-size: 18px;
-    margin-top: 4px;
 }
 .closeIcon{
-    fill: #7F86B5;
+    background-color: #7F86B5;
+    color: #ffffff;
+    border-radius: 3px;
+    padding: 2px 2px;
     cursor: pointer;
-    font-size: 18px;
-    margin-top: 4px;
 }
 
-.docLinksUl {
+.docLinksUl{
     padding-left: 1vw;
-    z-index: -1;
 }
 
 .spinRunning {
@@ -451,75 +437,37 @@ hr {
     }
 }
 
-#browse-buttons {
+  #browse-buttons{
     border: 1px solid rgba(0, 0, 0, 0.961);
-}
+  }
 
-.stepSettingsLink {
+  .stepSettingsLink {
     position: absolute;
-    bottom: 89px;
-    padding-right: 27px;
-    right: 22px;
+    bottom: 93%;
+    right: 30px;
     color: #44499C;
     cursor: pointer;
     .stepSettingsLabel {
         display: inline-block;
         margin-left: 6px;
     }
-    &:hover {
+    &:hover{
         color: var(--hoverColor);
     }
 }
 
-.legend {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: -80px;
-    padding-top: 20px;
-    padding-right: 40px;
-    padding-bottom: 16px;
-    position: relative;
 
-    .clearTestIcons {
-        bottom: 80%;
-        padding-right: 10px;
-        position: absolute;
-    }
+.clearTestIcons{
+  right: 1.2%;
+  bottom: 87%;
+  padding-right: 10px;
+  position: absolute;
+}
 
-    .legendText {
-        font-size: 14px;
-        margin-right: 18px;
-        img,
-        svg {
-            margin-right: 2px;
-        }
-    }
-
-    .modeledRelationshipIcon::before {
-        content: "\e95e";
-        font-family: MLCustomFont;
-        font-size: 19px;
-        margin-left: -26px;
-        margin-top: -3px;
-        color: #57c2da;
-        position: absolute;
-    }
-
-    .foreignKeyIcon {
-        color: #37aa6c;
-        font-size: 14px;
-    }
-
-    .relatedIcon {
-        margin-bottom: 4px;
-    }
-
-    .structuredIcon {
-        color: #5b69af;
-        font-size: 14px;
-    }
-
-    .arrayImage {
-        margin-bottom: 4px;
-    }
+.legendContainer {
+  margin-bottom: -80px;
+  padding-top: 20px;
+  padding-right: 55px;
+  left: 63%;
+  position: relative;
 }
