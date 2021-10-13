@@ -1411,7 +1411,7 @@ const MappingStepDetail: React.FC = () => {
           <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
         <span className={styles.clearTestIcons} id="ClearTestButtons">
-          <HCButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+          <HCButton id="Clear-btn" mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()}>
                                 Clear
           </HCButton>
                         &nbsp;&nbsp;
