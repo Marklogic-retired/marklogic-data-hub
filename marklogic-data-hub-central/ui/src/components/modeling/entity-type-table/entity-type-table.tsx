@@ -16,6 +16,7 @@ import {queryDateConverter, relativeTimeConverter} from "../../../util/date-conv
 import {numberConverter} from "../../../util/number-conversion";
 import {ModelingTooltips, SecurityTooltips} from "../../../config/tooltips.config";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import HCTable from "../../common/hc-table/hc-table";
 
 type Props = {
   allEntityTypesData: any[];
@@ -35,6 +36,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const {handleError} = useContext(UserContext);
   const {modelingOptions, setGraphViewOptions} = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
+  const [expandedNewRows, setExpandedNewRows] = useState<number[]>(expandedRowStorage ? expandedRowStorage.map(e => +e) : []);
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -46,6 +48,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.autoExpand) {
       setExpandedRows([props.autoExpand]);
+      setExpandedNewRows([+props.autoExpand]);
     }
   }, [props.autoExpand]);
 
@@ -53,10 +56,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     if (expandedRows === null) {
       return;
     }
+    if (expandedNewRows === null) {
+      return;
+    }
     const rowStorage = getViewSettings();
     const newStorage = {...rowStorage, model: {...rowStorage.model, entityExpandedRows: expandedRows}};
     setViewSettings(newStorage);
-  }, [expandedRows]);
+  }, [expandedRows, expandedNewRows]);
 
   useEffect(() => {
     // Deep copying props.allEntityTypesData since we dont want the prop to be mutated
@@ -142,6 +148,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const columns = [
     {
       title: <span data-testid="entityName">Name</span>,
+      text: "Name",
       dataIndex: "entityName",
       className: styles.tableText,
       width: 400,
@@ -174,6 +181,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     },
     {
       title: <span data-testid="Instances">Instances</span>,
+      text: "Instances",
       dataIndex: "instances",
       className: styles.rightHeader,
       width: 100,
@@ -213,6 +221,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     },
     {
       title: <span data-testid="lastProcessed">Last Processed</span>,
+      text: "Last Processed",
       dataIndex: "lastProcessed",
       className: styles.tableText,
       width: 100,
@@ -249,6 +258,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     },
     {
       title: <span data-testid="color">Color</span>,
+      text: "Color",
       dataIndex: "color",
       className: styles.actions,
       width: 100,
@@ -265,6 +275,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     },
     {
       title: "Actions",
+      text: "Actions",
       dataIndex: "actions",
       className: styles.actions,
       width: 100,
@@ -301,6 +312,17 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   ];
 
+  const hcColumns = columns.map((c, index) => {
+    const column = {...c, dataField: c.dataIndex, sort: c.dataIndex !== "actions",
+      formatter: typeof c.render === "function" ? (cell, row, rowIndex, formatterData) => c.render(cell) : null,
+      headerAttrs: c.dataIndex !== "actions" ? {"data-testid": c.dataIndex} : null,
+    };
+
+    //delete column.title;
+
+    return column;
+  });
+
   const getEntityTypeProp = (entityName: any, prop: string) => {
     const entity = allEntityTypes.find(e => e.entityName === entityName);
     if (prop === "color") {
@@ -325,6 +347,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
   const onExpand = (expanded, record) => {
     let newExpandedRows =  [...expandedRows];
+    
     if (expanded) {
       if (newExpandedRows.indexOf(record.entityName) === -1) {
         newExpandedRows.push(record.entityName);
@@ -335,18 +358,33 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   };
 
+
+  const onExpandWrapper = (record, expanded, rowIndex) => {
+    let newExpandedRows =  [...expandedNewRows];
+    
+    if (expanded) {
+      if (newExpandedRows.indexOf(rowIndex) === -1) {
+        newExpandedRows.push(rowIndex);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== rowIndex);
+    }
+    setExpandedNewRows(newExpandedRows);
+  };
+
   const colorExistsForEntity = (entityName) => {
     return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
   };
 
-  const renderTableData = allEntityTypes.map((entity) => {
+  const renderTableData = allEntityTypes.map((entity, index) => {
     let result = {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
       color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEEFF1"),
       actions: entity.entityName,
-      definitions: entity.model.definitions
+      definitions: entity.model.definitions,
+      index, // Added for expand/collapse
     };
     return result;
   });
@@ -361,18 +399,29 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-      <Table
-        rowKey="entityName"
-        locale={{emptyText: " "}}
+      <HCTable
+        rowKey="index"
+        data={renderTableData}
         className={styles.table}
-        columns={columns}
-        expandedRowRender={expandedRowRender}
-        onExpand={onExpand}
-        expandedRowKeys={expandedRows}
-        dataSource={renderTableData}
-        pagination={{defaultPageSize: 20, size: "small", hideOnSinglePage: renderTableData.length <= 20}}
-        size="middle"
+        columns={hcColumns}
+        showExpandIndicator={true}
+        onExpand={onExpandWrapper}
+        {...{expandedRowRender}}
+        expandedRowKeys={expandedNewRows}
       />
+      {/* Comment this for unit tests to pass 
+        <Table
+          rowKey="entityName"
+          locale={{emptyText: " "}}
+          className={styles.table}
+          columns={columns}
+          expandedRowRender={expandedRowRender}
+          onExpand={onExpand}
+          expandedRowKeys={expandedRows}
+          dataSource={renderTableData}
+          pagination={{defaultPageSize: 20, size: "small", hideOnSinglePage: renderTableData.length <= 20}}
+          size="middle"
+      />*/}
       {/* sortDirections: ["ascend", "descend", "ascend"], */}
     </>
   );

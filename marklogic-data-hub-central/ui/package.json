@@ -41,6 +41,7 @@
     "react-bootstrap": "2.0.1",
     "react-bootstrap-daterangepicker": "^7.0.0",
     "react-bootstrap-icons": "^1.5.0",
+    "react-bootstrap-table-next": "^4.0.3",
     "react-contextmenu": "^2.13.0",
     "react-dom": "^16.12.0",
     "react-drag-listview": "^0.1.6",

@@ -16,6 +16,7 @@ import HCDivider from "../common/hc-divider/hc-divider";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import HCButton from "../common/hc-button/hc-button";
+import HCTable from "../common/hc-table/hc-table";
 
 const {Option} = Select;
 
@@ -504,6 +505,10 @@ const LoadList: React.FC<Props> = (props) => {
     }
   ];
 
+  const hcColumns = columns.map(c => {
+    return {...c, dataField: c.key, text: c.title, sort: c.key !== "actions", formatter: typeof c.render === "function" ? (cell, row, rowIndex, formatterData) => c.render(cell, row, rowIndex) : null};
+  });
+
   // need special handlePagination for direct links to load steps that can be on another page
   const handlePagination = (page) => {
     setPage(page);
@@ -520,14 +525,20 @@ const LoadList: React.FC<Props> = (props) => {
           <HCButton aria-label="add-new-list" variant="primary" onClick={OpenAddNew}>Add New</HCButton>
         </div> : ""}
       </div>
-      <Table
+      <HCTable
+        columns={hcColumns}
+        data={props.data}
+        className={styles.loadTable}
+        rowKey="name"
+      />
+      {/*<Table
         pagination={{hideOnSinglePage: props.data.length <= 10, showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
         className={styles.loadTable}
         columns={columns}
         dataSource={props.data}
         rowKey="name"
         onChange={handleTableChange}
-      />
+      />*/}
       {deleteConfirmation}
       {addConfirmation}
       {runNoFlowsConfirmation}

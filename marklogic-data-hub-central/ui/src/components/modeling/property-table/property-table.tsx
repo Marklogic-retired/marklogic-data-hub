@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Table, Tooltip} from "antd";
-import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
 import styles from "./property-table.module.scss";
@@ -27,9 +27,9 @@ import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {ModelingMessages} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
-import arrayIcon from "../../../assets/icon_array.png";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../common/hc-button/hc-button";
+import HCTable from "../../common/hc-table/hc-table";
 
 let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);
@@ -103,6 +103,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [headerColumns, setHeaderColumns] = useState<any[]>([]);
   const [tableData, setTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
+  const [expandedNewRows, setExpandedNewRows] = useState<number[]>(expandedRowStorage ? expandedRowStorage.map(e => +e) : []);
   const [newRowKey, setNewRowKey] = useState("");
 
   useEffect(() => {
@@ -130,15 +131,18 @@ const PropertyTable: React.FC<Props> = (props) => {
   const columns = [
     {
       title: <span aria-label="propertyName-header">Property Name</span>,
+      text: "Property Name",
       dataIndex: "propertyName",
       width: 200,
       render: (text, record) => {
         let renderText = text;
         let recordKey = "";
+
         if (record.hasOwnProperty("structured")) {
           let recordArray = record.key.split(",");
           recordKey = recordArray[0] + "-";
         }
+
         if (props.canWriteEntityModel && props.canReadEntityModel) {
           renderText = <span
             data-testid={`${recordKey}` + text + "-span"}
@@ -147,40 +151,21 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(text, record);
             }}>
-            {record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
-            {record.multiple === record.propertyName &&
-              <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
-              </HCTooltip>}
-            {record.structured === record.type &&
-              <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
-              </HCTooltip>
-            }
+            {text}
           </span>;
         } else {
-          renderText = <span data-testid={text + "-span"} aria-label={"Property-name"}>{record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
-            {record.multiple === record.propertyName &&
-              <HCTooltip text={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
-              </HCTooltip>}
-            {record.structured === record.type &&
-              <HCTooltip text={"Structured Type"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
-                <i><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} data-testid={"structured-" + text} /></i>
-              </HCTooltip>
-            }
-          </span>;
+          renderText = <span data-testid={text + "-span"}>{text}</span>;
         }
         return renderText;
       }
     },
     {
       title: <span aria-label="type-header">Type</span>,
+      text: "Type",
       dataIndex: "type",
       width: 145,
       render: (text, record) => {
         let renderText = text;
-        let arrayIndicator = record.multiple === record.propertyName ? " [ ]" : "";
         if (record.joinPropertyType) {
           if (record.joinPropertyName) {
             //relationship complete with foreign key populated
@@ -188,7 +173,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             let completeRelationshipTooltip = ModelingTooltips.completeRelationship(record.joinPropertyType, record.delete);
             renderText =
               <div>
-                {renderText = renderText.concat(" (" + record.joinPropertyType + ")" + arrayIndicator)}
+                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
                 <div className={styles.dualIconsContainer}>
                   <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
                     <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName} />
@@ -203,7 +188,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
             renderText =
               <span>
-                {renderText = record.joinPropertyType}
+                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
                 <div className={styles.relationshipIconContainer}>
                   <HCTooltip className={styles.relationshipTooltip} text={tooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + record.propertyName} placement="bottom">
                     <span className={styles.modeledRelationshipIconNoKey} data-testid={"relationship-" + record.propertyName} />
@@ -211,10 +196,8 @@ const PropertyTable: React.FC<Props> = (props) => {
                 </div>
               </span>;
           }
-          return renderText;
-        } else {
-          return renderText + arrayIndicator;
         }
+        return renderText;
       }
     },
     {
@@ -223,6 +206,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="identifier-header">Identifier</span>
         </HCTooltip>
       ),
+      text: "Identifier",
       dataIndex: "identifier",
       width: 100,
       render: text => {
@@ -235,6 +219,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="multiple-header">Multiple</span>
         </HCTooltip>
       ),
+      text: "Multiple",
       dataIndex: "multiple",
       width: 100,
       render: text => {
@@ -247,6 +232,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="sort-header">Sort</span>
         </HCTooltip>
       ),
+      text: "Sort",
       dataIndex: "sortable",
       width: 75,
       render: text => {
@@ -259,6 +245,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="facet-header">Facet</span>
         </HCTooltip>
       ),
+      text: "Facet",
       dataIndex: "facetable",
       width: 100,
       render: text => {
@@ -283,6 +270,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="pii-header">PII</span>
         </HCTooltip>
       ),
+      text: "PII",
       dataIndex: "pii",
       width: 75,
       render: text => {
@@ -291,6 +279,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: <span aria-label="delete-header">Delete</span>,
+      text: "Delete",
       dataIndex: "delete",
       width: 75,
       render: (text, record) => {
@@ -328,6 +317,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     },
     {
       title: <span aria-label="add-header">Add</span>,
+      text: "Add",
       dataIndex: "add",
       width: 45,
       render: text => {
@@ -369,6 +359,13 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   ];
 
+  const hcHeaderColumns = columns.map(c => {
+    return {
+      dataField: c.dataIndex,
+      formatter: typeof c.render === "function" ? (cell, row, rowIndex, formatterData) => c.render(cell, row) : null,
+    };
+  });
+
   const addPropertyButtonClicked = () => {
 
     toggleShowPropertyModal(true);
@@ -382,6 +379,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (props.sidePanelView) {
       //remove unneeded middle columns if table is in side panel view
       columns.splice(2, 5);
+      hcHeaderColumns.splice(2, 5);
     }
     if (entityDefinitionsArray.length === 1) {
       setHeaderColumns(props.sidePanelView ? columns.slice(0, 3) : columns.slice(0, 8));
@@ -440,7 +438,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
       return {
-        datatype: propertyOptions.joinPropertyType ? propertyOptions.joinPropertyType : "string",
+        datatype: propertyOptions.joinPropertyType,
         relatedEntityType: externalEntity.entityTypeId,
         joinPropertyName: propertyOptions.joinPropertyName,
         //joinPropertyType: propertyOptions.joinPropertyType
@@ -453,7 +451,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         facetable: facetable,
         sortable: sortable,
         items: {
-          datatype: propertyOptions.joinPropertyType ? propertyOptions.joinPropertyType : "string",
+          datatype: propertyOptions.joinPropertyType,
           relatedEntityType: externalEntity.entityTypeId,
           joinPropertyName: propertyOptions.joinPropertyName,
           //joinPropertyType: propertyOptions.joinPropertyType
@@ -882,6 +880,18 @@ const PropertyTable: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   };
 
+  const onExpandedWrapper = (record, expanded, rowIndex) => {
+    let newExpandedRows = [...expandedNewRows];
+    if (expanded) {
+      if (newExpandedRows.indexOf(rowIndex) === -1) {
+        newExpandedRows.push(rowIndex);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== rowIndex);
+    }
+    setExpandedNewRows(newExpandedRows);
+  };
+
   const confirmAction = async () => {
     if (confirmType === ConfirmationType.DeletePropertyWarn || confirmType === ConfirmationType.DeletePropertyStepWarn) {
       deletePropertyFromDefinition(deletePropertyOptions.definitionName, deletePropertyOptions.propertyName);
@@ -950,18 +960,33 @@ const PropertyTable: React.FC<Props> = (props) => {
       />
       {titleNoDefinition() ?
         <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
-        <Table
-          rowClassName={(record) => {
-            let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
-            return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
-          }}
-          locale={{emptyText: " "}}
-          columns={headerColumns}
-          dataSource={tableData}
-          onExpand={onExpand}
-          expandedRowKeys={expandedRows}
-          pagination={false}
-        />
+        <>
+          {<HCTable
+        rowKey="id"
+        columns={hcHeaderColumns}
+        data={tableData}
+        pagination={false}
+        rowClassName={(record) => {
+          let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
+          return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
+        }}
+        onExpand={onExpandedWrapper}
+        expandedRowKeys={expandedNewRows}
+
+      />}
+          {/*<Table
+            rowClassName={(record) => {
+              let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
+              return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
+            }}
+            locale={{emptyText: " "}}
+            columns={headerColumns}
+            dataSource={tableData}
+            onExpand={onExpand}
+            expandedRowKeys={expandedRows}
+            pagination={false}
+          />*/}
+        </>
       }
     </div>
   );
