@@ -436,9 +436,9 @@ declare function opt-impl:compile-match-options(
       let $is-reduce :=  ($is-complex-rule and $rule-set/reduce = fn:true()) or $local-name eq "reduce"
       let $abs-weight :=
           (: This is a special case for the legacy zip options :)
-          if ($rule-set/(algorithmRef|@algorithms-ref) = "zip-match" and fn:empty($rule-set/(@weight|weight))) then
-            fn:max($rule-set/zip/(@weight|weight) ! fn:abs(fn:number(.)))
-          else
+          if ($rule-set/(algorithmRef|@algorithm-ref) = "zip-match" and fn:empty($rule-set/(@weight|weight))) then (
+            fn:max($rule-set/*:zip/(@weight|weight) ! fn:abs(fn:number(.)))
+          ) else
             (: We want to allow weight to be empty because if weight is empty we will score from cts query weights instead. See https://project.marklogic.com/jira/browse/DHFPROD-7234 :)
             $rule-set/(@weight|weight)[. castable as xs:double] ! fn:abs(fn:number(.))
       let $weight := if (fn:exists($abs-weight) and $is-reduce) then -$abs-weight else $abs-weight
@@ -523,12 +523,13 @@ declare function opt-impl:compile-match-options(
       else
         for $minimum-threshold-positive-combination in $minimum-threshold-positive-combinations
         let $combo-weight := $minimum-threshold-positive-combination => map:get("weight")
-        (: get the combinations of reduce weights that would push the document below minimum threshold  :)
-        let $negative-combinations := opt-impl:minimum-threshold-combinations($negative-queries, $combo-weight - $minimum-threshold)
         return
-          $minimum-threshold-positive-combination
-            => map:with("notQueries", $negative-combinations)
-
+          if (fn:exists($combo-weight)) then
+            (: get the combinations of reduce weights that would push the document below minimum threshold  :)
+            let $negative-combinations := opt-impl:minimum-threshold-combinations($negative-queries, $combo-weight - $minimum-threshold)
+            return $minimum-threshold-positive-combination => map:with("notQueries", $negative-combinations)
+          else
+            $minimum-threshold-positive-combination
     let $compiled-match-options := map:new((
         if (fn:exists($match-options/(dataFormat|matcher:data-format))) then
           map:entry("dataFormat", fn:string($match-options/(dataFormat|matcher:data-format)))
