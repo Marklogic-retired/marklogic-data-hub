@@ -1,10 +1,11 @@
 .systemModal {
-    top: 6.5em;
-    left: -1.5em;
+    top: 4.5em;
+    left: -2em;
+    min-width: 87%;
 }
 
 .systemContainer {
-  padding: 10px 20px;
+  padding: 0px 27px;
   font-family: 'HelveticaNeue-Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: black;
 
@@ -47,7 +48,7 @@
 
   .cards {
     padding-top: 80px;
-    padding-bottom: 100px;
+    padding-bottom: 80px;
     margin: auto;
     min-width: 700px;
 
@@ -116,4 +117,14 @@
     left: 50%;
     margin-left: -163px;
 }
+}
+
+.confirmationModal {
+  min-width: 40%;
+  top: 5.1em;
+  z-index: 1040;
+}
+
+.disabledMain {
+  z-index: 1 !important;
 }
