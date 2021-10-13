@@ -686,12 +686,20 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const srcDetails = mapData && mapData["sourceQuery"] && mapData["selectedSource"] ? <div className={styles.xpathDoc}>
-    {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(mapData["sourceQuery"], 32, "...")}</div>}
-    {!editingURI ? <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)}
-      className={styles.uri}>{!showEditURIOption ? <span data-testid={"uri-edit"} className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(sourceURI, 32, "...")}</span></span> :
-        <span className={styles.showingEditContainer}>URI: <span data-testid={"uri-edit"} className={styles.showingEditIcon}>{getLastChars(sourceURI, 32, "...")} <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"}
-        /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} className={styles.uriEditing} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
-      <XSquareFill aria-label="icon: close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<CheckSquareFill aria-label="icon: check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} /></span></div>}
+    {mapData["selectedSource"] === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(mapData["sourceQuery"])}</div> : <div className={styles.sourceQuery}>Source Query: {mapData["sourceQuery"]}</div>}
+    {!editingURI ?
+      <div onMouseOver={(e) => handleMouseOver(e)} onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>
+        {!showEditURIOption ?
+          <span data-testid={"uri-edit"} className={styles.notShowingEditContainer}>URI: <span className={styles.URItext}>{sourceURI}</span></span>
+          :
+          <div><span data-testid={"uri-edit"} className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{sourceURI}</span></span><i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon} data-testid={"pencil-icon"} /></i></div>}
+      </div>
+      :
+      <div className={styles.inputURIContainer}>URI:
+        <span><Input data-testid={"uri-input"} value={sourceURI} ref={ref => ref && ref.focus()} onChange={handleURIEditing} style={{display: "inline-block", width: `${sourceURI.length * 9}px`, marginLeft: "10px"}} onFocus={(e) => e.currentTarget.setSelectionRange(e.currentTarget.value.length, e.currentTarget.value.length)}></Input>&nbsp;
+          <Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption()} />&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(sourceURI)} />
+        </span>
+      </div>}
   </div> : "";
 
   const expandTableIcon = (
@@ -1402,7 +1410,7 @@ const MappingStepDetail: React.FC = () => {
           <span className={styles.stepSettingsLabel}>Step Settings</span>
         </div>
         <span className={styles.clearTestIcons} id="ClearTestButtons">
-          <HCButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+          <HCButton id="Clear-btn" mat-raised-button="true" variant="outline-light" disabled={emptyData} onClick={() => onClear()}>
                                 Clear
           </HCButton>
                         &nbsp;&nbsp;
