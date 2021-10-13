@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
-import {Modal, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import axios from "axios";
@@ -16,6 +16,7 @@ import HCAlert from "../common/hc-alert/hc-alert";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCCard from "../common/hc-card/hc-card";
 import HCButton from "../common/hc-button/hc-button";
+import {Modal} from "react-bootstrap";
 
 
 const SystemInfo = (props) => {
@@ -117,140 +118,130 @@ const SystemInfo = (props) => {
     setClearDataVisible(true);
   };
 
-  const clearDataConfirmation = <Modal
-    visible={clearDataVisible}
-    okText={<div aria-label="Yes">Yes</div>}
-    okType="primary"
-    cancelText={<div aria-label="No">No</div>}
-    onOk={() => onClearOk()}
-    onCancel={() => onClearCancel()}
-    bodyStyle={{textAlign: "left"}}
-    width={550}
-    maskClosable={false}
-    closable={false}
-    destroyOnClose={true}
-  >
-    <div style={{display: "flex"}}><div style={{padding: "24px 0px 0px 15px"}}><FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon></div><div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.</div></div>
-  </Modal>;
+  const clearDataConfirmation = (
+    <Modal show={clearDataVisible} dialogClassName={styles.confirmationModal}>
+      <Modal.Body>
+        <div style={{display: "flex"}}>
+          <div style={{padding: "24px 0px 0px 15px"}}>
+            <FontAwesomeIcon icon={faExclamationTriangle} size="lg" style={{color: "rgb(188, 129, 29)"}}></FontAwesomeIcon>
+          </div>
+          <div style={{fontSize: "16px", padding: "20px 20px 20px 20px"}}>
+            Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.
+          </div>
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <HCButton variant="outline-light" onClick={() => onClearCancel()}>
+          <div aria-label="No">No</div>
+        </HCButton>
+        <HCButton variant="primary" onClick={() => onClearOk()}>
+          <div aria-label="Yes">Yes</div>
+        </HCButton>
+      </Modal.Footer>
+    </Modal>
+  );
 
   return (
     <Modal
-      visible={props.systemInfoVisible}
-      onCancel={() => onCancel()}
-      width={"85vw"}
-      maskClosable={false}
-      footer={null}
-      className={styles.systemModal}
-      destroyOnClose={true}
+      show={props.systemInfoVisible}
+      onHide={() => onCancel()}
+      dialogClassName={styles.systemModal}
+      keyboard={true}
+      backdrop="static"
+      className={clearDataVisible ? styles.disabledMain : ""}
     >
-      <div className={styles.systemContainer}>
-        <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
-          <HCAlert variant="success" showIcon>{<span><b>Clear All User Data </b>completed successfully</span>}</HCAlert>
-        </div>
-        <div className={styles.serviceName}>
-          {serviceName}
-          <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"}>
-            <i>
-              {<FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/>}
-            </i>
-          </HCTooltip>
-        </div>
-        <div className={styles.version}>
-          <div className={styles.label}>Data Hub Version:</div>
-          <div className={styles.value}>{dataHubVersion}</div>
-        </div>
-        <div className={styles.version}>
-          <div className={styles.label}>MarkLogic Version:</div>
-          <div className={styles.value}>{marklogicVersion}</div>
-        </div>
-        <div className={styles.cardsContainer}>
-          <div className={styles.cards}>
-            <Row>
-              { !authorityService.canDownloadProjectFiles() ? <Col>
-                <HCCard className={styles.download} >
-                  <div className={styles.title}>Download Hub Central Files</div>
-                  <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
-                  <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
-                    <div className={styles.disabledButtonContainer}>
-                      <HCButton
-                        aria-label="Download"
-                        data-testid="downloadHubCentralFiles"
-                        disabled
-                      >Download</HCButton>
-                    </div>
-                  </Tooltip>
-                </HCCard>
-              </Col>:
-                <Col>
+      <Modal.Body >
+        <Modal.Header closeButton></Modal.Header>
+        <div className={styles.systemContainer}>
+          <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
+            <HCAlert variant="success" showIcon>{<span><b>Clear All User Data </b>completed successfully</span>}</HCAlert>
+          </div>
+
+          <div className={styles.serviceName}>
+            {serviceName}
+            <HCTooltip text="Copy to clipboard" id="copy-to-clipboard-tooltip" placement={"bottom"}>
+              <i>
+                {<FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/>}
+              </i>
+            </HCTooltip>
+          </div>
+          <div className={styles.version}>
+            <div className={styles.label}>Data Hub Version:</div>
+            <div className={styles.value}>{dataHubVersion}</div>
+          </div>
+          <div className={styles.version}>
+            <div className={styles.label}>MarkLogic Version:</div>
+            <div className={styles.value}>{marklogicVersion}</div>
+          </div>
+          <div className={styles.cardsContainer}>
+            <div className={styles.cards}>
+              <Row>
+                { !authorityService.canDownloadProjectFiles() ? <Col>
                   <HCCard className={styles.download} >
                     <div className={styles.title}>Download Hub Central Files</div>
                     <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
-                    <div className={styles.buttonContainer}>
-                      <HCButton
-                        variant="primary"
-                        aria-label="Download"
-                        data-testid="downloadHubCentralFiles"
-                        size="sm"
-                        onClick={downloadHubCentralFiles}
-                      >Download</HCButton>
-                    </div>
+                    <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                      <div className={styles.disabledButtonContainer}>
+                        <HCButton
+                          aria-label="Download"
+                          data-testid="downloadHubCentralFiles"
+                          disabled
+                        >Download</HCButton>
+                      </div>
+                    </Tooltip>
                   </HCCard>
-                </Col>
-              }
+                </Col>:
+                  <Col>
+                    <HCCard className={styles.download} >
+                      <div className={styles.title}>Download Hub Central Files</div>
+                      <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
+                      <div className={styles.buttonContainer}>
+                        <HCButton
+                          variant="primary"
+                          aria-label="Download"
+                          data-testid="downloadHubCentralFiles"
+                          size="sm"
+                          onClick={downloadHubCentralFiles}
+                        >Download</HCButton>
+                      </div>
+                    </HCCard>
+                  </Col>
+                }
 
-              { !authorityService.canDownloadProjectFiles() ? <Col>
-                <HCCard className={styles.download}>
-                  <div className={styles.title}>Download Project Files</div>
-                  <p>{SystemInfoMessages.downloadProjectFiles}</p>
-                  <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
-                    <div className={styles.disabledButtonContainer}>
-                      <HCButton
-                        aria-label="Download"
-                        data-testid="downloadProjectFiles"
-                        size="sm"
-                        disabled
-                      >Download</HCButton>
-                    </div>
-                  </Tooltip>
-                </HCCard>
-              </Col>:
-                <Col>
-                  <HCCard className={styles.download} >
+                { !authorityService.canDownloadProjectFiles() ? <Col>
+                  <HCCard className={styles.download}>
                     <div className={styles.title}>Download Project Files</div>
                     <p>{SystemInfoMessages.downloadProjectFiles}</p>
                     <div className={styles.buttonContainer}>
                       <HCButton
-                        type="primary"
+                        variant="primary"
                         aria-label="Download"
                         data-testid="downloadProjectFiles"
                         size="sm"
                         onClick={downloadProjectFiles}
+                        disabled
                       >Download</HCButton>
                     </div>
                   </HCCard>
-                </Col>
-              }
+                </Col>:
+                  <Col>
+                    <HCCard className={styles.download} >
+                      <div className={styles.title}>Download Project Files</div>
+                      <p>{SystemInfoMessages.downloadProjectFiles}</p>
+                      <div className={styles.buttonContainer}>
+                        <HCButton
+                          variant="primary"
+                          aria-label="Download"
+                          data-testid="downloadProjectFiles"
+                          size="sm"
+                          onClick={downloadProjectFiles}
+                        >Download</HCButton>
+                      </div>
+                    </HCCard>
+                  </Col>
+                }
 
-              { !authorityService.canClearUserData() ? <Col>
-                <HCCard className={styles.clearAll}>
-                  {isLoading === true ? <div className={styles.spinRunning}>
-                    <Spinner animation="border" variant="primary" />
-                  </div> : ""}
-                  <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                  <p>{SystemInfoMessages.clearAllUserData}</p>
-                  <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
-                    <div className={styles.disabledButtonContainer}>
-                      <HCButton
-                        aria-label="Clear"
-                        data-testid="clearUserData"
-                        size="sm"
-                        disabled
-                      >Clear</HCButton>
-                    </div>
-                  </Tooltip>
-                </HCCard>
-              </Col>:
-                <Col>
+                { !authorityService.canClearUserData() ? <Col>
                   <HCCard className={styles.clearAll}>
                     {isLoading === true ? <div className={styles.spinRunning}>
                       <Spinner animation="border" variant="primary" />
@@ -259,21 +250,41 @@ const SystemInfo = (props) => {
                     <p>{SystemInfoMessages.clearAllUserData}</p>
                     <div className={styles.buttonContainer}>
                       <HCButton
-                        type="primary"
+                        variant="primary"
                         aria-label="Clear"
                         data-testid="clearUserData"
                         size="sm"
                         onClick={handleClearData}
+                        disabled
                       >Clear</HCButton>
                     </div>
                   </HCCard>
-                </Col>
-              }
+                </Col>:
+                  <Col>
+                    <HCCard className={styles.clearAll}>
+                      {isLoading === true ? <div className={styles.spinRunning}>
+                        <Spinner animation="border" variant="primary" />
+                      </div> : ""}
+                      <div className={styles.title} data-testid="clearData">Clear All User Data</div>
+                      <p>{SystemInfoMessages.clearAllUserData}</p>
+                      <div className={styles.buttonContainer}>
+                        <HCButton
+                          variant="primary"
+                          aria-label="Clear"
+                          data-testid="clearUserData"
+                          size="sm"
+                          onClick={handleClearData}
+                        >Clear</HCButton>
+                      </div>
+                    </HCCard>
+                  </Col>
+                }
 
-            </Row>
+              </Row>
+            </div>
           </div>
         </div>
-      </div>
+      </Modal.Body>
       {clearDataConfirmation}
     </Modal>
   );
