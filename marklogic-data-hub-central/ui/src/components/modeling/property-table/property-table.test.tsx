@@ -409,7 +409,7 @@ describe("Entity Modeling Property Table Component", () => {
 
     fireEvent.mouseOver((getByTestId("relationship-customerRelationship")));
     await waitFor(() => expect(document.querySelector("#relationshipTooltip-customerRelationship")).toBeInTheDocument());
-    expect(screen.getByText("array (Customer)")).toBeInTheDocument();
+    expect(screen.getByText("integer (Customer) [ ]")).toBeInTheDocument();
 
     userEvent.clear(screen.getByLabelText("input-name"));
     userEvent.type(screen.getByLabelText("input-name"), "basicID");

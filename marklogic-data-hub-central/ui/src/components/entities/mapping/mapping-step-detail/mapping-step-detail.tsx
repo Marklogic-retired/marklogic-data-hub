@@ -619,6 +619,20 @@ const MappingStepDetail: React.FC = () => {
             relatedEntityType: relatedEntType,
             joinPropertyName: joinPropName
           };
+        } else if (val.hasOwnProperty("items") && val.items.hasOwnProperty("relatedEntityType") && val.items.hasOwnProperty("joinPropertyName")) {
+          let relatedEntType = val.items["relatedEntityType"];
+          let joinPropName = val.items["joinPropertyName"];
+          EntityTableKeyIndex = EntityTableKeyIndex + 1;
+          propty = {
+            key: EntityTableKeyIndex,
+            name: parentKey ? parentKey + "/" + key : key,
+            filterName: key,
+            filterMatch: false,
+            isProperty: true,
+            type: dataTp,
+            relatedEntityType: relatedEntType,
+            joinPropertyName: joinPropName
+          };
         } else {
           EntityTableKeyIndex = EntityTableKeyIndex + 1;
           propty = {

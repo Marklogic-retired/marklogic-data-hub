@@ -74,7 +74,7 @@ const ModelingTooltips = {
            </span>
       )
     },
-    /*Relationship withoout Foreign Key in modeling tile*/  
+    /*Relationship without Foreign Key in modeling tile*/  
     relationshipNoForeignKey: function (relatedEntityName, sourceEntityName) {
       return(
           <span>
@@ -100,7 +100,7 @@ const ModelingTooltips = {
   foreignKeyInfo: "A foreign key is a property that can be used to connect two entity types in a relationship. Select a property in the target entity type to connect the source and target entity types. A foreign key cannot allow multiple values, be a structured type property, or be an unpublished property.",
   deleteRelationshipIcon: "Delete this relationship",
   editModeInfo: <span>To add a relationship between entity types, drag the source entity type to the target entity type. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
-  addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and join property. You are not required to specify a join property to save the relationship.</span>,
+  addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.</span>,
   relationshipNameInfo: function (entityName) {
     return (
       <span>
