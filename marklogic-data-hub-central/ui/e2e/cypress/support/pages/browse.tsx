@@ -175,22 +175,28 @@ class BrowsePage {
     return cy.get("[data-cy=clear-all-grey-button]");
   }
 
-  getDateFacetPicker() {
-    return cy.get("[data-testid=\"facet-datetime-picker-date\"]");
+  getDateFacetPicker(options?: {time?: string}) {
+    const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
+    return cy.get(`[data-testid="${pickerTestId}"]`);
   }
 
   getSelectedFacet(facet: string) {
     return cy.get("#selected-facets > button").contains(facet);
   }
 
-  selectDateRange() {
-    this.getDateFacetPicker().click();
+  selectDateRange(options?: {time?: string}) {
+    this.getDateFacetPicker(options).click();
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child")).click({force: true});
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child")).click({force: true});
+
+    if (options && options.time) {
+      cy.waitUntil(() => cy.get(".daterangepicker .applyBtn").click());
+    }
   }
 
-  getDateFacetClearIcon() {
-    return cy.get("[data-testid=\"facet-datetime-picker-date\"] ~ svg[class^=\"hc-datetime-picker_clearIcon\"]");
+  getDateFacetClearIcon(options?: {time?: string}) {
+    const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
+    return cy.get(`[data-testid="${pickerTestId}"] ~ svg[data-testid="datetime-picker-reset"]`);
   }
 
   getDateFacetPickerIcon() {
