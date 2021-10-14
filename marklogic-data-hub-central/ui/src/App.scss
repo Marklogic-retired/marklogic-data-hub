@@ -315,6 +315,9 @@ ul.ant-cascader-menu:nth-child(2) {
   .ant-table-row-indent.indent-level-0 {
     padding-left: 15px !important;
   }
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    max-width: 30px;
+  }  
 }
 
 #rootTableContainer {
@@ -342,6 +345,9 @@ ul.ant-cascader-menu:nth-child(2) {
   .ant-table-row-indent.indent-level-0 {
     padding-left: 15px !important;
   }
+  .ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    max-width: 30px;
+  }  
 }
 .ant-modal-confirm-body{
     margin-top: 18px;

@@ -374,7 +374,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           // Ensure correct types for related case
           if (selectedPropertyOptions.propertyType === "relatedEntity") {
             selectedPropertyOptions.type = typeDisplayValue[1];
-            selectedPropertyOptions.joinPropertyType = joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName).type;
+            selectedPropertyOptions.joinPropertyType = joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName) ? joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName).type : "string";
           }
 
           const newEditPropertyOptions: EditPropertyOptions = {

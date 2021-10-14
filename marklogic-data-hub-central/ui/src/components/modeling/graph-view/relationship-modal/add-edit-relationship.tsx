@@ -41,7 +41,6 @@ const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 const AddEditRelationship: React.FC<Props> = (props) => {
 
   const headerText = !props.isEditing ? ModelingTooltips.addRelationshipHeader : "";
-  //   <span className={styles.headerText}><Icon type="exclamation-circle" className={styles.headerWarning}/>This relationship cannot be published until a join property is selected.</span>;
 
   const [relationshipName, setRelationshipName] = useState(""); //set default value when editing
   const [joinPropertyValue, setJoinPropertyValue] = useState("");  //set default value when editing
@@ -63,7 +62,6 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [optionalCollapsed, setOptionalCollapsed] = useState(true);
   const [cardinalityToggled, setCardinalityToggled] = useState(false);
-
 
   const initRelationship = (sourceEntityIdx) => {
     let sourceEntityDetails = props.entityTypes[sourceEntityIdx];
@@ -129,13 +127,12 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     let sortable = propertyOptions.sortable;
 
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
+      let externalEntity = props.entityTypes.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
         return {
           datatype: "string",
           relatedEntityType: externalEntity.entityTypeId,
           joinPropertyName: propertyOptions.joinPropertyName,
-          $ref: ""
         };
       } else {
         return {
@@ -146,7 +143,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       }
 
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
+      let externalEntity = props.entityTypes.find(entity => entity.entityName === propertyOptions.type);
       if (propertyOptions.joinPropertyType === "") {
         return {
           datatype: "array",

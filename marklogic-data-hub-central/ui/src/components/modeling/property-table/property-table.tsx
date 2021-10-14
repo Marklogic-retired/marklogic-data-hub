@@ -177,6 +177,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       width: 145,
       render: (text, record) => {
         let renderText = text;
+        let arrayIndicator = record.multiple === record.propertyName ? " [ ]" : "";
         if (record.joinPropertyType) {
           if (record.joinPropertyName) {
             //relationship complete with foreign key populated
@@ -184,7 +185,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             let completeRelationshipTooltip = ModelingTooltips.completeRelationship(record.joinPropertyType, record.delete);
             renderText =
               <div>
-                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
+                {renderText = renderText.concat(" (" + record.joinPropertyType + ")" + arrayIndicator)}
                 <div className={styles.dualIconsContainer}>
                   <MLTooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip}
                     data-testid={"relationship-tooltip"}
@@ -203,7 +204,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             let tooltip = ModelingTooltips.relationshipNoForeignKey(record.joinPropertyType, record.delete);
             renderText =
               <span>
-                {renderText = renderText.concat(" (" + record.joinPropertyType + ")")}
+                {renderText = record.joinPropertyType}
                 <div className={styles.relationshipIconContainer}>
                   <MLTooltip className={styles.relationshipTooltip} title={tooltip} data-testid={"relationship-tooltip"}
                     id={"relationshipTooltip-" + record.propertyName}>
@@ -213,14 +214,10 @@ const PropertyTable: React.FC<Props> = (props) => {
                 </div>
               </span>;
           }
+          return renderText;
+        } else {
+          return renderText + arrayIndicator;
         }
-        if (record.multiple === record.propertyName) {
-          renderText =
-          <span>
-            {renderText} [ ]
-          </span>;
-        }
-        return renderText;
       }
     },
     {
@@ -442,7 +439,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type);
       return {
-        datatype: propertyOptions.joinPropertyType,
+        datatype: propertyOptions.joinPropertyType ? propertyOptions.joinPropertyType : "string",
         relatedEntityType: externalEntity.entityTypeId,
         joinPropertyName: propertyOptions.joinPropertyName,
         //joinPropertyType: propertyOptions.joinPropertyType
@@ -455,7 +452,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         facetable: facetable,
         sortable: sortable,
         items: {
-          datatype: propertyOptions.joinPropertyType,
+          datatype: propertyOptions.joinPropertyType ? propertyOptions.joinPropertyType : "string",
           relatedEntityType: externalEntity.entityTypeId,
           joinPropertyName: propertyOptions.joinPropertyName,
           //joinPropertyType: propertyOptions.joinPropertyType

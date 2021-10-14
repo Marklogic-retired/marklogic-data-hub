@@ -395,6 +395,10 @@ export const definitionsParser = (definitions: any): Definition[] => {
                 // Parse type from relatedEntityType URI
                 let typeSplit = defProp["items"]["relatedEntityType"].split("/");
                 property.joinPropertyType = typeSplit[typeSplit.length - 1];
+                if (defProp["items"].hasOwnProperty("datatype")) {
+                  property.datatype = defProp["items"]["datatype"];
+                  property.collation = defProp["items"]["collation"];
+                }
               } else if (defProp["items"].hasOwnProperty("datatype")) {
                 // Array of datatype
                 property.datatype = defProp["items"]["datatype"];
