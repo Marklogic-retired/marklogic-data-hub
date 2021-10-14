@@ -401,7 +401,7 @@ const Sidebar: React.FC<Props> = (props) => {
     const dateArray = [startDate, endDate];
 
     let updateFacets = {...allSelectedFacets};
-    if (endDate) {
+    if (endDate && endDate.isValid()) {
       updateFacets = {
         ...updateFacets, createdOnRange:
         {

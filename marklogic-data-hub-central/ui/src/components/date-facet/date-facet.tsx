@@ -25,11 +25,11 @@ const DateFacet: React.FC<Props> = (props) => {
     const dateArray = [startDate, endDate];
     let isNested = props.constraint === props.propertyPath ? false : true;
 
-    if (dateArray.length && dateArray[0]) {
+    if (dateArray.length && dateArray[0] && startDate.isValid()) {
       props.onChange(props.datatype, props.constraint, dateArray, isNested);
       (dateArray[0] && dateArray[1]) && setDatePickerValue([moment(dateArray[0].format("YYYY-MM-DD")), moment(dateArray[1].format("YYYY-MM-DD"))]);
     } else {
-      props.onChange(props.datatype, props.constraint, !dateArray[0] ? [] : dateArray, isNested);
+      props.onChange(props.datatype, props.constraint, !dateArray[0] || !dateArray[0].isValid() ? [] : dateArray, isNested);
     }
   };
 
