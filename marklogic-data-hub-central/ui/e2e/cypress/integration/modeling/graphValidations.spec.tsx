@@ -45,6 +45,10 @@ describe("Graph Validations", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
     graphViewSidePanel.getPersonEntityDescription().should("be.visible");
+    cy.publishEntityModel();
+    modelPage.getEntityModifiedAlert().should("not.exist");
+    modelPage.getPublishButton().should("not.be.enabled");
+
     graphViewSidePanel.getPersonEntityDescription().clear();
     graphViewSidePanel.getPersonEntityNamespace().clear();
     graphViewSidePanel.getPersonEntityPrefix().clear();
@@ -53,6 +57,9 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getPersonEntityNamespace().clear();
     graphViewSidePanel.getPersonEntityPrefix().clear();
     graphViewSidePanel.getPersonEntityDescription().type("test description");
+    graphViewSidePanel.getPersonEntityNamespace().click();
+    modelPage.getEntityModifiedAlert().should("exist");
+    modelPage.getPublishButton().should("be.enabled");
     graphViewSidePanel.getPersonEntityNamespace().type("test");
     graphViewSidePanel.getPersonEntityDescription().click();
     cy.findByText("Since you entered a namespace, you must specify a prefix.").should("be.visible");

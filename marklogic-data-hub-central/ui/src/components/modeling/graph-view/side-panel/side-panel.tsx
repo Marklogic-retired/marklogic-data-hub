@@ -38,11 +38,16 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [selectedEntityDescription, setSelectedEntityDescription] = useState("");
   const [selectedEntityNamespace, setSelectedEntityNamespace] = useState("");
   const [selectedEntityNamespacePrefix, setSelectedEntityNamespacePrefix] = useState("");
+  const [descriptionTouched, setisDescriptionTouched] = useState(false);
+  const [namespaceTouched, setisNamespaceTouched] = useState(false);
+  const [prefixTouched, setisPrefixTouched] = useState(false);
   const [errorServer, setErrorServer] = useState("");
   const [colorSelected, setColorSelected] = useState("#EEEFF1");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [eventValid, setEventValid] = useState(false);
   const node: any = useRef();
+
+  const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
 
   const layout = {
     labelCol: {span: 6},
@@ -66,6 +71,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           const entity=modelingOptions.selectedEntity;
           const selectedEntityDetails = await response.data.find(ent => ent.entityName === modelingOptions.selectedEntity);
           if (selectedEntityDetails) {
+            setSelectedEntityInfo(selectedEntityDetails);
             if (entity !== undefined && selectedEntityDetails.model.definitions[entity]) {
               setSelectedEntityDescription(entity !== undefined && selectedEntityDetails.model.definitions[entity].description);
               setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
@@ -112,23 +118,57 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   });
 
   const handlePropertyChange = async (event) => {
+    let entity: any = modelingOptions.selectedEntity;
     if (event.target.id === "description") {
+      if (event.target.value !== selectedEntityInfo.model.definitions[entity].description) {
+        setisDescriptionTouched(true);
+      } else {
+        setisDescriptionTouched(false);
+      }
       setSelectedEntityDescription(event.target.value);
     }
     if (event.target.id === "namespace") {
+      if (event.target.value !== selectedEntityInfo.model.definitions[entity].namespace) {
+        setisNamespaceTouched(true);
+      } else {
+        setisNamespaceTouched(false);
+      }
       setSelectedEntityNamespace(event.target.value);
     }
     if (event.target.id === "prefix") {
+      if (event.target.value !== selectedEntityInfo.model.definitions[entity].namespacePrefix) {
+        setisPrefixTouched(true);
+      } else {
+        setisPrefixTouched(false);
+      }
       setSelectedEntityNamespacePrefix(event.target.value);
     }
   };
 
-  const handlePropertyUpdate = async (event) => {
+  const entityPropertiesEdited = () => {
+    return (descriptionTouched || namespaceTouched || prefixTouched);
+  };
+
+  const setEntityTypesFromServer = async (entityName) => {
+    await props.updateEntities().then((resp => {
+      let isDraft = true;
+      setSelectedEntity(entityName, isDraft);
+    }));
+  };
+
+  const onSubmit = (event) => {
+    if (entityPropertiesEdited()) {
+      handlePropertyUpdate();
+    }
+  };
+
+  const handlePropertyUpdate = async () => {
     try {
       if (modelingOptions.selectedEntity !== undefined) {
         const response = await updateModelInfo(modelingOptions.selectedEntity, selectedEntityDescription, selectedEntityNamespace, selectedEntityNamespacePrefix);
         if (response["status"] === 200) {
           setErrorServer("");
+          setEntityTypesFromServer(modelingOptions.selectedEntity);
         }
       }
     } catch (error) {
@@ -221,7 +261,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           className={styles.descriptionInput}
           value={selectedEntityDescription}
           onChange={handlePropertyChange}
-          onBlur={handlePropertyUpdate}
+          onBlur={onSubmit}
         />
         <MLTooltip title={ModelingTooltips.entityDescription} placement={"topLeft"}>
           <Icon type="question-circle" className={styles.icon} theme="filled" data-testid="entityDescriptionTooltip"/>
@@ -244,7 +284,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
             className={styles.input}
             value={selectedEntityNamespace}
             onChange={handlePropertyChange}
-            onBlur={handlePropertyUpdate}
+            onBlur={onSubmit}
             style={{width: "8.9vw", marginLeft: "1.5vw"}}
           />
         </Form.Item>
@@ -262,7 +302,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               className={styles.prefixInput}
               value={selectedEntityNamespacePrefix}
               onChange={handlePropertyChange}
-              onBlur={handlePropertyUpdate}
+              onBlur={onSubmit}
               style={{width: "96px", verticalAlign: "text-bottom"}}
             />
             <MLTooltip title={ModelingTooltips.namespace} placement={"right"}>
