@@ -122,6 +122,8 @@ const ModalStatus: React.FC<Props> = (props) => {
       } catch (error) {
         if (error.response) {
           handleError(error);
+        } else {
+          userNotAuthenticated();
         }
       } finally {
         setSessionTime(SESSION_WARNING_COUNTDOWN);
