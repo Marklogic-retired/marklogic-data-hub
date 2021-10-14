@@ -118,4 +118,19 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.waitForTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
   });
+  it("Verify clearing date time range facet clears corresponding selected facet", () => {
+    toolbar.getExploreToolbarIcon().click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.selectEntity("Client");
+    browsePage.selectDateRange({time: "updated"});
+    browsePage.getFacetApplyButton().click();
+    browsePage.getSelectedFacet("updated:").should("exist");
+    browsePage.getDateFacetPicker({time: "updated"}).trigger("mouseover");
+    cy.waitUntil(() => browsePage.getDateFacetClearIcon({time: "updated"})).click({force: true});
+    browsePage.getFacetApplyButton().should("not.exist");
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+  });
 });

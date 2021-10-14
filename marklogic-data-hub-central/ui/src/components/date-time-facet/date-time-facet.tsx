@@ -22,13 +22,13 @@ const DateTimeFacet: React.FC<Props> = (props) => {
   const [dateTimePickerValue, setDateTimePickerValue] = useState<any[]>([null, null]);
 
   const onChange = (element, picker) => {
-    const dateArray = [picker.startDate, picker.endDate];
+    const dateArray = [picker && picker.startDate, picker && picker.endDate];
     let isNested = props.constraint === props.propertyPath ? false : true;
-    if (dateArray.length) {
+    if (dateArray.length && dateArray[0] && dateArray[0].isValid()) {
       props.onChange(props.datatype, props.constraint, dateArray, isNested);
       (dateArray[0] && dateArray[1]) && setDateTimePickerValue([moment(dateArray[0].format("YYYY-MM-DDTHH:mm:ss")), moment(dateArray[1].format("YYYY-MM-DDTHH:mm:ss"))]);
     } else {
-      props.onChange(props.datatype, props.constraint, dateArray, isNested);
+      props.onChange(props.datatype, props.constraint, !dateArray[0] || !dateArray[0].isValid() ? [] : dateArray, isNested);
     }
   };
 
@@ -72,6 +72,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
         time={true}
         placeholder={["Start Date Time", "End Date Time"]}
         onOk={onChange}
+        bindChange={onChange}
         value={dateTimePickerValue}
       />
     </div>
