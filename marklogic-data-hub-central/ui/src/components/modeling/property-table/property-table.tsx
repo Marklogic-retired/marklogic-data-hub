@@ -538,10 +538,10 @@ const PropertyTable: React.FC<Props> = (props) => {
     };
 
     updateEntityModified(entityModified);
-    updateEntityDefinitionsAndRenderTable(updatedDefinitions);
     if (props.updateSavedEntity) {
       await props.updateSavedEntity([entityModified]);
     }
+    updateEntityDefinitionsAndRenderTable(updatedDefinitions);
     setNewRowKey(newRowKey);
   };
 
