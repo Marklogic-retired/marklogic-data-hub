@@ -26,6 +26,10 @@
         {
           "entityPropertyPath": "shipping.state",
           "matchType": "exact"
+        },
+        {
+          "entityPropertyPath": "shipping.zip.fiveDigit",
+          "matchType": "exact"
         }
       ]
     }
