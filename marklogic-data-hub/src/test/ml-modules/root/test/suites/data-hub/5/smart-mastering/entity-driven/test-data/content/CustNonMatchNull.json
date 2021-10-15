@@ -1,0 +1,73 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "source 2"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 3243,
+        "name": null,
+        "birthDate": "1985-01-01",
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Hanover Place"
+              ],
+              "city": null,
+              "state": "Oklahoma",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": null,
+                  "plusFour": "1001"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "1800 Tysons Blvd"
+              ],
+              "city": null,
+              "state": "Virginia",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": null,
+                  "plusFour": "2021"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Sunnyside Avenue"
+            ],
+            "city": null,
+            "state": "Wisconsin",
+            "zip": {
+              "Zip": {
+                "fiveDigit": null,
+                "plusFour": "8854"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
