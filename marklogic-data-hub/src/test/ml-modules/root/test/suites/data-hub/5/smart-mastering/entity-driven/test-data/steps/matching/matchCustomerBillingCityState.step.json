@@ -26,6 +26,10 @@
         {
           "entityPropertyPath": "billing.state",
           "matchType": "exact"
+        },
+        {
+          "entityPropertyPath": "billing.zip.fiveDigit",
+          "matchType": "exact"
         }
       ]
     }

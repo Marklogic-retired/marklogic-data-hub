@@ -20,19 +20,19 @@ xquery version "1.0-ml";
 module namespace match-impl = "http://marklogic.com/smart-mastering/matcher-impl";
 
 import module namespace blocks-impl = "http://marklogic.com/smart-mastering/blocks-impl"
-  at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
+at "/com.marklogic.smart-mastering/matcher-impl/blocks-impl.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
-  at "/com.marklogic.smart-mastering/constants.xqy";
+at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
-  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
+at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
-  at "/MarkLogic/json/json.xqy";
+at "/MarkLogic/json/json.xqy";
 import module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl"
-  at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
+at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
-  at "/com.marklogic.smart-mastering/telemetry.xqy";
+at "/com.marklogic.smart-mastering/telemetry.xqy";
 import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
-  at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
+at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
 
 declare namespace matcher = "http://marklogic.com/smart-mastering/matcher";
 
@@ -42,16 +42,16 @@ declare variable $match-trace-is-enabled as xs:boolean := xdmp:trace-enabled($co
 declare variable $performance-trace-is-enabled as xs:boolean := xdmp:trace-enabled($const:TRACE-PERFORMANCE);
 
 declare variable $QUERIES_WITH_WEIGHT := (
-    xs:QName("cts:element-attribute-pair-geospatial-query"),xs:QName("cts:element-attribute-range-query"),
-    xs:QName("cts:element-attribute-value-query"),xs:QName("cts:element-attribute-word-query"),xs:QName("cts:element-child-geospatial-query"),
-    xs:QName("cts:element-geospatial-query"),xs:QName("cts:element-pair-geospatial-query"),xs:QName("cts:element-range-query"),
-    xs:QName("cts:element-value-query"),xs:QName("cts:element-word-query"),xs:QName("cts:field-range-query"),
-    xs:QName("cts:field-value-query"),xs:QName("cts:field-word-query"),xs:QName("cts:geospatial-region-query"),
-    xs:QName("cts:json-property-child-geospatial-query"),xs:QName("cts:json-property-geospatial-query"),
-    xs:QName("cts:json-property-pair-geospatial-query"),xs:QName("cts:json-property-range-query"),xs:QName("cts:json-property-value-query"),
-    xs:QName("cts:json-property-word-query"),xs:QName("cts:lsqt-query"),xs:QName("cts:near-query"),xs:QName("cts:not-query"),
-    xs:QName("cts:path-geospatial-query"),xs:QName("cts:path-range-query"),xs:QName("cts:range-query"),xs:QName("cts:registered-query"),
-    xs:QName("cts:reverse-query"),xs:QName("cts:similar-query"),xs:QName("cts:triple-range-query"),xs:QName("cts:word-query"));
+  xs:QName("cts:element-attribute-pair-geospatial-query"),xs:QName("cts:element-attribute-range-query"),
+  xs:QName("cts:element-attribute-value-query"),xs:QName("cts:element-attribute-word-query"),xs:QName("cts:element-child-geospatial-query"),
+  xs:QName("cts:element-geospatial-query"),xs:QName("cts:element-pair-geospatial-query"),xs:QName("cts:element-range-query"),
+  xs:QName("cts:element-value-query"),xs:QName("cts:element-word-query"),xs:QName("cts:field-range-query"),
+  xs:QName("cts:field-value-query"),xs:QName("cts:field-word-query"),xs:QName("cts:geospatial-region-query"),
+  xs:QName("cts:json-property-child-geospatial-query"),xs:QName("cts:json-property-geospatial-query"),
+  xs:QName("cts:json-property-pair-geospatial-query"),xs:QName("cts:json-property-range-query"),xs:QName("cts:json-property-value-query"),
+  xs:QName("cts:json-property-word-query"),xs:QName("cts:lsqt-query"),xs:QName("cts:near-query"),xs:QName("cts:not-query"),
+  xs:QName("cts:path-geospatial-query"),xs:QName("cts:path-range-query"),xs:QName("cts:range-query"),xs:QName("cts:registered-query"),
+  xs:QName("cts:reverse-query"),xs:QName("cts:similar-query"),xs:QName("cts:triple-range-query"),xs:QName("cts:word-query"));
 
 (:
  : Find documents that are potential matches for the provided document.
@@ -69,51 +69,51 @@ declare variable $QUERIES_WITH_WEIGHT := (
  : @return results specify document URIs that matches for provided document
  :)
 declare function match-impl:find-document-matches-by-options(
-  $document as node()?,
-  $options as item(),
-  $start as xs:integer,
-  $page-length as xs:integer,
-  $minimum-threshold as xs:double,
-  $include-matches as xs:boolean,
-  $filter-query as cts:query
+    $document as node()?,
+    $options as item(),
+    $start as xs:integer,
+    $page-length as xs:integer,
+    $minimum-threshold as xs:double,
+    $include-matches as xs:boolean,
+    $filter-query as cts:query
 ) as element(results)
 {
-  (: increment usage count :)
+(: increment usage count :)
   tel:increment(),
   match-impl:find-document-matches-by-options(
-    $document,
-    $options,
-    $start,
-    $page-length,
-    $minimum-threshold,
-    $include-matches,
-    $filter-query,
-    fn:true()
+      $document,
+      $options,
+      $start,
+      $page-length,
+      $minimum-threshold,
+      $include-matches,
+      $filter-query,
+      fn:true()
   )
 };
 
 declare function match-impl:find-document-matches-by-options(
-  $document as node()?,
-  $options as item(),
-  $start as xs:integer,
-  $page-length as xs:integer,
-  $minimum-threshold as xs:double,
-  $include-matches as xs:boolean,
-  $filter-query as cts:query,
-  $include-results as xs:boolean
+    $document as node()?,
+    $options as item(),
+    $start as xs:integer,
+    $page-length as xs:integer,
+    $minimum-threshold as xs:double,
+    $include-matches as xs:boolean,
+    $filter-query as cts:query,
+    $include-results as xs:boolean
 ) as element(results)
 {
   match-impl:find-document-matches-by-options(
-    $document,
-    $options,
-    $start,
-    $page-length,
-    $minimum-threshold,
-    $include-matches,
-    $filter-query,
-    $include-results,
-    (: by default don't short-circuit redundant queries :)
-    fn:false()
+      $document,
+      $options,
+      $start,
+      $page-length,
+      $minimum-threshold,
+      $include-matches,
+      $filter-query,
+      $include-results,
+      (: by default don't short-circuit redundant queries :)
+      fn:false()
   )
 };
 
@@ -121,15 +121,15 @@ declare function match-impl:find-document-matches-by-options(
 declare variable $map-of-queries-previously-run := map:map();
 
 declare function match-impl:find-document-matches-by-options(
-  $document as node()?,
-  $options as item(),
-  $start as xs:integer,
-  $page-length as xs:integer,
-  $minimum-threshold as xs:double,
-  $include-matches as xs:boolean,
-  $filter-query as cts:query,
-  $include-results as xs:boolean,
-  $short-circuit-redundant-queries as xs:boolean
+    $document as node()?,
+    $options as item(),
+    $start as xs:integer,
+    $page-length as xs:integer,
+    $minimum-threshold as xs:double,
+    $include-matches as xs:boolean,
+    $filter-query as cts:query,
+    $include-results as xs:boolean,
+    $short-circuit-redundant-queries as xs:boolean
 ) as element(results)
 {
   if (fn:exists($document)) then (
@@ -141,9 +141,9 @@ declare function match-impl:find-document-matches-by-options(
     let $_set-data-format := $compiled-options => map:put("dataFormat", if ($is-json) then $const:FORMAT-JSON else $const:FORMAT-XML)
     let $values-by-property-name := match-impl:values-by-property-name($document, $compiled-options)
     let $query-prov as map:map? :=
-        if ($include-results and $include-matches) then
-          map:map()
-        else ()
+      if ($include-results and $include-matches) then
+        map:map()
+      else ()
     let $cached-queries := map:map()
     let $minimum-threshold-combinations-queries :=
       for $query-set in $compiled-options => map:get("minimumThresholdCombinations")
@@ -161,10 +161,10 @@ declare function match-impl:find-document-matches-by-options(
         (: if there are no values from the document for a query, then match-impl:query-map-to-query returns an empty sequence  :)
         let $queries := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
         return if (fn:count($queries) gt 1) then
-            (: if a match ruleset has multiple queries, be sure to AND them :)
-            helper-impl:group-queries-by-scope($queries, cts:and-query#1)
-          else
-            $queries
+        (: if a match ruleset has multiple queries, be sure to AND them :)
+          helper-impl:group-queries-by-scope($queries, cts:and-query#1)
+        else
+          $queries
 
 
       let $not-queries :=
@@ -181,28 +181,28 @@ declare function match-impl:find-document-matches-by-options(
       (: We want to be certain that we have values for each of the queries in a min threshold combo :)
       where fn:exists($queries) and fn:count($queries) eq fn:count($query-maps)
       return
-          let $positive-query :=
-            if (fn:count($queries) gt 1) then
-              helper-impl:group-queries-by-scope($queries, cts:and-query#1)
-            else
-              $queries
-          return
-            if (fn:exists($not-queries)) then
-              cts:and-not-query(
-                  $positive-query,
-                  if (fn:count($not-queries) gt 1) then
-                    cts:or-query($not-queries)
-                  else
-                    $not-queries
-              )
-            else
-              $positive-query
+        let $positive-query :=
+          if (fn:count($queries) gt 1) then
+            helper-impl:group-queries-by-scope($queries, cts:and-query#1)
+          else
+            $queries
+        return
+          if (fn:exists($not-queries)) then
+            cts:and-not-query(
+                $positive-query,
+                if (fn:count($not-queries) gt 1) then
+                  cts:or-query($not-queries)
+                else
+                  $not-queries
+            )
+          else
+            $positive-query
     (: We want to ignore redundant queries. This only applies to expanded searches to find additional merges that may be added via process-impl:build-match-summary
      : If the queries generated by a document are the same as document previously searched on, it won't result in additional URIs.
      :)
     let $has-redundant-match-combo := $short-circuit-redundant-queries and (
       every $min-query in $minimum-threshold-combinations-queries satisfies
-        map:contains($map-of-queries-previously-run, xdmp:md5(document{$min-query}))
+      map:contains($map-of-queries-previously-run, xdmp:md5(document{$min-query}))
     )
     let $_cache-minimum-threshold := if ($short-circuit-redundant-queries and fn:not($has-redundant-match-combo)) then
       for $min-query in $minimum-threshold-combinations-queries
@@ -226,37 +226,37 @@ declare function match-impl:find-document-matches-by-options(
       else
         ()
     let $match-base-query := cts:and-query((
-          $compiled-options => map:get("baseContentQuery"),
-          $minimum-threshold-combinations-query
-        ))
+      $compiled-options => map:get("baseContentQuery"),
+      $minimum-threshold-combinations-query
+    ))
     let $match-query :=
       if (fn:exists($excluded-uris)) then
         cts:and-not-query(
-          $match-base-query,
-          cts:document-query($excluded-uris)
+            $match-base-query,
+            cts:document-query($excluded-uris)
         )
       else
         $match-base-query
     let $match-query :=
       match-impl:instance-query-wrapper(
-        if (fn:not($filter-query instance of cts:true-query)) then
-          cts:and-query((
-            $filter-query,
-            $match-query
-          ))
-        else
-          $match-query,
-        $is-json
+          if (fn:not($filter-query instance of cts:true-query)) then
+            cts:and-query((
+              $filter-query,
+              $match-query
+            ))
+          else
+            $match-query,
+          $is-json
       )
     let $serialized-match-query :=
       element match-query {
         $match-query
       }
     let $_trace := if ($match-trace-is-enabled) then
-            xdmp:trace($const:TRACE-MATCH-RESULTS, "match-query cts.doc('"||$document-uri||"'):" || xdmp:describe($match-query, (),()))
-        else ()
+      xdmp:trace($const:TRACE-MATCH-RESULTS, "match-query cts.doc('"||$document-uri||"'):" || xdmp:describe($match-query, (),()))
+    else ()
     return
-      (: If minimum threshold can't be met or we're short-circuiting a query already run, don't bother with estimate and search :)
+    (: If minimum threshold can't be met or we're short-circuiting a query already run, don't bother with estimate and search :)
       if ($minimum-threshold-combinations-query instance of cts:false-query or $has-redundant-match-combo) then
         match-impl:build-empty-results($start, $page-length, $serialized-match-query)
       else
@@ -282,21 +282,21 @@ declare function match-impl:find-document-matches-by-options(
                 where fn:exists($query)
                 return
                   map:map()
-                    => map:with("name", $query-map => map:get("name"))
-                    => map:with("weight", $query-map => map:get("weight"))
-                    => map:with("matchRules", $query-map => map:get("matchRules"))
-                    => map:with("query",
-                        if (fn:count($query) gt 1) then
-                          helper-impl:group-queries-by-scope($query, cts:and-query#1)
-                        else
-                          $query
+                  => map:with("name", $query-map => map:get("name"))
+                  => map:with("weight", $query-map => map:get("weight"))
+                  => map:with("matchRules", $query-map => map:get("matchRules"))
+                  => map:with("query",
+                      if (fn:count($query) gt 1) then
+                        helper-impl:group-queries-by-scope($query, cts:and-query#1)
+                      else
+                        $query
                   )
               let $_trace :=
                 if ($match-trace-is-enabled) then
                   xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('"|| $document-uri ||"') property values:" || xdmp:to-json-string($values-by-property-name))
                 else ()
               return
-                  match-impl:search(
+                match-impl:search(
                     $match-query,
                     $queries-for-scoring,
                     $minimum-threshold,
@@ -306,7 +306,7 @@ declare function match-impl:find-document-matches-by-options(
                     $include-matches,
                     $is-json,
                     $query-prov
-                  )
+                )
             else (),
             if ($performance-trace-is-enabled) then
               xdmp:trace($const:TRACE-PERFORMANCE, "match-impl:find-document-matches-by-options: " || (xdmp:elapsed-time() - $start-elapsed))
@@ -318,9 +318,9 @@ declare function match-impl:find-document-matches-by-options(
 };
 
 declare function match-impl:build-empty-results(
-  $start as xs:integer,
-  $page-length as xs:integer,
-  $serialize-match-query as node()?
+    $start as xs:integer,
+    $page-length as xs:integer,
+    $serialize-match-query as node()?
 ) {
   element results {
     attribute total { 0 },
@@ -347,21 +347,19 @@ declare function match-impl:seq-contains($s1, $s2)
  : @return cts:query?
  :)
 declare function match-impl:query-map-to-query(
-  $document as node(),
-  $query-map as map:map,
-  $values-by-property-name as map:map,
-  $cached-queries as map:map,
-  $query-prov as map:map?,
-  $target-entity as xs:string?
+    $document as node(),
+    $query-map as map:map,
+    $values-by-property-name as map:map,
+    $cached-queries as map:map,
+    $query-prov as map:map?,
+    $target-entity as xs:string?
 )
 {
   if (map:contains($query-map, "matchRulesetId") and map:contains($cached-queries, $query-map => map:get("matchRulesetId"))) then (
     map:get($cached-queries, $query-map => map:get("matchRulesetId"))
   ) else (
-    let $multi-struct-prop-multi-value-map := map:get($query-map, "multiStructPropMultiValueMap")
-    let $is-reduce := $query-map => map:get("isReduce")
     let $sub-query-maps := map:get($query-map, "matchQueries")
-    let $queries := (
+    let $non-multi-struct-queries :=
       for $sub-query-map in $sub-query-maps
       let $queries :=
         if ($sub-query-map => map:get("type") = "reduce") then
@@ -374,7 +372,7 @@ declare function match-impl:query-map-to-query(
             ($sub-query-map => map:get("valuesToQueryFunction"))($values)
       let $query :=
         if (fn:count($queries) gt 1) then
-          (: if a query function returns multiple queries without explict ANDing them, we're assuming that they should be ORed :)
+        (: if a query function returns multiple queries without explict ANDing them, we're assuming that they should be ORed :)
           helper-impl:group-queries-by-scope($queries, cts:or-query#1)
         else
           $queries
@@ -385,22 +383,33 @@ declare function match-impl:query-map-to-query(
           return map:put($query-prov, $query-hash, $sub-query-map)
         else (),
         $query
-      ),
-      match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity)
       )
+    let $queries := (
+      $non-multi-struct-queries,
+      match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity)
+    )
+    let $multi-struct-prop-map := map:get($query-map, "multiStructPropMultiValueMap")
+    let $attempted-query-count := fn:count($sub-query-maps)
+    (: Determining the number of queries by counting queries from non-multi-struct-multi-value quers and the key values in the
+      multi-struct-multi-values map.
+    :)
+    let $query-count := fn:sum(($multi-struct-prop-map ! map:count(.), fn:count($non-multi-struct-queries)))
+    (: Only return the queries if we get the expected count back, so we don't count null/empty values as matches :)
+    let $no-missing-values := $query-count eq $attempted-query-count
+    where $no-missing-values
     return (
-      (: no caching in the structured properties case (yet) :)
-      if (fn:empty(map:get($query-map, "multiStructPropMultiValueMap"))) then
-        map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries)
-      else ()
-      ,
-      $queries
+    (: no caching in the structured properties case (yet) :)
+    if (fn:empty($multi-struct-prop-map)) then
+      map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries)
+    else ()
+    ,
+    $queries
     ))
 
 };
 
 declare function match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity-type as xs:string?)
-  as cts:query*
+as cts:query*
 {
   let $multi-struct-prop-multi-value-map := map:get($query-map, "multiStructPropMultiValueMap")
   return
@@ -461,21 +470,21 @@ declare function match-impl:multi-struct-prop-multi-value-queries($query-map, $d
  : @return map:map of values organized by QName
  :)
 declare function match-impl:values-by-property-name(
-  $document as node()?,
-  $compiled-options as map:map
+    $document as node()?,
+    $compiled-options as map:map
 )
 {
   map:new(
-    let $property-names-to-values := map:get($compiled-options, "propertyNamesToValues")
-    for $property-name in map:keys($property-names-to-values)
-    let $values := map:get($property-names-to-values, $property-name)($document)
-    let $_trace :=
-      if ($match-trace-is-enabled) then
-        xdmp:trace($const:TRACE-MATCH-RESULTS, "Values for cts.doc(" || xdmp:node-uri($document) || ") " || $property-name || ": " || xdmp:describe($values, (), ()))
-      else ()
-    where fn:exists($values)
-    return
-      map:entry($property-name, $values)
+      let $property-names-to-values := map:get($compiled-options, "propertyNamesToValues")
+      for $property-name in map:keys($property-names-to-values)
+      let $values := map:get($property-names-to-values, $property-name)($document)
+      let $_trace :=
+        if ($match-trace-is-enabled) then
+          xdmp:trace($const:TRACE-MATCH-RESULTS, "Values for cts.doc(" || xdmp:node-uri($document) || ") " || $property-name || ": " || xdmp:describe($values, (), ()))
+        else ()
+      where fn:exists($values)
+      return
+        map:entry($property-name, $values)
   )
 };
 
@@ -496,15 +505,15 @@ declare function match-impl:values-by-property-name(
  : @return results specify document URIs that matches for provided document
  :)
 declare function match-impl:search(
-  $match-query,
-  $queries-for-scoring,
-  $min-threshold as xs:double,
-  $start as xs:int,
-  $page-length as xs:int,
-  $compiled-options as map:map,
-  $include-matches as xs:boolean,
-  $is-json as xs:boolean,
-  $query-prov as map:map?
+    $match-query,
+    $queries-for-scoring,
+    $min-threshold as xs:double,
+    $start as xs:int,
+    $page-length as xs:int,
+    $compiled-options as map:map,
+    $include-matches as xs:boolean,
+    $is-json as xs:boolean,
+    $query-prov as map:map?
 ) {
   let $range := $start to ($start + $page-length - 1)
   let $cts-walk-query :=
@@ -513,10 +522,10 @@ declare function match-impl:search(
     else ()
   let $thresholds := $compiled-options => map:get("orderedThresholds")
   for $result at $pos in cts:search(
-    fn:collection(),
-    $match-query,
-    ("unfiltered", "score-simple"),
-    0
+      fn:collection(),
+      $match-query,
+      ("unfiltered", "score-simple"),
+      0
   )[fn:position() = $range]
   let $uri := xdmp:node-uri($result)
   let $matching-query-maps :=
@@ -526,7 +535,7 @@ declare function match-impl:search(
     let $weight := $query-map => map:get("weight")
     let $weight :=
       if (fn:empty($weight)) then
-        (: This allows a weight to not be specified for a match ruleset and then the weight of the cts:queries will determine the weight.
+      (: This allows a weight to not be specified for a match ruleset and then the weight of the cts:queries will determine the weight.
           See https://project.marklogic.com/jira/browse/DHFPROD-7234.:)
         let $custom-weight := match-impl:score-from-cts-query($result, $query)
         return $custom-weight
@@ -544,12 +553,12 @@ declare function match-impl:search(
     where $contains
     return map:new(($query-map, map:entry("weight", $weight)))
   let $score :=
-      fn:sum(
-          $matching-query-maps ! map:get(., "weight")
-      )
+    fn:sum(
+        $matching-query-maps ! map:get(., "weight")
+    )
   let $_trace := if ($match-trace-is-enabled) then
-        xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('" || $uri || "') score: " || $score || " minimum-threshold: " || $min-threshold)
-    else ()
+    xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('" || $uri || "') score: " || $score || " minimum-threshold: " || $min-threshold)
+  else ()
   where $score ge $min-threshold
   return
     element result {
@@ -576,8 +585,8 @@ declare function match-impl:search(
           else
             $ruleset-query
           let $_trace := if ($match-trace-is-enabled) then
-              xdmp:trace($const:TRACE-MATCH-RESULTS, "Walking document with query: " || xdmp:describe($walk-query,(),()))
-            else ()
+            xdmp:trace($const:TRACE-MATCH-RESULTS, "Walking document with query: " || xdmp:describe($walk-query,(),()))
+          else ()
           return <match weight="{$ruleset-weight}">
             <rulesetName>{$ruleset-name}</rulesetName>
             { cts:walk(
@@ -602,7 +611,7 @@ declare function match-impl:search(
                     <path>{xdmp:path($cts:node, fn:true())}</path>
                   </contributions>)
             )
-          }</match>
+            }</match>
         }
       else ()
     }
@@ -617,15 +626,15 @@ declare function match-impl:_results-json-config()
   return (
     map:put($config, "array-element-names", ("result","matches","algorithms",xs:QName("cts:option"),xs:QName("cts:text"),xs:QName("cts:element"))),
     map:put($config, "full-element-names",
-      (xs:QName("cts:query"),
-      xs:QName("cts:and-query"),
-      xs:QName("cts:near-query"),
-      xs:QName("cts:or-query"))
+        (xs:QName("cts:query"),
+        xs:QName("cts:and-query"),
+        xs:QName("cts:near-query"),
+        xs:QName("cts:or-query"))
     ),
     map:put($config, "json-children", "queries"),
     map:put($config, "attribute-names",
-      ("name","localname", "namespace", "function", "weight",
-      "at", "property-name", "weight", "above", "label","algorithm-ref")
+        ("name","localname", "namespace", "function", "weight",
+        "at", "property-name", "weight", "above", "label","algorithm-ref")
     ),
     map:put($config, "camel-case", fn:true()),
     $config
@@ -636,18 +645,18 @@ declare function match-impl:_results-json-config()
  : Convert XML match results to JSON.
  :)
 declare function match-impl:results-to-json($results-xml)
-  as object-node()?
+as object-node()?
 {
   if (fn:exists($results-xml)) then
     xdmp:to-json(
-      json:transform-to-json-object($results-xml, $results-json-config)
+        json:transform-to-json-object($results-xml, $results-json-config)
     )/node()
   else ()
 };
 
 declare function match-impl:instance-query-wrapper(
-  $query as cts:query,
-  $is-json as xs:boolean
+    $query as cts:query,
+    $is-json as xs:boolean
 ) {
   if ($is-json) then
     if (fn:exists($const:JSON-INSTANCE)) then
@@ -660,20 +669,20 @@ declare function match-impl:instance-query-wrapper(
 };
 
 declare function match-impl:score-from-cts-query($result as node(), $query as cts:query) as xs:double {
-  (: We don't want to double count for the same query/value pair hit :)
+(: We don't want to double count for the same query/value pair hit :)
   let $queries-and-values-hit := map:map()
   return
     fn:sum(
-      cts:walk(
-          $result,
-          $query,
-          let $key := xdmp:hash64(xdmp:describe($cts:queries, (), ())) ||  ":" || $cts:text
-          where fn:not(map:contains($queries-and-values-hit, $key))
-          return (
-            map:put($queries-and-values-hit, $key, fn:true()),
-            document{$cts:queries}
+        cts:walk(
+            $result,
+            $query,
+            let $key := xdmp:hash64(xdmp:describe($cts:queries, (), ())) ||  ":" || $cts:text
+            where fn:not(map:contains($queries-and-values-hit, $key))
+            return (
+              map:put($queries-and-values-hit, $key, fn:true()),
+              document{$cts:queries}
               //schema-element(cts:query)[fn:node-name(.) = $QUERIES_WITH_WEIGHT] ! fn:number(fn:head((./@weight, 1)))
-          )
-      )
+            )
+        )
     )
 };
