@@ -1,0 +1,33 @@
+{
+  "info": {
+    "title": "LaboratoryExam",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "LaboratoryExam": {
+      "properties": {
+        "LabExamID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "examName": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "descriptionExam": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "primaryKey": "LabExamID"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "info": {
+    "title": "OverTimeAssignment",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "OverTimeAssignment": {
+      "properties": {
+        "idOverTime": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "timeAvailable": {
+          "datatype": "time",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "providerID": {
+          "datatype": "integer",
+          "relatedEntityType": "http://marklogic.com/envision/Provider-0.0.1/Provider",
+          "joinPropertyName": "NPI"
+        },
+        "specializationID": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Specialization-1.0.0/Specialization",
+          "joinPropertyName": "specializationID"
+        }
+      },
+      "primaryKey": "idOverTime"
+    },
+    "time": {
+      "properties": { }
+    }
+  }
+}

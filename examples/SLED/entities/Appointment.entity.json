@@ -1,0 +1,43 @@
+{
+  "info": {
+    "title": "Appointment",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Appointment": {
+      "properties": {
+        "appointmentID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "date": {
+          "datatype": "dateTime",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "amountOfTime": {
+          "datatype": "double",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "memberID": {
+          "datatype": "string",
+          "relatedEntityType": "http://marklogic.com/envision/Member-0.0.1/Member",
+          "joinPropertyName": "memberID"
+        },
+        "providerID": {
+          "datatype": "integer",
+          "relatedEntityType": "http://marklogic.com/envision/Provider-0.0.1/Provider",
+          "joinPropertyName": "NPI"
+        }
+      },
+      "primaryKey": "appointmentID"
+    }
+  }
+}

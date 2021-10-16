@@ -1,0 +1,33 @@
+{
+  "info": {
+    "title": "Illness",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Illness": {
+      "properties": {
+        "name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "description": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "illnessID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      },
+      "primaryKey": "illnessID"
+    }
+  }
+}

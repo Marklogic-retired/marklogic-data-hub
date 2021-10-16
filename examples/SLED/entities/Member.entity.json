@@ -27,7 +27,7 @@
         "FirstLastNameSorted",
         "Suffix"
       ],
-      "wordLexicon": [],
+      "wordLexicon": [ ],
       "properties": {
         "SSN": {
           "datatype": "string",
@@ -188,6 +188,16 @@
             "datatype": "string",
             "relatedEntityType": "http://marklogic.com/envision/ClaimFHIR-0.0.1/ClaimFHIR",
             "joinPropertyName": "identifier"
+          }
+        },
+        "hasMedications": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "string",
+            "relatedEntityType": "http://example.org/Medication-1.0.0/Medication",
+            "joinPropertyName": ""
           }
         }
       },

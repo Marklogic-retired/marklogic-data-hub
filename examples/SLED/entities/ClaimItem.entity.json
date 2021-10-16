@@ -7,11 +7,11 @@
   },
   "definitions": {
     "ClaimItem": {
-      "required": [],
+      "required": [ ],
       "pii": [
         "patient"
       ],
-      "wordLexicon": [],
+      "wordLexicon": [ ],
       "properties": {
         "claimId": {
           "datatype": "string",

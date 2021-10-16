@@ -1,0 +1,39 @@
+{
+  "info": {
+    "title": "Auditor",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Auditor": {
+      "properties": {
+        "AuditorID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "DOB": {
+          "datatype": "dateTime",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "hasClaimHeader": {
+          "datatype": "string",
+          "relatedEntityType": "http://marklogic.com/envision/ClaimFHIR-0.0.1/ClaimFHIR",
+          "joinPropertyName": "",
+          "$ref": ""
+        }
+      },
+      "primaryKey": "AuditorID"
+    }
+  }
+}

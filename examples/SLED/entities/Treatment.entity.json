@@ -1,0 +1,37 @@
+{
+  "info": {
+    "title": "Treatment",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Treatment": {
+      "properties": {
+        "treatmentID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "description": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "hasIllness": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/Ilness-1.0.0/Ilness",
+            "joinPropertyName": "illnessID"
+          }
+        }
+      },
+      "primaryKey": "treatmentID"
+    }
+  }
+}

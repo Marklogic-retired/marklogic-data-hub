@@ -1,0 +1,37 @@
+{
+  "info": {
+    "title": "LaboratoryExamAppointment",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "LaboratoryExamAppointment": {
+      "properties": {
+        "LabExamAppointmentID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "date": {
+          "datatype": "dateTime",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "examID": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/LaboratoryExam-1.0.0/LaboratoryExam",
+          "joinPropertyName": "LabExamID"
+        },
+        "memberID": {
+          "datatype": "string",
+          "relatedEntityType": "http://marklogic.com/envision/Member-0.0.1/Member",
+          "joinPropertyName": "memberID"
+        }
+      },
+      "primaryKey": "LabExamAppointmentID"
+    }
+  }
+}
