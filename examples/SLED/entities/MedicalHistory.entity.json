@@ -1,0 +1,49 @@
+{
+  "info": {
+    "title": "MedicalHistory",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "MedicalHistory": {
+      "properties": {
+        "memberID": {
+          "datatype": "string",
+          "relatedEntityType": "http://marklogic.com/envision/Member-0.0.1/Member",
+          "joinPropertyName": "memberID"
+        },
+        "hasillness": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/Ilness-1.0.0/Ilness",
+            "joinPropertyName": "illnessID"
+          }
+        },
+        "hasAllergy": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/Allergy-1.0.0/Allergy",
+            "joinPropertyName": "allergyID"
+          }
+        },
+        "hasSurgery": {
+          "datatype": "array",
+          "facetable": false,
+          "sortable": false,
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/Surgery-1.0.0/Surgery",
+            "joinPropertyName": "surgeryID"
+          }
+        }
+      }
+    }
+  }
+}

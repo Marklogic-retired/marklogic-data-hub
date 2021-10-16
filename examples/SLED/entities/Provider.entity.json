@@ -8,9 +8,9 @@
   },
   "definitions": {
     "Provider": {
-      "required": [],
-      "pii": [],
-      "wordLexicon": [],
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
       "properties": {
         "Address1": {
           "datatype": "string",
@@ -55,6 +55,11 @@
         "Zip": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "specialization": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Specialization-1.0.0/Specialization",
+          "joinPropertyName": "specializationID"
         }
       },
       "description": ""

@@ -1,0 +1,31 @@
+{
+  "info": {
+    "title": "PlanInformation",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "PlanInformation": {
+      "properties": {
+        "PlanID": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/PaymentPlan-1.0.0/PaymentPlan",
+          "joinPropertyName": "planID"
+        },
+        "description": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "price": {
+          "datatype": "decimal",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

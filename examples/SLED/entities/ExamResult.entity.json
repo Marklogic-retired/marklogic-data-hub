@@ -1,0 +1,32 @@
+{
+  "info": {
+    "title": "ExamResult",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "ExamResult": {
+      "properties": {
+        "examResultID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "result": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "labExamAppointmentID": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/LaboratoryExamAppointment-1.0.0/LaboratoryExamAppointment",
+          "joinPropertyName": "LabExamAppointmentID"
+        }
+      },
+      "primaryKey": "examResultID"
+    }
+  }
+}

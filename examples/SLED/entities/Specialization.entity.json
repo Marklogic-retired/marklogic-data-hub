@@ -1,0 +1,38 @@
+{
+  "info": {
+    "title": "Specialization",
+    "draft": false,
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Specialization": {
+      "properties": {
+        "specializationID": {
+          "datatype": "integer",
+          "facetable": false,
+          "sortable": false,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "name": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "description": {
+          "datatype": "string",
+          "facetable": false,
+          "sortable": true,
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "include": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Specialization-1.0.0/Specialization",
+          "joinPropertyName": "specializationID"
+        }
+      },
+      "primaryKey": "specializationID"
+    }
+  }
+}

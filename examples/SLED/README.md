@@ -36,6 +36,27 @@ Entities:
  2. **ClaimFHIR entity**: Claim header can have claim line Items 
  3. **ClaimItems entity**: Any claim item can be serviced by a provider
  4. **Provider entity**: Providers are the physicians
+ 5. **Medication entity**: medications used by member
+ 6. **PaymentPlan entity**: plan associated with the member
+ 7. **PlanInformation entity**: information relating to a particular plan
+ 8. **Specialization entity**: each provider is going to have at least one specialization
+ 9. **WeightMeasurement entity**: particular measure on a given date
+ 10. **BloodSugarMeasurement entity**: particular measure on a given date
+ 11. **BloodPressureMeasurement entity**: particular measure on a given date
+ 12. **CholesterolMeasurement entity**: particular measure on a given date
+ 13. **Appointment entity**: date reserved to see the provider/physicians
+ 14. **OverTimeAssignment entity**: Work done by providers outside of regular schedule
+ 15. **LaboratoryExamAppointment entity**: date reserved to take and exam
+ 16. **LaboratoryExam entity**: information for a particular exam
+ 17. **ExamResult entity**: result obtained from an exam
+ 18. **Illness entity**: diseases of a member
+ 19. **Treatment entity**: disease-related treatment
+ 20. **MedicalEquipment entity**: equipment available in a particular provider
+ 21. **Allergy entity**: represents allergies
+ 22. **Surgery entity**: represents surgeries
+ 23. **MedicalHistory entity**: medical history, includes allergies, diseases that are associated with a member
+ 24. **Auditor entity**: they must control all the claims
+
  
 ## Predefined Flows
 

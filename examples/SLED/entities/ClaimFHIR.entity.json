@@ -7,9 +7,9 @@
   },
   "definitions": {
     "ClaimFHIR": {
-      "required": [],
-      "pii": [],
-      "wordLexicon": [],
+      "required": [ ],
+      "pii": [ ],
+      "wordLexicon": [ ],
       "properties": {
         "created": {
           "datatype": "date",
