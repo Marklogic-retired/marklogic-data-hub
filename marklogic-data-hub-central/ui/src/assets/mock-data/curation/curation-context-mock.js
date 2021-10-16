@@ -178,10 +178,14 @@ export const customerMappingStep = {
     activeStep: {
       stepArtifact: curateData.mappings.data[0],
       entityName: curateData.mappings.data[0].entityType,
-      isModified: false
+      isModified: false,
+      hasWarnings: []
     }
   },
   setActiveStep: jest.fn(),
+  setActiveStepWarning: jest.fn(),
+  setValidateMatchCalled: jest.fn(),
+  setValidateMergeCalled: jest.fn(),
   updateActiveStepArtifact: jest.fn(),
   mappingOptions: {
     openStepSettings: false,

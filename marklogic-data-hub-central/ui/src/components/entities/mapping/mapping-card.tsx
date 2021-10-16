@@ -33,11 +33,7 @@ interface Props {
 
 const MappingCard: React.FC<Props> = (props) => {
   const storage = getViewSettings();
-  const {
-    mappingOptions,
-    setActiveStep,
-    setOpenStepSettings,
-    setStepOpenOptions} = useContext(CurationContext);
+  const {setActiveStep} = useContext(CurationContext);
   const [mapData, setMapData] = useState({});
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
@@ -53,6 +49,9 @@ const MappingCard: React.FC<Props> = (props) => {
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const tooltipOverlayStyle={maxWidth: "200"};
 
+  const [openStepSettings, setOpenStepSettings] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   //To navigate to bench view with parameters
   let history = useHistory();
 
@@ -64,21 +63,14 @@ const MappingCard: React.FC<Props> = (props) => {
   }, [props.data]);
 
   const OpenAddNew = () => {
-    let stepOpenOptions = {
-      isEditing: false,
-      openStepSettings: true
-    };
-    setStepOpenOptions(stepOpenOptions);
+    setIsEditing(false);
+    setOpenStepSettings(true);
   };
 
   const OpenStepSettings = async (index) => {
     setMapData(prevState => ({...prevState, ...props.data[index]}));
-
-    let stepOpenOptions = {
-      isEditing: true,
-      openStepSettings: true
-    };
-    setStepOpenOptions(stepOpenOptions);
+    setIsEditing(true);
+    setOpenStepSettings(true);
   };
 
   const createMappingArtifact = async (payload) => {
@@ -473,7 +465,7 @@ const MappingCard: React.FC<Props> = (props) => {
       {runMultFlowsConfirmation}
       <Steps
         // Basic Settings
-        isEditing={mappingOptions.isEditing}
+        isEditing={isEditing}
         createStep={createMappingArtifact}
         stepData={mapData}
         canReadOnly={props.canReadOnly}
@@ -481,7 +473,7 @@ const MappingCard: React.FC<Props> = (props) => {
         canWrite={props.canReadWrite}
         // Advanced Settings
         tooltipsData={AdvMapTooltips}
-        openStepSettings={mappingOptions.openStepSettings}
+        openStepSettings={openStepSettings}
         setOpenStepSettings={setOpenStepSettings}
         updateStep={updateMappingArtifact}
         activityType={StepType.Mapping}
