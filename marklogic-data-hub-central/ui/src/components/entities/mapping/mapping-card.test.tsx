@@ -164,11 +164,11 @@ describe("Mapping Card component", () => {
     authorityService.setAuthorities(["writeMapping", "readMapping"]);
     const {getByText, getByLabelText, getByTestId, getByPlaceholderText} = render(
       <Router><AuthoritiesContext.Provider value={authorityService}>
-        <CurationContext.Provider value={customerMappingStep}><MappingCard
+        <MappingCard
           {...mappingProps}
           canReadWrite={true}
           canWriteFlow={true}
-        /></CurationContext.Provider></AuthoritiesContext.Provider></Router>
+        /></AuthoritiesContext.Provider></Router>
     );
 
     // Open default Basic settings
