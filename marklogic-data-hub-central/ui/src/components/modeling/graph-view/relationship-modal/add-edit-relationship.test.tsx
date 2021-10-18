@@ -24,6 +24,8 @@ describe("Add Edit Relationship component", () => {
         relationshipModalVisible={true}
         toggleRelationshipModal={true}
         updateSavedEntity={updateSavedEntity}
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
         entityMetadata={{}}
       />
     );
@@ -96,7 +98,7 @@ describe("Add Edit Relationship component", () => {
 
   test("Verify Add Relationship dialog renders correctly", () => {
     const updateSavedEntity = jest.fn(() => {});
-    const {getByText, getByTestId, getByLabelText, queryByText} = render(
+    const {getByText, getByTestId, getByLabelText, queryByText, rerender} = render(
       <AddEditRelationship
         openRelationshipModal={true}
         setOpenRelationshipModal={jest.fn()}
@@ -106,6 +108,8 @@ describe("Add Edit Relationship component", () => {
         relationshipModalVisible={true}
         toggleRelationshipModal={true}
         updateSavedEntity={updateSavedEntity}
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
         entityMetadata={{}}
       />
     );
@@ -130,10 +134,35 @@ describe("Add Edit Relationship component", () => {
     expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
     expect(getByText("Select foreign key")).toBeInTheDocument();
 
-    //verify error message upon Save click with no selected entity, entity selection tested in e2e
+    // verify error message upon Save click with no selected entity, entity selection tested in e2e
     fireEvent.click(getByText("Add"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByLabelText("error-circle"));
     wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
+
+    const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer"};
+
+    rerender(<AddEditRelationship
+      openRelationshipModal={true}
+      setOpenRelationshipModal={jest.fn()}
+      isEditing={false}
+      relationshipInfo={mockRelationshipWithTarget}
+      entityTypes={entityTypesWithRelationship}
+      relationshipModalVisible={true}
+      toggleRelationshipModal={true}
+      updateSavedEntity={updateSavedEntity}
+      canReadEntityModel={true}
+      canWriteEntityModel={true}
+      entityMetadata={{}}
+    />
+    );
+    //verify duplicate property error message
+    fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "BabyRegistry"}});
+    fireEvent.click(getByText("Add"));
+    wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
+    fireEvent.mouseOver(getByLabelText("error-circle"));
+    wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
+
+
   });
 });

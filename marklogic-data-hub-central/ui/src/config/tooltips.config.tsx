@@ -49,7 +49,7 @@ const ModelingTooltips = {
     'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',  /* intended dupe: all names */
   descriptionEntityType: 'A description of this entity type.',
   nameEntityProperty: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. ' +
-    'Names cannot use the same name as an existing property or structured type.',
+    'Property names cannot use the same name as the associated entity type or its existing properties.',
   descriptionEntityProperty: 'A description of this entity property.',
   namespace: 'Use of entity type namespaces is optional. If you choose to use a namespace, you must specify both a namespace URI and a prefix in your entity type definition.',
 
@@ -101,10 +101,17 @@ const ModelingTooltips = {
   deleteRelationshipIcon: "Delete this relationship",
   editModeInfo: <span>To add a relationship between entity types, drag the source entity type to the target entity type. You can also click the source entity type to configure a relationship. Press <strong>Esc</strong> to exit this mode.</span>,
   addRelationshipHeader: <span aria-label="addRelationshipHeader">Set the relationship type, relationship name, and foreign key. You are not required to specify a foreign key to save the relationship.</span>,
+  duplicatePropertyError: function (relationshipName) {
+    return (
+    <span data-testid="property-name-error">
+      The associated entity type or one of its properties is already using the name <b>{relationshipName}</b>. A property cannot use the same name as the associated entity type or its existing properties.
+    </span>
+    )
+  },
   relationshipNameInfo: function (entityName) {
     return (
       <span>
-        The name that identifies the relationship between the source and target entity types. The relationship is saved as a property in the <strong>{entityName}</strong> entity type.<br/>Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Names cannot use the same name as an existing property or structured type.
+        The name that identifies the relationship between the source and target entity types. The relationship is saved as a property in the <strong>{entityName}</strong> entity type.<br/>Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Property names cannot use the same name as the associated entity type or its existing properties.
       </span>
     )
   },
