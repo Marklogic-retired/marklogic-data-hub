@@ -428,6 +428,12 @@ const GraphVis: React.FC<Props> = (props) => {
       let properties: any = Object.keys(e.model.definitions[e.entityName].properties);
       properties.forEach((p, i) => {
         let pObj = e.model.definitions[e.entityName].properties[p];
+        let relationshipName =  p;
+        let title = !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship";
+        if (relationshipName.length > 20) {
+          relationshipName=relationshipName.substring(0, 20) + "...";
+          if (title !== undefined) title = p + "\n" + title;
+        }
         //for one to one edges
         if (pObj.relatedEntityType) {
           let parts = pObj.relatedEntityType.split("/");
@@ -435,9 +441,9 @@ const GraphVis: React.FC<Props> = (props) => {
             ...graphConfig.defaultEdgeProps,
             from: e.entityName,
             to: parts[parts.length - 1],
-            label: p,
+            label: relationshipName,
             id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.joinPropertyName,
-            title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
+            title: title,
             arrows: {
               to: {
                 enabled: true,
@@ -464,9 +470,9 @@ const GraphVis: React.FC<Props> = (props) => {
             ...graphConfig.defaultEdgeProps,
             from: e.entityName,
             to: parts[parts.length - 1],
-            label: p,
+            label: relationshipName,
             id: e.entityName + "-" + p + "-" + parts[parts.length - 1] + "-via-" + pObj.items.joinPropertyName,
-            title: !props.canWriteEntityModel && props.canReadEntityModel ? undefined : "Edit Relationship",
+            title: title,
             arrowStrikethrough: true,
             arrows: {
               to: {

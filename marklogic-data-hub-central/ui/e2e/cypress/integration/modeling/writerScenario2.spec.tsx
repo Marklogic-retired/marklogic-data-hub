@@ -551,7 +551,7 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.verifyTargetEntity("Client").should("be.visible");
 
     //add relationship properties and save
-    relationshipModal.editRelationshipName("recommendedBy");
+    relationshipModal.editRelationshipName("recommendedByUserHavingVeryLongName");
 
     //open Optional line to edit foreign key field
     relationshipModal.toggleOptional();
@@ -563,7 +563,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     //Both the relationship names must be available
     cy.contains("referredBy");
-    cy.contains("recommendedBy");
+    cy.contains("recommendedByUserHav...");
 
     //verify relationship was created and properties are present
     modelPage.selectView("table");
@@ -613,7 +613,7 @@ describe("Entity Modeling: Writer Role", () => {
       let personCoordinates: any = nodePositions["Person"];
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y));
     });
-    graphViewSidePanel.getPropertyName("recommendedBy").should("not.exist");
+    graphViewSidePanel.getPropertyName("recommendedByUserHavingVeryLongName").should("not.exist");
   });
 
   it("Verify the navigation warning on moving away to other tiles, when unpublished changes are available", {defaultCommandTimeout: 120000}, () => {
