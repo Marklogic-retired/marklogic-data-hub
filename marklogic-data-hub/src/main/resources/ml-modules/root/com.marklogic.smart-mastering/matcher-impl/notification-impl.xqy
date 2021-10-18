@@ -337,7 +337,7 @@ declare function notify-impl:count-notifications()
 as xs:int
 {
   let $collections := cts:collection-match($const:NOTIFICATION-COLL)
-  return xdmp:estimate(fn:collection($collections))
+  return if (fn:exists($collections)) then xdmp:estimate(fn:collection($collections)) else 0
 };
 
 (:
