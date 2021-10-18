@@ -2,11 +2,10 @@
 
 import browsePage from "../../support/pages/browse";
 import {Application} from "../../support/application.config";
-import {confirmationModal, toolbar} from "../../support/components/common";
+import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
-import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Verify All Data for final/staging databases and non-entity detail page", () => {
 
@@ -122,8 +121,6 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitForAsyncRequest();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();

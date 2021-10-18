@@ -322,21 +322,12 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
       >
         <div className={styles.colorContainer}>
           <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
-          {!props.canWriteEntityModel && props.canReadEntityModel ?
-            <div>
-              <span className={styles.editIconContainer}><HCTooltip text={SecurityTooltips.missingPermission} id="color-selector" placement="top"><FontAwesomeIcon icon={faPencilAlt} size="sm" className={styles.editIconReadOnly} data-testid={"edit-color-icon-disabled"}/></HCTooltip></span>
-              <HCTooltip text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} id="color-selector-disabled" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
-              </HCTooltip>
-            </div>
-            :
-            <div>
-              <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
-              <HCTooltip text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} id="color-selector" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon}/>
-              </HCTooltip>
-            </div>
-          }
+          <div>
+            <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"} /></span>
+            <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement="right">
+              <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
+            </HCTooltip>
+          </div>
         </div>
       </Form.Item>
     </div>

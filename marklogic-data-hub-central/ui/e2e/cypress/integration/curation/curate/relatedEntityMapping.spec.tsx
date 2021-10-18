@@ -113,7 +113,7 @@ describe("Mapping", () => {
     mappingStepDetail.successMessage().should("not.exist");
     // Test expresssions
     cy.waitUntil(() => mappingStepDetail.testMap()).should("be.enabled");
-    mappingStepDetail.testMap().click();
+    mappingStepDetail.testMap().click({force: true});
     cy.waitForAsyncRequest();
     mappingStepDetail.validateMapValue("Person", "id", "444-44-4440");
     mappingStepDetail.validateMapValueString("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
