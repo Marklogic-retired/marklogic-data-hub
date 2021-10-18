@@ -25,6 +25,7 @@ import {getViewSettings, setViewSettings, UserContext} from "../../../util/user-
 import {ModelingContext} from "../../../util/modeling-context";
 import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
+import {ModelingMessages} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
 import arrayIcon from "../../../assets/icon_array.png";
 
@@ -898,18 +899,23 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   };
 
+  // Check if entity name has no matching definition
+  const titleNoDefinition = () => {
+    return props.definitions ? !props.definitions.hasOwnProperty(props.entityName) : false;
+  };
+
   const addPropertyButton = <MLButton
     type="primary"
     aria-label={props.entityName + "-add-property"}
-    disabled={!props.canWriteEntityModel}
-    className={!props.canWriteEntityModel && styles.disabledButton}
+    disabled={!props.canWriteEntityModel || titleNoDefinition()}
+    className={(!props.canWriteEntityModel || titleNoDefinition()) && styles.disabledButton}
     onClick={() => addPropertyButtonClicked()}
   >Add Property</MLButton>;
 
   return (
     <div>
       <div className={styles.extraButtonContainer} id="extraButtonsContainer">
-        {props.sidePanelView ?
+        {props.sidePanelView && !titleNoDefinition() ?
           <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
         }
         {props.canWriteEntityModel ?
@@ -942,18 +948,21 @@ const PropertyTable: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-      <MLTable
-        rowClassName={(record) => {
-          let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
-          return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
-        }}
-        locale={{emptyText: " "}}
-        columns={headerColumns}
-        dataSource={tableData}
-        onExpand={onExpand}
-        expandedRowKeys={expandedRows}
-        pagination={false}
-      />
+      {titleNoDefinition() ?
+        <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
+        <MLTable
+          rowClassName={(record) => {
+            let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
+            return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
+          }}
+          locale={{emptyText: " "}}
+          columns={headerColumns}
+          dataSource={tableData}
+          onExpand={onExpand}
+          expandedRowKeys={expandedRows}
+          pagination={false}
+        />
+      }
     </div>
   );
 };
