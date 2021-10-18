@@ -99,11 +99,11 @@ describe("Curate component", () => {
     fireEvent.click(getByTestId("Mapping1-delete"));
     await wait(() => {
       fireEvent.click(getByText("No"));
-    });    
+    });
     fireEvent.click(getByTestId("Mapping1-delete"));
     await wait(() => {
       fireEvent.click(getByText("Yes"));
-    });    
+    });
     expect(axiosMock.delete).toHaveBeenNthCalledWith(1, "/api/steps/mapping/Mapping1");
   });
 

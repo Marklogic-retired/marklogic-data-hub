@@ -220,6 +220,25 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getAllByText("string")).toHaveLength(10);
   });
 
+  test("Property Table renders and shows messaging when entity name does not match a definition", async () => {
+    let entityName = propertyTableEntities[2].entityName + "-different";
+    let definitions = propertyTableEntities[2].model.definitions;
+    const {getByLabelText, queryByTestId} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={false}
+        entityName={entityName}
+        definitions={definitions}
+        sidePanelView={false}
+        updateSavedEntity={jest.fn()}
+      />
+    );
+
+    expect(getByLabelText(entityName + "-add-property")).toBeDisabled();
+    expect(queryByTestId("customerId-span")).not.toBeInTheDocument();
+    expect(getByLabelText("titleNoDefinition")).toBeInTheDocument();
+  });
+
   test("can add sortable and facetable Property to the table", async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
