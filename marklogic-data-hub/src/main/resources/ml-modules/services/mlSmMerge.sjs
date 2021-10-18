@@ -43,7 +43,7 @@ function post(context, params, input) {
   let stepRefOptions = stepRef.options || {};
   let stepDetailsOptions = stepDetails.options || {};
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
-  let sourceDatabase = combinedOptions.sourceDatabase || config.STAGINGDATABASE;
+  let sourceDatabase = combinedOptions.sourceDatabase || config.FINALDATABASE;
 
   combinedOptions.fullOutput = true;
   combinedOptions.writeStepOutput = params.preview !== "true";
@@ -75,6 +75,9 @@ function deleteFunction(context, params) {
   if (xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'boolean', options.retainAuditTrail)) {
     options.retainAuditTrail = xs.boolean(options.retainAuditTrail);
   }
+  if (!params.mergeURI) {
+    httpUtils.throwBadRequestWithArray(['Bad Request', 'At least one URI needs to be passed to unmerge.']);
+  }
   options.fullOutput = true;
   options.writeStepOutput = false;
   const datahub = DataHubSingleton.instance({
@@ -82,8 +85,9 @@ function deleteFunction(context, params) {
   });
   let jobId = params["job-id"];
   // build combined options
-  let sourceDatabase = options.sourceDatabase || config.STAGINGDATABASE;
+  let sourceDatabase = options.sourceDatabase || config.FINALDATABASE;
   let mergeURIs = hubUtils.normalizeToArray(params.mergeURI);
+
   let query = cts.documentQuery(mergeURIs);
   let content = hubUtils.queryToContentDescriptorArray(query, options, sourceDatabase);
   let results = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
