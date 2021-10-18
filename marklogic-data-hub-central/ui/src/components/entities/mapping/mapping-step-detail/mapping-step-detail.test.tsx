@@ -542,10 +542,8 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
 
     expect(getByText("orderedBy")).toBeInTheDocument();
-    // TODO skipping, DHFPROD-7711 MLTooltip -> Tooltip
-    // fireEvent.mouseOver((getByTestId("foreign-orderedBy")));
-    // await wait(() => expect(document.querySelector("#tooltip-orderedBy")).toBeInTheDocument());
-    expect(getByText("integer (Person)")).toBeInTheDocument();
+    fireEvent.mouseOver((getByTestId("foreign-orderedBy")));
+    await wait(() => expect(document.querySelector("#tooltip-orderedBy")).toBeInTheDocument());
 
     //Verify that there are now three entity filters, one in the primary table and one in each related table
     let entityFilters = getAllByText(

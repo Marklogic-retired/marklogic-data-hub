@@ -151,9 +151,6 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.closeSidePanel();
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
 
-    modelPage.selectView("table");
-    entityTypeTable.viewEntityInGraphView("Person");
-    graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
 
     //To verify Pan and Zoom in buttons are rendered properly
     cy.get(".vis-zoomOut").should("be.visible");
