@@ -848,7 +848,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           colon={false}
           labelAlign="left"
           validateStatus={errorMessage ? "error" : ""}
-          help={errorMessage === "name-error" ? <span data-testid="property-name-error">A property or structured type are already using the name <b>{name}</b>. A property cannot use the same name as an existing property or structured type.</span> : errorMessage}
+          help={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(name) : errorMessage}
         >
           <Input
             id="property-name"

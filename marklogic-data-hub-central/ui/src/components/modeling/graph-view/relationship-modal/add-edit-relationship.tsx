@@ -300,8 +300,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
       let sourceProperties = props.entityTypes[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
       let propertyNamesArray = props.isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName) : Object.keys(sourceProperties);
-      if (propertyNamesArray.includes(relationshipName)) {
-        setErrorMessage(`A property already exists with a name of ${relationshipName}`);
+      if (propertyNamesArray.includes(relationshipName) || props.relationshipInfo.sourceNodeName === relationshipName) {
+        setErrorMessage("name-error");
       } else {
 
         const newEditPropertyOptions = {
@@ -613,7 +613,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             aria-label="relationship-textarea"
             style={errorMessage && submitClicked? {border: "solid 1px #C00"} : {}}
           />
-          {errorMessage && submitClicked? <MLTooltip title={errorMessage} placement={"bottom"}><Icon aria-label="error-circle" type="exclamation-circle" theme="filled" className={styles.errorIcon}/></MLTooltip> : ""}
+          {errorMessage && submitClicked? <MLTooltip title={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(relationshipName) : errorMessage} placement={"bottom"}><Icon aria-label="error-circle" type="exclamation-circle" theme="filled" className={styles.errorIcon}/></MLTooltip> : ""}
           <MLTooltip title={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </MLTooltip>
