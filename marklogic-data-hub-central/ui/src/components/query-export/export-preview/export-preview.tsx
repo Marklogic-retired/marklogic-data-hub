@@ -24,7 +24,7 @@ export const getExportPreview = (response) => {
                     textOverflow: "ellipsis"}
                 };
               },
-              render: (text) => <HCTooltip text={text} id="export-preview-prop-tooltip" placement="top">{text}</HCTooltip>
+              render: (text) => <HCTooltip text={text} id="export-preview-prop-tooltip" placement="top"><span>{text}</span></HCTooltip>
             }
           );
         });
