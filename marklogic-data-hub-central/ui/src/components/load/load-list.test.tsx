@@ -191,8 +191,8 @@ describe("Load data component", () => {
     //TODO: Test with reference rather than hardcoded string.
     expect(getByTestId("validationError")).toHaveTextContent("The string contains invalid capabilities. Capabilities must be read, insert, update, or execute.");
 
-    fireEvent.change(targetPermissions, {target: {value: " "}}); // BAD permissions
-    expect(targetPermissions).toHaveValue(" ");
+    fireEvent.change(targetPermissions, {target: {value: "  "}}); // BAD permissions
+    expect(targetPermissions).toHaveValue("  ");
     fireEvent.blur(targetPermissions);
 
     //TODO: Test with reference rather than hardcoded string.
