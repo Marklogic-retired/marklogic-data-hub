@@ -44,31 +44,31 @@ describe("Graph Validations", () => {
   it("can view and edit Entity Type tab in side panel", () => {
     entityTypeTable.viewEntityInGraphView("Person");
     graphViewSidePanel.getEntityTypeTab().click();
-    graphViewSidePanel.getPersonEntityDescription().should("be.visible");
+    graphViewSidePanel.getEntityDescription().should("be.visible");
     cy.publishEntityModel();
     modelPage.getEntityModifiedAlert().should("not.exist");
     modelPage.getPublishButton().should("not.be.enabled");
 
-    graphViewSidePanel.getPersonEntityDescription().clear();
-    graphViewSidePanel.getPersonEntityNamespace().clear();
-    graphViewSidePanel.getPersonEntityPrefix().clear();
+    graphViewSidePanel.getEntityDescription().clear();
+    graphViewSidePanel.getEntityNamespace().clear();
+    graphViewSidePanel.getEntityPrefix().clear();
 
-    graphViewSidePanel.getPersonEntityDescription().clear();
-    graphViewSidePanel.getPersonEntityNamespace().clear();
-    graphViewSidePanel.getPersonEntityPrefix().clear();
-    graphViewSidePanel.getPersonEntityDescription().type("test description");
-    graphViewSidePanel.getPersonEntityNamespace().click();
+    graphViewSidePanel.getEntityDescription().clear();
+    graphViewSidePanel.getEntityNamespace().clear();
+    graphViewSidePanel.getEntityPrefix().clear();
+    graphViewSidePanel.getEntityDescription().type("test description");
+    graphViewSidePanel.getEntityNamespace().click();
     modelPage.getEntityModifiedAlert().should("exist");
     modelPage.getPublishButton().should("be.enabled");
-    graphViewSidePanel.getPersonEntityNamespace().type("test");
-    graphViewSidePanel.getPersonEntityDescription().click();
+    graphViewSidePanel.getEntityNamespace().type("test");
+    graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Since you entered a namespace, you must specify a prefix.").should("be.visible");
-    graphViewSidePanel.getPersonEntityPrefix().type("pre");
-    graphViewSidePanel.getPersonEntityDescription().click();
+    graphViewSidePanel.getEntityPrefix().type("pre");
+    graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("be.visible");
-    graphViewSidePanel.getPersonEntityDescription().clear();
-    graphViewSidePanel.getPersonEntityNamespace().type("http://example.org/test");
-    graphViewSidePanel.getPersonEntityDescription().click();
+    graphViewSidePanel.getEntityDescription().clear();
+    graphViewSidePanel.getEntityNamespace().type("http://example.org/test");
+    graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
     graphViewSidePanel.getEditEntityTypeColor().click();
     graphViewSidePanel.selectColorFromPicker("#D5D3DD").click();

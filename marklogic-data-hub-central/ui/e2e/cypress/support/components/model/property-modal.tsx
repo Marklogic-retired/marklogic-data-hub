@@ -85,8 +85,8 @@ class PropertyModal {
     return cy.get("[data-testid=\"same-name-property-error\"]").contains(errorName);
   }
 
-  verifyPropertyNameError(errorName: string) {
-    return cy.get("[data-testid=\"property-name-error\"]").contains(errorName);
+  verifyPropertyNameError() {
+    return cy.findByTestId("property-name-error").should("be.visible");
   }
 }
 

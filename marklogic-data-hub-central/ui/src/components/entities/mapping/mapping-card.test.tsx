@@ -8,8 +8,6 @@ import {act} from "react-dom/test-utils";
 import {AuthoritiesService, AuthoritiesContext} from "../../../util/authorities";
 import mocks from "../../../api/__mocks__/mocks.data";
 import {SecurityTooltips} from "../../../config/tooltips.config";
-import {CurationContext} from "../../../util/curation-context";
-import {customerMappingStep} from "../../../assets/mock-data/curation/curation-context-mock";
 import moment from "moment";
 
 jest.mock("axios");
