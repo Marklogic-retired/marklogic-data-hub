@@ -1,6 +1,5 @@
 import {
-  Modal,
-  Input, Radio, Select
+  Modal, Radio, Select
 } from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useEffect, useContext} from "react";
@@ -15,6 +14,7 @@ import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCButton from "../../../common/hc-button/hc-button";
+import HCInput from "../../../common/hc-input/hc-input";
 
 type Props = {
   sourceNames: string[];
@@ -345,10 +345,10 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={strategyNameErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="strategy-name"
                   value={strategyName}
-                  placeholder={"Enter strategy name"}
+                  placeholder="Enter strategy name"
                   onChange={handleChange}
                 />
               </Col>
@@ -358,15 +358,18 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             </Row>
           </Col>
         </Row>
-        <Row className={"mb-3"}>
+        <Row className={"mb-3 justify-content-center"}>
           <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Radio.Group value={radioValuesOptionClicked} onChange={handleChange} name={"maxValues"}>
-              <Radio value={1} > All</Radio>
-              <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
-                <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                </HCTooltip>
+            <Radio.Group className={styles.radioAnt} value={radioValuesOptionClicked} onChange={handleChange} name={"maxValues"}>
+              <Radio className={styles.radioAnt} value={1} > All</Radio>
+              <Radio className={styles.radioAnt} value={2} >
+                <div className={styles.radioAnt}>
+                  <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
+                  <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                  </HCTooltip>
+                </div>
               </Radio>
             </Radio.Group>
           </Col>
@@ -374,12 +377,15 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Radio.Group value={radioSourcesOptionClicked} onChange={handleChange} name={"maxSources"}>
-              <Radio value={1} > All</Radio>
-              <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
-                <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                </HCTooltip>
+            <Radio.Group className={styles.radioAnt} value={radioSourcesOptionClicked} onChange={handleChange} name={"maxSources"}>
+              <Radio className={styles.radioAnt} value={1} > All</Radio>
+              <Radio className={styles.radioAnt} value={2} >
+                <div className={styles.radioAnt}>
+                  <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
+                  <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
+                    <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                  </HCTooltip>
+                </div>
               </Radio>
             </Radio.Group>
           </Col>

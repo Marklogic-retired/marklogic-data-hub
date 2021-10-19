@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Input, Switch, Select} from "antd";
+import {Modal, Switch, Select} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +19,7 @@ import DeleteModal from "../delete-modal/delete-modal";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCButton from "../../../common/hc-button/hc-button";
+import HCInput from "../../../common/hc-input/hc-input";
 
 type Props = {
   editRuleset: any;
@@ -527,9 +528,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         <Col>
           <Row>
             <Col className={thesaurusErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="thesaurus-uri-input"
-                aria-label="thesaurus-uri-input"
+                ariaLabel="thesaurus-uri-input"
                 placeholder="Enter thesaurus URI"
                 className={styles.input}
                 value={thesaurusValue}
@@ -552,9 +553,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       <Row className={"mb-3"}>
         <FormLabel column lg={3}>{"Filter:"}</FormLabel>
         <Col className={"d-flex"}>
-          <Input
+          <HCInput
             id="filter-input"
-            aria-label="filter-input"
+            ariaLabel="filter-input"
             placeholder="Enter a node in the thesaurus to use as a filter"
             className={styles.input}
             value={filterValue}
@@ -578,9 +579,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         <Col>
           <Row>
             <Col className={dictionaryErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="dictionary-uri-input"
-                aria-label="dictionary-uri-input"
+                ariaLabel="dictionary-uri-input"
                 placeholder="Enter dictionary URI"
                 className={styles.input}
                 value={dictionaryValue}
@@ -605,9 +606,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         <Col>
           <Row>
             <Col className={distanceThresholdErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="distance-threshold-input"
-                aria-label="distance-threshold-input"
+                ariaLabel="distance-threshold-input"
                 placeholder="Enter distance threshold"
                 className={styles.input}
                 value={distanceThresholdValue}
@@ -636,9 +637,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         <Col>
           <Row>
             <Col className={uriErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="uri-input"
-                aria-label="uri-input"
+                ariaLabel="uri-input"
                 placeholder="Enter URI"
                 className={styles.input}
                 value={uriValue}
@@ -662,9 +663,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         <Col>
           <Row>
             <Col className={functionErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="function-input"
-                aria-label="function-input"
+                ariaLabel="function-input"
                 placeholder="Enter a function"
                 className={styles.input}
                 value={functionValue}
@@ -686,9 +687,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       <Row className={"mb-3"}>
         <FormLabel column lg={3}>{"Namespace:"}</FormLabel>
         <Col className={"d-flex"}>
-          <Input
+          <HCInput
             id="namespace-input"
-            aria-label="namespace-input"
+            ariaLabel="namespace-input"
             placeholder="Enter a namespace"
             className={styles.input}
             value={namespaceValue}

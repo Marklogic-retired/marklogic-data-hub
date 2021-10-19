@@ -53,3 +53,8 @@
 .validationError {
     @extend .validationError;
 }
+
+.radioAnt {
+    display: flex;
+    align-items: center;
+}

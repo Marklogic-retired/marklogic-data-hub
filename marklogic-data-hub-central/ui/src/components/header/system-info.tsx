@@ -220,7 +220,6 @@ const SystemInfo = (props) => {
                     <p>{SystemInfoMessages.downloadProjectFiles}</p>
                     <div className={styles.buttonContainer}>
                       <HCButton
-                        type="primary"
                         aria-label="Download"
                         data-testid="downloadProjectFiles"
                         size="sm"
@@ -259,7 +258,6 @@ const SystemInfo = (props) => {
                     <p>{SystemInfoMessages.clearAllUserData}</p>
                     <div className={styles.buttonContainer}>
                       <HCButton
-                        type="primary"
                         aria-label="Clear"
                         data-testid="clearUserData"
                         size="sm"

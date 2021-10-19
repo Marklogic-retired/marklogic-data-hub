@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Form, Input, Radio, AutoComplete, Tooltip, Popover} from "antd";
+import {Form, Radio, AutoComplete, Popover} from "antd";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
 import "./create-edit-step.scss";
@@ -12,6 +12,7 @@ import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import HCButton from "../../common/hc-button/hc-button";
 import {FormControl} from "react-bootstrap";
+import HCInput from "../../common/hc-input/hc-input";
 
 type Props = {
   tabKey: string;
@@ -465,64 +466,71 @@ const CreateEditStep: React.FC<Props> = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? (invalidChars ? "error" : "") : "error"}
         help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
-            id="name"
-            placeholder="Enter name"
-            value={stepName}
-            onChange={handleChange}
-            disabled={tobeDisabled}
-            className={styles.input}
-            onBlur={sendPayload}
-          /></Tooltip> : <Input
-            id="name"
-            placeholder="Enter name"
-            value={stepName}
-            onChange={handleChange}
-            disabled={tobeDisabled}
-            className={styles.input}
-            onBlur={sendPayload}
-          />}&nbsp;&nbsp;
-          <div className={styles.inputHCTooltip}>
-            {props.stepType === StepType.Mapping ?
-              <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-              </HCTooltip> :
-              props.stepType === StepType.Matching ?
-                <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip> :
-                <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip>
-            }
-          </div>
+          {tobeDisabled ?
+            <HCTooltip text={NewMatchTooltips.nameField} id="step-name-disabled-tooltip" placement={"bottom"}>
+              <HCInput
+                id="name"
+                placeholder="Enter name"
+                value={stepName}
+                onChange={handleChange}
+                disabled={tobeDisabled}
+                className={styles.input}
+                onBlur={sendPayload}
+              />
+            </HCTooltip>
+            :
+            <div className={"d-flex flex-start"}>
+              <HCInput
+                id="name"
+                placeholder="Enter name"
+                value={stepName}
+                onChange={handleChange}
+                disabled={tobeDisabled}
+                className={styles.input}
+                onBlur={sendPayload}
+              />&nbsp;&nbsp;
+              <div className={styles.inputHCTooltip}>
+                {props.stepType === StepType.Mapping ?
+                  <HCTooltip text={NewMapTooltips.name} id="map-step-name-tooltip" placement={"left"}>
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                  </HCTooltip> :
+                  props.stepType === StepType.Matching ?
+                    <HCTooltip text={NewMatchTooltips.name} id="match-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                    </HCTooltip> :
+                    <HCTooltip text={NewMergeTooltips.name} id="merge-step-name-tooltip" placement={"left"}>
+                      <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                    </HCTooltip>
+                }
+              </div>
+            </div>
+          }
         </Form.Item>
-        <Form.Item label={<span>
-          Description:
-          &nbsp;
-        </span>} labelAlign="left">
-          <Input
-            id="description"
-            placeholder="Enter description"
-            value={description}
-            onChange={handleChange}
-            disabled={props.canReadOnly && !props.canReadWrite}
-            className={styles.input}
-            onBlur={sendPayload}
-          />&nbsp;&nbsp;
-          <div className={styles.inputHCTooltip}>
-            {props.stepType === StepType.Mapping ?
-              <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-              </HCTooltip> :
-              props.stepType === StepType.Matching ?
-                <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
+        <Form.Item label={<span>Description:&nbsp;</span>} labelAlign="left">
+          <div className={"d-flex"}>
+            <HCInput
+              id="description"
+              placeholder="Enter description"
+              value={description}
+              onChange={handleChange}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              className={styles.input}
+              onBlur={sendPayload}
+            />&nbsp;&nbsp;
+            <div className={styles.inputHCTooltip}>
+              {props.stepType === StepType.Mapping ?
+                <HCTooltip text={NewMapTooltips.description} id="map-step-description-tooltip" placement={"left"}>
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
                 </HCTooltip> :
-                <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-                </HCTooltip>
-            }
+                props.stepType === StepType.Matching ?
+                  <HCTooltip text={NewMatchTooltips.description} id="match-step-description-tooltip" placement={"left"}>
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                  </HCTooltip> :
+                  <HCTooltip text={NewMergeTooltips.description} id="merge-step-description-tooltip" placement={"left"}>
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+                  </HCTooltip>
+              }
+            </div>
           </div>
         </Form.Item>
 
@@ -583,24 +591,23 @@ const CreateEditStep: React.FC<Props> = (props) => {
           </span>}
         </Form.Item>
         {props.stepType === StepType.Merging ?
-          <Form.Item label={<span>
-            Timestamp Path:
-            &nbsp;
-          </span>} labelAlign="left"
-          className={styles.timestamp}>
-            <Input
-              id="timestamp"
-              placeholder="Enter path to the timestamp"
-              value={timestamp}
-              onChange={handleChange}
-              disabled={props.canReadOnly && !props.canReadWrite}
-              className={styles.input}
-              onBlur={sendPayload}
-            />&nbsp;&nbsp;
-            <div className={styles.inputHCTooltip}>
-              <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
-              </HCTooltip>
+          <Form.Item label={<span>Timestamp Path:&nbsp;</span>} labelAlign="left" className={styles.timestamp}>
+            <div className={"d-flex"}>
+              <HCInput
+                id="timestamp"
+                placeholder="Enter path to the timestamp"
+                value={timestamp}
+                onChange={handleChange}
+                disabled={props.canReadOnly && !props.canReadWrite}
+                className={styles.input}
+                onBlur={sendPayload}
+                size="sm"
+              />&nbsp;&nbsp;
+              <div className={styles.inputHCTooltip}>
+                <HCTooltip text={NewMergeTooltips.timestampPath} id="timestamp-path-tooltip" placement="left">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                </HCTooltip>
+              </div>
             </div>
           </Form.Item> : ""}
 
@@ -608,8 +615,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
           <div className={styles.submitButtons}>
             <HCButton data-testid={`${props.stepType}-dialog-cancel`} variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
             &nbsp;&nbsp;
-            {!props.canReadWrite ? <Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
-              <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></Tooltip>
+            {!props.canReadWrite ? <HCTooltip text={NewMergeTooltips.missingPermission} id="save-disabled-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}>
+              <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></HCTooltip>
               : <HCButton variant="primary" size="sm" type="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</HCButton>}
           </div>
         </Form.Item>

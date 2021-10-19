@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Input, Select, Radio, Tooltip} from "antd";
+import {Select, Radio} from "antd";
 import {Form, Row, Col, FormLabel} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
@@ -14,6 +14,7 @@ import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-ico
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import HCButton from "../common/hc-button/hc-button";
 import {FormControl} from "react-bootstrap";
+import HCInput from "../common/hc-input/hc-input";
 
 const {Option} = Select;
 
@@ -714,7 +715,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col xs={12} className={"d-flex"}>
-                <Input
+                <HCInput
                   id="targetPermissions"
                   placeholder="Please enter target permissions"
                   value={targetPermissions}
@@ -876,7 +877,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Batch Size:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="batchSize"
               placeholder="Please enter batch size"
               value={batchSize}
@@ -1070,11 +1071,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Col className={"d-flex"}>
             <div className={styles.submitButtons}>
               <HCButton aria-label="Cancel" variant="outline-light" size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-              {!canReadWrite || !isFormValid() ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+              {!canReadWrite || !isFormValid() ? <HCTooltip text={tooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}>
                 <span className={styles.disabledCursor}>
                   <HCButton size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
                 </span>
-              </Tooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
+              </HCTooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
             </div>
           </Col>
         </Row>

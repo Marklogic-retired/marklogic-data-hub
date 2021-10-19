@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Input, Switch, Table, Select} from "antd";
+import {Modal, Switch, Table, Select} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
@@ -19,6 +19,7 @@ import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import HCTag from "../../../common/hc-tag/hc-tag";
 import HCButton from "../../../common/hc-button/hc-button";
+import HCInput from "../../../common/hc-input/hc-input";
 
 type Props = {
   editRuleset: any;
@@ -726,9 +727,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
-          <Input
+          <HCInput
             id={`${propertyPath}-thesaurus-uri-input`}
-            aria-label={`${propertyPath}-thesaurus-uri-input`}
+            ariaLabel={`${propertyPath}-thesaurus-uri-input`}
             placeholder="Enter thesaurus URI"
             style={inputUriStyle(propertyPath, "thesaurus-uri-input")}
             value={thesaurusValues[propertyPath]}
@@ -739,10 +740,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         </span>
         {checkFieldInErrors(propertyPath, "thesaurus-uri-input") ? <div id="errorInThesaurusUri" data-testid={propertyPath + "-thesaurus-uri-err"} style={validationErrorStyle("thesaurus-uri-input")}>{!thesaurusValues[propertyPath] ? "A thesaurus URI is required" : ""}</div> : ""}
       </span>
-      <span>
-        <Input
+      <span className={"d-flex"}>
+        <HCInput
           id={`${propertyPath}-filter-input`}
-          aria-label={`${propertyPath}-filter-input`}
+          ariaLabel={`${propertyPath}-filter-input`}
           placeholder="Enter a node in the thesaurus to use as a filter"
           className={styles.filterInput}
           value={filterValues[propertyPath]}
@@ -750,7 +751,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
         <HCTooltip text={MatchingStepTooltips.filter} id="node-thesaurus-tooltip" placement="bottom">
-          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+          <QuestionCircleFill color="#7F86B5" className={`${styles.questionCircle} mt-2`} size={13} />
         </HCTooltip>
       </span>
     </div>;
@@ -760,9 +761,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
-          <Input
+          <HCInput
             id={`${propertyPath}-dictionary-uri-input`}
-            aria-label={`${propertyPath}-dictionary-uri-input`}
+            ariaLabel={`${propertyPath}-dictionary-uri-input`}
             placeholder="Enter dictionary URI"
             style={inputUriStyle(propertyPath, "dictionary-uri-input")}
             value={dictionaryValues[propertyPath]}
@@ -775,9 +776,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       </span>
       <span>
         <span className={styles.mandatoryFieldContainer}>
-          <Input
+          <HCInput
             id={`${propertyPath}-distance-threshold-input`}
-            aria-label={`${propertyPath}-distance-threshold-input`}
+            ariaLabel={`${propertyPath}-distance-threshold-input`}
             placeholder="Enter distance threshold"
             style={inputUriStyle(propertyPath, "distance-threshold-input")}
             value={distanceThresholdValues[propertyPath]}
@@ -795,9 +796,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return <div className={styles.matchTypeDetailsContainer}>
       <span>
         <span className={styles.mandatoryFieldContainer}>
-          <Input
+          <HCInput
             id={`${propertyPath}-uri-input`}
-            aria-label={`${propertyPath}-uri-input`}
+            ariaLabel={`${propertyPath}-uri-input`}
             placeholder="Enter URI"
             style={inputUriStyle(propertyPath, "uri-input")}
             value={uriValues[propertyPath]}
@@ -810,9 +811,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       </span>
       <span>
         <span className={styles.mandatoryFieldContainer}>
-          <Input
+          <HCInput
             id={`${propertyPath}-function-input`}
-            aria-label={`${propertyPath}-function-input`}
+            ariaLabel={`${propertyPath}-function-input`}
             placeholder="Enter a function"
             style={inputUriStyle(propertyPath, "function-input")}
             value={functionValues[propertyPath]}
@@ -823,10 +824,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         </span>
         {checkFieldInErrors(propertyPath, "function-input") ? <div id="errorInFunction" data-testid={propertyPath + "-function-err"} style={validationErrorStyle("function-input")}>{!functionValues[propertyPath] ? "A function is required" : ""}</div> : ""}
       </span>
-      <span>
-        <Input
+      <span className={"d-flex"}>
+        <HCInput
           id={`${propertyPath}-namespace-input`}
-          aria-label={`${propertyPath}-namespace-input`}
+          ariaLabel={`${propertyPath}-namespace-input`}
           placeholder="Enter a namespace"
           className={styles.functionInput}
           value={namespaceValues[propertyPath]}
@@ -834,7 +835,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           onBlur={(e) => handleInputChange(e, propertyPath)}
         />
         <HCTooltip text={MatchingStepTooltips.namespace} id="namespace-input-tooltip" placement="bottom">
-          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+          <QuestionCircleFill color="#7F86B5" className={`${styles.questionCircle} mt-2`} size={13} />
         </HCTooltip>
       </span>
     </div>;
@@ -1173,10 +1174,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           <FormLabel column lg={"auto"}>{"Ruleset Name:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col>
             <Row>
-              <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+              <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"}  sm={6}>
+                <HCInput
                   id="rulesetName-input"
-                  aria-label="rulesetName-input"
+                  ariaLabel="rulesetName-input"
                   placeholder="Enter ruleset name"
                   className={styles.rulesetName}
                   value={rulesetName}

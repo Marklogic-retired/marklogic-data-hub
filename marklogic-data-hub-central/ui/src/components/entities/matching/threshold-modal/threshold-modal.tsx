@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Input, Select} from "antd";
+import {Modal, Select} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./threshold-modal.module.scss";
 
@@ -15,6 +15,7 @@ import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../../common/hc-button/hc-button";
+import HCInput from "../../../common/hc-input/hc-input";
 
 type Props = {
   isVisible: boolean;
@@ -347,11 +348,11 @@ const ThresholdModal: React.FC<Props> = (props) => {
       <Row className={"mb-3"}>
         <FormLabel column lg={3}>{"URI:"}<span className={styles.asterisk}>*</span></FormLabel>
         <Col>
-          <Row>
+          <Row className={"me-3"}>
             <Col className={uriErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="uri-input"
-                aria-label="uri-input"
+                ariaLabel="uri-input"
                 placeholder="Enter URI"
                 className={styles.input}
                 value={uriValue}
@@ -373,11 +374,11 @@ const ThresholdModal: React.FC<Props> = (props) => {
       <Row className={"mb-3"}>
         <FormLabel column lg={3}>{"Function:"}<span className={styles.asterisk}>*</span></FormLabel>
         <Col>
-          <Row>
+          <Row className={"me-3"}>
             <Col className={functionErrorMessage ? "d-flex has-error" : "d-flex"}>
-              <Input
+              <HCInput
                 id="function-input"
-                aria-label="function-input"
+                ariaLabel="function-input"
                 placeholder="Enter a function"
                 className={styles.input}
                 value={functionValue}
@@ -398,21 +399,25 @@ const ThresholdModal: React.FC<Props> = (props) => {
       </Row>
       <Row className={"mb-3"}>
         <FormLabel column lg={3}>{"Namespace:"}</FormLabel>
-        <Col className={"d-flex"}>
-          <Input
-            id="namespace-input"
-            aria-label="namespace-input"
-            placeholder="Enter a namespace"
-            className={styles.input}
-            value={namespaceValue}
-            onChange={handleInputChange}
-            onBlur={handleInputChange}
-          />
-          <div className={"p-2 d-flex"}>
-            <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top">
-              <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
-            </HCTooltip>
-          </div>
+        <Col>
+          <Row className={"me-3"}>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="namespace-input"
+                ariaLabel="namespace-input"
+                placeholder="Enter a namespace"
+                className={styles.input}
+                value={namespaceValue}
+                onChange={handleInputChange}
+                onBlur={handleInputChange}
+              />
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={NewMatchTooltips.namespace} id="function-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </>
@@ -464,11 +469,11 @@ const ThresholdModal: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col>
-            <Row>
+            <Row className={"me-5"}>
               <Col className={nameErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="name-input"
-                  aria-label="name-input"
+                  ariaLabel="name-input"
                   placeholder="Enter threshold name"
                   className={styles.input}
                   value={nameValue}
@@ -485,7 +490,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Action:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col>
-            <Row>
+            <Row className={"me-5"}>
               <Col className={actionTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
                 <Select
                   aria-label={"threshold-select"}
