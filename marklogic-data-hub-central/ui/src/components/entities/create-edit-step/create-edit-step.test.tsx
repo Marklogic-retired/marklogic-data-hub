@@ -14,6 +14,38 @@ describe("Create Edit Step Dialog component", () => {
     jest.clearAllMocks();
   });
 
+  test("Verify Edit Merging dialog renders correctly", () => {
+    const {getByText, getByPlaceholderText, getByLabelText} = render(<CreateEditStep {...data.editMerging} />);
+    expect(getByPlaceholderText("Enter name")).toHaveValue("mergeCustomers");
+    expect(getByPlaceholderText("Enter name")).toBeDisabled();
+    expect(getByPlaceholderText("Enter description")).toHaveValue("merge customer description");
+
+    expect(getByLabelText("Collection")).toBeChecked();
+    const collInput = document.querySelector(("#collList .ant-input"));
+    expect(collInput).toHaveValue("matchCustomers");
+
+    fireEvent.click(getByLabelText("Query"));
+    expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['matchCustomers'])");
+
+    expect(getByPlaceholderText("Enter path to the timestamp")).toHaveValue("/envelope/headers/createdOn");
+
+    expect(getByText("Save")).toBeEnabled();
+    expect(getByText("Cancel")).toBeEnabled();
+
+    fireEvent.click(getByLabelText("Collection"));
+
+    fireEvent.click(getByText("Save"));
+    expect(data.editMerging.updateStepArtifact).toBeCalledWith({
+      name: "mergeCustomers",
+      targetEntityType: "Customer",
+      description: "merge customer description",
+      collection: "matchCustomers",
+      selectedSource: "collection",
+      sourceQuery: "cts.collectionQuery(['matchCustomers'])",
+      timestamp: "/envelope/headers/createdOn"
+    });
+  });
+
   test("Verify Edit Merging dialog renders correctly for a read only user", () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <CreateEditStep {...data.editMerging} canReadWrite={false} />
@@ -75,7 +107,7 @@ describe("Create Edit Step Dialog component", () => {
 
     //proper error message shows when field is empty
     fireEvent.change(nameInput, {target: {value: ""}});
-    expect(getByText("Name is required")).toBeInTheDocument();
+    await(() => expect(getByText("Name is required")).toBeInTheDocument());
 
     //proper error message shows when field does not lead with a letter
     fireEvent.change(nameInput, {target: {value: "123testCreateStep"}});
@@ -83,7 +115,7 @@ describe("Create Edit Step Dialog component", () => {
 
     //reset name field
     fireEvent.change(nameInput, {target: {value: ""}});
-    expect(getByText("Name is required")).toBeInTheDocument();
+    await(() => expect(getByText("Name is required")).toBeInTheDocument());
 
     //proper error message shows when field contains special characters
     fireEvent.change(nameInput, {target: {value: "test Create Step"}});
@@ -230,38 +262,6 @@ describe("Create Edit Step Dialog component", () => {
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
 
-  });
-
-  test("Verify Edit Merging dialog renders correctly", () => {
-    const {getByText, getByPlaceholderText, getByLabelText} = render(<CreateEditStep {...data.editMerging} />);
-    expect(getByPlaceholderText("Enter name")).toHaveValue("mergeCustomers");
-    expect(getByPlaceholderText("Enter name")).toBeDisabled();
-    expect(getByPlaceholderText("Enter description")).toHaveValue("merge customer description");
-
-    expect(getByLabelText("Collection")).toBeChecked();
-    const collInput = document.querySelector(("#collList .ant-input"));
-    expect(collInput).toHaveValue("matchCustomers");
-
-    fireEvent.click(getByLabelText("Query"));
-    expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['matchCustomers'])");
-
-    expect(getByPlaceholderText("Enter path to the timestamp")).toHaveValue("/envelope/headers/createdOn");
-
-    expect(getByText("Save")).toBeEnabled();
-    expect(getByText("Cancel")).toBeEnabled();
-
-    fireEvent.click(getByLabelText("Collection"));
-
-    fireEvent.click(getByText("Save"));
-    expect(data.editMerging.updateStepArtifact).toBeCalledWith({
-      name: "mergeCustomers",
-      targetEntityType: "Customer",
-      description: "merge customer description",
-      collection: "matchCustomers",
-      selectedSource: "collection",
-      sourceQuery: "cts.collectionQuery(['matchCustomers'])",
-      timestamp: "/envelope/headers/createdOn"
-    });
   });
 
   test("Verify collection and query tooltips appear when hovered", () => {

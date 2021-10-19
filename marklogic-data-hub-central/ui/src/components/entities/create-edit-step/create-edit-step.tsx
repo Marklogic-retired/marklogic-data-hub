@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Input, Radio, AutoComplete, Tooltip, Popover} from "antd";
+import {Radio, AutoComplete, Tooltip, Popover} from "antd";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
@@ -12,6 +12,7 @@ import HCAlert from "../../common/hc-alert/hc-alert";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import HCButton from "../../common/hc-button/hc-button";
+import HCInput from "../../common/hc-input/hc-input";
 
 type Props = {
   tabKey: string;
@@ -420,7 +421,6 @@ const CreateEditStep: React.FC<Props> = (props) => {
 
 
     <div className={styles.createEditStep}>
-
       {(props.stepType === StepType.Matching || props.stepType === StepType.Merging) ? curationOptions.activeStep.hasWarnings.length > 0 ? (
         curationOptions.activeStep.hasWarnings.map((warning, index) => {
           let description;
@@ -452,19 +452,21 @@ const CreateEditStep: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
-                {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}><div className={"d-flex w-100"}><Input
+                {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}><div className={"d-flex w-100"}><HCInput
                   id="name"
                   placeholder="Enter name"
-                  value={stepName}
+                  value={stepName ? stepName : " "}
                   onChange={handleChange}
                   disabled={tobeDisabled}
+                  className={styles.input}
                   onBlur={sendPayload}
-                /></div></Tooltip> : <Input
+                /></div></Tooltip> : <HCInput
                   id="name"
                   placeholder="Enter name"
-                  value={stepName}
+                  value={stepName ? stepName : " "}
                   onChange={handleChange}
                   disabled={tobeDisabled}
+                  className={styles.input}
                   onBlur={sendPayload}
                 />}
                 <div className={"p-2 d-flex align-items-center"}>
@@ -491,12 +493,13 @@ const CreateEditStep: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="description"
               placeholder="Enter description"
-              value={description}
+              value={description ? description : " "}
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
+              className={styles.input}
               onBlur={sendPayload}
             />
             <div className={"p-2 d-flex align-items-center"}>
@@ -556,6 +559,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   onFocus={handleFocus}
                   onChange={handleTypeaheadChange}
                   onBlur={sendPayload}
+                  style={{width: "100%"}}
                 >
                   {/* {collectionsList} */}
                 </AutoComplete>{props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
@@ -579,10 +583,10 @@ const CreateEditStep: React.FC<Props> = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Timestamp Path:"}</FormLabel>
             <Col className={`d-flex ${styles.timestamp}`}>
-              <Input
+              <HCInput
                 id="timestamp"
                 placeholder="Enter path to the timestamp"
-                value={timestamp}
+                value={timestamp ? timestamp : " "}
                 onChange={handleChange}
                 disabled={props.canReadOnly && !props.canReadWrite}
                 className={styles.input}
@@ -600,8 +604,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
             <div className={styles.submitButtons}>
               <HCButton data-testid={`${props.stepType}-dialog-cancel`} variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
               &nbsp;&nbsp;
-              {!props.canReadWrite ? <Tooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
-                <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></Tooltip>
+              {!props.canReadWrite ? <HCTooltip text={NewMergeTooltips.missingPermission} id="save-disabled-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}>
+                <HCButton size="sm" className={styles.disabledSaveButton} variant="primary" type="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</HCButton></span></HCTooltip>
                 : <HCButton variant="primary" size="sm" type="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</HCButton>}
             </div>
           </Col>

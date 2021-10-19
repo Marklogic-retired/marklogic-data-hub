@@ -421,7 +421,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                       <HCInput
                         id="name"
                         placeholder="Enter name"
-                        value={stepName}
+                        value={stepName ? stepName : " "}
                         onChange={handleChange}
                         disabled={tobeDisabled}
                         onBlur={sendPayload}
@@ -431,7 +431,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                   <HCInput
                     id="name"
                     placeholder="Enter name"
-                    value={stepName}
+                    value={stepName ? stepName : " "}
                     onChange={handleChange}
                     disabled={tobeDisabled}
                     onBlur={sendPayload}
@@ -455,7 +455,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <HCInput
               id="description"
               placeholder="Enter description"
-              value={description}
+              value={description ? description: " "}
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
@@ -513,7 +513,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                   <div className={"d-flex ms-2"}>
                     <HCInput
                       id="otherSeparator"
-                      value={otherSeparator}
+                      value={otherSeparator ? otherSeparator: " "}
                       onChange={handleOtherSeparator}
                       style={{width: 75}}
                       disabled={props.canReadOnly && !props.canReadWrite}
@@ -563,7 +563,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               <HCInput
                 id="sourceName"
                 placeholder="Enter Source Name"
-                value={sourceName}
+                value={sourceName ? sourceName : " "}
                 onChange={handleChange}
                 disabled={props.canReadOnly && !props.canReadWrite}
                 className={styles.input}
@@ -584,7 +584,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               <HCInput
                 id="sourceType"
                 placeholder="Enter Source Type"
-                value={sourceType}
+                value={sourceType ? sourceType: " "}
                 onChange={handleChange}
                 disabled={props.canReadOnly && !props.canReadWrite}
                 className={styles.input}
@@ -604,7 +604,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <HCInput
               id="outputUriPrefix"
               placeholder="Enter URI Prefix"
-              value={outputUriPrefix}
+              value={outputUriPrefix ? outputUriPrefix: " "}
               onChange={handleOutputUriPrefix}
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}

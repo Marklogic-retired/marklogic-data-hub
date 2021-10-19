@@ -1,6 +1,6 @@
 import {
   Modal,
-  Radio, Input, Select
+  Radio, Select
 } from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useContext, useEffect} from "react";
@@ -21,6 +21,7 @@ import HCAlert from "../../../common/hc-alert/hc-alert";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCButton from "../../../common/hc-button/hc-button";
+import HCInput from "../../../common/hc-input/hc-input";
 
 type Props = {
   sourceNames: string[];
@@ -590,15 +591,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 <Col>
                   <Row>
                     <Col className={(uri || !uriTouched) ? "d-flex" : "d-flex has-error"}>
-                      <Input
+                      <HCInput
                         id="uri"
                         placeholder="Enter URI"
-                        size="default"
+                        size="sm"
                         value={uri}
                         onChange={handleChange}
                         //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
                         className={styles.input}
-                        aria-label="uri-input"
+                        ariaLabel="uri-input"
                       />
                       <div className={"p-2 d-flex align-items-center"}>
                         <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
@@ -619,15 +620,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 <Col>
                   <Row>
                     <Col className={(functionValue || !functionValueTouched) ? "d-flex" : "d-flex has-error"}>
-                      <Input
+                      <HCInput
                         id="function"
                         placeholder="Enter function"
-                        size="default"
+                        size="sm"
                         value={functionValue}
                         onChange={handleChange}
                         //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
                         className={styles.input}
-                        aria-label="function-input"
+                        ariaLabel="function-input"
                       />
                       <div className={"p-2 d-flex align-items-center"}>
                         <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
@@ -646,15 +647,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   {<span aria-label="formItem-namespace">Namespace:</span>}
                 </FormLabel>
                 <Col className={"d-flex"}>
-                  <Input
+                  <HCInput
                     id="namespace"
                     placeholder="Enter namespace"
-                    size="default"
+                    size="sm"
                     value={namespace}
                     onChange={handleChange}
                     //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
                     className={styles.input}
-                    aria-label="namespace-input"
+                    ariaLabel="namespace-input"
                   />
                   <div className={"p-2 d-flex align-items-center"}>
                     <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
@@ -698,11 +699,13 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               <Row className={"mb-3"}>
                 <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
                 <Col className={"d-flex"}>
-                  <Radio.Group value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
-                    <Radio value={1} > All</Radio>
-                    <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
+                  <Radio.Group className={styles.radioAnt} value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
+                    <Radio className={styles.radioAnt} value={1}> All</Radio>
+                    <Radio className={styles.radioAnt} value={2}>
+                      <HCInput id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput}/>
+                    </Radio>
                   </Radio.Group>
-                  <div className={"p-2 d-flex align-items-center"}>
+                  <div className={"d-flex align-items-center"}>
                     <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
                       <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                     </HCTooltip>
@@ -712,11 +715,13 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               <Row className={"mb-3"}>
                 <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
                 <Col className={"d-flex"}>
-                  <Radio.Group value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
-                    <Radio value={1} > All</Radio>
-                    <Radio value={2} ><Input id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
+                  <Radio.Group className={styles.radioAnt} value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
+                    <Radio className={styles.radioAnt} value={1} > All</Radio>
+                    <Radio className={styles.radioAnt} value={2} >
+                      <HCInput id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}/>
+                    </Radio>
                   </Radio.Group>
-                  <div className={"p-2 d-flex align-items-center"}>
+                  <div className={"d-flex align-items-center"}>
                     <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
                       <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
                     </HCTooltip>
