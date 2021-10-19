@@ -104,7 +104,7 @@ describe("EntityTypeModal Component", () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() =>
       Promise.reject({response: {status: 400, data: createModelErrorResponse}})));
 
-    const {getByText, getByPlaceholderText} = render(
+    const {getByText, getByPlaceholderText, getByLabelText} = render(
       <EntityTypeModal {...defaultModalOptions} color=""/>
     );
     expect(getByText("Add Entity Type")).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe("EntityTypeModal Component", () => {
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
 
-    expect(getByText("An entity type already exists with a name of Testing")).toBeInTheDocument();
+    await wait(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
   });
 
   test("Edit modal is not visible", () => {

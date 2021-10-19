@@ -43,7 +43,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName("Person");
     entityTypeModal.getAddButton().click();
-    cy.waitUntil(() => cy.contains("An entity type already exists with a name of Person").should("be.visible"));
+    cy.waitUntil(() => entityTypeModal.entityNameError().should("exist"));
     entityTypeModal.getAddButton().should("not.be.disabled");
     entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName("Buyer");

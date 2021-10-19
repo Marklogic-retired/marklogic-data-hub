@@ -67,7 +67,8 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
             fail("Expected a failure because a model already exists with the same name");
         } catch (FailedRequestException ex) {
             assertEquals(400, ex.getServerStatusCode());
-            assertEquals("An entity type already exists with a name of TestName", ex.getServerStatus());
+
+            assertEquals("An entity type is already using the name TestName. An entity type cannot use the same name as an existing entity type.", ex.getServerStatus());
         }
     }
 

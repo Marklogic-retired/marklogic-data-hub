@@ -4,7 +4,7 @@ import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../../util/user-context";
-import {ModelingTooltips} from "../../../config/tooltips.config";
+import {ModelingTooltips, ErrorTooltips} from "../../../config/tooltips.config";
 import {createEntityType, updateModelInfo} from "../../../api/modeling";
 import {MLTooltip} from "@marklogic/design-system";
 import {TwitterPicker} from "react-color";
@@ -186,7 +186,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       }
     } catch (error) {
       if (error.response.status === 400) {
-        if (error.response.data.hasOwnProperty("message")) {
+        if (error.response.data.hasOwnProperty("message") && error.response.data["message"] === ErrorTooltips.entityErrorServerResp(name)) {
+          setErrorServer("name-error");
+        } else {
           setErrorServer(error["response"]["data"]["message"]);
         }
       } else {
@@ -305,11 +307,12 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />}
+          { errorServer === "name-error" ? <p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>
+            : errorServer !== "" ? <p className={styles.errorServer}>{errorServer}</p> : null}
           {props.isEditModal ? null : <MLTooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>}
         </Form.Item>
-
         <Form.Item
           label={<span className={styles.label}>Description:</span>}
           {...formItemLayout}
@@ -370,7 +373,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
               <Icon type="question-circle" className={styles.icon} theme="filled" />
             </MLTooltip>
           </Form.Item>
-          { errorServer ? <p className={styles.errorServer}>{errorServer}</p> : null }
         </Form.Item>
         <Form.Item
           label="Color:"
