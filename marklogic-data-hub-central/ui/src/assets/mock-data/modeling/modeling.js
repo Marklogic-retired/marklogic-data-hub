@@ -14,9 +14,9 @@ export const createModelResponse = {
 
 export const createModelErrorResponse = {
   "code": 400,
-  "message": "An entity type already exists with a name of Testing",
+  "message": "An entity type is already using the name Testing. An entity type cannot use the same name as an existing entity type.",
   "suggestion": "Resend the request in the correct format.",
-  "details": "An entity type already exists with a name of Testing"
+  "details": "An entity type is already using the name Testing. An entity type cannot use the same name as an existing entity type."
 };
 
 export const createModelErrorResponseNamespace = {

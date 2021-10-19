@@ -38,10 +38,10 @@ if (name == null) {
 const entityModel = entityLib.findDraftModelByEntityName(name)
 if (entityModel) {
   if(!entityModel.info.draftDeleted) {
-    httpUtils.throwBadRequest(`An entity type already exists with a name of ${name}`);
+    httpUtils.throwBadRequest(`An entity type is already using the name ${name}. An entity type cannot use the same name as an existing entity type.`);
   }
 } else if (fn.docAvailable(entityLib.getModelUri(name))) {
-  httpUtils.throwBadRequest(`An entity type already exists with a name of ${name}`);
+  httpUtils.throwBadRequest(`An entity type is already using the name ${name}. An entity type cannot use the same name as an existing entity type.`);
 }
 
 const model = {

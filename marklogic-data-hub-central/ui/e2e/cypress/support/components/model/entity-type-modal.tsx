@@ -15,6 +15,9 @@ class EntityTypeModal {
     cy.get("#description").focus().clear();
   }
 
+  entityNameError() {
+    return cy.findByLabelText("entity-name-error");
+  }
   getEntityDescription() {
     return cy.get("#description");
   }

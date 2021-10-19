@@ -74,7 +74,7 @@ const ModelingTooltips = {
            </span>
       )
     },
-    /*Relationship without Foreign Key in modeling tile*/  
+    /*Relationship without Foreign Key in modeling tile*/
     relationshipNoForeignKey: function (relatedEntityName, sourceEntityName) {
       return(
           <span>
@@ -125,7 +125,7 @@ const ModelingTooltips = {
   },
 
   /* TO BE DEPRECATED. Use ModelingTooltips.nameEntityType. */
-  nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores.',
+  nameRegex: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. Entity names cannot use the same name as an existing entity type.',
 
   /* TO BE DEPRECATED. Use ModelingTooltips.descriptionEntityType. */
   entityDescription: 'A description of this entity type.',
@@ -514,7 +514,10 @@ const SecurityMessages = {
 
 /* --- ERROR --- */
 const ErrorTooltips = {
-  disabledTab: 'You must correct any errors and provide all required information in the current tab before switching.'
+  disabledTab: 'You must correct any errors and provide all required information in the current tab before switching.',
+  entityErrorServerResp: function (entityName) {
+    return `An entity type is already using the name ${entityName}. An entity type cannot use the same name as an existing entity type.`
+  }
 };
 
 /* --- SLIDER --- */
