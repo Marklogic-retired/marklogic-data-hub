@@ -45,19 +45,15 @@ class GraphViewSidePanel {
     return cy.findByTestId(`${propName}-span`);
   }
 
-  getPersonEntityNode() {
-    return cy.findByTestId("Person-entityNode");
-  }
-
-  getPersonEntityDescription() {
+  getEntityDescription() {
     return cy.findByTestId("description");
   }
 
-  getPersonEntityNamespace() {
+  getEntityNamespace() {
     return cy.findByTestId("namespace");
   }
 
-  getPersonEntityPrefix() {
+  getEntityPrefix() {
     return cy.findByTestId("prefix");
   }
 

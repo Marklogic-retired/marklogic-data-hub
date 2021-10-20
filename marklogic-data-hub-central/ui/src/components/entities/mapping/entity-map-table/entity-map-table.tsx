@@ -1232,7 +1232,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         } else {
           let renderOutput = getRenderOutput(textToSearchInto, valueToDisplay, "name", searchedEntityColumn, searchEntityText, row.key);
           renderText =
-            <span><span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.joinPropertyName && row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
+            <span><span data-testid={`${props.entityTypeTitle}-${valueToDisplay}-name`}>{row.relatedEntityType ? <i>{renderOutput}</i> : renderOutput}</span>
               {row.key > 100 && row.type.includes("[ ]") &&
                 <span>
                   <MLTooltip title={"Multiple"}>
@@ -1312,7 +1312,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 <MLTooltip className={styles.relationshipTooltip} title={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} >
                   <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name}/>
                 </MLTooltip>
-                <MLTooltip title={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} >
+                <MLTooltip title={ModelingTooltips.foreignKeyMapping(relatedEntityName, row.joinPropertyName, props.entityTypeTitle, row.name)} id={"tooltip-" + row.name} >
                   <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name}/>
                 </MLTooltip>
               </div>

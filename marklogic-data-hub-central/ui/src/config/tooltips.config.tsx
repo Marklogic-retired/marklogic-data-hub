@@ -57,10 +57,10 @@ const ModelingTooltips = {
   joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',
 
    /* Foreign key relationship tooltip in mapping tile*/
-   foreignKeyMapping: function (relatedEntityName, joinPropertyName, type, sourceEntityName, propertyName) {
+   foreignKeyMapping: function (relatedEntityName, joinPropertyName, sourceEntityName, propertyName) {
     return (
       <span>
-        Using the <strong>{joinPropertyName}</strong>  property (<strong>{type}</strong>), the <strong>{propertyName}</strong> property creates a foreign key relationship between the <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types.<br />
+        The <strong>{sourceEntityName}</strong> and <strong>{relatedEntityName}</strong> entity types are connected using the <strong>{joinPropertyName}</strong> property. <br/>
         The <strong>{propertyName}</strong> property (<strong>{sourceEntityName}</strong>) and the <strong>{joinPropertyName}</strong> property (<strong>{relatedEntityName}</strong>) must return the same value.
       </span>
     )

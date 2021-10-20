@@ -144,7 +144,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(text, record);
             }}>
-            {text}
+            {record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
             {record.multiple === record.propertyName &&
               <MLTooltip title={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
                 <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />
@@ -156,7 +156,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             }
           </span>;
         } else {
-          renderText = <span data-testid={text + "-span"} aria-label={"Property-name"}>{text}
+          renderText = <span data-testid={text + "-span"} aria-label={"Property-name"}>{record.joinPropertyType && record.joinPropertyType !== "" ? <i>{text}</i> : text}
             {record.multiple === record.propertyName &&
               <MLTooltip title={"Multiple"} id={"tooltip-" + record.propertyName} placement={"bottom"}>
                 <img className={styles.arrayImage} src={arrayIcon} alt={""} data-testid={"multiple-icon-" + text} />

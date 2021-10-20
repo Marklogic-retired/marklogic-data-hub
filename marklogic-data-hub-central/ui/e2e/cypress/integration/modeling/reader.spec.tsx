@@ -138,20 +138,20 @@ describe("Entity Modeling: Reader Role", () => {
 
     //To verify cannot edit Entity Type tab without permissions (except color)
     graphViewSidePanel.getEntityTypeTab().click();
-    graphViewSidePanel.getPersonEntityDescription().should("be.disabled");
-    graphViewSidePanel.getPersonEntityNamespace().should("be.disabled");
-    graphViewSidePanel.getPersonEntityPrefix().should("be.disabled");
+    graphViewSidePanel.getEntityDescription().should("be.disabled");
+    graphViewSidePanel.getEntityNamespace().should("be.disabled");
+    graphViewSidePanel.getEntityPrefix().should("be.disabled");
     graphViewSidePanel.getEditEntityTypeColor().click();
     graphViewSidePanel.selectColorFromPicker("#D5D3DD").click();
     if (Cypress.isBrowser("!firefox")) {
-      graphViewSidePanel.getEntityTypeColor("Customer").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
+      graphViewSidePanel.getEntityTypeColor("Order").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
     }
     if (Cypress.isBrowser("firefox")) {
-      graphViewSidePanel.getEntityTypeColor("Customer").should("have.css", "background-color", "rgb(213, 211, 221)");
+      graphViewSidePanel.getEntityTypeColor("Order").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
 
     graphViewSidePanel.closeSidePanel();
-    graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
+    graphViewSidePanel.getSelectedEntityHeading("Order").should("not.exist");
 
     modelPage.selectView("table");
     entityTypeTable.viewEntityInGraphView("Person");
