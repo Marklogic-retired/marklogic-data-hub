@@ -117,9 +117,8 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("not.be.checked");
   });
-  // TODO: skip failing test brought from develop branch since it's blocking ant replacement feature branch.
-  // will unskip next test when pending PR are merged in ant-lib-replacement
-  it.skip("apply facet search and verify docs, hub/entity properties", () => {
+
+  it("apply facet search and verify docs, hub/entity properties", () => {
     browsePage.selectEntity("All Entities");
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
