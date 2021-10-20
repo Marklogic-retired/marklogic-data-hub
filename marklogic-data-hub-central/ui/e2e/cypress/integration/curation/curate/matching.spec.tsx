@@ -427,7 +427,7 @@ describe("Matching", () => {
       cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
       cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
     }
-    cy.findAllByText("Total Score: 20").should("have.length.gt", 0);
+    cy.findAllByText("Total Score: 30").should("have.length.gt", 0);
 
     multiSlider.enableEdit("ruleset");
     multiSlider.deleteOptionMulti("testMultipleProperty");
