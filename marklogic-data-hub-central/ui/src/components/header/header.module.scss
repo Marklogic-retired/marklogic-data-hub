@@ -2,6 +2,7 @@ header.container {
   position: fixed;
   z-index: 1;
   width: 100%;
+  padding-right: 0.5rem;
   div.logoContainer {
     height: 0px;
     width: 240px;
@@ -78,9 +79,13 @@ li.menuLink {
   background-color: #2B333C;
 }
 div.iconsContainerAuth {
-  position: absolute;
-  top: 13px;
-  right: 10px;
+  line-height: normal;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
+  i {
+      color: #ffffffa6;
+  }
   i:hover {
     cursor: pointer;
     color: #fff;
@@ -122,10 +127,10 @@ div.iconsContainerAuth {
 }
 
 div.iconsContainer {
-  position: absolute;
-  top: 12px;
-  right: 0;
-  color: rgba(255, 255, 255, 0.65);
+  line-height: normal;
+  height: 100%;
+  align-items: center;
+  justify-content: flex-end;
   .helpIconContainer {
     margin-right: 10px;
     .helpIconLink {
@@ -146,24 +151,26 @@ div.iconsContainer {
     }
   }
 }
+div.userDrop{
+  margin-right: 1rem;
+  > [class~=dropdown-menu]{
+    margin-top: .75rem;
+    border-radius: 0;
+  }
+}
 
 div.userMenu {
-  position: relative;
-  // top: 17px;
-  width: 200px;
-  background-color: white;
-  border: solid 1px #aaa;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, .2);
-  color: black;
-  padding: 10px;
+  width: 185px;
+  padding: 1.25rem 0;
   div.username {
     width: 100%;
     font-weight: bold;
     text-align: center;
+    padding-bottom: 20px;
+    color: #333;
   }
   div.logout {
     width: 100%;
-    padding-bottom: 20px;
     text-align: center;
     button {
       color:#ffffff;

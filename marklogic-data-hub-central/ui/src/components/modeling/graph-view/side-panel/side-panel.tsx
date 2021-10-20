@@ -3,7 +3,7 @@ import styles from "./side-panel.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
-import {Menu, Form, Input} from "antd";
+import {Form, Input} from "antd";
 import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
@@ -14,6 +14,7 @@ import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
 import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
+import {Tab, Tabs} from "react-bootstrap";
 
 type Props = {
   entityTypes: any;
@@ -59,8 +60,8 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     wrapperCol: {span: 18}
   };
 
-  const handleTabChange = (item) => {
-    setCurrentTab(item.key);
+  const handleTabChange = (key) => {
+    setCurrentTab(key);
   };
 
   const getEntityInfo = async () => {
@@ -361,14 +362,21 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         </i></span>
       </div>
       <div className={styles.tabs}>
-        <Menu mode="horizontal" defaultSelectedKeys={[DEFAULT_TAB]} selectedKeys={[currentTab]} onClick={handleTabChange}>
-          <Menu.Item key="properties" aria-label="propertiesTabInSidePanel">
-            {<span className={styles.sidePanelTabLabel}>Properties</span>}
-          </Menu.Item>
-          <Menu.Item key="entityType" aria-label="entityTypeTabInSidePanel">
-            {<span className={styles.sidePanelTabLabel}>Entity Type</span>}
-          </Menu.Item>
-        </Menu>
+        <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
+          <Tab
+            eventKey="properties"
+            aria-label="propertiesTabInSidePanel"
+            id="propertiesTabInSidePanel"
+            title={<span className={styles.sidePanelTabLabel}>Properties</span>}
+            tabClassName={`${styles.tab} ${currentTab === "properties" && styles.active}`}></Tab>
+          <Tab
+            eventKey="entityType"
+            aria-label="entityTypeTabInSidePanel"
+            id="entityTypeTabInSidePanel"
+            title={<span className={styles.sidePanelTabLabel}>Entity Type</span>}
+            tabClassName={`${styles.tab}
+          ${currentTab === "entityType" && styles.active}`}></Tab>
+        </Tabs>
       </div>
       {displayPanelContent()}
       {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
