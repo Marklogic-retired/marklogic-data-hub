@@ -199,7 +199,7 @@ describe("Create and verify load steps, map step and flows with a custom header"
     cy.verifyStepAddedToFlow("Map", mapStep, flowName);
   });
   // TODO DHFPROD-7711 skip since fails in Explore for Ant Design Table component
-  it.skip("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
+  it("Add step to a new flow, Run Map step where step exists in multiple flows and explore data", {defaultCommandTimeout: 120000}, () => {
     toolbar.getCurateToolbarIcon().click({force: true});
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");

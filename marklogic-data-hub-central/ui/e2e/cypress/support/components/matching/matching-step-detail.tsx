@@ -73,7 +73,7 @@ class MatchingStepDetail {
   }
 
   getTestMatchUriButton() {
-    return cy.findByLabelText("testMatchUriButton").click();
+    return cy.findByLabelText("testMatchUriButton").scrollIntoView().click();
   }
 
   getAllDataRadio() {
