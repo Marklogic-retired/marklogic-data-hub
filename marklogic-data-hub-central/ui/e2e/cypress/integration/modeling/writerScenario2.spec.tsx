@@ -450,9 +450,8 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.cancelModal();
   });
 
-  // TODO: review why Test is running successfully on local environment but failing in pipeline.
-  // https://wiki.marklogic.com/display/ENGINEERING/Hub+Central+UI+Test+Failure+discussion
-  it.skip("can enter graph edit mode and add edge relationships via single node click", () => {
+
+  it("can enter graph edit mode and add edge relationships via single node click", () => {
 
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     cy.waitForAsyncRequest();
@@ -509,9 +508,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyForeignKeyIcon("purchased").should("not.exist");
   });
 
-  // TODO: review why Test is running successfully on local environment but failing in pipeline.
-  // https://wiki.marklogic.com/display/ENGINEERING/Hub+Central+UI+Test+Failure+discussion
-  it.skip("can edit graph edit mode and add edge relationships via drag/drop", () => {
+
+  it("can edit graph edit mode and add edge relationships via drag/drop", () => {
 
     entityTypeTable.viewEntityInGraphView("Person");
     cy.wait(2000);
@@ -598,8 +596,8 @@ describe("Entity Modeling: Writer Role", () => {
     graphView.verifyEditInfoMessage().should("not.exist");
   });
 
-  //TODO: Disabling this block since the above blocks are skipped
-  it.skip("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
+
+  it("Delete a relationship from graph view", {defaultCommandTimeout: 120000}, () => {
     // To delete a relation
     graphVis.getPositionOfEdgeBetween("Person,Client").then((edgePosition: any) => {
       cy.waitUntil(() => graphVis.getGraphVisCanvas().click(edgePosition.x, edgePosition.y));

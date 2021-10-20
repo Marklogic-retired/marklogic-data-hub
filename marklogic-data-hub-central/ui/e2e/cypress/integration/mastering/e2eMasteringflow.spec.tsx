@@ -80,7 +80,7 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", loadStepName, flowName);
-    runPage.runStep(loadStepName);
+    runPage.runStep(flowName, loadStepName);
     cy.waitUntil(() => cy.get("input[type=\"file\"]"));
     cy.get("input[type=\"file\"]").attachFile(["patients/first-name-double-metaphone1.json", "patients/first-name-double-metaphone2.json", "patients/first-name-synonym1.json", "patients/first-name-synonym2.json", "patients/last-name-address-reduce1.json", "patients/last-name-address-reduce2.json", "patients/last-name-dob-custom1.json", "patients/last-name-dob-custom2.json", "patients/last-name-plus-zip-boost1.json", "patients/last-name-plus-zip-boost2.json", "patients/last-name-slight-match1.json", "patients/last-name-slight-match2.json", "patients/ssn-match1.json", "patients/ssn-match2.json"], {force: true});
     cy.waitForAsyncRequest();
@@ -148,7 +148,7 @@ describe("Validate E2E Mastering Flow", () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
     curatePage.toggleEntityTypeId("Patient");
-    cy.waitUntil(() => curatePage.addNewStep().click());
+    cy.waitUntil(() => curatePage.addNewStep("Patient").click());
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     createEditMappingDialog.setCollectionInput(loadStepName);
@@ -193,7 +193,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Patient").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
     createEditStepDialog.stepDescriptionInput().type("match patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(mapStep);
@@ -322,7 +322,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Patient").should("be.visible"));
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMergeTab("Patient");
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Patient").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().type("merge patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(matchStep);

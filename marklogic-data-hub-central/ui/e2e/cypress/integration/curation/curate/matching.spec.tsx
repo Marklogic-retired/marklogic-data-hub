@@ -54,10 +54,10 @@ describe("Matching", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
-    cy.waitUntil(() => curatePage.addNewStep());
+    cy.waitUntil(() => curatePage.addNewStep("Customer"));
   });
   it("Creating a new match step", () => {
-    curatePage.addNewStep().should("be.visible").click();
+    curatePage.addNewStep("Customer").should("be.visible").click();
     createEditStepDialog.stepNameInput().type(matchStep);
     createEditStepDialog.stepDescriptionInput().type("match customer step example", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Query");
@@ -282,7 +282,7 @@ describe("Matching", () => {
   it("Edit test match URIs", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Person");
-    cy.findByText("Match").click();
+    curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
 
     // to verify tooltips are present
@@ -296,12 +296,15 @@ describe("Matching", () => {
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
     matchingStepDetail.getTestMatchUriButton();
+
     cy.findByText("At least Two URIs are required.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
+
     cy.findByText("This URI has already been added.").should("be.visible");
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri2");
     matchingStepDetail.getAddUriOnlyIcon().click();
+
     cy.findByText("At least Two URIs are required.").should("not.exist");
     cy.findByText("This URI has already been added.").should("not.exist");
 
@@ -333,7 +336,7 @@ describe("Matching", () => {
   it("Show matched results for test match", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId("Person");
-    cy.findByText("Match").click();
+    curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
     cy.findByLabelText("inputUriRadio").click();
 
