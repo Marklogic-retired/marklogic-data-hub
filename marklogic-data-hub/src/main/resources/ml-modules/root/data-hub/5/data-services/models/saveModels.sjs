@@ -19,21 +19,42 @@ declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
+const config = require("/com.marklogic.hub/config.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var models = fn.head(xdmp.fromJSON(models));
 
-/*
-This endpoint only writes to one database, as testing has shown that using xdmp.invoke in conjunction with
-pre and post commit triggers results in significantly worse performance - e.g. 20 models will take several seconds to load,
-as opposed to hundreds of milliseconds when saved directly via xdmp.documentInsert.
- */
-const databases = [xdmp.databaseName(xdmp.database())];
-models.forEach(model => {
-  const name = model.info.title;
-  if (name == null) {
-    httpUtils.throwBadRequest("The model must have an info object with a title property");
-  }
-  entityLib.writeModelToDatabases(name, model, databases);
+const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
+
+databases.forEach((database) => {
+  xdmp.invokeFunction(() => {
+    models.forEach(model => {
+      const name = model.info.title;
+      if (name == null) {
+        httpUtils.throwBadRequest("The model must have an info object with a title property");
+      }
+      entityLib.writeModelToDatabases(name, model, [database]);
+    });
+  }, {database: xdmp.database(database), commit: "auto", update: "true"});
 });
+// wait on post-commit triggers
+let tasksFinished = false;
+let taskCheckCount = 0;
+do {
+  hubUtils.invokeFunction(() => {
+        const requestStatusCounts = xdmp.hosts().toArray()
+            .map((host) => { return { host, taskServerId: fn.head(xdmp.hostStatus(host)).taskServer.taskServerId}})
+            .map((taskServerInfo) => {
+              return fn.head(xdmp.serverStatus(taskServerInfo.host, taskServerInfo.taskServerId)).toObject()
+                .requestStatuses.filter((requestStatus) => requestStatus.requestText === "/data-hub/4/triggers/entity-model-trigger.xqy").length;
+            });
+        tasksFinished = fn.sum(Sequence.from(requestStatusCounts)) === 0;
+  });
+  if (!tasksFinished) {
+    xdmp.sleep(100);
+  }
+  taskCheckCount++;
+} while(!tasksFinished && taskCheckCount < 100);
+
