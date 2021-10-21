@@ -4,7 +4,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "@components/common";
 
 interface Props {
   item: any;

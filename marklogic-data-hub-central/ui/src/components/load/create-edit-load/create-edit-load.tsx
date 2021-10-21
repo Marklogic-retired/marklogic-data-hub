@@ -6,9 +6,8 @@ import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/for
 import StepsConfig from "../../../config/steps.config";
 import {NewLoadTooltips} from "../../../config/tooltips.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../common/hc-button/hc-button";
-import HCInput from "../../common/hc-input/hc-input";
+import {HCInput, HCButton, HCTooltip} from "@components/common";
+
 interface Props {
   tabKey: string;
   openStepSettings: boolean;

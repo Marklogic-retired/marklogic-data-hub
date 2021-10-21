@@ -5,10 +5,7 @@ import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import styles from "./column-selector.module.scss";
 import {treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey} from "../../util/data-conversion";
 import {SearchContext} from "../../util/search-context";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCSearch from "../common/hc-search/hc-search";
-import HCButton from "../common/hc-button/hc-button";
+import {HCSearch, HCButton, HCDivider, HCTooltip} from "@components/common";
 
 interface Props {
   entityPropertyDefinitions: any[];

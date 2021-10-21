@@ -2,8 +2,8 @@ import React, {useContext, useEffect, useState} from "react";
 import {Select} from "antd";
 import styles from "./search-bar.module.scss";
 import {SearchContext} from "../../util/search-context";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCSearch from "../common/hc-search/hc-search";
+import {HCSearch, HCDivider} from "@components/common";
+
 interface Props {
   entities: any;
   cardView: boolean;

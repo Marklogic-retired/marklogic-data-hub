@@ -1,15 +1,12 @@
 import React, {useState, useContext, useEffect} from "react";
-import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import styles from "../facet/facet.module.scss";
 import {stringConverter} from "../../util/string-conversion";
 import {MonitorContext} from "../../util/monitor-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import PopOverSearch from "../pop-over-search/pop-over-search";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
-
-
+import {HCCheckbox, HCTooltip} from "@components/common";
 
 interface Props {
     name: string;

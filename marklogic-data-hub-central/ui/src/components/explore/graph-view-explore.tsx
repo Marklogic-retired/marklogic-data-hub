@@ -6,7 +6,7 @@ import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import SplitPane from "react-split-pane";
 import {ModelingTooltips} from "../../config/tooltips.config";
 import GraphVisExplore from "./graph-vis-explore/graph-vis-explore";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "@components/common";
 
 type Props = {
   entityTypesInstances: any;

@@ -3,8 +3,7 @@ import {Modal} from "react-bootstrap";
 import styles from "./confirmation-modal.module.scss";
 import {ModelingMessages} from "../../config/tooltips.config";
 import {ConfirmationType} from "../../types/common-types";
-import HCAlert from "../common/hc-alert/hc-alert";
-import HCButton from "../common/hc-button/hc-button";
+import {HCAlert, HCButton} from "@components/common";
 
 type Props = {
   isVisible: boolean;

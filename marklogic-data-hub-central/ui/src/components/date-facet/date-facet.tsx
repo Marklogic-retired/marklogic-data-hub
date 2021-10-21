@@ -2,8 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {SearchContext} from "../../util/search-context";
 import styles from "./date-facet.module.scss";
 import moment from "moment";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
+import {HCTooltip, HCDateTimePicker} from "@components/common";
 
 interface Props {
     name: any

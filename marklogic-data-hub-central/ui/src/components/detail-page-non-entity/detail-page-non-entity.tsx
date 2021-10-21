@@ -10,7 +10,7 @@ import AsyncLoader from "../async-loader/async-loader";
 import {updateUserPreferences} from "../../services/user-preferences";
 import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
 import {getRecord} from "../../api/record";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "@components/common";
 import {ArrowLeftShort, Download} from "react-bootstrap-icons";
 
 const DetailPageNonEntity = (props) => {
