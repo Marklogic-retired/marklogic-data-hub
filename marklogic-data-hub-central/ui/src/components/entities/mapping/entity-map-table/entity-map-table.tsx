@@ -5,7 +5,6 @@ import {Table, Popover, Select, Modal, Tooltip, Icon} from "antd";
 import Spinner from "react-bootstrap/Spinner";
 import {ButtonGroup, Dropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import Highlighter from "react-highlight-words";
 import {faList, faTerminal, faSearch} from "@fortawesome/free-solid-svg-icons";
 import EntitySettings from "../entity-settings/entity-settings";
@@ -17,11 +16,10 @@ import {getParentKey, getKeys, deepCopy} from "../../../../util/data-conversion"
 import {paginationMapping} from "../../../../config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
 import StepsConfig from "../../../../config/steps.config";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../../common/hc-button/hc-button";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {FormControl} from "react-bootstrap";
-import HCInput from "../../../common/hc-input/hc-input";
+import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "../../../common";
+
 interface Props {
   setScrollRef: any;
   executeScroll: any;

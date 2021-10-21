@@ -2,8 +2,7 @@ import React, {useContext, useEffect} from "react";
 import {Result} from "antd";
 import {withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
-import HCButton from "../components/common/hc-button/hc-button";
-
+import {HCButton} from "../components/common";
 
 const NoMatchRedirect = ({history}) => {
 

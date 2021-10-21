@@ -16,11 +16,8 @@ import MultiSlider from "../../matching/multi-slider/multi-slider";
 import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact, getMergingRulesWarnings} from "../../../../api/merging";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
-import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
-import HCAlert from "../../../common/hc-alert/hc-alert";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../../common/hc-button/hc-button";
+import {ConfirmYesNo, HCAlert, HCButton, HCTooltip} from "../../../common";
 
 type Props = {
   sourceNames: string[];

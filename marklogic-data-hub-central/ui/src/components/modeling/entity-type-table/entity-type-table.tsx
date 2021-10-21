@@ -15,7 +15,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {queryDateConverter, relativeTimeConverter} from "../../../util/date-conversion";
 import {numberConverter} from "../../../util/number-conversion";
 import {ModelingTooltips, SecurityTooltips} from "../../../config/tooltips.config";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "../../common";
 
 type Props = {
   allEntityTypesData: any[];

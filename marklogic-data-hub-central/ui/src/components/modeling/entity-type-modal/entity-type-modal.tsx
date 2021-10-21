@@ -11,8 +11,7 @@ import {TwitterPicker} from "react-color";
 import graphConfig from "../../../config/graph-vis.config";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-
+import {HCTooltip} from "../../common";
 
 type Props = {
   isVisible: boolean;

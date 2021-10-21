@@ -10,11 +10,9 @@ import GraphViewSidePanel from "./side-panel/side-panel";
 import {ModelingContext} from "../../../util/modeling-context";
 import GraphVis from "./graph-vis/graph-vis";
 import {ConfirmationType} from "../../../types/common-types";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../common/hc-button/hc-button";
-import HCAlert from "../../common/hc-alert/hc-alert";
 import {ChevronDown, Search} from "react-bootstrap-icons";
 import {Dropdown, DropdownButton} from "react-bootstrap";
+import {HCAlert, HCButton, HCTooltip} from "../../common";
 
 type Props = {
   entityTypes: any;

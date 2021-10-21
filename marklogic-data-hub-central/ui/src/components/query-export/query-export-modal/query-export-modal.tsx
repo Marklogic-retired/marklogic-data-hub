@@ -6,7 +6,7 @@ import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "../../../util/search-context";
 import {UserContext} from "../../../util/user-context";
 import {exportQuery, exportSavedQuery} from "../../../api/queries";
-import HCAlert from "../../common/hc-alert/hc-alert";
+import {HCAlert} from "../../common";
 
 const QueryExportModal = (props) => {
 

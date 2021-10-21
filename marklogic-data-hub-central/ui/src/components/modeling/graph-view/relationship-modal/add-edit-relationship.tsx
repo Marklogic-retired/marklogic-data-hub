@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
 import {Modal, Select, Icon, Card, Dropdown, Tooltip} from "antd";
-import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
@@ -18,10 +17,8 @@ import {
   PropertyType,
   EntityModified
 } from "../../../../types/modeling-types";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../../common/hc-button/hc-button";
-import HCInput from "../../../common/hc-input/hc-input";
+import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "../../../common";
 
 type Props = {
   openRelationshipModal: boolean;

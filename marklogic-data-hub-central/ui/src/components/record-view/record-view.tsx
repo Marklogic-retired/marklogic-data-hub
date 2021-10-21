@@ -13,10 +13,9 @@ import {formatCardUri} from "../../util/conversionFunctions";
 import {CardViewDateConverter} from "../../util/date-conversion";
 import {SearchContext} from "../../util/search-context";
 import {getRecord} from "../../api/record";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Download, FileEarmark} from "react-bootstrap-icons";
-import HCCard from "../common/hc-card/hc-card";
+import {HCCard, HCTooltip} from "../common";
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);  // eslint-disable-line @typescript-eslint/no-unused-vars

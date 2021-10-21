@@ -3,9 +3,7 @@ import {SearchContext} from "../../util/search-context";
 import {UserContext} from "../../util/user-context";
 import styles from "./numeric-facet.module.scss";
 import {rangeFacet} from "../../api/facets";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCSlider from "../common/hc-slider/hc-slider";
-
+import {HCSlider, HCTooltip} from "../common";
 
 interface Props {
   name: any;

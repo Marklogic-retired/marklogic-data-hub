@@ -3,7 +3,7 @@ import {Radio} from "antd";
 import styles from "./expand-collapse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleDown, faAngleDoubleUp} from "@fortawesome/free-solid-svg-icons";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "../common";
 
 interface Props {
   handleSelection: (option: string) => void;

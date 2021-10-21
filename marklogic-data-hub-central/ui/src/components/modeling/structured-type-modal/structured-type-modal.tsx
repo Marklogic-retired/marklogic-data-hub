@@ -2,12 +2,10 @@ import React, {useEffect, useState, useContext} from "react";
 import {Input, Modal} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./structured-type-modal.module.scss";
-
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../common/hc-button/hc-button";
+import {HCButton, HCTooltip} from "../../common";
 
 
 type Props = {

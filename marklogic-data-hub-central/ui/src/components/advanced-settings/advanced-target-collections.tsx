@@ -6,7 +6,7 @@ import React, {useState, useEffect} from "react";
 import styles from "./advanced-target-collections.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCheck, faTimes, faSquare} from "@fortawesome/free-solid-svg-icons";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "../common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 
 export const breakLine = "\u000A";

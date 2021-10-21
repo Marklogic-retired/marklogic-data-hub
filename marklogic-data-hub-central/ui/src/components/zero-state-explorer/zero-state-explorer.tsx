@@ -9,10 +9,7 @@ import {QueryOptions} from "../../types/query-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faThLarge} from "@fortawesome/free-solid-svg-icons";
 import tiles from "../../config/tiles.config";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCCard from "../common/hc-card/hc-card";
-import HCButton from "../common/hc-button/hc-button";
-import HCInput from "../common/hc-input/hc-input";
+import {HCButton, HCCard, HCDivider, HCInput} from "../common";
 
 const ZeroStateExplorer = (props) => {
   const {

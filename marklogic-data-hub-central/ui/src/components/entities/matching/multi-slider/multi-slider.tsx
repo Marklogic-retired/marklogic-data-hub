@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Slider, Handles, Ticks, Rail, GetRailProps} from "@marklogic/react-compound-slider";
 import "./multi-slider.scss";
 import {multiSliderTooltips} from "../../../../config/tooltips.config";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "../../../common";
 import {XLg} from "react-bootstrap-icons";
 
 const MultiSlider = (props) => {

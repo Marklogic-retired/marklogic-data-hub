@@ -9,12 +9,10 @@ import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import sourceFormatOptions from "../../config/formats.config";
 import {convertDateFromISO} from "../../util/conversionFunctions";
-import HCCard from "../common/hc-card/hc-card";
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
+import {HCCard, HCDivider, HCTooltip} from "../common";
 
 const {Option} = Select;
 

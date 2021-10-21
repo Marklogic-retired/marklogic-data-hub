@@ -8,12 +8,11 @@ import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
 import SystemInfo from "./system-info";
 import {Image, Nav, NavDropdown} from "react-bootstrap";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {QuestionCircle} from "react-bootstrap-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {faUser} from "@fortawesome/free-regular-svg-icons";
-import HCButton from "../common/hc-button/hc-button";
+import {HCButton, HCTooltip} from "../common";
 
 interface Props extends RouteComponentProps<any> {
   environment: any

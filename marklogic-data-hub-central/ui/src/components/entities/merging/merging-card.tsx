@@ -14,12 +14,9 @@ import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config"
 import {ConfirmationType} from "../../../types/common-types";
 import {MergingStep, StepType} from "../../../types/curation-types";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
-import HCDivider from "../../common/hc-divider/hc-divider";
-import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
-
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
+import {HCCard, HCDivider, HCTooltip} from "../../common";
 interface Props {
   mergingStepsArray: any;
   flows: any;

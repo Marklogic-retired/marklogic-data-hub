@@ -6,8 +6,8 @@ import {stringConverter} from "../../util/string-conversion";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
+import {HCTooltip} from "../common";
 
 interface Props {
   name: string;

@@ -18,9 +18,8 @@ import {Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../../common/hc-button/hc-button";
+import {HCButton, HCTooltip} from "../../../common";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",

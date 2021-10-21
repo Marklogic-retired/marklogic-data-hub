@@ -12,10 +12,9 @@ import {StepType} from "../../../types/curation-types";
 import {faCog, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {CurationContext} from "../../../util/curation-context";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
-import HCDivider from "../../common/hc-divider/hc-divider";
-import HCCard from "../../common/hc-card/hc-card";
 import Steps from "../../steps/steps";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
+import {HCCard, HCDivider} from "../../common";
 
 const {Option} = Select;
 

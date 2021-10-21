@@ -11,10 +11,8 @@ import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltip
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
-import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../../common/hc-button/hc-button";
+import {ConfirmYesNo, HCButton, HCTooltip} from "../../../common";
 
 type Props = {
   sourceNames: string[];

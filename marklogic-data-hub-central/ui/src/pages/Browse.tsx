@@ -23,8 +23,7 @@ import {QueryOptions} from "../types/query-types";
 import Spinner from "react-bootstrap/Spinner";
 import RecordCardView from "../components/record-view/record-view";
 import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
-import HCTooltip from "../components/common/hc-tooltip/hc-tooltip";
-
+import {HCTooltip} from "../components/common";
 
 interface Props extends RouteComponentProps<any> {
 }

@@ -9,7 +9,7 @@ import {Link} from "react-router-dom";
 import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "../common";
 
 /* eslint-disable */
 interface Props {

@@ -8,8 +8,7 @@ import StepsConfig from "../../../../config/steps.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../../common/hc-button/hc-button";
+import {HCButton, HCTooltip} from "../../../common";
 
 const {Option} = Select;
 

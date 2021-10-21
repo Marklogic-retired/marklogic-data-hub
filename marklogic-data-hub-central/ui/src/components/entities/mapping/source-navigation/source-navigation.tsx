@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./source-navigation.module.scss";
-import HCButton from "../../../common/hc-button/hc-button";
+import {HCButton} from "../../../common";
 import {ChevronLeft, ChevronRight} from "react-bootstrap-icons";
 
 interface Props {

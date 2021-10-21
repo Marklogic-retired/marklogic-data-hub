@@ -27,8 +27,7 @@ import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
 import arrayIcon from "../../../assets/icon_array.png";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../common/hc-button/hc-button";
+import {HCButton, HCTooltip} from "../../common";
 
 let CryptoJS = require("crypto-js");
 let key = CryptoJS.lib.WordArray.random(16);

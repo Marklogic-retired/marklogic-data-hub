@@ -28,10 +28,8 @@ import {
   MORE_DATE_TYPES,
   DROPDOWN_PLACEHOLDER
 } from "../../../config/modeling.config";
-import HCAlert from "../../common/hc-alert/hc-alert";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../common/hc-button/hc-button";
+import {HCAlert, HCButton, HCTooltip} from "../../common";
 
 const {Option} = Select;
 

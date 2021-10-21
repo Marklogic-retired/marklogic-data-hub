@@ -6,7 +6,6 @@ import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
 import styles from "./ruleset-multiple-modal.module.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
-import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import {CurationContext} from "../../../../util/curation-context";
 import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "../../../../config/tooltips.config";
@@ -14,11 +13,8 @@ import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
-import HCAlert from "../../../common/hc-alert/hc-alert";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
-import HCTag from "../../../common/hc-tag/hc-tag";
-import HCButton from "../../../common/hc-button/hc-button";
+import {ConfirmYesNo, HCAlert, HCButton, HCTag, HCTooltip} from "../../../common";
 
 type Props = {
   editRuleset: any;

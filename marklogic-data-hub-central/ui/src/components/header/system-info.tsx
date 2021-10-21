@@ -12,10 +12,7 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
-import HCAlert from "../common/hc-alert/hc-alert";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCCard from "../common/hc-card/hc-card";
-import HCButton from "../common/hc-button/hc-button";
+import {HCAlert, HCButton, HCCard, HCTooltip} from "../common";
 
 
 const SystemInfo = (props) => {

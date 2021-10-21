@@ -14,9 +14,8 @@ import DateFacet from "../date-facet/date-facet";
 import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {Accordion} from "react-bootstrap";
-import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
+import {HCDateTimePicker, HCTooltip} from "../common";
 
 const {Option} = Select;
 const tooltips = tooltipsConfig.browseDocuments;

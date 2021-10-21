@@ -5,11 +5,8 @@ import styles from "./selected-facets.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCButton from "../common/hc-button/hc-button";
 import {XLg} from "react-bootstrap-icons";
-
-
+import {HCButton, HCTooltip} from "../common";
 
 interface Props {
   selectedFacets: any[];

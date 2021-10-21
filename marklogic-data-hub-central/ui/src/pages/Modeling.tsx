@@ -22,8 +22,7 @@ import GraphView from "../components/modeling/graph-view/graph-view";
 import ModelingLegend from "../components/modeling/modeling-legend/modeling-legend";
 import {defaultModelingView} from "../config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
-import HCAlert from "../components/common/hc-alert/hc-alert";
-import HCButton from "../components/common/hc-button/hc-button";
+import {HCAlert, HCButton} from "../components/common";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);

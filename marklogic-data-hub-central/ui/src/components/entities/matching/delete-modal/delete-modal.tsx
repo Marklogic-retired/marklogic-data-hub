@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import {Modal} from "antd";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import {CurationContext} from "../../../../util/curation-context";
-import HCButton from "../../../common/hc-button/hc-button";
+import {HCButton} from "../../../common";
 
 
 type Props = {

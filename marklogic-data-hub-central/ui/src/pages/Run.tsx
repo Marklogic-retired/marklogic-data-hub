@@ -12,8 +12,9 @@ import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
 import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "../../src/components/job-response/job-response";
-import HCButton from "../components/common/hc-button/hc-button";
+import {HCButton} from "../components/common";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
+
 interface PollConfig {
     interval: number;
     retryLimit: number;

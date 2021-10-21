@@ -5,7 +5,6 @@ import {Row, Col, Accordion, Card} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import HCCard from "../../../common/hc-card/hc-card";
 import CustomPageHeader from "../../page-header/page-header";
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
 import RulesetMultipleModal from "../ruleset-multiple-modal/ruleset-multiple-modal";
@@ -23,13 +22,10 @@ import CompareValuesModal from "../compare-values-modal/compare-values-modal";
 import moment from "moment";
 import TimelineVis from "./timeline-vis/timeline-vis";
 import TimelineVisDefault from "./timeline-vis-default/timeline-vis-default";
-import HCButton from "../../../common/hc-button/hc-button";
-
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import styles from "./matching-step-detail.module.scss";
 import {DropdownButton, Dropdown} from "react-bootstrap";
-import HCInput from "../../../common/hc-input/hc-input";
+import {HCButton, HCCard, HCInput, HCTooltip} from "../../../common";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",

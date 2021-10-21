@@ -1,7 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
 import {Table, Alert} from "antd";
-import HCCheckbox from "../../../common/hc-checkbox/hc-checkbox";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -24,17 +23,13 @@ import {getDoc, getUris} from "../../../../util/search-service";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
 import {paginationMapping, mappingColors} from "../../../../config/mapping.config";
 import useDynamicRefs from "use-dynamic-refs";
-import HCAlert from "../../../common/hc-alert/hc-alert";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import HCCard from "../../../common/hc-card/hc-card";
 import Steps from "../../../steps/steps";
 import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.config";
 import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
-import HCButton from "../../../common/hc-button/hc-button";
 import {ChevronDown, ChevronRight, Search, ExclamationCircleFill, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
-import HCInput from "../../../common/hc-input/hc-input";
+import {HCAlert, HCButton, HCCard, HCCheckbox, HCInput, HCTooltip} from "../../../common";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",

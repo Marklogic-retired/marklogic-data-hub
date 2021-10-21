@@ -3,11 +3,9 @@ import {Row, Col, Form} from "react-bootstrap";
 import axios from "axios";
 import styles from "./login-form.module.scss";
 import {UserContext} from "../../util/user-context";
-import HCAlert from "../common/hc-alert/hc-alert";
 import {Spinner} from "react-bootstrap";
-import HCButton from "../common/hc-button/hc-button";
 import {Lock, Person} from "react-bootstrap-icons";
-import HCInput from "../common/hc-input/hc-input";
+import {HCAlert, HCButton, HCInput} from "../common";
 
 const LoginForm: React.FC = () => {
 
