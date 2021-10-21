@@ -81,6 +81,7 @@ const GraphVis: React.FC<Props> = (props) => {
   const initNetworkInstance = (networkInstance) => {
     setNetwork(networkInstance);
   };
+  const [networkHeight, setNetworkHeight] = useState(graphConfig.defaultOptions.height);
   const vis = require("vis-network/standalone/umd/vis-network"); //eslint-disable-line @typescript-eslint/no-unused-vars
 
   // Load coords *once* on init
@@ -99,6 +100,9 @@ const GraphVis: React.FC<Props> = (props) => {
       }
       setCoords(newCoords);
       setCoordsLoaded(true);
+      if (network) {
+        updateNetworkHeight();
+      }
     } else {
       setGraphData({
         nodes: getNodes(),
@@ -115,6 +119,25 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   }, [network, modelingOptions.view]);
 
+  const updateNetworkHeight = async () => {
+    let baseHeight = Math.round(window.innerHeight-network.body.container.offsetTop);
+    if (window.devicePixelRatio < 2) {
+      baseHeight = Math.round(window.innerHeight-(network.body.container.offsetTop * window.devicePixelRatio));
+    }
+    let height = (baseHeight < 505 ? 505 : baseHeight) + "px";
+    setNetworkHeight(height);
+  };
+
+  useLayoutEffect(() => {
+    const updateSize = _.debounce(() => {
+      updateNetworkHeight();
+    }, 400);
+    if (network) {
+      window.addEventListener("resize", updateSize);
+    }
+    return () => window.removeEventListener("resize", updateSize);
+  }, [network && window.innerHeight && window.devicePixelRatio]);
+
   // Initialize or update graph
   useEffect(() => {
     if (props.entityTypes) {
@@ -129,9 +152,14 @@ const GraphVis: React.FC<Props> = (props) => {
         edges: getEdges()
       });
 
+      const updateGraphSettings = async () => {
+        await updateNetworkHeight();
+        initializeScaleAndViewPosition();
+      };
+
       //Initialize graph zoom scale and view position
       if (network) {
-        initializeScaleAndViewPosition();
+        updateGraphSettings();
       }
       //setSaveAllCoords(true);
       return () => {
@@ -519,6 +547,7 @@ const GraphVis: React.FC<Props> = (props) => {
 
   const options = {
     ...graphConfig.defaultOptions,
+    height: networkHeight,
     layout: {
       //hierarchical: true
       //randomSeed: "0.7696:1625099255200",
@@ -527,7 +556,8 @@ const GraphVis: React.FC<Props> = (props) => {
       enabled: physicsEnabled,
       barnesHut: {
         springLength: 160,
-        avoidOverlap: 0.4
+        springConstant: 1,
+        avoidOverlap: 1
       },
       stabilization: {
         enabled: true,
@@ -564,7 +594,7 @@ const GraphVis: React.FC<Props> = (props) => {
     setContextMenuVisible(false);
     if (event.key === "1") {
       if (network) {
-        await network.focus(clickedNode);
+        await network.focus(clickedNode, {offset: {x: 0, y: (modelingOptions.selectedEntity ? -200 : -60)}});
         let viewPosition: any = await network.getViewPosition();
         setClickedNode(undefined);
         let viewPositionPayload = defaultHubCentralConfig;
