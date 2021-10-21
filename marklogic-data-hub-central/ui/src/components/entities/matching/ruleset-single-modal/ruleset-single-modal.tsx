@@ -8,7 +8,6 @@ import "./ruleset-single-modal.scss";
 import arrayIcon from "../../../../assets/icon_array.png";
 
 import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entity-property-tree-select";
-import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 
 import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
@@ -16,10 +15,8 @@ import {Definition} from "../../../../types/modeling-types";
 import {MatchingStepTooltips} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../../common/hc-button/hc-button";
-import HCInput from "../../../common/hc-input/hc-input";
+import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
 
 type Props = {
   editRuleset: any;

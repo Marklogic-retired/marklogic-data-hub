@@ -14,8 +14,7 @@ import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import {QueryOptions} from "../../types/query-types";
 import {getUserPreferences} from "../../services/user-preferences";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCButton from "../common/hc-button/hc-button";
+import {HCButton, HCTooltip} from "@components/common";
 
 interface Props {
   queries: any[];

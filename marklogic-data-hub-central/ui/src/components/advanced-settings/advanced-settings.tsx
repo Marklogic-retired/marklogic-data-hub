@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
 import {Select, Radio, Tooltip} from "antd";
-import {Form, Row, Col, FormLabel} from "react-bootstrap";
+import {Form, Row, Col, FormLabel, FormControl} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
@@ -9,12 +9,8 @@ import StepsConfig from "../../config/steps.config";
 import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
 import {CurationContext} from "../../util/curation-context";
-import HCAlert from "../common/hc-alert/hc-alert";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCButton from "../common/hc-button/hc-button";
-import {FormControl} from "react-bootstrap";
-import HCInput from "../common/hc-input/hc-input";
+import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 
 const {Option} = Select;
 

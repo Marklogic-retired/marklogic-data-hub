@@ -4,8 +4,7 @@ import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
-import HCButton from "../../../common/hc-button/hc-button";
-import HCInput from "../../../common/hc-input/hc-input";
+import {HCInput, HCButton} from "@components/common";
 
 const EditQueryDialog = (props) => {
   const {

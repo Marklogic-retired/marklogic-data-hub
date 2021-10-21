@@ -7,9 +7,8 @@ import ExpandableTableView from "../expandable-table-view/expandable-table-view"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {SearchContext} from "../../util/search-context";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
-
+import {HCTooltip} from "@components/common";
 
 interface Props extends RouteComponentProps {
     item: any;

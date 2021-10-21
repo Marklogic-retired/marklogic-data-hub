@@ -4,7 +4,6 @@ import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
-import HCInput from "../../common/hc-input/hc-input";
 import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {UserContext} from "../../../util/user-context";
@@ -28,10 +27,8 @@ import {
   MORE_DATE_TYPES,
   DROPDOWN_PLACEHOLDER
 } from "../../../config/modeling.config";
-import HCAlert from "../../common/hc-alert/hc-alert";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../common/hc-button/hc-button";
+import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
 
 const {Option} = Select;
 

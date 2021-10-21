@@ -3,7 +3,7 @@ import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import Spinner from "react-bootstrap/Spinner";
 import styles from "./async-loader.module.scss";
-import HCAlert from "../common/hc-alert/hc-alert";
+import {HCAlert} from "@components/common";
 
 const AsyncLoader: React.FC = () => {
   const {user, clearErrorMessage} = useContext(UserContext);

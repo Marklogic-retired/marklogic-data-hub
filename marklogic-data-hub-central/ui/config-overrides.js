@@ -1,4 +1,4 @@
-const {override, fixBabelImports, addLessLoader, babelInclude} = require("customize-cra");
+const {override, fixBabelImports, addLessLoader, babelInclude, addWebpackAlias} = require("customize-cra");
 const path = require("path");
 const themeVariables = require("@marklogic/design-system/src/theme-variables.json");
 
@@ -30,6 +30,10 @@ module.exports = override(
     libraryName: "antd",
     libraryDirectory: "es",
     style: true
+  }),
+  //Configure path alias
+  addWebpackAlias({
+    ["@components"]: path.resolve(__dirname, "src/components"),
   }),
   addLessLoader({
     javascriptEnabled: true,

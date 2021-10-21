@@ -5,10 +5,7 @@ import styles from "./new-flow-dialog.module.scss";
 import {NewFlowTooltips} from "../../../config/tooltips.config";
 import {useHistory} from "react-router-dom";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../common/hc-button/hc-button";
-import HCInput from "../../common/hc-input/hc-input";
-
+import {HCInput, HCButton, HCTooltip} from "@components/common";
 
 const NewFlowDialog = (props) => {
 

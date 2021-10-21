@@ -7,8 +7,7 @@ import ExportQueryModal from "./query-export-modal/query-export-modal";
 import {UserContext} from "../../util/user-context";
 import {getExportPreview} from "../query-export/export-preview/export-preview";
 import {getExportQueryPreview} from "../../api/queries";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-
+import {HCTooltip} from "@components/common";
 
 const QueryExport = (props) => {
   const [tableColumns, setTableColumns] = useState<Object[]>([]);

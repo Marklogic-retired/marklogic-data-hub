@@ -3,14 +3,13 @@ import {TabPane, Tabs, Tab, Modal} from "react-bootstrap";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
-import ConfirmYesNo from "../common/confirm-yes-no/confirm-yes-no";
 import styles from "./steps.module.scss";
 import "./steps.scss";
 import {StepType} from "../../types/curation-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ErrorTooltips} from "../../config/tooltips.config";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {ConfirmYesNo, HCTooltip} from "@components/common";
 
 interface Props {
     isEditing: boolean;

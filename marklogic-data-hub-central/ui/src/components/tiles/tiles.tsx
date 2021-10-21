@@ -13,9 +13,8 @@ import modelingInfoIcon from "../../assets/icon_helpInfo.png";
 import {Popover} from "antd";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCButton from "../common/hc-button/hc-button";
 import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
+import {HCButton, HCTooltip} from "@components/common";
 
 interface Props {
   id: string;

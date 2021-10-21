@@ -5,7 +5,7 @@ import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
-import HCInput from "../common/hc-input/hc-input";
+import {HCInput} from "@components/common";
 interface Props {
   referenceType: string;
   entityTypeId: any;

@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./facet.module.scss";
 import {numberConverter} from "../../util/number-conversion";
 import {stringConverter} from "../../util/string-conversion";
-import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
+import {HCCheckbox} from "@components/common";
 
 export const FacetName = (props) => {
   const id = `${stringConverter(props.name)}-${props.facet.value}-checkbox`;

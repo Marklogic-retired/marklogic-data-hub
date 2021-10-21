@@ -3,8 +3,6 @@ import {Modal, Select} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./threshold-modal.module.scss";
 
-import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
-
 import {CurationContext} from "../../../../util/curation-context";
 import {MatchingStep, Threshold} from "../../../../types/curation-types";
 import {NewMatchTooltips} from "../../../../config/tooltips.config";
@@ -13,9 +11,7 @@ import DeleteModal from "../delete-modal/delete-modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
-import HCButton from "../../../common/hc-button/hc-button";
-import HCInput from "../../../common/hc-input/hc-input";
+import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
 
 type Props = {
   isVisible: boolean;

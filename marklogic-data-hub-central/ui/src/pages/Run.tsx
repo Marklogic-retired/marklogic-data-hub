@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
-import Flows from "../components/flows/flows";
+import Flows from "@components/flows/flows";
 import {Accordion, Modal} from "react-bootstrap";
 import axios from "axios";
 import {AuthoritiesContext} from "../util/authorities";
@@ -10,10 +10,11 @@ import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
 import {getMappingArtifactByStepName} from "../api/mapping";
-import JobResponse from "../../src/components/job-response/job-response";
-import HCButton from "../components/common/hc-button/hc-button";
+import JobResponse from "@components/job-response/job-response";
+import {HCButton} from "@components/common";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
 import {ErrorMessageContext} from "../util/error-message-context";
+
 interface PollConfig {
     interval: number;
     retryLimit: number;
