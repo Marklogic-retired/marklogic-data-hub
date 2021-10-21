@@ -11,14 +11,11 @@ import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
 import {AuthoritiesContext} from "../../util/authorities";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
-
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import styles from "./flows.module.scss";
 import "./flows.scss";
-import HCCard from "../common/hc-card/hc-card";
-import HCButton from "../common/hc-button/hc-button";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown} from "react-bootstrap-icons";
 import {Accordion, Card, Dropdown, Spinner, Modal} from "react-bootstrap";
+import {HCButton, HCCard, HCTooltip} from "@components/common";
 
 
 enum ReorderFlowOrderDirection {

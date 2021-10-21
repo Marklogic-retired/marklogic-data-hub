@@ -12,10 +12,8 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
 import {getViewSettings, setViewSettings} from "../../util/user-context";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import HCButton from "../common/hc-button/hc-button";
+import {HCButton, HCDivider, HCTooltip} from "@components/common";
 
 const {Option} = Select;
 

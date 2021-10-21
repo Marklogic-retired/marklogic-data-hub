@@ -2,8 +2,7 @@ import React, {useContext} from "react";
 import styles from "./sidebar-footer.module.scss";
 import {SearchContext} from "../../util/search-context";
 import {MonitorContext} from "../../util/monitor-context";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCButton from "../common/hc-button/hc-button";
+import {HCButton, HCDivider} from "@components/common";
 
 const SidebarFooter: React.FC = () => {
   const {

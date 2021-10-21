@@ -16,8 +16,8 @@ import Spinner from "react-bootstrap/Spinner";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faSync} from "@fortawesome/free-solid-svg-icons";
 import "./job-response.scss";
-import HCDivider from "../common/hc-divider/hc-divider";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
+import {HCDivider} from "@components/common";
 
 type Props = {
   openJobResponse: boolean;

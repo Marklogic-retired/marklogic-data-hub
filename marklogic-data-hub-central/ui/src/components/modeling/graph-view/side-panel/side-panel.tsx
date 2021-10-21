@@ -14,9 +14,9 @@ import {TwitterPicker} from "react-color";
 import graphConfig from "../../../../config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
-import HCTooltip from "../../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
 import {Tab, Tabs} from "react-bootstrap";
+import {HCTooltip} from "@components/common";
 
 type Props = {
   entityTypes: any;

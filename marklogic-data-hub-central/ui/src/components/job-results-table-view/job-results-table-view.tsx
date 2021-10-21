@@ -2,16 +2,13 @@ import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
 import {Popover, Tooltip, Table} from "antd";
-import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
 import {MonitorContext} from "../../util/monitor-context";
 import JobResponse from "../job-response/job-response";
-import HCDivider from "../common/hc-divider/hc-divider";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCButton from "../common/hc-button/hc-button";
 import {CheckCircleFill, ClockFill, XCircleFill} from "react-bootstrap-icons";
+import {HCButton, HCCheckbox, HCDivider, HCTooltip} from "@components/common";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);

@@ -5,8 +5,8 @@ import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
-import HCButton from "../../../common/hc-button/hc-button";
-import HCInput from "../../../common/hc-input/hc-input";
+import {HCInput, HCButton} from "@components/common";
+
 interface Props {
   setEditQueryDetailVisibility: () => void;
   currentQuery: any;

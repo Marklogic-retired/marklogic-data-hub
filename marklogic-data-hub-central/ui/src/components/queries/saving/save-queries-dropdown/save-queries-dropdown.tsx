@@ -2,7 +2,7 @@ import {Select, Modal} from "antd";
 import React, {useContext, useState} from "react";
 import styles from "./save-queries-dropdown.module.scss";
 import {SearchContext} from "../../../../util/search-context";
-import HCButton from "../../../common/hc-button/hc-button";
+import {HCButton} from "@components/common";
 
 interface Props {
     savedQueryList: any[];

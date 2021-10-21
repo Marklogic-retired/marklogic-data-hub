@@ -7,7 +7,7 @@ import "./toolbar.scss";
 import ConfirmationModal from "../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../types/common-types";
 import {ModelingContext} from "../../util/modeling-context";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "@components/common";
 
 
 interface Props {

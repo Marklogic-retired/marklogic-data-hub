@@ -1,12 +1,10 @@
 import React, {useEffect, useState, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./structured-type-modal.module.scss";
-import HCInput from "../../common/hc-input/hc-input";
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import HCButton from "../../common/hc-button/hc-button";
+import {HCInput, HCButton, HCTooltip} from "@components/common";
 
 
 type Props = {

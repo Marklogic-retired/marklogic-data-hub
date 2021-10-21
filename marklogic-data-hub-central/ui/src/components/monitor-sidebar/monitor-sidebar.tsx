@@ -8,8 +8,7 @@ import styles from "../facet/facet.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCDateTimePicker from "../common/hc-datetime-picker/hc-datetime-picker";
+import {HCDateTimePicker, HCTooltip} from "@components/common";
 
 interface Props {
     facets: any;

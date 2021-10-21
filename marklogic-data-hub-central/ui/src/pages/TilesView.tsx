@@ -22,7 +22,7 @@ import MergingStepDetail from "../components/entities/merging/merging-step-detai
 import {ConfigProvider} from "antd";
 import MappingStepDetail from "../components/entities/mapping/mapping-step-detail/mapping-step-detail";
 import {ErrorMessageContext} from "../util/error-message-context";
-import HCButton from "../components/common/hc-button/hc-button";
+import {HCButton} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTimesCircle} from "@fortawesome/free-regular-svg-icons";
 

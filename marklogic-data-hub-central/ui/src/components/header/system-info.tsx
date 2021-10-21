@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
 import {Tooltip} from "antd";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
@@ -12,11 +10,8 @@ import {SecurityTooltips} from "../../config/tooltips.config";
 import {SystemInfoMessages} from "../../config/messages.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
-import HCAlert from "../common/hc-alert/hc-alert";
-import HCTooltip from "../common/hc-tooltip/hc-tooltip";
-import HCCard from "../common/hc-card/hc-card";
-import HCButton from "../common/hc-button/hc-button";
-import {Modal} from "react-bootstrap";
+import {Modal, Row, Col} from "react-bootstrap";
+import {HCAlert, HCButton, HCCard, HCTooltip} from "@components/common";
 
 
 const SystemInfo = (props) => {

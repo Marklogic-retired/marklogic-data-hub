@@ -1,5 +1,5 @@
 import React from "react";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
+import {HCTooltip} from "@components/common";
 
 export const getExportPreview = (response) => {
   const tableColumns: Object[] = [];

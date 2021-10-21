@@ -5,8 +5,7 @@ import {SearchContext} from "../../../../util/search-context";
 import styles from "./save-query-modal.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
-import HCButton from "../../../common/hc-button/hc-button";
-import HCInput from "../../../common/hc-input/hc-input";
+import {HCInput, HCButton} from "@components/common";
 
 interface Props {
   setSaveModalVisibility: () => void;

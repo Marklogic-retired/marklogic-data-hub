@@ -1,15 +1,13 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
 import {Modal, Select} from "antd";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import {Row, Col} from "react-bootstrap";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {Link, useHistory} from "react-router-dom";
 import {CustomStepTooltips, SecurityTooltips} from "../../../config/tooltips.config";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-import HCCard from "../../common/hc-card/hc-card";
+import {HCTooltip, HCCard} from "@components/common";
 import Steps from "../../steps/steps";
 
 const {Option} = Select;

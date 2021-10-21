@@ -7,7 +7,7 @@ import {UserContext} from "../../util/user-context";
 import {useInterval} from "../../hooks/use-interval";
 import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from "../../config/application.config";
 import {getSystemInfo} from "../../api/environment";
-import HCButton from "../common/hc-button/hc-button";
+import {HCButton} from "@components/common";
 
 interface Props extends RouteComponentProps<any>{
 }

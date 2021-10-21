@@ -8,11 +8,8 @@ import {UserContext} from "../../../util/user-context";
 import {NewMapTooltips, NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {StepType} from "../../../types/curation-types";
 import {CurationContext} from "../../../util/curation-context";
-import HCAlert from "../../common/hc-alert/hc-alert";
-import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
-import HCButton from "../../common/hc-button/hc-button";
-import HCInput from "../../common/hc-input/hc-input";
+import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 
 type Props = {
   tabKey: string;
