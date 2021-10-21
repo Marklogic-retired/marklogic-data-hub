@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.document.DocumentWriteSet;
@@ -37,6 +38,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.dataservices.StepService;
+import com.marklogic.mgmt.resource.hosts.HostManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,10 +122,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     }
 
     /**
-     * Due to significant performance issues with loading entity models via xdmp.invoke plus the existence of pre and
-     * post commit triggers on entity models, separate calls are made to the staging and final app servers for saving
-     * entity models. This avoids the performance issue, as the saveModels endpoint will not use an xdmp.invoke to
-     * save each model.
+     * Load the models into MarkLogic and assure that the expanded tree cache is cleared to ensure old schema isn't cached.
      *
      * @param hubClient
      * @throws IOException
@@ -144,7 +143,28 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         });
         if (modelsArray.size() > 0) {
             ModelsService.on(hubClient.getStagingClient()).saveModels(modelsArray);
-            ModelsService.on(hubClient.getFinalClient()).saveModels(modelsArray);
+            clearExpandedTreeCache(hubClient);
+        }
+    }
+
+    /**
+     * Attempts to clear the expanded tree cache for each node in the cluster.
+     *
+     * @param hubClient
+     */
+    private void clearExpandedTreeCache(HubClient hubClient) {
+        AppConfig mlAppConfig = hubConfig.getAppConfig();
+        String originalHost = mlAppConfig.getHost();
+        try {
+            new HostManager(hubClient.getManageClient()).getHostNames().forEach((host) -> {
+                mlAppConfig.setHost(host);
+                logger.info("Clearing expanded tree cache on host: " + host);
+                mlAppConfig.newAppServicesDatabaseClient("Documents").newServerEval().xquery("xdmp:expanded-tree-cache-clear()").evalAs(String.class);
+            });
+        } catch (Exception e) {
+            logger.info("Failed to clear expanded tree cache: " + e.getMessage());
+        } finally {
+            mlAppConfig.setHost(originalHost);
         }
     }
 
