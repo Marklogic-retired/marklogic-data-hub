@@ -168,11 +168,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
         if (obj.constructor.name === "Object") {
           let sourceName = "none";
           let sourceType = "none";
-          if (obj.hasOwnProperty("name") && obj["name"]) {
-            sourceName = obj["name"];
+          if (obj.hasOwnProperty("datahubSourceName") && obj.datahubSourceName) {
+            sourceName = obj.datahubSourceName;
           }
-          if (obj.hasOwnProperty("datahubSourceType") && obj["datahubSourceType"]) {
-            sourceType = obj["datahubSourceType"];
+          if (obj.hasOwnProperty("datahubSourceType") && obj.datahubSourceType) {
+            sourceType = obj.datahubSourceType;
           }
 
           let tableObj = {
