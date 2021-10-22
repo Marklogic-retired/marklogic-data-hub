@@ -61,6 +61,10 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "Adams");
+    browsePage.getNavigationIconForDocument("/json/customers/Cust2.json").click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.contains("CustomerSourceName", {timeout: 50000});
+    browsePage.backToResults();
   });
   it("Select query parameters for stage database", () => {
     browsePage.search("Barbi");
