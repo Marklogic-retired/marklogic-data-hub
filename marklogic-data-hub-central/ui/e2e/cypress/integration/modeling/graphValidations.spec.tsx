@@ -176,9 +176,21 @@ describe("Graph Validations", () => {
       let personCoordinates: any = nodePositions["Person"];
       graphVis.getGraphVisCanvas().rightclick(personCoordinates.x, personCoordinates.y);
       graphVis.getCenterOnEntityTypeOption("Person").trigger("mouseover").click();
+    });
 
-      //Clicking on center of the canvas, should click on Person entity node.
-      graphVis.getGraphVisCanvas().click();
+    let centeredPersonX, centeredPersonY;
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      centeredPersonX = nodePositions["Person"].x;
+      centeredPersonY = nodePositions["Person"].y;
+
+      //Person entity coordinates should be within the center of canvas
+      expect(centeredPersonX).to.be.greaterThan(700);
+      expect(centeredPersonX).to.be.lessThan(800);
+      expect(centeredPersonY).to.be.greaterThan(300);
+      expect(centeredPersonY).to.be.lessThan(400);
+
+      //Click on newly centered Person entity node.
+      graphVis.getGraphVisCanvas().click(centeredPersonX, centeredPersonY);
 
       //Verify the side panel content for selected entity
       graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
@@ -197,7 +209,11 @@ describe("Graph Validations", () => {
     modelPage.selectView("project-diagram");
 
     //Clicking on center of the canvas again to verify we click again on Person entity node.
-    graphVis.getGraphVisCanvas().click();
+    graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {
+      centeredPersonX = nodePositions["Person"].x;
+      centeredPersonY = nodePositions["Person"].y;
+      graphVis.getGraphVisCanvas().click(centeredPersonX, centeredPersonY);
+    });
 
     //Verify the side panel content for selected entity
     graphViewSidePanel.getSelectedEntityHeading("Person").should("be.visible");
