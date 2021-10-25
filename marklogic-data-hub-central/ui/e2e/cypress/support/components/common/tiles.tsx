@@ -33,7 +33,13 @@ class Tiles {
   }
 
   closeRunMessage() {
-    return cy.get("div.ant-modal-confirm-btns button").click({multiple: true, force: true});
+    cy.get("div.ant-modal-confirm-btns button").click({multiple: true, force: true});
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[data-testid=explorer-link]").length) {
+          cy.get("div.ant-modal-confirm-btns button").click({multiple: true, force: true});
+        }
+      });
   }
 }
 
