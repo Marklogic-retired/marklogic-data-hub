@@ -96,8 +96,6 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
-  });
-  it("Open settings, change setting, switch tabs, save", () => {
     loadPage.stepName(stepName).click();
     loadPage.stepDescriptionInput().clear().type("UPDATE2");
     loadPage.switchEditAdvanced().click();
