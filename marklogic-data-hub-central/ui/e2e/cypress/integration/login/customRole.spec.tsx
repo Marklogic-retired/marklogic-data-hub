@@ -40,8 +40,12 @@ describe("customRole", () => {
     let entityTypeId = "Customer";
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => confirmationModal.getNavigationWarnText()).should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "be.visible");
 

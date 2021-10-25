@@ -41,7 +41,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
-  it("Create load step", () => {
+  it("Create and Edit load step", () => {
     toolbar.getLoadToolbarIcon().click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     loadPage.addNewButton("card").click();
@@ -56,8 +56,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.confirmationOptions("Save").click({force: true});
     cy.waitForAsyncRequest();
     cy.findByText(loadStep).should("be.visible");
-  });
-  it("Edit load step", {defaultCommandTimeout: 120000}, () => {
+
     // Open step settings and switch to Advanced tab
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();

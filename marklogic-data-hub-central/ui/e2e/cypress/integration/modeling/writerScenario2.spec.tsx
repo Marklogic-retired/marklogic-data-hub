@@ -328,8 +328,14 @@ describe("Entity Modeling: Writer Role", () => {
       // Node shows full name on hover
       cy.findByText("ThisIsVeryLongNameHavingMoreThan20Characters").should("exist");
     });
+    graphViewSidePanel.getDeleteIcon("ThisIsVeryLongNameHavingMoreThan20Characters").click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity);
+    confirmationModal.getDeleteEntityText().should("not.exist");
+    cy.waitForAsyncRequest();
+    graphViewSidePanel.getSelectedEntityHeading("ThisIsVeryLongNameHavingMoreThan20Characters").should("not.exist");
+    cy.publishEntityModel();
   });
-  it("Create another entity Patients and add a property", {defaultCommandTimeout: 120000}, () => {
+  it("Create another entity Patients and add a properties", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("table");
     modelPage.getAddEntityButton().should("exist").click();
     entityTypeModal.newEntityName("Patients");
@@ -355,8 +361,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("personType").should("exist");
-  });
-  it("Add second property to Patients Entity and delete it", () => {
+
+    //Add second property to Patients Entity and delete it
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("patientId");
     propertyModal.openPropertyDropdown();
@@ -368,8 +374,8 @@ describe("Entity Modeling: Writer Role", () => {
     confirmationModal.getDeletePropertyWarnText().should("exist");
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("patientId").should("not.exist");
-  });
-  it("Add third property to Patients Entity, publish the changes", {defaultCommandTimeout: 120000}, () => {
+
+    //Add third property to Patients Entity, publish the changes
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();
@@ -451,7 +457,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();
-    graphView.verifyEditInfoMessage().should("be.visible");
+    graphView.verifyEditInfoMessage().should("exist");
 
     //verify create relationship via clicking a node in edit mode
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
@@ -507,8 +513,9 @@ describe("Entity Modeling: Writer Role", () => {
     cy.wait(2000);
     cy.waitForAsyncRequest();
     graphView.getAddButton().click();
-    graphView.addNewRelationship().click();
-    graphView.verifyEditInfoMessage().should("be.visible");
+    cy.waitUntil(() => graphView.addNewRelationship().should("be.visible"));
+    graphView.addNewRelationship().click({force: true});
+    cy.waitUntil(() => graphView.verifyEditInfoMessage().should("exist"));
 
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
@@ -530,13 +537,18 @@ describe("Entity Modeling: Writer Role", () => {
     relationshipModal.editForeignKey("firstname");
     relationshipModal.toggleCardinality();
     relationshipModal.addRelationshipSubmit();
+
     cy.waitForAsyncRequest();
-    relationshipModal.getModalHeader().should("not.exist");
+    cy.wait(2000);
+    graphView.getAddButton().click();
+    cy.waitUntil(() => graphView.addNewRelationship().should("be.visible"));
+    graphView.addNewRelationship().click({force: true});
+    cy.waitUntil(() => graphView.verifyEditInfoMessage().should("exist"));
 
     //add second relationship
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();
-    graphView.verifyEditInfoMessage().should("be.visible");
+    graphView.verifyEditInfoMessage().should("exist");
 
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
@@ -582,13 +594,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.verifyForeignKeyIcon("referredBy").should("exist");
 
     entityTypeTable.viewEntityInGraphView("Person");
-    cy.waitForAsyncRequest();
-    //re-enter graph edit mode, verify can exit with {esc}
-    graphView.getAddButton().click();
-    graphView.addNewRelationship().click();
-    graphView.verifyEditInfoMessage().should("be.visible");
-    graphVis.getGraphVisCanvas().type("{esc}");
-    graphView.verifyEditInfoMessage().should("not.exist");
   });
 
   it("Delete relationships from graph view", {defaultCommandTimeout: 120000}, () => {
