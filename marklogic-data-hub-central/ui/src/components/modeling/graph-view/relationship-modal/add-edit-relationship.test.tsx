@@ -160,7 +160,7 @@ describe("Add Edit Relationship component", () => {
     fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "BabyRegistry"}});
     fireEvent.click(getByText("Add"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
-    fireEvent.mouseOver(getByLabelText("error-circle"));
+    fireEvent.mouseOver(getByTestId("error-circle"));
     wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
 
 

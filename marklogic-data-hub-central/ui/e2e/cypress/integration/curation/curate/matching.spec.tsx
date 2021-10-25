@@ -273,7 +273,7 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDelete("customerId", "Exact");
     cy.waitForAsyncRequest();
-    cy.findByLabelText("noMatchedCombinations").trigger("mouseover");
+    cy.findByLabelText("noMatchedCombinations").scrollIntoView().trigger("mouseover");
     cy.waitUntil(() => cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0));
     //multiSlider.getHandleName("customerId").should("not.exist");
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
@@ -296,13 +296,11 @@ describe("Matching", () => {
     matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
     matchingStepDetail.getTestMatchUriButton();
-
     cy.findByText("At least Two URIs are required.").should("be.visible");
-    matchingStepDetail.getUriOnlyInputField().type("/test/Uri1");
+    matchingStepDetail.getUriOnlyInputField().clear().type("/test/Uri1");
     matchingStepDetail.getAddUriOnlyIcon().click();
-
     cy.findByText("This URI has already been added.").should("be.visible");
-    matchingStepDetail.getUriOnlyInputField().type("/test/Uri2");
+    matchingStepDetail.getUriOnlyInputField().clear().type("/test/Uri2");
     matchingStepDetail.getAddUriOnlyIcon().click();
 
     cy.findByText("At least Two URIs are required.").should("not.exist");
@@ -316,16 +314,14 @@ describe("Matching", () => {
     cy.findByText("/test/Uri1").should("be.visible");
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
-
-    matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton();
     cy.findByText("At least one URI is required.").should("be.visible");
-    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getUriInputField().clear().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
-    matchingStepDetail.getUriInputField().type("/test/Uri1");
+    matchingStepDetail.getUriInputField().clear().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("This URI has already been added.").should("be.visible");
-    matchingStepDetail.getUriInputField().type("/test/Uri2");
+    matchingStepDetail.getUriInputField().clear().type("/test/Uri2");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("This URI has already been added.").should("not.exist");
     cy.findByText("The minimum of two URIs are required.").should("not.exist");
@@ -338,7 +334,7 @@ describe("Matching", () => {
     curatePage.toggleEntityTypeId("Person");
     curatePage.selectMatchTab("Person");
     curatePage.openStepDetails("match-person");
-    cy.findByLabelText("inputUriRadio").click();
+    cy.findByLabelText("inputUriRadio").scrollIntoView().click();
 
     //adding new multiple property
     matchingStepDetail.addNewRuleset();
@@ -357,7 +353,7 @@ describe("Matching", () => {
     // multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
 
     //To test when users click on test button and no data is returned
-    cy.waitUntil(() => matchingStepDetail.getUriInputField().type("/json/noDataUri"));
+    cy.waitUntil(() => matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri"));
     matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton();
     cy.findByLabelText("noMatchedDataView").should("have.length.gt", 0);
@@ -365,7 +361,7 @@ describe("Matching", () => {
 
     //To test when user enters uris and click on test button
     for (let i in uris) {
-      cy.waitUntil(() => matchingStepDetail.getUriInputField().type(uris[i]));
+      cy.waitUntil(() => matchingStepDetail.getUriInputField().clear().type(uris[i]));
       matchingStepDetail.getAddUriIcon().click();
     }
     matchingStepDetail.getTestMatchUriButton();
@@ -388,7 +384,7 @@ describe("Matching", () => {
       cy.findByText("(Threshold: " + uriMatchedResults[j].threshold + ")").should("have.length.gt", 0);
     }
     cy.wait(1000);
-    cy.get(`[id="testMatchedPanel"]`).contains(ruleset[0].ruleName).click();
+    cy.get(`[id="testMatchedPanel"]`).contains(ruleset[0].ruleName).scrollIntoView().click();
     for (let k in urisMerged) {
       cy.waitUntil(() => cy.findAllByText(urisMerged[k]).should("have.length.gt", 0));
     }
@@ -397,31 +393,35 @@ describe("Matching", () => {
     cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
         cy.get(".ant-radio-group").within(() => {
-          cy.get("label:first").click();
+          cy.get("label:first").scrollIntoView().click();
         });
       });
     });
     cy.findAllByLabelText("expandedTableView").should("have.length.gt", 0);
 
     // To verify content of multiple properties
+    cy.findAllByLabelText("Expand row").first().click();
+    cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findAllByText("ZipCode").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
 
-    // TODO DHFPROD-7711 skip since fails for Ant Design Table component
-    // cy.findAllByLabelText("right").first().click();
-    // cy.waitUntil(() => cy.findAllByText("lname").should("have.length.gt", 0));
-    // cy.waitUntil(() => cy.findByLabelText("exact 0").should("have.length.gt", 0));
-    // cy.waitUntil(() => cy.findAllByText("ZipCode").should("have.length.gt", 0));
-    // cy.waitUntil(() => cy.findByLabelText("zip 1").should("have.length.gt", 0));
+    // To test compare values for matched Uris
+    cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().scrollIntoView().click();
+    for (let i in compareValuesData) {
+      cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
+      cy.findAllByLabelText(compareValuesData[i].uriValue1).should("have.length.gt", 0);
+      cy.findAllByLabelText(compareValuesData[i].uriValue2).should("have.length.gt", 0);
+    }
 
-    // // To test compare values for matched Uris
-    // cy.findAllByLabelText("/json/persons/first-name-double-metaphone compareButton").first().click();
-    // for (let i in compareValuesData) {
-    //   cy.findByLabelText(compareValuesData[i].propertyName).should("have.length.gt", 0);
-    //   cy.findAllByLabelText(compareValuesData[i].uriValue1).should("have.length.gt", 0);
-    //   cy.findAllByLabelText(compareValuesData[i].uriValue2).should("have.length.gt", 0);
-    // }
+    // To test highlighted matched rows
+    cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
+    cy.findByLabelText("Close").scrollIntoView().click();
 
     // To test expanded uri table content
-    cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().click());
+    cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().scrollIntoView().click());
     for (let i in allDataMatchedResults) {
       cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
       cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
@@ -434,34 +434,15 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     multiSlider.confirmDeleteMulti("testMultipleProperty");
     cy.waitForAsyncRequest();
-    // // To test highlighted matched rows
-    // cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    // cy.findByTitle("lname").should("have.css", "background-color", "rgb(133, 191, 151)");
-    // cy.findByTitle("Address").should("not.have.css", "background-color", "rgb(133, 191, 151)");
-    // cy.findByLabelText("Close").click();
 
-    // // To test expanded uri table content
-    // cy.waitUntil(() => cy.findByText("/json/persons/first-name-double-metaphone2.json").first().click());
-    // for (let i in allDataMatchedResults) {
-    //   cy.findAllByLabelText(allDataMatchedResults[i].ruleset).should("have.length.gt", 0);
-    //   cy.findAllByLabelText(allDataMatchedResults[i].matchType).should("have.length.gt", 0);
-    //   cy.findAllByLabelText(allDataMatchedResults[i].score).should("have.length.gt", 0);
-    // }
-    // cy.findAllByText("Total Score: 40").should("have.length.gt", 0);
-
-    // multiSlider.deleteOption("testMultipleProperty");
-    // matchingStepDetail.getSliderDeleteText().should("be.visible");
-    // matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    // cy.waitForAsyncRequest();
-
-    // // To test when user click on collapse all icon
-    // cy.get(".matching-step-detail_expandCollapseIcon__3hvf2").within(() => {
-    //   cy.findByLabelText("expand-collapse").within(() => {
-    //     cy.get(".ant-radio-group").within(() => {
-    //       cy.get("label:last").click();
-    //     });
-    //   });
-    // });
-    // cy.findAllByLabelText("expandedTableView").should("not.visible");
+    // To test when user click on collapse all icon
+    cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
+      cy.findByLabelText("expand-collapse").within(() => {
+        cy.get(".ant-radio-group").within(() => {
+          cy.get("label:last").scrollIntoView().click();
+        });
+      });
+    });
+    cy.findAllByLabelText("expandedTableView").should("not.visible");
   });
 });

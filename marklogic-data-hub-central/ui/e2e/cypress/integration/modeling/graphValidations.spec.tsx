@@ -84,7 +84,7 @@ describe("Graph Validations", () => {
   //Below is just an example test to showcase how to use the graph library functional library in cypress
   it("can select required entity nodes and edges, within the graph view", {defaultCommandTimeout: 120000}, () => {
     cy.loginAsDeveloper().withRequest();
-    entityTypeTable.viewEntityInGraphView("Person");
+    entityTypeTable.viewEntityInGraphView("Order");
     cy.wait(3000);
 
     //Select an entity node from within the graph view and ensure that side panel opens up

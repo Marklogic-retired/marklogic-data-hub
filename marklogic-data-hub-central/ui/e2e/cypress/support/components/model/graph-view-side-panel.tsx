@@ -8,7 +8,7 @@ class GraphViewSidePanel {
   }
 
   closeSidePanel() {
-    return cy.findByLabelText("closeGraphViewSidePanel").trigger("mouseover").click();
+    return cy.findByLabelText("closeGraphViewSidePanel").scrollIntoView().trigger("mouseover").click({force: true});
   }
 
   getPropertiesTab() {

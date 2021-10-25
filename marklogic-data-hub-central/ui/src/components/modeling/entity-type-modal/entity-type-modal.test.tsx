@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import {render, wait} from "@testing-library/react";
+import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import EntityTypeModal from "./entity-type-modal";
@@ -115,13 +116,13 @@ describe("EntityTypeModal Component", () => {
     userEvent.type(getByPlaceholderText(placeholders.name), payload.name);
     userEvent.type(getByPlaceholderText(placeholders.description), payload.description);
 
-    await wait(() => {
+    await waitFor(() => {
       userEvent.click(getByText("Add"));
     });
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
 
-    await wait(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
+    await waitFor(() => { expect(getByLabelText("entity-name-error")).toBeInTheDocument(); });
   });
 
   test("Edit modal is not visible", () => {
