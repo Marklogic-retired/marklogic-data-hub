@@ -299,7 +299,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 </div>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {errorName || (errorServer ? errorServer : null)}
+                {errorName || (errorServer === "name-error" ? <p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>
+                  : errorServer !== "" ? <p className={styles.errorServer}>{errorServer}</p> : null)}
               </Col>
             </Row>
           </Col>

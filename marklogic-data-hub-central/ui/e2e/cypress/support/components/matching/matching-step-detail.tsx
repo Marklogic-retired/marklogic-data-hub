@@ -21,7 +21,7 @@ class MatchingStepDetail {
   }
 
   addNewRuleset() {
-    cy.findByLabelText("add-ruleset").click();
+    cy.findByLabelText("add-ruleset").scrollIntoView().click();
   }
 
   getSinglePropertyOption() {
