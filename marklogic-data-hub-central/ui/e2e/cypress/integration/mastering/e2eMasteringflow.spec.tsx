@@ -80,7 +80,7 @@ describe("Validate E2E Mastering Flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", loadStepName, flowName);
-    runPage.runStep(flowName, loadStepName);
+    runPage.runStep(loadStepName, flowName);
     cy.waitUntil(() => cy.get("input[type=\"file\"]"));
     cy.get("input[type=\"file\"]").attachFile(["patients/first-name-double-metaphone1.json", "patients/first-name-double-metaphone2.json", "patients/first-name-synonym1.json", "patients/first-name-synonym2.json", "patients/last-name-address-reduce1.json", "patients/last-name-address-reduce2.json", "patients/last-name-dob-custom1.json", "patients/last-name-dob-custom2.json", "patients/last-name-plus-zip-boost1.json", "patients/last-name-plus-zip-boost2.json", "patients/last-name-slight-match1.json", "patients/last-name-slight-match2.json", "patients/ssn-match1.json", "patients/ssn-match2.json"], {force: true});
     cy.waitForAsyncRequest();

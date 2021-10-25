@@ -142,14 +142,14 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEditEntityTypeColor().click();
     graphViewSidePanel.selectColorFromPicker("#D5D3DD").click();
     if (Cypress.isBrowser("!firefox")) {
-      graphViewSidePanel.getEntityTypeColor("Order").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
+      graphViewSidePanel.getEntityTypeColor("Customer").should("have.css", "background", "rgb(213, 211, 221) none repeat scroll 0% 0% / auto padding-box border-box");
     }
     if (Cypress.isBrowser("firefox")) {
-      graphViewSidePanel.getEntityTypeColor("Order").should("have.css", "background-color", "rgb(213, 211, 221)");
+      graphViewSidePanel.getEntityTypeColor("Customer").should("have.css", "background-color", "rgb(213, 211, 221)");
     }
 
     graphViewSidePanel.closeSidePanel();
-    graphViewSidePanel.getSelectedEntityHeading("Order").should("not.exist");
+    graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
 
 
     //To verify Pan and Zoom in buttons are rendered properly
