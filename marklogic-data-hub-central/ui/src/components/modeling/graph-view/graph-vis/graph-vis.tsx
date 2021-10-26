@@ -44,21 +44,21 @@ const GraphVis: React.FC<Props> = (props) => {
   const {modelingOptions, setSelectedEntity} = useContext(ModelingContext);
 
   const entitiesConfigExist = () => {
-    return !props.hubCentralConfig?.modeling?.entities ? false : true;
+    return !props.hubCentralConfig?.modeling?.entities ? false : (!Object.keys(props.hubCentralConfig?.modeling?.entities).length ? false : true);
   };
 
   const coordinatesExist = () => {
-    let coordsExist = false;
+    let coordsExist = true;
     if (entitiesConfigExist()) {
       let allEntityCoordinates = props.hubCentralConfig["modeling"]["entities"];
-      for (const entity of Object.keys(allEntityCoordinates)) {
-        if (allEntityCoordinates[entity]) {
-          if (allEntityCoordinates[entity].graphX && allEntityCoordinates[entity].graphY) {
-            coordsExist = true;
-            break;
-          }
+      for (const entity of props.entityTypes) {
+        if (!allEntityCoordinates[entity.entityName]) {
+          coordsExist = false;
+          break;
         }
       }
+    } else {
+      coordsExist = false;
     }
     return coordsExist;
   };
@@ -144,6 +144,10 @@ const GraphVis: React.FC<Props> = (props) => {
       if (coordinatesExist()) {
         if (physicsEnabled) {
           setPhysicsEnabled(false);
+        }
+      } else {
+        if (!physicsEnabled) {
+          setPhysicsEnabled(true);
         }
       }
 
@@ -726,7 +730,7 @@ const GraphVis: React.FC<Props> = (props) => {
       if (network) {
         let positions = network.getPositions();
         // When graph is stabilized, nodePositions no longer empty
-        if (positions && Object.keys(positions).length && !Object.keys(coords).length) {
+        if (positions && Object.keys(positions).length) {
           saveUnsavedCoords();
           setHasStabilized(true);
           if (physicsEnabled) {
