@@ -10,12 +10,13 @@ import SearchBar from "../components/search-bar/search-bar";
 import SearchPagination from "../components/search-pagination/search-pagination";
 import SearchSummary from "../components/search-summary/search-summary";
 import SearchResults from "../components/search-results/search-results";
-import {ModelingMessages} from "../config/tooltips.config";
+import {ExploreToolTips, ModelingMessages} from "../config/tooltips.config";
 import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
 import {entityFromJSON, entityParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
+import {faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
+import {QuestionCircleFill} from "react-bootstrap-icons";
 import Query from "../components/queries/queries";
 import {AuthoritiesContext} from "../util/authorities";
 import ZeroStateExplorer from "../components/zero-state-explorer/zero-state-explorer";
@@ -25,6 +26,8 @@ import Spinner from "react-bootstrap/Spinner";
 import RecordCardView from "../components/record-view/record-view";
 import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 import HCTooltip from "../components/common/hc-tooltip/hc-tooltip";
+import {CSSProperties} from "react";
+import GraphViewExplore from "../components/explore/graph-view-explore";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -77,6 +80,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
+
+  const [graphView, setGraphView] = useState(false);
 
   const getEntityModel = async () => {
     try {
@@ -413,10 +418,16 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const handleViewChange = (view) => {
     let tableView = "";
-    if (view === "snippet") {
+    if (view === "graph") {
+      toggleTableView(false);
+      setGraphView(true);
+      tableView = "graph";
+    } else if (view === "snippet") {
+      setGraphView(false);
       toggleTableView(false);
       tableView = "snippet";
     } else {
+      setGraphView(false);
       toggleTableView(true);
       tableView = "table";
     }
@@ -426,6 +437,31 @@ const Browse: React.FC<Props> = ({location}) => {
       resultsRef.current["style"]["boxShadow"] = "none";
     }
   };
+
+  const switchViewsGraphStyle = () => {
+    let style: CSSProperties = {
+      width: "100%",
+      display: "flex",
+      justifyContent: "flex-end"
+    };
+    if (graphView) {
+      style["marginLeft"] = "20px";
+      style["marginTop"] = "10px";
+      style["justifyContent"]= "space-between";
+    }
+    return style;
+  };
+
+  const helpIcon = () => (
+    <span>
+      <HCTooltip text={ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
+        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+      </HCTooltip>
+    </span>
+  );
+
+  const numberOfResultsBanner = <span>Viewing 100 of 1000 results {helpIcon()}</span>;
+
 
   if (searchOptions.zeroState) {
     return (
@@ -474,53 +510,62 @@ const Browse: React.FC<Props> = ({location}) => {
                 {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
                 <div className={styles.searchBar} ref={searchBarRef} >
 
-                  <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}/>
+                  {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}/> : ""}
                   {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
-                    <span><SearchSummary
-                      total={totalDocuments}
-                      start={searchOptions.start}
-                      length={searchOptions.pageLength}
-                      pageSize={searchOptions.pageSize}
-                    />
-                    <div id="top-search-pagination-bar">
-                      <SearchPagination
+                    <span>
+                      {!graphView ? <div><SearchSummary
                         total={totalDocuments}
-                        pageNumber={searchOptions.pageNumber}
+                        start={searchOptions.start}
+                        length={searchOptions.pageLength}
                         pageSize={searchOptions.pageSize}
-                        pageLength={searchOptions.pageLength}
-                        maxRowsPerPage={searchOptions.maxRowsPerPage}
                       />
-                    </div>
-
-                    <div className={styles.spinViews}>
-                      <div className={styles.switchViews}>
-                        {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
-                        {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
-                          <Radio.Group
-                            buttonStyle="outline"
-                            name="radiogroup"
-                            size="large"
-                            defaultValue={tableView ? "table" : "snippet"}
-                            onChange={e => handleViewChange(e.target.value)}
-                          >
-                            <Radio.Button aria-label="switch-view-table" value={"table"} >
-                              <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
-                                <i data-cy="table-view" id={"tableView"}>
-                                  <FontAwesomeIcon icon={faTable} />
-                                </i>
-                              </HCTooltip>
-                            </Radio.Button>
-                            <Radio.Button aria-label="switch-view-snippet" value={"snippet"} >
-                              <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
-                                <i data-cy="facet-view" id={"snippetView"}>
-                                  <FontAwesomeIcon icon={faStream} />
-                                </i>
-                              </HCTooltip>
-                            </Radio.Button>
-                          </Radio.Group>
-                        </div> : ""}
+                      <div id="top-search-pagination-bar">
+                        <SearchPagination
+                          total={totalDocuments}
+                          pageNumber={searchOptions.pageNumber}
+                          pageSize={searchOptions.pageSize}
+                          pageLength={searchOptions.pageLength}
+                          maxRowsPerPage={searchOptions.maxRowsPerPage}
+                        />
                       </div>
-                    </div></span>}
+                      </div> : ""
+                      }
+
+                      <div className={styles.spinViews}>
+                        <div style={switchViewsGraphStyle()}>
+                          {graphView ? numberOfResultsBanner : ""}
+                          {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
+                          {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
+                            <Radio.Group
+                              buttonStyle="outline"
+                              name="radiogroup"
+                              size="large"
+                              defaultValue={tableView ? "table" : "snippet"}
+                              onChange={e => handleViewChange(e.target.value)}
+                            >
+                              <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={!tableView && graphView}>
+                                <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
+                                  <i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i>
+                                </HCTooltip>
+                              </Radio.Button>
+                              <Radio.Button aria-label="switch-view-table" value={"table"} >
+                                <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
+                                  <i data-cy="table-view" id={"tableView"}>
+                                    <FontAwesomeIcon icon={faTable} />
+                                  </i>
+                                </HCTooltip>
+                              </Radio.Button>
+                              <Radio.Button aria-label="switch-view-snippet" value={"snippet"} >
+                                <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
+                                  <i data-cy="facet-view" id={"snippetView"}>
+                                    <FontAwesomeIcon icon={faStream} />
+                                  </i>
+                                </HCTooltip>
+                              </Radio.Button>
+                            </Radio.Group>
+                          </div> : ""}
+                        </div>
+                      </div></span>}
                 </div>
                 <Query queries={queries || []}
                   setQueries={setQueries}
@@ -539,34 +584,44 @@ const Browse: React.FC<Props> = ({location}) => {
                 />
               </div>
               {!showNoDefinitionAlertMessage &&
-              <div className={styles.viewContainer} >
+              <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
                 <div>
-                  {cardView ?
-                    <RecordCardView
-                      data={data}
-                      entityPropertyDefinitions={entityPropertyDefinitions}
-                      selectedPropertyDefinitions={selectedPropertyDefinitions}
-                    />
-                    : (tableView ?
-                      <div className={styles.tableViewResult}>
-                        <ResultsTabularView
-                          data={data}
-                          entityPropertyDefinitions={entityPropertyDefinitions}
-                          selectedPropertyDefinitions={selectedPropertyDefinitions}
-                          entityDefArray={entityDefArray}
-                          columns={columns}
-                          selectedEntities={searchOptions.entityTypeIds}
-                          setColumnSelectorTouched={setColumnSelectorTouched}
-                          tableView={tableView}
-                          isLoading={isLoading}
-                        />
-                      </div>
-                      : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
-                    )}
+                  {graphView ?
+                    <div>
+                      <GraphViewExplore
+                        entityTypesInstances={data}
+                        graphView={graphView}
+                      />
+                    </div> :
+                    cardView ?
+                      <RecordCardView
+                        data={data}
+                        entityPropertyDefinitions={entityPropertyDefinitions}
+                        selectedPropertyDefinitions={selectedPropertyDefinitions}
+                      />
+                      : (tableView ?
+                        <div className={styles.tableViewResult}>
+                          <ResultsTabularView
+                            data={data}
+                            entityPropertyDefinitions={entityPropertyDefinitions}
+                            selectedPropertyDefinitions={selectedPropertyDefinitions}
+                            entityDefArray={entityDefArray}
+                            columns={columns}
+                            selectedEntities={searchOptions.entityTypeIds}
+                            setColumnSelectorTouched={setColumnSelectorTouched}
+                            tableView={tableView}
+                            isLoading={isLoading}
+                            handleViewChange={handleViewChange}
+                          />
+                        </div>
+                        : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
+                          handleViewChange={handleViewChange}
+                          entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                      )}
                 </div>
                 <br />
               </div>}
-              {!showNoDefinitionAlertMessage &&
+              {!showNoDefinitionAlertMessage && !graphView &&
               <div>
                 <SearchSummary
                   total={totalDocuments}

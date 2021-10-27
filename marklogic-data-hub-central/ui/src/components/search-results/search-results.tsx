@@ -10,6 +10,7 @@ type Props = {
   entityDefArray:any[];
   tableView: boolean;
   columns: any;
+  handleViewChange:any
 };
 
 
@@ -35,6 +36,7 @@ const SearchResults:React.FC<Props> = (props) => {
               item={item}
               entityDefArray={props.entityDefArray}
               tableView={props.tableView}
+              handleViewChange={props.handleViewChange}
             />
           </ListGroup.Item>
         ))}

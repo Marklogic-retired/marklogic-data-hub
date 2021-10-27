@@ -6,7 +6,7 @@ import ColumnSelector from "../../components/column-selector/column-selector";
 import {Table} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {Link} from "react-router-dom";
-import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
+import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
@@ -22,6 +22,7 @@ interface Props {
     tableView: boolean;
     entityDefArray: any[];
     database: string;
+    handleViewChange: any
 }
 /* eslint-enable */
 
@@ -71,7 +72,8 @@ const ResultsTabularView = (props) => {
   const {
     searchOptions,
     setSelectedTableProperties,
-    setSortOrder
+    setSortOrder,
+    setGraphViewOptions
   } = useContext(SearchContext);
 
   const authorityService = useContext(AuthoritiesContext);
@@ -200,6 +202,12 @@ const ResultsTabularView = (props) => {
     return header;
   };
 
+  const navigateToGraphView = (entityInstanceId) => {
+    setGraphViewOptions(entityInstanceId);
+    props.handleViewChange("graph");
+  };
+
+
   const tableHeaders = props.selectedEntities?.length === 0 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader();
 
   const tableDataRender = (item) => {
@@ -262,6 +270,12 @@ const ResultsTabularView = (props) => {
                   }
                 </HCTooltip>
               </Link>
+              <div className={styles.graphIcon}>
+                <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
+                  <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
+                    size="sm"  data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(`${item.entityName}-${primaryKeyValue}`)}/></i>
+                </HCTooltip>
+              </div>
             </div>;
     if (props.selectedEntities?.length === 0 && item.hasOwnProperty("entityName")) {
       let itemIdentifier = item.identifier?.propertyValue;

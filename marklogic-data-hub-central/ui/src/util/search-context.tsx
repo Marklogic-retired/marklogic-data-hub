@@ -19,7 +19,8 @@ type SearchContextInterface = {
   view: JSX.Element|null,
   tileId: string,
   sortOrder: any,
-  database: string
+  database: string,
+  entityInstanceId: any
 }
 
 const defaultSearchOptions = {
@@ -38,7 +39,8 @@ const defaultSearchOptions = {
   view: null,
   tileId: "",
   sortOrder: [],
-  database: "final"
+  database: "final",
+  entityInstanceId: undefined
 };
 
 
@@ -81,6 +83,7 @@ interface ISearchContextInterface {
   setLatestDatabase: (option: string, jobId: string) => void;
   entityDefinitionsArray: any;
   setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
+  setGraphViewOptions: (entityInstanceId: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -122,6 +125,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setPageQueryOptions: () => { },
   setDatabase: () => { },
   setLatestDatabase: () => { },
+  setGraphViewOptions: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -601,6 +605,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const setGraphViewOptions = (entityInstanceId) => {
+    setSearchOptions({
+      ...searchOptions,
+      entityInstanceId: entityInstanceId
+    });
+  };
+
   useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -646,7 +657,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setSortOrder,
       setPageQueryOptions,
       setDatabase,
-      setLatestDatabase
+      setLatestDatabase,
+      setGraphViewOptions
     }}>
       {children}
     </SearchContext.Provider>

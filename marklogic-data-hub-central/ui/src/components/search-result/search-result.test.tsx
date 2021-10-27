@@ -53,6 +53,9 @@ describe("Search Result view component", () => {
 
     fireEvent.mouseOver(getByTestId("instance-icon"));
     await (waitForElement(() => (getByText("Show the processed data"))));
+
+    fireEvent.mouseOver(getByTestId("graph-icon"));
+    await (waitForElement(() => (getByText("View entity in graph view"))));
   });
 
   test("Verify expandable icon closes if page number changes", async () => {
