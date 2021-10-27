@@ -1,0 +1,70 @@
+.graphViewExploreContainer {
+    padding: 10px 10px 0px 0px;
+
+    .graphHeader {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+
+        .filterInput{
+          padding-bottom: 0px;
+          width: 280px;
+        }
+        .buttons {
+          display: flex;
+
+          .graphExportIcon {
+            cursor: pointer;
+            font-size: 24px;
+            margin-left: 8px;
+            margin-top: 2px;
+            color: #777777;
+            &:hover{
+              color: var(--hoverColor);
+            }
+          }
+      }
+    }
+
+    .borderBelowHeader {
+      width: 100%;
+      border-top: 1px solid #CCCCCC;
+      margin-top: 5px;
+    }
+
+    .searchIcon {
+        float: right;
+        font-size: 20px;
+        position: relative;
+        color: #bfbfbf;
+    }
+}
+.resizerStyle {
+  border: 1px solid rgba(1, 22, 39, 0.21);
+  cursor: col-resize;
+  height: auto;
+  margin-top: 10px;
+  min-height: 60vh;
+};
+
+.resizerStyle::before {
+  content: '| |';
+  position: absolute;
+  top: 50%;
+  padding: 0 8px;
+  transform: translate(-50%, -50%);
+  background-color: transparent;
+  color: #CCCCCC;
+  line-height: 16px;
+  font-size: 16px;
+  letter-spacing: 0px;
+  display: inline-block;
+}
+
+.disabledPointerEvents{
+  pointer-events: none;
+}
+
+.disabledCursor{
+  cursor: not-allowed;
+}

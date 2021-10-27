@@ -1,3 +1,6 @@
+import modelingInfoIcon from "../assets/icon_helpInfo.png";
+import docIcon from "../assets/DocIcon.png";
+
 const defaultOptions: any = {
   edges: {
       color: "#000000"
@@ -77,60 +80,59 @@ const customEdgeSVG: any = {
 
 // TODO temp hardcoded node data, remove when retrieved from db
 let sampleMetadata = {
-  BabyRegistry: {
-    color: "#e3ebbc",
-    instances: 5,
-    x: 10,
-    y: -100
-  },
-  Customer: {
-    color: "#ecf7fd",
-    instances: 63,
-    x: 10,
-    y: 50
-  },
-  Product: {
-    color: "#ded2da",
-    instances: 252,
-    x: -10,
-    y: -100
-  },
-  Order: {
-    color: "#cfe3e8",
-    instances: 50123,
-    x: -300,
-    y: 50
-  },
-  NamespacedCustomer: {
-    color: "#dfe2ec",
-    instances: 75,
-    x: -600,
-    y: -100
-  },
-  Person: {
-    color: "#dfe2ec",
-    instances: 75,
-    x: -150,
-    y: -100
-  },
-  Client: {
-    color: "#dfe2ec",
-    instances: 75,
-    x: -300,
-    y: -100
-  },
-  Relation: {
-    color: "#ded2da",
-    instances: 75,
-    x: -400,
-    y: -100
-  },
-  Concept: {
-    color: "#ded2da",
-    instances: 75,
-    x: -300,
-    y: -200
-  }
+    "modeling": {
+        "entities": {
+            "BabyRegistry": {
+                "graphX": -91,
+                    "graphY": -12,
+                    "color":"#e3ebbc",
+                    "icon":modelingInfoIcon
+
+            },
+            "Client": {
+                "graphX": 86,
+                    "graphY": -22,
+                    "color":"#dfe2ec",
+                "icon": docIcon
+            },
+            "Customer": {
+                "graphX": 53,
+                    "graphY": 106,
+                    "color": "#ecf7fd"
+            },
+            "NamespacedCustomer": {
+              "graphX": 43,
+                  "graphY": 78,
+                  "color": "#ecf7fd"
+          },
+            "Order": {
+                "graphX": 55,
+                    "graphY": 16,
+                    "color":"#cfe3e8"
+            },
+            "Person": {
+                "graphX": -65,
+                    "graphY": 104,
+                    "color":"#dfe2ec"
+            },
+            "Buyer": {
+                "color": "#EEEFF1",
+                    "graphX": -24,
+                    "graphY": -100
+            },
+            "Product": {
+              "graphX": 40,
+                  "graphY": -120,
+                  "color":"#e3ebbc",
+                   "icon":modelingInfoIcon
+            }
+        },
+        "scale": 0.602620242936941,
+            "viewPosition": {
+            "x": 23.5,
+                "y": 3
+        }
+    }
 };
 
 export default {

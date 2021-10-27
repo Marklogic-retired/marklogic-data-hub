@@ -36,8 +36,9 @@
 }
 
 .redirectIcons a {
-  padding: 8px;
-  color: #44499C;
+    color: #44499C;
+    cursor:pointer;
+    padding: 0px 8px;
 }
 
 .jsonIcon:before {
@@ -46,10 +47,20 @@
   font-size: 18px;
   position: relative;
   font-weight: 200;
-  top: 3px;
+  top: -2px;
   display: inline-block;
 }
 
 .jsonIcon:hover:before{
     color: var(--hoverColor);
 }
+
+.graphIcon {
+    color: #44499C;
+    cursor:pointer;
+    padding: 0px 8px;
+}
+.redirectIcons{
+    display: flex;
+}
+

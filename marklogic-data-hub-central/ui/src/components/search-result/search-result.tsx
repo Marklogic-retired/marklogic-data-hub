@@ -5,7 +5,7 @@ import ReactHtmlParser from "react-html-parser";
 import {dateConverter} from "../../util/date-conversion";
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExternalLinkAlt, faCode} from "@fortawesome/free-solid-svg-icons";
+import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {SearchContext} from "../../util/search-context";
 import HCTooltip from "../common/hc-tooltip/hc-tooltip";
 import {ChevronDown, ChevronRight} from "react-bootstrap-icons";
@@ -15,11 +15,13 @@ interface Props extends RouteComponentProps {
     item: any;
     entityDefArray: any[];
     tableView: boolean;
+    handleViewChange: any
 }
 
 const SearchResult: React.FC<Props> = (props) => {
   const {
     searchOptions,
+    setGraphViewOptions
   } = useContext(SearchContext);
   const [show, toggleShow] = useState(false);
 
@@ -73,6 +75,10 @@ const SearchResult: React.FC<Props> = (props) => {
   function showTableEntityProperties() {
     toggleShow(!show);
   }
+  const navigateToGraphView = (entityInstanceId) => {
+    setGraphViewOptions(entityInstanceId);
+    props.handleViewChange("graph");
+  };
 
   return (
     <div className={"w-100"}>
@@ -122,6 +128,12 @@ const SearchResult: React.FC<Props> = (props) => {
               }
             </HCTooltip>
           </Link>
+          <div className={styles.graphIcon}>
+            <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
+              <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
+                size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(`${props.item.entityName}-${primaryKeyValue}`)}/></i>
+            </HCTooltip>
+          </div>
         </div>
       </div>
       <div className={styles.snippet} data-cy="snippet">

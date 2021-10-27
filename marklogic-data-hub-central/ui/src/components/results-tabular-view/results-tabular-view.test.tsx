@@ -137,6 +137,10 @@ describe("Results Table view component", () => {
     fireEvent.mouseOver(getByTestId("101-sourceOnSeparatePage"));
     await(waitForElement(() => (getByText("Show the complete JSON"))));
 
+    //Check if the tooltip on 'graph' icon works fine.
+    fireEvent.mouseOver(getByTestId("101-graphOnSeparatePage"));
+    await(waitForElement(() => (getByText("View entity in graph view"))));
+
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement

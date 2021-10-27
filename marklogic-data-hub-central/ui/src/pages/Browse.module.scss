@@ -15,7 +15,7 @@
   margin-top: -60px;
   padding-top: 10px;
   padding-right: 10px;
-  width: 75%;
+  width: 76%;
 }
 
 .stickyHeaderCollapsed{
@@ -47,7 +47,12 @@
 }
 
 .viewContainer {
-  margin-top: 150px;
+  margin-top: 100px;
+  padding-top: 10px;
+}
+
+.viewGraphContainer {
+  margin-top: 30px;
   padding-top: 10px;
 }
 
@@ -59,6 +64,7 @@
 }
 
 .tableViewResult {
+  margin-top: 5%;
   overflow: hidden;
   overflow-x: scroll;
 }
@@ -116,4 +122,9 @@
   width: 100%;
   padding-top: 3vh;
   padding-left: 2vw;
+}
+.borderBelowHeader {
+  width: 100%;
+  border-top: 1px solid #CCCCCC;
+  margin-top: -10px;
 }
