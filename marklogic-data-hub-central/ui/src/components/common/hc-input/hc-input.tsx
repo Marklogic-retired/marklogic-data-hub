@@ -70,7 +70,7 @@ function HCInput(props: Props) {
     if (onBlur) { onBlur(event); }
   };
 
-  useEffect(() => { if (props?.value) setMessage(props.value); }, [props?.value]);
+  useEffect(() => { if (props?.value) setMessage(props.value === " "? "" : props.value); }, [props?.value]);
 
   return (
     <>

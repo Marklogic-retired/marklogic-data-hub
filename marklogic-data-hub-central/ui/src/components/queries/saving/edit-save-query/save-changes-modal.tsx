@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Modal, Input, Radio} from "antd";
+import {Modal, Radio} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "../save-query-modal/save-query-modal.module.scss";
@@ -7,7 +7,7 @@ import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
 import HCButton from "../../../common/hc-button/hc-button";
-
+import HCInput from "../../../common/hc-input/hc-input";
 
 interface Props {
   setSaveChangesModalVisibility: () => void;
@@ -185,9 +185,9 @@ const SaveChangesModal: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="save-changes-query-name"
-                  value={queryName}
+                  value={queryName ? queryName: " "}
                   placeholder={"Enter query name"}
                   className={styles.input}
                   onChange={handleChange}
@@ -202,9 +202,9 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="save-changes-query-description"
-              value={queryDescription}
+              value={queryDescription ? queryDescription: " "}
               onChange={handleChange}
               placeholder={"Enter query description"}
             />

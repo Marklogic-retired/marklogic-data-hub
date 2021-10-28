@@ -1,12 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Input} from "antd";
+import {Modal} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
 import HCButton from "../../../common/hc-button/hc-button";
-
+import HCInput from "../../../common/hc-input/hc-input";
 interface Props {
   setEditQueryDetailVisibility: () => void;
   currentQuery: any;
@@ -96,9 +96,9 @@ const EditQueryDetails: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="edit-query-detail-name"
-                  value={queryName}
+                  value={queryName ? queryName: " "}
                   placeholder={"Enter new query name"}
                   onChange={handleChange}
                 />
@@ -112,9 +112,9 @@ const EditQueryDetails: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="edit-query-detail-description"
-              value={queryDescription}
+              value={queryDescription ? queryDescription: " "}
               onChange={handleChange}
               placeholder={"Enter new query description"}
             />
