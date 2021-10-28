@@ -1,0 +1,29 @@
+{
+  "info": {
+    "title": "ProductDetail",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/",
+    "draft": false
+  },
+  "definitions": {
+    "ProductInfo": {
+      "required": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "productName": {
+          "datatype": "string",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
+          "facetable": true
+        },
+        "productType": {
+          "datatype": "string",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
+          "facetable": true
+        }
+},
+    "description": "This entity has no matching definition as entity title so no info will be displayed"
+    }
+}
+}
