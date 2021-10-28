@@ -11,8 +11,11 @@ mlHost=`echo $2 | cut -d'=' -f 2`
 env=local
 mlSecurityUsername=`echo $3 | cut -d'=' -f 2`
 mlSecurityPassword=`echo $4 | cut -d'=' -f 2`
+e2eDirectory=`pwd`
 
-cd hc-qa-project
+cd ../../..
+./gradlew publishToMavenLocal -x test
+cd "$e2eDirectory/hc-qa-project"
 ./gradlew hubInit
 
 cp ../cypress/fixtures/users/* src/main/ml-config/security/users/
