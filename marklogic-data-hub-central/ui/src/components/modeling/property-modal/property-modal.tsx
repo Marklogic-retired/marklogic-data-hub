@@ -1,10 +1,10 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Input, Radio, Cascader, Select} from "antd";
+import {Modal, Radio, Cascader, Select} from "antd";
 import {Row, Col, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
-
+import HCInput from "../../common/hc-input/hc-input";
 import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {UserContext} from "../../../util/user-context";
@@ -837,12 +837,12 @@ const PropertyModal: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="property-name"
-                  aria-label="input-name"
+                  ariaLabel="input-name"
                   placeholder="Enter the property name"
                   className={styles.input}
-                  value={name}
+                  value={name ? name : " "}
                   onChange={handleInputChange}
                   onBlur={handleInputChange}
                 />
@@ -884,7 +884,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                   onChange={onPropertyTypeChange}
                   value={typeDisplayValue}
                   className={styles.input}
-                  style={{"width": "390px"}}
+                  style={{"width": "419px"}}
                 />
               </Col>
               <Col xs={12} className={styles.validationError}>

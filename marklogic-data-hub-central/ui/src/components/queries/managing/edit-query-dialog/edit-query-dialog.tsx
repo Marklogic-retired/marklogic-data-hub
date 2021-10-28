@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Input} from "antd";
+import {Modal} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
 import HCButton from "../../../common/hc-button/hc-button";
-
+import HCInput from "../../../common/hc-input/hc-input";
 
 const EditQueryDialog = (props) => {
   const {
@@ -112,10 +112,10 @@ const EditQueryDialog = (props) => {
             <Col>
               <Row>
                 <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                  <Input
+                  <HCInput
                     id="name"
                     placeholder="Edit name"
-                    value={queryName}
+                    value={queryName ? queryName: " "}
                     onChange={handleChange}
                     className={styles.text}
                   />
@@ -129,10 +129,10 @@ const EditQueryDialog = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Description:"}</FormLabel>
             <Col className={"d-flex"}>
-              <Input
+              <HCInput
                 id="description"
                 placeholder="Edit description"
-                value={queryDescription}
+                value={queryDescription ? queryDescription: " "}
                 onChange={handleChange}
                 className={styles.text}
               />

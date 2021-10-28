@@ -1,8 +1,8 @@
 import React, {useEffect, useState, useContext} from "react";
-import {Input, Modal} from "antd";
+import {Modal} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./structured-type-modal.module.scss";
-
+import HCInput from "../../common/hc-input/hc-input";
 import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
@@ -104,17 +104,17 @@ A structured type cannot use the same name as an existing structured type.</span
         onSubmit={onSubmit}
         className={"container-fluid"}
       >
-        <Row className={"mb-3"}>
+        <Row>
           <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col lg={9}>
             <Row>
-              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+              <Col className={errorMessage ? "d-flex has-error" : "d-flex"} style={{paddingRight: 0}}>
+                <HCInput
                   id="structured-name"
                   placeholder="Enter name"
-                  aria-label="structured-input-name"
+                  ariaLabel="structured-input-name"
                   className={styles.input}
-                  value={name}
+                  value={name ? name : " "}
                   onChange={handleChange}
                   onBlur={handleChange}
                 />

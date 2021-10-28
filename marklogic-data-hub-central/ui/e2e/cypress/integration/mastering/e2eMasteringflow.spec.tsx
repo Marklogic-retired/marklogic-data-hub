@@ -63,11 +63,11 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
-    loadPage.stepNameInput().type(loadStepName);
-    loadPage.stepDescriptionInput().type(`${loadStepName} description`);
-    loadPage.stepSourceNameInput().type("patientSourceName");
-    loadPage.stepSourceNameType().type("patientSourceType");
-    loadPage.uriPrefixInput().type("/patient/");
+    loadPage.stepNameInput().clear().type(loadStepName);
+    loadPage.stepDescriptionInput().clear().type(`${loadStepName} description`);
+    loadPage.stepSourceNameInput().clear().type("patientSourceName");
+    loadPage.stepSourceNameType().clear().type("patientSourceType");
+    loadPage.uriPrefixInput().clear().type("/patient/");
     loadPage.saveButton().click();
     cy.findByText(loadStepName).should("be.visible");
   });
@@ -194,8 +194,8 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMatchTab("Patient");
     curatePage.addNewStep("Patient").should("be.visible").click();
-    createEditStepDialog.stepNameInput().type(matchStep);
-    createEditStepDialog.stepDescriptionInput().type("match patient step example", {timeout: 2000});
+    createEditStepDialog.stepNameInput().clear().type(matchStep);
+    createEditStepDialog.stepDescriptionInput().clear().type("match patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(mapStep);
     createEditStepDialog.saveButton("matching").click();
     cy.waitForAsyncRequest();
@@ -323,8 +323,8 @@ describe("Validate E2E Mastering Flow", () => {
     curatePage.toggleEntityTypeId("Patient");
     curatePage.selectMergeTab("Patient");
     curatePage.addNewStep("Patient").should("be.visible").click();
-    createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
-    createEditStepDialog.stepDescriptionInput().type("merge patient step example", {timeout: 2000});
+    createEditStepDialog.stepNameInput().clear().type(mergeStep, {timeout: 2000});
+    createEditStepDialog.stepDescriptionInput().clear().type("merge patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(matchStep);
     createEditStepDialog.saveButton("merging").click();
     cy.waitForAsyncRequest();
