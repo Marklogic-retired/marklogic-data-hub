@@ -74,6 +74,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
   it("Verify load step with duplicate name cannot be created", () => {
     loadPage.addNewButton("card").click();
     loadPage.saveButton().should("be.enabled");
+    loadPage.stepNameInput().clear();
     loadPage.stepNameInput().type(loadStep);
     loadPage.confirmationOptions("Save").click({force: true});
     loadPage.duplicateStepErrorMessage();

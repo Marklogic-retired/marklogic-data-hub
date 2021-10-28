@@ -1,5 +1,5 @@
 import React, {CSSProperties, useContext, useState, useEffect} from "react";
-import {AutoComplete, Input, Tooltip} from "antd";
+import {AutoComplete, Tooltip} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
@@ -15,6 +15,7 @@ import HCButton from "../../common/hc-button/hc-button";
 import HCAlert from "../../common/hc-alert/hc-alert";
 import {ChevronDown, Search} from "react-bootstrap-icons";
 import {Dropdown, DropdownButton} from "react-bootstrap";
+import HCInput from "../../common/hc-input/hc-input";
 
 type Props = {
   entityTypes: any;
@@ -93,7 +94,7 @@ const GraphView: React.FC<Props> = (props) => {
     aria-label="graph-view-filter-autoComplete"
     placeholder={"Filter"}
   >
-    <Input aria-label="graph-view-filter-input" suffix={<Search className={styles.searchIcon} />} size="small"></Input>
+    <HCInput ariaLabel="graph-view-filter-input" placeholder={"Filter"} suffix={<Search className={styles.searchIcon} />} size="sm"></HCInput>
   </AutoComplete>;
 
   const handleAddMenu = (key) => {

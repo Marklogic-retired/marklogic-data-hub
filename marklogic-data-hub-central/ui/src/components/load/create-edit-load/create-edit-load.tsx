@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Input, Select, Tooltip} from "antd";
+import {Select, Tooltip} from "antd";
 import {Form, Row, Col, FormLabel} from "react-bootstrap";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
@@ -8,7 +8,7 @@ import {NewLoadTooltips} from "../../../config/tooltips.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../common/hc-button/hc-button";
-
+import HCInput from "../../common/hc-input/hc-input";
 interface Props {
   tabKey: string;
   openStepSettings: boolean;
@@ -418,7 +418,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 {tobeDisabled ?
                   <Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}>
                     <span className={"w-100"}>
-                      <Input
+                      <HCInput
                         id="name"
                         placeholder="Enter name"
                         value={stepName}
@@ -428,7 +428,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                       />
                     </span>
                   </Tooltip> :
-                  <Input
+                  <HCInput
                     id="name"
                     placeholder="Enter name"
                     value={stepName}
@@ -452,7 +452,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="description"
               placeholder="Enter description"
               value={description}
@@ -511,7 +511,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
               {fieldSeparator === "Other" ?
                 <>
                   <div className={"d-flex ms-2"}>
-                    <Input
+                    <HCInput
                       id="otherSeparator"
                       value={otherSeparator}
                       onChange={handleOtherSeparator}
@@ -560,7 +560,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           <Row  className={"mb-3"}>
             <FormLabel column lg={3}>{"Source Name:"}</FormLabel>
             <Col className={"d-flex"}>
-              <Input
+              <HCInput
                 id="sourceName"
                 placeholder="Enter Source Name"
                 value={sourceName}
@@ -581,7 +581,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Source Type:"}</FormLabel>
             <Col className={"d-flex"}>
-              <Input
+              <HCInput
                 id="sourceType"
                 placeholder="Enter Source Type"
                 value={sourceType}
@@ -601,7 +601,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         <Row className={"mb-4"}>
           <FormLabel column lg={3}>{"Target URI Prefix:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="outputUriPrefix"
               placeholder="Enter URI Prefix"
               value={outputUriPrefix}

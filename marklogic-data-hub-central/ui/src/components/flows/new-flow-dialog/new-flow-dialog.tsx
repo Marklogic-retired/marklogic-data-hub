@@ -1,4 +1,4 @@
-import {Modal, Input, Tooltip} from "antd";
+import {Modal, Tooltip} from "antd";
 import {Form, Row, Col, FormLabel} from "react-bootstrap";
 import React, {useState, useEffect} from "react";
 import styles from "./new-flow-dialog.module.scss";
@@ -7,6 +7,7 @@ import {useHistory} from "react-router-dom";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCButton from "../../common/hc-button/hc-button";
+import HCInput from "../../common/hc-input/hc-input";
 
 
 const NewFlowDialog = (props) => {
@@ -145,7 +146,7 @@ const NewFlowDialog = (props) => {
                 {tobeDisabled ?
                   <Tooltip title={NewFlowTooltips.nameField} placement={"bottom"} >
                     <span className={"w-100"}>
-                      <Input
+                      <HCInput
                         id="name"
                         placeholder="Enter name"
                         value={flowName}
@@ -154,7 +155,7 @@ const NewFlowDialog = (props) => {
                       />
                     </span>
                   </Tooltip> :
-                  <Input
+                  <HCInput
                     id="name"
                     placeholder="Enter name"
                     value={flowName}
@@ -176,7 +177,7 @@ const NewFlowDialog = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="description"
               placeholder="Enter description"
               value={description}
