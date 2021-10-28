@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Input, Modal, Tooltip} from "antd";
+import {Modal, Tooltip} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -12,7 +12,7 @@ import graphConfig from "../../../config/graph-vis.config";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
-
+import HCInput from "../../common/hc-input/hc-input";
 
 type Props = {
   isVisible: boolean;
@@ -279,13 +279,14 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         id="entity-type-form"
         onSubmit={onOk}
         className={"container-fluid"}
+        style={{padding: "0px"}}
       >
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Name:"}{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}</FormLabel>
           <Col>
             <Row>
               <Col className={(errorName || isErrorOfType("name") ? "d-flex has-error" : "d-flex")}>
-                {props.isEditModal ? <span>{name}</span> : <Input
+                {props.isEditModal ? <span>{name}</span> : <HCInput
                   id="entity-name"
                   placeholder="Enter name"
                   value={name}
@@ -308,7 +309,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="description"
               placeholder="Enter description"
               value={description}
@@ -327,22 +328,23 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={"d-flex"}>
-                <Input
+                <HCInput
                   id="namespace"
                   placeholder="Example: http://example.org/es/gs"
                   value={namespace}
                   onChange={handleChange}
                   onBlur={handleChange}
+                  style={{width: "90%"}}
                 />
-                <FormLabel className={"ps-4 pe-2 m-0 d-flex align-items-center"}>{"Prefix:"}</FormLabel>
-                <Input
+                <FormLabel className={"ps-2 pe-2 m-0 d-flex align-items-center"}>{"Prefix:"}</FormLabel>
+                <HCInput
                   id="prefix"
                   placeholder="Example: esgs"
                   className={styles.input}
                   value={prefix}
                   onChange={handleChange}
                   onBlur={handleChange}
-                  style={{width: "120px"}}
+                  style={{width: "170px"}}
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.namespace} id="prefix-tooltip" placement="top">
