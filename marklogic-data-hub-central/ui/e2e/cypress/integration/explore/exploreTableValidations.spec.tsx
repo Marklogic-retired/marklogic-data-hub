@@ -47,6 +47,9 @@ describe("Validate table and column selector in explore", () => {
     browsePage.getColumnSelector().should("be.visible");
     browsePage.getTreeItemTitle(2).should("have.class", "draggable");
     browsePage.getTreeItem(2).should("have.class", "ant-tree-treenode-checkbox-checked");
+    // Validate that alert message is displayed if there is no matching definition
+    browsePage.selectEntity("ProductDetail");
+    cy.findByLabelText("titleNoDefinition").should("be.visible");
   });
 });
 
