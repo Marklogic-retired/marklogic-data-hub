@@ -22,6 +22,16 @@
   }
 }
 
+.footerNewRuleset {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 32vw;
+
+  .saveButton {
+    margin-left: 5px;
+  }
+}
+
 .input {
   position: relative;
   width: 400px;
