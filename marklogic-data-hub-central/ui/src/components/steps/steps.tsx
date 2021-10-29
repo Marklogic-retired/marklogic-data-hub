@@ -1,8 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Modal} from "antd";
-import Tabs from "react-bootstrap/Tabs";
-import Tab from "react-bootstrap/Tab";
-import TabPane from "react-bootstrap/TabContainer";
+import {TabPane, Tabs, Tab, Modal} from "react-bootstrap";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
@@ -218,63 +215,60 @@ const Steps: React.FC<Props> = (props) => {
   };
 
   return <Modal
-    visible={props.openStepSettings}
-    title={null}
-    width="700px"
-    onCancel={() => onCancel()}
-    className={styles.StepsModal}
-    footer={null}
-    maskClosable={false}
-    destroyOnClose={true}
+    show={props.openStepSettings}
+    size={"lg"}
   >
-    <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>
-      <header>
-        <div className={styles.title}>{getTitle()}</div>
-      </header>
-      <div className={styles.tabs}>
-        <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} onSelect={handleTabChange}>
-          <Tab title={(
-            <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span>Basic</span></HCTooltip>
-          )} key="1" eventKey="1" disabled={!isValid && currentTab !== "1"}>
-            <TabPane mountOnEnter={false}>
-              {getCreateEditStep(props.activityType)}
-            </TabPane>
-          </Tab>
-          <Tab title={(
-            <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="advanced-tooltip" placement="bottom"><span>Advanced</span></HCTooltip>
-          )} key="2" eventKey="2" disabled={!isValid && currentTab !== "2"}>
-            <TabPane>
-              <AdvancedSettings
-                tabKey="2"
-                tooltipsData={props.tooltipsData}
-                isEditing={props.isEditing}
-                openStepSettings={props.openStepSettings}
-                setOpenStepSettings={props.setOpenStepSettings}
-                stepData={props.stepData}
-                updateStep={updateStep}
-                activityType={props.activityType}
-                canWrite={props.canWrite}
-                currentTab={currentTab}
-                setIsValid={setIsValid}
-                resetTabs={resetTabs}
-                setHasChanged={setHasAdvancedChanged}
-                setPayload={setAdvancedPayload}
-                createStep={createStep}
-                onCancel={onCancel}
-                defaultCollections={defaultCollections}
-              />
-            </TabPane>
-          </Tab>
-        </Tabs>
+    <Modal.Header className={"bb-none pb-0"}>
+      <div className={"fs-3"}>{getTitle()}</div>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"pt-0 pb-4"}>
+      <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>
+        <div className={styles.tabs}>
+          <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} onSelect={handleTabChange} className={"ms-auto me-5"}>
+            <Tab title={(
+              <HCTooltip text={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : ""} id="basic-tooltip" placement="bottom"><span>Basic</span></HCTooltip>
+            )} key="1" eventKey="1" disabled={!isValid && currentTab !== "1"}>
+              <TabPane mountOnEnter={false}>
+                {getCreateEditStep(props.activityType)}
+              </TabPane>
+            </Tab>
+            <Tab title={(
+              <HCTooltip text={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : ""} id="advanced-tooltip" placement="bottom"><span>Advanced</span></HCTooltip>
+            )} key="2" eventKey="2" disabled={!isValid && currentTab !== "2"}>
+              <TabPane>
+                <AdvancedSettings
+                  tabKey="2"
+                  tooltipsData={props.tooltipsData}
+                  isEditing={props.isEditing}
+                  openStepSettings={props.openStepSettings}
+                  setOpenStepSettings={props.setOpenStepSettings}
+                  stepData={props.stepData}
+                  updateStep={updateStep}
+                  activityType={props.activityType}
+                  canWrite={props.canWrite}
+                  currentTab={currentTab}
+                  setIsValid={setIsValid}
+                  resetTabs={resetTabs}
+                  setHasChanged={setHasAdvancedChanged}
+                  setPayload={setAdvancedPayload}
+                  createStep={createStep}
+                  onCancel={onCancel}
+                  defaultCollections={defaultCollections}
+                />
+              </TabPane>
+            </Tab>
+          </Tabs>
+        </div>
+        {/* Step Details link for Mapping steps */}
+        { (props.isEditing && props.activityType === StepType.Mapping) ?
+          <div className={styles.stepDetailsLink} onClick={() => handleStepDetails(props.stepData.name)}>
+            <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"}/>
+            <span className={styles.stepDetailsLabel}>Step Details</span>
+          </div> : null }
+        {discardChanges}
       </div>
-      {/* Step Details link for Mapping steps */}
-      { (props.isEditing && props.activityType === StepType.Mapping) ?
-        <div className={styles.stepDetailsLink} onClick={() => handleStepDetails(props.stepData.name)}>
-          <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"}/>
-          <span className={styles.stepDetailsLabel}>Step Details</span>
-        </div> : null }
-      {discardChanges}
-    </div>
+    </Modal.Body>
   </Modal>;
 };
 

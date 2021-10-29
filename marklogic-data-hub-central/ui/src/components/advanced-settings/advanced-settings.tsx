@@ -1067,15 +1067,13 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           </Row> : null
         }
         <Row className={"mt-4"}>
-          <Col className={"d-flex"}>
-            <div className={styles.submitButtons}>
-              <HCButton aria-label="Cancel" variant="outline-light" size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-              {!canReadWrite || !isFormValid() ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
-                <span className={styles.disabledCursor}>
-                  <HCButton size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
-                </span>
-              </Tooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
-            </div>
+          <Col className={"d-flex justify-content-end"}>
+            <HCButton aria-label="Cancel" variant="outline-light" size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
+            {!canReadWrite || !isFormValid() ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+              <span className={styles.disabledCursor}>
+                <HCButton size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
+              </span>
+            </Tooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
           </Col>
         </Row>
       </Form>
