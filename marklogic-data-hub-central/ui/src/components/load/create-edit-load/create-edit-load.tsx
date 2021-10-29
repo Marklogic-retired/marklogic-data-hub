@@ -409,7 +409,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   return (
     <div className={styles.newDataLoadForm}>
       <div className={styles.newLoadCardTitle} aria-label={"newLoadCardTitle"}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
-      <Form onSubmit={handleSubmit} data-testid={"create-edit-load-form"}>
+      <Form onSubmit={handleSubmit} data-testid={"create-edit-load-form"} className={"container-fluid"}>
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col>
@@ -618,29 +618,27 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           </Col>
         </Row>
         <Row>
-          <Col className={"d-flex"}>
-            <div className={styles.submitButtons}>
-              <HCButton aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
-              &nbsp;&nbsp;
-              {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
-                className={styles.disabledSaveButton}
+          <Col className={"d-flex justify-content-end"}>
+            <HCButton aria-label="Cancel" variant="outline-light" size="sm" onClick={() => onCancel()}>Cancel</HCButton>
+            &nbsp;&nbsp;
+            {!props.canReadWrite?<HCTooltip text={NewLoadTooltips.missingPermission} id="disabled-save-tooltip" placement={"bottom-end"}><span className={styles.disabledCursor}><HCButton
+              className={styles.disabledSaveButton}
+              aria-label="Save"
+              size="sm"
+              variant="primary"
+              type="submit"
+              disabled={true}
+              onClick={handleSubmit}
+            >Save</HCButton></span></HCTooltip> :
+              <HCButton
                 aria-label="Save"
                 size="sm"
                 variant="primary"
                 type="submit"
-                disabled={true}
+                disabled={false}
                 onClick={handleSubmit}
-              >Save</HCButton></span></HCTooltip> :
-                <HCButton
-                  aria-label="Save"
-                  size="sm"
-                  variant="primary"
-                  type="submit"
-                  disabled={false}
-                  onClick={handleSubmit}
-                  onFocus={sendPayload}
-                >Save</HCButton>}
-            </div>
+                onFocus={sendPayload}
+              >Save</HCButton>}
           </Col>
         </Row>
       </Form>
