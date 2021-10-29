@@ -420,10 +420,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <HCButton size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+      { (Object.keys(props.editThreshold).length !== 0) && <HCButton aria-label="editThresholdDeleteIcon" size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
         <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
-      </HCButton>
-      <div className={styles.footer}>
+      </HCButton>}
+      <div className={(Object.keys(props.editThreshold).length === 0) ? styles.footerNewRuleset : styles.footer}>
         <HCButton
           variant="outline-light"
           size="sm"

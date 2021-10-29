@@ -76,6 +76,16 @@
   }
 }
 
+.footerNewRuleset {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: 74vw;
+
+    .saveButton {
+        margin-left: 5px;
+    }
+}
+
 .reduceWeightText {
   font-weight: 900;
 }
