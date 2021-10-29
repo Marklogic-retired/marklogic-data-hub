@@ -10,6 +10,7 @@ import SearchBar from "../components/search-bar/search-bar";
 import SearchPagination from "../components/search-pagination/search-pagination";
 import SearchSummary from "../components/search-summary/search-summary";
 import SearchResults from "../components/search-results/search-results";
+import {ModelingMessages} from "../config/tooltips.config";
 import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
 import {entityFromJSON, entityParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
@@ -72,6 +73,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
+  const [entitiesData, setEntitiesData] = useState<any[]>([]);
+  const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
 
   const getEntityModel = async () => {
     try {
@@ -83,6 +86,7 @@ const Browse: React.FC<Props> = ({location}) => {
         setEntites(entityArray);
         setEntityDefArray(parsedEntityDef);
         setEntityDefinitionsArray(parsedEntityDef);
+        setEntitiesData(response.data);
       }
     } catch (error) {
       handleError(error);
@@ -109,6 +113,11 @@ const Browse: React.FC<Props> = ({location}) => {
           sortOrder: searchOptions.sortOrder
         }
       });
+      if (!["All Data"].includes(searchOptions.nextEntityType)) {
+        setShowNoDefinitionAlertMessage(titleNoDefinition(searchOptions.nextEntityType));
+      } else {
+        setShowNoDefinitionAlertMessage(false);
+      }
       if (componentIsMounted.current && response.data) {
         setData(response.data.results);
         if (response.data.hasOwnProperty("entityPropertyDefinitions")) {
@@ -136,6 +145,17 @@ const Browse: React.FC<Props> = ({location}) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Check if entity name has no matching definition
+  const titleNoDefinition = (selectedEntityName) => {
+    for (let i=0;i<entitiesData.length;i++) {
+      if (entitiesData[i].info.title === selectedEntityName) {
+        if (!entitiesData[i].definitions.hasOwnProperty(selectedEntityName)) return true;
+        else return false;
+      }
+    }
+    return false;
   };
 
   const fetchUpdatedSearchResults = () => {
@@ -449,47 +469,48 @@ const Browse: React.FC<Props> = ({location}) => {
                 <div className={styles.searchBar} ref={searchBarRef} >
 
                   <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}/>
-                  <SearchSummary
-                    total={totalDocuments}
-                    start={searchOptions.start}
-                    length={searchOptions.pageLength}
-                    pageSize={searchOptions.pageSize}
-                  />
-                  <div id="top-search-pagination-bar">
-                    <SearchPagination
+                  {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
+                    <span><SearchSummary
                       total={totalDocuments}
-                      pageNumber={searchOptions.pageNumber}
+                      start={searchOptions.start}
+                      length={searchOptions.pageLength}
                       pageSize={searchOptions.pageSize}
-                      pageLength={searchOptions.pageLength}
-                      maxRowsPerPage={searchOptions.maxRowsPerPage}
                     />
-                  </div>
-
-                  <div className={styles.spinViews}>
-                    <div className={styles.switchViews}>
-                      {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
-                      {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
-                        <MLRadio.MLGroup
-                          buttonStyle="outline"
-                          name="radiogroup"
-                          size="large"
-                          defaultValue={tableView ? "table" : "snippet"}
-                          onChange={e => handleViewChange(e.target.value)}
-                        >
-                          <MLRadio.MLButton aria-label="switch-view-table" value={"table"} >
-                            <i data-cy="table-view" id={"tableView"}><MLTooltip title={"Table View"}>
-                              {<FontAwesomeIcon icon={faTable} />}
-                            </MLTooltip></i>
-                          </MLRadio.MLButton>
-                          <MLRadio.MLButton aria-label="switch-view-snippet" value={"snippet"} >
-                            <i data-cy="facet-view" id={"snippetView"}><MLTooltip title={"Snippet View"}>
-                              {<FontAwesomeIcon icon={faStream} />}
-                            </MLTooltip></i>
-                          </MLRadio.MLButton>
-                        </MLRadio.MLGroup>
-                      </div> : ""}
+                    <div id="top-search-pagination-bar">
+                      <SearchPagination
+                        total={totalDocuments}
+                        pageNumber={searchOptions.pageNumber}
+                        pageSize={searchOptions.pageSize}
+                        pageLength={searchOptions.pageLength}
+                        maxRowsPerPage={searchOptions.maxRowsPerPage}
+                      />
                     </div>
-                  </div>
+
+                    <div className={styles.spinViews}>
+                      <div className={styles.switchViews}>
+                        {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
+                        {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
+                          <MLRadio.MLGroup
+                            buttonStyle="outline"
+                            name="radiogroup"
+                            size="large"
+                            defaultValue={tableView ? "table" : "snippet"}
+                            onChange={e => handleViewChange(e.target.value)}
+                          >
+                            <MLRadio.MLButton aria-label="switch-view-table" value={"table"} >
+                              <i data-cy="table-view" id={"tableView"}><MLTooltip title={"Table View"}>
+                                {<FontAwesomeIcon icon={faTable} />}
+                              </MLTooltip></i>
+                            </MLRadio.MLButton>
+                            <MLRadio.MLButton aria-label="switch-view-snippet" value={"snippet"} >
+                              <i data-cy="facet-view" id={"snippetView"}><MLTooltip title={"Snippet View"}>
+                                {<FontAwesomeIcon icon={faStream} />}
+                              </MLTooltip></i>
+                            </MLRadio.MLButton>
+                          </MLRadio.MLGroup>
+                        </div> : ""}
+                      </div>
+                    </div></span>}
                 </div>
                 <Query queries={queries || []}
                   setQueries={setQueries}
@@ -507,6 +528,7 @@ const Browse: React.FC<Props> = ({location}) => {
                   cardView={cardView}
                 />
               </div>
+              {!showNoDefinitionAlertMessage &&
               <div className={styles.viewContainer} >
                 <div>
                   {cardView ?
@@ -533,8 +555,8 @@ const Browse: React.FC<Props> = ({location}) => {
                     )}
                 </div>
                 <br />
-
-              </div>
+              </div>}
+              {!showNoDefinitionAlertMessage &&
               <div>
                 <SearchSummary
                   total={totalDocuments}
@@ -549,12 +571,10 @@ const Browse: React.FC<Props> = ({location}) => {
                   pageLength={searchOptions.pageLength}
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
-              </div>
+              </div>}
             </>
-
           }
         </Content>
-
       </Layout>
     );
   }
