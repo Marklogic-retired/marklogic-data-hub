@@ -1,12 +1,12 @@
 import React, {useState, useContext} from "react";
-import {Modal, Input, Radio} from "antd";
+import {Modal, Radio} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "./save-query-modal.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {QueryOptions} from "../../../../types/query-types";
 import HCButton from "../../../common/hc-button/hc-button";
-
+import HCInput from "../../../common/hc-input/hc-input";
 
 interface Props {
   setSaveModalVisibility: () => void;
@@ -142,7 +142,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="save-query-name"
                   value={queryName}
                   placeholder={"Enter query name"}
@@ -158,7 +158,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={4}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="save-query-description"
               value={queryDescription}
               onChange={handleChange}
