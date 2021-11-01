@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {Modal, Input, Radio, Table} from "antd";
+import {Modal, Radio, Table} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
@@ -7,6 +7,7 @@ import {SearchContext} from "../../../util/search-context";
 import {UserContext} from "../../../util/user-context";
 import {exportQuery, exportSavedQuery} from "../../../api/queries";
 import HCAlert from "../../common/hc-alert/hc-alert";
+import HCInput from "../../common/hc-input/hc-input";
 
 const QueryExportModal = (props) => {
 
@@ -107,7 +108,7 @@ const QueryExportModal = (props) => {
           <Row>
             <FormLabel column lg={"auto"} className={"offset-4"}>{"Maximum rows:"}</FormLabel>
             <Col className={"d-flex"}>
-              <Input data-testid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
+              <HCInput dataTestid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
             </Col>
           </Row>
         }
