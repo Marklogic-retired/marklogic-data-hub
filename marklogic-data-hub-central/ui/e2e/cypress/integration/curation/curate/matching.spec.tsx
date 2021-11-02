@@ -353,6 +353,7 @@ describe("Matching", () => {
     // multiSlider.getHandleName("testMultipleProperty").trigger("mouseup", {force: true});
 
     //To test when users click on test button and no data is returned
+    cy.findByLabelText("inputUriRadio").scrollIntoView({duration: 2000});
     cy.waitUntil(() => matchingStepDetail.getUriInputField().scrollIntoView().type("/json/noDataUri"));
     matchingStepDetail.getAddUriIcon().click();
     matchingStepDetail.getTestMatchUriButton();
@@ -436,6 +437,7 @@ describe("Matching", () => {
     cy.waitForAsyncRequest();
 
     // To test when user click on collapse all icon
+    cy.findByLabelText("inputUriRadio").scrollIntoView();
     cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
         cy.get(".ant-radio-group").within(() => {

@@ -154,7 +154,7 @@ describe("Validate E2E Mastering Flow", () => {
     createEditMappingDialog.setCollectionInput(loadStepName);
     createEditMappingDialog.saveButton().click({force: true});
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    cy.waitUntil(() => curatePage.dataPresent().scrollIntoView().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
   });
   it("Map source to entity", () => {
@@ -164,7 +164,7 @@ describe("Validate E2E Mastering Flow", () => {
     mappingStepDetail.setXpathExpressionInput("ZipCode", "ZipCode");
     mappingStepDetail.setXpathExpressionInput("Address", "Address");
     mappingStepDetail.setXpathExpressionInput("DateOfBirth", "DateOfBirth");
-    curatePage.dataPresent().should("be.visible");
+    curatePage.dataPresent().scrollIntoView().should("be.visible");
     mappingStepDetail.navigateUrisRight().click({force: true});
     // Test the mappings
     cy.waitUntil(() => mappingStepDetail.testMap().should("be.enabled"));

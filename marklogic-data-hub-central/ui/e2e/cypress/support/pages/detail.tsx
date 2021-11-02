@@ -1,15 +1,15 @@
 class DetailPage {
 
   getInstanceView() {
-    return cy.get("#instance");
+    return cy.get(`[data-rr-ui-event-key="instance"]`);
   }
 
   getSourceView() {
-    return cy.get("#full");
+    return cy.get(`[data-rr-ui-event-key="full"]`);
   }
 
   getMetadataView() {
-    return cy.get("#metadata");
+    return cy.get(`[data-rr-ui-event-key="metadata"]`);
   }
 
   getDocumentEntity() {
