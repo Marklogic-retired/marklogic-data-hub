@@ -170,7 +170,7 @@ class MappingStepDetail {
    * @example /
    */
   setXpathExpressionInput(propertyName: string, value: string) {
-    cy.findByTestId(`${propertyName}-mapexpression`).clear().type(value);
+    cy.findByTestId(`${propertyName}-mapexpression`).scrollIntoView().clear().type(value);
   }
 
   validateContextInput(entityTitle: string, value:string) {

@@ -62,20 +62,20 @@ class CuratePage {
      * @param customTabShould -- Cypress ".should" chainers like exist/visible or not.exist/not.visible etc
      */
   verifyTabs(entityTypeId: string, mapTabShould: string, customTabShould: string) {
-    cy.get(`#${entityTypeId}-Map`).should(mapTabShould);
-    cy.get(`#${entityTypeId}-Custom`).should(customTabShould);
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="map"]`).should(mapTabShould);
+    cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`).should(customTabShould);
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId}-Merge`)).click();
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`)).click();
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId}-Match`)).click({force: true});
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click();
   }
 
   selectCustomTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId}-Custom`)).click();
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`)).click();
   }
 
   addNewStep(curateTabId: string) {

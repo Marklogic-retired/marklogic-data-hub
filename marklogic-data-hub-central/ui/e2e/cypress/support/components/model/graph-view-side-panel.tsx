@@ -12,11 +12,11 @@ class GraphViewSidePanel {
   }
 
   getPropertiesTab() {
-    return cy.get("#propertiesTabInSidePanel");
+    return cy.get(`[data-rr-ui-event-key="properties"]`);
   }
 
   getEntityTypeTab() {
-    return cy.get("#entityTypeTabInSidePanel");
+    return cy.get(`[data-rr-ui-event-key="entityType"]`);
   }
   getEntityTypeName(entityName: string) {
     return cy.findByTestId(`${entityName}`);
