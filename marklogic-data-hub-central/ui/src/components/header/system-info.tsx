@@ -151,7 +151,7 @@ const SystemInfo = (props) => {
       className={clearDataVisible ? styles.disabledMain : ""}
     >
       <Modal.Body >
-        <Modal.Header closeButton></Modal.Header>
+        <Modal.Header closeButton className={"bb-none"}></Modal.Header>
         <div className={styles.systemContainer}>
           <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
             <HCAlert variant="success" showIcon>{<span><b>Clear All User Data </b>completed successfully</span>}</HCAlert>

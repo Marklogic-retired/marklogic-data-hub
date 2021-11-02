@@ -1,5 +1,5 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Modal, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
@@ -9,7 +9,6 @@ import {useDropzone} from "react-dropzone";
 import {Link, useLocation} from "react-router-dom";
 import sourceFormatOptions from "../../config/formats.config";
 import {RunToolTips, SecurityTooltips} from "../../config/tooltips.config";
-import Spinner from "react-bootstrap/Spinner";
 import {AuthoritiesContext} from "../../util/authorities";
 import {getViewSettings, setViewSettings, UserContext} from "../../util/user-context";
 
@@ -19,7 +18,7 @@ import "./flows.scss";
 import HCCard from "../common/hc-card/hc-card";
 import HCButton from "../common/hc-button/hc-button";
 import {ExclamationCircleFill, PlayCircleFill, X, ChevronDown} from "react-bootstrap-icons";
-import {Accordion, Card, Dropdown} from "react-bootstrap";
+import {Accordion, Card, Dropdown, Spinner, Modal} from "react-bootstrap";
 
 
 enum ReorderFlowOrderDirection {
@@ -369,53 +368,72 @@ const Flows: React.FC<Props> = (props) => {
 
   const deleteConfirmation = (
     <Modal
-      visible={dialogVisible}
-      okText={<div aria-label="Yes">Yes</div>}
-      okType="primary"
-      cancelText={<div aria-label="No">No</div>}
-      onOk={() => onOk(flowName)}
-      onCancel={() => onCancel()}
-      width={350}
-      destroyOnClose={true}
+      show={dialogVisible}
     >
-      <div className={styles.confirmationText}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4 ${styles.confirmationText}`}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
+        <div>
+          <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
+            No
+          </HCButton>
+          <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onOk(flowName)}>
+            Yes
+          </HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 
   const deleteStepConfirmation = (
     <Modal
-      visible={stepDialogVisible}
-      okText={<div aria-label="Yes">Yes</div>}
-      okType="primary"
-      cancelText={<div aria-label="No">No</div>}
-      onOk={() => onStepOk(flowName, stepNumber)}
-      onCancel={() => onCancel()}
-      width={350}
-      destroyOnClose={true}
+      show={stepDialogVisible}
     >
-      <div className={styles.confirmationText}>Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong> flow?</div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4 ${styles.confirmationText}`}>Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong> flow?</div>
+        <div>
+          <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
+            No
+          </HCButton>
+          <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onStepOk(flowName, stepNumber)}>
+            Yes
+          </HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 
   const addStepConfirmation = (
     <Modal
-      visible={addStepDialogVisible}
-      okText={<div aria-label="Yes">Yes</div>}
-      okType="primary"
-      cancelText={<div aria-label="No">No</div>}
-      onOk={() => onAddStepOk(stepName, flowName, stepType)}
-      onCancel={() => onCancel()}
-      width={350}
+      show={addStepDialogVisible}
     >
-      <div className={styles.confirmationText}>
-        {
-          isStepInFlow(stepName, flowName)
-            ?
-            <p>The step <b>{stepName}</b> is already in the flow <b>{flowName}</b>. Would you like to add another instance?</p>
-            :
-            <p>Are you sure you want to add step <b>{stepName}</b> to flow <b>{flowName}</b>?</p>
-        }
-      </div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"text-center pt-0 pb-4"}>
+        <div className={`mb-4 ${styles.confirmationText}`}>
+          {
+            isStepInFlow(stepName, flowName)
+              ?
+              <p>The step <b>{stepName}</b> is already in the flow <b>{flowName}</b>. Would you like to add another instance?</p>
+              :
+              <p>Are you sure you want to add step <b>{stepName}</b> to flow <b>{flowName}</b>?</p>
+          }
+        </div>
+        <div>
+          <HCButton variant="outline-light" aria-label={"No"} className={"me-2"} onClick={onCancel}>
+            No
+          </HCButton>
+          <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onAddStepOk(stepName, flowName, stepType)}>
+            Yes
+          </HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 

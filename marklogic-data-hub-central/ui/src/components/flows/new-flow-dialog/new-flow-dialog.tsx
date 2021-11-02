@@ -1,5 +1,5 @@
-import {Modal, Tooltip} from "antd";
-import {Form, Row, Col, FormLabel} from "react-bootstrap";
+import {Tooltip} from "antd";
+import {Form, Row, Col, FormLabel, Modal} from "react-bootstrap";
 import React, {useState, useEffect} from "react";
 import styles from "./new-flow-dialog.module.scss";
 import {NewFlowTooltips} from "../../../config/tooltips.config";
@@ -65,13 +65,6 @@ const NewFlowDialog = (props) => {
     }
   };
 
-  const onOk = () => {
-    props.setNewFlow(false);
-    if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
-      props.setOpenNewFlow(false);
-    }
-  };
-
   const handleSubmit = async (event: {preventDefault: () => void;}) => {
     if (!flowName || invalidChars) {
       // missing name
@@ -125,91 +118,90 @@ const NewFlowDialog = (props) => {
     }
   };
 
-  return (<Modal visible={props.newFlow}
-    title={null}
-    width="700px"
-    onCancel={() => onCancel()}
-    onOk={() => onOk()}
-    okText="Save"
-    className={styles.modal}
-    footer={null}>
-
-    <p className={styles.title}>{props.title || "New Flow"}</p>
-    <br />
-    <div className={styles.newFlowForm}>
-      <Form onSubmit={handleSubmit}>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={(flowName || !isFlowNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
-                {tobeDisabled ?
-                  <Tooltip title={NewFlowTooltips.nameField} placement={"bottom"} >
-                    <span className={"w-100"}>
-                      <HCInput
-                        id="name"
-                        placeholder="Enter name"
-                        value={flowName}
-                        onChange={handleChange}
-                        disabled={tobeDisabled}
-                      />
-                    </span>
-                  </Tooltip> :
-                  <HCInput
-                    id="name"
-                    placeholder="Enter name"
-                    value={flowName}
-                    onChange={handleChange}
-                    disabled={tobeDisabled}
-                  />}
-                <div className={"p-2 d-flex"}>
-                  <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
-                    <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
-                  </HCTooltip>
-                </div>
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (flowName || !isFlowNameTouched) ? "" : "Name is required"}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <HCInput
-              id="description"
-              placeholder="Enter description"
-              value={description}
-              onChange={handleChange}
-              disabled={!props.canWriteFlow}
-              className={styles.input}
-            />
-            <div className={"p-2 d-flex"}>
-              <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
-                <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
-        <Row className={"mb-3 mt-5"}>
-          <Col className={"w-100 text-end"}>
-            <HCButton size={"sm"} aria-label="Cancel" variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>
-              &nbsp;&nbsp;
-            <HCButton
-              size={"sm"}
-              aria-label="Save"
-              variant="primary"
-              type="submit"
-              disabled={!props.canWriteFlow}
-              onClick={handleSubmit}
-            >
-              Save
-            </HCButton>
-          </Col>
-        </Row>
-      </Form>
-    </div>
+  return (<Modal
+    show={props.newFlow}
+    dialogClassName={styles.modal700w}
+  >
+    <Modal.Header className={"bb-none"}>
+      <span className={"fs-3"}>{props.title || "New Flow"}</span>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel} style={{"marginTop": "-30px"}}></button>
+    </Modal.Header>
+    <Modal.Body className={"py-2"}>
+      <div className={styles.newFlowForm}>
+        <Form onSubmit={handleSubmit}>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Name:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={(flowName || !isFlowNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
+                  {tobeDisabled ?
+                    <Tooltip title={NewFlowTooltips.nameField} placement={"bottom"} >
+                      <span className={"w-100"}>
+                        <HCInput
+                          id="name"
+                          placeholder="Enter name"
+                          value={flowName}
+                          onChange={handleChange}
+                          disabled={tobeDisabled}
+                        />
+                      </span>
+                    </Tooltip> :
+                    <HCInput
+                      id="name"
+                      placeholder="Enter name"
+                      value={flowName}
+                      onChange={handleChange}
+                      disabled={tobeDisabled}
+                    />}
+                  <div className={"p-2 d-flex"}>
+                    <HCTooltip text={NewFlowTooltips.name} id="additional-settings-tooltip" placement="left">
+                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                    </HCTooltip>
+                  </div>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (flowName || !isFlowNameTouched) ? "" : "Name is required"}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="description"
+                placeholder="Enter description"
+                value={description}
+                onChange={handleChange}
+                disabled={!props.canWriteFlow}
+                className={styles.input}
+              />
+              <div className={"p-2 d-flex"}>
+                <HCTooltip text={NewFlowTooltips.description} id="additional-settings-tooltip" placement="left">
+                  <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
+          <Row className={"mb-3 mt-5"}>
+            <Col className={"w-100 text-end"}>
+              <HCButton size={"sm"} aria-label="Cancel" variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>
+                &nbsp;&nbsp;
+              <HCButton
+                size={"sm"}
+                aria-label="Save"
+                variant="primary"
+                type="submit"
+                disabled={!props.canWriteFlow}
+                onClick={handleSubmit}
+              >
+                Save
+              </HCButton>
+            </Col>
+          </Row>
+        </Form>
+      </div>
+    </Modal.Body>
   </Modal>);
 };
 

@@ -141,11 +141,3 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
 .modal-backdrop.show:nth-last-child(6){
     z-index: 1000;
 }
-
-//Modal
-.modal-header {
-    border-bottom: none;
-    padding: 0;
-    padding-top: 0.4rem;
-    padding-right: 0.4rem;
-}
