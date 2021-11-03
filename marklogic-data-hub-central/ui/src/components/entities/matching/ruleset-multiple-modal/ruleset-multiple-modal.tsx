@@ -849,10 +849,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      <MLButton type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+      {(Object.keys(curationRuleset).length !== 0) && <MLButton aria-label="editMultipleRulesetDeleteIcon" type="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
         <FontAwesomeIcon  className={styles.trashIcon} icon={faTrashAlt} />
-      </MLButton>
-      <div className={styles.footer}>
+      </MLButton>}
+      <div className={(Object.keys(curationRuleset).length === 0) ? styles.footerNewRuleset : styles.footer}>
         <MLButton
           aria-label={`cancel-multiple-ruleset`}
           onClick={closeModal}

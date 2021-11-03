@@ -22,7 +22,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender, getByLabelText} =  render(
+    const {queryByText, getByText, rerender, getByLabelText, queryByLabelText} =  render(
       <CurationContext.Provider value={matchThresholdArtifact}>
         <ThresholdModal
           isVisible={false}
@@ -48,6 +48,9 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.type(getByLabelText("name-input"), "nameThreshold");
     userEvent.click(screen.getByText("Select action"));
     userEvent.click(screen.getByText("Merge"));
+
+    // To verify delete icon is not present while adding new threshold
+    expect(queryByLabelText("editThresholdDeleteIcon")).not.toBeInTheDocument();
 
     userEvent.click(getByText("Save"));
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
@@ -171,6 +174,9 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(screen.getByLabelText("confirm-body")).toBeInTheDocument();
     userEvent.click(screen.getByText("Yes"));
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+
+    // To verify delete icon is present while editing a threshold
+    expect(getByLabelText("editThresholdDeleteIcon")).toBeInTheDocument();
   });
 
   it("can edit a notify type match threshold", () => {

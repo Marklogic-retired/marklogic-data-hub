@@ -22,7 +22,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText, rerender} =  render(
+    const {queryByText, getByText, getByLabelText, queryByLabelText, rerender} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={false}
@@ -57,6 +57,9 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByText("Cancel"));
     expect(screen.getByLabelText("confirm-body")).toBeInTheDocument();
     userEvent.click(screen.getByText("Yes"));
+
+    // To verify delete icon is not present for new single ruleset modal
+    expect(queryByLabelText("editSingleRulesetDeleteIcon")).not.toBeInTheDocument();
 
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
@@ -312,7 +315,7 @@ describe("Matching Ruleset Single Modal component", () => {
       index: 0
     };
 
-    const {queryByText, getByText} =  render(
+    const {queryByText, getByText, getByLabelText} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -330,6 +333,10 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(screen.getByText("orders"));
     userEvent.click(screen.getByText("Double Metaphone"));
     userEvent.click(screen.getByText("Exact"));
+
+    // To verify delete icon is present for editing single ruleset modal
+    expect(getByLabelText("editSingleRulesetDeleteIcon")).toBeInTheDocument();
+
     userEvent.click(screen.getByText("Save"));
 
     await wait(() => {
