@@ -23,10 +23,7 @@ import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.file.*;
 import com.marklogic.client.ext.modulesloader.ModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.ext.modulesloader.impl.SearchOptionsFinder;
+import com.marklogic.client.ext.modulesloader.impl.*;
 import com.marklogic.client.ext.tokenreplacer.DefaultTokenReplacer;
 import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.hub.DatabaseKind;
@@ -161,19 +158,18 @@ public class LoadHubModulesCommand extends AbstractCommand {
     }
     
     private ModulesLoader newModulesLoader(CommandContext context, DatabaseClient client) {
-        AssetFileLoader assetFileLoader = new AssetFileLoader(client);
+        PropertiesModuleManager modulesManager = new PropertiesModuleManager(hubConfig.getAppConfig().getModuleTimestampsPath());
+        AssetFileLoader assetFileLoader = new AssetFileLoader(client, modulesManager);
         prepareAssetFileLoader(assetFileLoader, context);
 
         DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
+        modulesLoader.setModulesManager(modulesManager);
         modulesLoader.addFailureListener((throwable, dbClient) -> {
             // ensure we throw the first exception
             if (caughtException == null) {
                 caughtException = throwable;
             }
         });
-
-        // When this command is run, should always load all modules
-        modulesLoader.setModulesManager(null);
 
         return modulesLoader;
     }

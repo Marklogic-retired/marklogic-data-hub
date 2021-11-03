@@ -53,7 +53,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -104,17 +106,19 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
     }
 
     private PropertiesModuleManager getModulesManager() {
-        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
-        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
+        String hubUserTimestampFilePath = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
+        String appConfigTimestampFilePath = hubConfig.getAppConfig().getModuleTimestampsPath();
+        PropertiesModuleManager pmm = new PropertiesModuleManager(hubUserTimestampFilePath);
+        logger.info("Initializing PropertiesModuleManager with properties timestamp file: " + hubUserTimestampFilePath);
 
         if (forceLoad) {
+            logger.info("Deleting properties timestamp file as part of force load: " + hubUserTimestampFilePath);
             pmm.deletePropertiesFile();
 
             // Need to delete ml-javaclient-utils timestamp file as well as modules present in the standard gradle locations are now
             // loaded by the modules loader in the parent class which adds these entries to the ml-javaclient-utils timestamp file
-            String filePath = hubConfig.getAppConfig().getModuleTimestampsPath();
-            if (filePath != null) {
-                File defaultTimestampFile = new File(filePath);
+            if (appConfigTimestampFilePath != null) {
+                File defaultTimestampFile = new File(appConfigTimestampFilePath);
                 if (defaultTimestampFile.exists()) {
                     defaultTimestampFile.delete();
                 }
