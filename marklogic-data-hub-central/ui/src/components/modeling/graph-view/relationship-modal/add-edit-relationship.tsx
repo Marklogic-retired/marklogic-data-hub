@@ -34,7 +34,7 @@ type Props = {
   updateSavedEntity: any;
   canReadEntityModel: any;
   canWriteEntityModel: any;
-  entityMetadata: any;
+  hubCentralConfig: any;
 }
 
 const {Option} = Select;
@@ -83,8 +83,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     setTargetEntityName(props.relationshipInfo.targetNodeName);
     setTargetEntityColor(props.relationshipInfo.targetNodeColor);
     setOneToManySelected(false);
-
-    if (sourceEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName].properties[props.relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
+    if (sourceEntityDetails.model.definitions[props.relationshipInfo.sourceNodeName]?.properties[props.relationshipInfo.relationshipName]?.hasOwnProperty("items")) {
       //set cardinality selection to "multiple"
       setOneToManySelected(true);
     }
@@ -349,7 +348,11 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       modelUpdated = entityUpdated.modelDefinition[props.relationshipInfo.targetNodeName];
     }
     menuProps = getJoinMenuProps(model, modelUpdated);
-    setTargetNodeJoinProperties(menuProps);
+    if (menuProps) {
+      setTargetNodeJoinProperties(menuProps);
+    } else {
+      setTargetNodeJoinProperties([]);
+    }
   };
 
   const getJoinMenuProps = (model, modelUpdated) => {
@@ -436,13 +439,17 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     entityIdx = props.entityTypes.findIndex(entity => entity.entityName === entityName);
     model = props.entityTypes[entityIdx].model.definitions[entityName];
     menuProps = getJoinMenuProps(model, "");
-    setTargetNodeJoinProperties(menuProps);
+    if (menuProps) {
+      setTargetNodeJoinProperties(menuProps);
+    } else {
+      setTargetNodeJoinProperties([]);
+    }
     setJoinPropertyValue("");
 
     //update target entity name and color,
     setTargetEntityName(entityName);
-    if (props.entityTypes[entityIdx].model.hubCentral && props.entityTypes[entityIdx].model.hubCentral.modeling.color) {  //revise when colors are retrieved from backend
-      setTargetEntityColor(props.entityTypes[entityIdx].model.hubCentral.modeling.color);
+    if (props.hubCentralConfig.modeling.entities.hasOwnProperty(entityName) && props.hubCentralConfig.modeling.entities[entityName].hasOwnProperty("color")) {
+      setTargetEntityColor(props.hubCentralConfig.modeling.entities[entityName].color);
     } else {
       setTargetEntityColor("#EEEFF1"); //assigning default color if entity is not assigned a color yet
     }
@@ -598,7 +605,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
         <div className={styles.nodeDisplay}>
           <span className={styles.nodeLabel}>SOURCE</span>
-          <Card style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
+          <Card data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
             <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
           </Card>
         </div>
@@ -630,7 +637,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         <div className={styles.nodeDisplay}>
           <span className={styles.nodeLabel}>TARGET</span>
           <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-            <Card style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
+            <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
               <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
             </Card>
             {!props.isEditing ?

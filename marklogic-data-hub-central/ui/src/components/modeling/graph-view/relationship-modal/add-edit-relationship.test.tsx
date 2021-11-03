@@ -1,8 +1,8 @@
 import React from "react";
-import {render, fireEvent, cleanup, wait} from "@testing-library/react";
+import {render, fireEvent, cleanup, wait, waitForElement} from "@testing-library/react";
 import AddEditRelationship from "./add-edit-relationship";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
-import {mockEditRelationshipInfo, mockAddRelationshipInfo, entityTypesWithRelationship} from "../../../../assets/mock-data/modeling/modeling";
+import {mockEditRelationshipInfo, mockAddRelationshipInfo, entityTypesWithRelationship, mockHubCentralConfig} from "../../../../assets/mock-data/modeling/modeling";
 
 jest.mock("axios");
 describe("Add Edit Relationship component", () => {
@@ -26,7 +26,7 @@ describe("Add Edit Relationship component", () => {
         updateSavedEntity={updateSavedEntity}
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityMetadata={{}}
+        hubCentralConfig={mockHubCentralConfig}
       />
     );
 
@@ -96,9 +96,9 @@ describe("Add Edit Relationship component", () => {
     expect(queryByTestId("targetEntityDropdown")).not.toBeInTheDocument();
   });
 
-  test("Verify Add Relationship dialog renders correctly", () => {
+  test("Verify Add Relationship dialog renders correctly", async () => {
     const updateSavedEntity = jest.fn(() => {});
-    const {getByText, getByTestId, getByLabelText, queryByText, rerender} = render(
+    const {getByText, getByTestId, getByLabelText, queryByText, rerender, getAllByRole} = render(
       <AddEditRelationship
         openRelationshipModal={true}
         setOpenRelationshipModal={jest.fn()}
@@ -110,7 +110,7 @@ describe("Add Edit Relationship component", () => {
         updateSavedEntity={updateSavedEntity}
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityMetadata={{}}
+        hubCentralConfig={mockHubCentralConfig}
       />
     );
     expect(getByText("Add a Relationship")).toBeInTheDocument();
@@ -140,7 +140,7 @@ describe("Add Edit Relationship component", () => {
     fireEvent.mouseOver(getByTestId("error-circle"));
     wait(() => expect(getByText(ModelingTooltips.targetEntityEmpty)).toBeInTheDocument());
 
-    const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer"};
+    const mockRelationshipWithTarget = {...mockAddRelationshipInfo, targetNodeName: "Customer", targetNodeColor: "#ecf7fd"};
 
     rerender(<AddEditRelationship
       openRelationshipModal={true}
@@ -153,16 +153,26 @@ describe("Add Edit Relationship component", () => {
       updateSavedEntity={updateSavedEntity}
       canReadEntityModel={true}
       canWriteEntityModel={true}
-      entityMetadata={{}}
+      hubCentralConfig={mockHubCentralConfig}
     />
     );
-    //verify duplicate property error message
+    //verify duplicate property error message with relationship name same as entity name
     fireEvent.change(getByLabelText("relationship-textarea"), {target: {value: "BabyRegistry"}});
     fireEvent.click(getByText("Add"));
     wait(() => expect(getByLabelText("error-circle")).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId("error-circle"));
     wait(() => expect(getByTestId("name-error")).toBeInTheDocument());
 
+    //verify node colors and updated colors with target entity selections
+    expect(getByTestId("sourceEntityNode")).toHaveStyle("background-color: rgb(227, 235, 188)"); //to have BabyRegistry color
 
+    expect(getByTestId("targetEntityNode")).toHaveStyle("background-color: rgb(236, 247, 253)"); //to have Customer color
+
+    fireEvent.click(getByTestId("targetEntityDropdown"));
+    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    expect(getByTestId("Order-option")).toBeInTheDocument();
+    fireEvent.click(getByTestId("Order-option"));
+    expect(getByTestId("Order-targetNodeName")).toHaveTextContent("Order");
+    expect(getByTestId("targetEntityNode")).toHaveStyle("background-color: rgb(232, 250, 244)"); //to have Order color
   });
 });
