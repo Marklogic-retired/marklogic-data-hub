@@ -43,7 +43,7 @@ class CreateFlowTask extends HubTask {
         ObjectMapper mapper = new ObjectMapper()
         try{
             ArtifactService service = ArtifactService.on(hubConfig.newStagingClient(null))
-            service.setArtifact("flow", flowName, mapper.readTree(file))
+            service.setArtifact("flow", flowName, mapper.readTree(file), "")
             println "The flow '" + flowName + "' has been written to staging and final databases."
         }
         catch (Exception e){

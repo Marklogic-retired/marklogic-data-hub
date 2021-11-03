@@ -18,7 +18,7 @@
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
-var artifactType, artifactName, artifact;
+var artifactType, artifactName, artifact, dirFileName;
 
 if ("ingestion" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
@@ -34,4 +34,4 @@ if ("ingestion" === artifactType) {
   httpUtils.throwBadRequest("Unsupported artifact type: " + artifactType);
 }
 
-Artifacts.setArtifact(artifactType, artifactName, artifact.toObject());
+Artifacts.setArtifact(artifactType, artifactName, artifact.toObject(), dirFileName);
