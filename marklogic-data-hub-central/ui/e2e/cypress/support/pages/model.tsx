@@ -5,6 +5,13 @@ class ModelPage {
   */
   selectView(view: string) {
     cy.get(`[data-icon="${view}"]`).first().trigger("mouseover").click({force: true});
+    cy.wait(1000);
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=graph-view-filter-input]").length) {
+          cy.get(`[data-icon="${view}"]`).first().trigger("mouseover").click({force: true});
+        }
+      });
   }
 
   getAddEntityButton() {
