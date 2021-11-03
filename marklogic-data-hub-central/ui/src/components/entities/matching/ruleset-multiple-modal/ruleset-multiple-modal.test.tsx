@@ -22,8 +22,12 @@ describe("Matching Multiple Rulesets Modal component", () => {
   it("can view multiple rulesets modal properties, select match type and click cancel", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
+    let editRuleset = {
+      ...customerMatchingStep.curationOptions.activeStep.stepArtifact.matchRulesets[0],
+      index: 0
+    };
 
-    const {queryByText, getByText, getByLabelText, rerender} =  render(
+    const {queryByText, getByText, getByLabelText, queryByLabelText, rerender} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetMultipleModal
           isVisible={false}
@@ -51,6 +55,9 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
+    // To verify delete icon is not present for new add multiple ruleset modal
+    expect(queryByLabelText("editMultipleRulesetDeleteIcon")).not.toBeInTheDocument();
+
     let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
     userEvent.hover(reduceInfoCircleIcon);
     await waitFor(() => expect(screen.getByLabelText("reduce-tooltip-text")));
@@ -68,6 +75,18 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
+
+    // To verify delete icon is present for editing multiple ruleset modal
+    rerender(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetMultipleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{editRuleset}}
+        />
+      </CurationContext.Provider>
+    );
+    expect(queryByLabelText("editMultipleRulesetDeleteIcon")).toBeInTheDocument();
   });
 
   it("can select Match type and view properties in match type details column", () => {
