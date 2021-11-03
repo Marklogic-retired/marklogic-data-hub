@@ -640,7 +640,12 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
     @Override
     public String getUserModulesDeployTimestampFile() {
-        return Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile).toString();
+        Path timestampPath = Paths.get(projectDirString, ".tmp", userModulesDeployTimestampFile);
+        File parentFile = timestampPath.getParent().toFile();
+        if (!parentFile.exists()) {
+            parentFile.mkdirs();
+        }
+        return timestampPath.toString();
     }
 
     @Override

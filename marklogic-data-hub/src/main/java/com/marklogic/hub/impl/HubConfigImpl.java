@@ -49,6 +49,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -1237,10 +1238,16 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         config.setUseRoxyTokenPrefix(false);
         config.setModulePermissions(getModulePermissions());
 
+        // Fix default path for Windows
+        String defaultPath = config.getModuleTimestampsPath();
+        if (!FileSystems.getDefault().getSeparator().equals("/")) {
+            defaultPath = defaultPath.replace("/", FileSystems.getDefault().getSeparator());
+        }
         if (envString != null) {
-            String defaultPath = config.getModuleTimestampsPath();
-            int index = defaultPath.lastIndexOf("/") + 1;
+            int index = defaultPath.lastIndexOf(FileSystems.getDefault().getSeparator()) + 1;
             config.setModuleTimestampsPath(defaultPath.substring(0, index) + envString + "-" + defaultPath.substring(index));
+        } else {
+            config.setModuleTimestampsPath(defaultPath);
         }
 
         Map<String, Integer> forestCounts = config.getForestCounts();
