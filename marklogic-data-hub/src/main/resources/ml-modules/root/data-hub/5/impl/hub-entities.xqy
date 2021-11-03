@@ -23,12 +23,20 @@ import module namespace es = "http://marklogic.com/entity-services"
 import module namespace ext = "http://marklogic.com/data-hub/extensions/entity"
   at "/data-hub/extensions/entity/post-process-search-options.xqy";
 
+
+import module namespace tg = "http://marklogic.com/data-hub/hub-entities" at "/data-hub/5/impl/template-generated.xqy";
+
+import module namespace sem = "http://marklogic.com/semantics" at "/MarkLogic/semantics.xqy";
+import module namespace functx = "http://www.functx.com" at "/MarkLogic/functx/functx-1.0.1-nodoc.xqy";
 declare namespace search = "http://marklogic.com/appservices/search";
 declare namespace tde = "http://marklogic.com/xdmp/tde";
 
+
 declare variable $ENTITY-MODEL-COLLECTION := "http://marklogic.com/entity-services/models";
 
-declare option xdmp:mapping "false";
+declare option xdmp:mapping "true";
+
+
 
 declare function hent:get-model($entity-name as xs:string)
 {
@@ -111,6 +119,9 @@ declare function hent:is-tde-generation-enabled($entity-def as object-node()) as
   let $tdes-enabled := not($is-property-set) or $property-value != "true"
   return $tdes-enabled
 };
+
+
+
 
 declare function hent:wrap-duplicates(
   $duplicate-map as map:map,
@@ -592,9 +603,12 @@ declare function hent:dump-tde($entities as json:array)
     else
       (: if the title doesn't match a definition, make our best guess at what the root entity definition is :)
       hent:get-primary-entity-type-title($uber-model => map:get("definitions"))
-  let $es-template := es:extraction-template-generate($uber-model)
+  let $es-template := extraction-template-generate($uber-model)
   return hent:fix-tde($es-template, $entity-model-contexts, $uber-model, $entity-name)
 };
+
+
+
 
 declare function hent:get-primary-entity-type-title($entity-definition as item()) {
   let $entity-definition-node :=
