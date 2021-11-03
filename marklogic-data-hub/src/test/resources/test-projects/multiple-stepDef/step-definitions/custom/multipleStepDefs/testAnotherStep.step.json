@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "testAnotherStep",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json"
+  },
+  "modulePath": "/doesnt/matter.sjs"
+}

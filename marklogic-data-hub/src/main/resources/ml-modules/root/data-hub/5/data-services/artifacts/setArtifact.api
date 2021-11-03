@@ -13,6 +13,11 @@
          "name": "artifact",
          "datatype": "jsonDocument",
          "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        },
+        {
+          "name": "dirFileName",
+          "datatype": "string",
+          "nullable": true
         }
     ],
     "return": {

@@ -48,11 +48,11 @@ function getArtifactNode(artifactName, artifactVersion) {
     return stepDef;
 }
 
-function getDirectory(artifactName, artifact) {
+function getDirectory(artifactName, artifact, artifactDirName) {
     let doc = getArtifactNode(artifactName, null);
     let dir = "/step-definitions/";
     if(!doc && artifact && artifactName) {
-        dir = dir + artifact.type.toLowerCase() + "/" + artifact.name +"/"
+        dir = dir + artifact.type.toLowerCase() + "/" + (artifactDirName || artifact.name) +"/";
     }
     else if (doc) {
         let stepDefinition = doc.toObject();

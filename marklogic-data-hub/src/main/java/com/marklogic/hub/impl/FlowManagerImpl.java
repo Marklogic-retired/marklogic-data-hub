@@ -323,7 +323,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     public void saveFlow(Flow flow) {
         saveLocalFlow(flow);
         try{
-            getArtifactService().setArtifact("flow", flow.getName(), JSONUtils.convertArtifactToJson(flow));
+            getArtifactService().setArtifact("flow", flow.getName(), JSONUtils.convertArtifactToJson(flow), "");
         }
         catch (Exception e){
             throw new RuntimeException("Unable to create flow; cause: " + e.getMessage(), e);

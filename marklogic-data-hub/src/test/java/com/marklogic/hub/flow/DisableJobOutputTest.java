@@ -51,6 +51,6 @@ public class DisableJobOutputTest extends AbstractHubCoreTest {
     private void setDisableJobOutputInFlowOptions(boolean value) {
         ObjectNode flow = (ObjectNode)getStagingDoc(format("/flows/%s.flow.json", FLOW_NAME));
         flow.putObject("options").put("disableJobOutput", value);
-        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", FLOW_NAME, flow);
+        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", FLOW_NAME, flow, "");
     }
 }

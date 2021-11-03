@@ -74,7 +74,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
             if (autoIncrement) {
                 stepDefinition.incrementVersion();
             }
-            getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition));
+            getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition), stepDefinition.getName());
             Path dir = resolvePath(getHubProject().getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
