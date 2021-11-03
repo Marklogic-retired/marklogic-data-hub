@@ -61,6 +61,6 @@ public class ConcreteDataHubTest extends AbstractDataHubTest {
             "}\n";
 
         ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", "SimpleInlineFlow",
-            new ObjectMapper().readTree(testFlow));
+            new ObjectMapper().readTree(testFlow), "");
     }
 }

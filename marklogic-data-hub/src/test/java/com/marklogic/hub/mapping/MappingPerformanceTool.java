@@ -99,7 +99,7 @@ public class MappingPerformanceTool extends AbstractHubCoreTest {
 
         ObjectNode flow = objectMapper.createObjectNode();
         flow.put("name", FLOW_NAME).putObject("steps").putObject("1").put("stepId", mappingStep.get("stepId").asText());
-        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", FLOW_NAME, flow);
+        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", FLOW_NAME, flow, "");
     }
 
     private ObjectNode newMappingStep() {
