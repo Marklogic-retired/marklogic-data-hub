@@ -135,8 +135,8 @@ Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName, flowName) => 
       cy.waitForAsyncRequest();
       cy.waitUntil(() => cy.get(`#${flowName}`).should("be.visible"));
       cy.get(`#${flowName}`).find("[class*=\"ant-collapse-arrow\"]").click({force: true});
-      cy.waitUntil(() => cy.findByText(stepType).should("be.visible"));
-      cy.waitUntil(() => cy.findByText(stepName).should("be.visible"));
+      cy.waitUntil(() => cy.findAllByText(stepType)[0].should("be.visible"));
+      cy.waitUntil(() => cy.findAllByText(stepName)[0].should("be.visible"));
     }
   });
 });
@@ -249,7 +249,8 @@ function setTestUserRoles(roles) {
   });
   cy.exec(`curl -X PUT --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
   -d @cypress/support/body.json ${protocol}://${Cypress.env("mlHost")}:8002/manage/v2/users/hc-test-user/properties`);
-  cy.wait(500);
+  cy.wait(1000);
+  cy.waitForAsyncRequest();
 }
 
 function resetTestUser() {
@@ -283,7 +284,16 @@ Cypress.Commands.add("setupHubCentralConfig", () => {
 });
 
 Cypress.Commands.add("publishEntityModel", () => {
-  modelPage.getPublishButton().click();
+  modelPage.getPublishButton().click({force: true});
+  cy.waitForAsyncRequest();
+  cy.wait(1000);
+
+  cy.get("body")
+    .then(($body) => {
+      if (!$body.find(`[aria-label=confirm-PublishAllEntity-yes]`).length) {
+        modelPage.getPublishButton().click({force: true});
+      }
+    });
   confirmationModal.getYesButton(ConfirmationType.PublishAll);
   cy.waitForAsyncRequest();
   confirmationModal.getSaveAllEntityText().should("exist");

@@ -90,9 +90,9 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQueryDescription().should("contain", "new-query-2 description");
     browsePage.getTableCell(1, 2).should("contain", "102");
     browsePage.getTableCell(2, 2).should("contain", "103");
-  });
 
-  it("save more queries with duplicate query name from browse and manage queries view", () => {
+    // it("save more queries with duplicate query name from browse and manage queries view", () => {
+    cy.wait(1000);
     browsePage.selectQuery("new-query-2");
     browsePage.getSelectedQuery().should("contain", "new-query-2");
     browsePage.waitForSpinnerToDisappear();

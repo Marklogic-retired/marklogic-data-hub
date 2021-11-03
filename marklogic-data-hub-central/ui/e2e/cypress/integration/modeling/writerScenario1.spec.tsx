@@ -64,6 +64,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
   });
   it("Add cascaded type with identifer", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
+    propertyModal.clearPropertyName();
     propertyModal.newPropertyName("newId");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("More string types").click();
@@ -205,6 +206,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
   it("Adding property to Person entity", () => {
     entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.getAddPropertyButton("Person").click();
+    propertyModal.clearPropertyName();
     propertyModal.newPropertyName("newID");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("string").click();

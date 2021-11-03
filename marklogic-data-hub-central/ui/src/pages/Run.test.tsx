@@ -499,7 +499,7 @@ describe("Verify Run CRUD operations", () => {
   test("Verify a user with writeFlow authority can create", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readFlow", "writeFlow"]);
-    const {getByText, getByPlaceholderText, rerender} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
+    const {getByText, getByPlaceholderText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
     const newFlowValues = {name: "newFlow", description: "newFlow description"};
     fireEvent.click(getByText("Create Flow"));
@@ -509,18 +509,6 @@ describe("Verify Run CRUD operations", () => {
     fireEvent.click(getByText("Save"));
 
     expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
-
-    const newStepToFlowOptions = {addingStepToFlow: true, existingFlow: false, newStepName: "newStep", stepDefinitionType: "ingestion"};
-    //rerender in a state after add step to flow is executed to test create new flow
-    rerender(<MemoryRouter><AuthoritiesContext.Provider value={ authorityService }><Run newStepToFlowOptions = {newStepToFlowOptions}/></AuthoritiesContext.Provider></MemoryRouter>);
-    fireEvent.click(getByText("Create Flow"));
-    await(waitForElement(() => getByText("Name:")));
-    fireEvent.change(getByPlaceholderText("Enter name"), {target: {value: newFlowValues.name}});
-    fireEvent.change(getByPlaceholderText("Enter description"), {target: {value: newFlowValues.description}});
-    fireEvent.click(getByText("Save"));
-    expect(axiosMock.post).toHaveBeenNthCalledWith(1, "/api/flows", newFlowValues);
-    //verify add step to flow is not called
-    expect(axiosMock.post).not.toBeCalledWith("/api/flows/newFlow/steps");
   });
 
   test("Verify a user with writeFlow authority can update", async () => {

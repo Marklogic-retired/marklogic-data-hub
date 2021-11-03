@@ -1,6 +1,6 @@
 class EntityTypeModal {
   newEntityName(str: string) {
-    cy.get("#entity-name").type(str);
+    cy.get("#entity-name").clear().type(str);
   }
 
   clearEntityName() {

@@ -61,6 +61,8 @@ describe("Mapping", () => {
     propertyModal.toggleForeignKeyDropdown();
     propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
+    cy.waitForAsyncRequest();
+    cy.wait(500);
     //Save Changes
     cy.publishEntityModel();
     propertyTable.getForeignIcon("relatedTo").should("exist");
