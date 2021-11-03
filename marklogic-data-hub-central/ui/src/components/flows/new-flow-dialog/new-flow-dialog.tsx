@@ -140,6 +140,7 @@ const NewFlowDialog = (props) => {
                         <HCInput
                           id="name"
                           placeholder="Enter name"
+                          dataTestid={"new-flow-name"}
                           value={flowName}
                           onChange={handleChange}
                           disabled={tobeDisabled}
@@ -149,6 +150,7 @@ const NewFlowDialog = (props) => {
                     <HCInput
                       id="name"
                       placeholder="Enter name"
+                      dataTestid={"new-flow-name"}
                       value={flowName}
                       onChange={handleChange}
                       disabled={tobeDisabled}
@@ -171,6 +173,7 @@ const NewFlowDialog = (props) => {
               <HCInput
                 id="description"
                 placeholder="Enter description"
+                dataTestid={"new-flow-description"}
                 value={description}
                 onChange={handleChange}
                 disabled={!props.canWriteFlow}

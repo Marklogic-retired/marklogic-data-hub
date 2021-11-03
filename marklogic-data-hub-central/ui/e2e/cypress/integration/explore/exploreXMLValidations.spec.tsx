@@ -39,6 +39,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
+    cy.get("#sideBarContainer").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();

@@ -44,17 +44,39 @@ describe("Validate persistence across Hub Central", () => {
     modelPage.selectView("table");
     entityTypeTable.getExpandEntityIcon("Customer");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-shipping-span").should("exist");
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-shipping-span").should("exist");
+
+    // "Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted."
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
+    cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse");
+    cy.get("#personJSON .accordion-button").click();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse show");
   });
 
   // Persistence of mapping step details is disabled temporarily. DHFPROD-7466
@@ -94,16 +116,5 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
     cy.findByTestId("arrow-left").click();
-  });
-
-  it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
-    cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse");
-    cy.get("#personJSON .accordion-button").click();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.get("#personJSON .accordion-collapse").should("have.class", "accordion-collapse collapse show");
   });
 });
