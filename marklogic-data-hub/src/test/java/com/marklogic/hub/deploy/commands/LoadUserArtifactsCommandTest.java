@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Properties;
 
@@ -204,5 +205,19 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         ex = assertThrows(FailedRequestException.class,
             () -> loadUserArtifactsCommand.execute(commandContext));
         assertEquals(errorMessage, ex.getServerMessage());
+    }
+
+    @Test
+    public void validateMultipleStepDefPathNames() {
+        installProjectInFolder("test-projects/multiple-stepDef");
+        runAsDataHubDeveloper();
+        HubConfigImpl hubConfig = getHubConfig();
+
+        Path stepDefDir = hubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("multipleStepDefs");
+        String[] fileNames = stepDefDir.toFile().list();
+
+        assertTrue(Arrays.asList(fileNames).contains("multipleStepDefs.step.json"));
+        assertTrue(Arrays.asList(fileNames).contains("testAnotherStep.step.json"));
+        assertTrue(Arrays.asList(fileNames).contains("testStep.step.json"));
     }
 }

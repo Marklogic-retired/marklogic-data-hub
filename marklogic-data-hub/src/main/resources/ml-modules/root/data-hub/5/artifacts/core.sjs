@@ -144,7 +144,7 @@ function getArtifact(artifactType, artifactName, artifactVersion = 'latest') {
     return cachedArtifacts[artifactKey];
 }
 
-function setArtifact(artifactType, artifactName, artifact) {
+function setArtifact(artifactType, artifactName, artifact, dirFileName) {
     const artifactKey = generateArtifactKey(artifactType, artifactName);
     let validArtifact = validateArtifact(artifactType, artifactName, artifact) || artifact;
     if (validArtifact instanceof Error) {
@@ -152,7 +152,7 @@ function setArtifact(artifactType, artifactName, artifact) {
     }
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
     const artifactDatabases = artifactLibrary.getStorageDatabases();
-    const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact);
+    const artifactDirectory = getArtifactDirectory(artifactType, artifactName, artifact, dirFileName);
     const artifactFileExtension = getArtifactFileExtension(artifactType);
     const artifactPermissions = artifactLibrary.getPermissions();
     const artifactCollections = artifactLibrary.getCollections();
@@ -202,9 +202,9 @@ function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest')
   return node;
 }
 
-function getArtifactDirectory(artifactType, artifactName, artifact) {
+function getArtifactDirectory(artifactType, artifactName, artifact, artifactDirName) {
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    return artifactLibrary.getDirectory ? artifactLibrary.getDirectory(artifactName, artifact): `/${artifactType}/`;
+    return artifactLibrary.getDirectory ? artifactLibrary.getDirectory(artifactName, artifact, artifactDirName): `/${artifactType}/`;
 }
 
 function getArtifactFileExtension(artifactType) {

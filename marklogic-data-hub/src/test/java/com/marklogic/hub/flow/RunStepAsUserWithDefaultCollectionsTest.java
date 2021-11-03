@@ -74,7 +74,7 @@ public class RunStepAsUserWithDefaultCollectionsTest extends AbstractHubCoreTest
         JsonNode flow = service.getFlow("simpleCustomStepFlow");
         ObjectNode options = (ObjectNode) flow.get("steps").get("1").get("options");
         options.remove("collections");
-        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", "simpleCustomStepFlow", flow);
+        ArtifactService.on(getHubClient().getStagingClient()).setArtifact("flow", "simpleCustomStepFlow", flow, "");
     }
 
     private void runAsTestUserWithDefaultCollection() {

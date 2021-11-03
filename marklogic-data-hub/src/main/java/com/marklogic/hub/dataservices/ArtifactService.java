@@ -79,18 +79,19 @@ public interface ArtifactService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact) {
+            public com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact, String dirFileName) {
                 return setArtifact(
-                    this.req_setArtifact.on(this.dbClient), artifactType, artifactName, artifact
+                    this.req_setArtifact.on(this.dbClient), artifactType, artifactName, artifact, dirFileName
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode setArtifact(BaseProxy.DBFunctionRequest request, String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact) {
+            private com.fasterxml.jackson.databind.JsonNode setArtifact(BaseProxy.DBFunctionRequest request, String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact, String dirFileName) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("artifactType", false, BaseProxy.StringType.fromString(artifactType)),
                           BaseProxy.atomicParam("artifactName", false, BaseProxy.StringType.fromString(artifactName)),
-                          BaseProxy.documentParam("artifact", false, BaseProxy.JsonDocumentType.fromJsonNode(artifact))
+                          BaseProxy.documentParam("artifact", false, BaseProxy.JsonDocumentType.fromJsonNode(artifact)),
+                          BaseProxy.atomicParam("dirFileName", true, BaseProxy.StringType.fromString(dirFileName))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -138,9 +139,10 @@ public interface ArtifactService {
    * @param artifactType	provides input
    * @param artifactName	provides input
    * @param artifact	provides input
+   * @param dirFileName	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact);
+    com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact, String dirFileName);
 
   /**
    * Invokes the clearUserArtifacts operation on the database server
