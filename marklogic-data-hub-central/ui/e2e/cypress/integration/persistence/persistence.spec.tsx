@@ -41,15 +41,23 @@ describe("Validate persistence across Hub Central", () => {
     modelPage.selectView("table");
     cy.findByTestId("mltable-expand-Customer").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-shipping-span").should("exist");
     cy.findByTestId("mltable-expand-shipping").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+    cy.get("body")
+      .then(($body) => {
+        if ($body.find("[aria-label=\"confirm-navigationWarn-yes\"]").length) {
+          confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
+        }
+      });
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     modelPage.selectView("table");
     cy.findByTestId("shipping-street-span").should("exist");
@@ -92,15 +100,5 @@ describe("Validate persistence across Hub Central", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.contains("The Merging step defines how to combine documents that the Matching step identified as similar.");
     cy.findByTestId("arrow-left").click();
-  });
-
-  it("Switch to run view, expand flows, and then visit another tile. When returning to run tile, the expanded flows are persisted.", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    confirmationModal.getNavigationWarnText().should("be.visible");
-    confirmationModal.getYesButton(ConfirmationType.NavigationWarn);
-    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item").click();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.get("[id=\"personJSON\"]").should("have.class", "ant-collapse-item ant-collapse-item-active");
   });
 });

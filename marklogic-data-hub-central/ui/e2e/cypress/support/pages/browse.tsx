@@ -519,7 +519,7 @@ class BrowsePage {
   }
 
   selectQuery(query: string) {
-    this.getSaveQueriesDropdown().click();
+    this.getSaveQueriesDropdown().click({force: true});
     this.getQueryOption(query).click();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
