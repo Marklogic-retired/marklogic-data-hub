@@ -816,7 +816,7 @@ const GraphVis: React.FC<Props> = (props) => {
         toggleRelationshipModal={props.toggleRelationshipModal}
         canReadEntityModel={props.canReadEntityModel}
         canWriteEntityModel={props.canWriteEntityModel}
-        entityMetadata={entityMetadata} //passing in for colors, update when colors are retrieved from backend
+        hubCentralConfig={props.hubCentralConfig}
       />
     </div>
   );

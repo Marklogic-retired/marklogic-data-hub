@@ -552,6 +552,36 @@ export const entityTypesWithRelationship = [{
       }
     }
   }
+},
+{
+  "entityName": "Order",
+  "entityTypeId": "http://marklogic.com/example/Order-0.0.1/Order",
+  "entityInstanceCount": 0,
+  "model": {
+    "info": {
+      "title": "Order",
+      "version": "0.0.1",
+      "baseUri": "http://marklogic.com/example/"
+    },
+    "definitions": {
+      "Order": {
+        "primaryKey": "orderId",
+        "properties": {
+          "orderId": {
+            "datatype": "integer"
+          },
+          "arrivalDate": {
+            "datatype": "date"
+          },
+          "ownedBy": {
+            "datatype": "string",
+            "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+            "joinPropertyName": "customerId"
+          }
+        }
+      }
+    }
+  }
 }];
 
 
@@ -876,6 +906,20 @@ export const propertyTableEntities = [
     "latestJobId": "b0ee8653-bf8f-4bbd-956b-9a1471137253"
   }
 ];
+
+export const mockHubCentralConfig = {
+  modeling: {
+    entities: {
+      BabyRegistry: {color: "#e3ebbc", graphX: 70, graphY: -151},
+      Client: {color: "#bec5dc", graphX: -164, graphY: 23},
+      Concept: {color: "#EEEFF1", graphX: 57, graphY: -9},
+      Customer: {color: "#ecf7fd", graphX: -158, graphY: -159},
+      Order: {color: "#e8faf4", graphX: -2, graphY: 165},
+      Patients: {color: "#EEEFF1", graphX: -53, graphY: -22},
+      Person: {color: "#cee0ed", graphX: 159, graphY: 15}
+    }
+  }
+};
 
 export const mockEditRelationshipInfo = {
   edgeId: "ownedBy-customerId-edge",
