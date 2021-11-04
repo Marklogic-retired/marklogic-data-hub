@@ -78,7 +78,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     loadPage.stepNameInput().type(loadStep);
     loadPage.confirmationOptions("Save").click({force: true});
     loadPage.duplicateStepErrorMessage();
-    loadPage.confirmationOptions("OK").click();
+    loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
   it("Add step to new flow and Run", {defaultCommandTimeout: 120000}, () => {

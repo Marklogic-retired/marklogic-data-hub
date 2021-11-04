@@ -1,5 +1,4 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Modal} from "antd";
 import styles from "./Curate.module.scss";
 import {AuthoritiesContext} from "../util/authorities";
 import {getViewSettings, UserContext} from "../util/user-context";
@@ -8,6 +7,7 @@ import EntityTiles from "../components/entities/entity-tiles";
 import tiles from "../config/tiles.config";
 import {MissingPagePermission} from "../config/messages.config";
 import {useHistory} from "react-router-dom";
+import {ErrorMessageContext} from "../util/error-message-context";
 
 const Curate: React.FC = () => {
 
@@ -19,6 +19,7 @@ const Curate: React.FC = () => {
   }, []);
 
   const {handleError} = useContext(UserContext);
+  const {setErrorMessageOptions} = useContext(ErrorMessageContext);
   // const [isLoading, setIsLoading] = useState(false);
   const [flows, setFlows] = useState<any[]>([]);
   const [entityModels, setEntityModels] = useState<any>({});
@@ -118,8 +119,9 @@ const Curate: React.FC = () => {
       let message = error.response.data.message;
       console.error("Error while adding step to flow.", message);
       // setIsLoading(false);
-      Modal.error({
-        content: "Error adding step \"" + stepArtifactName + "\" to flow \"" + flowName + ".\"",
+      setErrorMessageOptions({
+        isVisible: true,
+        message: `Error adding step "${stepArtifactName}" to flow "${flowName}".`
       });
       handleError(error);
     }

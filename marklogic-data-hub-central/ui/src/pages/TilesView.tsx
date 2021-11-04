@@ -13,6 +13,7 @@ import Run from "./Run";
 import Monitor from "./Monitor";
 import Browse from "./Browse";
 import Detail from "./Detail";
+import {Modal} from "react-bootstrap";
 import MatchingDetailStep from "../components/entities/matching/matching-step-detail/matching-step-detail";
 import {AuthoritiesContext} from "../util/authorities";
 import {SearchContext} from "../util/search-context";
@@ -20,6 +21,10 @@ import {useHistory, useLocation} from "react-router-dom";
 import MergingStepDetail from "../components/entities/merging/merging-step-detail/merging-step-detail";
 import {ConfigProvider} from "antd";
 import MappingStepDetail from "../components/entities/mapping/mapping-step-detail/mapping-step-detail";
+import {ErrorMessageContext} from "../util/error-message-context";
+import HCButton from "../components/common/hc-button/hc-button";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimesCircle} from "@fortawesome/free-regular-svg-icons";
 
 export type TileId = "load" | "model" | "curate" | "run" | "explore" | "monitor" | "detail";
 export type IconType = "fa" | "custom";
@@ -68,6 +73,7 @@ const TilesView = (props) => {
     setView,
     searchOptions
   } = useContext(SearchContext);
+  const {errorMessageOptions, setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const onMenuClick = () => {
     //Logic can be added here if menu is changed/added for any tile
@@ -158,6 +164,20 @@ const TilesView = (props) => {
         <Overview enabled={enabled}/>
       }
       <Toolbar tiles={tiles} enabled={enabled}/>
+      <Modal
+        show={errorMessageOptions.isVisible}
+      >
+        <Modal.Body className={"pt-5 pb-4"}>
+          <div className={"d-flex align-items-start justify-content-center"}>
+            <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />{errorMessageOptions.message}
+          </div>
+          <div className={"d-flex justify-content-end pt-4 pb-2"}>
+            <HCButton aria-label={"Ok"} variant="primary" type="submit" onClick={() => setErrorMessageOptions({isVisible: false, message: ""})}>
+              Ok
+            </HCButton>
+          </div>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };
