@@ -1,12 +1,13 @@
 import React, {useState, useContext, useEffect} from "react";
 import {RouteComponentProps, withRouter, useLocation, useHistory} from "react-router-dom";
-import {Modal} from "antd";
+import {Modal} from "react-bootstrap";
 import axios from "axios";
 
 import {UserContext} from "../../util/user-context";
 import {useInterval} from "../../hooks/use-interval";
 import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from "../../config/application.config";
 import {getSystemInfo} from "../../api/environment";
+import HCButton from "../common/hc-button/hc-button";
 
 interface Props extends RouteComponentProps<any>{
 }
@@ -135,19 +136,25 @@ const ModalStatus: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      visible={showModal}
-      closable={sessionWarning ? false : true }
-      zIndex={5000}
-      title={title}
-      cancelText={buttonText.cancel}
-      onCancel={() => onCancel()}
-      okText={buttonText.ok}
-      onOk={() => onOk()}
-      maskClosable={sessionWarning ? false : true }
-      destroyOnClose={true}
+      show={showModal}
+      style={{"z-index": "5000"}}
     >
-      {sessionWarning && user.error.type !== "MODAL" && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
-      {user.error.type === "MODAL" && <p>{user.error.message}</p>}
+      <Modal.Header className={"pe-4"}>
+        <span className={"fs-4"}>{title}</span>
+        {sessionWarning ? null : <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button> }
+      </Modal.Header>
+      <Modal.Body className={"py-4"}>
+        {sessionWarning && user.error.type !== "MODAL" && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
+        {user.error.type === "MODAL" && <p>{user.error.message}</p>}
+      </Modal.Body>
+      <Modal.Footer className={"d-flex justify-content-end py-2"}>
+        <HCButton className={"me-2"} variant="outline-light" aria-label={buttonText.cancel} onClick={onCancel}>
+          {buttonText.cancel}
+        </HCButton>
+        <HCButton aria-label={buttonText.ok} variant="primary" type="submit" onClick={onOk}>
+          {buttonText.ok}
+        </HCButton>
+      </Modal.Footer>
     </Modal>
   );
 };

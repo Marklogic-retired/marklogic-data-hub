@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Radio, Cascader, Select} from "antd";
-import {Row, Col, Form, FormLabel, FormCheck} from "react-bootstrap";
+import {Radio, Cascader, Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -746,7 +746,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
 
-  const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
+  const modalFooter = <div className={`w-100 ${props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}`}>
     { props.editPropertyOptions.isEdit &&
       <HCButton variant="link" onClick={async () => {
         if (confirmType === ConfirmationType.Identifer) {
@@ -761,6 +761,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       <HCButton
         aria-label="property-modal-cancel"
         variant="outline-light"
+        className={"me-2"}
         onClick={onCancel}
       >Cancel</HCButton>
       <HCButton
@@ -772,19 +773,15 @@ const PropertyModal: React.FC<Props> = (props) => {
     </div>
   </div>;
 
-  return (
-    <Modal
-      className={styles.modal}
-      visible={props.isVisible}
-      destroyOnClose={true}
-      closable={true}
-      title={modalTitle}
-      maskClosable={false}
-      width="680px"
-      style={{top: 30}}
-      onCancel={onCancel}
-      footer={modalFooter}
-    >
+  return (<Modal
+    show={props.isVisible}
+    size={"lg"}
+  >
+    <Modal.Header className={"pe-4"}>
+      <span className={"fs-3"}>{modalTitle}</span>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"py-4"}>
       {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 &&
         <div className={styles.warningContainer}>
           <HCAlert
@@ -942,7 +939,11 @@ const PropertyModal: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-    </Modal>
+    </Modal.Body>
+    <Modal.Footer className={"py-2"}>
+      {modalFooter}
+    </Modal.Footer>
+  </Modal>
   );
 };
 

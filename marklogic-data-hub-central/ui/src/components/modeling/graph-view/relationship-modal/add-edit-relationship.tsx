@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Modal, Select, Icon, Card, Dropdown, Tooltip} from "antd";
+import {Select, Icon, Card, Dropdown, Tooltip} from "antd";
+import {Modal} from "react-bootstrap";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
@@ -549,7 +550,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     updateEntityModified(modifiedEntity);
   };
 
-  const modalFooter = <div className={styles.modalFooter}>
+  const modalFooter = <>
     <div className={styles.deleteTooltip}>
       <HCTooltip text={ModelingTooltips.deleteRelationshipIcon} id="delete-relationship-tooltip" placement="top">
         <i key="last" role="delete-entity button" data-testid={"delete-relationship"}>
@@ -565,20 +566,23 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         </i>
       </HCTooltip>
     </div>
-    <HCButton
-      aria-label="relationship-modal-cancel"
-      variant="outline-light"
-      onClick={onCancel}
-    >Cancel</HCButton>
-    <HCButton
-      aria-label="relationship-modal-submit"
-      // form="property-form"
-      variant="primary"
-      type="submit"
-      loading={loading}
-      onClick={onSubmit}
-    >{props.isEditing ? "Save" : "Add"}</HCButton>
-  </div>;
+    <div>
+      <HCButton
+        aria-label="relationship-modal-cancel"
+        variant="outline-light"
+        className={"ms-auto me-2"}
+        onClick={onCancel}
+      >Cancel</HCButton>
+      <HCButton
+        aria-label="relationship-modal-submit"
+        // form="property-form"
+        variant="primary"
+        type="submit"
+        loading={loading}
+        onClick={onSubmit}
+      >{props.isEditing ? "Save" : "Add"}</HCButton>
+    </div>
+  </>;
 
   const confirmAction = async () => {
     await props.updateSavedEntity([modifiedEntity]);
@@ -586,103 +590,106 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     toggleConfirmModal(false);
   };
 
-
   return (<Modal
-    visible={props.openRelationshipModal}
-    title={<span aria-label="relationshipHeader">{props.isEditing ? "Edit Relationship" : "Add a Relationship"}</span>}
-    width="960px"
-    onCancel={onCancel}
-    footer={modalFooter}
-    maskClosable={false}
-    destroyOnClose={true}
+    show={props.openRelationshipModal}
+    dialogClassName={styles.dialog960w}
   >
-    <div aria-label="relationshipModal" id="relationshipModal" className={styles.relationshipModalContainer}>
-      {
-        <div aria-label="header-message">
-          {headerText}
-        </div>
-      }
-      <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
-        <div className={styles.nodeDisplay}>
-          <span className={styles.nodeLabel}>SOURCE</span>
-          <Card data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
-            <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
-          </Card>
-        </div>
-        <div className={styles.relationshipInputContainer}>
-          <HCInput
-            id="relationship"
-            placeholder="Relationship*"
-            value={relationshipName}
-            onChange={handleChange}
-            size={"sm"}
-            className={styles.relationshipInput}
-            ariaLabel="relationship-textarea"
-            style={errorMessage && submitClicked ? {border: "solid 1px #C00"} : {}}
-          />
-          {errorMessage && submitClicked ?
-            <HCTooltip text={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(relationshipName) : errorMessage} placement={"bottom"} id="exclamation-tooltip">
-              <i data-testid="error-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.errorIcon} /></i>
-            </HCTooltip> : ""}
-          <HCTooltip text={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"} id="relationship-name-tooltip">
-            <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
-          </HCTooltip>
-        </div>
-        <hr className={styles.horizontalLine}></hr>
-        <Tooltip title={ModelingTooltips.cardinalityButton} placement={"bottom"}>
-          <HCButton variant="onlined-light" className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
-            {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
-          </HCButton>
-        </Tooltip>
-        <div className={styles.nodeDisplay}>
-          <span className={styles.nodeLabel}>TARGET</span>
-          <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-            <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
-              <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
-            </Card>
-            {!props.isEditing ?
-              <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
-                <span className={styles.dropdownArrow}>
-                  {
-                    <ChevronDown className={styles.dropdownMenuIcon} data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
-                  }
-                </span>
-              </Dropdown>
-              : null }
+    <Modal.Header className={"pe-4"}>
+      <span aria-label="relationshipHeader" className={"fs-3"}>{props.isEditing ? "Edit Relationship" : "Add a Relationship"}</span>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"py-4"}>
+      <div aria-label="relationshipModal" id="relationshipModal" className={styles.relationshipModalContainer}>
+        {
+          <div aria-label="header-message">
+            {headerText}
           </div>
-          {submitClicked && emptyTargetEntity ? <span className={styles.targetEntityErrorMsg}>{ModelingTooltips.targetEntityEmpty}</span> : null}
-        </div>
-      </div>
-      <div className={styles.toggleOptional}>
-        {optionalCollapsed ?
-          <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronRight} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
-          :
-          <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronDown} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
         }
-        <span className={styles.optionalText} onClick = {(e) => toggleOptionalIcon()}>Optional</span>
-      </div>
-      { !optionalCollapsed && (
-        <div className={styles.foreignKeyContainer}>
-          <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
-          <div className={styles.foreignKeyDropdownContainer}>
-            {foreignKeyDropdown}
-            <Tooltip title={ModelingTooltips.foreignKeyInfo} placement={"bottom"}>
-              <Icon type="question-circle" data-testid={"foreign-key-tooltip"}className={styles.foreignKeyQuestionCircle} theme="filled"/>
-            </Tooltip>
+        <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
+          <div className={styles.nodeDisplay}>
+            <span className={styles.nodeLabel}>SOURCE</span>
+            <Card data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
+              <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
+            </Card>
+          </div>
+          <div className={styles.relationshipInputContainer}>
+            <HCInput
+              id="relationship"
+              placeholder="Relationship*"
+              value={relationshipName}
+              onChange={handleChange}
+              size={"sm"}
+              className={styles.relationshipInput}
+              ariaLabel="relationship-textarea"
+              style={errorMessage && submitClicked ? {border: "solid 1px #C00"} : {}}
+            />
+            {errorMessage && submitClicked ?
+              <HCTooltip text={errorMessage === "name-error" ? ModelingTooltips.duplicatePropertyError(relationshipName) : errorMessage} placement={"bottom"} id="exclamation-tooltip">
+                <i data-testid="error-circle"><FontAwesomeIcon icon={faExclamationCircle} size="1x" className={styles.errorIcon} /></i>
+              </HCTooltip> : ""}
+            <HCTooltip text={ModelingTooltips.relationshipNameInfo(props.relationshipInfo.sourceNodeName)} placement={"bottom"} id="relationship-name-tooltip">
+              <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
+            </HCTooltip>
+          </div>
+          <hr className={styles.horizontalLine}></hr>
+          <Tooltip title={ModelingTooltips.cardinalityButton} placement={"bottom"}>
+            <HCButton variant="onlined-light" className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
+              {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
+            </HCButton>
+          </Tooltip>
+          <div className={styles.nodeDisplay}>
+            <span className={styles.nodeLabel}>TARGET</span>
+            <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
+              <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
+                <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
+              </Card>
+              {!props.isEditing ?
+                <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
+                  <span className={styles.dropdownArrow}>
+                    {
+                      <ChevronDown className={styles.dropdownMenuIcon} data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
+                    }
+                  </span>
+                </Dropdown>
+                : null }
+            </div>
+            {submitClicked && emptyTargetEntity ? <span className={styles.targetEntityErrorMsg}>{ModelingTooltips.targetEntityEmpty}</span> : null}
           </div>
         </div>
-      )
-      }
-      <div className={styles.requiredFootnote}>* Required</div>
-    </div>
-    <ConfirmationModal
-      isVisible={showConfirmModal}
-      type={confirmType}
-      boldTextArray={confirmBoldTextArray}
-      arrayValues={stepValuesArray}
-      toggleModal={toggleConfirmModal}
-      confirmAction={confirmAction}
-    />
+        <div className={styles.toggleOptional}>
+          {optionalCollapsed ?
+            <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronRight} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
+            :
+            <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronDown} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
+          }
+          <span className={styles.optionalText} onClick = {(e) => toggleOptionalIcon()}>Optional</span>
+        </div>
+        { !optionalCollapsed && (
+          <div className={styles.foreignKeyContainer}>
+            <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
+            <div className={styles.foreignKeyDropdownContainer}>
+              {foreignKeyDropdown}
+              <Tooltip title={ModelingTooltips.foreignKeyInfo} placement={"bottom"}>
+                <Icon type="question-circle" data-testid={"foreign-key-tooltip"}className={styles.foreignKeyQuestionCircle} theme="filled"/>
+              </Tooltip>
+            </div>
+          </div>
+        )
+        }
+        <div className={styles.requiredFootnote}>* Required</div>
+      </div>
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        type={confirmType}
+        boldTextArray={confirmBoldTextArray}
+        arrayValues={stepValuesArray}
+        toggleModal={toggleConfirmModal}
+        confirmAction={confirmAction}
+      />
+    </Modal.Body>
+    <Modal.Footer className={"d-flex justify-content-between py-2"}>
+      {modalFooter}
+    </Modal.Footer>
   </Modal>);
 
 };
