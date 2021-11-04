@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useContext} from "react";
-import {Modal} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./structured-type-modal.module.scss";
 import HCInput from "../../common/hc-input/hc-input";
 import {ModelingContext} from "../../../util/modeling-context";
@@ -78,6 +77,7 @@ A structured type cannot use the same name as an existing structured type.</span
     <HCButton
       aria-label="structured-type-modal-cancel"
       variant="outline-light"
+      className={"me-2"}
       onClick={onCancel}
     >Cancel</HCButton>
     <HCButton
@@ -89,16 +89,14 @@ A structured type cannot use the same name as an existing structured type.</span
     >Add</HCButton>
   </div>;
 
-  return (
-    <Modal
-      className={styles.modal}
-      visible={props.isVisible}
-      closable={true}
-      title={"Add New Structured Property Type"}
-      maskClosable={false}
-      onCancel={onCancel}
-      footer={modalFooter}
-    >
+  return (<Modal
+    show={props.isVisible}
+  >
+    <Modal.Header className={"pe-4"}>
+      <span className={"fs-4"}>{"Add New Structured Property Type"}</span>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"py-4"}>
       <Form
         id="structured-type-form"
         onSubmit={onSubmit}
@@ -131,7 +129,11 @@ A structured type cannot use the same name as an existing structured type.</span
           </Col>
         </Row>
       </Form>
-    </Modal>
+    </Modal.Body>
+    <Modal.Footer className={"py-2"}>
+      {modalFooter}
+    </Modal.Footer>
+  </Modal>
   );
 };
 

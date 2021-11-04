@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Modal, Tooltip} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Tooltip} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +13,8 @@ import {defaultHubCentralConfig} from "../../../config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import HCTooltip from "../../common/hc-tooltip/hc-tooltip";
 import HCInput from "../../common/hc-input/hc-input";
+import HCButton from "../../common/hc-button/hc-button";
+
 
 type Props = {
   isVisible: boolean;
@@ -259,22 +261,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     setColorSelected(color.hex);
   };
 
-  return (
-    <Modal
-      className={styles.modal}
-      visible={props.isVisible}
-      closable={true}
-      confirmLoading={loading}
-      title={props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}
-      width="680px"
-      cancelText="Cancel"
-      cancelButtonProps={{id: "entity-modal-cancel"}}
-      onCancel={() => onCancel()}
-      okText={props.isEditModal ? "OK" : "Add"}
-      onOk={onOk}
-      okButtonProps={{id: "entity-modal-add", form: "entity-type-form", htmlType: "submit"}}
-      maskClosable={false}
-    >
+  return (<Modal
+    show={props.isVisible}
+    size={"lg"}
+  >
+    <Modal.Header className={"pe-4"}>
+      <span className={"fs-3"}>{props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}</span>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"py-4"}>
       <Form
         id="entity-type-form"
         onSubmit={onOk}
@@ -371,7 +366,16 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         </Row>
       </Form>
       {displayColorPicker ? <div ref={node} id={"color-picker-menu"} className={styles.colorPickerContainer}><TwitterPicker colors={graphConfig.colorOptionsArray} color={colorSelected} onChangeComplete={handleColorChange}/></div> : null}
-    </Modal>
+    </Modal.Body>
+    <Modal.Footer className={"d-flex justify-content-end py-2"}>
+      <HCButton className={"me-2"} variant="outline-light" id={"entity-modal-cancel"} aria-label={"Cancel"} onClick={onCancel}>
+        {"Cancel"}
+      </HCButton>
+      <HCButton aria-label={"Yes"} variant="primary" id={"entity-modal-add"} type="submit" onClick={onOk} loading={loading}>
+        {props.isEditModal ? "OK" : "Add"}
+      </HCButton>
+    </Modal.Footer>
+  </Modal>
   );
 };
 
