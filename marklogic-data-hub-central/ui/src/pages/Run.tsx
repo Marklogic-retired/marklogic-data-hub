@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./Run.module.scss";
 import Flows from "../components/flows/flows";
-import {Modal} from "antd";
-import {Accordion} from "react-bootstrap";
+import {Accordion, Modal} from "react-bootstrap";
 import axios from "axios";
 import {AuthoritiesContext} from "../util/authorities";
 import {UserContext} from "../util/user-context";
@@ -14,6 +13,7 @@ import {getMappingArtifactByStepName} from "../api/mapping";
 import JobResponse from "../../src/components/job-response/job-response";
 import HCButton from "../components/common/hc-button/hc-button";
 import {CheckCircleFill, ExclamationCircleFill} from "react-bootstrap-icons";
+import {ErrorMessageContext} from "../util/error-message-context";
 interface PollConfig {
     interval: number;
     retryLimit: number;
@@ -26,8 +26,60 @@ const Statuses = {
   "FINISHED_WITH_ERRORS": "finished_with_errors"
 };
 
+type commonModalType = {
+  isVisible: boolean,
+  stepName: string,
+  stepType: string,
+};
+
+const defaultCommonModal = {
+  isVisible: false,
+  stepName: "",
+  stepType: "",
+};
+
+type successModalType = commonModalType & {
+  entityName: string,
+  targetDatabase: string,
+  jobId: string,
+};
+
+const defaultSuccessModal = {
+  ...defaultCommonModal,
+  entityName: "",
+  targetDatabase: "",
+  jobId: ""
+};
+
+type errorModalType = commonModalType & {
+  errors: Array<any>,
+  response: Object,
+  entityName: string,
+  targetDatabase: string,
+  jobId: string,
+};
+
+const defaultErrorModal = {
+  ...defaultCommonModal,
+  errors: [],
+  response: {},
+  entityName: "",
+  targetDatabase: "",
+  jobId: "",
+};
+
+type failedModalType = commonModalType & {
+  errors: Array<any>
+};
+
+const defaultFailedModal = {
+  ...defaultCommonModal,
+  errors: []
+};
+
 const Run = (props) => {
   const {handleError} = useContext(UserContext);
+  const {setErrorMessageOptions} = useContext(ErrorMessageContext);
 
   const history: any = useHistory();
 
@@ -40,6 +92,10 @@ const Run = (props) => {
   const [uploadError, setUploadError] = useState("");
   const [openJobResponse, setOpenJobResponse] = useState<boolean>(false);
   const [jobId, setJobId] = useState<string>("");
+
+  const [successModal, setSuccessModal] = useState<successModalType>({...defaultSuccessModal});
+  const [errorModal, setErrorModal] = useState<errorModalType>({...defaultErrorModal});
+  const [failedModal, setFailedModal] = useState<failedModalType>({...defaultFailedModal});
 
   // For role-based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -56,10 +112,6 @@ const Run = (props) => {
     interval: 1000, // In millseconds
     retryLimit: 10  // Timeout after retries
   };
-
-  useEffect(() => {
-    return () =>  Modal.destroyAll();
-  }, []);
 
   useEffect(() => {
     getFlows();
@@ -93,8 +145,9 @@ const Run = (props) => {
     } catch (error) {
       console.error("Error getting flows", error.response);
       if (error.response && error.response.data && error.response.data.message) {
-        Modal.error({
-          content: error.response.data.message
+        setErrorMessageOptions({
+          isVisible: true,
+          message: error.response.data.message
         });
       }
     }
@@ -128,10 +181,12 @@ const Run = (props) => {
       console.error("Error posting flow", error);
       setIsLoading(false);
       let message = error.response.data.message;
-      message.indexOf(newFlow.name) > -1 ? Modal.error({
-        content: <p>Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.</p>
-      }) : Modal.error({
-        content: message
+      message.indexOf(newFlow.name) > -1 ? setErrorMessageOptions({
+        isVisible: true,
+        message: <p>Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.</p>
+      }) : setErrorMessageOptions({
+        isVisible: true,
+        message
       });
     }
   };
@@ -173,8 +228,9 @@ const Run = (props) => {
       let message = error.response.data.message;
       console.error("Error while adding load data step to flow.", message);
       setIsLoading(false);
-      Modal.error({
-        content: "Error adding step \"" + artifactName + "\" to flow \"" + flowName + ".\"",
+      setErrorMessageOptions({
+        isVisible: true,
+        message: `Error adding step "${artifactName}" to flow "${flowName}".`
       });
       handleError(error);
     }
@@ -218,7 +274,6 @@ const Run = (props) => {
         state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
       });
     }
-    Modal.destroyAll();
   };
 
   function showStepRunResponse(step, jobId, response) {
@@ -235,43 +290,40 @@ const Run = (props) => {
       entityName = splitTargetEntity[splitTargetEntity.length - 1];
     }
     if (response["jobStatus"] === Statuses.FINISHED || (stepStatus !== undefined && stepStatus.indexOf("completed step") !== -1)) {
-      showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber);
+      setSuccessModal({
+        isVisible: true,
+        stepName,
+        stepType,
+        entityName,
+        targetDatabase,
+        jobId
+      });
     } else if (response["jobStatus"] === Statuses.FINISHED_WITH_ERRORS) {
       let errors = getErrors(response, stepNumber);
-      showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber);
+      setErrorModal({
+        isVisible: true,
+        stepName,
+        stepType,
+        errors,
+        response,
+        entityName,
+        targetDatabase,
+        jobId
+      });
     } else if (response["jobStatus"] === Statuses.FAILED) {
       let errors = getErrors(response, stepNumber);
-      showFailed(stepName, stepType, errors.slice(0, 1));
+      setFailedModal({
+        isVisible: true,
+        stepName,
+        stepType,
+        errors: errors.slice(0, 1)
+      });
     }
   }
 
   const handleCloseJobResponse = () => {
     setOpenJobResponse(false);
   };
-
-  function showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber) {
-    Modal.success({
-      title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p>,
-      icon: <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle"/>,
-      okText: "Close",
-      okType: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ? "default" : stepType.toLowerCase() === "ingestion" ? "default" : "primary",
-      mask: false,
-      width: 650,
-      content: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ?
-        <div className={styles.exploreDataContainer}>
-          <HCButton data-testid="explorer-link"  variant="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
-            <span className={styles.exploreIcon}></span>
-            <span className={styles.exploreText}>Explore Curated Data</span>
-          </HCButton>
-        </div> : stepType.toLowerCase() === "ingestion" ?
-          <div className={styles.exploreDataContainer}>
-            <HCButton data-testid="explorer-link" variant="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
-              <span className={styles.exploreIcon}></span>
-              <span className={styles.exploreText}>Explore Loaded Data</span>
-            </HCButton>
-          </div> : ""
-    });
-  }
 
   function getErrors(response, stepNumber) {
     let errors = [];
@@ -299,62 +351,6 @@ const Run = (props) => {
             Error {index+1}
     </span>
   );
-
-  function showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber) {
-    Modal.error({
-      title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed with errors</p>,
-      icon: <ExclamationCircleFill aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>,
-      content: (
-        <div id="error-list">
-          {((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName) ?
-            <div className={styles.exploreDataContainer}>
-              <HCButton variant="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreCuratedData}>
-                <span className={styles.exploreIcon}></span>
-                <span className={styles.exploreText}>Explore Curated Data</span>
-              </HCButton></div> : stepType.toLowerCase() === "ingestion" ?
-              <div className={styles.exploreDataContainer}>
-                <HCButton variant="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType, stepName)} className={styles.exploreLoadedData}>
-                  <span className={styles.exploreIcon}></span>
-                  <span className={styles.exploreText}>Explore Loaded Data</span>
-                </HCButton></div> : ""}
-          <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
-          {errors.map((e, i) => {
-            return <Accordion className={"w-100"} flush key={i}>
-              <Accordion.Item eventKey={i}>
-                <div className={"p-0 d-flex"}>
-                  <Accordion.Button>{getErrorsHeader(i)}</Accordion.Button>
-                </div>
-                <Accordion.Body>
-                  {getErrorDetails(e)}
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion>;
-          })}
-        </div>
-      ),
-      okText: "Close",
-      okType: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ? "default" : stepType.toLowerCase() === "ingestion" ? "default" : "primary",
-      mask: false,
-      width: 800
-    });
-  }
-
-  function showFailed(stepName, stepType, errors) {
-    Modal.error({
-      title: <div id="error-title"><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> failed</p></div>,
-      icon: <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={styles.unSuccessfulRun}/>,
-      content: (
-        <div id="error-list">
-          {errors.map((e, i) => {
-            return getErrorDetails(e);
-          })}
-        </div>
-      ),
-      okText: "Close",
-      mask: false,
-      width: 800
-    });
-  }
 
   function getErrorDetails(e) {
 
@@ -539,7 +535,108 @@ const Run = (props) => {
                 onReorderFlow={onReorderFlow}
                 setJobId={setJobId}
                 setOpenJobResponse={setOpenJobResponse}
-              />
+              />,
+              // Success Message
+              <Modal
+                show={successModal.isVisible}
+                size={"lg"}
+                animation={false}
+                dialogClassName={styles.modal650w}
+              >
+                <Modal.Body className={"pt-5 pb-4 ps-5 pe-4"}>
+                  <div className={"d-flex align-items-center mb-4"}>
+                    <CheckCircleFill className={styles.successfulRun} aria-label="icon: check-circle"/>
+                    <span style={{fontWeight: 400}}>The {successModal.stepType.toLowerCase()} step <strong>{successModal.stepName}</strong> completed successfully</span>
+                  </div>
+                  {
+                    (successModal.stepType.toLowerCase() === "mapping" || successModal.stepType.toLowerCase() === "merging") && successModal.entityName ?
+                      <div className={`d-flex justify-content-center ${styles.exploreDataContainer}`}>
+                        <HCButton data-testid="explorer-link"  variant="primary" onClick={() => goToExplorer(successModal.entityName, successModal.targetDatabase, successModal.jobId, successModal.stepType, successModal.stepName)} className={styles.exploreCuratedData}>
+                          <span className={styles.exploreIcon}></span>
+                          <span className={styles.exploreText}>Explore Curated Data</span>
+                        </HCButton>
+                      </div> : successModal.stepType.toLowerCase() === "ingestion" ?
+                        <div className={`d-flex justify-content-center ${styles.exploreDataContainer}`}>
+                          <HCButton data-testid="explorer-link" variant="primary" onClick={() => goToExplorer(successModal.entityName, successModal.targetDatabase, successModal.jobId, successModal.stepType, successModal.stepName)} className={styles.exploreLoadedData}>
+                            <span className={styles.exploreIcon}></span>
+                            <span className={styles.exploreText}>Explore Loaded Data</span>
+                          </HCButton>
+                        </div> : ""
+                  }
+                  <div className={"d-flex justify-content-end pt-4 pb-2"}>
+                    <HCButton aria-label={"Close"} variant={(successModal.stepType.toLowerCase() === "mapping" || successModal.stepType.toLowerCase() === "merging") && successModal.entityName ? "outline-primary" : successModal.stepType.toLowerCase() === "ingestion" ? "outline-primary" : "primary"} type="submit" onClick={() => setSuccessModal({...defaultSuccessModal})}>
+                      Close
+                    </HCButton>
+                  </div>
+                </Modal.Body>
+              </Modal>,
+              // Error Message
+              <Modal
+                show={errorModal.isVisible}
+                size={"lg"}
+                animation={false}
+              >
+                <Modal.Body className={"pt-5 pb-4"}>
+                  <div className={"d-flex align-items-center mb-3"}>
+                    <ExclamationCircleFill aria-label="icon: exclamation-circle" className={`me-3 ${styles.unSuccessfulRun}`}/>
+                    <span style={{fontWeight: 400}}>The {errorModal.stepType.toLowerCase()} step <strong>{errorModal.stepName}</strong> completed with errors</span>
+                  </div>
+                  <div id="error-list">
+                    {((errorModal.stepType.toLowerCase() === "mapping" || errorModal.stepType.toLowerCase() === "merging") && errorModal.entityName) ?
+                      <div className={`d-flex justify-content-center ${styles.exploreDataContainer}`}>
+                        <HCButton variant="primary" onClick={() => goToExplorer(errorModal.entityName, errorModal.targetDatabase, errorModal.jobId, errorModal.stepType, errorModal.stepName)} className={styles.exploreCuratedData}>
+                          <span className={styles.exploreIcon}></span>
+                          <span className={styles.exploreText}>Explore Curated Data</span>
+                        </HCButton></div> : errorModal.stepType.toLowerCase() === "ingestion" ?
+                        <div className={`d-flex justify-content-center ${styles.exploreDataContainer}`}>
+                          <HCButton variant="primary" onClick={() => goToExplorer(errorModal.entityName, errorModal.targetDatabase, errorModal.jobId, errorModal.stepType, errorModal.stepName)} className={styles.exploreLoadedData}>
+                            <span className={styles.exploreIcon}></span>
+                            <span className={styles.exploreText}>Explore Loaded Data</span>
+                          </HCButton></div> : ""}
+                    <p className={styles.errorSummary}>{errorModal.isVisible && getErrorsSummary(errorModal.response)}</p>
+                    {errorModal.errors.map((e, i) => {
+                      return <Accordion className={"w-100"} flush key={i}>
+                        <Accordion.Item eventKey={`${i}`}>
+                          <div className={"p-0 d-flex"}>
+                            <Accordion.Button>{getErrorsHeader(i)}</Accordion.Button>
+                          </div>
+                          <Accordion.Body>
+                            {getErrorDetails(e)}
+                          </Accordion.Body>
+                        </Accordion.Item>
+                      </Accordion>;
+                    })}
+                  </div>
+                  <div className={"d-flex justify-content-end pt-4 pb-2"}>
+                    <HCButton aria-label={"Close"} variant={(errorModal.stepType.toLowerCase() === "mapping" || errorModal.stepType.toLowerCase() === "merging") && errorModal.entityName ? "outline-primary" : errorModal.stepType.toLowerCase() === "ingestion" ? "outline-primary" : "primary"} type="submit" onClick={() => setErrorModal({...defaultErrorModal})}>
+                      Close
+                    </HCButton>
+                  </div>
+                </Modal.Body>
+              </Modal>,
+              // Failed Message
+              <Modal
+                show={failedModal.isVisible}
+                size={"lg"}
+                animation={false}
+              >
+                <Modal.Body className={"pt-5 pb-4"}>
+                  <div className={"d-flex align-items-center mb-3"}>
+                    <ExclamationCircleFill data-icon="exclamation-circle" aria-label="icon: exclamation-circle" className={`me-3 ${styles.unSuccessfulRun}`}/>
+                    <div id="error-title"><span style={{fontWeight: 400}}>The {failedModal.stepType.toLowerCase()} step <strong>{failedModal.stepName}</strong> failed</span></div>
+                  </div>
+                  <div id="error-list">
+                    {failedModal.errors.map((e, i) => {
+                      return getErrorDetails(e);
+                    })}
+                  </div>
+                  <div className={"d-flex justify-content-end pt-4 pb-2"}>
+                    <HCButton aria-label={"Close"} variant="primary" type="submit" onClick={() => setFailedModal({...defaultFailedModal})}>
+                      Close
+                    </HCButton>
+                  </div>
+                </Modal.Body>
+              </Modal>
             ]
             :
             <p>{MissingPagePermission}</p>

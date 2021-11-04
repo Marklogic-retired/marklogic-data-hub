@@ -33,13 +33,16 @@ class Tiles {
   }
 
   closeRunMessage() {
-    cy.get("div.ant-modal-confirm-btns button").click({multiple: true, force: true});
+    cy.get("button[aria-label=\"Close\"]").click({multiple: true, force: true});
     cy.get("body")
       .then(($body) => {
         if ($body.find("[data-testid=explorer-link]").length) {
-          cy.get("div.ant-modal-confirm-btns button").click({multiple: true, force: true});
+          cy.get("button[aria-label=\"Close\"]").click({multiple: true, force: true});
+          cy.wait(1000); //wait until modal animation end
         }
       });
+    cy.wait(1000); //wait until modal animation end
+    cy.waitForBootstrapModalToDisappear();
   }
 }
 

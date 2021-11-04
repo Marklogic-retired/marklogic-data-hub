@@ -127,7 +127,7 @@ describe("Add Matching step to a flow", () => {
     runPage.addStep(flowName2);
     runPage.addStepToFlow(matchStep);
     runPage.verifyStepInFlow("Match", matchStep, flowName2);
-    cy.wait(500);
+    cy.wait(1000);
   });
   it("Delete the match step and Navigate back to match tab", () => {
     runPage.deleteStep(matchStep, flowName2).click();

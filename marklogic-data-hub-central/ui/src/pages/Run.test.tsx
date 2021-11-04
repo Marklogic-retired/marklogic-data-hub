@@ -20,6 +20,8 @@ import tiles from "../config/tiles.config";
 import {createMemoryHistory} from "history";
 import moment from "moment";
 import curateData from "../assets/mock-data/curation/flows.data";
+import TilesView from "./TilesView";
+import {ErrorMessageContext} from "../util/error-message-context";
 
 jest.mock("axios");
 jest.setTimeout(30000);
@@ -903,16 +905,25 @@ describe("Verify Add Step function", () => {
     fireEvent.click(getByText("Close"));
 
     //expect panel to still be open after step is run
-    expect(getAllByText(data.flows.data[0].steps[1].stepName)).toHaveLength(2);
+    await(() => expect(getAllByText(data.flows.data[0].steps[1].stepName)).toHaveLength(2));
 
   });
 
   test("Verify a missing step error is handled with a modal displaying error message", async () => {
-    mocks.runMissingStep(axiosMock);
+    const mockContext = {
+      errorMessageOptions: {
+        isVisible: true,
+        message: "Error message"
+      },
+      setErrorMessageOptions: () => {}
+    };
     const {getByText} = await render(<MemoryRouter>
-      <AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider>
+      <AuthoritiesContext.Provider value={mockOpRolesService}>
+        <ErrorMessageContext.Provider value={mockContext}>
+          <TilesView id="run"/>
+        </ErrorMessageContext.Provider>
+      </AuthoritiesContext.Provider>
     </MemoryRouter>);
     await(waitForElement(() => getByText("Error message")));
   });
-
 });
