@@ -49,6 +49,7 @@
   <xsl:template match="mapping:function-defs">
     <axsl:stylesheet version="2.0"
                      extension-element-prefixes="xdmp"
+                     axdmp:dialect="1.0-ml"
                      >
       <xsl:choose>
         <xsl:when test="@type='xquery'">
