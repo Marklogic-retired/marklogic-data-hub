@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Provenance expression test" enabled="true">
+      <stringProp name="TestPlan.comments">Primarily intended to measure the performance of provenance options</stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="host" elementType="Argument">
+            <stringProp name="Argument.name">host</stringProp>
+            <stringProp name="Argument.value">${__P(host, localhost)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="username" elementType="Argument">
+            <stringProp name="Argument.name">username</stringProp>
+            <stringProp name="Argument.value">${__P(username, test-data-hub-developer)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="password" elementType="Argument">
+            <stringProp name="Argument.name">password</stringProp>
+            <stringProp name="Argument.value">${__P(password, password)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="flowName" elementType="Argument">
+            <stringProp name="Argument.name">flowName</stringProp>
+            <stringProp name="Argument.value">jmeterMapFlow</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sourceCollection" elementType="Argument">
+            <stringProp name="Argument.name">sourceCollection</stringProp>
+            <stringProp name="Argument.value">jmeter-source-documents</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="entityTypeName" elementType="Argument">
+            <stringProp name="Argument.name">entityTypeName</stringProp>
+            <stringProp name="Argument.value">JMeterCustomer</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="sourceDocumentCount" elementType="Argument">
+            <stringProp name="Argument.name">sourceDocumentCount</stringProp>
+            <stringProp name="Argument.value">${__P(sourceDocumentCount, 10)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="entityPropertyCount" elementType="Argument">
+            <stringProp name="Argument.name">entityPropertyCount</stringProp>
+            <stringProp name="Argument.value">${__P(entityPropertyCount, 1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="iterations" elementType="Argument">
+            <stringProp name="Argument.name">iterations</stringProp>
+            <stringProp name="Argument.value">${__P(iterations, 1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="mappingExpression" elementType="Argument">
+            <stringProp name="Argument.name">mappingExpression</stringProp>
+            <stringProp name="Argument.value">${__P(mappingExpression, sourceProperty1)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="provenanceGranularityLevel" elementType="Argument">
+            <stringProp name="Argument.name">provenanceGranularityLevel</stringProp>
+            <stringProp name="Argument.value">${__P(provenanceGranularityLevel, coarse-grain)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="latestProvenance" elementType="Argument">
+            <stringProp name="Argument.name">latestProvenance</stringProp>
+            <stringProp name="Argument.value">${__P(latestProvenance, false)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </Arguments>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">true</boolProp>
+          <stringProp name="LoopController.loops">${iterations}</stringProp>
+        </LoopController>
+        <hashTree>
+          <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Run flow" enabled="true">
+            <stringProp name="cacheKey">true</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="script">import java.util.HashMap
+import com.marklogic.hub.flow.FlowInputs
+import com.marklogic.hub.flow.impl.FlowRunnerImpl
+
+def hubClient = vars.getObject(&quot;hubClient&quot;)
+def flowRunner = new FlowRunnerImpl(hubClient)
+def flowInputs = new FlowInputs(vars.get(&quot;flowName&quot;))
+
+log.info(&quot;Running flow: &quot; + flowInputs.getFlowName())
+def flowResponse = flowRunner.runFlow(flowInputs)
+flowRunner.awaitCompletion()
+//SampleResult.setResponseMessage(flowResponse.toJson())</stringProp>
+            <stringProp name="scriptLanguage">groovy</stringProp>
+          </JSR223Sampler>
+          <hashTree>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Initialize once" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.WriteBatcher;
+import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.impl.DataHubImpl;
+
+def createSourceDocuments(hubClient, sourceDocumentCount, propertyCount) {
+	DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+	metadata.withCollections(vars.get(&quot;sourceCollection&quot;));
+	metadata.withPermission(&quot;data-hub-common&quot;, DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+
+	DataMovementManager mgr = hubClient.getStagingClient().newDataMovementManager();
+	WriteBatcher writeBatcher = mgr.newWriteBatcher().withThreadCount(24).withBatchSize(100)
+
+	def objectMapper = new ObjectMapper()
+	for (int i = 1; i &lt;= sourceDocumentCount; i++) {
+	  ObjectNode source = objectMapper.createObjectNode();
+	  for (int j = 1; j &lt;= propertyCount; j++) {
+	      source.put(&quot;sourceProperty&quot; + j, &quot;value &quot; + j);
+	  }
+	  writeBatcher.add(&quot;/sourceDocument&quot; + i + &quot;.json&quot;, metadata, new JacksonHandle(source));
+	}
+	writeBatcher.flushAndWait();
+	mgr.stopJob(writeBatcher);
+}
+
+def createEntityModel(hubClient, propertyCount) {
+	def entityTypeName = vars.get(&quot;entityTypeName&quot;)
+	ObjectNode model = new ObjectMapper().createObjectNode();
+	ObjectNode info = model.putObject(&quot;info&quot;);
+	info.put(&quot;title&quot;, entityTypeName).put(&quot;version&quot;, &quot;1.0&quot;).put(&quot;baseUri&quot;, &quot;http://example.org/&quot;);
+	ObjectNode properties = model.putObject(&quot;definitions&quot;).putObject(entityTypeName).putObject(&quot;properties&quot;);
+	for (int i = 1; i &lt;= propertyCount; i++) {
+	  properties.putObject(&quot;property&quot; + i).put(&quot;datatype&quot;, &quot;string&quot;);
+	}
+	ModelsService.on(hubClient.getStagingClient()).saveDraftModel(model);
+	ModelsService.on(hubClient.getStagingClient()).publishDraftModels();
+}
+
+if (vars.getObject(&quot;hubClient&quot;) == null) {
+	log.info(&quot;Creating HubClient, source docs, and entity model&quot;)
+
+	def configProps = new Properties()
+	configProps.setProperty(&quot;mlHost&quot;, vars.get(&quot;host&quot;))
+	configProps.setProperty(&quot;mlUsername&quot;, vars.get(&quot;username&quot;))
+	configProps.setProperty(&quot;mlPassword&quot;, vars.get(&quot;password&quot;))
+
+	def hubClient = HubClient.withHubClientConfig(new HubClientConfig(configProps))
+	vars.putObject(&quot;hubClient&quot;, hubClient)
+
+	log.info(&quot;Clearing user data&quot;);
+	new DataHubImpl(hubClient).clearUserData();
+	
+	def entityPropertyCount = Integer.parseInt(vars.get(&quot;entityPropertyCount&quot;))
+	def sourceDocumentCount = Integer.parseInt(vars.get(&quot;sourceDocumentCount&quot;))
+
+	createSourceDocuments(hubClient, sourceDocumentCount, entityPropertyCount)
+	createEntityModel(hubClient, entityPropertyCount)
+}</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+            <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Create flow" enabled="true">
+              <stringProp name="scriptLanguage">groovy</stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="script">import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.StepService;
+
+
+def hubClient = vars.getObject(&quot;hubClient&quot;)
+def entityTypeName = vars.get(&quot;entityTypeName&quot;)
+def flowName = vars.get(&quot;flowName&quot;)
+def entityPropertyCount = vars.get(&quot;entityPropertyCount&quot;) as Integer
+def mappingExpression = vars.get(&quot;mappingExpression&quot;)
+def provenanceValue = vars.get(&quot;provenanceGranularityLevel&quot;)
+def latestProvenance = vars.get(&quot;latestProvenance&quot;)
+
+def objectMapper = new ObjectMapper()
+
+ObjectNode mappingStep = objectMapper.createObjectNode()
+	.put(&quot;name&quot;, &quot;jmeterMapTest&quot;)
+	.put(&quot;stepDefinitionName&quot;, &quot;entity-services-mapping&quot;)
+	.put(&quot;stepDefinitionType&quot;, &quot;mapping&quot;)
+	.put(&quot;stepId&quot;, &quot;jmeterMapTest-mapping&quot;)
+	.put(&quot;targetEntityType&quot;, &quot;http://example.org/&quot; + entityTypeName + &quot;-1.0/&quot; + entityTypeName)
+	.put(&quot;selectedSource&quot;, &quot;query&quot;)
+	.put(&quot;sourceQuery&quot;, &quot;cts.collectionQuery(&apos;&quot; + vars.get(&quot;sourceCollection&quot;) + &quot;&apos;)&quot;)
+	.put(&quot;targetFormat&quot;, &quot;JSON&quot;)
+	.put(&quot;permissions&quot;, &quot;data-hub-common,read,data-hub-operator,update&quot;)
+	.put(&quot;attachSourceDocument&quot;, false)
+	.put(&quot;provenanceGranularityLevel&quot;, provenanceValue)
+	.put(&quot;latestProvenance&quot;, latestProvenance);
+mappingStep.putArray(&quot;collections&quot;)
+
+StepService.on(hubClient.getStagingClient()).saveStep(&quot;mapping&quot;, mappingStep, true, false);
+
+ObjectNode flow = objectMapper.createObjectNode();
+flow.put(&quot;name&quot;, flowName).putObject(&quot;steps&quot;).putObject(&quot;1&quot;).put(&quot;stepId&quot;, mappingStep.get(&quot;stepId&quot;).asText());
+ArtifactService.on(hubClient.getStagingClient()).setArtifact(&quot;flow&quot;, flowName, flow);
+</stringProp>
+            </JSR223PreProcessor>
+            <hashTree/>
+          </hashTree>
+        </hashTree>
+      </hashTree>
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>

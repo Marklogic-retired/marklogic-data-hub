@@ -134,3 +134,41 @@ task "testMonitoring"(type: Exec, group: taskGroup) {
         "-JsourceDocumentCount=" + sourceDocumentCount,
     ]
 }
+
+task "testProvenanceOff"(type: Exec, group: taskGroup) {
+    commandLine jmeterHome + "/bin/jmeter"
+    args = [
+        "-n", // no GUI
+        "-l", "build/jmeter-output.txt",
+        "-j", "build/jmeter.log",
+        "-Jhost=" + mlHost,
+        "-Jusername=" + mlUsername,
+        "-Jpassword=" + mlPassword,
+        "-Jiterations=" + iterations,
+        "-t", "src/main/jmeter/provenanceOff.jmx",
+        "-JsourceDocumentCount=" + sourceDocumentCount,
+        "-JprovenanceGranularityLevel", "off",
+    ]
+}
+
+[
+    "true": true,
+    "false": false
+].each { key, value ->
+    task "testCoarseGrain_LatestProvenance${key}"(type: Exec, group: taskGroup) {
+        commandLine jmeterHome + "/bin/jmeter"
+            args = [
+            "-n", // no GUI
+            "-l", "build/jmeter-output.txt",
+            "-j", "build/jmeter.log",
+            "-Jhost=" + mlHost,
+            "-Jusername=" + mlUsername,
+            "-Jpassword=" + mlPassword,
+            "-Jiterations=" + iterations,
+            "-t", "src/main/jmeter/provenance.jmx",
+            "-JsourceDocumentCount=" + sourceDocumentCount,
+            "-JprovenanceGranularityLevel", "coarse-grain",
+            "-JlatestProvenance=${value}"
+            ]
+    }
+}
