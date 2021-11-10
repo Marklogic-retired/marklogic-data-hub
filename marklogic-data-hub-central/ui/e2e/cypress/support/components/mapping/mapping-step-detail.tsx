@@ -117,6 +117,10 @@ class MappingStepDetail {
     return cy.findByTestId(`${propertyName}-listIcon`);
   }
 
+  getMapPropertyName(entityName: string, propertyName: string) {
+    return cy.findByTestId(`${entityName}-${propertyName}-name`);
+  }
+
   /**
    * Get property from dropdown list of source data, depends on getListIcon() being clicked first
    * @param functionName
@@ -169,6 +173,11 @@ class MappingStepDetail {
    * @param value
    * @example /
    */
+
+  getXpathExpressionInput(propertyName: string) {
+    return cy.findByTestId(`${propertyName}-mapexpression`);
+  }
+
   setXpathExpressionInput(propertyName: string, value: string) {
     cy.findByTestId(`${propertyName}-mapexpression`).type(value);
   }

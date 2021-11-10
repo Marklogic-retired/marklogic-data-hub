@@ -108,12 +108,6 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
     graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
 
-    //To verify cannot edit without permissions
-    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
-    });
-    relationshipModal.getModalHeader().should("not.exist");
-
     //To verify properties tab should display property table
     graphViewSidePanel.getPropertyTableHeader("propertyName").should("be.visible");
     graphViewSidePanel.getPropertyTableHeader("type").should("be.visible");
@@ -124,9 +118,15 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getPropertyName("name").should("be.visible");
     graphViewSidePanel.getPropertyName("email").should("be.visible");
 
+    //To verify cannot edit without permissions
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+    });
+    relationshipModal.getModalHeader().should("not.exist");
+
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
-      let personCoordinates: any = nodePositions["Order"];
-      graphVis.getGraphVisCanvas().click(personCoordinates.x, personCoordinates.y, {force: true});
+      let orderCoordinates: any = nodePositions["Order"];
+      graphVis.getGraphVisCanvas().click(orderCoordinates.x, orderCoordinates.y, {force: true});
     });
 
     // Verify property type icons and respective tooltips
