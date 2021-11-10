@@ -152,6 +152,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
+    cy.wait(500);
     runPage.getFlowName(flowName).should("not.exist");
     cy.wait(1000);
   });

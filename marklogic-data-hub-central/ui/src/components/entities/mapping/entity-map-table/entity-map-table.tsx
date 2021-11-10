@@ -1375,12 +1375,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
             </span>;
         }
         return {
-          children: <div className={styles.typeContainer}>
-            {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
-              content={contextHelp}
-              trigger="click"
-              placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} /></Popover><p className={styles.typeText}>{dType}</p></div> : renderText}
-          </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
+          children:
+            <div className={styles.typeContainer}>
+              {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
+                <Popover
+                  content={contextHelp}
+                  trigger="click"
+                  placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} /></Popover>
+                <p className={styles.typeText}>{dType}</p></div>
+                : renderText}
+            </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
         };
       }
     },
