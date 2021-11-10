@@ -108,6 +108,10 @@ class MappingStepDetail {
     return cy.findByTestId(`${entityName}-delete`);
   }
 
+  getMapPropertyName(entityName: string, propertyName: string) {
+    return cy.findByTestId(`${entityName}-${propertyName}-name`);
+  }
+
   /**
    * Get property icon from dropdown list by Entity type property name
    * @param propertyName
@@ -169,6 +173,11 @@ class MappingStepDetail {
    * @param value
    * @example /
    */
+
+  getXpathExpressionInput(propertyName: string) {
+    return cy.findByTestId(`${propertyName}-mapexpression`);
+  }
+
   setXpathExpressionInput(propertyName: string, value: string) {
     cy.findByTestId(`${propertyName}-mapexpression`).scrollIntoView().clear().type(value);
   }

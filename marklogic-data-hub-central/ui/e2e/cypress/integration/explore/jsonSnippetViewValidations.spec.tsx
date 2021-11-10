@@ -198,8 +198,8 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentUri().should("contain", "/json/customers/Cust5.json");
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
-  });
-  it("verify instance view of the document without pk", () => {
+    // });
+    // it("verify instance view of the document without pk", () => {
     browsePage.selectEntity("All Entities");
     browsePage.search("1990 Taylor St");
     browsePage.getTotalDocuments().should("be.equal", 1);
