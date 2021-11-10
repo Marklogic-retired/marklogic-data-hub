@@ -156,7 +156,12 @@ def isPRUITest(){
                    ''')
     }
     def jsonObj = new JsonSlurperClassic().parseText(PrObj.toString().trim())
-    return jsonObj.body.contains('[x] Run UI tests')
+    for (label in jsonObj.labels){
+            if(label.name=="DO_NOT_RUN_UI_TESTS"){
+                return true
+            }
+        }
+         return false
 }
 
 void runCypressE2e(String cmd){
@@ -246,7 +251,7 @@ void PreBuildCheck() {
        sh 'exit 1'
   }
 
-  if(!isChangeInUI() && !isPRUITest()){env.NO_UI_TESTS=true}
+  if(!isChangeInUI() && isPRUITest()){env.NO_UI_TESTS=true}
 
  }
  def obj=new abortPrevBuilds();
@@ -770,7 +775,7 @@ pipeline{
 	agent none;
 	options {
   	checkoutToSubdirectory 'data-hub'
-  	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
+  	buildDiscarder logRotator(artifactDaysToKeepStr: '7', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
 	JAVA_HOME_DIR="/home/builder/java/openjdk-1.8.0-262"
