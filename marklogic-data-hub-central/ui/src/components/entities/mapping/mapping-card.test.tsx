@@ -126,11 +126,11 @@ describe("Mapping Card component", () => {
     fireEvent.mouseOver(getByRole("delete-mapping"));
     await wait(() => expect(getByText("Delete")).toBeInTheDocument());
     await fireEvent.click(getByRole("delete-mapping"));
-    await fireEvent.click(getByText("Yes"));
-    expect(deleteMappingArtifact).toBeCalled();
     expect(await(waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete the Mapping1 step?");
     })))).toBeInTheDocument();
+    await fireEvent.click(getByText("Yes"));
+    expect(deleteMappingArtifact).toBeCalled();
   });
 
   test("Mapping card parses XML appropriately", async () => {
