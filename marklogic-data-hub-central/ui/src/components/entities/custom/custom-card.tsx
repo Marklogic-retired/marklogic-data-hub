@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Modal, Select} from "antd";
-import {Row, Col} from "react-bootstrap";
+import {Select} from "antd";
+import {Row, Col, Modal} from "react-bootstrap";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {Link, useHistory} from "react-router-dom";
 import {CustomStepTooltips, SecurityTooltips} from "../../../config/tooltips.config";
-import {HCTooltip, HCCard} from "@components/common";
+import {HCTooltip, HCCard, HCButton} from "@components/common";
 import Steps from "../../steps/steps";
 
 const {Option} = Select;
@@ -106,22 +106,30 @@ const CustomCard: React.FC<Props> = (props) => {
     setAddDialogVisible(false);
     setSelected({}); // reset menus on cancel
   };
+
   const addConfirmation = (
     <Modal
-      visible={addDialogVisible}
-      okText={<div data-testid={`${stepName}-to-${flowName}-Confirm`}>Yes</div>}
-      cancelText="No"
-      onOk={() => onAddOk(stepName, flowName)}
-      onCancel={() => onCancel()}
-      width={400}
-      maskClosable={false}
+      show={addDialogVisible}
     >
-      <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
-        { isStepInFlow(stepName, flowName) ?
-          <p aria-label="step-in-flow">The step <strong>{stepName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
-          <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{stepName}</strong> to the flow <strong>{flowName}</strong>?</p>
-        }
-      </div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"pt-0 pb-4"}>
+        <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
+          { isStepInFlow(stepName, flowName) ?
+            <p aria-label="step-in-flow">The step <strong>{stepName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+            <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{stepName}</strong> to the flow <strong>{flowName}</strong>?</p>
+          }
+        </div>
+        <div className={"d-flex justify-content-center pt-4 pb-2"}>
+          <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+            {"No"}
+          </HCButton>
+          <HCButton data-testid={`${stepName}-to-${flowName}-Confirm`} aria-label={"Yes"} variant="primary" type="submit" onClick={() => onAddOk(stepName, flowName)}>
+            {"Yes"}
+          </HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 

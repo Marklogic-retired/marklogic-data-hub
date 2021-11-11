@@ -84,11 +84,11 @@ class MappingStepDetail {
   }
 
   deleteConfirmationButtonYes() {
-    return cy.get(".ant-modal-content button.ant-btn").contains("Yes");
+    return cy.get(".modal-content button").contains("Yes");
   }
 
   deleteConfirmationButtonNo() {
-    return cy.get(".ant-modal-content button.ant-btn").contains("No");
+    return cy.get(".modal-content button").contains("No");
   }
 
   relatedFilterSelection(entityName: string, relatedName: string) {

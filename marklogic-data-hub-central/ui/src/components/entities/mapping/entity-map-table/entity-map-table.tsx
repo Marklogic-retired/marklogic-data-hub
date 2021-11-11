@@ -1,9 +1,8 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Popover, Select, Modal, Tooltip, Icon} from "antd";
-import Spinner from "react-bootstrap/Spinner";
-import {ButtonGroup, Dropdown} from "react-bootstrap";
+import {Table, Popover, Select, Tooltip, Icon} from "antd";
+import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
 import {faList, faTerminal, faSearch} from "@fortawesome/free-solid-svg-icons";
@@ -17,9 +16,7 @@ import {paginationMapping} from "../../../../config/mapping.config";
 import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/tooltips.config";
 import StepsConfig from "../../../../config/steps.config";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
-import {FormControl} from "react-bootstrap";
 import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "@components/common";
-
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -1233,21 +1230,26 @@ const EntityMapTable: React.FC<Props> = (props) => {
   };
 
   const deleteConfirmation = <Modal
-    visible={deleteDialogVisible}
-    okText={entitiesReferencing.length > 0 ? "OK" : "Yes"}
-    cancelText="No"
-    onOk={() => { entitiesReferencing.length > 0 ? onCancel() : onOk(); }}
-    cancelButtonProps={entitiesReferencing.length > 0 ? {style: {display: "none"}} : {}}
-    onCancel={() => onCancel()}
-    bodyStyle={{paddingTop: "40px"}}
-    width={550}
-    maskClosable={false}
+    show={deleteDialogVisible}
   >
-    {entitiesReferencing.length > 0 ?
-      <span aria-label={"entity-being-referenced-msg"} style={{fontSize: "16px"}}>The <strong>{removedEntity?.entityLabel}</strong> mapping is referenced by the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping. Please delete the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping first.</span>
-      :
-      <span aria-label={"confirm-deletion-msg"} style={{fontSize: "16px"}}>Are you sure you want to delete any mapping expressions associated with the <strong>{removedEntity?.entityLabel}</strong> entity?</span>
-    }
+    <Modal.Header className={"bb-none"}>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"pt-0 pb-4"}>
+      {entitiesReferencing.length > 0 ?
+        <span aria-label={"entity-being-referenced-msg"} style={{fontSize: "16px"}}>The <strong>{removedEntity?.entityLabel}</strong> mapping is referenced by the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping. Please delete the <strong>{entitiesReferencing[0]?.entityLabel}</strong> mapping first.</span>
+        :
+        <span aria-label={"confirm-deletion-msg"} style={{fontSize: "16px"}}>Are you sure you want to delete any mapping expressions associated with the <strong>{removedEntity?.entityLabel}</strong> entity?</span>
+      }
+      <div className={"d-flex justify-content-center pt-4 pb-2"}>
+        {entitiesReferencing.length > 0 ? null : <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+          {"No"}
+        </HCButton>}
+        <HCButton aria-label={entitiesReferencing.length > 0 ? "OK" : "Yes"} variant="primary" type="submit" onClick={() => { entitiesReferencing.length > 0 ? onCancel() : onOk(); }}>
+          {entitiesReferencing.length > 0 ? "OK" : "Yes"}
+        </HCButton>
+      </div>
+    </Modal.Body>
   </Modal>;
 
   const entityColumns = [
