@@ -1,5 +1,4 @@
 import React from "react";
-import {Typography} from "antd";
 import {numberConverter} from "../../util/number-conversion";
 import styles from "./search-summary.module.scss";
 
@@ -11,8 +10,6 @@ interface Props {
 }
 
 const SearchSummary: React.FC<Props> = (props) => {
-  const {Text} = Typography;
-
   const isEndOfPage = () => {
     if (props.length !== props.pageSize || props.length > props.total) {
       return true;
@@ -31,9 +28,9 @@ const SearchSummary: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.searchSummaryContainer}>
-      <Text>Showing </Text>
-      <span className={styles.summaryValue}>{isNoDocuments() ? 0 : numberConverter(props.start)}-{isEndOfPage() ? numberConverter(props.total) : numberConverter(props.start + props.pageSize -1)}</span> <Text>of</Text> <span className={styles.summaryValue} data-cy="total-documents">{numberConverter(props.total)}</span>
-      <Text> results</Text>
+      <span>Showing </span>
+      <span className={styles.summaryValue}>{isNoDocuments() ? 0 : numberConverter(props.start)}-{isEndOfPage() ? numberConverter(props.total) : numberConverter(props.start + props.pageSize -1)}</span> <span>of</span> <span className={styles.summaryValue} data-cy="total-documents">{numberConverter(props.total)}</span>
+      <span> results</span>
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import {Typography} from "antd";
 import styles from "./detail-header.module.scss";
 import {dateConverter} from "../../util/date-conversion";
 import {ChevronRight} from "react-bootstrap-icons";
@@ -13,7 +12,6 @@ interface Props {
 }
 
 const DetailHeader: React.FC<Props> = (props) => {
-  const {Text} = Typography;
   const recordType = props.contentType;
   let envelope: any = {};
   let esEnvelope: any = {};
@@ -116,17 +114,17 @@ const DetailHeader: React.FC<Props> = (props) => {
       <div id="title" className={styles.title}>
         {primaryKey || id ?
           <>
-            <Text data-cy="document-title">{title} </Text>
+            <span data-cy="document-title">{title} </span>
             <ChevronRight className={styles.arrowRight} />
             {primaryKey ? (
               <>
-                <Text type="secondary"> {primaryKey}: </Text>
-                <Text data-cy="document-id">{id}</Text>
+                <span className={styles.secondary}> {primaryKey}: </span>
+                <span data-cy="document-id">{id}</span>
               </>
             ) : (
               <>
-                <Text type="secondary"> URI: </Text>
-                <Text data-cy="document-uri">{id}</Text>
+                <span className={styles.secondary}> URI: </span>
+                <span data-cy="document-uri">{id}</span>
               </>
             )}
           </>
@@ -136,16 +134,16 @@ const DetailHeader: React.FC<Props> = (props) => {
       </div>
       <div id="summary" className={styles.summary}>
         {timestamp &&
-          <Text className={styles.meta} data-cy="document-timestamp"><Text type="secondary">Created: </Text>{dateConverter(timestamp)}</Text>
+          <span className={styles.meta} data-cy="document-timestamp"><span className={styles.secondary}>Created: </span>{dateConverter(timestamp)}</span>
         }
         {sources &&
-          <Text className={styles.meta} data-cy="document-source"><Text type="secondary">Sources: </Text>{sources}</Text>
+          <span className={styles.meta} data-cy="document-source"><span className={styles.secondary}>Sources: </span>{sources}</span>
         }
         {recordType &&
-          <Text className={styles.meta}>
-            <Text type="secondary">Record Type: </Text>
-            <Text className={styles.type} data-cy="document-recordtype">{recordType}</Text>
-          </Text>
+          <span className={styles.meta}>
+            <span className={styles.secondary}>Record Type: </span>
+            <span className={styles.type} data-cy="document-recordtype">{recordType}</span>
+          </span>
         }
       </div>
     </div>
