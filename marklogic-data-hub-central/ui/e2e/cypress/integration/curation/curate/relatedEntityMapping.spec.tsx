@@ -58,7 +58,7 @@ describe("Mapping", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
