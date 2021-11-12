@@ -60,7 +60,7 @@ class PropertyModal {
   getForeignKeyDropdown() {
     return  cy.findByPlaceholderText("Select foreign key");
   }
-  toggleForeignKeyDropdown() {
+  openForeignKeyDropdown() {
     cy.findByLabelText("foreignKey-select").trigger("mouseover").click();
   }
   getForeignKey(propertyName: string) {

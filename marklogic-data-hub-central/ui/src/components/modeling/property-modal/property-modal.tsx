@@ -380,6 +380,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             isEdit: true,
             propertyOptions: selectedPropertyOptions
           };
+
           props.editPropertyUpdateDefinition(definitionName, props.editPropertyOptions.name, newEditPropertyOptions);
           setErrorMessage("");
           setTypeErrorMessage("");
@@ -663,6 +664,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         modelUpdated = entityUpdated.modelDefinition[entityName];
       }
       menuProps = getJoinMenuProps(model, modelUpdated);
+      menuProps.unshift({value: "None", label: "None", type: "string"});
       setJoinProperties(menuProps);
     } catch (error) {
       handleError(error);
@@ -671,8 +673,9 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const onJoinPropertyChange = (value) => {
     setJoinDisplayValue(value);
-    const type = joinProperties.find(prop => prop["value"] === value).type;
-    setSelectedPropertyOptions({...selectedPropertyOptions, joinPropertyName: value, joinPropertyType: type});
+    let joinPropertyVal = value === "None" ? "" : value;
+    const type = value === "None" ? "" : joinProperties.find(prop => prop["value"] === value).type;
+    setSelectedPropertyOptions({...selectedPropertyOptions, joinPropertyName: joinPropertyVal, joinPropertyType: type});
   };
 
   const onRadioChange = (event, radioName) => {
@@ -903,7 +906,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                 className={styles.joinPropertyDropdown}
               >
                 {joinProperties.length > 0 && joinProperties.map((prop, index) => (
-                  <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
+                  <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label === "None" ? "- " + prop.label + " -" : prop.label}</Option>
                 ))}
               </Select>
               <div className={"d-flex p-2 align-items-center"}>

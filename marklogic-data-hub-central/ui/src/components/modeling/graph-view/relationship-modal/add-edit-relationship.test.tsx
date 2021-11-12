@@ -59,6 +59,7 @@ describe("Add Edit Relationship component", () => {
 
     expect(joinPropertySelection).toHaveTextContent("customerId");
     fireEvent.click(getByTestId("foreignKey-dropdown"));
+    expect(getByLabelText("None-option")).toBeInTheDocument();
     expect(getByLabelText("name-option")).toBeInTheDocument();
     expect(getByLabelText("email-option")).toBeInTheDocument();
     expect(getByLabelText("pin-option")).toBeInTheDocument();

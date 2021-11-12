@@ -56,7 +56,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("id").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
@@ -102,7 +102,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("customerId").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
     propertyModal.getYesRadio("multiple").click();
@@ -197,9 +197,9 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Order").click();
-    propertyModal.toggleForeignKeyDropdown();
-    propertyModal.checkForeignKeyDropdownLength(6); // Check for saved (5) and unsaved (1) Order properties
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
+    propertyModal.checkForeignKeyDropdownLength(7); // Check for -None- (1), saved (5), unsaved (1) Order properties
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getCancelButton();
   });
 

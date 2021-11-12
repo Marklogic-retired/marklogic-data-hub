@@ -302,6 +302,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       let sourceEntityIdx = props.entityTypes.findIndex(obj => obj.entityName === props.relationshipInfo.sourceNodeName);
       let sourceProperties = props.entityTypes[sourceEntityIdx].model.definitions[props.relationshipInfo.sourceNodeName].properties;
       let propertyNamesArray = props.isEditing ? Object.keys(sourceProperties).filter(propertyName => propertyName !== props.relationshipInfo.relationshipName) : Object.keys(sourceProperties);
+      let joinPropertyVal = joinPropertyValue === "None" ? "" : joinPropertyValue;
       if (propertyNamesArray.includes(relationshipName) || props.relationshipInfo.sourceNodeName === relationshipName) {
         setErrorMessage("name-error");
       } else {
@@ -312,8 +313,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           propertyOptions: {
             facetable: false,
             identifier: "no",
-            joinPropertyName: joinPropertyValue,
-            joinPropertyType: getPropertyType(joinPropertyValue, targetEntityName),
+            joinPropertyName: joinPropertyVal,
+            joinPropertyType: getPropertyType(joinPropertyVal, targetEntityName),
             multiple: oneToManySelected ? "yes" : "no",
             pii: "no",
             propertyType: "relatedEntity",
@@ -349,6 +350,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
       modelUpdated = entityUpdated.modelDefinition[props.relationshipInfo.targetNodeName];
     }
     menuProps = getJoinMenuProps(model, modelUpdated);
+    menuProps.unshift({value: "None", label: "None", type: "string"});
     if (menuProps) {
       setTargetNodeJoinProperties(menuProps);
     } else {
@@ -440,6 +442,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     entityIdx = props.entityTypes.findIndex(entity => entity.entityName === entityName);
     model = props.entityTypes[entityIdx].model.definitions[entityName];
     menuProps = getJoinMenuProps(model, "");
+    menuProps.unshift({value: "None", label: "None", type: "string"});
     if (menuProps) {
       setTargetNodeJoinProperties(menuProps);
     } else {
@@ -505,7 +508,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     >
       {
         targetNodeJoinProperties.length > 0 && targetNodeJoinProperties.map((prop, index) => (
-          <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label}</Option>
+          <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label === "None" ? "- " + prop.label + " -" : prop.label}</Option>
         ))
       }
     </Select>

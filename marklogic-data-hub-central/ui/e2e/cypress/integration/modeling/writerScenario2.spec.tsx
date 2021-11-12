@@ -103,16 +103,27 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getPiiIcon("zip").should("not.exist");
     //propertyTable.getWildcardIcon('zip').should('not.exist');
   });
-  it("Add related property to structured type", () => {
+  it("Add related property to structured type and test foreign key selection", () => {
     propertyTable.getAddPropertyToStructureType("Address").click();
     propertyModal.newPropertyName("OrderedBy");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("nicknames").should("not.be.enabled");
     propertyModal.getForeignKey("customerId").click();
     propertyModal.getSubmitButton().click();
+    propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
+    propertyTable.verifyForeignKeyIcon("OrderedBy").should("exist");
+
+    //verify removing foreign key from relationship is possible
+    propertyTable.editProperty("address-OrderedBy");
+    propertyModal.openForeignKeyDropdown();
+    propertyModal.getForeignKey("None").click();
+    propertyModal.getSubmitButton().click();
+    propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
+    //foreign key no longer exists
+    propertyTable.verifyForeignKeyIcon("OrderedBy").should("not.exist");
   });
   it("Add properties to nested structured type", () => {
     propertyTable.getAddPropertyToStructureType("Zip").click();
@@ -181,7 +192,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("Address").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getYesRadio("idenifier").should("not.exist");
@@ -211,7 +222,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Customer").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("nicknames").should("not.be.enabled");
     propertyModal.getForeignKey("customerId").click();
     propertyModal.getSubmitButton().click();
@@ -304,7 +315,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Order").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("orderId").click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getSubmitButton().click();
@@ -382,7 +393,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
     propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.toggleForeignKeyDropdown();
+    propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("id").click();
     propertyModal.getSubmitButton().click();
     propertyTable.getProperty("personType").should("exist");
