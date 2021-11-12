@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, screen, wait} from "@testing-library/react";
+import {render, fireEvent, screen, wait, waitForElement} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import PropertyModal from "./property-modal";
@@ -372,7 +372,7 @@ describe("Property Modal Component", () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
 
-    const {getByPlaceholderText, getByText, getAllByText, getByLabelText} =  render(
+    const {getByPlaceholderText, getByText, getAllByText, getByLabelText, getAllByRole} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -403,6 +403,10 @@ describe("Property Modal Component", () => {
     // Choose join property after menu is populated
     expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
     userEvent.click(getByLabelText("foreignKey-select"));
+    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    expect(getByLabelText("None-option")).toBeInTheDocument();
+    expect(getByLabelText("customerId-option")).toBeInTheDocument();
+    expect(getByLabelText("name-option")).toBeInTheDocument();
     expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
     await wait(() => userEvent.click(getByText("customerId")));
 
