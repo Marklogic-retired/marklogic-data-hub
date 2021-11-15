@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
@@ -37,10 +36,6 @@ const EditQueryDialog = (props) => {
     }
 
   }, [props.query]);
-
-  const onOk = () => {
-    props.setEditModalVisibility(false);
-  };
 
   const onCancel = () => {
     setErrorMessage("");
@@ -96,57 +91,56 @@ const EditQueryDialog = (props) => {
   return (
     <div>
       <Modal
-        title={null}
-        visible={props.editModalVisibility}
-        onOk={onOk}
-        onCancel={onCancel}
-        width={600}
-        footer={null}
-        maskClosable={false}
+        show={props.editModalVisibility}
       >
-        <p className={styles.title}>{"Edit Query"}</p>
-        <Form name="basic" className={"container-fluid"}>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Query Name:"}<span className={styles.asterisk}>*</span></FormLabel>
-            <Col>
-              <Row>
-                <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                  <HCInput
-                    id="name"
-                    placeholder="Edit name"
-                    value={queryName ? queryName: " "}
-                    onChange={handleChange}
-                    className={styles.text}
-                  />
-                </Col>
-                <Col xs={12} className={styles.validationError}>
-                  {errorMessage}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Description:"}</FormLabel>
-            <Col className={"d-flex"}>
-              <HCInput
-                id="description"
-                placeholder="Edit description"
-                value={queryDescription ? queryDescription: " "}
-                onChange={handleChange}
-                className={styles.text}
-              />
-            </Col>
-          </Row>
-          <Row className={`mb-3 ${styles.submitButtonsForm}`}>
-            <Col className={"d-flex"}>
-              <div className={styles.submitButtons}>
-                <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</HCButton>
-                              &nbsp;&nbsp;
-                <HCButton variant="primary" type="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</HCButton>
-              </div>
-            </Col>
-          </Row>
-        </Form>
+        <Modal.Header className={"bb-none"}>
+          <span className={styles.title}>{"Edit Query"}</span>
+          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        </Modal.Header>
+        <Modal.Body className={"pt-0 pb-4"}>
+          <Form name="basic" className={"container-fluid"}>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>{"Query Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+              <Col>
+                <Row>
+                  <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                    <HCInput
+                      id="name"
+                      placeholder="Edit name"
+                      value={queryName ? queryName: " "}
+                      onChange={handleChange}
+                      className={styles.text}
+                    />
+                  </Col>
+                  <Col xs={12} className={styles.validationError}>
+                    {errorMessage}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>{"Description:"}</FormLabel>
+              <Col className={"d-flex"}>
+                <HCInput
+                  id="description"
+                  placeholder="Edit description"
+                  value={queryDescription ? queryDescription: " "}
+                  onChange={handleChange}
+                  className={styles.text}
+                />
+              </Col>
+            </Row>
+            <Row className={`mb-1 mt-3 ${styles.submitButtonsForm}`}>
+              <Col className={"d-flex"}>
+                <div className={styles.submitButtons}>
+                  <HCButton variant="outline-light" id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</HCButton>
+                                &nbsp;&nbsp;
+                  <HCButton variant="primary" type="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</HCButton>
+                </div>
+              </Col>
+            </Row>
+          </Form>
+        </Modal.Body>
       </Modal>
     </div>
   );

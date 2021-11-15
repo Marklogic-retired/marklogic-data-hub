@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Modal, Radio} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Radio} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
@@ -171,70 +171,71 @@ const SaveChangesModal: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      visible={true}
-      title={"Save Query"}
-      closable={true}
-      onCancel={() => onCancel()}
-      maskClosable={true}
-      footer={null}
+      show={true}
     >
-      <Form name="basic" className={"container-fluid"}>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <HCInput
-                  id="save-changes-query-name"
-                  value={queryName ? queryName: " "}
-                  placeholder={"Enter query name"}
-                  className={styles.input}
-                  onChange={handleChange}
-                />
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {errorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <HCInput
-              id="save-changes-query-description"
-              value={queryDescription ? queryDescription: " "}
-              onChange={handleChange}
-              placeholder={"Enter query description"}
-            />
-          </Col>
-        </Row>
-        {props.greyFacets.length > 0 &&
+      <Modal.Header>
+        <span className={"fs-5"}>{"Save Query"}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body>
+        <Form name="basic" className={"container-fluid"}>
           <Row className={"mb-3"}>
-            <FormLabel column lg={3}>{"Unapplied Facets:"}</FormLabel>
-            <Col className={"d-flex"}>
-              <Radio.Group onChange={unAppliedFacets} style={{"marginTop": "11px"}} defaultValue={2}>
-                <Radio value={1}> Apply before saving</Radio>
-                <Radio value={2}> Save as is, keep unapplied facets</Radio>
-                <Radio value={3}> Discard unapplied facets</Radio>
-              </Radio.Group>
+            <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                  <HCInput
+                    id="save-changes-query-name"
+                    value={queryName ? queryName: " "}
+                    placeholder={"Enter query name"}
+                    className={styles.input}
+                    onChange={handleChange}
+                  />
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorMessage}
+                </Col>
+              </Row>
             </Col>
           </Row>
-        }
-        <Row className={"mb-3"}>
-          <Col className={"d-flex justify-content-end"}>
-            <div>
-              <HCButton variant="outline-light" id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
-              &nbsp;&nbsp;
-              <HCButton variant="primary"
-                type="submit"
-                disabled={queryName.length === 0}
-                onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)} id="edit-save-changes-button">Save
-              </HCButton>
-            </div>
-          </Col>
-        </Row>
-      </Form>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="save-changes-query-description"
+                value={queryDescription ? queryDescription: " "}
+                onChange={handleChange}
+                placeholder={"Enter query description"}
+              />
+            </Col>
+          </Row>
+          {props.greyFacets.length > 0 &&
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>{"Unapplied Facets:"}</FormLabel>
+              <Col className={"d-flex"}>
+                <Radio.Group onChange={unAppliedFacets} style={{"marginTop": "11px"}} defaultValue={2}>
+                  <Radio value={1}> Apply before saving</Radio>
+                  <Radio value={2}> Save as is, keep unapplied facets</Radio>
+                  <Radio value={3}> Discard unapplied facets</Radio>
+                </Radio.Group>
+              </Col>
+            </Row>
+          }
+          <Row className={"mb-3"}>
+            <Col className={"d-flex justify-content-end"}>
+              <div>
+                <HCButton variant="outline-light" id="edit-save-changes-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+                &nbsp;&nbsp;
+                <HCButton variant="primary"
+                  type="submit"
+                  disabled={queryName.length === 0}
+                  onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)} id="edit-save-changes-button">Save
+                </HCButton>
+              </div>
+            </Col>
+          </Row>
+        </Form>
+      </Modal.Body>
     </Modal>
   );
 };

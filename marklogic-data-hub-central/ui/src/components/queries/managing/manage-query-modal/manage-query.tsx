@@ -1,7 +1,8 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Modal, Table} from "antd";
+import {Table} from "antd";
+import {Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faFileExport, faTrashAlt, faTimes} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faFileExport, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../../../util/user-context";
 import {queryDateConverter} from "../../../../util/date-conversion";
 import EditQueryDialog from "../edit-query-dialog/edit-query-dialog";
@@ -14,6 +15,7 @@ import ExportQueryModal from "../../../query-export/query-export-modal/query-exp
 import {getExportPreview} from "../../../query-export/export-preview/export-preview";
 import {QueryOptions} from "../../../../types/query-types";
 import {useHistory, useLocation} from "react-router-dom";
+import HCButton from "../../../common/hc-button/hc-button";
 
 const QueryModal = (props) => {
   const {
@@ -282,17 +284,24 @@ const QueryModal = (props) => {
   };
 
   const deleteConfirmation = <Modal
-    visible={deleteModalVisibility}
-    okText="Yes"
-    cancelText="No"
-    onOk={() => onOk(query)}
-    onCancel={() => onCancel()}
-    width={400}
-    maskClosable={false}
+    show={deleteModalVisibility}
   >
-    <span style={{fontSize: "16px", position: "relative", top: "10px"}} data-testid="deleteConfirmationText">
-      Are you sure you would like to delete the <b>{currentQueryName}</b> query? This action cannot be undone.
-    </span>
+    <Modal.Header className={"bb-none"}>
+      <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+    </Modal.Header>
+    <Modal.Body className={"pt-0 px-4"}>
+      <span style={{fontSize: "16px"}} data-testid="deleteConfirmationText">
+        Are you sure you would like to delete the <b>{currentQueryName}</b> query? This action cannot be undone.
+      </span>
+      <div className={"d-flex justify-content-center pt-4 pb-2"}>
+        <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+          {"No"}
+        </HCButton>
+        <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onOk(query)}>
+          {"Yes"}
+        </HCButton>
+      </div>
+    </Modal.Body>
   </Modal>;
 
   const getPreview = async (id) => {
@@ -317,31 +326,31 @@ const QueryModal = (props) => {
     <div>
       <ExportQueryModal hasStructured={hasStructured} queries={queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} />
       <Modal
-        title={null}
-        visible={props.modalVisibility}
-        onCancel={onClose}
-        width={1000}
-        footer={null}
-        maskClosable={false}
-        closeIcon={<FontAwesomeIcon icon={faTimes} className={"manage-modal-close-icon"} />}
-        destroyOnClose={true}
+        show={props.modalVisibility}
+        size={"lg"}
+        dialogClassName={styles.modal1000w}
       >
-        <p className={styles.title} data-testid="manage-queries-modal">{"Manage Queries"}</p>
-        <Table columns={columns} dataSource={data}
-          onRow={(record) => {
-            return {
-              onClick: () => {
-                queries.forEach((query) => {
-                  if (query["savedQuery"]["id"] === record.key) {
-                    setQuery(query);
-                    setCurrentQueryName(record.name);
-                  }
-                });
-              }
-            };
-          }}
-        >
-        </Table>
+        <Modal.Header className={"bb-none"} data-testid="manage-queries-modal">
+          <span className={styles.title}>{"Manage Queries"}</span>
+          <button type="button" className="btn-close manage-modal-close-icon" aria-label="Close" onClick={onClose}></button>
+        </Modal.Header>
+        <Modal.Body>
+          <Table columns={columns} dataSource={data}
+            onRow={(record) => {
+              return {
+                onClick: () => {
+                  queries.forEach((query) => {
+                    if (query["savedQuery"]["id"] === record.key) {
+                      setQuery(query);
+                      setCurrentQueryName(record.name);
+                    }
+                  });
+                }
+              };
+            }}
+          >
+          </Table>
+        </Modal.Body>
       </Modal>
       <EditQueryDialog
         currentQueryName={currentQueryName}

@@ -1,12 +1,12 @@
 import React, {useState, useContext} from "react";
-import {Modal, Radio, Table} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Radio, Table} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "../../../util/search-context";
 import {UserContext} from "../../../util/user-context";
 import {exportQuery, exportSavedQuery} from "../../../api/queries";
-import {HCInput, HCAlert} from "@components/common";
+import {HCInput, HCAlert, HCButton} from "@components/common";
 
 const QueryExportModal = (props) => {
 
@@ -61,59 +61,55 @@ const QueryExportModal = (props) => {
 
   return (
     <Modal
-      title="Export"
-      visible={props.exportModalVisibility}
-      okText="Export"
-      cancelText="Cancel"
-      onOk={() => onOk()}
-      okButtonProps={{disabled: limit <= 0}}
-      onCancel={() => onClose()}
-      width={800}
-      maskClosable={false}
-      destroyOnClose={true}
+      show={props.exportModalVisibility}
+      size={"lg"}
     >
-      <Form name="basic" data-testid="query-export-form" className={"container-fluid"} >
-        {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
+      <Modal.Header>
+        <span className={"fs-5"}>{"Export"}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onClose}></button>
+      </Modal.Header>
+      <Modal.Body>
+        <Form name="basic" data-testid="query-export-form" className={"container-fluid"} >
+          {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
 
-        <div>
-          <HCAlert
-            data-testid="export-warning"
-            variant="warning"
-            className={styles.dataWarning}
-            showIcon
-          >
-            {"One or more structured properties are included in this query. The data for those properties will not be included in the export file. to see what will be exported."}
-          </HCAlert>
-          <br />
-        </div>}
+          <div>
+            <HCAlert
+              data-testid="export-warning"
+              variant="warning"
+              className={styles.dataWarning}
+              showIcon
+            >
+              {"One or more structured properties are included in this query. The data for those properties will not be included in the export file. to see what will be exported."}
+            </HCAlert>
+            <br />
+          </div>}
 
-        <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
+          <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
 
-        <Row>
-          <FormLabel column lg={2}>{"Rows:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <Radio.Group className={styles.radio} value={value} onChange={onChange}>
-              <Radio value={1}> All</Radio>
-              <br />
-              <Radio value={2}> Limited set of the first rows returned</Radio>
-            </Radio.Group>
-          </Col>
-        </Row>
-      </Form>
-      <Form
-        name="basic"
-      >
-        {value === 2 &&
           <Row>
-            <FormLabel column lg={"auto"} className={"offset-4"}>{"Maximum rows:"}</FormLabel>
+            <FormLabel column lg={2}>{"Rows:"}</FormLabel>
             <Col className={"d-flex"}>
-              <HCInput dataTestid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
+              <Radio.Group className={styles.radio} value={value} onChange={onChange}>
+                <Radio value={1}> All</Radio>
+                <br />
+                <Radio value={2}> Limited set of the first rows returned</Radio>
+              </Radio.Group>
             </Col>
           </Row>
-        }
-      </Form>
-
-      {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
+        </Form>
+        <Form
+          name="basic"
+        >
+          {value === 2 &&
+            <Row>
+              <FormLabel column lg={"auto"} className={"offset-4"}>{"Maximum rows:"}</FormLabel>
+              <Col className={"d-flex"}>
+                <HCInput dataTestid="max-rows-input" className={styles.text} type="number" min="1" onChange={e => setLimit(Number(e.target.value))} style={{width: 60}} />
+              </Col>
+            </Row>
+          }
+        </Form>
+        {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured &&
         <Accordion id="export-panel" className={"w-100"} flush>
           <Accordion.Item eventKey="1">
             <div className={"d-flex"}>
@@ -131,6 +127,15 @@ const QueryExportModal = (props) => {
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>}
+      </Modal.Body>
+      <Modal.Footer>
+        <HCButton variant="outline-light" aria-label={"Cancel"} onClick={onClose}>
+          Cancel
+        </HCButton>
+        <HCButton key="submit" variant="primary" aria-label={"Export"} onClick={onOk} disabled={limit <= 0}>
+          Export
+        </HCButton>
+      </Modal.Footer>
     </Modal>
   );
 };

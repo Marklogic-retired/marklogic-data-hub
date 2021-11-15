@@ -180,7 +180,7 @@ describe("save/manage queries scenarios, developer role", () => {
       }
     );
     queryComponent.getEditCancelButton().click();
-    queryComponent.getManageQueryModal().type("{esc}");
+    queryComponent.getManageQueryModal().find(".btn-close").click();
     // checking previous query name is set clicking save modal icon
     browsePage.getSaveModalIcon().click();
     cy.get("@qName").then((qName) => {
@@ -252,9 +252,6 @@ describe("save/manage queries scenarios, developer role", () => {
     // Making changes to query-2 and switching to query-1
     browsePage.clickColumnTitle(2);
     browsePage.selectQuery("query-1");
-    browsePage.getQueryConfirmationCancelClick().click();
-    browsePage.getSortIndicatorAsc().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
-    browsePage.selectQuery("query-1");
     browsePage.getQueryConfirmationNoClick().click();
     browsePage.getSelectedQuery().should("contain", "query-1");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").click();
@@ -270,11 +267,6 @@ describe("save/manage queries scenarios, developer role", () => {
   it("Switching between entities when making changes to saved query", () => {
     browsePage.selectQuery("new-query");
     browsePage.getClearFacetSearchSelection("Adams Cole").click();
-    browsePage.selectEntity("Person");
-    browsePage.getEntityConfirmationCancelClick().click();
-    browsePage.getSelectedQuery().should("contain", "new-query");
-    browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.getSortIndicatorAsc().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
     browsePage.selectEntity("Person");
     browsePage.getEntityConfirmationNoClick().click();
     browsePage.getSelectedEntity().should("contain", "Person");
@@ -328,10 +320,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getResetQueryButton().click();
-    //selecting cancel will be in the same state as before
-    browsePage.getResetConfirmationCancelClick();
-    browsePage.getSelectedQuery().should("contain", "select a query");
-    browsePage.getResetQueryButton().click();
     // clicking on no doesn't create a new query and navigates to zero state
     browsePage.getResetConfirmationNoClick();
     browsePage.getExploreButton().should("be.visible");
@@ -372,10 +360,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.selectQuery("reset-query");
     browsePage.getSelectedQuery().should("contain", "reset-query");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
-    browsePage.getResetQueryButton().click();
-    //selecting cancel will be in the same state as before
-    browsePage.getResetConfirmationCancelClick();
-    browsePage.getSelectedQuery().should("contain", "reset-query");
     // clicking on no doesn't update query and navigates to zero state
     browsePage.getResetQueryButton().click();
     browsePage.getResetConfirmationNoClick();

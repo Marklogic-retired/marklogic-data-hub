@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "../save-query-modal/save-query-modal.module.scss";
 import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
@@ -79,60 +78,59 @@ const EditQueryDetails: React.FC<Props> = (props) => {
     }
   };
 
-
   return (
     <Modal
-      visible={true}
-      title={"Edit Query Details"}
-      closable={true}
-      onCancel={() => onCancel()}
-      maskClosable={false}
-      footer={null}
-      destroyOnClose={true}
+      show={true}
     >
-      <Form name="basic" className={"container-fluid"} >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
-                <HCInput
-                  id="edit-query-detail-name"
-                  value={queryName ? queryName: " "}
-                  placeholder={"Enter new query name"}
-                  onChange={handleChange}
-                />
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {errorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Description:"}</FormLabel>
-          <Col className={"d-flex"}>
-            <HCInput
-              id="edit-query-detail-description"
-              value={queryDescription ? queryDescription: " "}
-              onChange={handleChange}
-              placeholder={"Enter new query description"}
-            />
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <Col className={"d-flex justify-content-end"}>
-            <HCButton variant="outline-light" id="edit-query-detail-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
-            &nbsp;&nbsp;
-            <HCButton variant="primary"
-              type="submit"
-              disabled={queryName.length === 0}
-              onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)}
-              id="edit-query-detail-button">Save
-            </HCButton>
-          </Col>
-        </Row>
-      </Form>
+      <Modal.Header>
+        <span className={"fs-5"}>{"Edit Query Details"}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body>
+        <Form name="basic" className={"container-fluid"} >
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={errorMessage ? "d-flex has-error" : "d-flex"}>
+                  <HCInput
+                    id="edit-query-detail-name"
+                    value={queryName ? queryName: " "}
+                    placeholder={"Enter new query name"}
+                    onChange={handleChange}
+                  />
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {errorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Description:"}</FormLabel>
+            <Col className={"d-flex"}>
+              <HCInput
+                id="edit-query-detail-description"
+                value={queryDescription ? queryDescription: " "}
+                onChange={handleChange}
+                placeholder={"Enter new query description"}
+              />
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <Col className={"d-flex justify-content-end"}>
+              <HCButton variant="outline-light" id="edit-query-detail-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>
+              &nbsp;&nbsp;
+              <HCButton variant="primary"
+                type="submit"
+                disabled={queryName.length === 0}
+                onClick={(event) => onOk(event, queryName, queryDescription, props.currentQuery)}
+                id="edit-query-detail-button">Save
+              </HCButton>
+            </Col>
+          </Row>
+        </Form>
+      </Modal.Body>
     </Modal>
   );
 };

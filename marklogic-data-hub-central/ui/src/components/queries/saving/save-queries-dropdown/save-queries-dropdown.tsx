@@ -1,5 +1,6 @@
-import {Select, Modal} from "antd";
 import React, {useContext, useState} from "react";
+import {Select} from "antd";
+import {Modal} from "react-bootstrap";
 import styles from "./save-queries-dropdown.module.scss";
 import {SearchContext} from "../../../../util/search-context";
 import {HCButton} from "@components/common";
@@ -96,25 +97,29 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         {options}
       </Select>
       <Modal
-        visible={showConfirmation}
-        title={"Confirmation"}
-        onCancel={() => onCancel()}
-        footer={[
-          <HCButton variant="outline-light" key="cancel" id="query-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>,
-          <HCButton variant="outline-light" key="back" id="query-confirmation-no-button" onClick={() => onNoClick()}>
-                        No
-          </HCButton>,
-          <HCButton key="submit" id="query-confirmation-yes-button" variant="primary"  onClick={() => onOk()}>
-                        Yes
-          </HCButton>
-        ]}>
-        <p><strong>{props.currentQueryName}</strong> has been edited since it was last saved.</p>
-        <br/>
-        <p>Would you like to save the changes to <strong>{props.currentQueryName}</strong> before switching to the new query</p>
+        show={showConfirmation}
+      >
+        <Modal.Header className={"bb-none"}>
+          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        </Modal.Header>
+        <Modal.Body className={"pt-0 px-4"}>
+          <p><strong>{props.currentQueryName}</strong> has been edited since it was last saved.</p>
+          <p>Would you like to save the changes to <strong>{props.currentQueryName}</strong> before switching to the new query</p>
+          <div className={"d-flex justify-content-center"}>
+            <HCButton variant="outline-light" key="back" className={"me-2"} id="query-confirmation-no-button" onClick={() => onNoClick()}>
+              No
+            </HCButton>
+            <HCButton key="submit" id="query-confirmation-yes-button" variant="primary"  onClick={() => onOk()}>
+              Yes
+            </HCButton>
+          </div>
+        </Modal.Body>
       </Modal>
     </div>
-
   );
 };
 
 export default SaveQueriesDropdown;
+
+
+
