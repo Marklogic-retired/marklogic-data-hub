@@ -5,21 +5,13 @@ import DiscardChangesModal from "./discard-changes-modal";
 describe("<DiscardChangesModal/>", () => {
 
   test("Verify Discard changes modal appears with current query name", () => {
-    const {getByText} = render(<DiscardChangesModal
+    const {getByText, getByTestId} = render(<DiscardChangesModal
       setDiscardChangesModalVisibility = {jest.fn()}
       savedQueryList={[]}
       toggleApply={jest.fn()}
       toggleApplyClicked={jest.fn()}
     />);
-
-    expect(getByText((content, node) => {
-      const hasText = node => node.textContent === "Are you sure you want to discard all changes made to select a query ?";
-      const nodeHasText = hasText(node);
-      const childrenDontHaveText = Array.from(node.children).every(
-        child => !hasText(child)
-      );
-      return nodeHasText && childrenDontHaveText;
-    })).toBeInTheDocument();
+    expect(getByTestId("discard-changes-message").textContent).toEqual("Are you sure you want to discard all changes made to select a query?");
     expect(getByText("Yes")).toBeVisible();
     expect(getByText("No")).toBeVisible();
   });

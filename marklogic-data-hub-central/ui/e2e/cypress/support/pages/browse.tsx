@@ -462,7 +462,7 @@ class BrowsePage {
   }
 
   getRadioOptionSelected() {
-    return cy.get(".ant-modal [type=\"radio\"]").first().check();
+    return cy.get(".modal-content [type=\"radio\"]").first().check();
   }
 
   getEditSaveChangesButton() {
@@ -541,10 +541,6 @@ class BrowsePage {
 
   // Switching queries confirmation buttons
 
-  getQueryConfirmationCancelClick() {
-    return cy.get("#query-confirmation-cancel-button");
-  }
-
   getQueryConfirmationNoClick() {
     return cy.get("#query-confirmation-no-button");
   }
@@ -553,23 +549,12 @@ class BrowsePage {
     return cy.get("#query-confirmation-yes-button");
   }
 
-  // Switching entities confirmation buttons
-
-  getEntityConfirmationCancelClick() {
-    return cy.get("#entity-confirmation-cancel-button");
-  }
-
   getEntityConfirmationNoClick() {
     return cy.get("#entity-confirmation-no-button");
   }
 
   getEntityConfirmationYesClick() {
     return cy.get("#entity-confirmation-yes-button");
-  }
-
-  // Reset Query Confirmation buttons
-  getResetConfirmationCancelClick() {
-    return cy.get("#reset-confirmation-cancel-button").click();
   }
 
   getResetConfirmationNoClick() {

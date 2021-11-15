@@ -1,9 +1,10 @@
 import React, {useContext} from "react";
-import {Modal} from "antd";
+import {Modal} from "react-bootstrap";
 import {SearchContext} from "../../../../util/search-context";
 import {UserContext} from "../../../../util/user-context";
 import axios from "axios";
 import {QueryOptions} from "../../../../types/query-types";
+import {HCButton} from "@components/common";
 
 interface Props {
     setDiscardChangesModalVisibility: () => void;
@@ -66,21 +67,25 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
   return (
     <>
       <Modal
-        visible={true}
-        title={"Confirmation"}
-        onCancel={() => onCancel()}
-        onOk={() => onOk()}
-        okButtonProps={{id: "discard-yes-button", htmlType: "submit"}}
-        okText={"Yes"}
-        cancelText={"No"}
-        cancelButtonProps={{id: "discard-no-button"}}
+        show={true}
       >
-        <p>Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery} ?</strong></p>
+        <Modal.Header className={"bb-none"}>
+          <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+        </Modal.Header>
+        <Modal.Body className={"pt-0 px-4"}>
+          <p data-testid="discard-changes-message">Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery}?</strong></p>
+          <div className={"d-flex justify-content-center pt-4 pb-2"}>
+            <HCButton id={"discard-no-button"} className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onCancel}>
+              {"No"}
+            </HCButton>
+            <HCButton id={"discard-yes-button"} aria-label={"Yes"} variant="primary" type="submit" onClick={onOk}>
+              {"Yes"}
+            </HCButton>
+          </div>
+        </Modal.Body>
       </Modal>
     </>
   );
 };
 
 export default DiscardChangesModal;
-
-

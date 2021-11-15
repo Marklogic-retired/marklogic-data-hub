@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal} from "antd";
+import {Modal} from "react-bootstrap";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import SelectedFacets from "../../components/selected-facets/selected-facets";
@@ -563,24 +563,26 @@ const Query: React.FC<Props> = (props) => {
                     /></i>
                   </HCTooltip>
                   <Modal
-                    visible={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
-                    title={"Confirmation"}
-                    onCancel={() => onResetCancel()}
-                    footer={[
-                      <HCButton variant="outline-light" key="cancel" id="reset-confirmation-cancel-button" onClick={() => onResetCancel()}>Cancel</HCButton>,
-                      <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" onClick={() => onNoResetClick()}>
-                        No
-                      </HCButton>,
-                      <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
-                        Yes
-                      </HCButton>
-                    ]}>
-                    {showResetQueryEditedConfirmation &&
-                      <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
-                        <br />
-                        <p>Would you like to save the changes before switching to another query?</p>
-                      </div>}
-                    {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
+                    show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
+                  >
+                    <Modal.Header className={"bb-none"}>
+                      <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
+                    </Modal.Header>
+                    <Modal.Body className={"pt-0 px-4"}>
+                      {showResetQueryEditedConfirmation &&
+                        <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                          <p>Would you like to save the changes before switching to another query?</p>
+                        </div>}
+                      {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
+                      <div className={"d-flex justify-content-center mt-4 mb-2"}>
+                        <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" className={"me-2"} onClick={() => onNoResetClick()}>
+                          No
+                        </HCButton>
+                        <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
+                          Yes
+                        </HCButton>
+                      </div>
+                    </Modal.Body>
                   </Modal>
                 </div>}
             </div>
@@ -607,19 +609,23 @@ const Query: React.FC<Props> = (props) => {
           />
         </div>
         <Modal
-          visible={showEntityConfirmation}
-          title={"Existing Query"}
-          onCancel={() => onCancel()}
-          footer={[
-            <HCButton variant="outline-light" key="cancel" id="entity-confirmation-cancel-button" onClick={() => onCancel()}>Cancel</HCButton>,
+          show={showEntityConfirmation}
+        >
+          <Modal.Header>
+            <span className={"fs-5"}>{"Existing Query"}</span>
+            <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Changing the entity selection starts a new query. Would you like to save the existing query before changing the selection?</p>
+          </Modal.Body>
+          <Modal.Footer className={"d-flex justify-content-center"}>
             <HCButton variant="outline-light" key="back" id="entity-confirmation-no-button" onClick={() => onNoClick()}>
               No
-            </HCButton>,
+            </HCButton>
             <HCButton key="submit" id="entity-confirmation-yes-button" variant="primary" onClick={() => onOk()}>
               Yes
             </HCButton>
-          ]}>
-          <p>Changing the entity selection starts a new query. Would you like to save the existing query before changing the selection?</p>
+          </Modal.Footer>
         </Modal>
       </div>
       {/* } */}
