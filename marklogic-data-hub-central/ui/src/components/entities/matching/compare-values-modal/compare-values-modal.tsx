@@ -100,7 +100,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           return arrObject[updatedCurr] ? arrObject[updatedCurr] : "";
         }
       } else {
-        return !arrObject[curr] ? "" : arrObject[curr];
+        return (arrObject === undefined || !arrObject[curr]) ? "" : arrObject[curr];
       }
     }, initialObj);
     return localPropertyPath;
@@ -311,7 +311,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           props: {
             style: {backgroundImage: property.matchedRow ? "url("+ backgroundImage+")" : "", backgroundColor: property.matchedRow ? "#85BF97" : ""}
           },
-          children: <span key={key} aria-label={property.value.length > 0 ? property.value : "empty"}>{property.value}</span>
+          children: <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>
         };
       }
     },
@@ -325,7 +325,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           props: {
             style: {backgroundImage: property.matchedRow ? "url("+ backgroundImage+")" : "", backgroundColor: property.matchedRow ? "#85BF97" : ""}
           },
-          children: <span key={key} aria-label={property.value.length > 0 ? property.value : "empty"}>{property.value}</span>
+          children: <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>
         };
       }
     },
