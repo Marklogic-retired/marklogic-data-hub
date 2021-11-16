@@ -3,7 +3,6 @@ import QueryExport from "../query-export/query-export";
 import {AuthoritiesContext} from "../../util/authorities";
 import styles from "./results-tabular-view.module.scss";
 import ColumnSelector from "../../components/column-selector/column-selector";
-import {Table} from "antd";
 import {SearchContext} from "../../util/search-context";
 import {Link} from "react-router-dom";
 import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
@@ -421,7 +420,7 @@ const ResultsTabularView = (props) => {
 
     nestedData = parseJson(props.data[index]?.entityInstance);
 
-    return <Table
+    return <MLTable
       rowKey="key"
       columns={nestedColumns}
       dataSource={nestedData}
