@@ -666,6 +666,10 @@ class BrowsePage {
     return this.getCreatedOnFacet().invoke("text");
   }
 
+  scrollSideBar() {
+    return cy.get("#sideBarContainer").scrollTo("bottom", {ensureScrollable: false});
+  }
+
   selectCreatedOnRangeOption(option: string) {
     return cy.findByTestId(`date-select-option-${option}`).click();
   }

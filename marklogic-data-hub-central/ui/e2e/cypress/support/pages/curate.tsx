@@ -67,7 +67,7 @@ class CuratePage {
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Merge`)).click();
+    cy.waitUntil(() => cy.findByTestId(`${entityTypeId}-Merge`)).click({force: true});
   }
 
   selectMatchTab(entityTypeId: string) {
@@ -79,7 +79,7 @@ class CuratePage {
   }
 
   addNewStep() {
-    return cy.findByLabelText("icon: plus-circle");
+    return cy.findAllByLabelText("icon: plus-circle").first();
   }
 
   addNewStepDisabled() {

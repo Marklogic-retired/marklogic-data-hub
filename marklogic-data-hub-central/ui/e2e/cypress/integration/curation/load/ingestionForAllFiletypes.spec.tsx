@@ -115,7 +115,7 @@ describe("Verify ingestion for all filetypes", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     //Verify step name appears as a collection facet in explorer
-    runPage.explorerLink().click();
+    runPage.explorerLink().click({multiple: true, force: true});
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.waitForCardToLoad();
