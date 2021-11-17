@@ -801,6 +801,30 @@ function getMarkLogicMappingFunctions() {
   }, datahub.config.MODULESDATABASE));
 }
 
+function getXpathMappingFunctions() {
+  const xpathFunctions = getXQueryLib().detectFunctions().toObject();
+  return getFunctionsWithSignatures(xpathFunctions);
+}
+
+function getFunctionsWithSignatures(xpathFunctions) {
+  const excludedFunctions = getXpathFunctionsThatDoNotWorkInMappingExpressions();
+  const response = [];
+  //used to prevent duplicates(overloaded functions) in the response
+  const functionMap = new Map();
+  for (let i = 0; i < xpathFunctions.length; i++) {
+    let xpathFunction = Object.assign({}, xpathFunctions[i]);
+    let fn = xpathFunction.functionName;
+    if (!excludedFunctions.includes(fn)) {
+      xpathFunction["category"] = "xpath";
+      functionMap.set(fn, xpathFunction);
+    }
+  }
+  for (let value of functionMap.values()){
+    response.push(value);
+  }
+  return response;
+}
+
 /**
  * Per DHFPROD-5084, these have been identified as functions that do not work in mapping expressions. See the unit
  * test for this function to see how they have been identified.
@@ -808,6 +832,11 @@ function getMarkLogicMappingFunctions() {
  */
 function getXpathFunctionsThatDoNotWorkInMappingExpressions() {
   return [
+    "index-of",
+    "base-uri",
+    "document-uri",
+    "node-uri",
+    "filtered",
     "unparsed-text",
     "nilled",
     "unparsed-text-available",
@@ -819,37 +848,6 @@ function getXpathFunctionsThatDoNotWorkInMappingExpressions() {
     "static-base-uri",
     "doc"
   ];
-}
-
-function getXpathMappingFunctions() {
-  const xpathFunctions = xdmp.functions().toObject();
-  // The *-uri functions are excluded because the object being mapped is in memory and these functions won't work on it
-  const excludeFunctions = ["base-uri", "document-uri", "distinct-values"].concat(getXpathFunctionsThatDoNotWorkInMappingExpressions());
-  return getFunctionsWithSignatures(xpathFunctions, excludeFunctions);
-}
-
-function getFunctionsWithSignatures(xpathFunctions, excludeFunctions) {
-  const response = [];
-  //used to prevent duplicates(overloaded functions) in the response
-  const functionMap = new Map();
-  for (let i = 0; i < xpathFunctions.length; i++) {
-    if (String(xpathFunctions[i]).includes("fn:")) {
-      let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
-      signature = signature.match(/fn:(.*?) as.*?/)[1];
-      let fn = String(xdmp.functionName(xpathFunctions[i])).replace("fn:", "");
-      if (!excludeFunctions.includes(fn)) {
-        let xpathFunction = {};
-        xpathFunction["functionName"] = fn;
-        xpathFunction["signature"] = signature;
-        xpathFunction["category"] = "xpath";
-        functionMap.set(fn, xpathFunction);
-      }
-    }
-  }
-  for (let value of functionMap.values()){
-    response.push(value);
-  }
-  return response;
 }
 
 function getSourceRecordForMapping(mappingStep, sourceRecord){

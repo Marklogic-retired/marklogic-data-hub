@@ -22,6 +22,8 @@ import module namespace inst="http://marklogic.com/entity-services-instance" at 
 import module namespace es="http://marklogic.com/entity-services" at "/MarkLogic/entity-services/entity-services.xqy";
 import module namespace json = "http://marklogic.com/xdmp/json" at "/MarkLogic/json/json.xqy";
 
+declare namespace s = "http://www.w3.org/2005/xpath-functions";
+
 declare function document-with-nodes($nodes as node()*) {
   document {
     $nodes
@@ -168,3 +170,53 @@ declare function function-metadata-compile(
     xdmp:xslt-invoke("/data-hub/5/mapping/entity-services/function-metadata.xsl", $input)
 };
 
+(: Determine functions available for mapping by calling fn:function-available on the function in an XSLT with xdmp:dialect="tde" :)
+declare function detect-functions() {
+  let $functions := xdmp:xslt-invoke("/data-hub/5/builtins/steps/mapping/entity-services/detect-mapping-functions.xslt", document{ <doc/> },
+          map:entry("functions", xdmp:functions#0)
+            => map:with("function-signature", xdmp:function-signature#1)
+            => map:with("function-name", xdmp:function-name#1)
+            => map:with("function-available", fn:function-available#1)
+            => map:with("function-arity", fn:function-arity#1)
+            => map:with("local-name-from-QName", fn:local-name-from-QName#1)
+        )/root/function
+  for $fun in $functions
+  let $function-name := $fun/@name
+  let $function-arity := fn:number($fun/@arity)
+  let $all-arities := $functions[@name eq $function-name]/@arity ! xs:int(.)
+  let $min-arity := fn:min($all-arities)
+  let $max-arity := fn:max($all-arities)
+  where $function-arity eq $max-arity
+  order by fn:string($function-name)
+  return
+    let $signature := parse-function-signature(fn:string($fun), $min-arity, $max-arity)
+    let $name := fn:string($fun/@name)
+    return map:map() => map:with("signature", $signature) => map:with("functionName", $name)
+};
+
+declare function parse-function-signature($signature as xs:string, $min-arity as xs:int, $max-arity as xs:int) as xs:string {
+  if ($min-arity ne $max-arity) then
+    let $parsed-function := fn:analyze-string(
+          $signature,
+          "\("||fn:string-join((
+          for $arg-number in 1 to $min-arity
+          return
+            "[^,\s]+,\s"
+          ), "")||"([^,\s]+(,\s)?)+\)"
+        )
+    return fn:string-join(
+      for $part in $parsed-function/*
+      return
+        typeswitch($part)
+        case element(s:match) return
+          for $node in $part/node()
+          return
+            typeswitch($node)
+            case element(s:group) return fn:replace(fn:string($node), "([^,]+)(,/s)?", "[$1]$2")
+            default return fn:string($node)
+        default return fn:string($part)
+        ,
+    "")
+  else
+    $signature
+};
