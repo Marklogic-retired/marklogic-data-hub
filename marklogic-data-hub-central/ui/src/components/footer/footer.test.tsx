@@ -12,7 +12,7 @@ describe("Footer component", () => {
   });
 
   it("should render correctly", () => {
-    expect(wrapper.exists(".ant-layout-footer")).toBe(true);
+    expect(wrapper.contains(<Footer />)).toBe(true);
   });
 
   it("should display correct text", () => {
@@ -25,7 +25,7 @@ describe("Footer component", () => {
     global.window = {location: {href: null}};
 
     // get the actual link wrapper by traversing DOM tree
-    let privacyLink = wrapper.childAt(0).childAt(0).childAt(0).childAt(0).childAt(2);
+    let privacyLink = wrapper.find("#privacy-link");
     expect(privacyLink.text()).toBe("Privacy");
 
     // can set link wrapper to focus

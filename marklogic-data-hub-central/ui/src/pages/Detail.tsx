@@ -7,7 +7,7 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Layout, Tooltip, Table} from "antd";
+import {Tooltip, Table} from "antd";
 import {Row, Col, Tabs, Tab} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -21,7 +21,7 @@ import {ArrowLeftShort} from "react-bootstrap-icons";
 
 interface Props extends RouteComponentProps<any> { }
 
-const {Content} = Layout;
+
 
 const Detail: React.FC<Props> = ({history, location}) => {
   const {setSavedQueries} = useContext(SearchContext);
@@ -389,8 +389,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
     </div> :
 
       entityInstanceDocument ?
-        <Layout>
-          <Content className={styles.detailContent}>
+        <div>
+          <div className={styles.detailContent}>
             <Row id="back-button" className={"py-4 header-heading-title"} onClick={() => history.push(selectedSearchOptions)}>
               <Col>
                 <span className={`d-flex align-items-center cursor-pointer ${styles.title}`}><ArrowLeftShort aria-label="Back" className={"d-inline-block me-2 fs-2 header-back-button"} />Back to results</span>
@@ -492,8 +492,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
               return block;
             })()}</div>
             <div></div>
-          </Content>
-        </Layout> :
+          </div>
+        </div> :
         <DetailPageNonEntity
           uri={uri}
           sourcesTableData={sourcesTableData}

@@ -389,7 +389,7 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     cy.waitForModalToDisappear();
     browsePage.showMoreCollection();
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "sm-Patient-archived").click();
     browsePage.getApplyFacetsButton().click();
     browsePage.waitForSpinnerToDisappear();

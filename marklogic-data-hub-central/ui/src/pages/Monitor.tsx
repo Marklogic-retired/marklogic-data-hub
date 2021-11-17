@@ -7,16 +7,14 @@ import axios from "axios";
 import {UserContext} from "../util/user-context";
 import JobResultsTableView from "../components/job-results-table-view/job-results-table-view";
 import SearchPagination from "../components/search-pagination/search-pagination";
-import {Layout} from "antd";
 import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 import MonitorSidebar from "../components/monitor-sidebar/monitor-sidebar";
 import MonitorSelectedFacets from "../components/monitor-selected-facets/monitor-selected-facets";
 import {MonitorContext} from "../util/monitor-context";
+import {HCSider} from "@components/common";
 
 
 const Monitor: React.FC = () => {
-
-  const {Content, Sider} = Layout;
 
   const [, setIsLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
@@ -84,21 +82,15 @@ const Monitor: React.FC = () => {
   };
 
   return (
-    <Layout className={styles.layout}>
-      <Sider className={styles.sideBarFacets}
-        trigger={null}
-        collapsedWidth={0}
-        collapsible
-        width={"20vw"}
-      >
+    <div className={styles.layout}>
+      <HCSider placement="left" show={true} footer={<SidebarFooter />}>
         <MonitorSidebar
           facets={facets}
           facetRender={updateSelectedFacets}
           checkFacetRender={updateCheckedFacets}
         />
-        <SidebarFooter />
-      </Sider>
-      <Content className={styles.content} id="monitorContent">
+      </HCSider>
+      <div className={styles.content} id="monitorContent">
         <div>
           {canAccessMonitor ?
             <div className={styles.monitorContainer}>
@@ -130,7 +122,7 @@ const Monitor: React.FC = () => {
             />
           </div>
           <div>
-            <JobResultsTableView data={data}/>
+            <JobResultsTableView data={data} />
           </div>
           <SearchPagination
             total={totalDocuments}
@@ -140,8 +132,8 @@ const Monitor: React.FC = () => {
             maxRowsPerPage={monitorOptions.maxRowsPerPage}
           />
         </div>
-      </Content>
-    </Layout>
+      </div>
+    </div>
   );
 
 };

@@ -1,7 +1,6 @@
 import React, {useContext, useState} from "react";
 import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
-import {Layout} from "antd";
 import {UserContext} from "../../util/user-context";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
@@ -223,7 +222,7 @@ const Header:React.FC<Props> = (props) => {
 
   return (
     <>
-      <Layout.Header className={styles.container}>
+      <div className={styles.headerContainer}>
         <div className={styles.logoContainer} aria-label="header-logo">
           <Link to="/tiles" aria-label="logo-link" className={styles.logo} tabIndex={1} ref={logoRef}
             onKeyDown={logoKeyDownHandler} onMouseDown={logoClickHandler}>
@@ -238,7 +237,7 @@ const Header:React.FC<Props> = (props) => {
           </div>
         </div>
         {globalIcons}
-      </Layout.Header>
+      </div>
       <SystemInfo
         serviceName={props.environment.serviceName}
         dataHubVersion={props.environment.dataHubVersion}

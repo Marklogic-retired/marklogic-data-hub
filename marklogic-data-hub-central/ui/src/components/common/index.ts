@@ -11,3 +11,4 @@ export {default as HCSlider} from "./hc-slider/hc-slider";
 export {default as HCTag} from "./hc-tag/hc-tag";
 export {default as HCTooltip} from "./hc-tooltip/hc-tooltip";
 export {default as HCSearch} from "./hc-search/hc-search";
+export {default as HCSider} from "./hc-sider/hc-sider";

@@ -110,7 +110,7 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getFacetItemCheckbox("collection", "mapCustomerXML").should("not.exist");
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Customer").should("not.exist");
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getFacetApplyButton().click();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("exist");

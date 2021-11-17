@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent} from "@testing-library/react";
+import {render, fireEvent, screen} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
@@ -43,11 +43,11 @@ describe("Explorer Browse page tests ", () => {
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    expect(document.querySelector("[data-icon=\"angle-double-left\"]")).toBeInTheDocument();
-    await fireEvent.click(getByLabelText("expanded"));
-    expect(document.querySelector("[data-icon=\"angle-double-right\"]")).toBeInTheDocument();
-    await fireEvent.click(getByLabelText("collapsed"));
-    expect(document.querySelector("[data-icon=\"angle-double-left\"]")).toBeInTheDocument();
+    expect(screen.getByTestId("icon-collapsed")).toBeInTheDocument();
+    await fireEvent.click(getByLabelText("sider-action"));
+    expect(screen.getByTestId("icon-expanded")).toBeInTheDocument();
+    await fireEvent.click(getByLabelText("sider-action"));
+    expect(screen.getByTestId("icon-collapsed")).toBeInTheDocument();
   });
 
   test("Verify snippet/table view on hover css", async () => {

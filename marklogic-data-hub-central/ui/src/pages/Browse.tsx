@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
 import axios from "axios";
-import {Layout, Radio} from "antd";
+import {Radio} from "antd";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
@@ -15,7 +15,7 @@ import {updateUserPreferences, createUserPreferences, getUserPreferences} from "
 import {entityFromJSON, entityParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
+import {faStream, faTable, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import Query from "../components/queries/queries";
 import {AuthoritiesContext} from "../util/authorities";
@@ -27,13 +27,13 @@ import RecordCardView from "../components/record-view/record-view";
 import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 import {CSSProperties} from "react";
 import GraphViewExplore from "../components/explore/graph-view-explore";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, HCSider} from "@components/common";
+
 
 interface Props extends RouteComponentProps<any> {
 }
 
 const Browse: React.FC<Props> = ({location}) => {
-  const {Content, Sider} = Layout;
   const componentIsMounted = useRef(true);
   const {
     user,
@@ -63,7 +63,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [tableView, toggleTableView] = useState(JSON.parse(getUserPreferences(user.name)).tableView);
   const [endScroll, setEndScroll] = useState(false);
-  const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
@@ -155,7 +154,7 @@ const Browse: React.FC<Props> = ({location}) => {
 
   // Check if entity name has no matching definition
   const titleNoDefinition = (selectedEntityName) => {
-    for (let i=0;i<entitiesData.length;i++) {
+    for (let i = 0; i < entitiesData.length; i++) {
       if (entitiesData[i].info.title === selectedEntityName) {
         if (!entitiesData[i].definitions.hasOwnProperty(selectedEntityName)) return true;
         else return false;
@@ -380,10 +379,6 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
-  const onCollapse = () => {
-    setCollapsed(!collapse);
-  };
-
   useLayoutEffect(() => {
     if (endScroll && data.length) {
       if (resultsRef.current) {
@@ -446,7 +441,7 @@ const Browse: React.FC<Props> = ({location}) => {
     if (graphView) {
       style["marginLeft"] = "20px";
       style["marginTop"] = "10px";
-      style["justifyContent"]= "space-between";
+      style["justifyContent"] = "space-between";
     }
     return style;
   };
@@ -465,20 +460,14 @@ const Browse: React.FC<Props> = ({location}) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView} cardView={cardView}/>
-        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} toggleDataHubArtifacts={toggleDataHubArtifacts}/>
+        <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView} cardView={cardView} />
+        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} toggleDataHubArtifacts={toggleDataHubArtifacts} />
       </>
     );
   } else {
     return (
-      <Layout className={styles.layout}>
-        <Sider className={styles.sideBarFacets}
-          trigger={null}
-          collapsedWidth={0}
-          collapsible
-          collapsed={collapse}
-          width={"20vw"}
-        >
+      <div className={styles.layout}>
+        <HCSider placement="left" show={true} footer={<SidebarFooter />}>
           <Sidebar
             facets={facets}
             selectedEntities={searchOptions.entityTypeIds}
@@ -491,25 +480,19 @@ const Browse: React.FC<Props> = ({location}) => {
             hideDataHubArtifacts={hideDataHubArtifacts}
             cardView={cardView}
           />
-          <SidebarFooter />
-        </Sider>
-        <Content className={styles.content} id="browseContainer">
+        </HCSider>
+        <div className={styles.content} id="browseContainer">
 
-          <div className={styles.collapseIcon} id="sidebar-collapse-icon">
-            {collapse ?
-              <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{fontSize: "16px", color: "#000"}} /> :
-              <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{fontSize: "16px", color: "#000"}} />}
-          </div>
           {user.error.type === "ALERT" ?
             <AsyncLoader />
             :
 
             <>
-              <div className={collapse ? styles.stickyHeaderCollapsed : styles.stickyHeader}>
+              <div className={styles.stickyHeader}>
                 {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
                 <div className={styles.searchBar} ref={searchBarRef} >
 
-                  {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}/> : ""}
+                  {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
                   {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
                     <span>
                       {!graphView ? <div><SearchSummary
@@ -544,7 +527,7 @@ const Browse: React.FC<Props> = ({location}) => {
                             >
                               <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={!tableView && graphView}>
                                 <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
-                                  <i>{<FontAwesomeIcon icon={faProjectDiagram}/>}</i>
+                                  <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
                                 </HCTooltip>
                               </Radio.Button>
                               <Radio.Button aria-label="switch-view-table" value={"table"} >
@@ -583,63 +566,63 @@ const Browse: React.FC<Props> = ({location}) => {
                 />
               </div>
               {!showNoDefinitionAlertMessage &&
-              <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
-                <div>
-                  {graphView ?
-                    <div>
-                      <GraphViewExplore
-                        entityTypesInstances={data}
-                        graphView={graphView}
-                      />
-                    </div> :
-                    cardView ?
-                      <RecordCardView
-                        data={data}
-                        entityPropertyDefinitions={entityPropertyDefinitions}
-                        selectedPropertyDefinitions={selectedPropertyDefinitions}
-                      />
-                      : (tableView ?
-                        <div className={styles.tableViewResult}>
-                          <ResultsTabularView
-                            data={data}
-                            entityPropertyDefinitions={entityPropertyDefinitions}
-                            selectedPropertyDefinitions={selectedPropertyDefinitions}
-                            entityDefArray={entityDefArray}
-                            columns={columns}
-                            selectedEntities={searchOptions.entityTypeIds}
-                            setColumnSelectorTouched={setColumnSelectorTouched}
-                            tableView={tableView}
-                            isLoading={isLoading}
+                <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
+                  <div>
+                    {graphView ?
+                      <div>
+                        <GraphViewExplore
+                          entityTypesInstances={data}
+                          graphView={graphView}
+                        />
+                      </div> :
+                      cardView ?
+                        <RecordCardView
+                          data={data}
+                          entityPropertyDefinitions={entityPropertyDefinitions}
+                          selectedPropertyDefinitions={selectedPropertyDefinitions}
+                        />
+                        : (tableView ?
+                          <div className={styles.tableViewResult}>
+                            <ResultsTabularView
+                              data={data}
+                              entityPropertyDefinitions={entityPropertyDefinitions}
+                              selectedPropertyDefinitions={selectedPropertyDefinitions}
+                              entityDefArray={entityDefArray}
+                              columns={columns}
+                              selectedEntities={searchOptions.entityTypeIds}
+                              setColumnSelectorTouched={setColumnSelectorTouched}
+                              tableView={tableView}
+                              isLoading={isLoading}
+                              handleViewChange={handleViewChange}
+                            />
+                          </div>
+                          : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
                             handleViewChange={handleViewChange}
-                          />
-                        </div>
-                        : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
-                          handleViewChange={handleViewChange}
-                          entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
-                      )}
-                </div>
-                <br />
-              </div>}
+                            entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                        )}
+                  </div>
+                  <br />
+                </div>}
               {!showNoDefinitionAlertMessage && !graphView &&
-              <div>
-                <SearchSummary
-                  total={totalDocuments}
-                  start={searchOptions.start}
-                  length={searchOptions.pageLength}
-                  pageSize={searchOptions.pageSize}
-                />
-                <SearchPagination
-                  total={totalDocuments}
-                  pageNumber={searchOptions.pageNumber}
-                  pageSize={searchOptions.pageSize}
-                  pageLength={searchOptions.pageLength}
-                  maxRowsPerPage={searchOptions.maxRowsPerPage}
-                />
-              </div>}
+                <div>
+                  <SearchSummary
+                    total={totalDocuments}
+                    start={searchOptions.start}
+                    length={searchOptions.pageLength}
+                    pageSize={searchOptions.pageSize}
+                  />
+                  <SearchPagination
+                    total={totalDocuments}
+                    pageNumber={searchOptions.pageNumber}
+                    pageSize={searchOptions.pageSize}
+                    pageLength={searchOptions.pageLength}
+                    maxRowsPerPage={searchOptions.maxRowsPerPage}
+                  />
+                </div>}
             </>
           }
-        </Content>
-      </Layout>
+        </div>
+      </div>
     );
   }
 };
