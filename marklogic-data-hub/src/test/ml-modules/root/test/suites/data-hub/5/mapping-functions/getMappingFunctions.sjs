@@ -11,8 +11,8 @@ const mlFunctions = esMappingLib.getMarkLogicMappingFunctions();
   test.assertTrue(findFunction("sum")["signature"].includes("sum")),
   test.assertTrue(findFunction("fn:sum") == null, "'fn:' has been stripped from the function name and signature"),
   test.assertTrue(echoCount() == 1 || echoCount() == 0, "echo() function if present should be present only once"),
-  test.assertTrue(xpathFunctions.length >= 116,
-    "As of 10.0-4 server, there are 116 mapping xpath functions (accounting for all excluded ones); " +
+  test.assertTrue(xpathFunctions.length >= 90,
+    "As of 10.0-4 server, there are more than 90 mapping xpath functions (accounting for all excluded ones); " +
     "there may be more in a future version, but we expect at least that many to exist; actual length: " + xpathFunctions.length),
 
   test.assertTrue(mlFunctions.length >= 4,
