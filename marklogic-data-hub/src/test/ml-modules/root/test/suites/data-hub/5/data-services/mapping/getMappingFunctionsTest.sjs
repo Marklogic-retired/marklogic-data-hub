@@ -19,7 +19,7 @@ let sumFunc = getFunctionInfo("sum");
 let currentDatetime = getFunctionInfo("current-dateTime");
 const assertions = [];
 assertions.push(
-  test.assertTrue(mapFuncs.length >= 100),
+  test.assertTrue(mapFuncs.length >= 100, fn.string(mapFuncs.length)),
   test.assertTrue(sumFunc != null),
   test.assertTrue(sumFunc["signature"].includes("sum")),
   test.assertTrue(currentDatetime != null),
