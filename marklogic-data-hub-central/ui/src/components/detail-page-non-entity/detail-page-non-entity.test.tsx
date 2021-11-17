@@ -43,13 +43,13 @@ describe("Detail page for non-entity view component", () => {
     expect(getByTestId("json-container")).toHaveTextContent(/(?=.*customerId)(?=.*1001)(?=.*firstName)(?=.*Gabriel)(?=.*lastName)(?=.*324 Wilkinson blvd)/i);
 
     //Check siderExpandCollapse Icons
-    expect(getByTestId("metadataIcon-expanded")).toBeInTheDocument();
-    expect(getByTestId("sider-nonEntityDetailPage")).toHaveStyle("width: 45vw;"); // non-zero width represents the expanded sider
-    expect(queryByTestId("metadataIcon-collapsed")).not.toBeInTheDocument();
+    expect(getByTestId("icon-expanded")).toBeInTheDocument();
+    expect(getByTestId("hc-sider-component")).toHaveStyle("width: 45vw;"); // non-zero width represents the expanded sider
+    expect(queryByTestId("icon-collapsed")).not.toBeInTheDocument();
 
-    userEvent.click(getByTestId("metadataIcon-expanded"));
-    expect(getByTestId("metadataIcon-collapsed")).toBeInTheDocument();
-    expect(getByTestId("sider-nonEntityDetailPage")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
+    userEvent.click(getByTestId("icon-expanded"));
+    expect(getByTestId("icon-collapsed")).toBeInTheDocument();
+    expect(getByTestId("hc-sider-component")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
 
   });
 
@@ -85,13 +85,13 @@ describe("Detail page for non-entity view component", () => {
     expect(getByTestId("xml-container")).toHaveTextContent(/(?=.*word)(?=.*Alexandra)(?=.*Alice)(?=.*Barbara)(?=.*Bob)/i);
 
     //Check siderExpandCollapse Icons
-    expect(getByTestId("metadataIcon-expanded")).toBeInTheDocument();
-    expect(getByTestId("sider-nonEntityDetailPage")).toHaveStyle("width: 45vw;"); // non-zero width represents the expanded sider
-    expect(queryByTestId("metadataIcon-collapsed")).not.toBeInTheDocument();
+    expect(getByTestId("icon-expanded")).toBeInTheDocument();
+    expect(getByTestId("hc-sider-component")).toHaveStyle("width: 45vw;"); // non-zero width represents the expanded sider
+    expect(queryByTestId("icon-collapsed")).not.toBeInTheDocument();
 
-    userEvent.click(getByTestId("metadataIcon-expanded"));
-    expect(getByTestId("metadataIcon-collapsed")).toBeInTheDocument();
-    expect(getByTestId("sider-nonEntityDetailPage")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
+    userEvent.click(getByTestId("icon-expanded"));
+    expect(getByTestId("icon-collapsed")).toBeInTheDocument();
+    expect(getByTestId("hc-sider-component")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
 
   });
 
@@ -129,13 +129,13 @@ describe("Detail page for non-entity view component", () => {
     expect(getByTestId("text-container")).toHaveTextContent("customerId 1001 firstName Gabriel lastName Stane Gender Male years_active 3 Street 324 Wilkinson blvd Apt 108 City Long Beach State CA zipCode 95034");
 
     //Check siderExpandCollapse Icons
-    expect(getByTestId("metadataIcon-expanded")).toBeInTheDocument();
-    expect(getByTestId("sider-nonEntityDetailPage")).toHaveStyle("width: 45vw;"); // non-zero width represents the expanded sider
-    expect(queryByTestId("metadataIcon-collapsed")).not.toBeInTheDocument();
+    expect(getByTestId("icon-expanded")).toBeInTheDocument();
+    expect(getByTestId("hc-sider-component")).toHaveStyle("width: 45vw;"); // non-zero width represents the expanded sider
+    expect(queryByTestId("icon-collapsed")).not.toBeInTheDocument();
 
-    userEvent.click(getByTestId("metadataIcon-expanded"));
-    expect(getByTestId("metadataIcon-collapsed")).toBeInTheDocument();
-    expect(getByTestId("sider-nonEntityDetailPage")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
+    userEvent.click(getByTestId("icon-expanded"));
+    expect(getByTestId("icon-collapsed")).toBeInTheDocument();
+    expect(getByTestId("hc-sider-component")).toHaveStyle("width: 0px;"); // 0 width represents the collapsed sider
 
   });
 

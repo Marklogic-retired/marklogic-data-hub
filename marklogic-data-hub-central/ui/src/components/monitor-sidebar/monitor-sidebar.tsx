@@ -254,7 +254,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
 
 
   return (
-    <>
+    <div className={styles.container}>
       <div className={styles.facetContainer} style={{"marginLeft": "7px"}}>
         <div className={styles.name} data-testid="start-time-facet">Start Time
           <HCTooltip text="Start time for a step that has run" id="start-time-tooltip" placement="bottom-start">
@@ -300,7 +300,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
           />
         );
       })}
-    </>);
+    </div>);
 };
 
 

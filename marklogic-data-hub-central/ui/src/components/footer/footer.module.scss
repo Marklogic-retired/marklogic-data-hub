@@ -1,20 +1,28 @@
+div.footerContainer {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 0 0;
+    margin: 0;
+    margin-top: 0px;
+    background-color: transparent;
+    height: 60px;
+}
 div.content {
-	font-size: 14px;
-	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	background-color: 'transparent';
-	span {
-		padding: 0 5px;
-	}
-	.link {
-		cursor: pointer;
-	}
-	.link:focus {
-		outline: 2px solid #7F86B5;
-		outline-offset: -1px;
-	}
+    font-size: 14px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: "transparent";
+    span {
+        padding: 0 5px;
+    }
+    .link {
+        cursor: pointer;
+    }
+    .link:focus {
+        outline: 2px solid #7f86b5;
+        outline-offset: -1px;
+    }
 }
 
 .linkStyle:hover {
-        color : var(--hoverColor) !important;
-    }
-
+    color: var(--hoverColor) !important;
+}

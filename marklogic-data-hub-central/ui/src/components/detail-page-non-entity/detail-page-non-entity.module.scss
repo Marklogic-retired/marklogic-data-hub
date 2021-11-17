@@ -1,3 +1,6 @@
+.container {
+    display: flex;
+}
 .title {
     color: #5b69af;
     cursor: pointer;
@@ -22,6 +25,7 @@
     background: #fff;
     padding: 18px 0px;
     max-height: 100vh;
+    width: 100%;
 
     .detailContent {
         background: #fff;
@@ -67,7 +71,7 @@
 }
 
 .documentContainer {
-    max-height: 60vh;
+    max-height: 56vh;
     overflow: auto;
 }
 
@@ -191,4 +195,19 @@
     border: 0 !important;
     border-bottom: 2px solid #5b69af !important;
     color: #5b69af !important;
+}
+
+div.siderContainer {
+}
+
+div.contentContainer {
+    z-index: 9;
+    overflow: auto;
+    position: relative;
+    height: 80vh !important;
+    border-left: 1px solid #777;
+    box-shadow: -1px 0 4px #777;
+}
+a.indicatorCLassName {
+    top: 60px;
 }

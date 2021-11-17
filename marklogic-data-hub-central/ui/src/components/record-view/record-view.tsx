@@ -177,7 +177,7 @@ const RecordCardView = (props) => {
 
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
-      <Row>
+      <Row className="w-100 m-0">
         {props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col xs={"auto"} key={index}>
             <div >

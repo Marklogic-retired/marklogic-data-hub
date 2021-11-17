@@ -43,6 +43,13 @@ div.mosaic-container-explore div.mosaic-window-body {
     overflow-y: hidden;
 }
 
+div.mosaic-container-monitor div.mosaic-window-body {
+    overflow: hidden;
+}
+div.mosaic-container-detail div.mosaic-window-body {
+    overflow: hidden;
+}
+
 .ant-layout.ant-layout-has-sider > .ant-layout, .ant-layout.ant-layout-has-sider > .ant-layout-content {
     overflow-x: scroll;
 }

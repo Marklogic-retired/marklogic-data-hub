@@ -11,26 +11,27 @@
 }
 
 .errorModal {
-  margin-left: 38px;
+    margin-left: 38px;
 }
 
 .layout {
     height: 100%;
+    display: flex;
 }
 
 .content {
     background: #fff;
-    padding: 20px 24px 34px 36px;
+    padding: 20px 24px 50px 36px;
+    max-height: 100vh;
+    overflow-y: auto;
     width: 100%;
-    max-height: 200vh;
-    height:200vh;
 }
 
 .sideBarFacets {
     background-color: #f1f2f5;
     margin-top: 25px;
     max-height: 200vh;
-    height:200vh;
+    height: 200vh;
 }
 
 .monitorPagination {

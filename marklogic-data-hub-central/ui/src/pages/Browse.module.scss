@@ -1,21 +1,24 @@
 .layout {
   height: 100%;
+  display: flex;
 }
 
 .content {
   background: #fff;
-  padding: 60px 24px 34px 26px;
+  padding: 0 16px 70px 16px;
   max-height: 100vh;
+  overflow-y: auto;
+  width: 100%;
 }
 
 .stickyHeader{
-  position: absolute;
-  background-color: #fff;
+  top: 0;
   z-index: 1;
-  margin-top: -60px;
-  padding-top: 10px;
-  padding-right: 10px;
-  width: 76%;
+  position: sticky;
+  background-color: #fff;
+  padding-top: 20px;
+  padding-bottom: 16px;
+  padding-left: 7px;
 }
 
 .stickyHeaderCollapsed{
@@ -47,8 +50,6 @@
 }
 
 .viewContainer {
-  margin-top: 100px;
-  padding-top: 10px;
 }
 
 .viewGraphContainer {
@@ -64,7 +65,6 @@
 }
 
 .tableViewResult {
-  margin-top: 5%;
   overflow: hidden;
   overflow-x: scroll;
 }

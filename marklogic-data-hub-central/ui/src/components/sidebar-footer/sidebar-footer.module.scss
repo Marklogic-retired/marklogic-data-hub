@@ -1,10 +1,11 @@
 .facetFooter {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
   flex-flow: row wrap;
   padding: 12px 20px 12px 20px;
   background: #f1f2f5;
+  gap: 16px;
 }
 
 .button {

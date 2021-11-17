@@ -39,7 +39,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
@@ -64,7 +64,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getShowMoreLink("collection").click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
@@ -82,7 +82,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getShowMoreLink("collection").click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getGreySelectedFacets("mapCustomersXML").click();
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
@@ -94,7 +94,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
     browsePage.getFacetItemCheckbox("collection", "Customer").click();
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
     browsePage.getGreySelectedFacets("Customer").should("exist");
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
@@ -144,7 +144,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
-    cy.get("#sideBarContainer").scrollTo("bottom");
+    cy.get("#hc-sider-content").scrollTo("bottom");
     cy.waitUntil(() => browsePage.getFacetItemCheckbox("collection", "mapCustomersXML")).click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
