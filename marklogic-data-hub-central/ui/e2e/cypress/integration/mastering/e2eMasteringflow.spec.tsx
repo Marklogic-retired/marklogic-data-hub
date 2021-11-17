@@ -102,6 +102,8 @@ describe("Validate E2E Mastering Flow", () => {
     entityTypeModal.newEntityName("Patient");
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => entityTypeModal.getAddButton().should("not.be.visible"));
   });
   it("Add properties", () => {
     propertyTable.getAddPropertyButton("Patient").should("be.visible").click();
