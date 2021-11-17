@@ -25,7 +25,7 @@ const expectedFunctionsThatDontWork = esMappingLib.getXpathFunctionsThatDoNotWor
  * The goal of this test then is to verify that we don't get any additional functions that don't work - i.e. that
  * the ones excluded by esMappingLib covers all the functions that should be ignored.
  */
-const functions = esMappingLib.getFunctionsWithSignatures(xdmp.functions().toObject(), []);
+const functions = esMappingLib.getXpathMappingFunctions();
 const actualFunctionsThatDontWork = [];
 for(let i=0; i< functions.length; i++){
   const result = testFunctionInMapping(functions[i].signature);
@@ -35,8 +35,7 @@ for(let i=0; i< functions.length; i++){
 }
 
 [
-  test.assertEqual(expectedFunctionsThatDontWork.length, actualFunctionsThatDontWork.length,
+  test.assertEqual(0, actualFunctionsThatDontWork.length,
     "Expected to find zero functions that don't work, as getXpathMappingFunctions should have already removed " +
-    "ones that don't work. Note that base-uri and document-uri aren't expected to be in these lists; those are " +
-    "separately excluded based on the knowledge that they won't work against in-memory objects.")
+    "ones that don't work.")
 ];
