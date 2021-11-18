@@ -22,6 +22,8 @@ import HCButton from "../../../common/hc-button/hc-button";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {FormControl} from "react-bootstrap";
 import HCInput from "../../../common/hc-input/hc-input";
+import HCTable from "../../../common/hc-table/hc-table";
+
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -136,7 +138,34 @@ const EntityMapTable: React.FC<Props> = (props) => {
     </ul></div>
   </div>;
 
-  const getColumnsForEntityTable: any = () => {
+  const getColumnsForEntityTable: any = (newTable?: boolean) => {
+    if (newTable) {
+      return entityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item).map(el => {
+        //console.log("ELEMENT", el);
+        const customEl: any = {
+          /*
+          text: el.title,
+          dataField: el.keyField,*/
+          ...el,
+          //text: (el as any).title,
+          dataField: (el as any).dataIndex,
+          //formatter: typeof (el as any).render === "function" ? (cell, row, rowIndex, formatterData) => (el as any).render(cell, row, rowIndex) : null,
+        }
+        const renderFunction = (el as any).render;
+        if (renderFunction && typeof renderFunction === "function") {
+          console.log(customEl.dataField, renderFunction)
+          /*if ((el as any).key === "type") {
+            customEl.formatter = renderFunction;
+          }*/
+          //customEl.formatter = (cell, row, rowIndex) => (el as any).render(cell, row, rowIndex);
+        }
+
+        delete customEl.title;
+        delete customEl.keyField;
+
+        return customEl;
+      });  
+    }
     return entityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item);
   };
 
@@ -1255,6 +1284,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const entityColumns = [
     {
       title: <span data-testid="entityTableName">Name</span>,
+      text: "Name",
       dataIndex: "name",
       key: "name",
       width: "18%",
@@ -1321,6 +1351,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     {
       ellipsis: true,
       title: <span data-testid="entityTableType">Type</span>,
+      text: "Type",
       dataIndex: "type",
       key: "type",
       width: "16%",
@@ -1395,6 +1426,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
         placement="top"
         getPopupContainer={() => document.getElementById("parentContainer") || document.body}><img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" /></Popover>
       </span>,
+      text: "XPath Expression",
       dataIndex: "key",
       key: "key",
       width: "45%",
@@ -1469,6 +1501,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
     },
     {
       title: "Value",
+      text: "Value",
       dataIndex: "value",
       key: "value",
       width: "20%",
@@ -1512,6 +1545,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   return (props.entityLoaded ? (props.entityMappingId || !props.isRelatedEntity) ? (<div id={props.isRelatedEntity ? "entityTableContainer" : "rootTableContainer"} data-testid={props.entityTypeTitle.split(" ")[0].toLowerCase() + "-table"}>
     <div className={styles.tableContainer} id={entityProperties.length > 0 ? "upperTable" : "upperTableEmptyProps"} ref={props.setScrollRef(`${props.entityMappingId}-ref`)}>
+      <>
       <Table
         pagination={false}
         className={tableCSS}
@@ -1528,9 +1562,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
         showHeader={!props.isRelatedEntity}
         rowClassName={(record, index) => getRowClassName(record, index)}
       />
+      <HCTable 
+        columns={getColumnsForEntityTable(true)}
+        data={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
+        rowKey={(record: any) => record.key}
+        
+      />
+      </>
     </div>
     {entityProperties.length > 0 ?
       <div className={styles.tableContainer} id="lowerTable">
+        <>
         <Table
           pagination={paginationFunction}
           className={tableCSS}
@@ -1547,6 +1589,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
           showHeader={false}
           rowClassName={(record, index) => getRowClassName(record, index)}
         />
+        <HCTable 
+          columns={getColumnsForEntityTable(true)}
+          rowKey={(record: any) => record.key}
+          data={filterApplied ? entityProperties : props.isRelatedEntity ? entityProperties.slice(2, entityProperties.length) : entityProperties.slice(1, entityProperties.length)}
+          
+        />
+        </>
       </div>
       : null
     }
