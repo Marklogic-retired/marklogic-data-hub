@@ -46,9 +46,9 @@ describe("Merging Step Detail view component", () => {
     expect(container.querySelector(".ant-pagination")).toBeNull();
   });
 
-  it("can render merging step with merge strategies and rulesets", async () => {
+  it.only("can render merging step with merge strategies and rulesets", async () => {
 
-    const {getByText, getAllByText, getByLabelText, getByTestId, queryByTestId} = render(
+    const {getByText, getAllByText, getByLabelText, getByTestId, queryByTestId, queryByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
       </CurationContext.Provider>
@@ -69,12 +69,9 @@ describe("Merging Step Detail view component", () => {
     userEvent.hover(getByLabelText("icon: question-circle"));
     expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
 
-    //Timestamp handle is visible by default
-    let timestampHandle = getByTestId("Timestamp-active");
-    expect(timestampHandle).toHaveClass("handleDisabled");
-    expect(getByLabelText("Timestamp")).toBeInTheDocument();
-    userEvent.hover(timestampHandle);
-    expect((await(waitForElement(() => getByText(multiSliderTooltips.viewOnlyTooltip))))).toBeInTheDocument();
+    //Verify default timeline is visible and no edit strategy button is present
+    expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
+    expect(queryByLabelText("mergeStrategy-scale-switch")).not.toBeInTheDocument();
 
     //Verify merge rules table is rendered with data
     //Check table column headers are rendered
