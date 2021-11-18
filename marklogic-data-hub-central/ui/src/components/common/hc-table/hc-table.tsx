@@ -7,7 +7,7 @@ interface Props {
     columns: any;
     data: any;
     showExpandIndicator?: boolean;
-    rowKey?: string;
+    rowKey?: string | ((record: any) => string);
     pagination?: boolean | any;
     showHeader?: boolean;
     expandedRowKeys?: number[];
