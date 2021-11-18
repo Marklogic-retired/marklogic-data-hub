@@ -20,7 +20,8 @@ interface Props extends RouteComponentProps {
 const SearchResult: React.FC<Props> = (props) => {
   const {
     searchOptions,
-    setGraphViewOptions
+    setGraphViewOptions,
+    setSavedNode
   } = useContext(SearchContext);
   const [show, toggleShow] = useState(false);
 
@@ -74,10 +75,12 @@ const SearchResult: React.FC<Props> = (props) => {
   function showTableEntityProperties() {
     toggleShow(!show);
   }
-  const navigateToGraphView = (entityInstanceId) => {
-    setGraphViewOptions(entityInstanceId);
+  const navigateToGraphView = (item) => {
+    setSavedNode(item);
+    setGraphViewOptions(`${item.entityName}-${primaryKeyValue}`);
     props.handleViewChange("graph");
   };
+
 
   return (
     <div className={"w-100"}>
@@ -130,7 +133,7 @@ const SearchResult: React.FC<Props> = (props) => {
           <div className={styles.graphIcon}>
             <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
               <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
-                size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(`${props.item.entityName}-${primaryKeyValue}`)}/></i>
+                size="sm"  data-testid="graph-icon" onClick={() => navigateToGraphView(props.item)}/></i>
             </HCTooltip>
           </div>
         </div>

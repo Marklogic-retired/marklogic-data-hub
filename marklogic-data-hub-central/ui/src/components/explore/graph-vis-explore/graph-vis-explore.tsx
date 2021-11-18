@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext, useLayoutEffect} from "react";
 import Graph from "react-graph-vis";
-import "./graph-vis-explore.scss";
 import graphConfig from "../../../config/graph-vis.config";
 import {Dropdown, Menu} from "antd";
 import * as _ from "lodash";
@@ -12,18 +11,26 @@ type Props = {
   splitPaneResized: any;
   setSplitPaneResized: any;
   graphView: any;
+  coords: any[];
+  setCoords: (coords: any[]) => void;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
-
-  const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
+
+  const coordinatesExist = () => {
+    let coordsExist = !!props.coords;
+    return coordsExist;
+  };
+
+  const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
   const [hasStabilized, setHasStabilized] = useState(false);
   const {
     searchOptions,
-    setGraphViewOptions
+    setGraphViewOptions,
+    setSavedNode,
   } = useContext(SearchContext);
 
   // Get network instance on init
@@ -100,7 +107,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       if (selectedEntityExists()) {
         setPhysicsEnabled(false);
         network.selectNodes([searchOptions.entityInstanceId]);
-        network.focus(searchOptions.entityInstanceId);
       } else {
         setGraphViewOptions(undefined);
       }
@@ -137,13 +143,21 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       let entityInstanceId = key+"-"+nodeId;
       let nodeLabel;
       nodeId.length > 6 ? nodeLabel = nodeId.substring(0, 6) + "..." : nodeLabel = nodeId;
-
+      let positionX = undefined;
+      let positionY = undefined;
+      if (props.coords && props.coords[entityInstanceId] && props.coords[entityInstanceId].x && props.coords[entityInstanceId].y) {
+        //tmp.physics.enabled = false;
+        positionX = props.coords[entityInstanceId].x;
+        positionY = props.coords[entityInstanceId].y;
+      }
       return {
         id: entityInstanceId,
         shape: "custom",
         title: key,
         //...graphConfig.defaultNodeProps,
         color: entity["color"],
+        x: positionX,
+        y: positionY,
         ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
           const r = style.size;
           const color = style.color;
@@ -275,7 +289,17 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const events = {
     select: (event) => {
-      // console.info("SELECT", event);
+      const {nodes} = event;
+      if (nodes.length > 0) {
+        const [node]= nodes;
+        const entity  = node.substr(0, node.indexOf("-"));
+        const id = node.substr(node.indexOf("-")+1);
+        const nodeObject = props.entityTypeInstances.find(node => node.entityName === entity && node.primaryKey.propertyValue.toString() === id);
+        setSavedNode(nodeObject);
+        const primaryKeyValue = nodeObject.primaryKey.propertyValue;
+        const entityId = `${nodeObject.entityName}-${primaryKeyValue}`;
+        setGraphViewOptions(entityId);
+      }
     },
     click: (event) => {
       //if click is on an edge
@@ -324,6 +348,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         if (positions && Object.keys(positions).length) {
         //   saveUnsavedCoords();
           setHasStabilized(true);
+          props.setCoords(positions);
           if (physicsEnabled) {
             setPhysicsEnabled(false);
             return false;

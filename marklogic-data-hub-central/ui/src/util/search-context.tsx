@@ -24,7 +24,6 @@ type SearchContextInterface = {
   entityInstanceId: any,
   datasource: string,
   baseEntities: string[]
-
 }
 
 const defaultSearchOptions = {
@@ -47,7 +46,7 @@ const defaultSearchOptions = {
   database: "final",
   entityInstanceId: undefined,
   datasource: "entities",
-  baseEntities: []
+  baseEntities: [],
 };
 
 
@@ -94,6 +93,8 @@ interface ISearchContextInterface {
   setGraphViewOptions: (entityInstanceId: any) => void;
   setDatasource: (option: string) => void;
   setBaseEntities: (baseEntities: string[]) => void;
+  savedNode: any,
+  setSavedNode: (node: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -101,6 +102,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   greyedOptions: defaultSearchOptions,
   savedQueries: [],
   setSavedQueries: () => { },
+  savedNode: undefined,
+  setSavedNode: () => { },
   entityDefinitionsArray: [],
   setEntityDefinitionsArray: () => { },
   setSearchFromUserPref: () => { },
@@ -138,7 +141,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setLatestDatabase: () => { },
   setGraphViewOptions: () => { },
   setDatasource: () => { },
-  setBaseEntities: () => { }
+  setBaseEntities: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -146,6 +149,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
+  const [savedNode, setSavedNode] = useState<any>();
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
   const {user} = useContext(UserContext);
 
@@ -660,6 +664,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       greyedOptions,
       savedQueries,
       setSavedQueries,
+      savedNode,
+      setSavedNode,
       entityDefinitionsArray,
       setEntityDefinitionsArray,
       setSearchFromUserPref,

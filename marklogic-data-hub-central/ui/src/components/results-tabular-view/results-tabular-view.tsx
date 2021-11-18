@@ -72,7 +72,8 @@ const ResultsTabularView = (props) => {
     searchOptions,
     setSelectedTableProperties,
     setSortOrder,
-    setGraphViewOptions
+    setGraphViewOptions,
+    setSavedNode
   } = useContext(SearchContext);
 
   const authorityService = useContext(AuthoritiesContext);
@@ -201,8 +202,10 @@ const ResultsTabularView = (props) => {
     return header;
   };
 
-  const navigateToGraphView = (entityInstanceId) => {
-    setGraphViewOptions(entityInstanceId);
+  const navigateToGraphView = (item) => {
+    setSavedNode(item);
+    let primaryKeyValue = item.primaryKey?.propertyValue;
+    setGraphViewOptions(`${item.entityName}-${primaryKeyValue}`);
     props.handleViewChange("graph");
   };
 
@@ -272,7 +275,7 @@ const ResultsTabularView = (props) => {
               <div className={styles.graphIcon}>
                 <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
                   <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
-                    size="sm"  data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(`${item.entityName}-${primaryKeyValue}`)}/></i>
+                    size="sm"  data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)}/></i>
                 </HCTooltip>
               </div>
             </div>;

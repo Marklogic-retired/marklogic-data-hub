@@ -114,3 +114,11 @@ div.vis-network div.vis-navigation div.vis-button:hover {
 .vis-button.vis-zoomExtends {
     background-image: url("../../../assets/expand-arrows-alt-solid.svg") !important;
 }
+
+.resizerStyle {
+    border: 1px solid rgba(1, 22, 39, 0.21);
+    cursor: col-resize;
+    height: auto;
+    margin-top: 10px;
+    min-height: 60vh;
+  };
