@@ -363,6 +363,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     return {
       dataField: c.dataIndex,
       formatter: typeof c.render === "function" ? (cell, row, rowIndex, formatterData) => c.render(cell, row) : null,
+      ...c
     };
   });
 
