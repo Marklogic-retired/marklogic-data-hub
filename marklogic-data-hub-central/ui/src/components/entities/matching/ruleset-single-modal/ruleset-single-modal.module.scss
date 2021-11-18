@@ -3,8 +3,6 @@
 .modalTitleLegend {
   display: flex;
   justify-content: flex-end;
-  margin-top: 8px;
-  margin-bottom: -16px;
 
   .legendText {
     font-size: 11px;
@@ -47,7 +45,7 @@
 .footerNewRuleset {
     display: flex;
     justify-content: flex-end;
-    margin-left: 32vw;
+    margin-left: auto;
 
     .saveButton {
         margin-left: 5px;

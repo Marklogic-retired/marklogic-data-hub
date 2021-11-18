@@ -1,7 +1,6 @@
 @import "../../../../theme/HCUtils.scss";
 
 .modalTitleContainer {
-  margin-bottom: 35px;
 
   .modalTitle{
     font-size: 25px;
@@ -79,7 +78,7 @@
 .footerNewRuleset {
     display: flex;
     justify-content: flex-end;
-    margin-left: 74vw;
+    margin-left: auto;
 
     .saveButton {
         margin-left: 5px;
@@ -180,4 +179,8 @@ margin-bottom: 40px;
 
 .validationError {
   @extend .validationError;
+}
+
+.modal1400w {
+  @extend .modal1400w;
 }

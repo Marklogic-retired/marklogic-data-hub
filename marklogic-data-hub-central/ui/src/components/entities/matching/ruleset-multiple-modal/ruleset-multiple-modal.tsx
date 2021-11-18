@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Modal, Switch, Table, Select} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Switch, Table, Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import "./ruleset-multiple-modal.scss";
@@ -1054,7 +1054,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       }
     },
     selectedRowKeys: selectedRowKeys,
-    getCheckboxProps: record => ({name: record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? "hidden" : record.propertyPath}),
+    getCheckboxProps: record => ({name: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? "hidden" : record.propertyPath),
+      style: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? {display: "none"} : {})
+    }),
   };
 
   const closeMatchOnTag = (tagKey) => {
@@ -1149,95 +1151,94 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      visible={props.isVisible}
-      destroyOnClose={true}
-      closable={true}
-      maskClosable={false}
-      title={null}
-      footer={null}
-      width={1400}
-      onCancel={closeModal}
+      show={props.isVisible}
+      dialogClassName={styles.modal1400w}
+      onEntered={hideCheckboxes}
     >
+      <Modal.Header className={"bb-none align-items-start"}>
+        {modalTitle}
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+      </Modal.Header>
+      <Modal.Body>
+        <Form
+          id="matching-multiple-ruleset"
+          onSubmit={onSubmit}
+          className={"container-fluid"}
+        >
+          <Row className={"mb-3"}>
+            <FormLabel column lg={"auto"}>{"Ruleset Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"}  sm={6}>
+                  <HCInput
+                    id="rulesetName-input"
+                    ariaLabel="rulesetName-input"
+                    placeholder="Enter ruleset name"
+                    className={styles.rulesetName}
+                    value={rulesetName}
+                    onChange={(e) => handleInputChange(e, "")}
+                    onBlur={(e) => handleInputChange(e, "")}
+                  />
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {rulesetNameErrorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={"auto"} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+              <div className={"p-2 d-flex"}>
+                <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
 
-      {modalTitle}
+          <Row className={"mb-3"}>
+            <FormLabel column lg={"auto"}>{"Match on:"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <span className={styles.matchOnTagsContainer}>{displayMatchOnTags()}</span>
+              {!selectedRowKeys.length && saveClicked ? noPropertyCheckedErrorMessage : null}
+            </Col>
+          </Row>
 
-      <Form
-        id="matching-multiple-ruleset"
-        onSubmit={onSubmit}
-      >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={"auto"}>{"Ruleset Name:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"}  sm={6}>
-                <HCInput
-                  id="rulesetName-input"
-                  ariaLabel="rulesetName-input"
-                  placeholder="Enter ruleset name"
-                  className={styles.rulesetName}
-                  value={rulesetName}
-                  onChange={(e) => handleInputChange(e, "")}
-                  onBlur={(e) => handleInputChange(e, "")}
-                />
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {rulesetNameErrorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={"auto"} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
-            <div className={"p-2 d-flex"}>
-              <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
+          <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
+            <div className={`d-flex align-items-center ${styles.legendText}`}><img className={"me-1"} src={arrayIcon} /> Multiple</div>
+            <div className={`d-flex align-items-center ${styles.legendText}`}><FontAwesomeIcon className={`me-1 ${styles.structuredIcon}`} icon={faLayerGroup} /> Structured Type</div>
+            <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
+          </div>
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={"auto"}>{"Match on:"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <span className={styles.matchOnTagsContainer}>{displayMatchOnTags()}</span>
-            {!selectedRowKeys.length && saveClicked ? noPropertyCheckedErrorMessage : null}
-          </Col>
-        </Row>
-
-        <div className={styles.modalTitleLegend} aria-label="modalTitleLegend">
-          <div className={`d-flex align-items-center ${styles.legendText}`}><img className={"me-1"} src={arrayIcon} /> Multiple</div>
-          <div className={`d-flex align-items-center ${styles.legendText}`}><FontAwesomeIcon className={`me-1 ${styles.structuredIcon}`} icon={faLayerGroup} /> Structured Type</div>
-          <div className={styles.expandCollapseIcon}><ExpandCollapse handleSelection={(id) => handleExpandCollapse(id)} currentSelection={""} /></div>
-        </div>
-
-        <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
-          <Table
-            pagination={paginationOptions}
-            className={styles.entityTable}
-            expandIcon={(props) => customExpandIcon(props)}
-            onExpand={(expanded, record) => toggleRowExpanded(expanded, record)}
-            expandedRowKeys={expandedRowKeys}
-            rowClassName={() => styles.entityTableRows}
-            rowSelection={{...rowSelection}}
-            indentSize={18}
-            columns={multipleRulesetsTableColumns}
-            scroll={{y: "60vh", x: 1000}}
-            dataSource={multipleRulesetsData}
-            tableLayout="unset"
-            rowKey="propertyPath"
-            getPopupContainer={() => document.getElementById("multipleRulesetsTableContainer") || document.body}
-          /></div>
-        {modalFooter}
-      </Form>
-      {discardChanges}
-      <DeleteModal
-        isVisible={showDeleteConfirmModal}
-        toggleModal={toggleDeleteConfirmModal}
-        editRuleset={curationRuleset}
-        confirmAction={confirmAction}
-      />
+          <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
+            <Table
+              pagination={paginationOptions}
+              className={styles.entityTable}
+              expandIcon={(props) => customExpandIcon(props)}
+              onExpand={(expanded, record) => toggleRowExpanded(expanded, record)}
+              expandedRowKeys={expandedRowKeys}
+              rowClassName={() => styles.entityTableRows}
+              rowSelection={{...rowSelection}}
+              indentSize={18}
+              columns={multipleRulesetsTableColumns}
+              scroll={{y: "60vh", x: 1000}}
+              dataSource={multipleRulesetsData}
+              tableLayout="unset"
+              rowKey="propertyPath"
+              getPopupContainer={() => document.getElementById("multipleRulesetsTableContainer") || document.body}
+            /></div>
+          {modalFooter}
+        </Form>
+        {discardChanges}
+        <DeleteModal
+          isVisible={showDeleteConfirmModal}
+          toggleModal={toggleDeleteConfirmModal}
+          editRuleset={curationRuleset}
+          confirmAction={confirmAction}
+        />
+      </Modal.Body>
     </Modal>
   );
 };

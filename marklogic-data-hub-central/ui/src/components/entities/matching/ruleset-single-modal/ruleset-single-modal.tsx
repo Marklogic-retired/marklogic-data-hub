@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Switch, Select} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Switch, Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ruleset-single-modal.module.scss";
@@ -703,16 +703,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     </>
   );
 
-  const modalTitle = (
-    <div>
-      <div style={{fontSize: "18px"}}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
-      <div className={styles.modalTitleLegend}>
-        <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
-        <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
-      </div>
-    </div>
-  );
-
   const modalFooter = (
     <div className={styles.editFooter}>
       { (Object.keys(curationRuleset).length !== 0) && <HCButton size="sm" aria-label="editSingleRulesetDeleteIcon" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
@@ -749,88 +739,96 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     resetModal();
   };
 
-
   return (
     <Modal
-      visible={props.isVisible}
-      destroyOnClose={true}
-      closable={true}
-      maskClosable={false}
-      title={modalTitle}
-      footer={null}
-      width={700}
-      onCancel={closeModal}
+      show={props.isVisible}
+      size={"lg"}
     >
-      <Form
-        id="matching-single-ruleset"
-        onSubmit={onSubmit}
-      >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
-          <Col className={"d-flex align-items-center"}>
-            <Switch onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
-            <div className={"p-2 d-flex align-items-center"}>
-              <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
-                <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
-              </HCTooltip>
-            </div>
-          </Col>
-        </Row>
+      <Modal.Header className={"pb-0"}>
+        <div>
+          <div className={"fs-5"}>{Object.keys(curationRuleset).length !== 0 ? "Edit Match Ruleset for Single Property" : "Add Match Ruleset for Single Property"}</div>
+        </div>
+        <div className={`flex-column ${styles.modalTitleLegend}`}>
+          <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+          <div className={"d-flex mt-3"}>
+            <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/>Multiple</div>
+            <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
+          </div>
+        </div>
+      </Modal.Header>
+      <Modal.Body>
+        <Form
+          id="matching-single-ruleset"
+          onSubmit={onSubmit}
+          className={"container-fluid"}
+        >
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
+            <Col className={"d-flex align-items-center"}>
+              <Switch onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+              <div className={"p-2 d-flex align-items-center"}>
+                <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={styles.icon} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </div>
+            </Col>
+          </Row>
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Property to Match:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={propertyTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <EntityPropertyTreeSelect
-                  propertyDropdownOptions={entityTypeDefinition.properties}
-                  entityDefinitionsArray={curationOptions.entityDefinitionsArray}
-                  value={selectedProperty}
-                  onValueSelected={onPropertySelect}
-                />
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {propertyTypeErrorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Property to Match:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={propertyTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                  <EntityPropertyTreeSelect
+                    propertyDropdownOptions={entityTypeDefinition.properties}
+                    entityDefinitionsArray={curationOptions.entityDefinitionsArray}
+                    value={selectedProperty}
+                    onValueSelected={onPropertySelect}
+                  />
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {propertyTypeErrorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
 
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Match Type:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row>
-              <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <Select
-                  aria-label="match-type-dropdown"
-                  className={styles.matchTypeSelect}
-                  size="default"
-                  placeholder="Select match type"
-                  onSelect={onMatchTypeSelect}
-                  value={matchType}
-                >
-                  {renderMatchOptions}
-                </Select>
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {matchTypeErrorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Match Type:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row>
+                <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                  <Select
+                    aria-label="match-type-dropdown"
+                    className={styles.matchTypeSelect}
+                    size="default"
+                    placeholder="Select match type"
+                    onSelect={onMatchTypeSelect}
+                    value={matchType}
+                  >
+                    {renderMatchOptions}
+                  </Select>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {matchTypeErrorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
 
-        {matchType === "synonym" && renderSynonymOptions}
-        {matchType === "doubleMetaphone" && renderDoubleMetaphoneOptions}
-        {matchType === "custom" && renderCustomOptions}
-        {modalFooter}
-      </Form>
-      {discardChanges}
-      <DeleteModal
-        isVisible={showDeleteConfirmModal}
-        toggleModal={toggleDeleteConfirmModal}
-        editRuleset={curationRuleset}
-        confirmAction={confirmAction}
-      />
+          {matchType === "synonym" && renderSynonymOptions}
+          {matchType === "doubleMetaphone" && renderDoubleMetaphoneOptions}
+          {matchType === "custom" && renderCustomOptions}
+          {modalFooter}
+        </Form>
+        {discardChanges}
+        <DeleteModal
+          isVisible={showDeleteConfirmModal}
+          toggleModal={toggleDeleteConfirmModal}
+          editRuleset={curationRuleset}
+          confirmAction={confirmAction}
+        />
+      </Modal.Body>
     </Modal>
   );
 };
