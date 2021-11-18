@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Modal, Table} from "antd";
+import {Table} from "antd";
+import {Modal} from "react-bootstrap";
 import "./compare-values-modal.scss";
 import styles from "./compare-values-modal.module.scss";
 import {Definition} from "../../../../types/modeling-types";
@@ -330,37 +331,38 @@ const CompareValuesModal: React.FC<Props> = (props) => {
       }
     },
   ];
+
   return <Modal
-    visible={props.isVisible}
-    closable={true}
-    maskClosable={false}
-    title={null}
-    footer={null}
-    width={1400}
-    destroyOnClose={true}
-    onCancel={closeModal}
-    onOk={closeModal}
+    show={props.isVisible}
+    size={"lg"}
+    dialogClassName={styles.modal1400w}
   >
-    <div><div className={styles.compareValuesModalHeading}>Compare</div>
+    <Modal.Header className={"bb-none"}>
+      <span className={styles.compareValuesModalHeading}>Compare</span>
+      <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+    </Modal.Header>
+    <Modal.Body>
       <div>
-        <span className={styles.customer1}>Customer 1</span>
-        <span className={styles.customer2}>Customer 2</span>
+        <div>
+          <span className={styles.customer1}>Customer 1</span>
+          <span className={styles.customer2}>Customer 2</span>
+        </div>
+        <div className={styles.compareTableHeader}>
+          <span className={styles.uri1}>{props.uriCompared[0]}</span>
+          <span className={styles.uri2}>{props.uriCompared[1]}</span>
+        </div>
+        <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
+        <span className={styles.matchIconText}>Match</span>
       </div>
-      <div className={styles.compareTableHeader}>
-        <span className={styles.uri1}>{props.uriCompared[0]}</span>
-        <span className={styles.uri2}>{props.uriCompared[1]}</span>
-      </div>
-      <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
-      <span className={styles.matchIconText}>Match</span>
-    </div>
-    <Table
-      dataSource={compareValuesTableData}
-      className={styles.compareValuesTable}
-      columns={columns}
-      rowKey="key"
-      //id="compareValuesTable"
-    >
-    </Table>
+      <Table
+        dataSource={compareValuesTableData}
+        className={styles.compareValuesTable}
+        columns={columns}
+        rowKey="key"
+        //id="compareValuesTable"
+      >
+      </Table>
+    </Modal.Body>
   </Modal>;
 };
 

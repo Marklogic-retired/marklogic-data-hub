@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {Modal} from "antd";
+import {Modal} from "react-bootstrap";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import {CurationContext} from "../../../../util/curation-context";
 import {HCButton} from "@components/common";
@@ -41,32 +41,31 @@ const DeleteModal: React.FC<Props> = (props) => {
     props.confirmAction();
   };
 
-
-  const modalFooter = <div >
-    <HCButton
-      aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-no`: `confirm-${props.editRuleset.thresholdName}-no`}
-      variant="outline-light"
-      onClick={closeModal}
-    >No</HCButton>
-    <HCButton
-      aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-yes`: `confirm-${props.editRuleset.thresholdName}-yes`}
-      variant="primary"
-      onClick={() => confirmAction()}
-    >Yes</HCButton>
-  </div>;
-
   return (
     <Modal
-      width={500}
-      visible={props.isVisible}
-      destroyOnClose={true}
-      closable={false}
-      maskClosable={false}
-      footer={modalFooter}
+      show={props.isVisible}
     >
-      <p aria-label="delete-slider-text" >Are you sure you want to delete a&nbsp;<span>{props.editRuleset.hasOwnProperty("name") ? "ruleset" : "threshold"}</span>&nbsp;
-        <b>{props.editRuleset.hasOwnProperty("name")? props.editRuleset.name : (props.editRuleset.thresholdName + " - " + props.editRuleset.action)} </b> ?
-      </p>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+      </Modal.Header>
+      <Modal.Body className={"pt-0 px-4"}>
+        <p aria-label="delete-slider-text" >Are you sure you want to delete a&nbsp;<span>{props.editRuleset.hasOwnProperty("name") ? "ruleset" : "threshold"}</span>&nbsp;
+          <b>{props.editRuleset.hasOwnProperty("name")? props.editRuleset.name : (props.editRuleset.thresholdName + " - " + props.editRuleset.action)} </b> ?
+        </p>
+        <div className={"d-flex justify-content-center pt-4 pb-2"}>
+          <HCButton
+            aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-no`: `confirm-${props.editRuleset.thresholdName}-no`}
+            variant="outline-light"
+            className={"me-2"}
+            onClick={closeModal}
+          >No</HCButton>
+          <HCButton
+            aria-label={props.editRuleset.hasOwnProperty("name")? `confirm-${props.editRuleset.name}-yes`: `confirm-${props.editRuleset.thresholdName}-yes`}
+            variant="primary"
+            onClick={() => confirmAction()}
+          >Yes</HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 };

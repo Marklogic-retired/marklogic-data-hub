@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Select} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./threshold-modal.module.scss";
 
 import {CurationContext} from "../../../../util/curation-context";
@@ -449,74 +449,75 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      visible={props.isVisible}
-      destroyOnClose={true}
-      closable={true}
-      maskClosable={false}
-      title={Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}
-      footer={null}
-      width={700}
-      onCancel={closeModal}
+      show={props.isVisible}
+      size={"lg"}
     >
-      <Form
-        id="match-threshold"
-        onSubmit={onSubmit}
-      >
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row className={"me-5"}>
-              <Col className={nameErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <HCInput
-                  id="name-input"
-                  ariaLabel="name-input"
-                  placeholder="Enter threshold name"
-                  className={styles.input}
-                  value={nameValue}
-                  onChange={handleInputChange}
-                  onBlur={handleInputChange}
-                />
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {nameErrorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-        <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Action:"}<span className={styles.asterisk}>*</span></FormLabel>
-          <Col>
-            <Row className={"me-5"}>
-              <Col className={actionTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                <Select
-                  aria-label={"threshold-select"}
-                  className={styles.matchTypeSelect}
-                  size="default"
-                  placeholder="Select action"
-                  defaultValue="''"
-                  onSelect={onMatchTypeSelect}
-                  value={actionType}
-                >
-                  {renderThresholdOptions}
-                </Select>
-              </Col>
-              <Col xs={12} className={styles.validationError}>
-                {actionTypeErrorMessage}
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+      <Modal.Header>
+        <span className={"fs-5"}>{Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}</span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+      </Modal.Header>
+      <Modal.Body>
+        <Form
+          id="match-threshold"
+          onSubmit={onSubmit}
+          className={"container-fluid"}
+        >
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Name:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row className={"me-5"}>
+                <Col className={nameErrorMessage ? "d-flex has-error" : "d-flex"}>
+                  <HCInput
+                    id="name-input"
+                    ariaLabel="name-input"
+                    placeholder="Enter threshold name"
+                    className={styles.input}
+                    value={nameValue}
+                    onChange={handleInputChange}
+                    onBlur={handleInputChange}
+                  />
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {nameErrorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+          <Row className={"mb-3"}>
+            <FormLabel column lg={3}>{"Action:"}<span className={styles.asterisk}>*</span></FormLabel>
+            <Col>
+              <Row className={"me-5"}>
+                <Col className={actionTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                  <Select
+                    aria-label={"threshold-select"}
+                    className={styles.matchTypeSelect}
+                    size="default"
+                    placeholder="Select action"
+                    defaultValue="''"
+                    onSelect={onMatchTypeSelect}
+                    value={actionType}
+                  >
+                    {renderThresholdOptions}
+                  </Select>
+                </Col>
+                <Col xs={12} className={styles.validationError}>
+                  {actionTypeErrorMessage}
+                </Col>
+              </Row>
+            </Col>
+          </Row>
 
-        {actionType === "custom" && renderCustomOptions}
-        {modalFooter}
-      </Form>
-      {discardChanges}
-      <DeleteModal
-        isVisible={showDeleteConfirmModal}
-        toggleModal={toggleDeleteConfirmModal}
-        editRuleset={props.editThreshold}
-        confirmAction={confirmAction}
-      />
+          {actionType === "custom" && renderCustomOptions}
+          {modalFooter}
+        </Form>
+        {discardChanges}
+        <DeleteModal
+          isVisible={showDeleteConfirmModal}
+          toggleModal={toggleDeleteConfirmModal}
+          editRuleset={props.editThreshold}
+          confirmAction={confirmAction}
+        />
+      </Modal.Body>
     </Modal>
   );
 };
