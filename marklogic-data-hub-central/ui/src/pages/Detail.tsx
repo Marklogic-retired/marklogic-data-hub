@@ -61,7 +61,14 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
   const componentIsMounted = useRef(true);
   const authorityService = useContext(AuthoritiesContext);
-
+  let tableView = detailPagePreferences.hasOwnProperty("tableView") ? detailPagePreferences["tableView"] : true;
+  let graphView= false;
+  if (location.state) {
+    graphView = !!location.state["graphView"];
+  }
+  if (graphView) {
+    tableView = false;
+  }
   const getSaveQueries = async () => {
     try {
       if (authorityService.isSavedQueryUser()) {
@@ -307,7 +314,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
       start: detailPagePreferences["start"] ? detailPagePreferences["start"] : 1,
       searchFacets: detailPagePreferences.query["selectedFacets"] ? detailPagePreferences.query["selectedFacets"] : {},
       query: detailPagePreferences.query["searchText"] ? detailPagePreferences.query["searchText"] : "",
-      tableView: detailPagePreferences.hasOwnProperty("tableView") ? detailPagePreferences["tableView"] : true,
+      tableView,
+      graphView,
       sortOrder: detailPagePreferences["sortOrder"] ? detailPagePreferences["sortOrder"] : [],
       sources: detailPagePreferences["sources"] ? detailPagePreferences["sources"] : [],
       primaryKey: detailPagePreferences["primaryKey"] ? detailPagePreferences["primaryKey"] : "",
@@ -374,7 +382,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
       start: state && state.hasOwnProperty("start") ? state["start"] : parentPagePreferences["start"],
       searchFacets: state && state.hasOwnProperty("searchFacets") ? state["searchFacets"] : parentPagePreferences["searchFacets"],
       query: state && state.hasOwnProperty("query") ? state["query"] : parentPagePreferences["query"],
-      tableView: state && state.hasOwnProperty("tableView") ? state["tableView"] : parentPagePreferences["tableView"],
+      tableView,
+      graphView,
       sortOrder: state && state.hasOwnProperty("sortOrder") ? state["sortOrder"] : parentPagePreferences["sortOrder"],
       sources: state && state.hasOwnProperty("sources") ? state["sources"] : parentPagePreferences["sources"],
       isEntityInstance: state && state.hasOwnProperty("isEntityInstance") ? state["isEntityInstance"] : parentPagePreferences["isEntityInstance"],
