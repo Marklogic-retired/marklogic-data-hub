@@ -125,15 +125,14 @@
     }
 
     > .columnOptionsSelectorContainer {
-        display: inline-block;
-        min-width: 1000px;
-        margin-bottom: 10px;
-
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        min-width: 100%;
         > .columnOptionsSelector{
             float: right;
             margin: 15px 15px 0px 0px;
         }
-
         > .entityCollapseButtons{
             float: right;
             margin-top: 10px;

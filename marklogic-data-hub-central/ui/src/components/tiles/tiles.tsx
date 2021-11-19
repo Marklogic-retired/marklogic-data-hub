@@ -149,7 +149,7 @@ const Tiles: React.FC<Props> = (props) => {
               <>
                 <div>
                   <i className={styles.faCog} aria-label={"menu"} style={{color: options["color"]}}>
-                    <HCButton variant="outline-light" id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
+                    <HCButton variant="outline-light" id="manage-queries-button" onClick={onMenuClick} >
                       <FontAwesomeIcon icon={faCog} style={{color: "#394494", fontSize: "14px", paddingRight: "4px", paddingTop: "1px"}} /> Manage Queries
                     </HCButton>
                   </i>

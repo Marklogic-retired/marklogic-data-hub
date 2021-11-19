@@ -446,7 +446,7 @@ const EntityTiles = (props) => {
                 </Accordion.Button>
               </Card.Header>
               <Accordion.Body>
-                <Tabs defaultActiveKey={`map-${entityType}`} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
+                <Tabs defaultActiveKey={`map`} onSelect={(eventKey) => updateView(index, eventKey, entityType)} className={styles.entityTabs}>
                   {canReadMapping ? <Tab id={`${entityType}-Map`} data-testid={`${entityType}-Map`} eventKey={`map`} key={`map-${entityType}`}  title="Map" tabClassName={`curateTab`}/>: null}
                   {props.canReadMatchMerge ? <Tab  id={`${entityType}-Match`} data-testid={`${entityType}-Match`} eventKey="match" key={`match-${entityType}`}  title="Match" tabClassName={`curateTab`}/>: null}
                   {props.canReadMatchMerge ? <Tab id={`${entityType}-Merge`} data-testid={`${entityType}-Merge`} eventKey="merge" key={`merge-${entityType}`}   title="Merge" tabClassName={`curateTab`}/>: null}

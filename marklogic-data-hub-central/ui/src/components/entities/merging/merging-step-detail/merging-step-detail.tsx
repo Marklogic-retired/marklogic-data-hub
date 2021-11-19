@@ -421,9 +421,9 @@ const MergingStepDetail: React.FC = () => {
               expandIcon={(expandProps) => {
                 if (expandProps.record.priorityOrder) {
                   return (expandProps.expanded ? (
-                    <ChevronDown aria-label="down" onClick={e => expandProps.onExpand(expandProps.record, e)} />
+                    <ChevronDown aria-label="down" className={styles.icon} onClick={e => expandProps.onExpand(expandProps.record, e)} />
                   ) : (
-                    <ChevronRight aria-label="right" onClick={e => expandProps.onExpand(expandProps.record, e)} />
+                    <ChevronRight aria-label="right" className={styles.icon} onClick={e => expandProps.onExpand(expandProps.record, e)} />
                   )
                   );
                 } else { return (false); }

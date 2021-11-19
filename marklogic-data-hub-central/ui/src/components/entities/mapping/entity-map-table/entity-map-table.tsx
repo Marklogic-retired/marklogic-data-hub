@@ -1333,7 +1333,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           let completeRelationshipTooltip = ModelingTooltips.completeRelationship(relatedEntityName, props.entityTypeTitle);
           let incompleteRelationshipTooltip = ModelingTooltips.relationshipNoForeignKey(relatedEntityName, props.entityTypeTitle);
           renderText =
-            <span className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
+            <div className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
               {expanded && row.joinPropertyName !== "" ?
                 //if multiple and has foreign key, show context help
                 <div className={styles.typeContainer}>
@@ -1349,16 +1349,19 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   </div>
                 </div>
                 :
-                row.joinPropertyName !== "" ?
-                  renderText //show data type if not multiple but has foreign key
-                  :
-                  renderText = relatedEntityName //if no foreign key
+                <span className={styles.textTypeContainer}>
+                  {row.joinPropertyName !== "" ?
+                    renderText //show data type if not multiple but has foreign key
+                    :
+                    renderText = relatedEntityName //if no foreign key
+                  }
+                </span>
               }
               {row.joinPropertyName !== "" ?
                 //icons if relationship is complete with a foreign key
                 <div className={styles.dualIconsContainer}>
                   <HCTooltip className={styles.relationshipTooltip} text={completeRelationshipTooltip} data-testid={"relationship-tooltip"} id={"relationshipTooltip-" + row.name} placement="bottom">
-                    <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name} />
+                    <div className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name} />
                   </HCTooltip>
                   <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom">
                     <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
@@ -1372,7 +1375,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   </HCTooltip>
                 </div>
               }
-            </span>;
+            </div>;
         }
         return {
           children:

@@ -468,7 +468,7 @@ const LoadList: React.FC<Props> = (props) => {
       dataIndex: "actions",
       key: "actions",
       render: (text, row) => (
-        <span>
+        <span className={styles.actionButtonsContainer}>
           {props.canReadWrite ?
             <HCTooltip text="Run" id="run-action-tooltip" placement="bottom">
               <i aria-label="icon: run">

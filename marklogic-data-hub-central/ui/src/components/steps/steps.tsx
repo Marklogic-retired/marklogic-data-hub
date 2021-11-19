@@ -218,7 +218,7 @@ const Steps: React.FC<Props> = (props) => {
     size={"lg"}
   >
     <Modal.Header className={"bb-none pb-0"}>
-      <div className={"fs-3"}>{getTitle()}</div>
+      <div className={`fs-3 position-absolute ${styles.title}`}>{getTitle()}</div>
       <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
     </Modal.Header>
     <Modal.Body className={"pt-0 pb-4"}>

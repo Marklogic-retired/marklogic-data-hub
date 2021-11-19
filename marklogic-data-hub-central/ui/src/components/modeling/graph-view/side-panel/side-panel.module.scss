@@ -41,11 +41,12 @@
         .sidePanelTabLabel {
             font-size: 18px;
         }
-        .tab-content {
+        div[class=tab-content] {
             display: none;
-        }
+        } 
     }
 }
+
 
 .formItem {
     display: flex;

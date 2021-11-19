@@ -1,22 +1,20 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import styles from "./side-panel.module.scss";
+import {Input} from "antd";
+import {Row, Col, Form, FormLabel, Tab, Tabs} from "react-bootstrap";
+import {TwitterPicker} from "react-color";
+import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
+import {HCTooltip} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import styles from "./side-panel.module.scss";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
-// import {CloseOutlined} from "@ant-design/icons";
-import {Input} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import {ModelingContext} from "../../../../util/modeling-context";
 import PropertiesTab from "../properties-tab/properties-tab";
 import {primaryEntityTypes, updateModelInfo} from "../../../../api/modeling";
 import {UserContext} from "../../../../util/user-context";
-import {TwitterPicker} from "react-color";
 import graphConfig from "../../../../config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
-import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
-import {Tab, Tabs} from "react-bootstrap";
-import {HCTooltip} from "@components/common";
 
 type Props = {
   entityTypes: any;

@@ -949,6 +949,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     variant="primary"
     aria-label={props.entityName + "-add-property"}
     disabled={!props.canWriteEntityModel || titleNoDefinition()}
+    size="sm"
     className={(!props.canWriteEntityModel || titleNoDefinition()) ? styles.disabledButton : styles.addPropertyButton}
     onClick={() => addPropertyButtonClicked()}
   >Add Property</HCButton>;
