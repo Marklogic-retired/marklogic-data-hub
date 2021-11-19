@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Radio, AutoComplete, Tooltip, Popover} from "antd";
+import {Radio, AutoComplete, Tooltip} from "antd";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
@@ -531,13 +531,13 @@ const CreateEditStep: React.FC<Props> = (props) => {
                 </Radio.Group>
 
                 <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" }>
-                  <Popover
-                    content={collectionQueryInfo}
-                    trigger="hover"
+                  <HCTooltip
+                    text={collectionQueryInfo}
+                    id={"collection-query-tooltip"}
                     placement="left"
                   >
                     <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
-                  </Popover></span>
+                  </HCTooltip></span>
 
                 <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
