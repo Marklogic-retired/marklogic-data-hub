@@ -37,7 +37,10 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
           es-helper:get-entity-property-info($target-entity-type, $full-property-name)
         else
           ()
-      let $property-def := $match-options/(*:property-defs|propertyDefs)/*:property[(name|@name) = $full-property-name]
+      let $property-def := fn:head(
+        ($match-options/(*:property-defs|propertyDefs)/*:property[(name|@name) = $full-property-name],
+        $match-options/matchRulesets/matchRules[documentXPath = $full-property-name])
+      )
       let $index-reference-info := $property-def/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference|indexReferences)
       let $index-references := ($property-info ! map:get(., "indexReference"), $index-reference-info ! cts:reference-parse(.))
       let $helper-query :=
@@ -97,33 +100,79 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
                 )
             }
         else if (fn:exists($property-def)) then
-          let $qname := fn:QName(fn:string($property-def/(@namespace|namespace)), fn:string($property-def/(@localname|localname)))
-          return
-            function($nodes, $weight) {
-              let $expanded-values := $nodes ! fn:string(.)[. ne '']
-              where fn:exists($expanded-values)
-              return
-                if ($is-json-fun()) then
-                  cts:json-property-value-query(
-                    fn:string($qname),
-                    $nodes[fn:not(. instance of null-node())],
-                    ("case-insensitive"),
-                    $weight
-                  )
-                else
-                  cts:element-value-query(
-                      $qname,
-                      $expanded-values,
+          if (fn:exists($property-def/(@xpath|documentXPath))) then
+            helper-impl:build-xpath-based-query($property-def, $compiled-match-options)
+          else
+            let $qname := fn:QName(fn:string($property-def/(@namespace|namespace)), fn:string($property-def/(@localname|localname)))
+            return
+              function($nodes, $weight) {
+                let $expanded-values := $nodes ! fn:string(.)[. ne '']
+                where fn:exists($expanded-values)
+                return
+                  if ($is-json-fun()) then
+                    cts:json-property-value-query(
+                      fn:string($qname),
+                      $nodes[fn:not(. instance of null-node())],
                       ("case-insensitive"),
                       $weight
-                  )
-            }
+                    )
+                  else
+                    cts:element-value-query(
+                        $qname,
+                        $expanded-values,
+                        ("case-insensitive"),
+                        $weight
+                    )
+              }
         else ()
       return (
         map:put($_cached-property-name-to-queries, $key, $helper-query),
         $helper-query,
         xdmp:trace($const:TRACE-MATCH-RESULTS, "Caching '" || xdmp:describe($helper-query, (),()) || "' under key '" || $key ||"'" )
       )
+};
+
+declare function helper-impl:build-xpath-based-query($property-def, $compiled-match-options) {
+  let $xpath-parts := fn:reverse(fn:tokenize(fn:string($property-def/(@xpath|documentXPath)), "/")[. ne ""])
+  let $first-xpath-part := fn:head($xpath-parts)
+  let $remaining-xpath-parts := fn:tail($xpath-parts)
+  let $namespaces := $compiled-match-options => map:get("namespaces")
+  let $parse-names-function := function ($xpath-step) {
+      fn:tokenize(fn:replace($xpath-step, "^\(.+\)$", "$1"), "\|") ! fn:normalize-space()
+    }
+  return
+    function ($nodes, $weight) {
+      let $is-xml := fn:exists($nodes[parent::element()])
+      let $local-namespaces := map:new(($namespaces, $property-def/namespaces ! xdmp:from-json(.)))
+      let $is-xml := fn:exists($nodes[parent::element()])
+      let $values := if ($is-xml) then $nodes ! fn:string(.)[. ne ''] else $nodes[fn:not(. instance of null-node())]
+      let $parse-names-function := if ($is-xml) then
+              function($xpath-step) {
+                for $part in $parse-names-function($xpath-step)
+                return
+                  if (fn:contains($part, ":")) then
+                    let $qname-parts := fn:tokenize($part, ":")
+                    return
+                      fn:QName(map:get($local-namespaces, $qname-parts[1]), $qname-parts[2])
+                  else
+                    xs:QName($part)
+              }
+            else
+              $parse-names-function
+      let $query := if ($is-xml) then
+            cts:element-value-query($parse-names-function($first-xpath-part), $values, (), $weight)
+          else
+            cts:json-property-value-query($parse-names-function($first-xpath-part), $values, (), $weight)
+      return
+        fn:fold-left(
+          if ($is-xml) then
+            function($query, $parent-xpath-part) {cts:element-query($parse-names-function($parent-xpath-part) ! xs:QName(.), $query) }
+          else
+            function($query, $parent-xpath-part) {cts:json-property-scope-query($parse-names-function($parent-xpath-part), $query) },
+          $query,
+          $remaining-xpath-parts
+        )
+    }
 };
 
 declare variable $_cached-property-name-to-qnames as map:map := map:map();
