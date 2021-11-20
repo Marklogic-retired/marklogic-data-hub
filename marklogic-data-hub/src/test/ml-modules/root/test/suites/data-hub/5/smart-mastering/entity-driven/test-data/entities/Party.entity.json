@@ -1,0 +1,20 @@
+{
+  "info": {
+    "title": "Party",
+    "version": "1.0.0",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Party": {
+      "namespacePrefix": "pty",
+      "namespace": "http://www.example.org/customer",
+      "required": [],
+      "primaryKey": "givenNameOne",
+      "properties": {
+        "givenNameOne": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
