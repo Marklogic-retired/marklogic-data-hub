@@ -58,7 +58,24 @@ function verifyNullsDoNotMatch() {
         test.assertEqual(0, fn.count(notifyAction), `Zero notify actions should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`)
     ];
 }
+
+function verifyDocumentXPathDoesNotThrowError() {
+    const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/PartyDocumentXPath1.xml'), {}, xdmp.databaseName(xdmp.database()));
+    const results = fn.head(match.main(content, { stepId: 'matchDocumentXPathOnly-matching'})).value;
+    let resultsNode = xdmp.toJSON(results);
+    let mergeAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "merge"]');
+    let customAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "customActions"]');
+    let notifyAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "notify"]');
+    return [
+        test.assertEqual(1, fn.count(results), `A matchSummary should be returned. Results: ${results}`),
+        test.assertEqual(1, fn.count(mergeAction), `A merge action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
+        test.assertEqual(0, fn.count(customAction), `Zero custom actions should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
+        test.assertEqual(0, fn.count(notifyAction), `Zero notify actions should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`)
+    ];
+}
+
 assertions
     .concat(testJsonMatches())
     .concat(testNamespacedXmlMatches())
-    .concat(verifyNullsDoNotMatch());
+    .concat(verifyNullsDoNotMatch())
+    .concat(verifyDocumentXPathDoesNotThrowError());

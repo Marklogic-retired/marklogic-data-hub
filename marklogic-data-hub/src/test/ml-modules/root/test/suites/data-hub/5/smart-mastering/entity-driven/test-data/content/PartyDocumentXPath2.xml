@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources xmlns="">
+            <name>source 2</name>
+        </sources>
+        <createdOn xmlns="">2020-08-20T05:27:43.360675Z</createdOn>
+        <createdBy xmlns="">admin</createdBy>
+    </headers>
+    <triples/>
+    <instance>
+        <info>
+            <title>Party</title>
+            <version>1.0.0</version>
+        </info>
+        <pty:Party xmlns:pty="http://example.org/customer">
+            <pty:givenNameOne>Accessed by documentXPath</pty:givenNameOne>
+        </pty:Party>
+    </instance>
+    <attachments/>
+</envelope>

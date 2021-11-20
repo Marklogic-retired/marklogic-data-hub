@@ -1,0 +1,26 @@
+{
+  "name": "matchDocumentXPathOnly",
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "stepId": "matchDocumentXPathOnly-matching",
+  "targetEntityType": "http://www.example.com/Party-1.0.0/Party",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['raw-content'])",
+  "collections": ["matchCustomers"],
+  "matchRulesets": [
+    {
+      "name": "Name",
+      "weight": 5,
+      "matchRules": [
+        {
+          "namespaces":{ "es": "http://marklogic.com/entity-services", "pty": "http://example.org/customer" },
+          "documentXPath": "/es:envelope/es:instance/pty:Party/pty:givenNameOne",
+          "matchType": "exact"
+        }
+      ]
+    }
+  ],
+  "thresholds": [
+    { "thresholdName": "sameThreshold", "action": "merge", "score": 4 }
+  ]
+}
