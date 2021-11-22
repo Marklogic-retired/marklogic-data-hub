@@ -571,6 +571,7 @@ const GraphVis: React.FC<Props> = (props) => {
     interaction: {
       navigationButtons: true,
       hover: true,
+      zoomView: false
     },
     manipulation: {
       enabled: false,
