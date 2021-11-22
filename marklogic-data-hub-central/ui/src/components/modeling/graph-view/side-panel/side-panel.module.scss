@@ -41,6 +41,9 @@
         .sidePanelTabLabel {
             font-size: 18px;
         }
+        .tab-content {
+            display: none;
+        }
     }
 }
 
@@ -56,7 +59,7 @@
 }
 
 .colorsIcon {
-  margin-left: 12px;
+    margin-left: 12px;
 }
 
 .editIconReadOnly {
@@ -80,15 +83,15 @@
 }
 
 .editIcon:hover {
-    color: #7FADE3;
+    color: #7fade3;
 }
 
 .questionCircle {
-  font-size: 12px;
-  vertical-align: top;
-  margin-top: 8px;
-  margin-left: 10px;
-  color: #7F86B5;
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 8px;
+    margin-left: 10px;
+    color: #7f86b5;
 }
 
 .colorContainer {
@@ -127,7 +130,7 @@
 
 ul.tabsContainer {
     width: 100%;
-    margin-left: .5rem !important;
+    margin-left: 0.5rem !important;
     font-size: 14px;
     display: flex;
     align-items: flex-end;
@@ -167,5 +170,5 @@ button.tab {
 }
 
 .validationError {
-  @extend .validationError;
+    @extend .validationError;
 }

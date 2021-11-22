@@ -17,9 +17,9 @@ describe("Search Pagination component", () => {
           maxRowsPerPage={20}
         />);
 
-      expect(wrapper.find(".ant-pagination")).toHaveLength(1);
-      const pageSize = wrapper.find(".ant-select-selection-selected-value").text();
-      expect(pageSize).toEqual("20");
+      expect(wrapper.find(`.pagination`)).toHaveLength(1);
+      const pageSize = wrapper.find(`select[data-testid="pageSizeSelect"]`);
+      expect(pageSize.props().value).toBe(20);
     });
 
     test("verify not showing pagination controls if 0 or 1 pages ", () => {
@@ -31,7 +31,7 @@ describe("Search Pagination component", () => {
           pageLength={1}
           maxRowsPerPage={20}
         />);
-      expect(wrapper.find(".ant-pagination")).toHaveLength(0);
+      expect(wrapper.find(".pagination")).toHaveLength(0);
     });
 
   });

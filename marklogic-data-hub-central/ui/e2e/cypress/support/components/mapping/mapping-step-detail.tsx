@@ -15,6 +15,10 @@ class MappingStepDetail {
     return cy.findByTestId("navigate-uris-left");
   }
 
+  getPaginationPageSizeOptions() {
+    return cy.get(`.ant-pagination-options .ant-select-selection-selected-value`);
+  }
+
   expandSource() {
     return cy.get("#srcContainer #expandIcon");
   }
