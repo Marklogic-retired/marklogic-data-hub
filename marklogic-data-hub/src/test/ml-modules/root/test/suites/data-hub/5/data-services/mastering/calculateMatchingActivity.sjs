@@ -478,7 +478,144 @@ const expected2 = {
     }]
 };
 
+const step3 = {
+  "matchRulesets": [
+    {
+      "name": "customerId - Exact",
+      "weight": 12,
+      "matchRules": [
+        {
+          "entityPropertyPath": "customerId",
+          "matchType": "exact",
+          "options": {
+          }
+        }
+      ]
+    }
+    ,
+    {
+      "name": "name - Exact",
+      "weight": 16,
+      "matchRules": [
+        {
+          "entityPropertyPath": "name",
+          "matchType": "exact",
+          "options": {
+          }
+        }
+      ]
+    }
+    ,
+    {
+      "name": "birthDate - Reduce",
+      "weight": 4,
+      "reduce": true,
+      "matchRules": [
+        {
+          "entityPropertyPath": "birthDate",
+          "matchType": "exact",
+          "options": {
+          }
+        }
+      ]
+    }
+  ]
+  ,
+  "thresholds": [
+    {
+      "thresholdName": "Definitive Match",
+      "action": "merge",
+      "score": 11
+    },
+    {
+      "thresholdName": "Definitive Match - testing multiple thresholds with same score",
+      "action": "notify",
+      "score": 11
+    }
+  ]
+};
+
+const expected3 = {
+  "scale":
+    {
+      "max": 11,
+      "min": 11
+    },
+  "thresholdActions": [
+    {
+      "name": "Definitive Match",
+      "action": "merge",
+      "minimumMatchContributions": [
+        [
+          {
+            "rulesetName": "name - Exact",
+            "weight": 16,
+            "matchRules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "exact"
+              }]
+          }],
+        [
+          {
+            "rulesetName": "customerId - Exact",
+            "weight": 12,
+            "matchRules": [
+              {
+                "entityPropertyPath": "customerId",
+                "matchAlgorithm": "exact"
+              }]
+          },
+          {
+            "rulesetName": "NOT birthDate - Reduce",
+            "weight": 4,
+            "matchRules": [
+              {
+                "entityPropertyPath": "birthDate",
+                "matchAlgorithm": "exact"
+              }]
+          }]
+      ]
+    },
+    {
+      "name": "Definitive Match - testing multiple thresholds with same score",
+      "action": "notify",
+      "minimumMatchContributions": [
+        [
+          {
+            "rulesetName": "name - Exact",
+            "weight": 16,
+            "matchRules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "exact"
+              }]
+          }],
+        [
+          {
+            "rulesetName": "customerId - Exact",
+            "weight": 12,
+            "matchRules": [
+              {
+                "entityPropertyPath": "customerId",
+                "matchAlgorithm": "exact"
+              }]
+          },
+          {
+            "rulesetName": "NOT birthDate - Reduce",
+            "weight": 4,
+            "matchRules": [
+              {
+                "entityPropertyPath": "birthDate",
+                "matchAlgorithm": "exact"
+              }]
+          }]
+      ]
+    }]
+};
+
 [
   test.assertEqualJson(expected1, cma.calculateMatchingActivity(step1), "most cases"),
-  test.assertEqualJson(expected2, cma.calculateMatchingActivity(step2), "use case that hits reduce recursion code")
+  test.assertEqualJson(expected2, cma.calculateMatchingActivity(step2), "use case that hits reduce recursion code"),
+  test.assertEqualJson(expected3, cma.calculateMatchingActivity(step3), "use case that has multiple thresholds with the same score")
 ];
