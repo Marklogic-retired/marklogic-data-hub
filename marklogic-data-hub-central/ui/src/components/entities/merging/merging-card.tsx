@@ -1,8 +1,7 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Select, Modal, Tooltip} from "antd";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import {Select, Tooltip} from "antd";
+import {Row, Col, Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -16,7 +15,7 @@ import {MergingStep, StepType} from "../../../types/curation-types";
 import {getViewSettings, setViewSettings} from "../../../util/user-context";
 import Steps from "../../steps/steps";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCCard, HCDivider, HCTooltip} from "@components/common";
+import {HCCard, HCButton, HCDivider, HCTooltip} from "@components/common";
 interface Props {
   mergingStepsArray: any;
   flows: any;
@@ -231,97 +230,122 @@ const MergingCard: React.FC<Props> = (props) => {
 
   const renderAddConfirmation = (
     <Modal
-      visible={addToFlowVisible}
-      okText={<div data-testid={`${mergingArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
-      cancelText="No"
-      onOk={() => onAddOk(mergingArtifactName, flowName)}
-      onCancel={() => onAddCancel()}
-      width={400}
-      maskClosable={false}
+      show={addToFlowVisible}
     >
-      <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
-        { isStepInFlow(mergingArtifactName, flowName) ?
-          <p aria-label="step-in-flow">The step <strong>{mergingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
-          <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mergingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
-        }
-      </div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"pt-0 pb-4 px-4"}>
+        <div aria-label="add-step-confirmation" style={{fontSize: "16px"}}>
+          { isStepInFlow(mergingArtifactName, flowName) ?
+            <p aria-label="step-in-flow">The step <strong>{mergingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+            <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mergingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+          }
+        </div>
+        <div className={"d-flex justify-content-center pt-3 pb-2"}>
+          <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={onAddCancel}>
+            {"No"}
+          </HCButton>
+          <HCButton aria-label={"Yes"} data-testid={`${mergingArtifactName}-to-${flowName}-Confirm`} variant="primary" type="submit" onClick={() => onAddOk(mergingArtifactName, flowName)}>
+            {"Yes"}
+          </HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 
   const runNoFlowsConfirmation = (
     <Modal
-      visible={runNoFlowsDialogVisible}
-      cancelText="Cancel"
-      okButtonProps={{style: {display: "none"}}}
-      onCancel={() => onAddCancel()}
-      width={650}
-      maskClosable={false}
+      show={runNoFlowsDialogVisible}
+      size={"lg"}
     >
-      <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mergingArtifactName}</strong>.</div>
-      <Row className={"pt-4"}>
-        <Col>
-          <div>{props.flows.map((flow, i) => (
-            <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
-          ))}</div>
-        </Col>
-        <Col xs={"auto"}>
-          <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
-        </Col>
-        <Col>
-          <Link data-testid="link" id="tiles-add-run-new-flow" to={
-            {pathname: "/tiles/run/add-run",
-              state: {
-                stepToAdd: mergingArtifactName,
-                stepDefinitionType: "merging",
-                existingFlow: false
-              }}}><div className={styles.stepLink} data-testid={`${mergingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
-        </Col>
-      </Row>
+      <Modal.Header className={"bb-none"}>
+        <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mergingArtifactName}</strong>.</div>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"pb-2"}>
+        <Row>
+          <Col>
+            <div>{props.flows.map((flow, i) => (
+              <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
+            ))}</div>
+          </Col>
+          <Col xs={"auto"}>
+            <HCDivider type="vertical" className={styles.verticalDiv}></HCDivider>
+          </Col>
+          <Col>
+            <Link data-testid="link" id="tiles-add-run-new-flow" to={
+              {pathname: "/tiles/run/add-run",
+                state: {
+                  stepToAdd: mergingArtifactName,
+                  stepDefinitionType: "merging",
+                  existingFlow: false
+                }}}><div className={styles.stepLink} data-testid={`${mergingArtifactName}-run-toNewFlow`}><PlusCircleFill className={styles.plusIconNewFlow}/>New flow</div></Link>
+          </Col>
+        </Row>
+      </Modal.Body>
+      <Modal.Footer>
+        <HCButton variant="outline-light" aria-label={"Cancel"} onClick={onAddCancel}>
+          Cancel
+        </HCButton>
+      </Modal.Footer>
     </Modal>
   );
 
   const runOneFlowConfirmation = (
     <Modal
-      visible={runOneFlowDialogVisible}
-      okText={<div aria-label="continue-confirm">Continue</div>}
-      onOk={() => onContinueRun()}
-      cancelText="Cancel"
-      onCancel={() => onAddCancel()}
-      width={650}
-      maskClosable={false}
+      show={runOneFlowDialogVisible}
     >
-      <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px", padding: "10px"}}>
-        <div>
-          <div aria-label="step-in-one-flow">Running the step <strong>{mergingArtifactName}</strong> in the flow <strong>{flowsWithStep}</strong></div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"pt-0"}>
+        <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+          <div>
+            <div aria-label="step-in-one-flow">Running the step <strong>{mergingArtifactName}</strong> in the flow <strong>{flowsWithStep}</strong></div>
+          </div>
         </div>
-      </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <HCButton variant="outline-light" aria-label={"Cancel"} className={"me-2"} onClick={onAddCancel}>
+          Cancel
+        </HCButton>
+        <HCButton aria-label={"continue-confirm"} variant="primary" type="submit" onClick={onContinueRun}>
+          Continue
+        </HCButton>
+      </Modal.Footer>
     </Modal>
   );
 
   const runMultFlowsConfirmation = (
     <Modal
-      visible={runMultFlowsDialogVisible}
-      cancelText="Cancel"
-      okButtonProps={{style: {display: "none"}}}
-      onCancel={() => onAddCancel()}
-      width={650}
-      maskClosable={false}
+      show={runMultFlowsDialogVisible}
     >
-      <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px", padding: "10px"}}>
-        <div aria-label="step-in-mult-flows">Choose the flow in which to run the step <strong>{mergingArtifactName}</strong>.</div>
-        <div className = {styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
-          <Link data-testid="link" id="tiles-run-step" key={i} to={
-            {pathname: "/tiles/run/run-step",
-              state: {
-                flowName: flowName,
-                stepToAdd: mergingArtifactName,
-                stepDefinitionType: "merging",
-                existingFlow: false,
-                flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
-              }}}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
-        ))}
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onAddCancel}></button>
+      </Modal.Header>
+      <Modal.Body className={"pt-0"}>
+        <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+          <div aria-label="step-in-mult-flows">Choose the flow in which to run the step <strong>{mergingArtifactName}</strong>.</div>
+          <div className = {styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
+            <Link data-testid="link" id="tiles-run-step" key={i} to={
+              {pathname: "/tiles/run/run-step",
+                state: {
+                  flowName: flowName,
+                  stepToAdd: mergingArtifactName,
+                  stepDefinitionType: "merging",
+                  existingFlow: false,
+                  flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
+                }}}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
+          ))}
+          </div>
         </div>
-      </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <HCButton variant="outline-light" aria-label={"Cancel"} onClick={onAddCancel}>
+          Cancel
+        </HCButton>
+      </Modal.Footer>
     </Modal>
   );
 
