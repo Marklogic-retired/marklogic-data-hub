@@ -1,8 +1,5 @@
-import {
-  Modal,
-  Radio, Select
-} from "antd";
-import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import {Radio, Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -267,10 +264,6 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const onOk = () => {
-    props.setOpenMergeRuleDialog(false);
-  };
-
   const handleProperty = (value) => {
     if (value === " ") {
       setPropertyTouched(false);
@@ -495,275 +488,275 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      visible={props.createEditMergeRuleDialog}
-      title={props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}
-      width={700}
-      onCancel={() => onCancel()}
-      onOk={() => onOk()}
-      okText="Save"
-      className={styles.AddMergeRuleModal}
-      footer={null}
-      maskClosable={false}
-      destroyOnClose={true}
+      show={props.createEditMergeRuleDialog}
+      size={"lg"}
     >
-      {validationWarnings.length > 0 ? (
-        validationWarnings.map((warning, index) => {
-          let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
-          return (
-            <HCAlert
-              className={styles.alert}
-              variant="warning"
-              showIcon
-              key={warning["level"] + index}
-              heading={warning["message"]}
-            >
-              {description}
-            </HCAlert>
-          );
-        })
-      ) : null}
-      <p>Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.</p>
-      {titleLegend}
-      <br />
-      <div className={styles.addMergeRuleForm}>
-        <Form onSubmit={handleSubmit}>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3} htmlFor={"propertyName"}>
-              {<span aria-label="formItem-Property">Property:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
-            </FormLabel>
-            <Col>
-              <Row>
-                <Col className={propertyErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <EntityPropertyTreeSelect
-                    propertyDropdownOptions={entityTypeDefinition.properties}
-                    entityDefinitionsArray={curationOptions.entityDefinitionsArray}
-                    value={property}
-                    onValueSelected={handleProperty}
-                  />
-                  <div className={"p-2 d-flex align-items-center"}>
-                    <HCTooltip text={MergeRuleTooltips.disabledProperties} id="property-name-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
-                  </div>
-                </Col>
-                <Col xs={12} className={styles.validationError}>
-                  {propertyErrorMessage}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          <Row className={"mb-3"}>
-            <FormLabel column lg={3}>
-              {<span aria-label="formItem-MergeType">Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
-            </FormLabel>
-            <Col>
-              <Row>
-                <Col className={mergeTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <Select
-                    id="mergeType"
-                    placeholder="Select merge type"
-                    size="default"
-                    value={mergeType}
-                    onChange={handleMergeType}
-                    //disabled={!canWriteMatchMerge}
-                    className={styles.mergeTypeSelect}
-                    aria-label="mergeType-select"
-                  >
-                    {mergeTypeOptions}
-                  </Select>
-                </Col>
-                <Col xs={12} className={styles.validationError}>
-                  {mergeTypeErrorMessage}
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-          {mergeType === "Custom" ?
-            <>
-              <Row className={"mb-3"}>
-                <FormLabel column lg={3}>
-                  {<span aria-label="formItem-URI">URI:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
-                </FormLabel>
-                <Col>
-                  <Row>
-                    <Col className={(uri || !uriTouched) ? "d-flex" : "d-flex has-error"}>
-                      <HCInput
-                        id="uri"
-                        placeholder="Enter URI"
-                        size="sm"
-                        value={uri}
-                        onChange={handleChange}
-                        //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
-                        className={styles.input}
-                        ariaLabel="uri-input"
-                      />
-                      <div className={"p-2 d-flex align-items-center"}>
-                        <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
-                          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                        </HCTooltip>
-                      </div>
-                    </Col>
-                    <Col xs={12} className={styles.validationError}>
-                      {(uri || !uriTouched) ? "" : "URI is required"}
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              <Row className={"mb-3"}>
-                <FormLabel column lg={3}>
-                  {<span aria-label="formItem-function">Function:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
-                </FormLabel>
-                <Col>
-                  <Row>
-                    <Col className={(functionValue || !functionValueTouched) ? "d-flex" : "d-flex has-error"}>
-                      <HCInput
-                        id="function"
-                        placeholder="Enter function"
-                        size="sm"
-                        value={functionValue}
-                        onChange={handleChange}
-                        //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
-                        className={styles.input}
-                        ariaLabel="function-input"
-                      />
-                      <div className={"p-2 d-flex align-items-center"}>
-                        <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
-                          <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                        </HCTooltip>
-                      </div>
-                    </Col>
-                    <Col xs={12} className={styles.validationError}>
-                      {(functionValue || !functionValueTouched) ? "" : "Function is required"}
-                    </Col>
-                  </Row>
-                </Col>
-              </Row>
-              <Row className={"mb-3"}>
-                <FormLabel column lg={3}>
-                  {<span aria-label="formItem-namespace">Namespace:</span>}
-                </FormLabel>
-                <Col className={"d-flex"}>
-                  <HCInput
-                    id="namespace"
-                    placeholder="Enter namespace"
-                    size="sm"
-                    value={namespace}
-                    onChange={handleChange}
-                    //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
-                    className={styles.input}
-                    ariaLabel="namespace-input"
-                  />
-                  <div className={"p-2 d-flex align-items-center"}>
-                    <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
-                  </div>
-                </Col>
-              </Row>
-            </> : ""
-          }
-          {mergeType === "Strategy" ?
+      <Modal.Header>
+        <span className={"fs-5"}>
+          {props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}
+        </span>
+        <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
+      </Modal.Header>
+      <Modal.Body>
+        {validationWarnings.length > 0 ? (
+          validationWarnings.map((warning, index) => {
+            let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
+            return (
+              <HCAlert
+                className={styles.alert}
+                variant="warning"
+                showIcon
+                key={warning["level"] + index}
+                heading={warning["message"]}
+              >
+                {description}
+              </HCAlert>
+            );
+          })
+        ) : null}
+        <p>Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.</p>
+        {titleLegend}
+        <br />
+        <div className={styles.addMergeRuleForm}>
+          <Form onSubmit={handleSubmit} className={"container-fluid"}>
             <Row className={"mb-3"}>
-              <FormLabel column lg={3}>
-                {<span aria-label="formItem-strategyName">Strategy Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+              <FormLabel column lg={3} htmlFor={"propertyName"}>
+                {<span aria-label="formItem-Property">Property:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
               </FormLabel>
               <Col>
                 <Row>
-                  <Col className={strategyNameErrorMessage ? "d-flex has-error" : "d-flex"}>
-                    <Select
-                      id="strategyName"
-                      placeholder="Select strategy name"
-                      size="default"
-                      value={strategyValue}
-                      onChange={handleStrategyNameOptions}
-                      className={styles.mergeTypeSelect}
-                      aria-label="strategy-name-select"
-                    >
-                      {mergeStrategyNames.map((strategyName) => <Option data-testid={`strategyNameOptions-${strategyName}`} key={strategyName}>{strategyName}</Option>)}
-                    </Select>
+                  <Col className={propertyErrorMessage ? "d-flex has-error" : "d-flex"}>
+                    <EntityPropertyTreeSelect
+                      propertyDropdownOptions={entityTypeDefinition.properties}
+                      entityDefinitionsArray={curationOptions.entityDefinitionsArray}
+                      value={property}
+                      onValueSelected={handleProperty}
+                    />
+                    <div className={"p-2 d-flex align-items-center"}>
+                      <HCTooltip text={MergeRuleTooltips.disabledProperties} id="property-name-tooltip" placement="top">
+                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                      </HCTooltip>
+                    </div>
                   </Col>
                   <Col xs={12} className={styles.validationError}>
-                    {strategyNameErrorMessage ? strategyNameErrorMessage : ""}
+                    {propertyErrorMessage}
                   </Col>
                 </Row>
               </Col>
             </Row>
-            : ""
-          }
-          {mergeType === "Property-specific" ?
-            <>
+            <Row className={"mb-3"}>
+              <FormLabel column lg={3}>
+                {<span aria-label="formItem-MergeType">Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+              </FormLabel>
+              <Col>
+                <Row>
+                  <Col className={mergeTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
+                    <Select
+                      id="mergeType"
+                      placeholder="Select merge type"
+                      size="default"
+                      value={mergeType}
+                      onChange={handleMergeType}
+                      //disabled={!canWriteMatchMerge}
+                      className={styles.mergeTypeSelect}
+                      aria-label="mergeType-select"
+                    >
+                      {mergeTypeOptions}
+                    </Select>
+                  </Col>
+                  <Col xs={12} className={styles.validationError}>
+                    {mergeTypeErrorMessage}
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            {mergeType === "Custom" ?
+              <>
+                <Row className={"mb-3"}>
+                  <FormLabel column lg={3}>
+                    {<span aria-label="formItem-URI">URI:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                  </FormLabel>
+                  <Col>
+                    <Row>
+                      <Col className={(uri || !uriTouched) ? "d-flex" : "d-flex has-error"}>
+                        <HCInput
+                          id="uri"
+                          placeholder="Enter URI"
+                          size="sm"
+                          value={uri}
+                          onChange={handleChange}
+                          //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
+                          className={styles.input}
+                          ariaLabel="uri-input"
+                        />
+                        <div className={"p-2 d-flex align-items-center"}>
+                          <HCTooltip text={MergeRuleTooltips.uri} id="uri-tooltip" placement="top">
+                            <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                          </HCTooltip>
+                        </div>
+                      </Col>
+                      <Col xs={12} className={styles.validationError}>
+                        {(uri || !uriTouched) ? "" : "URI is required"}
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Row className={"mb-3"}>
+                  <FormLabel column lg={3}>
+                    {<span aria-label="formItem-function">Function:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                  </FormLabel>
+                  <Col>
+                    <Row>
+                      <Col className={(functionValue || !functionValueTouched) ? "d-flex" : "d-flex has-error"}>
+                        <HCInput
+                          id="function"
+                          placeholder="Enter function"
+                          size="sm"
+                          value={functionValue}
+                          onChange={handleChange}
+                          //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
+                          className={styles.input}
+                          ariaLabel="function-input"
+                        />
+                        <div className={"p-2 d-flex align-items-center"}>
+                          <HCTooltip text={MergeRuleTooltips.function} id="function-tooltip" placement="top">
+                            <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                          </HCTooltip>
+                        </div>
+                      </Col>
+                      <Col xs={12} className={styles.validationError}>
+                        {(functionValue || !functionValueTouched) ? "" : "Function is required"}
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+                <Row className={"mb-3"}>
+                  <FormLabel column lg={3}>
+                    {<span aria-label="formItem-namespace">Namespace:</span>}
+                  </FormLabel>
+                  <Col className={"d-flex"}>
+                    <HCInput
+                      id="namespace"
+                      placeholder="Enter namespace"
+                      size="sm"
+                      value={namespace}
+                      onChange={handleChange}
+                      //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
+                      className={styles.input}
+                      ariaLabel="namespace-input"
+                    />
+                    <div className={"p-2 d-flex align-items-center"}>
+                      <HCTooltip text={MergeRuleTooltips.namespace} id="namespace-tooltip" placement="top">
+                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                      </HCTooltip>
+                    </div>
+                  </Col>
+                </Row>
+              </> : ""
+            }
+            {mergeType === "Strategy" ?
               <Row className={"mb-3"}>
-                <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
-                <Col className={"d-flex"}>
-                  <Radio.Group className={styles.radioAnt} value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
-                    <Radio className={styles.radioAnt} value={1}> All</Radio>
-                    <Radio className={styles.radioAnt} value={2}>
-                      <HCInput id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput}/>
-                    </Radio>
-                  </Radio.Group>
-                  <div className={"d-flex align-items-center"}>
-                    <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
-                  </div>
+                <FormLabel column lg={3}>
+                  {<span aria-label="formItem-strategyName">Strategy Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                </FormLabel>
+                <Col>
+                  <Row>
+                    <Col className={strategyNameErrorMessage ? "d-flex has-error" : "d-flex"}>
+                      <Select
+                        id="strategyName"
+                        placeholder="Select strategy name"
+                        size="default"
+                        value={strategyValue}
+                        onChange={handleStrategyNameOptions}
+                        className={styles.mergeTypeSelect}
+                        aria-label="strategy-name-select"
+                      >
+                        {mergeStrategyNames.map((strategyName) => <Option data-testid={`strategyNameOptions-${strategyName}`} key={strategyName}>{strategyName}</Option>)}
+                      </Select>
+                    </Col>
+                    <Col xs={12} className={styles.validationError}>
+                      {strategyNameErrorMessage ? strategyNameErrorMessage : ""}
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
-              <Row className={"mb-3"}>
-                <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
-                <Col className={"d-flex"}>
-                  <Radio.Group className={styles.radioAnt} value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
-                    <Radio className={styles.radioAnt} value={1} > All</Radio>
-                    <Radio className={styles.radioAnt} value={2} >
-                      <HCInput id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}/>
-                    </Radio>
-                  </Radio.Group>
-                  <div className={"d-flex align-items-center"}>
-                    <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
+              : ""
+            }
+            {mergeType === "Property-specific" ?
+              <>
+                <Row className={"mb-3"}>
+                  <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
+                  <Col className={"d-flex"}>
+                    <Radio.Group className={styles.radioAnt} value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
+                      <Radio className={styles.radioAnt} value={1}> All</Radio>
+                      <Radio className={styles.radioAnt} value={2}>
+                        <HCInput id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput}/>
+                      </Radio>
+                    </Radio.Group>
+                    <div className={"d-flex align-items-center"}>
+                      <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
+                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                      </HCTooltip>
+                    </div>
+                  </Col>
+                </Row>
+                <Row className={"mb-3"}>
+                  <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
+                  <Col className={"d-flex"}>
+                    <Radio.Group className={styles.radioAnt} value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
+                      <Radio className={styles.radioAnt} value={1} > All</Radio>
+                      <Radio className={styles.radioAnt} value={2} >
+                        <HCInput id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}/>
+                      </Radio>
+                    </Radio.Group>
+                    <div className={"d-flex align-items-center"}>
+                      <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
+                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                      </HCTooltip>
+                    </div>
+                  </Col>
+                </Row>
+                <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
+                  <div>
+                    <p className={styles.priorityText}>Priority Order
+                      <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
+                        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                      </HCTooltip>
+                    </p>
                   </div>
-                </Col>
-              </Row>
-              <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
-                <div>
-                  <p className={styles.priorityText}>Priority Order
-                    <HCTooltip text={multiSliderTooltips.priorityOrder} id="priority-order-tooltip" placement="right">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
-                  </p>
+                  <div className={styles.addButtonContainer}>
+                    <Select
+                      id="dropdownOptions"
+                      placeholder=""
+                      size="default"
+                      value={dropdownOption}
+                      onChange={handleDropDownOptions}
+                      //disabled={!canWriteMatchMerge}
+                      className={styles.dropdownOptionsSelect}
+                      aria-label="dropdownOptions-select"
+                    >
+                      {dropdownTypeOptions}
+                    </Select>
+                    <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
+                  </div>
+                  <div>
+                    <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging} />
+                  </div>
                 </div>
-                <div className={styles.addButtonContainer}>
-                  <Select
-                    id="dropdownOptions"
-                    placeholder=""
-                    size="default"
-                    value={dropdownOption}
-                    onChange={handleDropDownOptions}
-                    //disabled={!canWriteMatchMerge}
-                    className={styles.dropdownOptionsSelect}
-                    aria-label="dropdownOptions-select"
-                  >
-                    {dropdownTypeOptions}
-                  </Select>
-                  <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
+              </> : ""
+            }
+            <Row className={`my-3 ${styles.submitButtonsForm}`}>
+              <Col className={"d-flex"}>
+                <div className={styles.submitButtons}>
+                  <HCButton aria-label={"cancel-merge-rule"} variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
+                  <HCButton aria-label={"confirm-merge-rule"} id={"saveButton"} variant="primary" onClick={handleSubmit} >Save</HCButton>
                 </div>
-                <div>
-                  <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging} />
-                </div>
-              </div>
-            </> : ""
-          }
-          <Row className={`my-3 ${styles.submitButtonsForm}`}>
-            <Col className={"d-flex"}>
-              <div className={styles.submitButtons}>
-                <HCButton aria-label={"cancel-merge-rule"} variant="outline-light" onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-                <HCButton aria-label={"confirm-merge-rule"} id={"saveButton"} variant="primary" onClick={handleSubmit} >Save</HCButton>
-              </div>
-            </Col>
-          </Row>
-        </Form>
-        {discardChanges}
-      </div>
+              </Col>
+            </Row>
+          </Form>
+          {discardChanges}
+        </div>
+      </Modal.Body>
     </Modal>
   );
 };

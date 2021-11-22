@@ -14,7 +14,8 @@ import {faTrashAlt, faCheck} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
-import {Modal, Table} from "antd";
+import {Table} from "antd";
+import {Modal} from "react-bootstrap";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
@@ -327,29 +328,29 @@ const MergingStepDetail: React.FC = () => {
 
   const deleteModal = (
     <Modal
-      width={500}
-      visible={deleteModalVisibility}
-      destroyOnClose={true}
-      closable={false}
-      className={styles.confirmModal}
-      maskClosable={false}
-      footer={null}
+      show={deleteModalVisibility}
     >
-      {currentMergeObj.hasOwnProperty("entityPropertyPath") ? <p aria-label="delete-merge-rule-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.entityPropertyPath} - {currentMergeObj.mergeType}</b> merge rule ?</p> :
-        <p aria-label="delete-merge-strategy-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.strategyName}</b> merge strategy ?</p>}
-      <div className={styles.footer}>
-        <HCButton
-          aria-label={`delete-merge-modal-discard`}
-          variant="outline-light"
-          onClick={() => setDeleteModalVisibility(false)}
-        >No</HCButton>
-        <HCButton
-          className={styles.saveButton}
-          aria-label={`delete-merge-modal-confirm`}
-          variant="primary"
-          onClick={() => deleteConfirm()}
-        >Yes</HCButton>
-      </div>
+      <Modal.Header className={"bb-none"}>
+        <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)}></button>
+      </Modal.Header>
+      <Modal.Body className={"pt-0 pb-4 px-4"}>
+        {currentMergeObj.hasOwnProperty("entityPropertyPath") ? <p aria-label="delete-merge-rule-text">Are you sure you want to delete <b>{currentMergeObj.entityPropertyPath} - {currentMergeObj.mergeType}</b> merge rule ?</p> :
+          <p aria-label="delete-merge-strategy-text">Are you sure you want to delete <b>{currentMergeObj.strategyName}</b> merge strategy ?</p>}
+        <div className={"d-flex justify-content-center pt-4 pb-2"}>
+          <HCButton
+            aria-label={`delete-merge-modal-discard`}
+            variant="outline-light"
+            onClick={() => setDeleteModalVisibility(false)}
+            className={"me-2"}
+          >No</HCButton>
+          <HCButton
+            className={styles.saveButton}
+            aria-label={`delete-merge-modal-confirm`}
+            variant="primary"
+            onClick={() => deleteConfirm()}
+          >Yes</HCButton>
+        </div>
+      </Modal.Body>
     </Modal>
   );
 
