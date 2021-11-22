@@ -55,7 +55,7 @@ function calculateMatchingActivity(step)
   step.thresholds.forEach(obj => {
     thresholdScores.push(obj.score);
     if (thresholdScoreObjectMap.has(obj.score)) {
-      thresholdScoreObjectMap.get(obj.score.push(obj));
+      thresholdScoreObjectMap.get(obj.score).push(obj);
     }
     else {
       let arr = [];
