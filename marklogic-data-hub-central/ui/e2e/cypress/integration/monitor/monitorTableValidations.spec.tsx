@@ -28,10 +28,7 @@ describe("Monitor Tile", () => {
 
   it("Navigate to Monitor Tile and verify pagination works", () => {
     monitorPage.getTableRows().its("length").should("be.gte", 10);
-    monitorPage.getPaginationPageSizeOptions().then(attr => {
-      attr[0].click();
-      monitorPage.getPageSizeOption("10 / page").click();
-    });
+    monitorPage.getPaginationPageSizeOptions().select("10 / page");
     monitorPage.getTableRows().should("have.length", 10);
   });
 

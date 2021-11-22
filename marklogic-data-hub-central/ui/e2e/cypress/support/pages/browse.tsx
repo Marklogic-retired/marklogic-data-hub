@@ -39,7 +39,7 @@ class BrowsePage {
   }
 
   clickPaginationItem(index: number) {
-    return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click();
+    return cy.get(`#pagination-item-${index}`).click();
   }
 
   getSelectedPaginationNumber() {
@@ -649,7 +649,7 @@ class BrowsePage {
   }
 
   getPaginationPageSizeOptions() {
-    return cy.get(".ant-pagination-options .ant-select-selection-selected-value");
+    return cy.get(`#pageSizeSelect`);
   }
 
   getPageSizeOption(pageSizeOption: string) {

@@ -1,5 +1,63 @@
+@import "../../theme/HCVariables.scss";
+
 .searchPaginationContainer {
     position: relative;
     float: right;
     padding: 8px 3px 8px 8px;
+}
+
+.paginationContainer {
+    display: flex;
+    gap: 4px;
+}
+.paginationWrapper {
+    li[class="page-item active"] {
+        border: none;
+        margin-left: 0 !important;
+        a[class="page-link"],
+        span[class="page-link"] {
+            background: #fff;
+            border: 1px solid $primary;
+            color: $primary;
+            font-weight: 700;
+            border-radius: 5px;
+            padding: 4px 10px;
+        }
+    }
+    a[class="page-link"],
+    span[class="page-link"] {
+        border: none;
+        background: #fff;
+        padding: 4px 10px;
+        &:focus, &:hover {
+            border: none;
+            box-shadow: none;
+        }
+    }
+}
+
+.select {
+    padding-top: 0px !important;
+    padding-bottom: 0 !important;
+    margin-top: 2px;
+    height: 27px;
+}
+.corner {
+    a[class="page-link"],
+    span[class="page-link"] {
+        font-weight: 800;
+        font-size: 16px;
+        padding-top: 2px;
+    }
+}
+.disable {
+    cursor: not-allowed;
+    border: none;
+    a {
+        border: none;
+    }
+}
+.optionSelected {
+    font-weight: 600;
+    background-color: $bg-clean;
 }

@@ -182,10 +182,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.clearSearchText();
     browsePage.selectEntity("All Entities");
     browsePage.getTotalDocuments().then(val => {
-      browsePage.getPaginationPageSizeOptions().then(attr => {
-        attr[0].click();
-      });
-      browsePage.getPageSizeOption("10 / page").click();
+      browsePage.getPaginationPageSizeOptions().select("10 / page");
       browsePage.waitForSpinnerToDisappear();
       browsePage.clickPaginationItem(4);
       browsePage.waitForSpinnerToDisappear();

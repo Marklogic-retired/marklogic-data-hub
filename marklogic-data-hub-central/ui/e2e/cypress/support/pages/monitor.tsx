@@ -10,7 +10,7 @@ class MonitorPage {
     return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click({force: true});
   }
   getPaginationPageSizeOptions() {
-    return cy.get(".ant-pagination-options .ant-select-selection-selected-value");
+    return cy.get(`#pageSizeSelect`);
   }
   getPageSizeOption(pageSizeOption: string) {
     return cy.findByText(pageSizeOption);
