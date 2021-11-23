@@ -112,6 +112,11 @@
   display: inline-block;
 }
 
+.addPropertyButton {
+  line-height: normal;
+  padding: 1.5px 8px !important;
+}
+
 .disabledButton {
   cursor: not-allowed;
 }
