@@ -254,7 +254,7 @@ const GraphView: React.FC<Props> = (props) => {
         pane2Style={splitPaneStyles.pane2}
         split="vertical"
         primary="first"
-        defaultSize="70%"
+        defaultSize="66%"
         onDragFinished={handleSplitPaneResize}
       >
         {graphViewMainPanel}

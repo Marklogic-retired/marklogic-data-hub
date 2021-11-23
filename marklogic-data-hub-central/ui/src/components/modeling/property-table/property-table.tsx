@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Table, Tooltip} from "antd";
+import {Table} from "antd";
 import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
@@ -103,6 +103,9 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [tableData, setTableData] = useState<any[]>([]);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [newRowKey, setNewRowKey] = useState("");
+
+  const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
+  const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
 
   useEffect(() => {
     updateEntityDefinitionsAndRenderTable(props.definitions);
@@ -894,8 +897,47 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSourceExpandCollapse = (option) => {
+  //Collapse all-Expand All button
 
+  const toggleSourceRowExpanded = (expanded, record, rowKey) => {
+    if (!sourceExpandedKeys.includes(record.rowKey)) {
+      setSourceExpandedKeys(prevState => {
+        let finalKeys = prevState.concat([record["key"]]);
+        setExpandedSourceFlag(true);
+        return finalKeys;
+      });
+
+    } else {
+      setSourceExpandedKeys(prevState => {
+        let finalKeys = prevState.filter(item => item !== record["key"]);
+        setExpandedSourceFlag(false);
+        return finalKeys;
+      });
+    }
+  };
+
+  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
+
+    dataArr.forEach(obj => {
+      if (obj.hasOwnProperty("children")) {
+        allKeysToExpand.push(obj[rowKey]);
+        if (rowKey === "key" && (!expandedSourceFlag || expanded)) {
+          getKeysToExpandFromTable(obj["children"], rowKey, allKeysToExpand);
+        }
+      }
+    });
+    return allKeysToExpand;
+  };
+
+  const handleSourceExpandCollapse = (option) => {
+    let keys = getKeysToExpandFromTable(tableData, "key", [], true);
+    if (option === "collapse") {
+      setSourceExpandedKeys([]);
+      setExpandedSourceFlag(false);
+    } else {
+      setSourceExpandedKeys([...keys]);
+      setExpandedSourceFlag(true);
+    }
   };
 
   // Check if entity name has no matching definition
@@ -907,7 +949,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     variant="primary"
     aria-label={props.entityName + "-add-property"}
     disabled={!props.canWriteEntityModel || titleNoDefinition()}
-    className={(!props.canWriteEntityModel || titleNoDefinition()) ? styles.disabledButton : undefined}
+    className={(!props.canWriteEntityModel || titleNoDefinition()) ? styles.disabledButton : styles.addPropertyButton}
     onClick={() => addPropertyButtonClicked()}
   >Add Property</HCButton>;
 
@@ -918,13 +960,13 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
         }
         {props.canWriteEntityModel ?
-          <Tooltip title={ModelingTooltips.addProperty}>
+          <HCTooltip placement="top" text={ModelingTooltips.addProperty} id="add-property-tooltip" >
             <span>{addPropertyButton}</span>
-          </Tooltip>
+          </HCTooltip>
           :
-          <Tooltip title={ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess}>
+          <HCTooltip placement="top" text={ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess} id="add-property-disabled">
             <span>{addPropertyButton}</span>
-          </Tooltip>
+          </HCTooltip>
         }
       </div>
       <PropertyModal
@@ -957,8 +999,8 @@ const PropertyTable: React.FC<Props> = (props) => {
           locale={{emptyText: " "}}
           columns={headerColumns}
           dataSource={tableData}
-          onExpand={onExpand}
-          expandedRowKeys={expandedRows}
+          onExpand={props.sidePanelView ? (expanded, record) => toggleSourceRowExpanded(expanded, record, "key") : onExpand}
+          expandedRowKeys={props.sidePanelView ? sourceExpandedKeys : expandedRows}
           pagination={false}
         />
       }
