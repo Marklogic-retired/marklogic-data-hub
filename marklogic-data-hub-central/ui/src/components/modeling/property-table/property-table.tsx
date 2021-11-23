@@ -103,6 +103,9 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
   const [newRowKey, setNewRowKey] = useState("");
 
+  const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
+  const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
+
   useEffect(() => {
     updateEntityDefinitionsAndRenderTable(props.definitions);
   }, [props.definitions]);
@@ -895,8 +898,47 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSourceExpandCollapse = (option) => {
+  //Collapse all-Expand All button
 
+  const toggleSourceRowExpanded = (expanded, record, rowKey) => {
+    if (!sourceExpandedKeys.includes(record.rowKey)) {
+      setSourceExpandedKeys(prevState => {
+        let finalKeys = prevState.concat([record["key"]]);
+        setExpandedSourceFlag(true);
+        return finalKeys;
+      });
+
+    } else {
+      setSourceExpandedKeys(prevState => {
+        let finalKeys = prevState.filter(item => item !== record["key"]);
+        setExpandedSourceFlag(false);
+        return finalKeys;
+      });
+    }
+  };
+
+  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
+
+    dataArr.forEach(obj => {
+      if (obj.hasOwnProperty("children")) {
+        allKeysToExpand.push(obj[rowKey]);
+        if (rowKey === "key" && (!expandedSourceFlag || expanded)) {
+          getKeysToExpandFromTable(obj["children"], rowKey, allKeysToExpand);
+        }
+      }
+    });
+    return allKeysToExpand;
+  };
+
+  const handleSourceExpandCollapse = (option) => {
+    let keys = getKeysToExpandFromTable(tableData, "key", [], true);
+    if (option === "collapse") {
+      setSourceExpandedKeys([]);
+      setExpandedSourceFlag(false);
+    } else {
+      setSourceExpandedKeys([...keys]);
+      setExpandedSourceFlag(true);
+    }
   };
 
   // Check if entity name has no matching definition
@@ -958,8 +1000,8 @@ const PropertyTable: React.FC<Props> = (props) => {
           locale={{emptyText: " "}}
           columns={headerColumns}
           dataSource={tableData}
-          onExpand={onExpand}
-          expandedRowKeys={expandedRows}
+          onExpand={props.sidePanelView ? (expanded, record) => toggleSourceRowExpanded(expanded, record, "key") : onExpand}
+          expandedRowKeys={props.sidePanelView ? sourceExpandedKeys : expandedRows}
           pagination={false}
         />
       }
