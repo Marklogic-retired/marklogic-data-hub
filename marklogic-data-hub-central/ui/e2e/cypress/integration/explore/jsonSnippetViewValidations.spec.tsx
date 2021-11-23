@@ -96,14 +96,14 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").should("not.be.visible");
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Person").should("not.exist");
-    browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").click({force: true});
-    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").scrollIntoView().click({force: true});
+    browsePage.getFacetApplyButton().scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").should("exist");
     browsePage.getFacetItemCheckbox("collection", "mapPersonJSON").should("be.checked");
   });
   it("select Customer entity and verify entity, docs, hub/entity properties", () => {
     browsePage.selectEntity("Customer");
-    browsePage.getEntityConfirmationNoClick().click();
+    browsePage.getEntityConfirmationNoClick().click({force: true});
     cy.waitForModalToDisappear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedEntity().should("contain", "Customer");
@@ -111,8 +111,8 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "Customer").should("not.exist");
     cy.get("#hc-sider-content").scrollTo("bottom");
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
-    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click({force: true});
+    browsePage.getFacetApplyButton().scrollIntoView().click({force: true});
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("exist");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.checked");
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");

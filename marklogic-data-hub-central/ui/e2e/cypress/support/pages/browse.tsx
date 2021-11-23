@@ -267,7 +267,7 @@ class BrowsePage {
 
   getHubPropertiesExpanded() {
     cy.wait(500);
-    cy.get("#hub-properties .accordion-button").click();
+    cy.get("#hub-properties .accordion-button").click({force: true});
   }
 
   getExpandableSnippetView() {

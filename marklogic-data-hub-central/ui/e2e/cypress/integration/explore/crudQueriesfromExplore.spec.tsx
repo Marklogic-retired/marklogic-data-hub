@@ -73,7 +73,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "new-query-2");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").scrollIntoView().click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getSaveModalIcon().click();
     browsePage.getRadioOptionSelected();

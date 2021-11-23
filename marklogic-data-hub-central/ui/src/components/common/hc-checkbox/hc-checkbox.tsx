@@ -7,13 +7,14 @@ interface Props {
   tooltip?: string;
   handleClick: Function;
   value: any;
-  label: string;
+  label?: string;
   checked?: boolean;
-  dataTestId: string;
+  dataTestId?: string;
+  ariaLabel?: string;
 }
 
 const HCCheckbox: React.FC<Props> = (props) => {
-  const {id, tooltip, handleClick, value, label, checked, dataTestId} = props;
+  const {id, tooltip, handleClick, value, label, checked, dataTestId, ariaLabel, children} = props;
   const checkLabel = <FormCheck.Label style={{"marginLeft": 5, "color": "#333333"}}>{label}</FormCheck.Label>;
 
   const getLabel = () => {
@@ -23,16 +24,17 @@ const HCCheckbox: React.FC<Props> = (props) => {
     return label;
   };
 
-  return <FormCheck id={id} style={{display: "flex", alignItems: "center", gap: "6px"}}>
+  return <FormCheck id={id} style={{display: "flex", alignItems: "center", gap: "6px", justifyContent: "flex-start"}}>
     <FormCheck.Input
       type="checkbox"
       value={value}
       checked={checked}
       onChange={(e) => handleClick(e)}
       data-testid={dataTestId}
+      aria-label={ariaLabel}
       style={{marginTop: "0", verticalAlign: "middle"}}
     />
-    {getLabel()}
+    {label ? getLabel() : children}
   </FormCheck>;
 };
 

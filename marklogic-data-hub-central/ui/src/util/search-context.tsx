@@ -14,13 +14,17 @@ type SearchContextInterface = {
   selectedFacets: any,
   maxRowsPerPage: number,
   selectedQuery: string,
+  sidebarQuery: string,
   zeroState: boolean,
   selectedTableProperties: any,
   view: JSX.Element|null,
   tileId: string,
   sortOrder: any,
   database: string,
-  entityInstanceId: any
+  entityInstanceId: any,
+  datasource: string,
+  baseEntities: string[]
+
 }
 
 const defaultSearchOptions = {
@@ -33,6 +37,7 @@ const defaultSearchOptions = {
   pageSize: 20,
   selectedFacets: {},
   maxRowsPerPage: 100,
+  sidebarQuery: "Select a saved query",
   selectedQuery: "select a query",
   zeroState: true,
   selectedTableProperties: [],
@@ -40,7 +45,9 @@ const defaultSearchOptions = {
   tileId: "",
   sortOrder: [],
   database: "final",
-  entityInstanceId: undefined
+  entityInstanceId: undefined,
+  datasource: "entities",
+  baseEntities: []
 };
 
 
@@ -71,6 +78,7 @@ interface ISearchContextInterface {
   resetGreyedOptions: () => void;
   applySaveQuery: (query: QueryOptions) => void;
   setSelectedQuery: (query: string) => void;
+  setSidebarQuery: (query: string) => void;
   setZeroState: (zeroState: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (tileId:string, viewId: JSX.Element| null, zeroState?:boolean) => void;
@@ -84,6 +92,8 @@ interface ISearchContextInterface {
   entityDefinitionsArray: any;
   setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
   setGraphViewOptions: (entityInstanceId: any) => void;
+  setDatasource: (option: string) => void;
+  setBaseEntities: (baseEntities: string[]) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -117,6 +127,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   resetGreyedOptions: () => { },
   applySaveQuery: () => { },
   setSelectedQuery: () => { },
+  setSidebarQuery: () => { },
   setZeroState: () => { },
   setSelectedTableProperties: () => { },
   setView: () => { },
@@ -125,7 +136,9 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setPageQueryOptions: () => { },
   setDatabase: () => { },
   setLatestDatabase: () => { },
-  setGraphViewOptions: () => { }
+  setGraphViewOptions: () => { },
+  setDatasource: () => { },
+  setBaseEntities: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -149,7 +162,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
         entityTypeIds: values.query.entityTypeIds,
         selectedFacets: values.query.selectedFacets,
         pageLength: values.pageLength,
-        selectedQuery: values.selectedQuery
+        selectedQuery: values.selectedQuery,
+        sidebarQuery: values.sidebarQuery,
+        baseEntities: values.baseEntities,
       });
     }
   };
@@ -517,6 +532,13 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const setSidebarQuery = (query: string) => {
+    setSearchOptions({
+      ...searchOptions,
+      sidebarQuery: query
+    });
+  };
+
   const setZeroState = (zeroState: boolean) => {
     setSearchOptions({
       ...searchOptions,
@@ -612,6 +634,20 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const setDatasource = (datasource: string) => {
+    setSearchOptions({
+      ...searchOptions,
+      datasource
+    });
+  };
+
+  const setBaseEntities = (baseEntities: string[]) => {
+    setSearchOptions({
+      ...searchOptions,
+      baseEntities
+    });
+  };
+
   useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -650,6 +686,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       resetGreyedOptions,
       applySaveQuery,
       setSelectedQuery,
+      setSidebarQuery,
       setZeroState,
       setSelectedTableProperties,
       setView,
@@ -658,7 +695,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setPageQueryOptions,
       setDatabase,
       setLatestDatabase,
-      setGraphViewOptions
+      setGraphViewOptions,
+      setDatasource,
+      setBaseEntities
     }}>
       {children}
     </SearchContext.Provider>

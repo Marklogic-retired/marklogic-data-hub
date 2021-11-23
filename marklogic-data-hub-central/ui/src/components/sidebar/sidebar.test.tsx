@@ -102,7 +102,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={["Customer"]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        database="final"
         setDatabasePreferences={jest.fn()}
       />
     );
@@ -125,7 +124,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={[]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        database="final"
         setDatabasePreferences={jest.fn()}
       />
     );
@@ -150,7 +148,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={["Customer"]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        database="final"
         setDatabasePreferences={jest.fn()}
       />
     );
@@ -181,7 +178,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
         selectedEntities={["Customer"]}
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
-        database="final"
         setDatabasePreferences={jest.fn()}
         cardView={true}
         hideDataHubArtifacts={true}

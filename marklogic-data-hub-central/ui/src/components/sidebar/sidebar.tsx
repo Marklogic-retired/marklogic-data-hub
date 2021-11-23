@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Select, Switch, Radio} from "antd";
+import {Icon, Select, Radio, Input, Menu, Dropdown, Button, Tooltip, Checkbox, Switch} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -7,7 +7,7 @@ import {facetParser} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
-import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
+import {faCopy, faEllipsisV, faInfoCircle, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NumericFacet from "../numeric-facet/numeric-facet";
 import DateFacet from "../date-facet/date-facet";
@@ -16,9 +16,13 @@ import {getUserPreferences, updateUserPreferences} from "../../services/user-pre
 import {UserContext} from "../../util/user-context";
 import {Accordion} from "react-bootstrap";
 import {HCDateTimePicker, HCTooltip} from "@components/common";
+import QueriesDropdown from "../queries/saving/queries-dropdown/queries-dropdown";
+import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
+import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 
 const {Option} = Select;
 const tooltips = tooltipsConfig.browseDocuments;
+const {exploreSidebar} = tooltipsConfig;
 
 interface Props {
   facets: any;
@@ -33,6 +37,8 @@ interface Props {
   cardView: boolean;
 }
 
+const PLACEHOLDER: string = "Select a saved query";
+
 const Sidebar: React.FC<Props> = (props) => {
   const {
     searchOptions,
@@ -43,6 +49,8 @@ const Sidebar: React.FC<Props> = (props) => {
     clearGreyRangeFacet,
     greyedOptions,
     setAllGreyedOptions,
+    setSidebarQuery,
+    setDatasource,
   } = useContext(SearchContext);
   const {
     user
@@ -52,11 +60,54 @@ const Sidebar: React.FC<Props> = (props) => {
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
+  const [currentQueryName, setCurrentQueryName] = useState(searchOptions.sidebarQuery);
+  const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
+  const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
+
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
   const dateRangeOptions = ["Today", "This Week", "This Month", "Custom"];
   const [activeKey, setActiveKey] = useState<any[]>([]);
   const [userPreferences, setUserPreferences] = useState({});
+  const [indeterminate, setIndeterminate] = React.useState(false);
+  const [checkAll, setCheckAll] = React.useState(true);
+
+  useEffect(() => {
+    setCurrentQueryName(searchOptions.sidebarQuery);
+  }, [searchOptions.sidebarQuery]);
+
+  useEffect(() => {
+    let final = new Map();
+    currentBaseEntities.forEach(base => {
+      base.relatedEntities.map(entity => {
+        final.set(entity.name, {...entity, checked: true});
+      });
+    });
+    setCurrentRelatedEntities(final);
+  }, [currentBaseEntities]);
+
+
+  const onSettingCheckedList = (list) => {
+    setIndeterminate(!!list.length && list.length < currentRelatedEntities.size);
+    setCheckAll(list.length === currentRelatedEntities.size);
+  };
+
+  const onCheckAllChanges = ({target}) => {
+    const {checked} = target;
+    setIndeterminate(false);
+    setCheckAll(checked);
+    let final = new Map();
+    Array.from(currentRelatedEntities.values()).forEach(entity => {
+      final.set(entity.name, {...entity, checked});
+    });
+    setCurrentRelatedEntities(final);
+  };
+
+
+  const clearSelectedQuery = () => {
+    setCurrentQueryName(PLACEHOLDER);
+    setSidebarQuery(PLACEHOLDER);
+  };
 
   useEffect(() => {
     if (props.facets) {
@@ -85,7 +136,7 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties"]);
+        props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties", "baseEntities"]);
       }
 
       let entityFacets: any[] = [];
@@ -472,6 +523,10 @@ const Sidebar: React.FC<Props> = (props) => {
     handleFacetPreferences(tmpActiveKeys);
   };
 
+  const setDatasourcePreferences = (datasource) => {
+    setDatasource(datasource);
+  };
+
   const initializeFacetPreferences = () => {
     let defaultPreferences = getUserPreferences(user.name);
     if (defaultPreferences !== null) {
@@ -493,9 +548,96 @@ const Sidebar: React.FC<Props> = (props) => {
     updateUserPreferences(user.name, options);
   };
 
+  const menu = (
+    <Menu>
+      <Menu.Item key="0">
+        <span>
+          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon}/>
+          Edit query details
+        </span>
+      </Menu.Item>
+      <Menu.Item key="1">
+        <span>
+          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon}/>
+          Revert query to saved state
+        </span>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <span>
+          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon}/>
+          Save query as
+        </span>
+      </Menu.Item>
+      <Menu.Item key="3">
+        <span style={{color: "#B32424"}}>
+          <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon}/>
+          Delete query
+        </span>
+      </Menu.Item>
+    </Menu>
+  );
+
+  const panelTitle = (title, tooltipTitle) => {
+    return (
+      <div className={styles.panelTitle}>
+        {title}
+        <Tooltip title={tooltipTitle} placement="right">
+          <Icon type="info-circle" theme="filled" className={styles.entitiesInfoIcon}/>
+        </Tooltip>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
-      <Accordion id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
+      <div className={styles.query}>
+        <QueriesDropdown
+          savedQueryList={[{name: "active clients"}, {name: "disabled customers"}]}
+          currentQueryName={currentQueryName}
+        />
+        {currentQueryName !== PLACEHOLDER &&
+          <div className={styles.queryIcons}>
+            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query"/>
+            <Dropdown overlay={menu} trigger={["click"]}>
+              <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg"/>
+            </Dropdown>
+          </div>
+        }
+      </div>
+      {currentQueryName !== PLACEHOLDER &&
+        <div className={styles.clearQuery}>
+          <Button size="small" type={"link"} onClick={clearSelectedQuery} >
+            <FontAwesomeIcon  icon={faWindowClose} size="sm"/>
+            Clear query
+          </Button>
+        </div>
+      }
+      <div className={styles.searchInput}>
+        <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined"/>} placeholder="Search" size="small"/>
+      </div>
+      <div className={styles.dataSourceButtons}>
+        <Radio.Group
+          buttonStyle="solid"
+          defaultValue={searchOptions.datasource}
+          name="radiogroup"
+          onChange={e => setDatasourcePreferences(e.target.value)}
+          size="default"
+        >
+          <Radio.Button aria-label="switch-datasource-entities" value={"entities"} className={styles.dataSourceButton}>
+            <span className={styles.dataSourceButton}>
+              <div id="all-entities" className="curateIcon"></div>
+              <div>Entities</div>
+            </span>
+          </Radio.Button>
+          <Radio.Button aria-label="switch-datasource-all-data" value={"all-data"} className={styles.dataSourceButton}>
+            <span className={styles.dataSourceButton}>
+              <div id="all-data" className="loadIcon"></div>
+              <div>All Data</div>
+            </span>
+          </Radio.Button>
+        </Radio.Group>
+      </div>
+      <Accordion aria-label="switch-database" id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
         <Accordion.Item eventKey="database" className={"bg-transparent"}>
           <div className={"p-0 d-flex"}>
             <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}>Database</Accordion.Button>
@@ -519,6 +661,31 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
+
+      <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
+        <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
+          <div className={"p-0 d-flex"}>
+            <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
+          </div>
+          <Accordion.Body>
+            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities}/>
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+      {currentRelatedEntities.size > 0 &&
+        <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
+          <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
+            <div className={"p-0 d-flex"}>
+              <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
+                panelTitle(<Checkbox indeterminate={indeterminate} onChange={onCheckAllChanges} checked={checkAll}> related entities types </Checkbox>, exploreSidebar.relatedEntities)}</Accordion.Button>
+            </div>
+            <Accordion.Body>
+              <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList}/>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      }
+
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
         <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/>
           Include Data Hub artifacts
