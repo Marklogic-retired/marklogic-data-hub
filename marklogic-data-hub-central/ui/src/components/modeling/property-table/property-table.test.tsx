@@ -3,7 +3,7 @@ import {render, screen, fireEvent, within, cleanup} from "@testing-library/react
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
-
+import {onClosestTableRow} from "../../../util/test-utils";
 import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
 import curateData from "../../../assets/mock-data/curation/flows.data";
 import {ConfirmationType} from "../../../types/common-types";
@@ -220,6 +220,53 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getAllByText("plusFour")).toHaveLength(2);
     expect(getAllByText("string")).toHaveLength(10);
   });
+
+  test("Expand/Collapse all works in Property table side panel view", async () => {
+    let entityName = propertyTableEntities[2].entityName;
+    let definitions = propertyTableEntities[2].model.definitions;
+    const {queryByText, getByTestId, getAllByText} =  render(
+      <PropertyTable
+        canReadEntityModel={true}
+        canWriteEntityModel={false}
+        entityName={entityName}
+        definitions={definitions}
+        sidePanelView={true}
+        updateSavedEntity={jest.fn()}
+      />
+    );
+
+    //properties under Address and Billing structured properties should be hidden by default
+    expect(queryByText("street")).not.toBeInTheDocument();
+    expect(queryByText("state")).not.toBeInTheDocument();
+    expect(queryByText("fiveDigit")).not.toBeInTheDocument();
+    expect(queryByText("plusFour")).not.toBeInTheDocument();
+
+    //verify expand all
+    fireEvent.click(getByTestId("expandBtn"));
+
+    //all nested properties should be present
+    expect(getAllByText("street")).toHaveLength(2);
+    expect(getAllByText("state")).toHaveLength(2);
+    expect(getAllByText("fiveDigit")).toHaveLength(2);
+    expect(getAllByText("plusFour")).toHaveLength(2);
+
+    //verify collapse all
+    fireEvent.click(getByTestId("collapseBtn"));
+
+    //all nested properties should be present
+
+    //address
+    expect(onClosestTableRow(getAllByText("street")[0])?.style.display).toBe("none");
+    expect(onClosestTableRow(getAllByText("state")[0])?.style.display).toBe("none");
+    expect(onClosestTableRow(getAllByText("fiveDigit")[0])?.style.display).toBe("none");
+    expect(onClosestTableRow(getAllByText("plusFour")[0])?.style.display).toBe("none");
+    //billing
+    expect(onClosestTableRow(getAllByText("street")[1])?.style.display).toBe("none");
+    expect(onClosestTableRow(getAllByText("state")[1])?.style.display).toBe("none");
+    expect(onClosestTableRow(getAllByText("fiveDigit")[1])?.style.display).toBe("none");
+    expect(onClosestTableRow(getAllByText("plusFour")[1])?.style.display).toBe("none");
+  });
+
 
   test("Property Table renders and shows messaging when entity name does not match a definition", async () => {
     let entityName = propertyTableEntities[2].entityName + "-different";
