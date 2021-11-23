@@ -8,7 +8,8 @@ interface UserPreferences {
   tableView: boolean,
   // pageRoute: string,
   resultTableColumns: any[],
-  selectedQuery: string
+  selectedQuery: string,
+  sidebarQuery: string
 }
 
 export const defaultUserPreferences = {
@@ -21,7 +22,9 @@ export const defaultUserPreferences = {
   tableView: true,
   // pageRoute: '/view',
   resultTableColumns: [],
-  selectedQuery: "select a query"
+  selectedQuery: "select a query",
+  sidebarQuery: "Select a saved query",
+  baseEntities: ["All Entities"]
 };
 
 export const createUserPreferences = (username: string) => {

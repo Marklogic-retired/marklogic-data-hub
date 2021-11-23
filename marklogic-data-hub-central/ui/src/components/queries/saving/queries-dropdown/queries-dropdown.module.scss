@@ -1,0 +1,34 @@
+.dropDownStyle,
+.dropDownStyle:focus {
+  padding-right: 6px;
+  min-width: 200px;
+  width: 100%;
+  color: #333333;
+  font-size: 20px;
+  div {
+    border: none;
+    box-shadow: none !important;
+    background-color: #f1f2f5;
+    div {
+      margin-right: 16px;
+    }
+  }
+}
+
+.dropDownStyle_placeholder,
+.dropDownStyle_placeholder:focus {
+  padding-right: 6px;
+  width: 200px;
+  color: #777;
+  font-size: 14px;
+  border: none;
+  div {
+    border: none;
+    box-shadow: none !important;
+    background-color: #f1f2f5;
+  }
+}
+
+.queriesDropdown {
+  background-color: #eee !important;
+}

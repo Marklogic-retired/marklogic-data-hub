@@ -14,10 +14,27 @@
 }
 
 .title {
-  font-size: 15px !important;
-  color: #979797 !important;
-  text-transform: uppercase;
-  font-weight: bold;
+    font-size: 15px;
+    color: #979797 !important;;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.titleBaseEntities,
+.titleCheckbox {
+  span {
+    font-size: 15px;
+    color: #979797 !important;;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+}
+
+.titleCheckbox {
+  span{
+    padding-right: 0px;
+    padding-left: 1px;
+  }
 }
 
 .facet {
@@ -96,6 +113,90 @@
   padding-right: 5px;
 }
 
+.dataSourceButtons{
+  padding-left: 16px;
+}
+
+.query {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  padding-left: 7px;
+}
+
+.queryIcons {
+  padding-right: 20px;
+}
+
+.queryIconsSave {
+  width: 18px;
+  color: #5b69af;
+  cursor: pointer;
+}
+
+.queryIconsEllipsis {
+  width: 18px;
+  margin-left: 5px;
+  color: #777777;
+  cursor: pointer;
+}
+
+.queryMenuItem {
+  color: #333;
+}
+
+.queryMenuItemIcon {
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.clearQuery {
+  padding-left: 10px;
+  padding-bottom: 10px;
+  svg {
+    margin-right: 5px;
+    font-size: 14px;
+  }
+}
+
+.searchInput {
+  padding-bottom: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
+  input {
+    height: 30px;
+  }
+}
+
+.searchIcon {
+  float: right;
+  font-size: 20px;
+  position: relative;
+  color: #bfbfbf;
+}
+
+.dataSourceButton {
+  display: inline-flex;
+  height: 30px;
+  width: 100px;
+  font-size: 14px;
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .toggleDataHubArtifacts {
   margin-left: 15px;
+}
+
+.panelTitle {
+  display: flex;
+}
+
+.entitiesInfoIcon {
+  margin-left: 5px;
+  color: #5B69AF;
+  font-size: 11px;
+  margin-top: 4px;
 }

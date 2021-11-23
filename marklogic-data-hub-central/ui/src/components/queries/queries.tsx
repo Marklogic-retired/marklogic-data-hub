@@ -588,7 +588,7 @@ const Query: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div id="selected-query-description" style={props.isSavedQueryUser ? {marginTop: "10px"} : {marginTop: "-36px"}}
+          <div id="selected-query-description" style={{marginTop: "-36px"}}
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
             <HCTooltip text={currentQueryDescription} id="current-query-description-tooltip" placement="top">
               <span>{

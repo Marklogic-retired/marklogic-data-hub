@@ -1,0 +1,40 @@
+.entityItem {
+    position: relative;
+    padding: 10px;
+    margin-block: 8px;
+    width: 100%;
+    color: #777 !important;
+    label {
+      font-size: 13px;
+    }
+
+    .entityName {
+        font-weight: bold;
+    }
+
+    .entityIcon {
+        margin-right: 4px;
+    }
+
+    .entityChevron{
+        margin-left: 4px;
+        font-size: 15px;
+    }
+    .entityAmount {
+        margin-top: 2px;
+        margin-left: auto;
+        font-size: 13px;
+    }
+}
+
+.more {
+    position: relative;
+    top: 3px;
+    left: 30px;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
