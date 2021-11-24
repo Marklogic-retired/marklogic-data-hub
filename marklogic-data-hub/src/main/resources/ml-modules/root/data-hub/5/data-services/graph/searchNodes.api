@@ -1,0 +1,38 @@
+{
+    "functionName": "searchNodes",
+    "desc": "Returns the nodes and edges that are the result of the query passed",
+    "params": [
+        {
+            "name": "query",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+            "schema" : {
+               "type" : "object",
+               "properties" : {
+                "name" : {
+                  "type" : "string"
+                },
+                 "description" : {
+                   "type" : "string"
+                 },
+                  "namespace" : {
+                    "type" : "string"
+                  },
+                   "namespacePrefix" : {
+                     "type" : "string"
+                   }
+               }
+           }
+        },
+         {
+           "name" : "start",
+           "datatype" : "long",
+           "desc" : "The name of the model"
+         },
+         {
+           "name" : "pageLength",
+           "datatype" : "long",
+           "desc" : "The length of the page"
+         }
+    ]
+}

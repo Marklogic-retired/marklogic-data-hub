@@ -1,0 +1,86 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "CustomerWithRelatedEntitiesJSON"
+        }
+      ],
+      "createdOn": "2021-11-22T01:35:36.267443-08:00",
+      "createdBy": "admin"
+    },
+    "triples": [
+    ],
+    "instance": {
+      "info": {
+        "title": "Product",
+        "version": "1.0.0",
+        "baseUri": "http://example.org/"
+      },
+      "Product": {
+        "productId": 60,
+        "productName": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)"
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "CustomerWithRelatedEntitiesJSON"
+            }
+          ],
+          "createdOn": "2021-11-22T01:35:36.061788-08:00",
+          "createdBy": "admin"
+        },
+        "triples": [
+        ],
+        "instance": {
+          "CustomerID": 301,
+          "Name": {
+            "FirstName": "Cynthia",
+            "LastName": "Waters"
+          },
+          "nicknames": [
+            "Cindy",
+            "Cyn"
+          ],
+          "Address": [
+            {
+              "Shipping": {
+                "Street": "Abbey Court",
+                "Street2": "More info",
+                "City": "Columbus",
+                "State": "Ohio",
+                "Postal": "43210-0241"
+              }
+            },
+            {
+              "Billing": {
+                "Street": "Keys Crescent Ln",
+                "City": "Cincinnati",
+                "State": "Ohio",
+                "Postal": "45206-6783"
+              }
+            }
+          ],
+          "BabyRegistry": {
+            "BabyRegistryId": "3039",
+            "Arrival_Date": "2021-06-07",
+            "Products": [
+              {
+                "ProductId": "50",
+                "Name": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls"
+              },
+              {
+                "ProductId": "60",
+                "Name": "BlueSnail Newborn Receiving Blanket Baby Sleeping Wrap Swaddle (Gray)"
+              }
+            ]
+          }
+        },
+        "attachments": null
+      }
+    }
+  }
+}

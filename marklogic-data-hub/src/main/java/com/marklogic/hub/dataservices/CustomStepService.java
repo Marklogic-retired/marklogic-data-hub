@@ -89,7 +89,7 @@ public interface CustomStepService {
                 request.responseSingle(false, Format.JSON)
                 );
             }
-            
+
             @Override
             public com.fasterxml.jackson.databind.JsonNode updateCustomStep(com.fasterxml.jackson.databind.JsonNode stepProperties) {
                 return updateCustomStep(
@@ -101,7 +101,7 @@ public interface CustomStepService {
                 request
                       .withParams(
                           BaseProxy.documentParam("stepProperties", false, BaseProxy.JsonDocumentType.fromJsonNode(stepProperties))
-                      ).responseSingle(false, Format.JSON)
+                          ).responseSingle(false, Format.JSON)
                 );
             }
         }
@@ -109,29 +109,28 @@ public interface CustomStepService {
         return new CustomStepServiceImpl(db, serviceDeclaration);
     }
 
-    /**
-     * Invokes the getCustomStep operation on the database server
-     *
-     * @param stepName	provides input
-     * @return	as output
-     */
+  /**
+   * Invokes the getCustomStep operation on the database server
+   *
+   * @param stepName	provides input
+   * @return	as output
+   */
     com.fasterxml.jackson.databind.JsonNode getCustomStep(String stepName);
 
-    /**
-     * Invokes the getCustomSteps operation on the database server
-     *
-     * 
-     * @return	as output
-     */
+  /**
+   * Invokes the getCustomSteps operation on the database server
+   *
+   * 
+   * @return	as output
+   */
     com.fasterxml.jackson.databind.JsonNode getCustomSteps();
-    
-    /**
-     * Invokes the updateCustomStep operation on the database server
-     *
-     * @param stepProperties	provides input
-     * @return	Return the created/updated step document
-     */
-    com.fasterxml.jackson.databind.JsonNode updateCustomStep(com.fasterxml.jackson.databind.JsonNode stepProperties);
 
+  /**
+   * Updates the custom step and returns the updated step
+   *
+   * @param stepProperties	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode updateCustomStep(com.fasterxml.jackson.databind.JsonNode stepProperties);
 
 }

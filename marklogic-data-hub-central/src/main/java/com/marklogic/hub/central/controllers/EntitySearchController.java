@@ -25,6 +25,7 @@ import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.schemas.EntitySearchResponseSchema;
 import com.marklogic.hub.dataservices.EntitySearchService;
+import com.marklogic.hub.dataservices.GraphService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -146,6 +147,14 @@ public class EntitySearchController extends BaseController {
         return ResponseEntity.ok(stream);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/graph")
+    @ResponseBody
+    @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
+        response = EntitySearchResponseSchema.class)
+    public JsonNode graphSearch(@RequestBody JsonNode searchQuery, @RequestParam(defaultValue = "final") String database) {
+        return getGraphService(database).searchNodes(searchQuery);
+    }
+
     private EntitySearchManager newEntitySearchManager(String database) {
         return new EntitySearchManager(getHubClient(), database);
     }
@@ -159,6 +168,13 @@ public class EntitySearchController extends BaseController {
             return EntitySearchService.on(getHubClient().getStagingClient());
         }
         return EntitySearchService.on(getHubClient().getFinalClient());
+    }
+
+    private GraphService getGraphService(String database) {
+        if("staging".equalsIgnoreCase(database)) {
+            return GraphService.on(getHubClient().getStagingClient());
+        }
+        return GraphService.on(getHubClient().getFinalClient());
     }
 
     public static class FacetValues extends ArrayList<String> {

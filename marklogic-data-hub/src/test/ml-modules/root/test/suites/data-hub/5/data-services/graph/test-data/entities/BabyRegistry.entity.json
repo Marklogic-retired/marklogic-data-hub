@@ -1,0 +1,35 @@
+{
+  "info": {
+    "title": "BabyRegistry",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/",
+    "draft": false
+  },
+  "definitions": {
+    "BabyRegistry": {
+      "primaryKey": "babyRegistryId",
+      "properties": {
+        "babyRegistryId": {
+          "datatype": "integer"
+        },
+        "arrivalDate": {
+          "datatype": "date"
+        },
+        "ownedBy": {
+          "datatype": "integer",
+          "relatedEntityType": "http://example.org/Customer-0.0.1/Customer",
+          "joinPropertyName": "customerId"
+        },
+        "includes": {
+          "datatype": "array",
+          "items": {
+            "datatype": "integer",
+            "relatedEntityType": "http://example.org/Product-1.0.0/Product",
+            "joinPropertyName": "productId"
+          }
+        }
+      },
+      "description": ""
+    }
+  }
+}
