@@ -25,7 +25,7 @@ import module namespace ext = "http://marklogic.com/data-hub/extensions/entity"
 
  import module namespace sem = "http://marklogic.com/semantics" at "/MarkLogic/semantics.xqy";
 
-import module namespace functx = "http://www.functx.com" at "/MarkLogic/functx/functx-1.0.1-nodoc.xqy";
+import module namespace functx = "http://www.functx.com" at "/MarkLogic/functx/functx-1.0-nodoc-2007-01.xqy";
 
 declare namespace search = "http://marklogic.com/appservices/search";
 declare namespace tde = "http://marklogic.com/xdmp/tde";
