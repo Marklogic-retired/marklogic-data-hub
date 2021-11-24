@@ -56,13 +56,13 @@
   color: #7F86B5;
 }
 
-.formCheck { 
+.formCheck {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.formCheckLabel{ 
+.formCheckLabel{
   color: #333333;
 }
 
@@ -81,7 +81,7 @@
 
 .trashIcon {
   font-size: 20px;
-  color: $danger;
+  color: $trash-icon;
   &:hover{
       color: var(--hoverColor);
   }

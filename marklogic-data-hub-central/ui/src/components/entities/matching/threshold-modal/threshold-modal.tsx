@@ -9,7 +9,7 @@ import {NewMatchTooltips} from "../../../../config/tooltips.config";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
 

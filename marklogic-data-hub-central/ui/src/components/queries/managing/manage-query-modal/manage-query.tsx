@@ -2,7 +2,8 @@ import React, {useState, useContext, useEffect} from "react";
 import {Table} from "antd";
 import {Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faFileExport, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faFileExport} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {UserContext} from "../../../../util/user-context";
 import {queryDateConverter} from "../../../../util/date-conversion";
 import EditQueryDialog from "../edit-query-dialog/edit-query-dialog";
@@ -276,7 +277,7 @@ const QueryModal = (props) => {
           export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>,
           // TODO: Uncomment once link for query is implemented
           // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
-          delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" className={styles.manageQueryIconsHover}/>
+          delete: <FontAwesomeIcon icon={faTrashAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>
         }
       );
     });

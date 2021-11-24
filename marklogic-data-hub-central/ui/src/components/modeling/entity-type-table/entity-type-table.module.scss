@@ -5,13 +5,13 @@
   cursor: pointer;
   margin-right: 8px;
   margin-bottom: 2px;
-  color: #5B69AF;
+  color: $trash-icon;
   &:hover{
       color:var(--hoverColor) !important;
   }
 }
 .iconTrash {
-  color: $danger;
+  color: $trash-icon;
 }
 
 .iconRevertReadOnly, .iconTrashReadOnly {

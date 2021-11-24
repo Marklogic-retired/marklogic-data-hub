@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Table} from "antd";
-import {faCircle, faCheck, faTrashAlt, faPlusSquare, faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import {faCircle, faCheck, faPlusSquare, faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
 import styles from "./property-table.module.scss";
