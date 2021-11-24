@@ -5,7 +5,7 @@ const defaultOptions: any = {
   edges: {
       color: "#000000"
   },
-  height: "505px",
+  height: "50px",
   interaction: {
       hover: true
   }
