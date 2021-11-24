@@ -1,15 +1,18 @@
-import {Radio, Select} from "antd";
+import {Radio, Select, Switch} from "antd";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
-import MultiSlider from "../../matching/multi-slider/multi-slider";
 import {CurationContext} from "../../../../util/curation-context";
-import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
-import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
-import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
+import {MergeRuleTooltips, multiSliderTooltips, MergingStepTooltips} from "../../../../config/tooltips.config";
+import {addSliderOptions, parsePriorityOrder, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
+import {MergingStep, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {ConfirmYesNo, HCInput, HCButton, HCTooltip} from "@components/common";
+import moment from "moment";
+import TimelineVis from "../../matching/matching-step-detail/timeline-vis/timeline-vis";
+import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
+import MergeDeleteModal from "../merge-delete-modal/merge-delete-modal";
 
 type Props = {
   sourceNames: string[];
@@ -35,12 +38,16 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [maxSources, setMaxSources] = useState<any>("");
   const [maxSourcesTouched, setMaxSourcesTouched] = useState(false);
   const [isCustomStrategy, setIsCustomStrategy] = useState(false);
+  const [deleteModalVisibility, toggleDeleteModalVisibility] = useState(false);
   const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([defaultPriorityOption]);
   const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState("");
   const [defaultStrategyErrorMessage, setDefaultStrategyErrorMessage] = useState<any>();
   const [dropdownOption, setDropdownOption] = useState("Length");
   const [dropdownOptionTouched, setDropdownOptionTouched] = useState(false);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
+  const [displayPriorityOrderTimeline, toggleDisplayPriorityOrderTimeline] = useState(false);
+  const [priorityOptions, setPriorityOptions] = useState<any>();
+  const [deletePriorityName, setDeletePriorityName] = useState("");
 
   const dropdownTypes = ["Length"].concat(props.sourceNames);
   const dropdownTypeOptions = dropdownTypes.map(elem => <Option data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</Option>);
@@ -115,6 +122,133 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     setDropdownOptionTouched(true);
   };
 
+  const updateMergeRuleItems = async(id, newValue, priorityOrderOptions:any[]) => {
+    let editPriorityName = id.split(":")[0];
+    for (let priority of priorityOrderOptions) {
+      let id2=priority.id;
+      let priorityName  = id2.split(":")[0];
+      if (priorityName === editPriorityName) {
+        let name="";
+        if (editPriorityName !== "Length" && editPriorityName !== "Timestamp") { name = priorityName + ":"+ parseInt(newValue); } else if (editPriorityName === "Length") { name =  "Length:" + parseInt(newValue); } else if (editPriorityName === "Timestamp") { name =  "Timestamp:0"; }
+        priority.start=parseInt(newValue);
+        priority.value= name;
+      }
+    }
+    return priorityOrderOptions;
+  };
+
+  const renderPriorityOrderTimeline = () => {
+    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} /></div>;
+  };
+
+  const renderDefaultPriorityOrderTimeline = () => {
+    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} /></div>;
+  };
+
+  const timelineOrder = (a, b) => {
+    let aParts = a.value.split(":");
+    let bParts = b.value.split(":");
+    // If weights not equal
+    if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+      // By weight
+      return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+    } else {
+      // Else alphabetically
+      let aUpper = a.value.toUpperCase();
+      let bUpper = b.value.toUpperCase();
+      return (aUpper < bUpper) ? 1 : (aUpper > bUpper) ? -1 : 0;
+    }
+  };
+
+  const strategyOptions:any = {
+    max: 120,
+    min: -20,
+    start: -20,
+    end: 120,
+    width: "100%",
+    itemsAlwaysDraggable: {
+      item: displayPriorityOrderTimeline,
+      range: displayPriorityOrderTimeline
+    },
+    selectable: false,
+    editable: {
+      remove: true,
+      updateTime: true
+    },
+    moveable: false,
+    timeAxis: {
+      scale: "millisecond",
+      step: 5
+    },
+    onMove: function(item, callback) {
+      if (item.value.split(":")[0] !== "Timestamp") {
+        if (item.start >= 0 && item.start <= 100) {
+          item.value= getStrategyName(item);
+          callback(item);
+          updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
+        } else {
+          if (item.start < 1) {
+            item.start = 1;
+            item.value = getStrategyName(item);
+          } else {
+            item.start = 100;
+            item.value = getStrategyName(item);
+          }
+          callback(item);
+          updateMergeRuleItems(item.id, item.start, priorityOrderOptions);
+        }
+        setPriorityOrderOptions(priorityOrderOptions);
+      } else {
+        item.start = 0;
+        callback(item);
+        updateMergeRuleItems("Timestamp:0", 0, priorityOrderOptions);
+        setPriorityOrderOptions(priorityOrderOptions);
+      }
+    },
+    format: {
+      minorLabels: function (date, scale, step) {
+        let time;
+        if (date >= 0 && date <= 100) {
+          time = date.format("SSS");
+          return moment.duration(time).asMilliseconds();
+        } else {
+          return "";
+        }
+      },
+    },
+    template: function(item) {
+      if (item && item.hasOwnProperty("value")) {
+        return "<div data-testid=\"strategy"+" "+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1]+ "</div></div>";
+      }
+    },
+    maxMinorChars: 4,
+    order: timelineOrder
+  };
+
+  const confirmAction = () => {
+    setPriorityOrderOptions(handleDeleteSliderOptions(priorityOptions, priorityOrderOptions));
+    toggleDeleteModalVisibility(false);
+  };
+
+  const deletePriorityModal = (
+    <MergeDeleteModal
+      isVisible={deleteModalVisibility}
+      toggleModal={toggleDeleteModalVisibility}
+      confirmAction={confirmAction}
+      deletePriorityName={deletePriorityName}
+    />
+  );
+
+
+  const onPriorityOrderTimelineItemClicked = (event) => {
+    if (event.item && event.item.split(":")[0] !== "Timestamp") {
+      toggleDeleteModalVisibility(true);
+      if (event.item.split(":")[0] === "Length") setDeletePriorityName("Length");
+      else setDeletePriorityName(event.item.split(":")[0].split(" - ")[1]);
+      setPriorityOptions(event);
+    }
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     let strategyNameErrorMessage = "";
@@ -137,7 +271,24 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const onAddOptions = () => {
-    setPriorityOrderOptions(addSliderOptions(priorityOrderOptions, dropdownOption));
+    const data = (addSliderOptions(priorityOrderOptions, dropdownOption));
+    setPriorityOrderOptions(data);
+  };
+
+  const getStrategyName = (item) => {
+    let strategyName=item.value.split(":")[0];
+    let startTime;
+    if (item.start === 100 || item.start === 1) {
+      startTime = item.start;
+    } else {
+      startTime = item.start.getMilliseconds().toString();
+    }
+    if ((strategyName !== "Length" && strategyName !== "Timestamp") && item.value.indexOf("Source - ") === -1) {
+      item.value = "Source - " + strategyName + ":"+ startTime;
+    } else {
+      item.value = item.value.split(":")[0] + ":"+ startTime;
+    }
+    return item.value;
   };
 
   const onSave = async (newMergeStrategies) => {
@@ -187,20 +338,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSlider = (values, options) => {
-    handleSliderOptions(values, options, priorityOrderOptions);
-    setPriorityOrderOptions(priorityOrderOptions);
-  };
-
-  const handleDelete = (options) => {
-    setPriorityOrderOptions(handleDeleteSliderOptions(options, priorityOrderOptions));
-    setDropdownOption("Length");
-  };
-
-  const handleEdit = () => {
-
-  };
-
   const resetModal = () => {
     setDefaultStrategyErrorMessage("");
     setStrategyNameErrorMessage("");
@@ -225,6 +362,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const discardOk = () => {
     props.setOpenEditMergeStrategyDialog(false);
     resetModal();
+    parsedEditedFormDetails(curationOptions.activeStep.stepArtifact);
   };
 
   const discardCancel = () => {
@@ -250,6 +388,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     if (!props.isEditStrategy) {
       resetModal();
     }
+    toggleDisplayPriorityOrderTimeline(false);
   }, [props.strategyName, curationOptions, props.isEditStrategy, props.sourceNames]);
 
   let priorityOrderStrategyOptions: any[] = [defaultPriorityOption];
@@ -260,21 +399,17 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         if (key.hasOwnProperty("priorityOrder")) {
           for (let key1 of key.priorityOrder.sources) {
             const priorityOrderSourceObject = {
-              props: [{
-                prop: "Source",
-                type: key1.sourceName,
-              }],
-              value: key1.weight,
+              id: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
+              start: key1.weight,
+              value: "Source - "  +key1.sourceName + ":" + key1.weight.toString(),
             };
             priorityOrderStrategyOptions.push(priorityOrderSourceObject);
           }
           if (key.priorityOrder.hasOwnProperty("lengthWeight")) {
             const priorityOrderLengthObject = {
-              props: [{
-                prop: "Length",
-                type: "",
-              }],
-              value: key.priorityOrder.lengthWeight,
+              id: "Length:" + key.priorityOrder.lengthWeight.toString(),
+              value: "Length:"+  key.priorityOrder.lengthWeight.toString(),
+              start: key.priorityOrder.lengthWeight,
             };
             priorityOrderStrategyOptions.push(priorityOrderLengthObject);
           }
@@ -419,9 +554,16 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
             </div>
             <div>
-              <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging} />
+              <div><span className={styles.enableStrategySwitch}><b>Enable Merge Strategy Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
+                <span>
+                  <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
+                    <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                  </HCTooltip>
+                </span></div>
+              {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}
             </div>
           </div>}
+          {deletePriorityModal}
           <Row className={`my-3 ${styles.submitButtonsForm}`}>
             <Col className={"d-flex"}>
               <div className={styles.submitButtons}>
