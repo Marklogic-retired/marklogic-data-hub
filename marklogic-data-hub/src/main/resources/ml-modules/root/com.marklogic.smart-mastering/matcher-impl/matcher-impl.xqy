@@ -262,6 +262,9 @@ declare function match-impl:find-document-matches-by-options(
       else
         let $estimate := xdmp:estimate(cts:search(fn:collection(), $match-query, "unfiltered"))
         return (
+          if ($estimate ge 250) then
+            xdmp:log("A large number ("|| $estimate ||") of potential matches were discovered for document '" || $document-uri || "' with the following query: " || xdmp:describe($match-query, (), ()), "warning")
+          else (),
           if ($match-trace-is-enabled) then
             xdmp:trace($const:TRACE-MATCH-RESULTS, "Estimated " || $estimate || " doc(s) found for cts.doc('"|| $document-uri ||"') in " || xdmp:database-name(xdmp:database()))
           else (),

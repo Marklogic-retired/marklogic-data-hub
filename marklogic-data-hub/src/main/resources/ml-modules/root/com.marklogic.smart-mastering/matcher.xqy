@@ -187,6 +187,36 @@ declare function matcher:find-document-matches-by-options(
 };
 
 (:
+ : Starting with the specified document, look for a page of potential matches based on previously-saved matching options.
+ :
+ : @param $document  document to find matches for
+ : @param $options  match options saved using matcher:save-options
+ : @param $start  starting index for potential match results (starts at 1)
+ : @param $page-length  maximum number of results to return in this call
+ : @param $minimum-threshold  value of the lowest threshold score; the match query will require matches to score at
+                              least this high to be returned
+ : @param $include-matches  whether the response should list the matched properties for each potential match
+ : @param $filter-query  a cts:query used to restrict matches to a set, such as a specific entity type or collection
+ : @param $include-results  a boolean that determines if results should be retrieved or just an estimate
+ : @return the queries used for search and the search results themselves
+ : @see https://marklogic-community.github.io/smart-mastering-core/docs/match-results/
+ :)
+declare function matcher:find-document-matches-by-options(
+  $document,
+  $options as item(), (: as (element(matcher:options)|object-node()) :)
+  $start as xs:integer,
+  $page-length as xs:integer,
+  $minimum-threshold as xs:double,
+  $include-matches as xs:boolean,
+  $filter-query,
+  $include-results as xs:boolean
+) as element(results)
+{
+  match-impl:find-document-matches-by-options(
+    $document, $options, $start, $page-length, $minimum-threshold, $include-matches, $filter-query, $include-results
+  )
+};
+(:
  : Convert match results from XML to JSON.
  : @param $results-xml  XML match results as returned from the
  :                      find-document-matches-* functions
@@ -489,6 +519,25 @@ declare function matcher:build-match-notification(
   notify-impl:build-match-notification($threshold-label, $uris, $options)
 };
 
+(:
+ : Builds a map action for new notification. If a notification document already exists for
+ : this label/URIs combination, it will be replaced with the new notification.
+ : @param $threshold-label  human-readable label used to indicate the
+ :                          likelihood of the match
+ : @param $uris  URIs of the content documents that are merge candidates
+ : @param $merge-options  merge options for determining notification collections
+ : @param $query  merge options for determining notification collections
+ : @return content of the newly-constructed notification
+ :)
+declare function matcher:build-match-notification(
+  $threshold-label as xs:string,
+  $uris as xs:string*,
+  $options as item()?,
+  $query as cts:query?
+) as map:map?
+{
+  notify-impl:build-match-notification($threshold-label, $uris, $options, $query)
+};
 (:
  : Delete the specified notification.
  : @param $uri  URI of the notification document to be deleted

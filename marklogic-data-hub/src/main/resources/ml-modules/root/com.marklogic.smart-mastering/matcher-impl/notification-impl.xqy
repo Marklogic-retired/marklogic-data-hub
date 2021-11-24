@@ -67,6 +67,14 @@ declare function notify-impl:save-match-notification(
 };
 
 declare variable $_notifications-inserted := map:map();
+declare function notify-impl:build-match-notification(
+  $threshold-label as xs:string,
+  $uris as xs:string*,
+  $options as item()?
+) as map:map?
+{
+  notify-impl:build-match-notification($threshold-label, $uris, $options, ())
+};
 (:
  : Create a new notification document. If there is already a notification for
  : this combination of label and URIs, that notification will be replaced.
@@ -77,7 +85,8 @@ declare variable $_notifications-inserted := map:map();
 declare function notify-impl:build-match-notification(
   $threshold-label as xs:string,
   $uris as xs:string*,
-  $options as item()?
+  $options as item()?,
+  $query as cts:query?
 ) as map:map?
 {
   let $options-node := merge-impl:options-to-node($options)
@@ -109,7 +118,8 @@ declare function notify-impl:build-match-notification(
             element sm:threshold-label {$threshold-label},
             element sm:document-uris {
               $doc-uris
-            }
+            },
+            $query ! element sm:query {.}
           }
         ),
       map:entry("context",
