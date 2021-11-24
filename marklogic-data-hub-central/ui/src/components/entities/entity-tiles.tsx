@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {useLocation} from "react-router-dom";
-import {Modal} from "antd";
-import {Row, Col, Accordion, Card, Tabs, Tab} from "react-bootstrap";
+import {Row, Col, Accordion, Card, Tabs, Tab, Modal} from "react-bootstrap";
 import axios from "axios";
 import {createStep, updateStep, getSteps, deleteStep} from "../../api/steps";
 import {sortStepsByUpdated} from "../../util/conversionFunctions";
@@ -13,7 +12,9 @@ import "./entity-tiles.scss";
 import MergingCard from "./merging/merging-card";
 import {MappingStepMessages} from "../../config/tooltips.config";
 import {CurationContext} from "../../util/curation-context";
-
+import {HCButton} from "@components/common";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 
 const EntityTiles = (props) => {
   const {setActiveStepWarning, setValidateMatchCalled, setValidateMergeCalled} = useContext(CurationContext);
@@ -32,6 +33,16 @@ const EntityTiles = (props) => {
   const [requiresNoEntityTypeTile, setRequiresNoEntityTypeTile]  = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openStep, setOpenStep] = useState({});
+
+  interface ModalError {
+    isVisible: boolean,
+    message: string | JSX.Element
+  }
+
+  const [modalError, setModalError] = useState<ModalError>({
+    isVisible: false,
+    message: ""
+  });
 
   useEffect(() => {
     getMappingArtifacts();
@@ -128,13 +139,13 @@ const EntityTiles = (props) => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error creating mapping", message);
-      message.indexOf(mapping.name) > -1 ? Modal.error({
-        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create mapping step. A mapping step with the name <b>{mapping.name}</b> already exists.</p></div>,
-        okText: <div aria-label="OK">OK</div>
-      }) : Modal.error({
-        content: message
+      message.indexOf(mapping.name) > -1 ? setModalError({
+        isVisible: true,
+        message: <p aria-label="duplicate-step-error">Unable to create mapping step. A mapping step with the name <b>{mapping.name}</b> already exists.</p>
+      }) : setModalError({
+        isVisible: true,
+        message
       });
-
     }
   };
 
@@ -197,11 +208,12 @@ const EntityTiles = (props) => {
       setValidateMatchCalled(true);
       let message = error.response.data.message;
       console.error("Error while creating the matching artifact!", message);
-      message.indexOf(matchingObj.name) > -1 ? Modal.error({
-        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create matching step. A matching step with the name <b>{matchingObj.name}</b> already exists.</p></div>,
-        okText: <div aria-label="OK">OK</div>
-      }) : Modal.error({
-        content: message
+      message.indexOf(matchingObj.name) > -1 ? setModalError({
+        isVisible: true,
+        message: <p aria-label="duplicate-step-error">Unable to create matching step. A matching step with the name <b>{matchingObj.name}</b> already exists.</p>
+      }) : setModalError({
+        isVisible: true,
+        message
       });
     }
   };
@@ -266,11 +278,12 @@ const EntityTiles = (props) => {
       setValidateMergeCalled(true);
       let message = error.response.data.message;
       console.error("Error while creating the merging artifact!", message);
-      message.indexOf(mergingObj.name) > -1 ? Modal.error({
-        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create merging step. A merging step with the name <b>{mergingObj.name}</b> already exists.</p></div>,
-        okText: <div aria-label="OK">OK</div>
-      }) : Modal.error({
-        content: message
+      message.indexOf(mergingObj.name) > -1 ? setModalError({
+        isVisible: true,
+        message: <p aria-label="duplicate-step-error">Unable to create merging step. A merging step with the name <b>{mergingObj.name}</b> already exists.</p>
+      }) : setModalError({
+        isVisible: true,
+        message
       });
     }
   };
@@ -509,6 +522,20 @@ const EntityTiles = (props) => {
             </Card>
           </Accordion.Item>
         </Accordion> : null}
+      <Modal
+        show={modalError.isVisible}
+      >
+        <Modal.Body className={"pt-5 pb-4"}>
+          <div className={"d-flex align-items-start justify-content-center"}>
+            <FontAwesomeIcon icon={faTimesCircle} className={"text-danger me-4 fs-3"} />{modalError.message}
+          </div>
+          <div className={"d-flex justify-content-end pt-4 pb-2"}>
+            <HCButton aria-label={"Ok"} variant="primary" type="submit" onClick={() => setModalError({isVisible: false, message: ""})}>
+              Ok
+            </HCButton>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 

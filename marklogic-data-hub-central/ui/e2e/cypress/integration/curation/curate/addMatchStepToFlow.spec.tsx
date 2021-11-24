@@ -62,7 +62,7 @@ describe("Add Matching step to a flow", () => {
     createEditStepDialog.saveButton("matching").click();
     cy.waitForAsyncRequest();
     loadPage.duplicateStepErrorMessage();
-    loadPage.confirmationOptions("OK").click();
+    loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
   it("Add the Match step to new flow and Run the step(new)", {defaultCommandTimeout: 120000}, () => {

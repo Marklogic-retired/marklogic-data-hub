@@ -65,7 +65,7 @@ describe("Add Merge step to a flow", () => {
     createEditStepDialog.saveButton("merging").click();
     cy.waitForAsyncRequest();
     loadPage.duplicateStepErrorMessage();
-    loadPage.confirmationOptions("OK").click();
+    loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
   it("Add the Merge step to new flow and Run the step(new)", {defaultCommandTimeout: 120000}, () => {

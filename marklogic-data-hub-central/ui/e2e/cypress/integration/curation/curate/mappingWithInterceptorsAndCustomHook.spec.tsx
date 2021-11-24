@@ -256,7 +256,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     //error message should be displayed instead of step details auto open
     cy.findByLabelText(`${mapStep}-details-header`).should("not.exist");
     loadPage.duplicateStepErrorMessage();
-    loadPage.confirmationOptions("OK").click();
+    loadPage.confirmationOptions("Ok").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
   /*  it("Verify link to settings, Add mapstep to existing flow, Run the flow and explore the data", () => {
