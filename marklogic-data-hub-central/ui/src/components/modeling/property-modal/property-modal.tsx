@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Radio, Cascader, Select} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
-import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
 import StructuredTypeModal from "../structured-type-modal/structured-type-modal";

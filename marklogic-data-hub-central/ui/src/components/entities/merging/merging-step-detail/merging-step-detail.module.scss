@@ -75,7 +75,11 @@
 }
 
 .enabledDeleteIcon{
-    color: $danger;
+    color: $trash-icon;
+}
+
+.enabledDeleteIcon:hover{
+    color: var(--hoverColor);
 }
 
 .priorityOrderContainer{

@@ -10,7 +10,8 @@ import {
 } from "../../../../types/curation-types";
 import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "../../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faTrashAlt, faCheck} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
@@ -263,7 +264,7 @@ const MergingStepDetail: React.FC = () => {
         property: i["entityPropertyPath"]?.split(".").join(" > "),
         mergeType: i["mergeType"],
         strategy: i["mergeStrategyName"],
-        delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)} />
+        delete: <i><FontAwesomeIcon icon={faTrashAlt} className={styles.enabledDeleteIcon} color="#5B69AF" size="lg" data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/></i>
       }
     );
   });
