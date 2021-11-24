@@ -669,6 +669,10 @@ class BrowsePage {
     cy.get("#back-button").click({force: true});
   }
 
+  scrollSideBar() {
+    return cy.get("#hc-sider-content").scrollTo("bottom", {ensureScrollable: false});
+  }
+
   sliderMinimum() {
     return cy.findByTestId("numeric-slider-min");
   }

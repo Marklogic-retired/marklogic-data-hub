@@ -67,19 +67,19 @@ class CuratePage {
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`)).click();
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`)).click({force: true});
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click();
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click({force: true});
   }
 
   selectCustomTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`)).click();
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`)).click({force: true});
   }
 
   addNewStep(curateTabId: string) {
-    return cy.get(`#${curateTabId}`).findByLabelText("icon: plus-circle");
+    return cy.get(`#${curateTabId}`).findAllByLabelText("icon: plus-circle").first();
   }
 
   addNewStepDisabled(entityTypeId: string) {

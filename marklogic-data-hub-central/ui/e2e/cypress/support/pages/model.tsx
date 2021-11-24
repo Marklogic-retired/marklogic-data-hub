@@ -14,6 +14,10 @@ class ModelPage {
       });
   }
 
+  closeSidePanel() {
+    return cy.findByLabelText("closeGraphViewSidePanel").click({force: true});
+  }
+
   getAddEntityButton() {
     return cy.findByLabelText("add-entity");
   }
@@ -32,6 +36,14 @@ class ModelPage {
 
   verifyModelingInfo() {
     return cy.findByLabelText("modelingInfo").should("exist");
+  }
+
+  scrollPageBottom() {
+    return cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
+  }
+
+  scrollPageTop() {
+    return cy.get(".mosaic-window > :nth-child(2)").scrollTo("top");
   }
 }
 

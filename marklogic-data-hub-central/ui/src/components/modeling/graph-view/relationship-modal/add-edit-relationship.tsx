@@ -641,7 +641,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>TARGET</span>
             <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-              <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
+              <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor}}>
                 <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
               </Card>
               {!props.isEditing ?
