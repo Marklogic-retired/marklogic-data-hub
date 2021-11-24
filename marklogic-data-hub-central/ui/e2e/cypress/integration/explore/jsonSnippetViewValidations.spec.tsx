@@ -75,7 +75,7 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSearchText().should("have.value", "10256");
-    browsePage.getFacetView().should("have.css", "color", "rgb(91, 105, 175)");
+    browsePage.getFacetView().should("have.css", "color", "rgb(57, 68, 148)");
   });
   it("select Person entity and verify entity, docs, hub/entity properties", () => {
     browsePage.selectEntity("Person");

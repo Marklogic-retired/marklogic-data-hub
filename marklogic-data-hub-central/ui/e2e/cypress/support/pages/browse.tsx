@@ -591,7 +591,7 @@ class BrowsePage {
   }
 
   getDatabaseButton(database: string) {
-    return cy.get(`[aria-label='switch-database-${database}']`);
+    return cy.get(`#switch-database-${database}`);
   }
 
   getTableViewButton() {

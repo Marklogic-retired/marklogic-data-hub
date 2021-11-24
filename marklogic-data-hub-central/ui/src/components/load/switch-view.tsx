@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Radio} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThLarge, faTable} from "@fortawesome/free-solid-svg-icons";
 import "./switch-view.scss";
@@ -52,23 +51,37 @@ const SwitchView: React.FC<Props> = (props) => {
 
   return (
     <div id="switch-view" aria-label="switch-view" onKeyDown={radioKeyDownHandler}>
-      <Radio.Group
-        buttonStyle="outline"
-        className={"radioGroupView"}
-        defaultValue={view}
-        name="radiogroup"
-        onChange={e => onChange(e.target.value)}
-        size="large"
-        style={{color: "#999"}}
-        // tabIndex={0}
-      >
-        <Radio.Button aria-label="switch-view-card" value={"card"} checked={view === "card"}>
-          <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
-        </Radio.Button>
-        <Radio.Button aria-label="switch-view-list" value={"list"} checked={view === "list"}>
-          <i>{<FontAwesomeIcon icon={faTable} />}</i>
-        </Radio.Button>
-      </Radio.Group>
+      <div className={"switch-button-group outline"}>
+        <span>
+          <input
+            type="radio"
+            id="switch-view-card"
+            name="switch-view-radiogroup"
+            value={"card"}
+            defaultChecked={view === "card"}
+            checked={view === "card"}
+            onChange={e => onChange(e.target.value)}
+          />
+          <label aria-label="switch-view-card" htmlFor="switch-view-card" className={`d-flex justify-content-center align-items-center`} style={{height: "40px", fontSize: "22px"}}>
+            <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
+          </label>
+        </span>
+
+        <span>
+          <input
+            type="radio"
+            id="switch-view-list"
+            name="switch-view-radiogroup"
+            value={"list"}
+            defaultChecked={view === "list"}
+            checked={view === "list"}
+            onChange={e => onChange(e.target.value)}
+          />
+          <label aria-label="switch-view-list" htmlFor="switch-view-list" className={`d-flex justify-content-center align-items-center`} style={{height: "40px", fontSize: "24px"}}>
+            <i>{<FontAwesomeIcon icon={faTable} />}</i>
+          </label>
+        </span>
+      </div>
     </div>
 
   );

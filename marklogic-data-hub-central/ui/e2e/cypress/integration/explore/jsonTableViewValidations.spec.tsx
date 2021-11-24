@@ -103,7 +103,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getClearFacetSearchSelection("Alice").should("exist");
     browsePage.getSearchText().should("have.value", "Alice");
-    browsePage.getTableView().should("have.css", "color", "rgb(91, 105, 175)");
+    browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
 
   });
 
@@ -147,7 +147,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getAppliedFacetName("adamscole@nutralab.com").should("be.equal", "email: adamscole@nutralab.com");
     browsePage.getAppliedFacetName("coleadams39@nutralab.com").should("be.equal", "email: coleadams39@nutralab.com");
     browsePage.getSearchText().should("have.value", "Adams Cole");
-    browsePage.getTableView().should("have.css", "color", "rgb(91, 105, 175)");
+    browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
 
     //Navigating to detail view
     cy.waitForAsyncRequest();
@@ -180,7 +180,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getSearchText().should("have.value", "Adams Cole");
-    browsePage.getTableView().should("have.css", "color", "rgb(91, 105, 175)");
+    browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 
   it("search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {

@@ -113,10 +113,6 @@
   padding-right: 5px;
 }
 
-.dataSourceButtons{
-  padding-left: 16px;
-}
-
 .query {
   display: flex;
   align-items: center;
@@ -174,16 +170,6 @@
   font-size: 20px;
   position: relative;
   color: #bfbfbf;
-}
-
-.dataSourceButton {
-  display: inline-flex;
-  height: 30px;
-  width: 100px;
-  font-size: 14px;
-  text-align: center;
-  padding-left: 5px;
-  padding-right: 5px;
 }
 
 .toggleDataHubArtifacts {

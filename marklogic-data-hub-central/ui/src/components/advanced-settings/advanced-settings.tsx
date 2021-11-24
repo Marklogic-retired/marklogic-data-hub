@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Select, Radio, Tooltip} from "antd";
-import {Form, Row, Col, FormLabel, FormControl} from "react-bootstrap";
+import {Select, Tooltip} from "antd";
+import {Form, Row, Col, FormCheck, FormLabel, FormControl} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
@@ -437,7 +437,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
     if (event.target.name === "attachSourceDocument") {
       setAttachSourceDocumentTouched(true);
-      setAttachSourceDocument(event.target.value);
+      setAttachSourceDocument(1 === parseInt(event.target.value) ? true : false);
     }
 
     if (event.target.id === "batchSize") {
@@ -853,11 +853,33 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         {stepType === "mapping" ?
           <Row className={"mb-3"}>
             <FormLabel column lg={3} className={"pe-0"}>{"Attach Source Document:"}</FormLabel>
-            <Col className={"d-flex"}>
-              <Radio.Group onChange={handleChange} name="attachSourceDocument" value={attachSourceDocument} className={"d-flex align-items-center"}>
-                <Radio value={true} data-testid="attachmentTrue">Yes</Radio>
-                <Radio value={false} data-testid="attachmentFalse">No</Radio>
-              </Radio.Group>
+            <Col className={"d-flex align-items-center"}>
+              <FormCheck
+                inline
+                id={"attachmentTrue"}
+                data-testid="attachmentTrue"
+                name={"attachSourceDocument"}
+                type={"radio"}
+                defaultChecked={attachSourceDocument}
+                checked={attachSourceDocument}
+                onChange={handleChange}
+                label={"Yes"}
+                value={1}
+                className={"mb-0"}
+              />
+              <FormCheck
+                inline
+                id={"attachmentFalse"}
+                data-testid="attachmentFalse"
+                name={"attachSourceDocument"}
+                type={"radio"}
+                defaultChecked={!attachSourceDocument}
+                checked={!attachSourceDocument}
+                onChange={handleChange}
+                label={"No"}
+                value={0}
+                className={"mb-0"}
+              />
               <div className={"p-2 d-flex align-items-center"}>
                 <HCTooltip
                   text={tooltips.attachSourceDocument}

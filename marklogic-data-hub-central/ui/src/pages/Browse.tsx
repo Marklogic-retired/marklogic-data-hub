@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
 import axios from "axios";
-import {Radio} from "antd";
 import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
 import {SearchContext} from "../util/search-context";
@@ -524,33 +523,58 @@ const Browse: React.FC<Props> = ({location}) => {
                           {graphView ? numberOfResultsBanner : ""}
                           {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
                           {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
-                            <Radio.Group
-                              buttonStyle="outline"
-                              name="radiogroup"
-                              size="large"
-                              defaultValue={tableView ? "table" : "snippet"}
-                              onChange={e => handleViewChange(e.target.value)}
-                            >
-                              <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={!tableView && graphView}>
+                            <div className={"switch-button-group outline"}>
+                              <span>
+                                <input
+                                  type="radio"
+                                  id="switch-view-graph"
+                                  name="switch-view-radiogroup"
+                                  value={"graph"}
+                                  onChange={e => handleViewChange(e.target.value)}
+                                />
                                 <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
-                                  <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
+                                  <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} id={"graphView"} style={{height: "40px"}}>
+                                    <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
+                                  </label>
                                 </HCTooltip>
-                              </Radio.Button>
-                              <Radio.Button aria-label="switch-view-table" value={"table"} >
+                              </span>
+
+                              <span>
+                                <input
+                                  type="radio"
+                                  id="switch-view-table"
+                                  name="switch-view-radiogroup"
+                                  value={"table"}
+                                  defaultChecked={tableView}
+                                  onChange={e => handleViewChange(e.target.value)}
+                                />
                                 <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
-                                  <i data-cy="table-view" id={"tableView"}>
-                                    <FontAwesomeIcon icon={faTable} />
-                                  </i>
+                                  <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`d-flex justify-content-center align-items-center`} id={"tableView"} style={{height: "40px"}}>
+                                    <i data-cy="table-view">
+                                      <FontAwesomeIcon icon={faTable} />
+                                    </i>
+                                  </label>
                                 </HCTooltip>
-                              </Radio.Button>
-                              <Radio.Button aria-label="switch-view-snippet" value={"snippet"} >
+                              </span>
+
+                              <span>
+                                <input
+                                  type="radio"
+                                  id="switch-view-snippet"
+                                  name="switch-view-radiogroup"
+                                  value={"snippet"}
+                                  defaultChecked={!tableView}
+                                  onChange={e => handleViewChange(e.target.value)}
+                                />
                                 <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
-                                  <i data-cy="facet-view" id={"snippetView"}>
-                                    <FontAwesomeIcon icon={faStream} />
-                                  </i>
+                                  <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={`d-flex justify-content-center align-items-center`} id={"snippetView"} style={{height: "40px"}}>
+                                    <i data-cy="facet-view">
+                                      <FontAwesomeIcon icon={faStream} />
+                                    </i>
+                                  </label>
                                 </HCTooltip>
-                              </Radio.Button>
-                            </Radio.Group>
+                              </span>
+                            </div>
                           </div> : ""}
                         </div>
                       </div></span>}

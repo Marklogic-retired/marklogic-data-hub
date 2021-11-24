@@ -33,12 +33,6 @@
     cursor: not-allowed;
 }
 
-.questionCircle:before,
-.questionCircleCollection:before,
-.questionCircleQuery:before {
-    position: absolute;
-}
-
 .questionCircle {
     font-size: 12px;
     color: #7F86B5;
@@ -47,12 +41,9 @@
 .questionCircleCollection {
     font-size: 12px;
     color: #7F86B5;
-    margin-left: -8px;
 }
 
 .questionCircleQuery {
-    margin-left: -112px;
-    margin-top: 5px;
     font-size: 12px;
     color: #7F86B5;
 }

@@ -1,4 +1,4 @@
-import {Radio, Select, Switch} from "antd";
+import {Select, Switch} from "antd";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useContext, useEffect} from "react";
 import styles from "./merge-rule-dialog.module.scss";
@@ -504,12 +504,12 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         setRadioSourcesOptionClicked(2);
       }
     } else if (event.target.name === "maxValues") {
-      setRadioValuesOptionClicked(event.target.value);
+      setRadioValuesOptionClicked(parseInt(event.target.value));
       if (event.target.value === 1) {
         setMaxValueRuleInput("");
       }
     } else if (event.target.name === "maxSources") {
-      setRadioSourcesOptionClicked(event.target.value);
+      setRadioSourcesOptionClicked(parseInt(event.target.value));
       if (event.target.value === 1) {
         setMaxSourcesRuleInput("");
       }
@@ -830,13 +830,24 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               <>
                 <Row className={"mb-3"}>
                   <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
-                  <Col className={"d-flex"}>
-                    <Radio.Group className={styles.radioAnt} value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
-                      <Radio className={styles.radioAnt} value={1}> All</Radio>
-                      <Radio className={styles.radioAnt} value={2}>
-                        <HCInput id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput}/>
-                      </Radio>
-                    </Radio.Group>
+                  <Col className={"d-flex align-items-center"}>
+                    <Form.Check
+                      inline
+                      id={"maxValues_all"}
+                      name={"maxValues"}
+                      type={"radio"}
+                      onChange={handleChange}
+                      defaultChecked={radioValuesOptionClicked === 1}
+                      checked={radioValuesOptionClicked === 1}
+                      label={"All"}
+                      value={1}
+                      aria-label={"All"}
+                      className={"mb-0 flex-shrink-0"}
+                    />
+                    <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"} >
+                      <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2} defaultChecked={radioValuesOptionClicked === 2} checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+                      <HCInput id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput}/>
+                    </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
                         <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
@@ -846,13 +857,24 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 </Row>
                 <Row className={"mb-3"}>
                   <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
-                  <Col className={"d-flex"}>
-                    <Radio.Group className={styles.radioAnt} value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
-                      <Radio className={styles.radioAnt} value={1} > All</Radio>
-                      <Radio className={styles.radioAnt} value={2} >
-                        <HCInput id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}/>
-                      </Radio>
-                    </Radio.Group>
+                  <Col className={"d-flex align-items-center"}>
+                    <Form.Check
+                      inline
+                      id={"maxSources_all"}
+                      name={"maxSources"}
+                      type={"radio"}
+                      onChange={handleChange}
+                      defaultChecked={radioSourcesOptionClicked === 1}
+                      checked={radioSourcesOptionClicked === 1}
+                      label={"All"}
+                      value={1}
+                      aria-label={"All"}
+                      className={"mb-0 flex-shrink-0"}
+                    />
+                    <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"} >
+                      <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} defaultChecked={radioSourcesOptionClicked === 2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+                      <HCInput id="maxSourcesRuleInput" value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}/>
+                    </Form.Check>
                     <div className={"d-flex align-items-center"}>
                       <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
                         <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>

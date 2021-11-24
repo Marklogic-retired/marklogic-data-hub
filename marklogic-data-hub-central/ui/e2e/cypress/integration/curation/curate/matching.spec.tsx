@@ -99,7 +99,7 @@ describe("Matching", () => {
     // To test when user click on Expand all icon
     cy.get("[class*=\"matching-step-detail_expandCollapseRulesIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
-        cy.get(".ant-radio-group").within(() => {
+        cy.get(".switch-button-group").within(() => {
           cy.get("label:first").click();
         });
       });
@@ -108,7 +108,7 @@ describe("Matching", () => {
     // To test when user click on Collapse all icon
     cy.get("[class*=\"matching-step-detail_expandCollapseRulesIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
-        cy.get(".ant-radio-group").within(() => {
+        cy.get(".switch-button-group").within(() => {
           cy.get("label:last").click();
         });
       });
@@ -375,6 +375,10 @@ describe("Matching", () => {
       cy.waitUntil(() => matchingStepDetail.getUriInputField().clear().type(uris[i]));
       matchingStepDetail.getAddUriIcon().click();
     }
+
+    matchingStepDetail.getTestMatchUriButton();
+    cy.waitForAsyncRequest();
+    cy.wait(3000);
     matchingStepDetail.getTestMatchUriButton();
     cy.waitForAsyncRequest();
     cy.wait(3000);
@@ -403,7 +407,7 @@ describe("Matching", () => {
     // To test when user click on expand all icon
     cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
-        cy.get(".ant-radio-group").within(() => {
+        cy.get(".switch-button-group").within(() => {
           cy.get("label:first").scrollIntoView().click();
         });
       });
@@ -450,7 +454,7 @@ describe("Matching", () => {
     cy.findByLabelText("inputUriRadio").scrollIntoView();
     cy.get("[class*=\"matching-step-detail_expandCollapseIcon_\"]").within(() => {
       cy.findByLabelText("expand-collapse").within(() => {
-        cy.get(".ant-radio-group").within(() => {
+        cy.get(".switch-button-group").within(() => {
           cy.get("label:last").scrollIntoView().click();
         });
       });

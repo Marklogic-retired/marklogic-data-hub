@@ -128,13 +128,12 @@
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        min-width: 100%;
+        margin-bottom: 10px;
+
         > .columnOptionsSelector{
-            float: right;
-            margin: 15px 15px 0px 0px;
+            margin: 10px 15px 0px 0px;
         }
         > .entityCollapseButtons{
-            float: right;
             margin-top: 10px;
             padding-right: 15px;
         }

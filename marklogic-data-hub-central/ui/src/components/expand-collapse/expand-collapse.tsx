@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Radio} from "antd";
 import styles from "./expand-collapse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleDown, faAngleDoubleUp} from "@fortawesome/free-solid-svg-icons";
@@ -10,6 +9,11 @@ interface Props {
   currentSelection: string;
 }
 
+const ExpandCollapseStyle = {
+  height: "32px",
+  padding: "8px 12px"
+};
+
 const ExpandCollapse: React.FC<Props> = (props) => {
   let [enabled, setEnabled] = useState(props.currentSelection);
 
@@ -17,6 +21,8 @@ const ExpandCollapse: React.FC<Props> = (props) => {
     setEnabled(val);
     props.handleSelection(val);
   };
+
+  const cmpRandomData = Math.random().toString(36).substr(2, 5);
 
   const radioKeyDownHandler = (event) => {
     if (event.key === "Enter") {
@@ -45,38 +51,53 @@ const ExpandCollapse: React.FC<Props> = (props) => {
 
   return (
     <span id="expand-collapse" aria-label="expand-collapse" onKeyDown={radioKeyDownHandler}>
-      <Radio.Group
-        buttonStyle="outline"
-        className={"radioGroupView"}
-        name="radiogroup"
-        onChange={e => onSelect(e.target.value)}
-        size="small"
-        // tabIndex={0}
-        value={""}
-      >
-        <Radio.Button id="expandBtn" data-testid="expandBtn" aria-label="radio-button-expand" value={"expand"} checked={enabled === "expand"} >
+      <div className={"switch-button-group outline"}>
+        <span>
+          <input
+            type="radio"
+            id={`expandBtn-${cmpRandomData}`}
+            name={`expand-collapse-radiogroup-${cmpRandomData}`}
+            value={"expand"}
+            defaultChecked={enabled === "expand"}
+            checked={enabled === "expand"}
+            onChange={e => onSelect(e.target.value)}
+          />
           <HCTooltip text="Expand All" id="collapse-all-tooltip" placement="top">
-            <i>
-              <FontAwesomeIcon
-                id="expandIcon"
-                icon={faAngleDoubleDown}
-                className={styles.icon}
-                size="sm" />
-            </i>
+            <label aria-label="radio-button-expand" data-testid="expandBtn" htmlFor={`expandBtn-${cmpRandomData}`} className={`d-flex justify-content-center align-items-center`} style={ExpandCollapseStyle}>
+              <i>
+                <FontAwesomeIcon
+                  id="expandIcon"
+                  icon={faAngleDoubleDown}
+                  className={styles.icon}
+                  size="xs" />
+              </i>
+            </label>
           </HCTooltip>
-        </Radio.Button>
-        <Radio.Button id="collapseBtn" data-testid="collapseBtn" aria-label="radio-button-collapse" value={"collapse"} checked={enabled === "collapse"} >
+        </span>
+
+        <span>
+          <input
+            type="radio"
+            id={`collapseBtn-${cmpRandomData}`}
+            name={`expand-collapse-radiogroup-${cmpRandomData}`}
+            value={"collapse"}
+            defaultChecked={enabled === "collapse"}
+            checked={enabled === "collapse"}
+            onChange={e => onSelect(e.target.value)}
+          />
           <HCTooltip text="Collapse All" id="collapse-all-tooltip" placement="top">
-            <i>
-              <FontAwesomeIcon
-                id="collapseIcon"
-                icon={faAngleDoubleUp}
-                className={styles.icon}
-                size="sm" />
-            </i>
+            <label aria-label="radio-button-collapse" data-testid="collapseBtn" htmlFor={`collapseBtn-${cmpRandomData}`} className={`d-flex justify-content-center align-items-center`} style={ExpandCollapseStyle}>
+              <i>
+                <FontAwesomeIcon
+                  id="collapseIcon"
+                  icon={faAngleDoubleUp}
+                  className={styles.icon}
+                  size="xs" />
+              </i>
+            </label>
           </HCTooltip>
-        </Radio.Button>
-      </Radio.Group>
+        </span>
+      </div>
     </span>
   );
 };

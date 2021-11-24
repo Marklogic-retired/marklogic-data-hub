@@ -137,7 +137,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Attach Source Document:")).toBeInTheDocument();
     const radio = getByLabelText("No");
 
-    expect(radio["value"]).toBe("false");
+    expect(radio["value"]).toBe("0");
     fireEvent.change(radio, {target: {value: "true"}});
     expect(radio["value"]).toBe("true");
 

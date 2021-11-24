@@ -1,4 +1,4 @@
-import {Radio, Select, Switch} from "antd";
+import {Select, Switch} from "antd";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
@@ -77,20 +77,20 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         if (defaultStrategy) {
           displayErrorMessage(defaultStrategy);
         } else {
-          setRadioDefaultOptionClicked(event.target.value);
+          setRadioDefaultOptionClicked(parseInt(event.target.value));
         }
       } else {
-        setRadioDefaultOptionClicked(event.target.value);
+        setRadioDefaultOptionClicked(parseInt(event.target.value));
       }
     }
     if (event.target.name === "maxSources") {
-      setRadioSourcesOptionClicked(event.target.value);
+      setRadioSourcesOptionClicked(parseInt(event.target.value));
       if (event.target.value === 1) {
         setMaxSources("");
       }
     }
     if (event.target.name === "maxValues") {
-      setRadioValuesOptionClicked(event.target.value);
+      setRadioValuesOptionClicked(parseInt(event.target.value));
       if (event.target.value === 1) {
         setMaxValues("");
       }
@@ -483,34 +483,52 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           </Row>
           <Row className={"mb-3 justify-content-center"}>
             <FormLabel column lg={3}>{"Max Values:"}</FormLabel>
-            <Col className={"d-flex"}>
-              <Radio.Group className={styles.radioAnt} value={radioValuesOptionClicked} onChange={handleChange} name={"maxValues"}>
-                <Radio className={styles.radioAnt} value={1} > All</Radio>
-                <Radio className={styles.radioAnt} value={2} >
-                  <div className={styles.radioAnt}>
-                    <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
-                    <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
-                  </div>
-                </Radio>
-              </Radio.Group>
+            <Col className={"d-flex align-items-center"}>
+              <Form.Check
+                inline
+                id={"maxValues_all"}
+                name={"maxValues"}
+                type={"radio"}
+                onChange={handleChange}
+                defaultChecked={radioValuesOptionClicked === 1}
+                checked={radioValuesOptionClicked === 1}
+                label={"All"}
+                value={1}
+                aria-label={"All"}
+                className={"mb-0 flex-shrink-0"}
+              />
+              <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"} >
+                <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2} defaultChecked={radioValuesOptionClicked === 2} checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+                <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
+                <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </Form.Check>
             </Col>
           </Row>
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Max Sources:"}</FormLabel>
-            <Col className={"d-flex"}>
-              <Radio.Group className={styles.radioAnt} value={radioSourcesOptionClicked} onChange={handleChange} name={"maxSources"}>
-                <Radio className={styles.radioAnt} value={1} > All</Radio>
-                <Radio className={styles.radioAnt} value={2} >
-                  <div className={styles.radioAnt}>
-                    <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
-                    <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
-                      <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
-                    </HCTooltip>
-                  </div>
-                </Radio>
-              </Radio.Group>
+            <Col className={"d-flex align-items-center"}>
+              <Form.Check
+                inline
+                id={"maxSources_all"}
+                name={"maxSources"}
+                type={"radio"}
+                onChange={handleChange}
+                defaultChecked={radioSourcesOptionClicked === 1}
+                checked={radioSourcesOptionClicked === 1}
+                label={"All"}
+                value={1}
+                aria-label={"All"}
+                className={"mb-0 flex-shrink-0"}
+              />
+              <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"} >
+                <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} defaultChecked={radioSourcesOptionClicked === 2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+                <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
+                <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
+                  <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
+                </HCTooltip>
+              </Form.Check>
             </Col>
           </Row>
           <Row className={"mb-3"}>
@@ -518,10 +536,32 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             <Col className={"d-flex align-items-center"}>
               <Row>
                 <Col className={defaultStrategyErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <Radio.Group value={radioDefaultOptionClicked} onChange={handleChange} name={"defaultYesNo"}>
-                    <Radio value={1} >Yes</Radio>
-                    <Radio value={2} >No</Radio>
-                  </Radio.Group>
+                  <Form.Check
+                    inline
+                    id={"defaultYesNo_yes"}
+                    name={"defaultYesNo"}
+                    type={"radio"}
+                    onChange={handleChange}
+                    defaultChecked={radioDefaultOptionClicked === 1}
+                    checked={radioDefaultOptionClicked === 1}
+                    label={"Yes"}
+                    value={1}
+                    aria-label={"Yes"}
+                    className={"mb-0 flex-shrink-0"}
+                  />
+                  <Form.Check
+                    inline
+                    id={"defaultYesNo_no"}
+                    name={"defaultYesNo"}
+                    type={"radio"}
+                    onChange={handleChange}
+                    defaultChecked={radioDefaultOptionClicked === 2}
+                    checked={radioDefaultOptionClicked === 2}
+                    label={"No"}
+                    value={2}
+                    aria-label={"No"}
+                    className={"mb-0 flex-shrink-0"}
+                  />
                 </Col>
                 <Col xs={12} className={styles.validationError}>
                   {defaultStrategyErrorMessage}

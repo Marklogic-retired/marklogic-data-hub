@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Radio, AutoComplete, Tooltip} from "antd";
+import {AutoComplete, Tooltip} from "antd";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
@@ -32,11 +32,6 @@ type Props = {
   setPayload: any;
   onCancel: any;
 }
-
-const srcTypeOptions = [
-  {label: "Collection", value: "collection"},
-  {label: "Query", value: "query"}
-];
 
 const CreateEditStep: React.FC<Props> = (props) => {
   // TODO use steps.config.ts for default values
@@ -523,20 +518,40 @@ const CreateEditStep: React.FC<Props> = (props) => {
           <FormLabel column lg={3}>{"Source Query:"}<span className={styles.asterisk}>*</span></FormLabel>
           <Col>
             <Row>
-              <Col className={"d-flex mb-3"}>
-                <Radio.Group
-                  id="srcType"
-                  options={srcTypeOptions}
+              <Col className={"d-flex mb-3 align-items-center"} id="srcType">
+                <Form.Check
+                  inline
+                  id={"collection"}
+                  name={"source-query"}
+                  type={"radio"}
+                  defaultChecked={selectedSource === "collection" ? true : false}
+                  checked={selectedSource === "collection" ? true : false}
                   onChange={handleSelectedSource}
-                  value={selectedSource}
+                  label={"Collection"}
+                  value={"collection"}
+                  aria-label={"collection"}
                   disabled={!props.canReadWrite}
-                >
-                </Radio.Group>
-                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" }>
+                  className={"mb-0"}
+                />
+                <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}>
                   <OverlayTrigger placement="left" overlay={collectionQueryInfo} trigger="hover" delay={{show: 0, hide: 2000}} rootClose>
                     <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
                   </OverlayTrigger>
                 </span>
+                <Form.Check
+                  inline
+                  id={"query"}
+                  name={"source-query"}
+                  type={"radio"}
+                  defaultChecked={selectedSource !== "collection" ? true : false}
+                  checked={selectedSource !== "collection" ? true : false}
+                  onChange={handleSelectedSource}
+                  label={"Query"}
+                  value={"query"}
+                  aria-label={"Query"}
+                  disabled={!props.canReadWrite}
+                  className={"mb-0"}
+                />
                 <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
                 </HCTooltip>
