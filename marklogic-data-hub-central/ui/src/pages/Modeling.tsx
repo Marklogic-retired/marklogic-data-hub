@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Radio, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -296,28 +296,40 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const mlRadioStyle: CSSProperties = {
-    color: "#999"
-  };
-
   const viewSwitch = <div id="switch-view" aria-label="switch-view">
-    <Radio.Group
-      buttonStyle="outline"
-      className={"radioGroupView"}
-      defaultValue={modelingOptions.view}
-      name="radiogroup"
-      onChange={e => handleViewChange(e.target.value)}
-      size="large"
-      style={mlRadioStyle}
-    // tabIndex={0} // TODO confirm we can make React Bootstrap element tab-able
-    >
-      <Radio.Button aria-label="switch-view-graph" value={"graph"} checked={modelingOptions.view === "graph"}>
-        <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
-      </Radio.Button>
-      <Radio.Button aria-label="switch-view-table" value={"table"} checked={modelingOptions.view === "table"}>
-        <i>{<FontAwesomeIcon icon={faTable} />}</i>
-      </Radio.Button>
-    </Radio.Group>
+    <div className={"switch-button-group outline"}>
+      <span aria-label="switch-view-graph">
+        <input
+          type="radio"
+          id="switch-view-graph"
+          name="switch-view-radiogroup"
+          value={"graph"}
+          defaultChecked={modelingOptions.view === "graph"}
+          checked={modelingOptions.view === "graph"}
+          onChange={e => handleViewChange(e.target.value)}
+          tabIndex={0}
+        />
+        <label htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} style={{height: "40px", fontSize: "10px"}}>
+          <i>{<FontAwesomeIcon icon={faProjectDiagram} size={"2x"}/>}</i>
+        </label>
+      </span>
+
+      <span aria-label="switch-view-table">
+        <input
+          type="radio"
+          id="switch-view-table"
+          name="switch-view-radiogroup"
+          value={"table"}
+          defaultChecked={modelingOptions.view === "table"}
+          checked={modelingOptions.view === "table"}
+          onChange={e => handleViewChange(e.target.value)}
+          tabIndex={1}
+        />
+        <label htmlFor="switch-view-table" className={`d-flex justify-content-center align-items-center`} style={{height: "40px", fontSize: "12px"}}>
+          <i>{<FontAwesomeIcon icon={faTable} size={"2x"}/>}</i>
+        </label>
+      </span>
+    </div>
   </div>;
 
   if (canAccessModel) {

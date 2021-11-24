@@ -1,5 +1,4 @@
 import React, {useState, useContext} from "react";
-import {Radio} from "antd";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {SearchContext} from "../../../../util/search-context";
 import styles from "./save-query-modal.module.scss";
@@ -167,12 +166,37 @@ const SaveQueryModal: React.FC<Props> = (props) => {
           {props.greyFacets.length > 0 &&
             <Row className={"mb-3"}>
               <FormLabel column lg={4}>{"Unapplied Facets:"}</FormLabel>
-              <Col className={"d-flex"}>
-                <Radio.Group onChange={unAppliedFacets} style={{"marginTop": "11px"}} defaultValue={2}>
-                  <Radio value={1}> Apply before saving</Radio>
-                  <Radio value={2}> Save as is, keep unapplied facets</Radio>
-                  <Radio value={3}> Discard unapplied facets</Radio>
-                </Radio.Group>
+              <Col>
+                <Form.Check
+                  id={"unapplied-facets-1"}
+                  name={"unapplied-facets"}
+                  type={"radio"}
+                  onChange={unAppliedFacets}
+                  label={"Apply before saving"}
+                  value={1}
+                  aria-label={"Apply before saving"}
+                />
+                <Form.Check
+                  id={"unapplied-facets-2"}
+                  name={"unapplied-facets"}
+                  type={"radio"}
+                  onChange={unAppliedFacets}
+                  label={"Save as is, keep unapplied facets"}
+                  defaultChecked={true}
+                  value={2}
+                  aria-label={"Save as is, keep unapplied facets"}
+                  className={"mt-2"}
+                />
+                <Form.Check
+                  id={"unapplied-facets-3"}
+                  name={"unapplied-facets"}
+                  type={"radio"}
+                  onChange={unAppliedFacets}
+                  label={"Discard unapplied facets"}
+                  value={3}
+                  aria-label={"Discard unapplied facets"}
+                  className={"mt-2"}
+                />
               </Col>
             </Row>
           }

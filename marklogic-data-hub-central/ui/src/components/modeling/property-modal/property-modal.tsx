@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Radio, Cascader, Select} from "antd";
+import {Cascader, Select} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -703,13 +703,30 @@ const PropertyModal: React.FC<Props> = (props) => {
       <Row className={"mb-3"} key={index}>
         <FormLabel column lg={3}>{`${radio.label}:`}</FormLabel>
         <Col className={"d-flex align-items-center"}>
-          <Radio.Group
+          <Form.Check
+            inline
+            id={`${radio.value}-yes`}
+            name={radio.value}
+            type={"radio"}
+            defaultChecked={selectedPropertyOptions[radio.value] === "yes"}
             onChange={(event) => onRadioChange(event, radio.value)}
-            value={selectedPropertyOptions[radio.value]}
-          >
-            <Radio aria-label={radio.value + "-yes"} value={"yes"}>Yes</Radio>
-            <Radio aria-label={radio.value + "-no"} value={"no"}>No</Radio>
-          </Radio.Group>
+            label={"Yes"}
+            value={"yes"}
+            aria-label={radio.value + "-yes"}
+            className={"mb-0"}
+          />
+          <Form.Check
+            inline
+            id={`${radio.value}-no`}
+            name={radio.value}
+            type={"radio"}
+            defaultChecked={selectedPropertyOptions[radio.value] === "no"}
+            onChange={(event) => onRadioChange(event, radio.value)}
+            label={"No"}
+            value={"no"}
+            aria-label={radio.value + "-no"}
+            className={"mb-0"}
+          />
           <div className={"p-2 d-flex align-items-center"}>
             <HCTooltip text={radio.tooltip} id={radio.value+"-tooltip"} placement="top">
               <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon}/>

@@ -61,15 +61,15 @@ describe("Explorer Browse page tests ", () => {
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    fireEvent.click(getByLabelText("switch-view-table"));
-    expect(getByLabelText("switch-view-table")).toHaveProperty("checked", true);
-    expect(getByLabelText("switch-view-snippet")).toHaveProperty("checked", false);
-    fireEvent.mouseOver(getByLabelText("switch-view-snippet"));
+    fireEvent.click(document.querySelector("#switch-view-table"));
+    expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", true);
+    expect(document.querySelector("#switch-view-snippet")).toHaveProperty("checked", false);
+    fireEvent.mouseOver(document.querySelector("#switch-view-snippet"));
     expect(getByLabelText("switch-view-snippet")).toHaveStyle("color: rgb(127, 134, 181");
-    fireEvent.click(getByLabelText("switch-view-snippet"));
-    expect(getByLabelText("switch-view-table")).toHaveProperty("checked", false);
-    expect(getByLabelText("switch-view-snippet")).toHaveProperty("checked", true);
-    fireEvent.mouseOver(getByLabelText("switch-view-table"));
-    expect(getByLabelText("switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
+    fireEvent.click(document.querySelector("#switch-view-snippet"));
+    expect(document.querySelector("#switch-view-table")).toHaveProperty("checked", false);
+    expect(document.querySelector("#switch-view-snippet")).toHaveProperty("checked", true);
+    fireEvent.mouseOver(document.querySelector("#switch-view-table"));
+    expect(document.querySelector("#switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
 });

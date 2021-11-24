@@ -243,7 +243,7 @@ describe("Graph view page", () => {
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
     expect(getByLabelText("switch-view")).toBeInTheDocument();
-    expect(getByLabelText("switch-view-graph")).toBeChecked(); // Graph view is checked by default.
+    expect(document.querySelector("#switch-view-graph")).toBeChecked(); // Graph view is checked by default.
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(getByLabelText("graph-view-filter-input")).toBeInTheDocument();
     userEvent.click(getByText("Add"));
@@ -276,8 +276,8 @@ describe("Graph view page", () => {
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
-    let graphViewButton = getByLabelText("switch-view-graph");
-    let tableViewButton = getByLabelText("switch-view-table");
+    let graphViewButton = document.querySelector("#switch-view-graph");
+    let tableViewButton = document.querySelector("#switch-view-table");
     let filterInput = getByLabelText("graph-view-filter-input");
     let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
     let publishToDatabaseBtn = getByLabelText("publish-to-database");

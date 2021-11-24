@@ -1,7 +1,6 @@
 import React, {useState, useContext} from "react";
-import {Card, Select, Radio, Tooltip} from "antd";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import {Card, Select, Tooltip} from "antd";
+import {Row, Col} from "react-bootstrap";
 import styles from "./zero-state-explorer.module.scss";
 import {SearchContext} from "../../util/search-context";
 import graphic from "./explore_visual_big.png";
@@ -158,22 +157,35 @@ const ZeroStateExplorer = (props) => {
                   <Col xs={12}>
                     <div className={styles.database}>
                       <p className={styles.databaseLabel}>Database:</p>
-                      <Radio.Group
-                        className={styles.databaseSelector}
-                        buttonStyle="solid"
-                        defaultValue={props.zeroStatePageDatabase}
-                        name="radiogroup"
-                        onChange={e => onDatabaseChange(e.target.value)}
-                        // size="medium"
-                        id="database-switch"
-                      >
-                        <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
-                          Final
-                        </Radio.Button>
-                        <Radio.Button aria-label="switch-database-staging" value={"staging"} className={styles.button}>
-                          Staging
-                        </Radio.Button>
-                      </Radio.Group>
+                      <div className={"switch-button-group"} id="database-switch">
+                        <span>
+                          <input
+                            type="radio"
+                            id="switch-database-final"
+                            name="switch-database"
+                            value={"final"}
+                            defaultChecked={props.zeroStatePageDatabase === "final"}
+                            onChange={e => onDatabaseChange(e.target.value)}
+                          />
+                          <label aria-label="switch-database-final" htmlFor="switch-database-final" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
+                            Final
+                          </label>
+                        </span>
+
+                        <span>
+                          <input
+                            type="radio"
+                            id="switch-database-staging"
+                            name="switch-database"
+                            value={"staging"}
+                            defaultChecked={props.zeroStatePageDatabase === "staging"}
+                            onChange={e => onDatabaseChange(e.target.value)}
+                          />
+                          <label aria-label="switch-database-staging" htmlFor="switch-database-staging" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
+                            Staging
+                          </label>
+                        </span>
+                      </div>
                     </div>
                   </Col>
                 </Row>
@@ -197,38 +209,67 @@ const ZeroStateExplorer = (props) => {
                   <Col xs={12} className={"py-3"}>
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
-                      <Radio.Group
-                        style={{}}
-                        buttonStyle="solid"
-                        value={view}
-                        name="radiogroup"
-                        onChange={e => onViewChange(e.target.value)}
-                        // size="medium"
-                      >
+                      <div className={"switch-button-group"}>
                         <Tooltip
                           title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
-                        ><Radio.Button aria-label="switch-view-table" value={"table"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
-                            <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
-                          </Radio.Button>
+                        >
+                          <span>
+                            <input
+                              type="radio"
+                              id="viewas-table"
+                              name="viewas-radiogroup"
+                              value={"table"}
+                              disabled={dropDownValue === "All Data"}
+                              checked={view === "table"}
+                              onChange={e => onViewChange(e.target.value)}
+                            />
+                            <label aria-label="switch-view-table" htmlFor="viewas-table" className={`d-flex justify-content-center align-items-center`}>
+                              <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
+                            </label>
+                          </span>
                         </Tooltip>
+
                         <Tooltip
                           title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
-                        ><Radio.Button aria-label="switch-view-snippet" value={"snippet"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
-                            <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
-                          </Radio.Button>
+                        >
+                          <span>
+                            <input
+                              type="radio"
+                              id="viewas-snippet"
+                              name="viewas-radiogroup"
+                              value={"snippet"}
+                              disabled={dropDownValue === "All Data"}
+                              checked={view === "snippet"}
+                              onChange={e => onViewChange(e.target.value)}
+                            />
+                            <label aria-label="switch-view-snippet" htmlFor="viewas-snippet" className={`d-flex justify-content-center align-items-center`}>
+                              <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
+                            </label>
+                          </span>
                         </Tooltip>
-                        <span id="viewAsCard" className={styles.viewAsCard}>
-                          <Tooltip
-                            title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
-                            placement="bottom"
-                          ><Radio.Button  aria-label="switch-view-card" value={"card"} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
+
+                        <Tooltip
+                          title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
+                          placement="bottom"
+                        >
+                          <span aria-label="switch-view-card" id="viewAsCard">
+                            <input
+                              type="radio"
+                              id="viewas-card"
+                              name="viewas-radiogroup"
+                              value={"card"}
+                              disabled={dropDownValue !== "All Data"}
+                              checked={view === "card"}
+                              onChange={e => onViewChange(e.target.value)}
+                            />
+                            <label htmlFor="viewas-card" className={`d-flex justify-content-center align-items-center`}>
                               <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
-                            </Radio.Button>
-                          </Tooltip>
-                        </span>
-                      </Radio.Group>
+                            </label>
+                          </span>
+                        </Tooltip>
+                      </div>
                     </div>
                   </Col>
                 </Row>

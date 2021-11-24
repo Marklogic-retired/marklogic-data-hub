@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {Radio, Table} from "antd";
+import {Table} from "antd";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
@@ -56,7 +56,7 @@ const QueryExportModal = (props) => {
   };
 
   const onChange = e => {
-    setValue(e.target.value);
+    setValue(parseInt(e.target.value));
   };
 
   return (
@@ -89,11 +89,29 @@ const QueryExportModal = (props) => {
           <Row>
             <FormLabel column lg={2}>{"Rows:"}</FormLabel>
             <Col className={"d-flex"}>
-              <Radio.Group className={styles.radio} value={value} onChange={onChange}>
-                <Radio value={1}> All</Radio>
-                <br />
-                <Radio value={2}> Limited set of the first rows returned</Radio>
-              </Radio.Group>
+              <span className={styles.radio}>
+                <Form.Check
+                  id={"rows-radio-all"}
+                  name={"rows-radio"}
+                  type={"radio"}
+                  defaultChecked={true}
+                  onChange={onChange}
+                  label={"All"}
+                  value={1}
+                  aria-label={"All"}
+                  className={styles.radio}
+                />
+                <Form.Check
+                  id={"rows-radio-limited"}
+                  name={"rows-radio"}
+                  type={"radio"}
+                  onChange={onChange}
+                  label={"Limited set of the first rows returned"}
+                  value={2}
+                  aria-label={"Limited set of the first rows returned"}
+                  className={styles.radio}
+                />
+              </span>
             </Col>
           </Row>
         </Form>

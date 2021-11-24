@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Radio, Table, Switch} from "antd";
+import {Table, Switch} from "antd";
 import {useHistory} from "react-router-dom";
-import {Row, Col, Accordion, Card} from "react-bootstrap";
+import {Row, Col, Accordion, Card, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -838,97 +838,126 @@ const MatchingStepDetail: React.FC = () => {
           <NumberIcon value={3} />
           <div className={styles.stepText}>Test and review matched entities</div>
         </div>
-        <div className={styles.testMatch} aria-label="testMatch">
-          <Radio.Group onChange={onTestMatchRadioChange} value={value} id="addDataRadio" className={styles.testMatchedRadioGroup}>
-            <span className={styles.borders}>
-              <Radio
-                className={styles.urisData}
+        <div className={`w-100 ${styles.testMatch}`} aria-label="testMatch">
+          <span className={styles.borders}>
+            <label className={styles.urisData} htmlFor={"test-uris"}>
+              <FormCheck
+                inline
+                id={"test-uris"}
+                name={"test-review-matched-entities"}
+                type={"radio"}
+                defaultChecked={value === 1 ? true : false}
+                onChange={(e) => {
+                  handleUriInputSelected(e);
+                  onTestMatchRadioChange(e);
+                }}
+                label={"Test URIs"}
                 value={1}
-                aria-label="inputUriOnlyRadio"
-                onClick={handleUriInputSelected}
-              // validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""}
-              >
-                <span className={styles.radioTitle}>Test URIs</span>
-                <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
-                  <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right">
-                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
-                  </HCTooltip><br />
-                </span>
-                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
-                  <HCInput
-                    placeholder="Enter URI or Paste URIs"
-                    className={styles.uriInput}
-                    value={uriContent}
-                    onChange={handleUriInputChange}
-                    ariaLabel="UriOnlyInput"
-                    disabled={inputUriDisabled}
-                    classNameFull={colourElementAdded ? styles.uriInputColor: ""}
-                  />
-                  <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon" />
-                </div>
-                {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
-                {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
-                <div className={styles.UriTable}>
-                  {UriTableData.length > 0 ? <Table
-                    columns={UriColumns}
-                    className={styles.tableContent}
-                    dataSource={renderUriTableData}
-                    rowKey="key"
-                    // id="uriData"
-                    pagination={false}
-                  /> : ""}
-                </div>
-              </Radio></span>
-            <Radio
-              value={2}
-              className={styles.allDataUris}
-              aria-label="inputUriRadio"
-              onClick={handleUriInputSelected2}
-            // validateStatus={duplicateUriWarning || singleUriWarning ? "error" : ""} // TODO handle vvalidation in React Bootstrap components
-            >
-              <span className={styles.radioTitle}>Test URIs with All Data</span>
-              <span aria-label="testUriTooltip">
-                <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right">
+                aria-label={"inputUriOnlyRadio"}
+                className={"mb-0"}
+              />
+              <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
+                <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right">
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
-                </HCTooltip>
-              </span><br />
+                </HCTooltip><br />
+              </span>
               <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
                 <HCInput
                   placeholder="Enter URI or Paste URIs"
                   className={styles.uriInput}
-                  value={uriContent2}
-                  onChange={handleUriInputChange2}
-                  ariaLabel="UriInput"
-                  disabled={inputUriDisabled2}
-                  classNameFull={colourElementAdded2 ? styles.uriInputColor: ""}
+                  value={uriContent}
+                  onChange={handleUriInputChange}
+                  ariaLabel="UriOnlyInput"
+                  disabled={inputUriDisabled}
+                  classNameFull={colourElementAdded ? styles.uriInputColor: ""}
                 />
-                <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon" />
+                <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon" />
               </div>
-              {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
-              {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
+              {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
+              {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
               <div className={styles.UriTable}>
-                {UriTableData2.length > 0 ? <Table
-                  columns={UriColumns2}
+                {UriTableData.length > 0 ? <Table
+                  columns={UriColumns}
                   className={styles.tableContent}
-                  dataSource={renderUriTableData2}
+                  dataSource={renderUriTableData}
                   rowKey="key"
                   // id="uriData"
                   pagination={false}
                 /> : ""}
               </div>
-            </Radio>
-            <Radio value={3} className={styles.allDataRadio} onClick={handleAllDataRadioClick} aria-label="allDataRadio">
-              <span>Test All Data</span>
-              <span aria-label={"allDataTooltip"}>
-                <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right">
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
-                </HCTooltip>
-              </span>
-              <div aria-label="allDataContent" className={styles.allDataContent}>
-                Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
-              </div>
-            </Radio>
-          </Radio.Group>
+            </label>
+          </span>
+          <label className={styles.allDataUris} htmlFor={"test-uris-all-data"}>
+            <FormCheck
+              inline
+              id={"test-uris-all-data"}
+              name={"test-review-matched-entities"}
+              type={"radio"}
+              defaultChecked={value === 2 ? true : false}
+              onChange={(e) => {
+                handleUriInputSelected2(e);
+                onTestMatchRadioChange(e);
+              }}
+              label={"Test URIs with All Data"}
+              value={2}
+              aria-label={"inputUriRadio"}
+              className={"mb-0"}
+            />
+            <span aria-label="testUriTooltip">
+              <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right">
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+              </HCTooltip>
+            </span><br />
+            <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
+              <HCInput
+                placeholder="Enter URI or Paste URIs"
+                className={styles.uriInput}
+                value={uriContent2}
+                onChange={handleUriInputChange2}
+                ariaLabel="UriInput"
+                disabled={inputUriDisabled2}
+                classNameFull={colourElementAdded2 ? styles.uriInputColor: ""}
+              />
+              <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon" />
+            </div>
+            {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
+            {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
+            <div className={styles.UriTable}>
+              {UriTableData2.length > 0 ? <Table
+                columns={UriColumns2}
+                className={styles.tableContent}
+                dataSource={renderUriTableData2}
+                rowKey="key"
+                // id="uriData"
+                pagination={false}
+              /> : ""}
+            </div>
+          </label>
+          <label className={styles.allDataRadio} htmlFor={"all-data"}>
+            <FormCheck
+              inline
+              id={"all-data"}
+              name={"test-review-matched-entities"}
+              type={"radio"}
+              defaultChecked={value === 3 ? true : false}
+              onChange={(e) => {
+                handleAllDataRadioClick(e);
+                onTestMatchRadioChange(e);
+              }}
+              label={"Test All Data"}
+              value={3}
+              aria-label={"allDataRadio"}
+              className={"mb-0"}
+            />
+            <span aria-label={"allDataTooltip"}>
+              <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right">
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+              </HCTooltip>
+            </span>
+            <div aria-label="allDataContent" className={styles.allDataContent}>
+              Select All Data in your source query in order to preview matching activity against all URIs up to 100 displayed pair matches. It is best practice to test with a smaller-sized source query.
+            </div>
+          </label>
           <div className={styles.testButton}>
             <HCButton variant="primary" type="submit" onClick={handleTestButtonClick} aria-label="testMatchUriButton">Test</HCButton>
           </div>

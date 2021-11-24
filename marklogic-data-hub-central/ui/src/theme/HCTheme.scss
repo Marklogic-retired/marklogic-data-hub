@@ -114,9 +114,13 @@
     }
 }
 
-.form-label {
+.form-label, .form-check-label {
     color: $text-color;
     font-size: $font-size-base;
+}
+
+.form-check-label {
+    cursor: pointer;
 }
 
 .modal-header.bb-none {
@@ -140,4 +144,76 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
 }
 .modal-backdrop.show:nth-last-child(6){
     z-index: 1000;
+}
+
+.switch-button-group {
+    display: flex;
+    input {
+        position: absolute !important;
+        clip: rect(0, 0, 0, 0);
+        height: 0px;
+        width: 0px;
+        border: 0;
+        overflow: hidden;
+    }
+  
+    label {
+        display: inline-block;
+        vertical-align: middle;
+        height: 32px;
+        background-color: #ffffff;
+        color: $text-color;
+        font-size: 14px;
+        font-weight: normal;
+        text-align: center;
+        text-shadow: none;
+        padding: 4px 15px;
+        border: 1px solid $light;
+        transition: all 0.1s ease-in-out;
+        svg {
+            color: $secondary-gray;
+        }
+    }
+    
+    label:hover {
+        cursor: pointer;
+    }
+    
+    input:checked + label {
+        background-color: $primary;
+        color: #ffffff;
+        box-shadow: none;
+        svg {
+            color: #ffffff;
+        }
+    }
+
+    input:disabled + label {
+        background-color: $disabled-color;
+        color: $light;
+        cursor: not-allowed;
+        box-shadow: none;
+        svg {
+            color: $light;
+        }
+    }
+    
+    span:first-of-type label {
+        border-radius: 4px 0 0 4px;
+    }
+    
+    span:last-of-type label {
+        border-radius: 0 4px 4px 0;
+    }
+
+    &.outline{
+        input:checked + label {
+            border: 1px solid $primary;
+            background-color: #ffffff;
+            color: $primary;
+            svg {
+                color: $primary;
+            }
+        } 
+    }
 }

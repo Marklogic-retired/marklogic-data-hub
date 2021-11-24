@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Icon, Select, Radio, Input, Menu, Dropdown, Button, Tooltip, Checkbox, Switch} from "antd";
+import {Icon, Select, Input, Menu, Dropdown, Button, Tooltip, Checkbox, Switch} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -615,27 +615,38 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.searchInput}>
         <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined"/>} placeholder="Search" size="small"/>
       </div>
-      <div className={styles.dataSourceButtons}>
-        <Radio.Group
-          buttonStyle="solid"
-          defaultValue={searchOptions.datasource}
-          name="radiogroup"
-          onChange={e => setDatasourcePreferences(e.target.value)}
-          size="default"
-        >
-          <Radio.Button aria-label="switch-datasource-entities" value={"entities"} className={styles.dataSourceButton}>
-            <span className={styles.dataSourceButton}>
-              <div id="all-entities" className="curateIcon"></div>
-              <div>Entities</div>
-            </span>
-          </Radio.Button>
-          <Radio.Button aria-label="switch-datasource-all-data" value={"all-data"} className={styles.dataSourceButton}>
-            <span className={styles.dataSourceButton}>
-              <div id="all-data" className="loadIcon"></div>
-              <div>All Data</div>
-            </span>
-          </Radio.Button>
-        </Radio.Group>
+      <div className={"m-3 switch-button-group"}>
+        <span>
+          <input
+            type="radio"
+            id="switch-datasource-entities"
+            name="switch-datasource"
+            value={"entities"}
+            defaultChecked={searchOptions.datasource === "entities"}
+            checked={searchOptions.datasource === "entities"}
+            onChange={e => setDatasourcePreferences(e.target.value)}
+          />
+          <label aria-label="switch-datasource-entities" htmlFor="switch-datasource-entities" className={"d-flex align-items-center justify-content-center"} style={{width: "110px"}}>
+            <span id="all-entities" className="curateIcon"></span>
+            <span>Entities</span>
+          </label>
+        </span>
+
+        <span>
+          <input
+            type="radio"
+            id="switch-datasource-all-data"
+            name="switch-datasource"
+            value={"all-data"}
+            defaultChecked={searchOptions.datasource === "all-data"}
+            checked={searchOptions.datasource === "all-data"}
+            onChange={e => setDatasourcePreferences(e.target.value)}
+          />
+          <label aria-label="switch-datasource-all-data" htmlFor="switch-datasource-all-data" className={"d-flex align-items-center justify-content-center"} style={{width: "110px"}}>
+            <span id="all-data" className="loadIcon"></span>
+            <span>All Data</span>
+          </label>
+        </span>
       </div>
       <Accordion aria-label="switch-database" id="database" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("database") ? "database" : ""} defaultActiveKey={activeKey.includes("database") ? "database" : ""}>
         <Accordion.Item eventKey="database" className={"bg-transparent"}>
@@ -643,21 +654,37 @@ const Sidebar: React.FC<Props> = (props) => {
             <Accordion.Button className={`after-indicator ${styles.title}`} onClick={() => setActiveAccordion("database")}>Database</Accordion.Button>
           </div>
           <Accordion.Body>
-            <Radio.Group
-              style={{}}
-              buttonStyle="solid"
-              defaultValue={searchOptions.database}
-              name="radiogroup"
-              onChange={e => props.setDatabasePreferences(e.target.value)}
-              // size="medium"
-            >
-              <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
-                Final
-              </Radio.Button>
-              <Radio.Button aria-label="switch-database-staging" value={"staging"} className={styles.button}>
-                Staging
-              </Radio.Button>
-            </Radio.Group>
+            <div className={"switch-button-group"}>
+              <span>
+                <input
+                  type="radio"
+                  id="switch-database-final"
+                  name="switch-database"
+                  value={"final"}
+                  defaultChecked={searchOptions.database === "final"}
+                  checked={searchOptions.database === "final"}
+                  onChange={e => props.setDatabasePreferences(e.target.value)}
+                />
+                <label aria-label="switch-database-final" htmlFor="switch-database-final" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
+                  Final
+                </label>
+              </span>
+
+              <span>
+                <input
+                  type="radio"
+                  id="switch-database-staging"
+                  name="switch-database"
+                  value={"staging"}
+                  defaultChecked={searchOptions.database === "staging"}
+                  checked={searchOptions.database === "staging"}
+                  onChange={e => props.setDatabasePreferences(e.target.value)}
+                />
+                <label aria-label="switch-database-staging" htmlFor="switch-database-staging" className={`d-flex justify-content-center align-items-center ${styles.button}`}>
+                  Staging
+                </label>
+              </span>
+            </div>
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
