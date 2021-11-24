@@ -89,7 +89,7 @@ public class MasterTest extends AbstractHubCoreTest {
         RunFlowResponse flowResponse = runFlow(new FlowInputs("myNewFlow", "3"));
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
 
-        assertTrue(masterJob.isSuccess(), "Mastering job failed!");
+        assertTrue(masterJob.isSuccess(), "Mastering job failed! Message: " + ((masterJob.stepOutput != null) ? masterJob.stepOutput.toString(): ""));
         assertTrue(getFinalDocCount("sm-person-merged") >= 10, "At least 10 merges occur");
         assertTrue(getFinalDocCount("master") > 0, "Documents didn't receive master collection");
 
@@ -122,7 +122,7 @@ public class MasterTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
         RunFlowResponse flowResponse = runFlow(new FlowInputs("myMatchMergeFlow", "1", "2", "3"));
         RunStepResponse matchJob = flowResponse.getStepResponses().get("3");
-        assertTrue(matchJob.isSuccess(), "Matching job failed!");
+        assertTrue(matchJob.isSuccess(), "Matching job failed! Message: " + ((matchJob.stepOutput != null) ? matchJob.stepOutput.toString(): ""));
         assertEquals(3, getFinalDocCount("datahubMasteringMatchSummary"), "3 match summaries should be created!");
         // Check for datahubMasteringMatchSummary for matching with correct count
         String summaryQueryText = "cts:and-query((" +
@@ -133,7 +133,7 @@ public class MasterTest extends AbstractHubCoreTest {
 
         RunFlowResponse flowMergeResponse = runFlow(new FlowInputs("myMatchMergeFlow", "4"));
         RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
-        assertTrue(mergeJob.isSuccess(), "Merging job failed!");
+        assertTrue(mergeJob.isSuccess(), "Merging job failed! Message: " + ((mergeJob.stepOutput != null) ? mergeJob.stepOutput.toString(): ""));
         assertTrue(getFinalDocCount("sm-person-merged") >= 10, "At least 10 merges occur");
         assertEquals(209, getFinalDocCount("sm-person-mastered"), "We end with the correct amount of final docs");
         // Setting this to 40 or greater as occasionally we get 41 in the pipeline. See bug https://project.marklogic.com/jira/browse/DHFPROD-3178
