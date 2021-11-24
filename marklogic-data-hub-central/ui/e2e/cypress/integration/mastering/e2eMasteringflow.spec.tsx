@@ -336,9 +336,8 @@ describe("Validate E2E Mastering Flow", () => {
     mergeStrategyModal.setStrategyName("retain-single-value");
     mergeStrategyModal.addSliderOptionsButton().click();
     multiSlider.getHandleName("Length").should("be.visible");
-    multiSlider.getHandleName("Length").trigger("mousedown", {force: true});
-    cy.findByTestId("undefined-slider-ticks").find(`div[style*="left: 9.09091%;"]`).trigger("mousemove", {force: true});
-    multiSlider.getHandleName("Length").trigger("mouseup", {force: true});
+    multiSlider.getHandleName("Length").first().trigger("mousedown", {force: true});
+    multiSlider.getHandleName("Length").first().trigger("mouseup", {force: true});
     mergeStrategyModal.maxValue("1");
     mergeStrategyModal.saveButton().click();
     cy.waitForAsyncRequest();

@@ -117,11 +117,9 @@ export interface MergingStep {
 }
 
 export const defaultPriorityOption = {
-  props: [{
-    prop: "Timestamp",
-    type: ""
-  }],
-  value: 0
+  start: 0,
+  id: "Timestamp:0",
+  value: "Timestamp:0"
 };
 
 export interface MappingStep {

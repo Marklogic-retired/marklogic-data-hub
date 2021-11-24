@@ -20,7 +20,7 @@ describe("Merge Strategy Dialog component", () => {
 
   it("Verify Add Merge Strategy dialog renders correctly", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByText, getByPlaceholderText, getByTestId, getByLabelText, getAllByLabelText} = render(
+    const {getByText, getByPlaceholderText, getByTestId, getByLabelText, getAllByLabelText, queryByTestId, queryByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
           {...data.mergeStrategyDataProps}
@@ -46,12 +46,14 @@ describe("Merge Strategy Dialog component", () => {
     userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
     expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
 
-    //Timestamp handle is visible by default
-    let timestampHandle = getByTestId("Timestamp-active");
-    expect(timestampHandle).toHaveClass("handleDisabled");
-    expect(getByLabelText("Timestamp")).toBeInTheDocument();
-    userEvent.hover(timestampHandle);
-    expect((await(waitForElement(() => getByText(multiSliderTooltips.timeStamp))))).toBeInTheDocument();
+    //Default Timeline is visible by default
+    expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
+
+    //Active timeline is visible on clicking edit strategy button
+    fireEvent.click(getByLabelText("mergeStrategy-scale-switch"));
+    expect(queryByLabelText("mergeStrategy-scale-switch")).toBeChecked();
+    expect(queryByTestId("default-priorityOrder-timeline")).not.toBeInTheDocument();
+    expect(queryByTestId("active-priorityOrder-timeline")).toBeInTheDocument();
 
     fireEvent.click(getByLabelText("add-slider-button"));
     let saveButton = getByText("Save");
