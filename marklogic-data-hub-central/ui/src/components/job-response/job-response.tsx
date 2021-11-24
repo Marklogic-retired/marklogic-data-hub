@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Button} from "antd";
-import {Accordion} from "react-bootstrap";
+import {Button} from "antd";
+import {Modal, Accordion} from "react-bootstrap";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -182,7 +182,6 @@ const JobResponse: React.FC<Props> = (props) => {
         state: {targetDatabase: targetDatabase, jobId: jobId}
       });
     }
-    Modal.destroyAll();
   };
 
   const renderExploreButton = (stepResponse) => {
@@ -224,32 +223,33 @@ const JobResponse: React.FC<Props> = (props) => {
   };
 
   return (<Modal
-    visible={props.openJobResponse}
-    title={null}
-    width="700px"
-    onCancel={() => props.setOpenJobResponse(false)}
-    footer={null}
-    maskClosable={false}
-    destroyOnClose={true}
+    show={props.openJobResponse}
+    size={"lg"}
   >
-    <div aria-label="jobResponse" id="jobResponse" style={ isLoading ? {display: "none"}: {}} className={styles.jobResponseContainer} >
-      <header>
-        { isRunning(jobResponse) ? <span className={styles.title}>The flow <strong>{jobResponse.flow}</strong> is running <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a></span> : <span className={styles.title}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
-      </header>
-      <div>
-        <div className={styles.descriptionContainer}>
-          <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong>{props.jobId}</strong></div>
-          <div key={"startTime"}><span className={styles.descriptionLabel}>Start Time:</span><strong>{dateConverter(jobResponse.timeStarted)}</strong></div>
-          <div key={"duration"}><span className={styles.descriptionLabel}>Duration:</span><strong>{renderDuration(jobResponse.duration)}</strong></div>
+    <Modal.Header className={"bb-none"}>
+      { isRunning(jobResponse) ? <span className={`fs-5 ${styles.title}`}>The flow <strong>{jobResponse.flow}</strong> is running <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a></span> : <span className={`fs-5 ${styles.title}`}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
+      <button type="button" className="btn-close" aria-label="Close" onClick={() => props.setOpenJobResponse(false)}></button>
+    </Modal.Header>
+    <Modal.Body>
+      <div aria-label="jobResponse" id="jobResponse" style={ isLoading ? {display: "none"}: {}} className={styles.jobResponseContainer} >
+        {/* <header>
+          { isRunning(jobResponse) ? <span className={styles.title}>The flow <strong>{jobResponse.flow}</strong> is running <a onClick={() => retrieveJobDoc()}><FontAwesomeIcon icon={faSync} data-testid={"job-response-refresh"} /></a></span> : <span className={styles.title}>The flow <strong>{jobResponse.flow}</strong> completed</span>}
+        </header> */}
+        <div>
+          <div className={styles.descriptionContainer}>
+            <div key={"jobId"}><span className={styles.descriptionLabel}>Job ID:</span><strong>{props.jobId}</strong></div>
+            <div key={"startTime"}><span className={styles.descriptionLabel}>Start Time:</span><strong>{dateConverter(jobResponse.timeStarted)}</strong></div>
+            <div key={"duration"}><span className={styles.descriptionLabel}>Duration:</span><strong>{renderDuration(jobResponse.duration)}</strong></div>
+          </div>
+          {jobResponse.flowOrStepsUpdatedSinceRun ? <div className={styles.flowOrStepsUpdatedSinceRun}>* The flow or steps are updated since the previous flow run.</div> : ""}
         </div>
-        {jobResponse.flowOrStepsUpdatedSinceRun ? <div className={styles.flowOrStepsUpdatedSinceRun}>* The flow or steps are updated since the previous flow run.</div> : ""}
+        <HCDivider />
+        <div>
+          {renderStepResponses(jobResponse)}
+        </div>
+        {renderExploreButton(lastSuccessfulStep)}
       </div>
-      <HCDivider />
-      <div>
-        {renderStepResponses(jobResponse)}
-      </div>
-      {renderExploreButton(lastSuccessfulStep)}
-    </div>
+    </Modal.Body>
   </Modal>);
 
 };
