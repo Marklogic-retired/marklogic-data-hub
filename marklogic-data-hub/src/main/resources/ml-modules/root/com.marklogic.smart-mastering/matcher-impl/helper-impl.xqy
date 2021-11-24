@@ -218,6 +218,7 @@ declare function helper-impl:group-queries-by-scope($queries as cts:query*, $gro
       for $query in $queries
       let $is-json-prop-scope := $query instance of cts:json-property-scope-query
       let $is-element-scope := $query instance of cts:element-query
+      let $is-and-not := $query instance of cts:and-not-query
       let $key :=
         if ($is-json-prop-scope) then
           "json-prop:" || fn:string-join(
@@ -229,6 +230,8 @@ declare function helper-impl:group-queries-by-scope($queries as cts:query*, $gro
             for $qn in cts:element-query-element-name($query) order by $qn return xdmp:key-from-QName($qn),
             $string-token
           )
+        else if ($is-and-not) then
+          "and-not"
         else
           "_other"
       let $values :=
@@ -253,6 +256,10 @@ declare function helper-impl:group-queries-by-scope($queries as cts:query*, $gro
           cts:json-property-scope-query(fn:tokenize(fn:substring-after($key, "json-prop:"), $string-token), $grouped-queries)
         else if (fn:starts-with($key, "element:")) then
           cts:element-query(fn:tokenize(fn:substring-after($key, "element:"), $string-token) ! xdmp:QName-from-key(.), $grouped-queries)
+        else if ($key eq "and-not" and fn:count($grouped-queries) gt 1) then
+          let $positive-queries := helper-impl:group-queries-by-scope(for $q in $grouped-queries return cts:and-not-query-positive-query($q), $grouping-query-fun)
+          let $negative-queries := helper-impl:group-queries-by-scope(for $q in $grouped-queries return cts:and-not-query-negative-query($q), $grouping-query-fun)
+          return cts:and-not-query($positive-queries, $negative-queries)
         else
           $grouped-queries
     return

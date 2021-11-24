@@ -264,3 +264,66 @@ declare function util-impl:function-is-javascript(
 ) as xs:boolean {
   fn:exists($fun) and fn:ends-with(xdmp:function-module($fun), "js")
 };
+
+declare variable $SESSION_TIMEOUT := 600;
+
+(:
+ : Ensures each item is run in set amount of time
+ : @param $fun as function(item())
+ : @param $items as item()*
+ : @return item()*
+ :)
+declare function util-impl:process-items-in-set-time(
+  $fun,
+  $items as item()*,
+  $item-cost-fun,
+  $outlier-handler
+) {
+  try {
+    for $item in $items
+    return $fun($item)
+  } catch ($e) {
+    if ($e/error:code eq "XDMP-EXTIME") then (
+      let $items-cost := $items ! $item-cost-fun(.)
+      let $high-outliers-cost := util-impl:determine-high-outliers($items-cost)
+      let $high-outlier-indexes := $high-outliers-cost ! fn:index-of($items-cost, .)
+      let $high-outliers := $items[fn:position() = $high-outlier-indexes]
+      let $others := $items[fn:not(fn:position() = $high-outlier-indexes)]
+      return (
+        util-impl:process-items-in-set-time(
+          $fun,
+          $others,
+          $item-cost-fun,
+          $outlier-handler
+        ),
+        if (fn:exists($outlier-handler)) then
+          $outlier-handler($high-outliers)
+        else (),
+        for $outlier in $high-outliers
+        return
+          xdmp:log("Unable to process "|| xdmp:describe($outlier, (), ()) || " outlier item.", "warning")
+      )
+    ) else
+      xdmp:rethrow()
+  }
+};
+
+(:
+ : Returns high outliers
+ : @param $items as item()*
+ : @return item()*
+ :)
+declare function util-impl:determine-high-outliers(
+  $items as xs:unsignedLong*) {
+  let $ordered-items :=
+    for $i in $items
+    order by $i ascending
+    return $i
+  let $size := fn:count($items)
+  let $half := $size idiv 2
+  let $median-low := fn:avg(fn:subsequence($ordered-items, 1, $half))
+  let $median-high := fn:avg(fn:subsequence($ordered-items,$half + 1))
+  let $median-difference := $median-high - $median-low
+  let $outlier-threshold := $median-high + (1.5 * $median-difference)
+  return $items[. gt $outlier-threshold]
+};

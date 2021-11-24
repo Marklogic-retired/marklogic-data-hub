@@ -25,6 +25,8 @@ import module namespace helper-impl = "http://marklogic.com/smart-mastering/help
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
+import module namespace sem = "http://marklogic.com/semantics"
+  at "/MarkLogic/semantics.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
   at "/com.marklogic.smart-mastering/impl/util.xqy";
 
@@ -545,21 +547,7 @@ declare function opt-impl:compile-match-options(
         map:entry("orderedThresholds", $ordered-thresholds),
         map:entry("minimumThresholdCombinations", $minimum-threshold-combinations),
         map:entry("propertyNamesToValues", $property-names-to-values),
-        map:entry("baseContentQuery",
-          if (fn:exists($target-entity-type-def)) then
-            cts:or-query((
-              cts:json-property-scope-query(
-                "info",
-                cts:json-property-value-query("title", fn:string($target-entity-type-def/entityTitle), (), 0)
-              ),
-              cts:element-query(
-                xs:QName("es:info"),
-                cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-type-def/entityTitle), (), 0)
-              )
-            ))
-          else
-            opt-impl:build-collection-query(coll:content-collections($match-options))
-        )
+        map:entry("baseContentQuery", opt-impl:build-base-query($match-options, $target-entity-type-def, $target-entity-type-iri))
       ))
     let $cache-ids := (
       $cache-id,
@@ -582,6 +570,30 @@ declare function opt-impl:compile-match-options(
         map:put($_cached-compiled-match-options, $cache-id, $compiled-match-options)
       )
     )
+};
+
+
+declare function opt-impl:build-base-query($match-options as item()?, $target-entity-type-def as item()?, $target-entity-type-iri as xs:string?) {
+  let $base-query :=
+    if (fn:exists($target-entity-type-def)) then
+      let $triple-query := cts:triple-range-query((), sem:curie-expand("rdf:type"), sem:iri($target-entity-type-iri))
+      return
+        if (xdmp:exists(cts:search(fn:collection(), $triple-query))) then
+          $triple-query
+        else
+          cts:or-query((
+            cts:json-property-scope-query(
+              "info",
+              cts:json-property-value-query("title", fn:string($target-entity-type-def/entityTitle), (), 0)
+            ),
+            cts:element-query(
+              xs:QName("es:info"),
+              cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-type-def/entityTitle), (), 0)
+            )
+          ))
+    else
+      opt-impl:build-collection-query(coll:content-collections($match-options))
+  return cts:registered-query(cts:register($base-query))
 };
 
 declare function opt-impl:convert-match-rule-for-custom-module($match-rule, $match-options, $custom-algorithm)
@@ -734,7 +746,7 @@ declare function opt-impl:minimum-threshold-combinations($query-results, $thresh
   else
     (: Each of $queries-ge-threshold has a weight high enough to hit the $threshold :)
     let $queries-ge-threshold := $query-results[fn:empty((. => map:get("weight"))) or (. => map:get("weight")) >= $threshold]
-    let $queries-lt-threshold := $query-results[(. => map:get("weight")) <= $threshold]
+    let $queries-lt-threshold := $query-results[(. => map:get("weight")) < $threshold]
     return (
       $queries-ge-threshold ! (map:entry("queries", .) => map:with("weight", map:get(., "weight"))),
       opt-impl:filter-for-required-queries($queries-lt-threshold, 0, $threshold, ())

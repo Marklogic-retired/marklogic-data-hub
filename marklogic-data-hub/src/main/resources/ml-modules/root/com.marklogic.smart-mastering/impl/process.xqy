@@ -398,28 +398,59 @@ declare function proc-impl:build-match-summary(
     $match-options-node//(*:max-scan|maxScan) ! xs:integer(.),
     500
   ))
+  let $outlier-map := map:map()
+  let $estimate-map := map:map()
   let $all-matches :=
     let $start-elapsed := xdmp:elapsed-time()
     let $matches :=
       map:new((
-        $normalized-input !
-        map:entry(
-          (. => map:get("uri")),
-          let $match-results := matcher:find-document-matches-by-options(
-                (. => map:get("value")),
-                $match-options,
-                1,
-                $max-scan,
-                $minimum-threshold,
-                $fine-grain-provenance,
-                $filter-query
+        util-impl:process-items-in-set-time(
+          function ($input) {
+            map:entry(
+              ($input => map:get("uri")),
+              let $match-results := matcher:find-document-matches-by-options(
+                    ($input => map:get("value")),
+                    $match-options,
+                    1,
+                    $max-scan,
+                    $minimum-threshold,
+                    $fine-grain-provenance,
+                    $filter-query
+                  )
+               return (
+                 if ($lock-for-update) then
+                   $match-results/result[fn:exists(@action)]/@uri ! merge-impl:lock-for-update(fn:string(.))
+                 else (),
+                 $match-results
+               )
+            )
+          },
+          $normalized-input,
+          function($input) {
+            if (map:contains($estimate-map,($input => map:get("uri")))) then
+              map:get($estimate-map,($input => map:get("uri")))/@total ! xs:unsignedLong(.)
+            else
+              let $estimate := matcher:find-document-matches-by-options(
+                  ($input => map:get("value")),
+                  $match-options,
+                  1,
+                  $max-scan,
+                  $minimum-threshold,
+                  $fine-grain-provenance,
+                  $filter-query,
+                  fn:false()
+                )
+              return (
+                map:put($estimate-map,($input => map:get("uri")), $estimate-map),
+                $estimate/@total ! xs:unsignedLong(.)
               )
-           return (
-             if ($lock-for-update) then
-               $match-results/result[fn:exists(@action)]/@uri ! merge-impl:lock-for-update(fn:string(.))
-             else (),
-             $match-results
-           )
+          },
+          function($outliers) {
+            for $outlier in $outliers
+            let $uri := ($outlier => map:get("uri"))
+            let $output := map:get($estimate-map,$uri)
+            return map:put($outlier-map, $uri, $output)
+          }
         )
       ))
     return (
@@ -509,6 +540,17 @@ declare function proc-impl:build-match-summary(
     let $notifications :=
       (: Process notifications :)
       map:new((
+        let $outlier-threshold := "Unable to process"
+        for $outlier-uri in map:keys($outlier-map)
+        let $notification-uri := notify-impl:build-notification-uri($outlier-threshold, $outlier-uri)
+        return map:entry(
+                $notification-uri,
+                  map:map()
+                    => map:with("action", "notify")
+                    => map:with("threshold", $outlier-threshold)
+                    => map:with("uris", json:to-array($outlier-uri))
+                    => map:with("query", ($outlier-map => map:get($outlier-uri))/match-query/* ! cts:query(.))
+              ),
         for $notification in $consolidated-notifies
         let $_lock := if ($lock-for-update) then (merge-impl:lock-for-update($notification)) else ()
         let $parts := fn:tokenize($notification, $STRING-TOKEN)
@@ -739,9 +781,10 @@ declare function proc-impl:build-content-objects-from-match-summary(
                 )
               case "notify" return
                 let $uris := $action-details => map:get("uris") => json:array-values()
+                let $query := ($action-details => map:get("query")) ! cts:query(.)
                 let $threshold := $action-details => map:get("threshold")
                 let $provenance := $action-details => map:get("provenance")
-                let $match-write-object := matcher:build-match-notification($threshold, $uris, $merge-options-node)
+                let $match-write-object := matcher:build-match-notification($threshold, $uris, $merge-options-node, $query)
                 where fn:exists($match-write-object)
                 return
                   if (fn:exists($provenance)) then
