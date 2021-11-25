@@ -1364,7 +1364,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                     <div className={styles.modeledRelationshipIcon} data-testid={"relationship-" + row.name} />
                   </HCTooltip>
                   <HCTooltip text={ModelingTooltips.foreignKeyModeling(relatedEntityName, row.joinPropertyName, props.entityTypeTitle)} id={"tooltip-" + row.name} placement="bottom">
-                    <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
+                    <i>
+                      <FontAwesomeIcon className={styles.foreignKeyIcon} icon={faKey} data-testid={"foreign-" + row.name} />
+                    </i>
                   </HCTooltip>
                 </div>
                 :
