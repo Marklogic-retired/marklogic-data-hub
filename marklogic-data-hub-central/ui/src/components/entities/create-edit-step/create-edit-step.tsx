@@ -10,6 +10,8 @@ import {StepType} from "../../../types/curation-types";
 import {CurationContext} from "../../../util/curation-context";
 import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 
 type Props = {
   tabKey: string;
@@ -189,7 +191,8 @@ const CreateEditStep: React.FC<Props> = (props) => {
     return result;
   };
 
-  const collectionQueryInfo = <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioCollection}</div>;
+  const collectionQueryInfo = <Popover id={`popover-create-edit-step`} className={styles.popoverCreateEditStep}><Popover.Body className={styles.popoverCreateEditStepBody}>
+    <div className={styles.collectionQueryInfo}>{CommonStepTooltips.radioCollection}</div></Popover.Body></Popover>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (!stepName) {
@@ -529,16 +532,11 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                 >
                 </Radio.Group>
-
                 <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" }>
-                  <HCTooltip
-                    text={collectionQueryInfo}
-                    id={"collection-query-tooltip"}
-                    placement="left"
-                  >
+                  <OverlayTrigger placement="left" overlay={collectionQueryInfo} trigger="hover" delay={{show: 0, hide: 2000}} rootClose>
                     <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
-                  </HCTooltip></span>
-
+                  </OverlayTrigger>
+                </span>
                 <HCTooltip text={CommonStepTooltips.radioQuery} id="radio-query-tooltip" placement={"top"}>
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleQuery} data-testid="queryTooltip"/>
                 </HCTooltip>

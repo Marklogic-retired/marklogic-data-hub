@@ -1,11 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Popover, Tree, Tooltip} from "antd";
+import {Tree, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import styles from "./column-selector.module.scss";
 import {treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey} from "../../util/data-conversion";
 import {SearchContext} from "../../util/search-context";
 import {HCSearch, HCButton, HCDivider, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 
 interface Props {
   entityPropertyDefinitions: any[];
@@ -138,44 +140,48 @@ const ColumnSelector: React.FC<Props> = (props) => {
   };
 
   const content = (
-    <div data-testid="column-selector-popover" className={styles.popover}>
-      <header>
-        <HCSearch style={{marginBottom: 8}} placeholder="Search" onChange={onChange} />
-      </header>
-      <div className={styles.content}>
-        <Tree
-          data-testid="popover-tree"
-          className="draggable-tree"
-          draggable
-          blockNode
-          checkable
-          onExpand={onExpand}
-          expandedKeys={expandedKeys}
-          autoExpandParent={autoExpandParent}
-          onCheck={onCheck}
-          checkedKeys={checkedKeys}
-        >
-          {treeRenderer(treeColumns)}
-        </Tree>
-      </div>
-      <footer>
-        <HCDivider className={styles.divider} />
-        <div className={styles.footer}>
-          <HCButton size="sm" variant="outline-light" onClick={onClose} >Cancel</HCButton>
-          <HCButton size="sm" onClick={onApply} disabled={!checkedKeys.length} >Apply</HCButton>
+    <Popover id={`popover-column-selector`} className={styles.popoverColumnSelector}>
+      <Popover.Body>
+        <div data-testid="column-selector-popover" className={styles.popover}>
+          <header>
+            <HCSearch style={{marginBottom: 8}} placeholder="Search" onChange={onChange} />
+          </header>
+          <div className={styles.content}>
+            <Tree
+              data-testid="popover-tree"
+              className="draggable-tree"
+              draggable
+              blockNode
+              checkable
+              onExpand={onExpand}
+              expandedKeys={expandedKeys}
+              autoExpandParent={autoExpandParent}
+              onCheck={onCheck}
+              checkedKeys={checkedKeys}
+            >
+              {treeRenderer(treeColumns)}
+            </Tree>
+          </div>
+          <footer>
+            <HCDivider className={styles.divider} />
+            <div className={styles.footer}>
+              <HCButton size="sm" variant="outline-light" onClick={onClose} >Cancel</HCButton>
+              <HCButton size="sm" onClick={onApply} disabled={!checkedKeys.length} >Apply</HCButton>
+            </div>
+          </footer>
         </div>
-      </footer>
-    </div>
+      </Popover.Body>
+    </Popover>
   );
 
   return (
-    <div className={styles.fixedPopup}>
-      <Tooltip title="Select the columns to display." placement="topRight">
-        <Popover placement="leftTop" content={content} trigger="click" visible={props.popoverVisibility} className={styles.fixedPopup}>
+    <OverlayTrigger placement="left-start" show={props.popoverVisibility} overlay={content} trigger="click">
+      <div className={styles.fixedPopup}>
+        <Tooltip title="Select the columns to display." placement="topRight">
           <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector-tooltip"/>
-        </Popover>
-      </Tooltip>
-    </div>
+        </Tooltip>
+      </div>
+    </OverlayTrigger>
   );
 };
 

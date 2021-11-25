@@ -389,26 +389,26 @@ class BrowsePage {
 
   //popover
   getColumnSelector() {
-    return cy.get(".ant-popover-inner");
+    return cy.get(".popover-body");
   }
 
   getTreeItems() {
-    return cy.get(".ant-popover-inner ul > li");
+    return cy.get(".popover-body ul > li");
   }
 
   getTreeItem(index: number) {
-    return cy.get(`.ant-popover-inner ul > li:nth-child(${index})`);
+    return cy.get(`.popover-body ul > li:nth-child(${index})`);
   }
 
   getTreeItemTitle(index: number) {
-    return cy.get(`.ant-popover-inner ul > li:nth-child(${index}) span:last-child`);
+    return cy.get(`.popover-body ul > li:nth-child(${index}) span:last-child`);
   }
   getTreeItemChecked(index: number) {
-    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should("not.have.class", "ant-tree-checkbox-checked") ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
+    cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).should("not.have.class", "ant-tree-checkbox-checked") ? cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
   }
 
   getTreeItemUnchecked(index: number) {
-    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should("have.class", "ant-tree-checkbox-checked") ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
+    cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).should("have.class", "ant-tree-checkbox-checked") ? cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
   }
 
   //Save queries

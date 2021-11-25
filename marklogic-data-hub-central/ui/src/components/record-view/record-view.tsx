@@ -1,6 +1,5 @@
 import React, {CSSProperties, useContext} from "react";
 import styles from "./record-view.module.scss";
-import {Popover} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -16,6 +15,8 @@ import {getRecord} from "../../api/record";
 import {faInfoCircle} from "@fortawesome/free-solid-svg-icons";
 import {Download, FileEarmark} from "react-bootstrap-icons";
 import {HCCard, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);  // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -85,43 +86,47 @@ const RecordCardView = (props) => {
 
   const displayRecordMetadata = (item) => {
     return (
-      <div className={styles.popover} data-testid={item.uri + "-popover"}>
-        <div className={styles.colKey}>
-          <p>Source:</p>
-          <p>Flow:</p>
-          <p>Step:</p>
-          <p>Created On:</p>
-        </div>
-        <div className={styles.colValue}>
-          {item.hubMetadata?.sources?.length > 0 ? <span className={styles.valText} data-testid={item.uri + "-sources"}>
-            <HCTooltip
-              text={displayRecordSources(item)}
-              id="source-tooltip"
-              placement="bottom"
-              //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-            ><span>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
-          </span> : emptyField}
-          {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
-            <HCTooltip
-              text={item.hubMetadata?.lastProcessedByFlow}
-              id="last-processed-by-flow-tooltip"
-              placement="bottom"
-              //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-            ><span>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
-          </span> : emptyField}
-          {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
-            <HCTooltip
-              text={item.hubMetadata.lastProcessedByStep}
-              id="last-processed-by-step-tooltip"
-              placement="bottom"
-              //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
-            ><span>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
-          </span> : emptyField}
-          {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
-            {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
-          </span> : emptyField}
-        </div>
-      </div>
+      <Popover id={`popover-positioned-record-view-${item?.index ? item.index: ""}`} className={styles.popoverWrap}>
+        <Popover.Body>
+          <div className={styles.popover} data-testid={item.uri + "-popover"}>
+            <div className={styles.colKey}>
+              <p>Source:</p>
+              <p>Flow:</p>
+              <p>Step:</p>
+              <p>Created On:</p>
+            </div>
+            <div className={styles.colValue}>
+              {item.hubMetadata?.sources?.length > 0 ? <span className={styles.valText} data-testid={item.uri + "-sources"}>
+                <HCTooltip
+                  text={displayRecordSources(item)}
+                  id="source-tooltip"
+                  placement="bottom"
+                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                ><span>{displayRecordSources(item).substring(0, 28)}</span></HCTooltip>
+              </span> : emptyField}
+              {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
+                <HCTooltip
+                  text={item.hubMetadata?.lastProcessedByFlow}
+                  id="last-processed-by-flow-tooltip"
+                  placement="bottom"
+                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                ><span>{item.hubMetadata?.lastProcessedByFlow}</span></HCTooltip>
+              </span> : emptyField}
+              {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
+                <HCTooltip
+                  text={item.hubMetadata.lastProcessedByStep}
+                  id="last-processed-by-step-tooltip"
+                  placement="bottom"
+                  //width={"200px"} // DHFPROD-7711 MLTooltip -> Tooltip
+                ><span>{item.hubMetadata.lastProcessedByStep}</span></HCTooltip>
+              </span> : emptyField}
+              {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
+                {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
+              </span> : emptyField}
+            </div>
+          </div>
+        </Popover.Body>
+      </Popover>
     );
   };
 
@@ -191,7 +196,10 @@ const RecordCardView = (props) => {
                     </HCTooltip>
                   </span></span>
                   <span className={styles.cardIcons}>
-                    <Popover getPopupContainer={trigger => trigger.parentElement || document.body} content={displayRecordMetadata(elem)} placement="bottomRight" trigger="click">
+                    <OverlayTrigger
+                      overlay={displayRecordMetadata(elem)}
+                      placement="bottom-end"
+                      trigger="click">
                       <span>
                         <HCTooltip text={"View info"} id="view-info-tooltip" placement="bottom">
                           <span className={styles.infoIcon}>
@@ -199,7 +207,7 @@ const RecordCardView = (props) => {
                           </span>
                         </HCTooltip>
                       </span>
-                    </Popover>
+                    </OverlayTrigger>
                     <span className={styles.sourceFormat}
                       style={sourceFormatStyle(elem.format)}
                       data-testid={elem.uri + "-sourceFormat"}
