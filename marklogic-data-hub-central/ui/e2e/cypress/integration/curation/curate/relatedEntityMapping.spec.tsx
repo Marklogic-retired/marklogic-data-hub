@@ -204,7 +204,7 @@ describe("Mapping", () => {
     mappingStepDetail.getValidationError("Person").should("exist");
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person")).focus().clear();
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Person")).type("data-hub-common,read,data-hub-common,update");
-    mappingStepDetail.getValidationError("Person").should("not.be.visible");
+    mappingStepDetail.getValidationError("Person").should("not.have.text");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Person")).click({force: true});
 
     mappingStepDetail.getEntitySettings("Relation").click();
@@ -215,7 +215,7 @@ describe("Mapping", () => {
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation")).focus().clear();
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation")).type("data-hub-common,read");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation")).click({force: true});
-    mappingStepDetail.getValidationError("Relation").should("not.be.visible");
+    mappingStepDetail.getValidationError("Relation").should("not.have.text");
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation")).focus().clear();
     cy.waitUntil(() => mappingStepDetail.getTargetPermissions("Relation")).type("data-hub-common,read,data-hub-common,update");
     cy.waitUntil(() => mappingStepDetail.getSaveSettings("Relation")).click({force: true});

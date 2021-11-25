@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
-import {Popover, Tooltip, Table} from "antd";
+import {Tooltip, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
@@ -9,6 +9,8 @@ import {MonitorContext} from "../../util/monitor-context";
 import JobResponse from "../job-response/job-response";
 import {CheckCircleFill, ClockFill, XCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCheckbox, HCDivider, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 
 const JobResultsTableView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
@@ -179,31 +181,35 @@ const JobResultsTableView = (props) => {
   };
 
   const content = (
-    <div data-testid="column-selector-popover" className={styles.popover}>
-      <div className={styles.content}>
-        {Object.keys(checkedAttributes).map(attribute => (
-          <div key={attribute} className={styles.DropdownMenuItem}>
-            <HCCheckbox
-              id={`column-${attribute}-id`}
-              handleClick={handleColOptionsChecked}
-              value={attribute}
-              label={columnOptionsLabel[attribute]}
-              checked={checkedAttributes[attribute]}
-              dataTestId={`columnOptionsCheckBox-${attribute}`}/>
+    <Popover id={`popover-overview`} className={styles.popoverJobResults}>
+      <Popover.Body>
+        <div data-testid="column-selector-popover" className={styles.popover}>
+          <div className={styles.content}>
+            {Object.keys(checkedAttributes).map(attribute => (
+              <div key={attribute} className={styles.DropdownMenuItem}>
+                <HCCheckbox
+                  id={`column-${attribute}-id`}
+                  handleClick={handleColOptionsChecked}
+                  value={attribute}
+                  label={columnOptionsLabel[attribute]}
+                  checked={checkedAttributes[attribute]}
+                  dataTestId={`columnOptionsCheckBox-${attribute}`}/>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <footer>
-        <HCDivider className={styles.divider} />
-        <div className={styles.footer}>
-          <div>
-            <HCButton size="sm" variant="outline-light" onClick={onCancel} >Cancel</HCButton>
-            <span>  </span>
-            <HCButton variant="primary" size="sm" onClick={onApply} disabled={false} >Apply</HCButton>
-          </div>
+          <footer>
+            <HCDivider className={styles.divider} />
+            <div className={styles.footer}>
+              <div>
+                <HCButton size="sm" variant="outline-light" onClick={onCancel} >Cancel</HCButton>
+                <span>  </span>
+                <HCButton variant="primary" size="sm" onClick={onApply} disabled={false} >Apply</HCButton>
+              </div>
+            </div>
+          </footer>
         </div>
-      </footer>
-    </div>
+      </Popover.Body>
+    </Popover>
   );
 
 
@@ -211,11 +217,11 @@ const JobResultsTableView = (props) => {
     <>
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup}>
-          <Tooltip title="Select the columns to display." placement="topRight">
-            <Popover placement="leftTop" content={content} trigger="click" visible={popoverVisibility} className={styles.fixedPopup}>
+          <OverlayTrigger placement="left-start" overlay={content} trigger="click" show={popoverVisibility}>
+            <Tooltip title="Select the columns to display." placement="topRight">
               <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
-            </Popover>
-          </Tooltip>
+            </Tooltip>
+          </OverlayTrigger>
         </div>
       </div>
       <div className={styles.tabular}>

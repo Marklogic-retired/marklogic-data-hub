@@ -1,11 +1,13 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Popover, Checkbox} from "antd";
+import {Checkbox} from "antd";
 import styles from "./pop-over-search.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
 import {HCInput} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 interface Props {
   referenceType: string;
   entityTypeId: any;
@@ -106,31 +108,33 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
 
   const content = (
-    <div className={styles.popover}>
-      <HCInput placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
-      <div className={styles.scrollOptions}>
-        {renderCheckBoxGroup}
-      </div>
-      <hr/>
-      <div className={styles.checkIcon} data-testid="check-icon">
-        <CheckSquare aria-label="icon: check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
-      </div>
-    </div>
+    <Popover id={`popover-over-search`} className={styles.popoverSearch}>
+      <Popover.Body>
+        <div className={styles.popover}>
+          <HCInput placeholder="Search" allowClear={true} onChange={searchOptions.tileId === "explore" ? getFacetValues : getMonitorFacetValues} data-testid={(props.facetName)+"-popover-input-field"}/>
+          <div className={styles.scrollOptions}>
+            {renderCheckBoxGroup}
+          </div>
+          <hr/>
+          <div className={styles.checkIcon} data-testid="check-icon">
+            <CheckSquare aria-label="icon: check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
+          </div>
+        </div>
+      </Popover.Body>
+    </Popover>
   );
 
   return (
-    <Popover
-      style={{padding: "40px !important", backgroundColor: "red !important"}}
-      placement="leftTop"
-      content={content}
+    <OverlayTrigger
+      placement="right-end"
+      overlay={content}
       trigger="click"
-      onVisibleChange={handleChange}
-      visible={popOverVisibility}>
+      onToggle={handleChange}
+      rootClose
+      show={popOverVisibility}>
       <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={"popover-search-label"}>See all</div>
-    </Popover>
+    </OverlayTrigger>
   );
 };
 
 export default PopOverSearch;
-
-

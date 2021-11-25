@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Popover, Select, Tooltip, Icon} from "antd";
+import {Table, Select, Tooltip, Icon} from "antd";
 import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
@@ -17,6 +17,8 @@ import {ModelingTooltips, MappingDetailsTooltips} from "../../../../config/toolt
 import StepsConfig from "../../../../config/steps.config";
 import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-bootstrap-icons";
 import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -73,13 +75,18 @@ const EntityMapTable: React.FC<Props> = (props) => {
   let relatedEntityMapData = props.isRelatedEntity ? props.mapData.relatedEntityMappings?.find(entity => entity.relatedEntityMappingId === props.entityMappingId) : {};
 
   //Text for Context Icon
-  const contextHelp = <div className={styles.contextHelp}>{MappingDetailsTooltips.context}</div>;
-
+  const contextHelp = <Popover id={`popover-emt-related-help`} className={styles.popoverEntityMapTableHelp}><Popover.Body>
+    <div className={styles.contextHelp}>{MappingDetailsTooltips.context}</div>
+  </Popover.Body></Popover>;
   //Text for URI Icon
-  const uriHelp = <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>;
+  const uriHelp = <Popover id={`popover-emt-urihelp`} className={styles.popoverEntityMapTableUriHelp}><Popover.Body>
+    <div className={styles.uriHelp}>{MappingDetailsTooltips.uri}</div>
+  </Popover.Body></Popover>;
 
   //Text for related entities help icon
-  const relatedInfo = <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>;
+  const relatedInfo = <Popover id={`popover-emt-related-info`} className={styles.popoverEntityMapTableRelated}><Popover.Body>
+    <div data-testid="relatedInfoContent">Map related entities by selecting them from the dropdown below. <br />Refer to the <a href="https://docs.marklogic.com/datahub/5.5/flows/about-mapping.html" target="_blank">documentation</a> for more details.</div>
+  </Popover.Body></Popover>;
 
   //For Entity table
   const [searchEntityText, setSearchEntityText] = useState("");
@@ -123,13 +130,15 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   let firstRowKeys = new Array(100).fill(0).map((_, i) => i);
   //Documentation links for using Xpath expressions
-  const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
-    <div><ul className={styles.docLinksUl}>
-      <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
-      <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
-      <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
-    </ul></div>
-  </div>;
+  const xPathDocLinks = <Popover id={`popover-emt-xpathdoclinks`} className={styles.xPathDocLinks}><Popover.Body>
+    <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
+      <div><ul className={styles.docLinksUl}>
+        <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
+        <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
+        <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
+      </ul></div>
+    </div>
+  </Popover.Body></Popover>;
 
   const getColumnsForEntityTable: any = () => {
     return entityColumns.map(el => props.checkedEntityColumns[el.key] ? el : "").filter(item => item);
@@ -1116,14 +1125,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
         <div className={styles.entityTitle} aria-label={`${props.entityTypeTitle}-title`}>
           {expandTableIcon}<strong>{props.entityTypeTitle}</strong>
           {props.relatedMappings &&
-            <Popover
-              content={relatedInfo}
-              trigger="hover"
-              placement="right"
-              overlayStyle={{
-                width: "16vw"
-              }}>
-              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" /></Popover>}
+            <OverlayTrigger placement="right" overlay={relatedInfo} trigger="hover" delay={{show: 0, hide: 2000}} rootClose>
+              <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="relatedInfoIcon" />
+            </OverlayTrigger>}
         </div>
         <div className={styles.entitySettingsLink}>
           <EntitySettings canReadWrite={props.canReadWrite} tooltipsData={props.tooltipsData} stepData={props.savedMappingArt} updateStep={props.updateStep} entityMappingId={props.entityMappingId} entityTitle={props.isRelatedEntity ? props.entityModel.info.title : props.entityTypeTitle} />
@@ -1297,20 +1301,16 @@ const EntityMapTable: React.FC<Props> = (props) => {
               }
               {row.key > 100 && row.name === "Context" && !row.isProperty &&
                 <span>
-                  &nbsp;<Popover
-                    content={contextHelp}
-                    trigger="click"
-                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
-                  </Popover>
+                  &nbsp;<OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
+                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                  </OverlayTrigger>
                 </span>
               }
               {row.key > 100 && row.name === "URI" && !row.isProperty &&
                 <span>
-                  &nbsp;<Popover
-                    content={uriHelp}
-                    trigger="click"
-                    placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
-                  </Popover>
+                &nbsp;<OverlayTrigger placement="right" overlay={uriHelp} rootClose trigger="click">
+                    <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
+                  </OverlayTrigger>
                 </span>
               }
             </span>;
@@ -1336,15 +1336,12 @@ const EntityMapTable: React.FC<Props> = (props) => {
             <div className={row.joinPropertyName !== "" || !expanded ? styles.renderContainer : styles.noKeyContainer}>
               {expanded && row.joinPropertyName !== "" ?
                 //if multiple and has foreign key, show context help
-                <div className={styles.typeContainer}>
+                <div className={styles.typeContainer} >
                   <div className={styles.typeContextContainer}>
                     <span className={styles.typeContext}>Context</span>&nbsp;
-                    <Popover
-                      content={contextHelp}
-                      trigger="click"
-                      placement="right">
+                    <OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
                       <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-                    </Popover>
+                    </OverlayTrigger>
                     <p className={styles.typeText}>{dType}</p>
                   </div>
                 </div>
@@ -1381,10 +1378,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
           children:
             <div className={styles.typeContainer}>
               {expanded && row.joinPropertyName !== "" && !row.joinPropertyType && !row.relatedEntityType ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;
-                <Popover
-                  content={contextHelp}
-                  trigger="click"
-                  placement="right"><QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} /></Popover>
+                <OverlayTrigger placement="right" overlay={contextHelp} rootClose trigger="click">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircleContext} />
+                </OverlayTrigger>
                 <p className={styles.typeText}>{dType}</p></div>
                 : renderText}
             </div>, props: (row.key <= 100 && index === 0) ? {colSpan: 0} : {colSpan: 1}
@@ -1392,12 +1388,17 @@ const EntityMapTable: React.FC<Props> = (props) => {
       }
     },
     {
-      title: <span>XPath Expression <Popover
-        content={xPathDocLinks}
+      title: <span>XPath Expression <OverlayTrigger
+        overlay={xPathDocLinks}
         trigger="hover"
         placement="top"
-        getPopupContainer={() => document.getElementById("parentContainer") || document.body}><img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" /></Popover>
+        delay={{show: 0, hide: 2000}}
+        rootClose
+      >
+        <img className={styles.arrayImage} src={DocIcon} alt={""} data-testid="XPathInfoIcon" />
+      </OverlayTrigger>
       </span>,
+
       dataIndex: "key",
       key: "key",
       width: "45%",

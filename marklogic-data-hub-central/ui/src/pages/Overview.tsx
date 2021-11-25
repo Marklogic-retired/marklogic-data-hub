@@ -3,11 +3,11 @@ import styles from "./Overview.module.scss";
 import {useHistory} from "react-router-dom";
 import overviewConfig from "../config/overview.config";
 import tiles from "../config/tiles.config";
-import {Popover} from "antd";
 import "./Overview.scss";
 import modelingInfoIcon from "../assets/icon_helpInfo.png";
 import {ToolbarBulbIconInfo} from "../config/tooltips.config";
-
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 interface Props {
     enabled: any;
 }
@@ -37,7 +37,11 @@ const Overview: React.FC<Props> = (props) => {
     window.open(overviewConfig.videoLinks[type], "_blank");
   };
 
-  const homePageInfo = <div className={styles.homeInfoPopover} aria-label="homePageInfoPopover">{ToolbarBulbIconInfo.homePageInfo}</div>;
+  const homePageInfo = <Popover id={`popover-overview`} className={styles.popoverHomePageInfo}><Popover.Body className={styles.popoverHomePageInfoBody}>
+    <div className={styles.homeInfoPopover} aria-label="homePageInfoPopover">{ToolbarBulbIconInfo.homePageInfo}</div>
+  </Popover.Body>
+  </Popover>;
+
   const [helpInfoVisible, setHelpInfoVisible] = useState(false);
 
   const helpInfoViewChange = (visible) => {
@@ -138,15 +142,18 @@ const Overview: React.FC<Props> = (props) => {
   return (
     <div className={styles.overviewContainer} aria-label="overview">
       <div className={styles.title}>Welcome to MarkLogic Data Hub Central
-        {<span className={styles.infoBulbIcon} id="homePagePopover"><Popover
-          visible={helpInfoVisible}
-          content={homePageInfo}
-          trigger="click"
-          placement="bottomRight"
-          overlayClassName={styles.homePageInfoPopover}
-          onVisibleChange={helpInfoViewChange}
-        >
-          <span className={styles.helpInfoIcon} aria-label="homePageInfoIcon"><img src={modelingInfoIcon}/></span></Popover></span>}</div>
+        {<span className={styles.infoBulbIcon} id="homePagePopover">
+          <OverlayTrigger
+            show={helpInfoVisible}
+            overlay={homePageInfo}
+            trigger="click"
+            placement="bottom-end"
+            rootClose
+            onToggle={helpInfoViewChange}
+          >
+            <span className={styles.helpInfoIcon} aria-label="homePageInfoIcon"><img src={modelingInfoIcon}/></span>
+          </OverlayTrigger>
+        </span>}</div>
       <div className={styles.introText} aria-label={"introText"}>MarkLogic Data Hub Central makes it easy to manage your data. You can load, curate, and manage your data, or explore and export your data — all within Hub Central.</div>
       <div className={styles.cardsContainer}>
         <div className={styles.cards}>

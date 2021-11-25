@@ -10,11 +10,12 @@ import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import modelingInfoIcon from "../../assets/icon_helpInfo.png";
-import {Popover} from "antd";
 import {primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
 import {HCButton, HCTooltip} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 
 interface Props {
   id: string;
@@ -49,7 +50,12 @@ const Tiles: React.FC<Props> = (props) => {
   />;
   /******************************************/
 
-  const modelInfo = <div className={styles.modelingInfoPopover} aria-label="modelingInfo">{ToolbarBulbIconInfo.modelingInfo}</div>;
+  const modelInfo =
+  <Popover id={`popover-tiles`} className={styles.popoverModelInfo}>
+    <Popover.Body className={styles.popoverModelInfoBody}>
+      <div className={styles.modelingInfoPopover} aria-label="modelingInfo">{ToolbarBulbIconInfo.modelingInfo}</div>
+    </Popover.Body>
+  </Popover>;
 
   const showControl = (control) => {
     return controls.indexOf(control) !== -1;
@@ -125,17 +131,18 @@ const Tiles: React.FC<Props> = (props) => {
           {(options["iconType"] === "custom") ? (<>
             <span className={options["icon"] + "Header"} aria-label={"icon-" + viewId} style={{color: options["color"]}}></span>
             <div className={styles.exploreText} aria-label={"title-" + viewId}>{options["title"]}</div>
-            {viewId === "model" && <span id="modelInfo"><Popover
-              visible={modelingInfoVisible}
-              content={modelInfo}
-              trigger="click"
-              placement="bottomRight"
-              overlayStyle={{
-                width: "40vw"
-              }}
-              onVisibleChange={modelingInfoViewChange}
-            >
-              <span className={styles.modelingInfoIcon} aria-label="modelInfoIcon"><img src={modelingInfoIcon}/></span></Popover></span>}
+            {viewId === "model" && <span id="modelInfo">
+              <OverlayTrigger
+                show={modelingInfoVisible}
+                overlay={modelInfo}
+                trigger="click"
+                placement="bottom-end"
+                rootClose
+                onToggle={modelingInfoViewChange}
+              >
+                <span className={styles.modelingInfoIcon} aria-label="modelInfoIcon"><img src={modelingInfoIcon}/></span>
+              </OverlayTrigger>
+            </span>}
           </>) : (<>
             <i aria-label={"icon-" + viewId}>
               <FontAwesomeIcon style={{color: options["color"]}} icon={options["icon"]} />

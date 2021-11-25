@@ -307,3 +307,14 @@ a {
 .homePageInfoPopover {
     width: 42vw;
 }
+
+.popoverHomePageInfo {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border: 0px !important;
+    min-width: 810px !important;
+    font-size: 14px !important;
+}
+
+.popoverHomePageInfoBody {
+    padding: 0px !important;
+}

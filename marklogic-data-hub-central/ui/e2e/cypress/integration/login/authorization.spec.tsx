@@ -227,9 +227,9 @@ describe("login", () => {
 
     // To verify on click operation works as expected
     toolbar.getHomePageInfoIcon().click();
-    toolbar.getHomePageInfoPopover().should("be.visible");
+    toolbar.getHomePageInfoPopover().should("exist");
     toolbar.getHomePageInfoIcon().click();
-    toolbar.getHomePageInfoPopover().should("be.not.visible");
+    toolbar.getHomePageInfoPopover().should("not.exist");
 
     toolbar.getModelToolbarIcon().trigger("mouseover").click();
     cy.url().should("include", "/tiles/model");
