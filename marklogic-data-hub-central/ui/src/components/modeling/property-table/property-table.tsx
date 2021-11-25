@@ -197,7 +197,9 @@ const PropertyTable: React.FC<Props> = (props) => {
                     <span className={styles.modeledRelationshipIcon} data-testid={"relationship-" + record.propertyName} />
                   </HCTooltip>
                   <HCTooltip text={foreignKeyTooltip} id={"foreignKeyTooltip-" + record.propertyName} placement="bottom" >
-                    <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName} />
+                    <span>
+                      <FontAwesomeIcon className={styles.foreignKeyRelationshipIcon} icon={faKey} data-testid={"foreign-" + record.propertyName} />
+                    </span>
                   </HCTooltip>
                 </div>
               </div>;
