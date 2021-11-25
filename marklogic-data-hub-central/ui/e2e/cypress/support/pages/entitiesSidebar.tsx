@@ -4,7 +4,6 @@ class BaseEntitySidebar {
     return cy.get(`[aria-label="base-entity-icons-list-close"]`);
   }
   getBaseEntity(entity: string) {
-    //return cy.get("base-entities-facet_entityName").contains(entity);
     return cy.get(`div[aria-label="base-entities-${entity}"]`);
   }
   getEntityTitle(entity: string) {
@@ -13,6 +12,10 @@ class BaseEntitySidebar {
   getEntityIconFromList(entity: string) {
     return cy.get(`div[aria-label="base-entity-icon-${entity}"]`);
   }
+  getBaseEntitiesAccordion() {
+    return cy.get(`[id='baseEntities']`);
+  }
+
   //Actions
   clickOnBaseEntity(entity: string) {
     return this.getBaseEntity(entity).click();

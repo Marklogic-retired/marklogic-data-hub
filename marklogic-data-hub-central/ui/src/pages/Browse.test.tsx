@@ -1,5 +1,5 @@
 import React from "react";
-import {render, fireEvent, screen} from "@testing-library/react";
+import {waitForElement, render, fireEvent, screen} from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
 import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
@@ -90,5 +90,13 @@ describe("Explorer Browse page tests ", () => {
     const close = getByLabelText("base-entity-icons-list-close");
     userEvent.click(close);
     expect(queryByText("base-entities-Bank Account")).toBeNull();
+  });
+
+  test("Verify graph nodes amount", async () => {
+    const {getByTestId} = render(<MemoryRouter><Browse /></MemoryRouter>);
+    expect(getByTestId("graphCountText")).toHaveTextContent("Viewing 0 of 0 results");
+    const tooltip = getByTestId("graphViewingNodesTooltip");
+    fireEvent.mouseOver(tooltip);
+    await waitForElement(() => getByTestId("graphViewingNodesTooltipText"));
   });
 });

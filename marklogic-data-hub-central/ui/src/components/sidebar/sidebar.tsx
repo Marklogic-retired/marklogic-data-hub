@@ -41,6 +41,7 @@ interface Props {
   setCurrentBaseEntities: (entity: any[]) => void;
   currentRelatedEntities: Map<string, any>;
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
+  entitiesData: any[];
 }
 
 const PLACEHOLDER: string = "Select a saved query";
@@ -75,7 +76,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [userPreferences, setUserPreferences] = useState({});
   const [indeterminate, setIndeterminate] = React.useState(false);
   const [checkAll, setCheckAll] = React.useState(true);
-
   useEffect(() => {
     setCurrentQueryName(searchOptions.sidebarQuery);
   }, [searchOptions.sidebarQuery]);
@@ -205,6 +205,8 @@ const Sidebar: React.FC<Props> = (props) => {
         setAllSelectedFacets({});
         setDatePickerValue([null, null]);
       }
+    } else {
+      setActiveKey(["database", "hubProperties"]);
     }
   }, [props.selectedEntities, props.facets]);
 
@@ -531,7 +533,7 @@ const Sidebar: React.FC<Props> = (props) => {
     handleFacetPreferences(tmpActiveKeys);
   };
 
-  const setDatasourcePreferences = (datasource) => {
+  const setDatasourcePreferences = (datasource: string) => {
     setDatasource(datasource);
   };
 
@@ -698,22 +700,24 @@ const Sidebar: React.FC<Props> = (props) => {
         </Accordion.Item>
       </Accordion>
 
-      <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
-        <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
-          <div className={"p-0 d-flex"}>
-            <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
-          </div>
-          <Accordion.Body>
-            <BaseEntitiesFacet
-              setCurrentBaseEntities={props.setCurrentBaseEntities}
-              setEntitySpecificPanel={props.setEntitySpecificPanel}
-              currentBaseEntities={props.currentBaseEntities}
-              setActiveAccordionRelatedEntities={setActiveAccordion}
-              activeKey={activeKey}
-            />
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
+      {(props.entitiesData.length > 0) &&
+        <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
+          <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
+            <div className={"p-0 d-flex"}>
+              <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
+            </div>
+            <Accordion.Body>
+              <BaseEntitiesFacet
+                setCurrentBaseEntities={props.setCurrentBaseEntities}
+                setEntitySpecificPanel={props.setEntitySpecificPanel}
+                currentBaseEntities={props.currentBaseEntities}
+                setActiveAccordionRelatedEntities={setActiveAccordion}
+                activeKey={activeKey}
+              />
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+      }
       {props.currentRelatedEntities.size > 0 &&
         <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
           <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>

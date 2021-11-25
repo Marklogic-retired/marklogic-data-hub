@@ -34,6 +34,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     clearAllGreyFacets,
     greyedOptions,
     setAllSearchFacets,
+    clearPageSearchFacets,
     searchOptions,
     applySaveQuery,
     setAllGreyedOptions
@@ -109,6 +110,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             propertiesToDisplay: searchOptions.selectedTableProperties,
             sortOrder: searchOptions?.sortOrder || [],
             database: searchOptions.database,
+            datasource: searchOptions.datasource,
           };
           applySaveQuery(options);
         }
@@ -134,6 +136,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             propertiesToDisplay: [],
             sortOrder: [],
             database: "final",
+            datasource: "entities",
           };
           applySaveQuery(options);
         }
@@ -143,7 +146,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
           setErrorMessage(error["response"]["data"]["message"]);
-          setAllSearchFacets(selectedFacets);
+          clearPageSearchFacets();
           setAllGreyedOptions(greyedFacets);
           props.currentQuery.savedQuery.name = previousQueryName;
         }

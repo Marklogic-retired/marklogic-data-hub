@@ -71,6 +71,8 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.clickBackButton();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    //browsePage.getTableView().click({force: true});
+    browsePage.getFacetView().click({force: true});
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSearchText().should("have.value", "10256");

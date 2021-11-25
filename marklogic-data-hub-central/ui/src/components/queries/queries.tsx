@@ -89,8 +89,8 @@ const Query: React.FC<Props> = (props) => {
         sortOrder: searchOptions.sortOrder
       }
     };
-    props.setIsLoading(true);
     await creatNewQuery(query);
+    props.setIsLoading(true);
     setOpenSaveModal(false);
     getSaveQueries();
   };
@@ -122,6 +122,7 @@ const Query: React.FC<Props> = (props) => {
             propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
             sortOrder: response.data.savedQuery.sortOrder,
             database: searchOptions.database,
+            datasource: searchOptions.datasource,
           };
           applySaveQuery(options);
           setCurrentQuery(response.data);
@@ -223,6 +224,7 @@ const Query: React.FC<Props> = (props) => {
 
   useEffect(() => {
     initializeUserPreferences();
+    console.log('initi');
   }, []);
 
   useEffect(() => {
@@ -319,6 +321,7 @@ const Query: React.FC<Props> = (props) => {
       propertiesToDisplay: [],
       sortOrder: [],
       database: "final",
+      datasource: "entities",
     };
     applySaveQuery(options);
     toggleResetQueryEditedConfirmation(false);
@@ -346,6 +349,7 @@ const Query: React.FC<Props> = (props) => {
         propertiesToDisplay: [],
         sortOrder: [],
         database: "final",
+        datasource: "entities",
       };
       applySaveQuery(options);
       clearAllGreyFacets();
@@ -377,6 +381,9 @@ const Query: React.FC<Props> = (props) => {
 
   }, [searchOptions, props.greyFacets, isSaveQueryChanged()]);
 
+  console.log("searchOptions.nextEntityType ", searchOptions.nextEntityType);
+  console.log("queries", props.queries);
+  console.log("props.savedQueries", savedQueries);
   return (
     <>
       <div>
@@ -413,6 +420,7 @@ const Query: React.FC<Props> = (props) => {
                       onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
                       className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
                       data-testid="save-modal"
+                      id="save-current-query"
                       size="lg"
                       style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
                     /></i>

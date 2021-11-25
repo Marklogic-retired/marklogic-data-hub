@@ -119,7 +119,7 @@ describe("json scenario for table on browse documents page", () => {
     // detailPage.getDocumentTable().should("exist");
   });
 
-  it("verify source view of the document", () => {
+  it.skip("verify source view of the document", () => {
     browsePage.selectEntity("Customer");
     browsePage.getFinalDatabaseButton().click();
     browsePage.search("Adams Cole");

@@ -18,14 +18,8 @@ type Props = {
 const GraphVisExplore: React.FC<Props> = (props) => {
   const [graphData, setGraphData] = useState({nodes: [], edges: []});
 
-  const coordinatesExist = () => {
-    let coordsExist = !!props.coords;
-    return coordsExist;
-  };
-
-  const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [hasStabilized, setHasStabilized] = useState(false);
   const {
     searchOptions,
@@ -35,14 +29,23 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
+  const [graphDataLoaded, setGraphDataLoaded] = useState(false);
   const initNetworkInstance = (networkInstance) => {
     setNetwork(networkInstance);
   };
 
+  useEffect(() => {
+    if (network) {
+      if (network.physics.stabilized && hasStabilized) {
+        setPhysicsEnabled(false);
+      }
+    }
+  }, [hasStabilized, network?.physics]);
+
+  const [physicsEnabled, setPhysicsEnabled] = useState(true);
   const [networkHeight, setNetworkHeight] = useState(graphConfig.defaultOptions.height);
   const vis = require("vis-network/standalone/umd/vis-network"); //eslint-disable-line @typescript-eslint/no-unused-vars
 
-  const [graphDataLoaded, setGraphDataLoaded] = useState(false);
   // Load coords *once* on init
 
 
@@ -394,10 +397,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         //   saveUnsavedCoords();
           setHasStabilized(true);
           props.setCoords(positions);
-          if (physicsEnabled) {
-            setPhysicsEnabled(false);
-            return false;
-          }
         }
         // if (modelingOptions.selectedEntity && selectedEntityExists()) {
         //   try { // Visjs might not have new entity yet, catch error

@@ -29,6 +29,8 @@ import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery} from "../api/queries";
 import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
+import {CARD, GRAPH, FIRST_TIME_VIEW} from "../config/explorer.config";
+import {fetchResults} from "../api/explore";
 
 //TODO: remove this, it's just for mocking porpouses and show default data en specif sidebar when non entity was selected
 const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
@@ -51,7 +53,17 @@ const ENTITIES = [
   {...ORDERS, relatedEntities: []}
 ];
 
+const IS_FIRST_TIME = (preferences?: any) => {
+  if (preferences) {
+    return preferences.firstTime;
+  }
+  return true;
+};
 
+const IS_GRAPH_VIEW =(preferences: any) => {
+  const {cardView, tableView, snippetView, firstTime} = preferences;
+  return !cardView && !tableView && !snippetView && firstTime;
+};
 interface Props extends RouteComponentProps<any> {
 }
 
@@ -72,12 +84,13 @@ const Browse: React.FC<Props> = ({location}) => {
     setDatabase,
     setLatestDatabase,
     setEntityDefinitionsArray,
-    clearAllGreyFacets
+    clearAllGreyFacets,
+    setFirstTimeEntry
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
   const [data, setData] = useState<any[]>([]);
-  const [entities, setEntites] = useState<any[]>([]);
+  const [entities, setEntities] = useState<any[]>([]);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
   const [facets, setFacets] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
@@ -98,14 +111,16 @@ const Browse: React.FC<Props> = ({location}) => {
   const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
-  const [coords, setCoords] = useState<any>(undefined);
+  const [coords, setCoords] = useState<any[]>([]);
   const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
   const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
   const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
-  const [graphView, setGraphView] = useState(state && state.graphView ? true : false);
+  const [graphView, setGraphView] = useState(IS_GRAPH_VIEW(JSON.parse(getUserPreferences(user.name))));
   const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
+  const [snippetView, setSnippetView] = useState(JSON.parse(getUserPreferences(user.name)).snippetView);
+  const [firstTime, setFirstTime] = useState(IS_FIRST_TIME(JSON.parse(getUserPreferences(user.name))));
 
   const handleEntitySelected = (entity: any) => {
     setEntitySpecificPanel(entity);
@@ -129,15 +144,14 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const [graphSearchData, setGraphSearchData] = useState<any[]>([]);
 
-
-  const getGraphSearchResult = async (allEntities: any[]) => {
+  const buildPayloadGraphSearchQuery = async (entitiesList: any[], database?: string) => {
     try {
       let payload = {
-        "database": searchOptions.database,
+        "database": database ? database : searchOptions.database,
         "data": {
           "query": {
             "searchText": searchOptions.query,
-            "entityTypeIds": searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            "entityTypeIds": searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : entitiesList,
             "selectedFacets": searchOptions.selectedFacets,
           },
           "start": 0,
@@ -145,26 +159,67 @@ const Browse: React.FC<Props> = ({location}) => {
         }
       };
       const response = await graphSearchQuery(payload);
-      if (componentIsMounted.current && response.data) {
-        setGraphSearchData(response.data);
-      }
+      return response;
     } catch (error) {
       handleError(error);
     }
   };
 
-  const getEntityModel = async () => {
+  const getGraphSearchResult = async (allEntities: any[]) => {
+    const response = await buildPayloadGraphSearchQuery(allEntities);
+    if (componentIsMounted.current && response && response.data) {
+      setGraphSearchData(response.data);
+    }
+  };
+
+  const fetchFirstEntry = async (entitiesList: string[] = [], parsedPreferences: any) => {
+    if (parsedPreferences.firstTime) {
+      let order = -1;
+      let results = [];
+      let resultsGraph = [];
+      let total = 0;
+      while (results.length === 0 && order < 4) {
+        order = order + 1;
+        const viewData = FIRST_TIME_VIEW[order];
+        let data;
+        let graphData;
+        graphData = await buildPayloadGraphSearchQuery(entitiesList, viewData.database);
+        resultsGraph = graphData.data;
+        data = await fetchResults(viewData.database, entitiesList, searchOptions);
+        results = data.results;
+        total = data.total;
+      }
+      const {database, view, datasource} = FIRST_TIME_VIEW[order];
+      setFirstTimeEntry({datasource, database});
+      setCardView(view === CARD);
+      setGraphView(view === GRAPH);
+      toggleTableView(false);
+      setFirstTime(false);
+      setIsLoading(false);
+      setGraphSearchData(resultsGraph);
+      setData(results);
+      setTotalDocuments(total);
+      return {database, datasource};
+    }
+  };
+
+  const getEntityModel = async (parsedPreferences: any) => {
     try {
       const response = await axios(`/api/models`);
       if (componentIsMounted.current) {
         const parsedModelData = entityFromJSON(response.data);
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
         let parsedEntityDef = entityParser(parsedModelData);
-        setEntites(entityArray);
+        setEntities(entityArray);
         setEntityDefArray(parsedEntityDef);
         setEntityDefinitionsArray(parsedEntityDef);
         setEntitiesData(response.data);
-        getGraphSearchResult(entityArray);
+        if (firstTime) {
+          await fetchFirstEntry(entityArray, parsedPreferences);
+        } else {
+          getGraphSearchResult(entityArray);
+        }
+        return entityArray;
       }
     } catch (error) {
       handleError(error);
@@ -173,48 +228,49 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const getSearchResults = async (allEntities: string[]) => {
     try {
+      const {database, query, entityTypeIds, selectedFacets, selectedTableProperties, start, pageLength, sortOrder, nextEntityType} = searchOptions;
       handleUserPreferences();
       setIsLoading(true);
-      const response = await axios({
+      const {data} = await axios({
         method: "POST",
-        url: `/api/entitySearch?database=${searchOptions.database}`,
+        url: `/api/entitySearch?database=${database}`,
         data: {
           query: {
-            searchText: searchOptions.query,
-            entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
-            selectedFacets: searchOptions.selectedFacets,
+            searchText: query,
+            entityTypeIds: cardView ? [] : entityTypeIds.length ? entityTypeIds : allEntities,
+            selectedFacets,
             hideHubArtifacts: cardView ? hideDataHubArtifacts : true
           },
-          propertiesToDisplay: searchOptions.selectedTableProperties,
-          start: searchOptions.start,
-          pageLength: searchOptions.pageLength,
-          sortOrder: searchOptions.sortOrder
+          propertiesToDisplay: selectedTableProperties,
+          start,
+          pageLength,
+          sortOrder
         }
       });
-      if (!["All Data"].includes(searchOptions.nextEntityType)) {
-        setShowNoDefinitionAlertMessage(titleNoDefinition(searchOptions.nextEntityType));
+      if (!["All Data"].includes(nextEntityType)) {
+        setShowNoDefinitionAlertMessage(titleNoDefinition(nextEntityType));
       } else {
         setShowNoDefinitionAlertMessage(false);
       }
-      if (componentIsMounted.current && response.data) {
-        if (response.data.entityPropertyDefinitions && graphView) {
-          setData(response.data.results);
+      if (componentIsMounted.current && data) {
+        if (data.entityPropertyDefinitions && graphView) {
+          setData(data.results);
         } else if (!graphView) {
-          setData(response.data.results);
+          setData(data.results);
         }
-        if (response.data.hasOwnProperty("entityPropertyDefinitions")) {
-          setEntityPropertyDefinitions(response.data.entityPropertyDefinitions);
+        if (data.hasOwnProperty("entityPropertyDefinitions")) {
+          setEntityPropertyDefinitions(data.entityPropertyDefinitions);
         }
-        if (response.data.hasOwnProperty("selectedPropertyDefinitions")) {
-          setSelectedPropertyDefinitions(response.data.selectedPropertyDefinitions);
+        if (data.hasOwnProperty("selectedPropertyDefinitions")) {
+          setSelectedPropertyDefinitions(data.selectedPropertyDefinitions);
         }
 
-        setFacets(response.data.facets);
-        setTotalDocuments(response.data.total);
+        setFacets(data.facets);
+        setTotalDocuments(data.total);
 
-        if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
-          if (!["All Data"].includes(searchOptions.nextEntityType)) {
-            let properties = getTableProperties(response.data.selectedPropertyDefinitions);
+        if (data.selectedPropertyDefinitions && data.selectedPropertyDefinitions.length) {
+          if (!["All Data"].includes(nextEntityType)) {
+            let properties = getTableProperties(data.selectedPropertyDefinitions);
             setColumns(properties);
           } else {
             setColumns([]);
@@ -266,7 +322,6 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   useEffect(() => {
-    getEntityModel();
     initializeUserPreferences();
     return () => {
       componentIsMounted.current = false;
@@ -277,9 +332,21 @@ const Browse: React.FC<Props> = ({location}) => {
     if (searchOptions.nextEntityType && searchOptions.nextEntityType !== "All Data") {
       setCardView(false);
     }
-    fetchUpdatedSearchResults();
-    getGraphSearchResult(entities);
-  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
+    if (!firstTime) {
+      console.log("searchOptions.query ", searchOptions.query);
+      fetchUpdatedSearchResults();
+      getGraphSearchResult(entities);
+    }
+  /* }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]); */
+
+  }, [entities,
+    searchOptions.datasource,
+    searchOptions.query,
+    searchOptions.selectedFacets,
+    searchOptions.nextEntityType,
+    searchOptions.entityTypeIds,
+    user.error.type,
+    hideDataHubArtifacts]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -304,6 +371,7 @@ const Browse: React.FC<Props> = ({location}) => {
         propertiesToDisplay: savedQuery.propertiesToDisplay,
         sortOrder: savedQuery.sortOrder,
         database: searchOptions.database,
+        datasource: searchOptions.datasource,
       };
       applySaveQuery(options);
     } else if (state && state.hasOwnProperty("isBackToResultsClicked") && state["isBackToResultsClicked"]) {
@@ -357,14 +425,18 @@ const Browse: React.FC<Props> = ({location}) => {
   const initializeUserPreferences = async () => {
     let state: any = location.state;
     let defaultPreferences = getUserPreferences(user.name);
+    let parsedPreferences = JSON.parse(defaultPreferences);
     if (defaultPreferences !== null) {
-      let parsedPreferences = JSON.parse(defaultPreferences);
-      if (state) {
-        if (state["tileIconClicked"]) {
-          let preferencesObject = {
-            ...parsedPreferences,
-          };
-          updateUserPreferences(user.name, preferencesObject);
+      const entitiesModel = await getEntityModel(parsedPreferences);
+      if (entitiesModel !== undefined) {
+        if (state) {
+          if (state["tileIconClicked"] && firstTime) {
+            let preferencesObject = {
+              ...parsedPreferences,
+              firstTime: false,
+            };
+            updateUserPreferences(user.name, preferencesObject);
+          }
         }
       }
     }
@@ -382,12 +454,14 @@ const Browse: React.FC<Props> = ({location}) => {
       pageNumber: searchOptions.pageNumber,
       start: searchOptions.start,
       tableView: view ? (view === "snippet" ? false : true) : tableView,
+      snippetView: view ?  (view === "snippet" ? true : false)  : snippetView,
       selectedQuery: searchOptions.selectedQuery,
       queries: queries,
       propertiesToDisplay: searchOptions.selectedTableProperties,
       sortOrder: searchOptions.sortOrder,
       cardView: cardView,
-      database: searchOptions.database
+      database: searchOptions.database,
+      firstTime: false,
     };
     updateUserPreferences(user.name, preferencesObject);
   };
@@ -458,22 +532,11 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const handleViewChange = (view) => {
-    let tableView = "";
-    if (view === "graph") {
-      toggleTableView(false);
-      setGraphView(true);
-      tableView = "graph";
-    } else if (view === "snippet") {
-      setGraphView(false);
-      toggleTableView(false);
-      tableView = "snippet";
-    } else {
-      setGraphView(false);
-      toggleTableView(true);
-      tableView = "table";
-    }
-    setUserPreferences(tableView);
-
+    setUserPreferences(view);
+    toggleTableView(view === "table");
+    setGraphView(view === "graph");
+    setCardView(view === "card");
+    setSnippetView(view === "snippet");
     if (resultsRef && resultsRef.current) {
       resultsRef.current["style"]["boxShadow"] = "none";
     }
@@ -495,14 +558,13 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const helpIcon = () => (
     <span>
-      <HCTooltip text={ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
-        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+      <HCTooltip text={ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right" data-testid="graphViewingNodesTooltipText" >
+        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} data-testid="graphViewingNodesTooltip"/>
       </HCTooltip>
     </span>
   );
 
-  const numberOfResultsBanner = <span>Viewing 100 of 1000 results {helpIcon()}</span>;
-
+  const numberOfResultsBanner = data ? <span data-testid="graphCountText" >Viewing <strong>{data.length}</strong> of <strong>{data.length}</strong> results {helpIcon()}</span> : null;
 
   return (
     <div className={styles.layout}>
@@ -532,6 +594,7 @@ const Browse: React.FC<Props> = ({location}) => {
             setCurrentBaseEntities={setCurrentBaseEntities}
             currentRelatedEntities={currentRelatedEntities}
             setCurrentRelatedEntities={setCurrentRelatedEntities}
+            entitiesData={entitiesData}
           />
         </HCSider>
       }
@@ -556,7 +619,7 @@ const Browse: React.FC<Props> = ({location}) => {
                 {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
                 {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
                   <span>
-                    {!graphView &&
+                    {!graphView && !isLoading &&
                       <div>
                         <SearchSummary
                           total={totalDocuments}
@@ -570,7 +633,11 @@ const Browse: React.FC<Props> = ({location}) => {
                     <div className={styles.spinViews}>
                       <div style={switchViewsGraphStyle()}>
                         {graphView ? numberOfResultsBanner : ""}
-                        {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
+                        {isLoading &&
+                          <div className={styles.spinnerContainer}>
+                            <Spinner animation="border" data-testid="spinner" variant="primary" />
+                          </div>
+                        }
                         {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
                           <div className={"switch-button-group outline"}>
                             <span>
@@ -579,6 +646,7 @@ const Browse: React.FC<Props> = ({location}) => {
                                 id="switch-view-graph"
                                 name="switch-view-radiogroup"
                                 value={"graph"}
+                                defaultChecked={graphView}
                                 onChange={e => handleViewChange(e.target.value)}
                               />
                               <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
@@ -612,7 +680,7 @@ const Browse: React.FC<Props> = ({location}) => {
                                 id="switch-view-snippet"
                                 name="switch-view-radiogroup"
                                 value={"snippet"}
-                                defaultChecked={!tableView}
+                                defaultChecked={snippetView}
                                 onChange={e => handleViewChange(e.target.value)}
                               />
                               <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
@@ -626,80 +694,83 @@ const Browse: React.FC<Props> = ({location}) => {
                           </div>
                         </div> : ""}
                       </div>
-                    </div></span>}
+                    </div>
+                  </span>}
               </div>
-              <Query queries={queries || []}
-                setQueries={setQueries}
-                isSavedQueryUser={isSavedQueryUser}
-                columns={columns}
-                setIsLoading={setIsLoading}
-                entities={entities}
-                selectedFacets={selectedFacets}
-                greyFacets={greyFacets}
-                isColumnSelectorTouched={isColumnSelectorTouched}
-                setColumnSelectorTouched={setColumnSelectorTouched}
-                entityDefArray={entityDefArray}
-                database={searchOptions.database}
-                setCardView={setCardView}
-                cardView={cardView}
-              />
+              {!graphView && !isLoading  &&
+                <Query queries={queries || []}
+                  setQueries={setQueries}
+                  isSavedQueryUser={isSavedQueryUser}
+                  columns={columns}
+                  setIsLoading={setIsLoading}
+                  entities={entities}
+                  selectedFacets={selectedFacets}
+                  greyFacets={greyFacets}
+                  isColumnSelectorTouched={isColumnSelectorTouched}
+                  setColumnSelectorTouched={setColumnSelectorTouched}
+                  entityDefArray={entityDefArray}
+                  database={searchOptions.database}
+                  setCardView={setCardView}
+                  cardView={cardView}
+                />
+              }
             </div>
             {!showNoDefinitionAlertMessage &&
-                <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
-                  <div>
-                    {graphView ?
-                      <div>
-                        <GraphViewExplore
-                          entityTypesInstances={graphSearchData}
-                          graphView={graphView}
-                          coords={coords}
-                          setCoords={setCoords}
-                        />
-                      </div> :
-                      cardView ?
-                        <RecordCardView
-                          data={data}
-                          entityPropertyDefinitions={entityPropertyDefinitions}
-                          selectedPropertyDefinitions={selectedPropertyDefinitions}
-                        />
-                        : (tableView ?
-                          <div className={styles.tableViewResult}>
-                            <ResultsTabularView
-                              data={data}
-                              entityPropertyDefinitions={entityPropertyDefinitions}
-                              selectedPropertyDefinitions={selectedPropertyDefinitions}
-                              entityDefArray={entityDefArray}
-                              columns={columns}
-                              selectedEntities={searchOptions.entityTypeIds}
-                              setColumnSelectorTouched={setColumnSelectorTouched}
-                              tableView={tableView}
-                              isLoading={isLoading}
-                              handleViewChange={handleViewChange}
-                            />
-                          </div>
-                          : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
-                            handleViewChange={handleViewChange}
-                            entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
-                        )}
-                  </div>
-                  <br />
-                </div>}
-            {!showNoDefinitionAlertMessage && !graphView &&
+              <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
                 <div>
-                  <SearchSummary
-                    total={totalDocuments}
-                    start={searchOptions.start}
-                    length={searchOptions.pageLength}
-                    pageSize={searchOptions.pageSize}
-                  />
-                  <SearchPagination
-                    total={totalDocuments}
-                    pageNumber={searchOptions.pageNumber}
-                    pageSize={searchOptions.pageSize}
-                    pageLength={searchOptions.pageLength}
-                    maxRowsPerPage={searchOptions.maxRowsPerPage}
-                  />
-                </div>}
+                  {graphView && !isLoading ?
+                    <div>
+                      <GraphViewExplore
+                        entityTypesInstances={graphSearchData}
+                        graphView={graphView}
+                        coords={coords}
+                        setCoords={setCoords}
+                      />
+                    </div> :
+                    cardView ?
+                      <RecordCardView
+                        data={data}
+                        entityPropertyDefinitions={entityPropertyDefinitions}
+                        selectedPropertyDefinitions={selectedPropertyDefinitions}
+                      />
+                      : (tableView ?
+                        <div className={styles.tableViewResult}>
+                          <ResultsTabularView
+                            data={data}
+                            entityPropertyDefinitions={entityPropertyDefinitions}
+                            selectedPropertyDefinitions={selectedPropertyDefinitions}
+                            entityDefArray={entityDefArray}
+                            columns={columns}
+                            selectedEntities={searchOptions.entityTypeIds}
+                            setColumnSelectorTouched={setColumnSelectorTouched}
+                            tableView={tableView}
+                            isLoading={isLoading}
+                            handleViewChange={handleViewChange}
+                          />
+                        </div>
+                        : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
+                          handleViewChange={handleViewChange}
+                          entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                      )}
+                </div>
+                <br />
+              </div>}
+            {!showNoDefinitionAlertMessage && !graphView &&
+              <div>
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
+                />
+              </div>}
           </>
         }
       </div>

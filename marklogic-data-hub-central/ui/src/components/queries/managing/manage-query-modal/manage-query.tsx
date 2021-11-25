@@ -106,6 +106,7 @@ const QueryModal = (props) => {
       propertiesToDisplay: [],
       sortOrder: [],
       database: searchOptions.database,
+      datasource: searchOptions.datasource,
     };
     applySaveQuery(options);
     setCurrentQueryDescription("");
@@ -138,6 +139,7 @@ const QueryModal = (props) => {
             propertiesToDisplay: query.savedQuery.propertiesToDisplay,
             sortOrder: query.savedQuery.sortOrder,
             database: searchOptions.database,
+            datasource: searchOptions.datasource,
           };
           applySaveQuery(options);
           setCurrentQueryDescription(query["savedQuery"]["description"]);

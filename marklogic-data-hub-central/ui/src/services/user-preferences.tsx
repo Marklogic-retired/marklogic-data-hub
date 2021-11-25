@@ -19,12 +19,14 @@ export const defaultUserPreferences = {
     selectedFacets: {}
   },
   pageLength: 20,
-  tableView: true,
+  tableView: false,
+  snippetView: false,
   // pageRoute: '/view',
   resultTableColumns: [],
   selectedQuery: "select a query",
   sidebarQuery: "Select a saved query",
-  baseEntities: ["All Entities"]
+  baseEntities: ["All Entities"],
+  firstTime: true,
 };
 
 export const createUserPreferences = (username: string) => {

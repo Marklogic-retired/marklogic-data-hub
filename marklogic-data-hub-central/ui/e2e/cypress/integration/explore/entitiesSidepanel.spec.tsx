@@ -31,6 +31,9 @@ describe("Test '/Explore' left sidebar", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log(`**Selecting 'Address' base entity**`);
+    cy.wait(150);
+    entitiesSidebar.getBaseEntitiesAccordion().click();
+    cy.wait(150);
     entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.ADDRESS);
     browsePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.ADDRESS).should("be.visible");

@@ -67,6 +67,7 @@ interface ISearchContextInterface {
   clearGreyRangeFacet: (range: string) => void;
   resetSearchOptions: (tileIconClicked?:boolean) => void;
   setAllSearchFacets: (facets: any) => void;
+  clearPageSearchFacets: () => void;
   greyedOptions: SearchContextInterface;
   setAllGreyedOptions: (facets: any) => void;
   clearGreyFacet: (constraint: string, val: string) => void;
@@ -91,6 +92,7 @@ interface ISearchContextInterface {
   setBaseEntities: (baseEntities: string[]) => void;
   savedNode: any,
   setSavedNode: (node: any) => void;
+  setFirstTimeEntry: (options: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -119,6 +121,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   clearGreyRangeFacet: () => { },
   resetSearchOptions: () => { },
   setAllSearchFacets: () => { },
+  clearPageSearchFacets: () => { },
   setAllGreyedOptions: () => { },
   clearGreyFacet: () => { },
   clearConstraint: () => { },
@@ -136,6 +139,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setGraphViewOptions: () => { },
   setDatasource: () => { },
   setBaseEntities: () => { },
+  setFirstTimeEntry: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({children}) => {
@@ -222,14 +226,20 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const setEntity = (option: string) => {
-    let entityOptions = (option === "All Entities" || option === "All Data") ? [] : [option];
+    let entityOptions: any = {entityTypeIds: (option === "All Entities" || option === "All Data") ? [] : [option]};
+    if (entityOptions.entityTypeIds.length === 0 && entityOptions.entityTypeIds.length === searchOptions.entityTypeIds.length) {
+      entityOptions = {};
+    }
+    console.log('clear!');
+/*     if (Object.keys(searchOptions.selectedFacets).length !== 0) {
+      entityOptions = {...entityOptions, selectedFacets: {}};
+    } */
     setSearchOptions({
       ...searchOptions,
+      ...entityOptions,
       start: 1,
       query: "",
       pageNumber: 1,
-      selectedFacets: {},
-      entityTypeIds: entityOptions,
       pageLength: searchOptions.pageSize,
       selectedQuery: "select a query",
       selectedTableProperties: [],
@@ -238,11 +248,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
 
     setGreyedOptions({
       ...greyedOptions,
+      ...entityOptions,
       start: 1,
       query: "",
       pageNumber: 1,
-      selectedFacets: {},
-      entityTypeIds: entityOptions,
       pageLength: greyedOptions.pageSize,
       sortOrder: []
     });
@@ -400,6 +409,15 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
+  const clearPageSearchFacets = () => {
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      pageNumber: 1,
+      pageLength: searchOptions.pageSize
+    });
+  };
+
 
   const clearGreyDateFacet = () => {
     let facets = greyedOptions.selectedFacets;
@@ -505,6 +523,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       selectedTableProperties: query.propertiesToDisplay,
       sortOrder: query.sortOrder,
       database: query.database,
+      datasource: query.datasource,
     });
   };
 
@@ -614,6 +633,21 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       baseEntities
     });
   };
+  const setFirstTimeEntry = (values : any) => {
+    const {datasource, database} = values;
+    setSearchOptions({
+      ...searchOptions,
+      datasource,
+      database,
+      start: 1,
+      query: "",
+      pageNumber: 1,
+      pageLength: 20,
+      pageSize: 20,
+      selectedFacets: {},
+      selectedQuery: "select a query",
+    });
+  };
 
   useEffect(() => {
     if (user.authenticated) {
@@ -648,6 +682,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       clearGreyRangeFacet,
       resetSearchOptions,
       setAllSearchFacets,
+      clearPageSearchFacets,
       setAllGreyedOptions,
       clearGreyFacet,
       clearConstraint,
@@ -664,7 +699,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       setLatestDatabase,
       setGraphViewOptions,
       setDatasource,
-      setBaseEntities
+      setBaseEntities,
+      setFirstTimeEntry,
     }}>
       {children}
     </SearchContext.Provider>

@@ -33,6 +33,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
   });
   it("select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click({force: true});
     browsePage.clickFacetView();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
@@ -58,6 +60,9 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
   it("apply facet search and verify docs, hub/entity properties", () => {
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click({force: true});
     browsePage.selectEntity("All Entities");
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});
@@ -75,6 +80,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
   it("apply facet search and clear individual grey facet", () => {
+    browsePage.selectEntity("Customer");
     browsePage.selectEntity("All Entities");
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getShowMoreLink("collection").scrollIntoView().click({force: true});

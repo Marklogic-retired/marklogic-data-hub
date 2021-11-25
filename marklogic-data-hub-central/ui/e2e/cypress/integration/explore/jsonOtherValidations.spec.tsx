@@ -33,6 +33,7 @@ describe("Verify numeric/date facet can be applied", () => {
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click({force: true});
     //browsePage.waitForTableToLoad();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
@@ -63,6 +64,10 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Verify functionality of clear and apply facet buttons", () => {
     //verify no facets selected case.
+    cy.reload();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click({force: true});
+    browsePage.waitForTableToLoad();
     browsePage.selectEntity("Customer");
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
@@ -97,6 +102,7 @@ describe("Verify numeric/date facet can be applied", () => {
     toolbar.getExploreToolbarIcon().click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click({force: true});
     //browsePage.waitForTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
     //verify gray facets don't persist when switching between browse and run views.
@@ -111,6 +117,7 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
+    browsePage.getTableView().click({force: true});
     cy.waitForAsyncRequest();
     //browsePage.waitForTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");

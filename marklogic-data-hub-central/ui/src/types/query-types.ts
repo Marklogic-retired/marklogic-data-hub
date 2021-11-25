@@ -6,4 +6,6 @@ export interface QueryOptions {
     propertiesToDisplay: string[];
     sortOrder: any[];
     database: string;
+    datasource: string;
+    query?: string;
   }

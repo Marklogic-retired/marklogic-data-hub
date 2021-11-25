@@ -43,15 +43,19 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "ColeAdams");
   });
-  it("Select query parameters for final database", () => {
-    browsePage.clearSearchText();
+  it.skip("Select query parameters for final database", () => {
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    browsePage.getTableView().click({force: true});
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+    //browsePage.clearSearchText();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should("be.equal", 0);
   });
-  it("Switch to staging database and verify data for query parameters", () => {
+  it.skip("Switch to staging database and verify data for query parameters", () => {
     browsePage.getStagingDatabaseButton().click();
     cy.waitForAsyncRequest();
     browsePage.search("Adams");
@@ -64,14 +68,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.contains("CustomerSourceName", {timeout: 50000});
     browsePage.backToResults();
   });
-  it("Select query parameters for stage database", () => {
+  it.skip("Select query parameters for stage database", () => {
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getAllDataSnippetByUri("/json/clients/client1.json").should("contain", "Barbi");
   });
-  it("Verify if switching between All Data and specific entities works properly", () => {
+  it.skip("Verify if switching between All Data and specific entities works properly", () => {
     browsePage.getFinalDatabaseButton().click();
     cy.waitForAsyncRequest();
     browsePage.selectEntity("Customer");
@@ -113,7 +117,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     // browsePage.getSelectedEntity().should("contain", "All Data");
     // browsePage.getDatabaseButton("final").should("have.attr", "checked");
   });
-  it("Verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations", () => {
+  it.skip("Verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations", () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
@@ -152,7 +156,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
       browsePage.getTotalDocuments().should("be.equal", val);
     });
   });
-  it("Switch to staging database and verify the number of documents for the search string is 0", () => {
+  it.skip("Switch to staging database and verify the number of documents for the search string is 0", () => {
     browsePage.getStagingDatabaseButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Adams");
@@ -169,14 +173,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
   });
-  it("Switch to staging database and verify documents deployed to staging", () => {
+  it.skip("Switch to staging database and verify documents deployed to staging", () => {
     browsePage.getStagingDatabaseButton().click();
     browsePage.selectEntity("Client");
     browsePage.getSelectedEntity().should("contain", "Client");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 5);
   });
-  it("Apply facet search for the documents deployed to staging", () => {
+  it.skip("Apply facet search for the documents deployed to staging", () => {
     browsePage.getFacetItemCheckbox("firstname", "Barbi").click();
     browsePage.getGreySelectedFacets("Barbi").should("exist");
     browsePage.getFacetApplyButton().click();
@@ -185,7 +189,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getClearAllFacetsButton().click();
   });
-  it("Apply numeric search for the documents deployed to staging", () => {
+  it.skip("Apply numeric search for the documents deployed to staging", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.changeNumericSlider("7000");
     browsePage.getGreyRangeFacet(7000).should("exist");
@@ -196,7 +200,7 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getTotalDocuments().should("be.equal", 3);
     browsePage.getClearAllFacetsButton().click();
   });
-  it("Apply string search for the documents deployed to staging", () => {
+  it.skip("Apply string search for the documents deployed to staging", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();

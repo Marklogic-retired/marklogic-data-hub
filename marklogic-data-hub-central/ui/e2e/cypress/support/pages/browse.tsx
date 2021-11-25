@@ -21,11 +21,17 @@ class BrowsePage {
   waitForCardToLoad() {
     cy.waitUntil(() => this.getCard().should("have.length.gt", 0));
   }
+  waitForGraphToLoad() {
+    cy.waitUntil(() => this.getGraph().should("have.length.gt", 0));
+  }
 
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
+    cy.wait(150);
     cy.get("#entity-select-wrapper").click();
+    cy.wait(150);
     cy.get(`#entity-select-MenuList [data-cy="entity-option-${entity}"]`).scrollIntoView().click({force: true});
+    cy.wait(150);
     cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -147,7 +153,7 @@ class BrowsePage {
   */
 
   getSelectedFacets() {
-    return cy.get("[data-cy=selected-facet-block]");
+    return cy.get("[data-cy=selected-facet-block]").scrollIntoView();
   }
 
   computeStartDateOfTheWeek() {
@@ -246,7 +252,7 @@ class BrowsePage {
     cy.get("[data-testid='hc-inputSearch-btn']").click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
+    //cy.waitForAsyncRequest();
   }
 
   changeNumericSlider(val: string) {
@@ -283,7 +289,7 @@ class BrowsePage {
   clickFacetView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
-    cy.get("[data-cy=facet-view]").click().trigger("mouseout", {force: true});
+    cy.get("[data-cy=facet-view]").click();
   }
 
   getFacetView() {
@@ -337,6 +343,10 @@ class BrowsePage {
 
   getCard() {
     return cy.get(".card-body");
+  }
+
+  getGraph() {
+    return cy.get("#graphVisExplore");
   }
 
   getTableViewInstanceIcon() {
@@ -424,6 +434,10 @@ class BrowsePage {
 
   getSaveModalIcon() {
     return cy.get("svg[data-icon=\"save\"]");
+  }
+
+  getSaveCurrentQuery() {
+    return cy.get("#save-current-query");
   }
 
   getSaveQueryName() {
@@ -539,14 +553,16 @@ class BrowsePage {
   }
 
   selectQuery(query: string) {
+    cy.wait(150);
     this.getSaveQueriesDropdownInput().click({force: true});
+    cy.wait(150);
     this.getQueryOption(query).click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   }
 
   getSelectedQueryDescription() {
-    return cy.get("#selected-query-description").invoke("text");
+    return cy.get("#selected-query-description");
   }
 
   getQueryOption(query: string) {
