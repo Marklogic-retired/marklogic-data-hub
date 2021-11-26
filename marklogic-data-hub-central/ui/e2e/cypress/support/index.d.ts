@@ -108,5 +108,15 @@ declare namespace Cypress {
       setupHubCentralConfig(): Chainable<Element>
 
       publishEntityModel(): Chainable<Element>
+
+      /**
+       * Save Local Storage Data
+       */
+      saveLocalStorage(): Chainable<Element>
+
+      /**
+       * Restore (preserve) Local Storage Data
+       */
+      restoreLocalStorage(): Chainable<Element>
     }
   }

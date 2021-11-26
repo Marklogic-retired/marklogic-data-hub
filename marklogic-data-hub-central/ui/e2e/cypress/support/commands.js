@@ -304,3 +304,20 @@ Cypress.Commands.add("publishEntityModel", () => {
   confirmationModal.getSaveAllEntityText().should("not.exist");
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
+
+/**
+ * These commands will save the Local Storage Data so that we can use it to preserve the session without the need to re-login before each "it" block
+ */
+let LOCAL_STORAGE_MEMORY = {};
+// Save Local Storage Data
+Cypress.Commands.add("saveLocalStorage", () => {
+  Object.keys(localStorage).forEach(key => {
+    LOCAL_STORAGE_MEMORY[key] = localStorage[key];
+  });
+});
+//Restore (preserve) Local Storage Data
+Cypress.Commands.add("restoreLocalStorage", () => {
+  Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+    localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
+  });
+});
