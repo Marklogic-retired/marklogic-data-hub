@@ -17,5 +17,12 @@
   "lastUpdatedLocation": {},
   "mergeStrategies": [],
   "mergeRules": [],
-  "targetCollections": {}
+  "targetCollections": {},
+  "interceptors" : [
+    {
+      "path": "/test/suites/data-hub/5/smart-mastering/rest/mlSmMerge/test-data/mergeInterceptor.sjs",
+      "vars": {},
+      "when": "beforeContentPersisted"
+    }
+  ]
 }

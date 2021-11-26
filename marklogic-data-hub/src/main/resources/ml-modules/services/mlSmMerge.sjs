@@ -40,8 +40,8 @@ function post(context, params, input) {
   let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType) || {};
   // build combined options
   let flowOptions = flow.options || {};
-  let stepRefOptions = stepRef.options || {};
-  let stepDetailsOptions = stepDetails.options || {};
+  let stepRefOptions = stepRef.options || stepRef;
+  let stepDetailsOptions = stepDetails.options || stepDetails;
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
   let sourceDatabase = combinedOptions.sourceDatabase || config.FINALDATABASE;
 
@@ -52,7 +52,8 @@ function post(context, params, input) {
   let uris = hubUtils.normalizeToArray(params.uri);
   let query = cts.documentQuery(uris);
   let content = hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
-  let results = datahub.flow.runFlow(flowName, jobId, content, combinedOptions, stepNumber);
+  let results = datahub.flow.runFlow(flowName, jobId, content, combinedOptions, stepNumber, stepRef.interceptors);
+
   return {
     'success': results.errorCount === 0,
     'errors': results.errors,
