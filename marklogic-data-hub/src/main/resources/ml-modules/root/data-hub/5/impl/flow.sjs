@@ -137,6 +137,9 @@ class Flow {
     ));
   }
 
+  runFlow(flowName, jobId, contentArray, options, stepNumber) {
+    runFlow(flowName, jobId, contentArray, options, stepNumber, null);
+  }
   /**
    * It's unlikely that this actually runs a "flow", unless the flow consists of one step and only one transaction is
    * needed to run the step. More likely, this is really "process a batch of items for a step".
@@ -149,8 +152,9 @@ class Flow {
    * @param options Unfortunately this is not consistently defined; depending on the client, it's either the runtime
    * options provided by the user, or it's the already-combined options
    * @param stepNumber The number of the step within the given flow to run
+   * @param interceptors Additional interceptors to run. Used with the merge REST endpoint
    */
-  runFlow(flowName, jobId, contentArray, options, stepNumber) {
+  runFlow(flowName, jobId, contentArray, options, stepNumber, interceptors = []) {
     contentArray = contentArray || [];
     const theFlow = this.getFlow(flowName);
     if(!theFlow) {
@@ -177,10 +181,10 @@ class Flow {
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
     const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
-
     const stepExecutionContext = new StepExecutionContext(theFlow, stepNumber, stepDefinition, jobId, options);
     const combinedOptions = stepExecutionContext.combinedOptions;
-
+    // add any additional interceptors
+    stepExecutionContext.flowStep.interceptors = (stepExecutionContext.flowStep.interceptors || []).concat(interceptors);
     const batchItems = contentArray.map(contentObject => contentObject.uri);
 
     let outputContentArray;

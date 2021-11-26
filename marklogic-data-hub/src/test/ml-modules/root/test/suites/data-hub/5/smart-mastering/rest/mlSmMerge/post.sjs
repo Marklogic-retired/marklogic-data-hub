@@ -11,7 +11,8 @@ const validResults = mlSmMergeRest.POST(context, validMergeParams, emptyDocument
 
 assertions.push(
   test.assertTrue(validResults.success,"Merge should be successful"),
-  test.assertEqual(2, validResults.mergedURIs.length)
+  test.assertEqual(2, validResults.mergedURIs.length),
+  test.assertTrue(validResults.mergedDocument.value.envelope.headers.interceptorCalled, "Interceptor should be called on merge.")
 );
 
 const invalidMergeParams = { flowName: "CurateCustomerJSON", step: "1", uri: ["/content/customer1.json", "/content/customer2.json"] };
