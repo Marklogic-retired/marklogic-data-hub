@@ -1,5 +1,6 @@
 {
   "envelope": {
+    "headers": {},
     "instance": {
       "info": {
         "title": "Customer",
