@@ -260,7 +260,8 @@ const MappingStepDetail: React.FC = () => {
           });
         }
         let nestedDoc: any = [];
-        let sDta = generateNestedDataSource(parsedDoc, nestedDoc);
+        let docRoot = mappingStep.sourceRecordScope === "entireRecord" || !(parsedDoc.envelope && parsedDoc.envelope.instance) ? parsedDoc : parsedDoc.envelope.instance;
+        let sDta = generateNestedDataSource(docRoot, nestedDoc);
         setSourceData([]);
         setSourceData([...sDta]);
 
@@ -273,7 +274,7 @@ const MappingStepDetail: React.FC = () => {
     } catch (error)  {
       setIsLoading(false);
       setDocNotFound(true);
-      if (error.response.data && error.response.data.message.includes("Interceptor execution failed")) {
+      if (error.response && error.response.data.message.includes("Interceptor execution failed")) {
         setInterceptorExecutionError(error.response.data.message);
       } else {
         let message = error;//.response.data.message;
