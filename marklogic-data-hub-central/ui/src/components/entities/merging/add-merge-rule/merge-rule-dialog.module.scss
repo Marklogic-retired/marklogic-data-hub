@@ -99,3 +99,20 @@
 .alertMessage {
     font-weight: bold;
 }
+
+.deleteMessage {
+    margin: 4% 0 8% 0;
+}
+
+.footer {
+    display: flex;
+    justify-content: flex-end;
+
+    .saveButton {
+        margin-left: 5px;
+    }
+}
+
+.enableStrategySwitch {
+    margin-left: 0.8vw;
+}

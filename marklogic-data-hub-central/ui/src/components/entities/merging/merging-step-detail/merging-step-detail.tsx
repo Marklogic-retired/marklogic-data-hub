@@ -8,12 +8,11 @@ import NumberIcon from "../../../number-icon/number-icon";
 import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {CurationContext} from "../../../../util/curation-context";
 import {
-  MergingStep, StepType, defaultPriorityOption
+  MergingStep, defaultPriorityOption
 } from "../../../../types/curation-types";
 import {MergeStrategyTooltips, MergingStepIntros, multiSliderTooltips} from "../../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt, faCheck} from "@fortawesome/free-solid-svg-icons";
-import MultiSlider from "../../matching/multi-slider/multi-slider";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {RightOutlined, DownOutlined} from "@ant-design/icons";
@@ -21,6 +20,8 @@ import {Icon, Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
+import moment from "moment";
+import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 
 const DEFAULT_MERGING_STEP: MergingStep = {
   name: "",
@@ -46,6 +47,61 @@ const DEFAULT_MERGING_STEP: MergingStep = {
   mergeRules: [],
   interceptors: {},
   customHook: {}
+};
+
+const timelineOrder = (a, b) => {
+  let aParts = a.value.split(":");
+  let bParts = b.value.split(":");
+  // If weights not equal
+  if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+    // By weight
+    return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+  } else {
+    // Else alphabetically
+    let aUpper = a.value.toUpperCase();
+    let bUpper = b.value.toUpperCase();
+    return (aUpper < bUpper) ? 1 : (aUpper > bUpper) ? -1 : 0;
+  }
+};
+
+const strategyOptions:any = {
+  max: 120,
+  min: -20,
+  start: -20,
+  end: 120,
+  width: "100%",
+  itemsAlwaysDraggable: {
+    item: false,
+    range: false
+  },
+  selectable: false,
+  editable: {
+    remove: true,
+    updateTime: true
+  },
+  moveable: false,
+  timeAxis: {
+    scale: "millisecond",
+    step: 5
+  },
+  format: {
+    minorLabels: function (date, scale, step) {
+      let time;
+      if (date >= 0 && date <= 100) {
+        time = date.format("SSS");
+        return moment.duration(time).asMilliseconds();
+      } else {
+        return "";
+      }
+    },
+  },
+  template: function(item) {
+    if (item && item.hasOwnProperty("value")) {
+      return "<div data-testid=\"strategy"+"-"+item.value.split(":")[0]+"\">" + item.value.split(":")[0] + "<div class=\"itemValue\">" + item.value.split(":")[1]+ "</div></div>";
+    }
+  },
+  maxMinorChars: 4,
+  order: timelineOrder
 };
 
 const MergingStepDetail: React.FC = () => {
@@ -268,51 +324,34 @@ const MergingStepDetail: React.FC = () => {
     );
   });
 
-
-  const handleSlider = (values) => {
-    return;
-  };
-
-  const handleDelete = (values) => {
-    return;
-  };
-
-  const handleEdit = (values) => {
-    return;
-  };
-
   const expandedRowRender = (strategyObj) => {
     let priorityOrderStrategyOptions:any[] = [defaultPriorityOption];
-    for (let strategy of mergingStep.mergeStrategies) {
+    mergingStep.mergeStrategies.map((strategy) => {
       if (strategy.hasOwnProperty("priorityOrder") && strategy.strategyName === strategyObj.strategyName) {
-        for (let key of strategy.priorityOrder.sources) {
+        strategy.priorityOrder.sources.map((key) => {
           const priorityOrderSourceObject = {
-            props: [{
-              prop: "Source",
-              type: key.sourceName,
-            }],
-            value: key.weight,
+            id: strategy.strategyName + ":" + key.sourceName,
+            start: key.weight,
+            value: "Source" +" - " +key.sourceName + ":" + key.weight.toString(),
           };
           priorityOrderStrategyOptions.push(priorityOrderSourceObject);
-        }
+        });
         if (strategy.priorityOrder.hasOwnProperty("lengthWeight")) {
           const priorityOrderLengthObject = {
-            props: [{
-              prop: "Length",
-              type: "",
-            }],
-            value: strategy.priorityOrder.lengthWeight,
+            id: strategy.strategyName + ":Length:",
+            start: strategy.priorityOrder.lengthWeight,
+            value: "Length:" + strategy.priorityOrder.lengthWeight.toString(),
           };
           priorityOrderStrategyOptions.push(priorityOrderLengthObject);
         }
       }
-    }
+    });
     return <>
       <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip></p>
       <div id="strategyText"><MLTooltip title={multiSliderTooltips.viewOnlyTooltip}><div style={{opacity: "60%"}}>
-        <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
+        <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderStrategyOptions} options={strategyOptions} /></div>
       </div></MLTooltip></div>
       </div>
     </>;

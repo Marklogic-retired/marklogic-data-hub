@@ -1,7 +1,7 @@
 class MultiSlider {
 
   getHandleName(name: string) {
-    return cy.findByTestId(`${name}-active`);
+    return cy.findAllByText(`${name}`);
   }
 
   getHandleNameMulti(name: string) {
