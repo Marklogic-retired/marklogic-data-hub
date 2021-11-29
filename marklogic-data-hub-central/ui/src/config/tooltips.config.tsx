@@ -303,7 +303,8 @@ const MappingStepPlaceholders = {
 
 const MappingStepMessages = {
   interceptorMessage: <span>These records are the output of an interceptor configured to run before this step. See <b>Step Settings</b> for more details.</span>,
-  interceptorError: "An error prevented the interceptor from completing successfully. The source data will be visible once you resolve the error."
+  interceptorError: "An error prevented the interceptor from completing successfully. The source data will be visible once you resolve the error.",
+  titleNoDefinition: <span>Unable to add steps because the definition cannot be found for this entity type. To learn more, see <a href="https://docs.marklogic.com/datahub/refs/troubleshooting.html" target="_blank">Troubleshooting</a> in the documentation.</span>
 };
 
 
