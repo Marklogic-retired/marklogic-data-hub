@@ -11,6 +11,7 @@ import MatchingCard from "./matching/matching-card";
 import CustomCard from "./custom/custom-card";
 import "./entity-tiles.scss";
 import MergingCard from "./merging/merging-card";
+import {ModelingMessages} from "../../config/tooltips.config";
 import {CurationContext} from "../../util/curation-context";
 
 
@@ -342,76 +343,86 @@ const EntityTiles = (props) => {
     }
   };
 
+  // Check if entity name has no matching definition
+  const titleNoDefinition = (selectedEntityName) => {
+    let entityModels = props.entityModels;
+    return !entityModels[selectedEntityName].model.definitions.hasOwnProperty(selectedEntityName);
+  };
+
   const outputCards = (index, entityType, mappingCardData, matchingCardData, mergingCardData, customCardData) => {
     let output;
     if (viewData[index] === "map-" + entityType) {
-      output = <div className={styles.cardView}>
-        <MappingCard data={mappingCardData ? sortStepsByUpdated(mappingCardData.artifacts) : []}
-          flows={props.flows}
-          entityTypeTitle={entityType}
-          deleteMappingArtifact={deleteMappingArtifact}
-          createMappingArtifact={createMappingArtifact}
-          updateMappingArtifact={updateMappingArtifact}
-          canReadWrite={canWriteMapping}
-          canReadOnly={canReadMapping}
-          openStep={openStep}
-          entityModel={props.entityModels[entityType]}
-          canWriteFlow={props.canWriteFlow}
-          addStepToFlow={props.addStepToFlow}
-          addStepToNew={props.addStepToNew}
-        />
-      </div>;
+      output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"mappingNoTitleDisplay"}>{ModelingMessages.titleNoDefinition}</div>
+        :<div className={styles.cardView}>
+          <MappingCard data={mappingCardData ? sortStepsByUpdated(mappingCardData.artifacts) : []}
+            flows={props.flows}
+            entityTypeTitle={entityType}
+            deleteMappingArtifact={deleteMappingArtifact}
+            createMappingArtifact={createMappingArtifact}
+            updateMappingArtifact={updateMappingArtifact}
+            canReadWrite={canWriteMapping}
+            canReadOnly={canReadMapping}
+            openStep={openStep}
+            entityModel={props.entityModels[entityType]}
+            canWriteFlow={props.canWriteFlow}
+            addStepToFlow={props.addStepToFlow}
+            addStepToNew={props.addStepToNew}
+          />
+        </div>;
     } else if (viewData[index] === "match-" + entityType) {
-      output = <div className={styles.cardView}>
-        <MatchingCard
-          matchingStepsArray={ matchingCardData ? sortStepsByUpdated(matchingCardData.artifacts) : []}
-          flows={props.flows}
-          entityName={entityType}
-          deleteMatchingArtifact={deleteMatchingArtifact}
-          createMatchingArtifact={createMatchingArtifact}
-          updateMatchingArtifact={updateMatchingArtifact}
-          canReadMatchMerge={props.canReadMatchMerge}
-          canWriteMatchMerge={props.canWriteMatchMerge}
-          entityModel={props.entityModels[entityType]}
-          canWriteFlow={props.canWriteFlow}
-          addStepToFlow={props.addStepToFlow}
-          addStepToNew={props.addStepToNew}
-        />
-      </div>;
+      output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"matchingNoTitleDisplay"}>{ModelingMessages.titleNoDefinition}</div>
+        : <div className={styles.cardView}>
+          <MatchingCard
+            matchingStepsArray={ matchingCardData ? sortStepsByUpdated(matchingCardData.artifacts) : []}
+            flows={props.flows}
+            entityName={entityType}
+            deleteMatchingArtifact={deleteMatchingArtifact}
+            createMatchingArtifact={createMatchingArtifact}
+            updateMatchingArtifact={updateMatchingArtifact}
+            canReadMatchMerge={props.canReadMatchMerge}
+            canWriteMatchMerge={props.canWriteMatchMerge}
+            entityModel={props.entityModels[entityType]}
+            canWriteFlow={props.canWriteFlow}
+            addStepToFlow={props.addStepToFlow}
+            addStepToNew={props.addStepToNew}
+          />
+        </div>;
       //TODO:- Enhance below code for merging when working on DHFPROD-4328
     } else if (viewData[index] === "merge-" + entityType) {
-      output = <div className={styles.cardView}>
-        <MergingCard
-          mergingStepsArray={ mergingCardData ? sortStepsByUpdated(mergingCardData.artifacts) : []}
-          flows={props.flows}
-          entityName={entityType}
-          entityModel={props.entityModels[entityType]}
-          canReadMatchMerge={props.canReadMatchMerge}
-          canWriteMatchMerge={props.canWriteMatchMerge}
-          deleteMergingArtifact={deleteMergingArtifact}
-          createMergingArtifact={createMergingArtifact}
-          updateMergingArtifact={updateMergingArtifact}
-          addStepToFlow={props.addStepToFlow}
-          addStepToNew={props.addStepToNew}
-          canWriteFlow={props.canWriteFlow}
-        />
-      </div>;
+      output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"mergingNoTitleDisplay"}>{ModelingMessages.titleNoDefinition}</div>
+        : <div className={styles.cardView}>
+          <MergingCard
+            mergingStepsArray={ mergingCardData ? sortStepsByUpdated(mergingCardData.artifacts) : []}
+            flows={props.flows}
+            entityName={entityType}
+            entityModel={props.entityModels[entityType]}
+            canReadMatchMerge={props.canReadMatchMerge}
+            canWriteMatchMerge={props.canWriteMatchMerge}
+            deleteMergingArtifact={deleteMergingArtifact}
+            createMergingArtifact={createMergingArtifact}
+            updateMergingArtifact={updateMergingArtifact}
+            addStepToFlow={props.addStepToFlow}
+            addStepToNew={props.addStepToNew}
+            canWriteFlow={props.canWriteFlow}
+          />
+        </div>;
     } else if (viewData[index] === "custom-" + entityType) {
-      output = <div className={styles.cardView}>
-        <div className={styles.customEntityTitle} aria-label={"customEntityTitle"}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
-        <CustomCard data={ customCardData ? sortStepsByUpdated(customCardData.artifacts) : []}
-          flows={props.flows}
-          entityTypeTitle={entityType}
-          entityModel={props.entityModels[entityType]}
-          getArtifactProps={getCustomArtifactProps}
-          updateCustomArtifact={updateCustomArtifact}
-          canReadOnly={props.canReadCustom}
-          canReadWrite = {props.canWriteCustom}
-          addStepToFlow={props.addStepToFlow}
-          addStepToNew={props.addStepToNew}
-          canWriteFlow={props.canWriteFlow}
-        />
-      </div>;
+      output = (titleNoDefinition(entityType)) ? <div className={styles.NoMatchDefTitle} aria-label={"customNoTitleDisplay"}>{ModelingMessages.titleNoDefinition}</div>
+        : <div className={styles.cardView}>
+          <div className={styles.customEntityTitle} aria-label={"customEntityTitle"}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
+          <CustomCard data={ customCardData ? sortStepsByUpdated(customCardData.artifacts) : []}
+            flows={props.flows}
+            entityTypeTitle={entityType}
+            entityModel={props.entityModels[entityType]}
+            getArtifactProps={getCustomArtifactProps}
+            updateCustomArtifact={updateCustomArtifact}
+            canReadOnly={props.canReadCustom}
+            canReadWrite = {props.canWriteCustom}
+            addStepToFlow={props.addStepToFlow}
+            addStepToNew={props.addStepToNew}
+            canWriteFlow={props.canWriteFlow}
+          />
+        </div>;
     } else {
       output = <div><br/>This functionality implemented yet.</div>;
     }

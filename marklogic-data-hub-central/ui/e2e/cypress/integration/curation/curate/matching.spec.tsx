@@ -49,6 +49,16 @@ describe("Matching", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+  it("Navigate to curate tab and Open Product Detail entity", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("ProductDetail").should("be.visible"));
+    curatePage.toggleEntityTypeId("ProductDetail");
+    cy.findByLabelText("mappingNoTitleDisplay").should("be.visible");
+    curatePage.selectMatchTab("ProductDetail");
+    cy.findByLabelText("matchingNoTitleDisplay").should("be.visible");
+    curatePage.selectMergeTab("ProductDetail");
+    cy.findByLabelText("mergingNoTitleDisplay").should("be.visible");
+  });
   it("Navigate to curate tab and Open Customer entity", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
