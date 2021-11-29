@@ -104,7 +104,7 @@ describe("Merging", () => {
     mergingStepDetail.addStrategyButton().click();
     mergeStrategyModal.setStrategyName("myFavourite");
     mergeStrategyModal.addSliderOptionsButton().click();
-    multiSlider.getHandleName("Length").should("be.visible");
+    multiSlider.getHandleName("Length").should("have.length.gt", 1);
     mergeStrategyModal.saveButton().click();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("myFavourite").should("have.length.gt", 0));
