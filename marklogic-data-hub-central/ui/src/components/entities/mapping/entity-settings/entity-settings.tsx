@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Input, Select, Popover} from "antd";
+import {Select, Popover} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../../../config/tooltips.config";
@@ -8,7 +8,7 @@ import StepsConfig from "../../../../config/steps.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {QuestionCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCTooltip} from "@components/common";
+import {HCButton, HCTooltip, HCInput} from "@components/common";
 
 const {Option} = Select;
 
@@ -196,7 +196,7 @@ const EntitySettings: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={"d-flex"}>
-                  <Input
+                  <HCInput
                     id="targetPermissions"
                     placeholder="Please enter target permissions"
                     data-testid={`${props.entityTitle}-targetPermissions`}

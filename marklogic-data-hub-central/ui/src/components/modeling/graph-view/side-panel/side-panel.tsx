@@ -1,9 +1,8 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
-import {Input} from "antd";
 import {Row, Col, Form, FormLabel, Tab, Tabs} from "react-bootstrap";
 import {TwitterPicker} from "react-color";
 import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, HCInput} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
@@ -237,7 +236,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Description:"}</FormLabel>
           <Col className={"d-flex"}>
-            <Input
+            <HCInput
               id="description"
               data-testid="description"
               disabled={props.canReadEntityModel && !props.canWriteEntityModel}
@@ -258,7 +257,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={isErrorOfType("namespace") ? "d-flex has-error" : "d-flex"}>
-                <Input
+                <HCInput
                   id="namespace"
                   data-testid="namespace"
                   placeholder="Example: http://example.org/es/gs"
@@ -273,7 +272,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
                 <span className={styles.prefixLabel}>Prefix:</span>
               </Col>
               <Col className={isErrorOfType("namespacePrefix") ? "d-flex col-auto pe-2 has-error" : "d-flex col-auto pe-2"}>
-                <Input
+                <HCInput
                   id="prefix"
                   data-testid="prefix"
                   placeholder="Example: esgs"

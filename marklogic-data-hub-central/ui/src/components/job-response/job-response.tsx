@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Button} from "antd";
 import {Modal, Accordion} from "react-bootstrap";
+import {HCButton} from "@components/common";
 import {dateConverter, renderDuration, durationFromDateTime} from "../../util/date-conversion";
 import styles from "./job-response.module.scss";
 import axios from "axios";
@@ -197,27 +197,27 @@ const JobResponse: React.FC<Props> = (props) => {
       }
       return ((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging" || stepType.toLowerCase() === "custom") && entityName ?
         <div className={styles.exploreDataContainer}>
-          <Button data-testid="explorer-link" size="large" type="primary"
+          <HCButton data-testid="explorer-link" size="lg"
             onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
             className={styles.exploreCuratedData}>
             <span className={styles.exploreIcon}></span>
             <span className={styles.exploreText}>Explore Curated Data</span>
-          </Button>
+          </HCButton>
         </div> : (stepType.toLowerCase() === "ingestion" || stepType.toLowerCase() === "custom")?
           <div className={styles.exploreDataContainer}>
-            <Button data-testid="explorer-link" size="large" type="primary"
+            <HCButton data-testid="explorer-link" size="lg"
               onClick={() => goToExplorer(entityName, targetDatabase, jobResponse.jobId, stepType, stepName)}
               className={styles.exploreLoadedData}>
               <span className={styles.exploreIcon}></span>
               <span className={styles.exploreText}>Explore Loaded Data</span>
-            </Button>
+            </HCButton>
           </div> : "");
     } else {
       return (<div className={styles.closeContainer}>
-        <Button data-testid="close-link" size="large" type="primary"
+        <HCButton data-testid="close-link" size="lg"
           onClick={() => props.setOpenJobResponse(false)}
           className={styles.closeButton}><span>Close</span>
-        </Button>
+        </HCButton>
       </div>);
     }
   };

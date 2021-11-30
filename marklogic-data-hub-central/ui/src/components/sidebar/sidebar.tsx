@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Icon, Select, Radio, Input, Menu, Dropdown, Button, Tooltip, Checkbox, Switch} from "antd";
+import {Select, Radio, Menu, Dropdown, Button, Tooltip, Checkbox, Switch} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -7,7 +7,7 @@ import {facetParser} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
-import {faCopy, faEllipsisV, faInfoCircle, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose} from "@fortawesome/free-solid-svg-icons";
+import {faCopy, faEllipsisV, faInfoCircle, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NumericFacet from "../numeric-facet/numeric-facet";
 import DateFacet from "../date-facet/date-facet";
@@ -15,7 +15,7 @@ import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 import {Accordion} from "react-bootstrap";
-import {HCDateTimePicker, HCTooltip} from "@components/common";
+import {HCDateTimePicker, HCTooltip, HCInput} from "@components/common";
 import QueriesDropdown from "../queries/saving/queries-dropdown/queries-dropdown";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
@@ -148,7 +148,7 @@ const Sidebar: React.FC<Props> = (props) => {
           for (let i in newEntityFacets) {
             newEntityFacets[i].referenceType = "path";
             newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
-            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".")+1);
+            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".") + 1);
           }
         }
         entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
@@ -552,25 +552,25 @@ const Sidebar: React.FC<Props> = (props) => {
     <Menu>
       <Menu.Item key="0">
         <span>
-          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
           Edit query details
         </span>
       </Menu.Item>
       <Menu.Item key="1">
         <span>
-          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon} />
           Revert query to saved state
         </span>
       </Menu.Item>
       <Menu.Item key="2">
         <span>
-          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
           Save query as
         </span>
       </Menu.Item>
       <Menu.Item key="3">
         <span style={{color: "#B32424"}}>
-          <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon} />
           Delete query
         </span>
       </Menu.Item>
@@ -581,8 +581,8 @@ const Sidebar: React.FC<Props> = (props) => {
     return (
       <div className={styles.panelTitle}>
         {title}
-        <Tooltip title={tooltipTitle} placement="right">
-          <Icon type="info-circle" theme="filled" className={styles.entitiesInfoIcon}/>
+        <Tooltip title={tooltipTitle} placement="top">
+          <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-panelTitle" /></i>
         </Tooltip>
       </div>
     );
@@ -597,9 +597,9 @@ const Sidebar: React.FC<Props> = (props) => {
         />
         {currentQueryName !== PLACEHOLDER &&
           <div className={styles.queryIcons}>
-            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query"/>
+            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query" />
             <Dropdown overlay={menu} trigger={["click"]}>
-              <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg"/>
+              <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
             </Dropdown>
           </div>
         }
@@ -607,13 +607,13 @@ const Sidebar: React.FC<Props> = (props) => {
       {currentQueryName !== PLACEHOLDER &&
         <div className={styles.clearQuery}>
           <Button size="small" type={"link"} onClick={clearSelectedQuery} >
-            <FontAwesomeIcon  icon={faWindowClose} size="sm"/>
+            <FontAwesomeIcon icon={faWindowClose} size="sm" />
             Clear query
           </Button>
         </div>
       }
       <div className={styles.searchInput}>
-        <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined"/>} placeholder="Search" size="small"/>
+        <HCInput aria-label="graph-view-filter-input" suffix={<FontAwesomeIcon className={styles.searchIcon} icon={faSearch} size="sm" data-testid="search-icon" />} placeholder="Search" size="sm" />
       </div>
       <div className={styles.dataSourceButtons}>
         <Radio.Group
@@ -649,7 +649,7 @@ const Sidebar: React.FC<Props> = (props) => {
               defaultValue={searchOptions.database}
               name="radiogroup"
               onChange={e => props.setDatabasePreferences(e.target.value)}
-              // size="medium"
+            // size="medium"
             >
               <Radio.Button aria-label="switch-database-final" value={"final"} className={styles.button}>
                 Final
@@ -668,7 +668,7 @@ const Sidebar: React.FC<Props> = (props) => {
             <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
           </div>
           <Accordion.Body>
-            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities}/>
+            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities} />
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
@@ -680,15 +680,15 @@ const Sidebar: React.FC<Props> = (props) => {
                 panelTitle(<Checkbox indeterminate={indeterminate} onChange={onCheckAllChanges} checked={checkAll}> related entities types </Checkbox>, exploreSidebar.relatedEntities)}</Accordion.Button>
             </div>
             <Accordion.Body>
-              <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList}/>
+              <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} />
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
       }
 
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-        <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/>
-          Include Data Hub artifacts
+        <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts" />
+        Include Data Hub artifacts
         <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
           <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
         </HCTooltip>

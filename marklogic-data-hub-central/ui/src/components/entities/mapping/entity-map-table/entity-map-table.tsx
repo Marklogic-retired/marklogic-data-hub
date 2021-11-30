@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Popover, Select, Tooltip, Icon} from "antd";
+import {Table, Popover, Select, Tooltip} from "antd";
 import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
@@ -1343,7 +1343,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                       content={contextHelp}
                       trigger="click"
                       placement="right">
-                      <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                      <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
                     </Popover>
                     <p className={styles.typeText}>{dType}</p>
                   </div>

@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {Card, Select, Radio, Tooltip} from "antd";
+import {Select, Radio, Tooltip} from "antd";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import styles from "./zero-state-explorer.module.scss";
@@ -252,7 +252,7 @@ const ZeroStateExplorer = (props) => {
         {props.isSavedQueryUser && <Row className={"g-0"}>
           <Col xs={12}>
             <div className={styles.box}>
-              <Card className={styles.smallCard}>
+              <HCCard className={styles.smallCard}>
                 <Row>
                   <Col xs={12} >
                     <div id="query-selector" className={styles.query} >
@@ -269,7 +269,7 @@ const ZeroStateExplorer = (props) => {
                     </div>
                   </Col>
                 </Row>
-              </Card>
+              </HCCard>
             </div>
           </Col>
         </Row>}

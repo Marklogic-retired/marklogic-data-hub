@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Select, Icon, Card, Dropdown, Tooltip} from "antd";
+import {Select, Icon, Dropdown, Tooltip} from "antd";
 import {Modal} from "react-bootstrap";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
@@ -20,7 +20,7 @@ import {
   EntityModified
 } from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "@components/common";
+import {DropDownWithSearch, HCButton, HCInput, HCTooltip, HCCard} from "@components/common";
 
 type Props = {
   openRelationshipModal: boolean;
@@ -609,9 +609,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>SOURCE</span>
-            <Card data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
+            <HCCard data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
               <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
-            </Card>
+            </HCCard>
           </div>
           <div className={styles.relationshipInputContainer}>
             <HCInput
@@ -641,9 +641,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>TARGET</span>
             <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-              <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
+              <HCCard data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor, marginLeft: "-2px"}}>
                 <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
-              </Card>
+              </HCCard>
               {!props.isEditing ?
                 <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
                   <span className={styles.dropdownArrow}>
