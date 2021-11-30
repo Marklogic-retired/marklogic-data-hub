@@ -152,9 +152,16 @@ declare function util-impl:properties-to-values-functions(
           let $namespace := $entity-property-info => map:get("namespace")
           let $qname := fn:QName(fn:string($namespace), fn:string($property-title))
           return
-            function($document) {
-              $document/(es:envelope|envelope)/(es:instance|instance)/*/*[fn:node-name(.) eq $qname]
-            }
+           function($document) {
+              let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
+              let $qname:=
+              if($is-json)
+              then
+                fn:QName("", fn:string($property-title))
+              else
+              $qname
+              return  $document/(es:envelope|envelope)/(es:instance|instance)/*/*[fn:node-name(.) eq $qname]
+           }
       else if (fn:exists($document-xpath-rule)) then
         let $xpath := fn:head(($document-xpath-rule/(@path|path),$property-name))
         let $namespaces := fn:head(($document-xpath-rule/namespaces ! xdmp:from-json(.), $xpath-namespaces))
