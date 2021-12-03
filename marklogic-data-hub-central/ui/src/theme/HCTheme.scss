@@ -1,4 +1,3 @@
-
 // Import HC variables
 @import "HCVariables.scss";
 
@@ -6,7 +5,7 @@
 @import "~bootstrap/scss/bootstrap.scss";
 
 .accordion {
-    &:not(:last-child) .accordion-item > .card, 
+    &:not(:last-child) .accordion-item > .card,
     .accordion-item > .card .card-header {
         border-bottom: 0;
     }
@@ -27,7 +26,7 @@
             transform: $accordion-icon-transform;
         }
     }
-    &:focus{
+    &:focus {
         box-shadow: none;
     }
     // Accordion icon
@@ -90,20 +89,22 @@
     }
 }
 
-.btn-sm, .btn-group-sm > .btn {
+.btn-sm,
+.btn-group-sm > .btn {
     padding: 0.05rem 0.45rem;
 }
 
 .cursor-pointer {
     cursor: pointer;
-  }
+}
 .dropdown-toggle::after {
-    display:none !important;
+    display: none !important;
 }
 .daterangepicker {
     font-family: $font-family-sans-serif;
-    
-    td.active, td.active:hover {
+
+    td.active,
+    td.active:hover {
         background-color: $primary;
     }
     .cancelBtn {
@@ -114,7 +115,8 @@
     }
 }
 
-.form-label, .form-check-label {
+.form-label,
+.form-check-label {
     color: $text-color;
     font-size: $font-size-base;
 }
@@ -130,19 +132,19 @@
 div[role="dialog"][aria-modal="true"]:nth-last-child(1) {
     z-index: 1125;
 }
-.modal-backdrop.show:nth-last-child(2){
+.modal-backdrop.show:nth-last-child(2) {
     z-index: 1100;
 }
 div[role="dialog"][aria-modal="true"]:nth-last-child(3) {
     z-index: 1075;
 }
-.modal-backdrop.show:nth-last-child(4){
+.modal-backdrop.show:nth-last-child(4) {
     z-index: 1050;
 }
 div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
     z-index: 1025;
 }
-.modal-backdrop.show:nth-last-child(6){
+.modal-backdrop.show:nth-last-child(6) {
     z-index: 1000;
 }
 
@@ -156,7 +158,7 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
         border: 0;
         overflow: hidden;
     }
-  
+
     label {
         display: inline-block;
         vertical-align: middle;
@@ -174,11 +176,11 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
             color: $secondary-gray;
         }
     }
-    
+
     label:hover {
         cursor: pointer;
     }
-    
+
     input:checked + label {
         background-color: $primary;
         color: #ffffff;
@@ -197,16 +199,16 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
             color: $light;
         }
     }
-    
+
     span:first-of-type label {
         border-radius: 4px 0 0 4px;
     }
-    
+
     span:last-of-type label {
         border-radius: 0 4px 4px 0;
     }
 
-    &.outline{
+    &.outline {
         input:checked + label {
             border: 1px solid $primary;
             background-color: #ffffff;
@@ -214,6 +216,21 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
             svg {
                 color: $primary;
             }
-        } 
+        }
+    }
+}
+
+.form-switch {
+    .form-check-input {
+        cursor: pointer;
+        background-color: #ccc;
+        border: 0;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+        &:focus {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+        }
+        &:checked {
+            background-color: $primary;
+        }
     }
 }

@@ -383,7 +383,6 @@
 
 .scaleTooltip {
     font-size: 12px;
-    margin-left: 5px;
     color: #7f86b5;
     cursor: pointer;
 }
@@ -394,4 +393,18 @@
 
 .allDataContent {
     margin-top: 6px;
+}
+.switchToggleContainer {
+    display: flex;
+    align-items: center;
+    span:first-child {
+        padding-right: 5px;
+    }
+}
+.switchToggle {
+  font-size: 1.5em;
+  input {
+    margin-left: -2.2em;
+    margin-top: 5px;
+  }
 }

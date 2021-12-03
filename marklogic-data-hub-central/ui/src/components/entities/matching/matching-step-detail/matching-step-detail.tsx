@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Table, Switch} from "antd";
+import {Table} from "antd";
 import {useHistory} from "react-router-dom";
 import {Row, Col, Accordion, Card, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -458,8 +458,8 @@ const MatchingStepDetail: React.FC = () => {
     const index = tmpActiveMatchedRuleset.indexOf(key);
     index !== -1 ? tmpActiveMatchedRuleset.splice(index, 1) : tmpActiveMatchedRuleset.push(key);
     setActiveMatchedRuleset(tmpActiveMatchedRuleset);
-    let arr=activeMatchedUri;
-    for (let i=0;i<activeMatchedUri.length;i++) {
+    let arr = activeMatchedUri;
+    for (let i = 0; i < activeMatchedUri.length; i++) {
       let rulesetName = activeMatchedUri[i].split("/")[0];
       if (!activeMatchedRuleset.includes(rulesetName)) {
         arr = arr.filter(e => e !== activeMatchedUri[i]);
@@ -506,9 +506,9 @@ const MatchingStepDetail: React.FC = () => {
     let aParts = a.value.split(":");
     let bParts = b.value.split(":");
     // If weights not equal
-    if (bParts[bParts.length-1] !== aParts[aParts.length-1]) {
+    if (bParts[bParts.length - 1] !== aParts[aParts.length - 1]) {
       // By weight
-      return parseInt(bParts[bParts.length-1]) - parseInt(aParts[aParts.length-1]);
+      return parseInt(bParts[bParts.length - 1]) - parseInt(aParts[aParts.length - 1]);
     } else {
       // Else alphabetically
       let aUpper = a.value.toUpperCase();
@@ -517,7 +517,7 @@ const MatchingStepDetail: React.FC = () => {
     }
   };
 
-  const rulesetOptions:any = {
+  const rulesetOptions: any = {
     max: 120,
     min: -20,
     start: -20,
@@ -787,10 +787,10 @@ const MatchingStepDetail: React.FC = () => {
               >Add</HCButton>
             </div>
           </div>
-          <div><span className={styles.editingLabel}><b>Edit Thresholds</b></span><Switch aria-label="threshold-scale-switch" onChange={(e) => toggleDisplayThresholdTimeline(e)} defaultChecked={false} ></Switch>
+          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Thresholds</b></span><FormCheck type="switch" aria-label="threshold-scale-switch" onChange={({target}) => toggleDisplayThresholdTimeline(target.checked)} defaultChecked={false} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.thresholdScale} id="threshold-scale-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"}/>
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.scaleTooltip} data-testid={"info-tooltip-threshold"} />
               </HCTooltip>
               <br />
             </span></div>
@@ -824,10 +824,10 @@ const MatchingStepDetail: React.FC = () => {
               {addButton}
             </div>
           </div>
-          <div><span className={styles.editingLabel}><b>Edit Rulesets</b></span><Switch aria-label="ruleset-scale-switch"  onChange={(e) => toggleDisplayRulesetTimeline(e)} defaultChecked={false} ></Switch>
+          <div className={styles.switchToggleContainer}><span className={styles.editingLabel}><b>Edit Rulesets</b></span><FormCheck type="switch" aria-label="ruleset-scale-switch" onChange={({target}) => toggleDisplayRulesetTimeline(target.checked)} defaultChecked={false} className={styles.switchToggle}></FormCheck>
             <span>
               <HCTooltip text={MatchingStepTooltips.rulesetScale} id="ruleset-scale-tooltip" placement="right">
-                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.scaleTooltip} data-testid={`info-tooltip-ruleset`}/>
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={`${styles.scaleTooltip} ps-0`} data-testid={`info-tooltip-ruleset`} />
               </HCTooltip>
               <br />
             </span></div>
@@ -858,7 +858,7 @@ const MatchingStepDetail: React.FC = () => {
               />
               <span className={styles.selectTooltip} aria-label="testUriOnlyTooltip">
                 <HCTooltip text={MatchingStepTooltips.testUris} id="test-all-uris-tooltip" placement="right">
-                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                  <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
                 </HCTooltip><br />
               </span>
               <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
@@ -869,7 +869,7 @@ const MatchingStepDetail: React.FC = () => {
                   onChange={handleUriInputChange}
                   ariaLabel="UriOnlyInput"
                   disabled={inputUriDisabled}
-                  classNameFull={colourElementAdded ? styles.uriInputColor: ""}
+                  classNameFull={colourElementAdded ? styles.uriInputColor : ""}
                 />
                 <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri} aria-label="addUriOnlyIcon" />
               </div>
@@ -905,7 +905,7 @@ const MatchingStepDetail: React.FC = () => {
             />
             <span aria-label="testUriTooltip">
               <HCTooltip text={MatchingStepTooltips.testUrisAllData} id="test-uris-all-data-tooltip" placement="right">
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span><br />
             <div style={{display: "flex", justifyContent: "space-between", alignItems: "center", paddingRight: 12}}>
@@ -916,7 +916,7 @@ const MatchingStepDetail: React.FC = () => {
                 onChange={handleUriInputChange2}
                 ariaLabel="UriInput"
                 disabled={inputUriDisabled2}
-                classNameFull={colourElementAdded2 ? styles.uriInputColor: ""}
+                classNameFull={colourElementAdded2 ? styles.uriInputColor : ""}
               />
               <FontAwesomeIcon icon={faPlusSquare} className={inputUriDisabled2 ? styles.disabledAddIcon : styles.addIcon} onClick={handleClickAddUri2} aria-label="addUriIcon" />
             </div>
@@ -951,7 +951,7 @@ const MatchingStepDetail: React.FC = () => {
             />
             <span aria-label={"allDataTooltip"}>
               <HCTooltip text={MatchingStepTooltips.testAllData} id="test-all-data-tooltip" placement="right">
-                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </span>
             <div aria-label="allDataContent" className={styles.allDataContent}>
@@ -1011,7 +1011,7 @@ const MatchingStepDetail: React.FC = () => {
                                 </div>
                               </div>
                               <Accordion.Body>
-                                <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep}/></span>
+                                <span aria-label="expandedTableView"><ExpandableTableView rowData={actionPreviewData} allRuleset={curationOptions.activeStep.stepArtifact.matchRulesets} entityData={curationOptions.activeStep} /></span>
                               </Accordion.Body>
                             </Accordion.Item>
                           </Accordion>);
