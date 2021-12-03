@@ -48,13 +48,10 @@ describe("Validate Match warnings", () => {
     cy.waitUntil(() => curatePage.editStep(matchStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
     curatePage.targetCollection("mapPersonJSON");
-    curatePage.targetCollectionDropdown();
     curatePage.saveSettings(matchStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection mapPersonJSON");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     curatePage.targetCollection("Person");
-    cy.wait(1000);
-    cy.get("div[id=\"additionalColl\"]").type("{enter}");
     curatePage.saveSettings(matchStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the target entity type Person");
     curatePage.alertContent().eq(0).contains("Please remove target entity type from target collections");
@@ -90,7 +87,7 @@ describe("Validate Match warnings", () => {
     curatePage.alertContent().should("not.exist");
     curatePage.switchEditAdvanced().click();
     curatePage.alertContent().should("not.exist");
-    curatePage.matchTargetCollection("mapPersonJSON").should("not.exist");
-    curatePage.matchTargetCollection("Person").should("not.exist");
+    curatePage.getAdditionalCollSelectWrapper().findByText("mapPersonJSON").should("not.exist");
+    curatePage.getAdditionalCollSelectWrapper().findByText("Person").should("not.exist");
   });
 });

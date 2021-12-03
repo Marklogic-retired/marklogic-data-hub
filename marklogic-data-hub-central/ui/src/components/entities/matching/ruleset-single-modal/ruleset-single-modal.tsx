@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Select} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import styles from "./ruleset-single-modal.module.scss";
@@ -25,8 +26,6 @@ type Props = {
 
 };
 
-
-
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: "",
   properties: []
@@ -39,8 +38,6 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Zip", value: "zip"},
   {name: "Custom", value: "custom"},
 ];
-
-const {Option} = Select;
 
 const MatchRulesetModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -404,10 +401,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setSelectedProperty(value);
   };
 
-  const onMatchTypeSelect = (value: string) => {
+  const onMatchTypeSelect = (selectedItem: any) => {
     setMatchTypeErrorMessage("");
     setIsMatchTypeTouched(true);
-    setMatchType(value);
+    setMatchType(selectedItem.value);
   };
 
   const updateStepArtifact = async (matchRuleset: MatchRuleset) => {
@@ -514,9 +511,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     onNo={discardCancel}
   />;
 
-  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => {
-    return <Option key={index} value={matchType.value} aria-label={`${matchType.value}-option`}>{matchType.name}</Option>;
-  });
+  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
 
   const renderSynonymOptions = (
     <>
@@ -740,6 +735,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     resetModal();
   };
 
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
   return (
     <Modal
       show={props.isVisible}
@@ -806,16 +807,26 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             <Col>
               <Row>
                 <Col className={matchTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
-                  <Select
-                    aria-label="match-type-dropdown"
-                    className={styles.matchTypeSelect}
-                    size="default"
-                    placeholder="Select match type"
-                    onSelect={onMatchTypeSelect}
-                    value={matchType}
-                  >
-                    {renderMatchOptions}
-                  </Select>
+                  <div className={styles.input}>
+                    <Select
+                      id="match-type-select-wrapper"
+                      inputId="match-type"
+                      components={{MenuList: props => MenuList("match-type", props)}}
+                      placeholder="Select match type"
+                      value={renderMatchOptions.find(oItem => oItem.value === matchType)}
+                      onChange={onMatchTypeSelect}
+                      aria-label="match-type-dropdown"
+                      options={renderMatchOptions}
+                      styles={reactSelectThemeConfig}
+                      formatOptionLabel={({value, label}) => {
+                        return (
+                          <span aria-label={`${value}-option`}>
+                            {label}
+                          </span>
+                        );
+                      }}
+                    />
+                  </div>
                 </Col>
                 <Col xs={12} className={styles.validationError}>
                   {matchTypeErrorMessage}

@@ -241,6 +241,7 @@ describe("Entity Modeling: Graph View", () => {
     relationshipModal.verifyEntityOption("Order").should("be.visible");
     relationshipModal.selectTargetEntityOption("Order");
     relationshipModal.toggleOptional();
+    relationshipModal.verifyVisibleOptionalBlock();
     relationshipModal.verifyForeignKeyPlaceholder();
     relationshipModal.editRelationshipName("purchased");
     relationshipModal.toggleCardinality();
@@ -293,6 +294,7 @@ describe("Entity Modeling: Graph View", () => {
 
     //open Optional line to edit foreign key field
     relationshipModal.toggleOptional();
+    relationshipModal.verifyVisibleOptionalBlock();
     relationshipModal.editForeignKey("firstname");
     relationshipModal.toggleCardinality();
     relationshipModal.addRelationshipSubmit();
@@ -327,6 +329,7 @@ describe("Entity Modeling: Graph View", () => {
 
     //open Optional line to edit foreign key field
     relationshipModal.toggleOptional();
+    relationshipModal.verifyVisibleOptionalBlock();
     relationshipModal.editForeignKey("lastname");
     relationshipModal.toggleCardinality();
     relationshipModal.addRelationshipSubmit();

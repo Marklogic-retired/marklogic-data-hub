@@ -20,8 +20,8 @@ class RulesetSingleModal {
   }
 
   selectMatchTypeDropdown(matchType: string) {
-    cy.findByLabelText("match-type-dropdown").should("be.visible", {timeout: 10000}).click({force: true});
-    cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should("have.length.gt", 0)).click({force: true});
+    cy.get("#match-type-select-wrapper").click();
+    cy.get(`#match-type-select-MenuList [aria-label="${matchType}-option"]`).should("have.length.gt", 0).click();
   }
 
   setUriText(str: string) {

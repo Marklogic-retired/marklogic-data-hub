@@ -346,6 +346,7 @@ describe("Validate E2E Mastering Flow", () => {
     multiSlider.getHandleName("Length").first().trigger("mouseup", {force: true});
     mergeStrategyModal.maxValue("1");
     mergeStrategyModal.saveButton().click();
+    mergeStrategyModal.getModalDialog().should("not.exist");
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("retain-single-value").should("have.length.gt", 0));
     cy.findByText("retain-single-value").should("exist");

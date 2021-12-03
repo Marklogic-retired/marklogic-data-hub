@@ -6,9 +6,7 @@ import {
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 import loadPage from "../../../support/pages/load";
-import {
-  advancedSettingsDialog
-} from "../../../support/components/mapping/index";
+import {advancedSettings} from "../../../support/components/common/index";
 
 const matchStep = "match-person";
 
@@ -38,27 +36,23 @@ describe("Validate Advance Settings for hub-central-match-merge-reader role", ()
   it("Validate the default Advanced settings are disabled", () => {
     loadPage.editStepInCardView(matchStep).click({force: true});
     loadPage.switchEditAdvanced().click();
-    cy.get("#sourceDatabase").invoke("attr", "class").should("contain", "ant-select-disabled");
-    cy.get("#targetDatabase").invoke("attr", "class").should("contain", "ant-select-disabled");
-    cy.get("div[id=\"additionalColl\"]").invoke("attr", "class").should("contain", "ant-select-disabled");
-    cy.get("#targetPermissions").should("be.disabled");
-    cy.get("#provGranularity").invoke("attr", "class").should("contain", "ant-select-disabled");
-    cy.get("#batchSize").should("be.disabled");
-    advancedSettingsDialog.toggleInterceptors();
-    cy.get("#interceptors").should("be.disabled");
-    advancedSettingsDialog.toggleCustomHook();
-    cy.get("#customHook").should("be.disabled");
+    advancedSettings.getSourceDatabaseSelectInput().should("be.disabled");
+    advancedSettings.getTargetDatabaseSelectInput().should("be.disabled");
+    advancedSettings.getAdditionalCollSelectInput().should("be.disabled");
+    advancedSettings.getTargetPermissions().should("be.disabled");
+    advancedSettings.getProvGranularitySelectInput().should("be.disabled");
+    advancedSettings.getBatchSize().should("be.disabled");
+    advancedSettings.toggleInterceptors();
+    advancedSettings.getInterceptors().should("be.disabled");
+    advancedSettings.toggleCustomHook();
+    advancedSettings.getCustomHook().should("be.disabled");
   });
   it("Validate the Advanced settings options are not displayed", () => {
-    cy.get("#sourceDatabase").click();
-    cy.findByTestId("sourceDbOptions-data-hub-STAGING").should("not.exist");
-    cy.findByTestId("sourceDbOptions-data-hub-FINAL").should("not.exist");
-    cy.get("#targetDatabase").click();
-    cy.findByTestId("targetDbOptions-data-hub-STAGING").should("not.exist");
-    cy.findByTestId("targetDbOptions-data-hub-FINAL").should("not.exist");
-    cy.get("#provGranularity").click();
-    cy.findByTestId("provOptions-Coarse-grained").should("not.exist");
-    cy.findByTestId("provOptions-Fine-grained").should("not.exist");
-    cy.findByTestId("provOptions-Off").should("not.exist");
+    advancedSettings.getSourceDatabaseSelectWrapper().click({force: true});
+    advancedSettings.getAdditionalCollSelectMenuList().should("not.exist");
+    advancedSettings.getTargetDatabaseSelectWrapper().click({force: true});
+    advancedSettings.getTargetDatabaseSelectMenuList().should("not.exist");
+    advancedSettings.getProvGranularitySelectWrapper().click({force: true});
+    advancedSettings.getProvGranularitySelectMenuList().should("not.exist");
   });
 });

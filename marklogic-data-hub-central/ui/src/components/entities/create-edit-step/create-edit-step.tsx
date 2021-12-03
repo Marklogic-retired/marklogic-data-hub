@@ -521,7 +521,6 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   id={"collection"}
                   name={"source-query"}
                   type={"radio"}
-                  defaultChecked={selectedSource === "collection" ? true : false}
                   checked={selectedSource === "collection" ? true : false}
                   onChange={handleSelectedSource}
                   label={"Collection"}
@@ -531,7 +530,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   className={"mb-0"}
                 />
                 <span id={props.stepType !== StepType.Merging ? "radioCollectionPopover" : "radioCollectionMergePopover" } className={"me-4"}>
-                  <OverlayTrigger placement="left" overlay={collectionQueryInfo} trigger="hover" delay={{show: 0, hide: 2000}} rootClose>
+                  <OverlayTrigger placement="left" overlay={collectionQueryInfo} trigger={["hover", "focus"]} delay={{show: 0, hide: 2000}} rootClose>
                     <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircleCollection} data-testid="collectionTooltip"/>
                   </OverlayTrigger>
                 </span>
@@ -540,7 +539,6 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   id={"query"}
                   name={"source-query"}
                   type={"radio"}
-                  defaultChecked={selectedSource !== "collection" ? true : false}
                   checked={selectedSource !== "collection" ? true : false}
                   onChange={handleSelectedSource}
                   label={"Query"}

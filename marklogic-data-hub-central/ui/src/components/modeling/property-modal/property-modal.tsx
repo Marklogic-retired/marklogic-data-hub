@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Cascader, Select} from "antd";
+import {Cascader} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../config/react-select-theme.config";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
@@ -29,8 +31,6 @@ import {
 } from "../../../config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
-
-const {Option} = Select;
 
 type Props = {
   entityName: any;
@@ -668,10 +668,10 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onJoinPropertyChange = (value) => {
-    setJoinDisplayValue(value);
-    let joinPropertyVal = value === "None" ? "" : value;
-    const type = value === "None" ? "" : joinProperties.find(prop => prop["value"] === value).type;
+  const onJoinPropertyChange = (selectedItem) => {
+    setJoinDisplayValue(selectedItem.value);
+    let joinPropertyVal = selectedItem.value === "None" ? "" : selectedItem.value;
+    const type = selectedItem.value === "None" ? "" : joinProperties.find(prop => prop["value"] === selectedItem.value).type;
     setSelectedPropertyOptions({...selectedPropertyOptions, joinPropertyName: joinPropertyVal, joinPropertyType: type});
   };
 
@@ -789,6 +789,14 @@ const PropertyModal: React.FC<Props> = (props) => {
       >{props.editPropertyOptions.isEdit ? "OK" : "Add"}</HCButton>
     </div>
   </div>;
+
+  const foreignKeyOptions = joinProperties.map((prop, index) => ({value: prop.value, label: prop.label === "None" ? "- " + prop.label + " -" : prop.label, isDisabled: prop.disabled}));
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
 
   return (<Modal
     show={props.isVisible}
@@ -911,18 +919,26 @@ const PropertyModal: React.FC<Props> = (props) => {
         { showJoinProperty && (
           <div className={`mb-3 ${styles.joinPropertyContainer}`}>
             <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
-            <div className={styles.joinPropertyInput}>
+            <div className={`ms-3 ${styles.joinPropertyInput}`}>
               <Select
+                id="foreignKey-select-wrapper"
+                inputId="foreignKey-select"
+                components={{MenuList: props => MenuList("foreignKey", props)}}
                 placeholder="Select foreign key"
+                value={foreignKeyOptions.find(oItem => oItem.value === joinDisplayValue)}
                 onChange={onJoinPropertyChange}
-                value={joinDisplayValue}
+                isSearchable={false}
                 aria-label="foreignKey-select"
-                className={styles.joinPropertyDropdown}
-              >
-                {joinProperties.length > 0 && joinProperties.map((prop, index) => (
-                  <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label === "None" ? "- " + prop.label + " -" : prop.label}</Option>
-                ))}
-              </Select>
+                options={foreignKeyOptions}
+                styles={reactSelectThemeConfig}
+                formatOptionLabel={({value, label}) => {
+                  return (
+                    <span aria-label={`${value}-option`} role={"option"}>
+                      {label}
+                    </span>
+                  );
+                }}
+              />
               <div className={"d-flex p-2 align-items-center"}>
                 <HCTooltip text={ModelingTooltips.foreignKeyInfo} id="join-property-tooltip" placement="top">
                   <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} data-testid={"foreign-key-tooltip"} />

@@ -144,6 +144,7 @@ describe("Matching", () => {
     multiSlider.thresholdEditOption("testing", "merge");
     thresholdModal.selectActionDropdown("Notify");
     thresholdModal.saveButton().click();
+    thresholdModal.getModalDialog().should("not.exist");
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findByText("testing - notify").should("have.length.gt", 0));
     multiSlider.getThresholdHandleNameAndType("testing", "notify").should("be.visible");

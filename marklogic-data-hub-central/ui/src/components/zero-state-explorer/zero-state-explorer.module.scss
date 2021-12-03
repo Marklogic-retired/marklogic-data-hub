@@ -119,10 +119,6 @@
     margin: 5px 10px 5px 0px;
   }
 
-  .query {
-    max-width: 50%;
-  }
-
   .button {
     height: 30px;
     width: 80px;
@@ -180,6 +176,7 @@
 
   .iconDropdownContainer {
     display: flex;
+    align-items: center;
   }
 
   .selectEntityMenu > div {

@@ -1,7 +1,7 @@
-import React, {useContext, useState} from "react";
-import {Select} from "antd";
+import React, {useContext, useState, useEffect} from "react";
 import {Modal} from "react-bootstrap";
-import styles from "./save-queries-dropdown.module.scss";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import {SearchContext} from "../../../../util/search-context";
 import {HCButton} from "@components/common";
 
@@ -25,28 +25,29 @@ interface Props {
 
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
 
-  const {Option} = Select;
-  const [showConfirmation, toggleConfirmation] = useState(false);
-
-
   const {
     searchOptions
   } = useContext(SearchContext);
-
+  // const {Option} = Select;
+  const [showConfirmation, toggleConfirmation] = useState(false);
   const [switchedQueryName, setSwitchedQueryName] = useState(searchOptions.selectedQuery);
+
+  useEffect(() => {
+    if (props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === "select a query") {
+      onItemSelect(searchOptions.selectedQuery);
+    }
+  }, [searchOptions.selectedQuery, props.currentQueryName]);
 
   const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
 
-  const options = savedQueryOptions.map((query, index) =>
-    <Option value={query} key={index+1} data-cy={`query-option-${query}`}>{query}</Option>
-  );
+  const options = savedQueryOptions.map(query => ({value: query, label: query}));
 
-  const checkCurrentQueryChange = (e) => {
+  const checkCurrentQueryChange = (selectedItem) => {
     if (props.isSaveQueryChanged() && searchOptions.selectedQuery !== "select a query") {
       toggleConfirmation(true);
-      setSwitchedQueryName(e);
+      setSwitchedQueryName(selectedItem.value);
     } else {
-      onItemSelect(e);
+      onItemSelect(selectedItem.value);
     }
   };
 
@@ -78,24 +79,59 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     props.setNextQueryName(switchedQueryName);
   };
 
+  const placeholder = "select a query";
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
   return (
     <div>
       <Select
-        id="dropdownList"
-        placeholder={"select a query"}
-        className={searchOptions.selectedQuery === "select a query" ? styles.dropDownStyle_placeholder : styles.dropDownStyle}
+        id="dropdownList-select-wrapper"
+        inputId="dropdownList"
+        components={{MenuList: props => MenuList("query", props)}}
+        placeholder={placeholder}
+        value={searchOptions.selectedQuery === placeholder ? null : options.find(oItem => oItem.value === searchOptions.selectedQuery)}
         onChange={checkCurrentQueryChange}
-        value={(() => {
-          if (props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === "select a query") {
-            onItemSelect(searchOptions.selectedQuery);
-          }
-          return searchOptions.selectedQuery;
-        })()}
-        getPopupContainer={() => document.getElementById("dropdownList") || document.body}
-        data-testid="dropdown-list"
-      >
-        {options}
-      </Select>
+        isSearchable={false}
+        aria-label="dropdownList"
+        options={options}
+        styles={{...reactSelectThemeConfig,
+          container: (provided, state) => ({
+            ...provided,
+            height: "32px",
+            width: "200px",
+            marginRight: "15px"
+          }),
+          control: (provided, state) => ({
+            ...provided,
+            border: "none",
+            borderRadius: "4px 0px 0px 4px",
+            borderColor: "none",
+            boxShadow: "none",
+            minHeight: "32px",
+            webkitBoxShadow: "none",
+            "&:hover": {
+              borderColor: "none",
+            },
+            ":focus": {
+              border: "none",
+              boxShadow: "none",
+              webkitBoxShadow: "none"
+            }
+          }),
+        }}
+        formatOptionLabel={({value, label}) => {
+          return (
+            <span data-cy={`query-option-${value}`}>
+              {label}
+            </span>
+          );
+        }}
+      />
       <Modal
         show={showConfirmation}
       >

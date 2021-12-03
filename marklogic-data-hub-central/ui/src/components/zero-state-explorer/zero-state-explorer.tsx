@@ -1,6 +1,8 @@
 import React, {useState, useContext} from "react";
-import {Card, Select} from "antd";
+import {Card} from "antd";
 import {Row, Col} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import styles from "./zero-state-explorer.module.scss";
 import {SearchContext} from "../../util/search-context";
 import graphic from "./explore_visual_big.png";
@@ -18,9 +20,7 @@ const ZeroStateExplorer = (props) => {
   const [dropDownValue, setDropdownValue] = useState<string>("All Entities");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [view, setView] = useState(props.tableView ? "table" : "snippet");
-  const {Option} = Select;
-  const dividerOption = <HCDivider className={styles.dividerOption} />;
-  const dropdownOptions = ["All Data", dividerOption, "All Entities", dividerOption, ...props.entities];
+  const dropdownOptions = ["All Data", "-", "All Entities", "-", ...props.entities];
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const [cardView, setCardView] = useState(false);
 
@@ -45,8 +45,8 @@ const ZeroStateExplorer = (props) => {
   };
 
   const handleOptionSelect = (option: any) => {
-    setDropdownValue(option);
-    if (option === "All Data") {
+    setDropdownValue(option.value);
+    if (option.value === "All Data") {
       setView("card");
       setCardView(true);
     } else {
@@ -60,48 +60,87 @@ const ZeroStateExplorer = (props) => {
     setSearchQuery(e.target.value);
   };
 
-  const options = dropdownOptions.map((entity, index) => {
-    let renderEntity = entity;
-    if (entity === "All Entities") {
+  const entityOptions = dropdownOptions.map(entity => ({value: entity, label: entity, isDisabled: entity === "-"}));
+
+  const formatOptionLabel = ({value, label}) => {
+    let renderEntity = value;
+    if (value === "-") {
+      return <HCDivider className={styles.dividerOption} />;
+    } else if (value === "All Entities") {
       renderEntity = (
         <span className={styles.iconDropdownContainer}>
           <div id="all-entities" className="curateIcon"></div>
-          <div>All Entities</div>
+          <div>{label}</div>
         </span>
       );
-    } else if (entity === "All Data") {
+    } else if (value === "All Data") {
       renderEntity = (
         <span className={styles.iconDropdownContainer}>
           <div id="all-data" className="loadIcon"></div>
-          <div>All Data</div>
+          <div>{label}</div>
         </span>
       );
     }
 
-    return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{cursor: "default"}}>
-      {entity}
-    </Option> : <Option key={index} value={entity} data-cy={`entity-option-${entity}`}>
-      {renderEntity}
-    </Option>;
-  });
+    return (
+      <span data-cy={`entity-option-${value}`}>
+        {renderEntity}
+      </span>
+    );
+  };
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
 
   const entityMenu = (
     <Select
-      className={styles.selectEntityMenu}
-      defaultValue="All Entities"
-      style={{width: 250, borderRadius: "4px 0px 0px 4px"}}
-      id="entity-select"
-      data-testid="entity-select"
-      value={dropDownValue}
-      onChange={value => handleOptionSelect(value)}
-    >
-      {options}
-    </Select>
+      id="entity-select-wrapper"
+      inputId="entity-select"
+      components={{MenuList: props => MenuList("entity", props)}}
+      value={entityOptions.find(item => item.value === dropDownValue)}
+      onChange={handleOptionSelect}
+      aria-label="entity-select"
+      isSearchable={false}
+      options={entityOptions}
+      formatOptionLabel={formatOptionLabel}
+      styles={{...reactSelectThemeConfig,
+        container: (provided, state) => ({
+          ...provided,
+          height: "32px",
+          width: "250px",
+        }),
+        control: (provided, state) => ({
+          ...provided,
+          border: "none",
+          borderRadius: "4px 0px 0px 4px",
+          borderColor: "none",
+          boxShadow: "none",
+          webkitBoxShadow: "none",
+          backgroundColor: "#394494",
+          minHeight: "34px",
+          "&:hover": {
+            borderColor: "none",
+          },
+          ":focus": {
+            border: "none",
+            boxShadow: "none",
+            webkitBoxShadow: "none"
+          }
+        }),
+        singleValue: (provided, state) => ({
+          ...provided,
+          color: "#ffffff",
+        }),
+      }}
+    />
   );
 
-  const onItemSelect = (e) => {
+  const onItemSelect = (selectedItem) => {
     props.queries.forEach(query => {
-      if (e === query["savedQuery"]["name"]) {
+      if (selectedItem.value === query["savedQuery"]["name"]) {
         let options: QueryOptions = {
           searchText: query["savedQuery"]["query"]["searchText"],
           entityTypeIds: query["savedQuery"]["query"]["entityTypeIds"],
@@ -125,11 +164,13 @@ const ZeroStateExplorer = (props) => {
   const onDatabaseChange = (val) => {
     setZeroStatePageDatabase(val);
     if (val === "staging") {
-      handleOptionSelect("All Data");
+      handleOptionSelect({value: "All Data"});
     } else {
-      handleOptionSelect("All Entities");
+      handleOptionSelect({value: "All Entities"});
     }
   };
+
+  const queryOptions = props.queries?.length ? props.queries.map((key) => key.savedQuery.name).map((query, index) => ({value: query, label: query})) : {};
 
   return (
     <div id="zero-state-explorer" className={styles.container} >
@@ -299,17 +340,24 @@ const ZeroStateExplorer = (props) => {
               <Card className={styles.smallCard}>
                 <Row>
                   <Col xs={12} >
-                    <div id="query-selector" className={styles.query} >
+                    <div id="query-selector">
                       <Select
-                        className={styles.querySelector}
+                        id="query-select-wrapper"
+                        inputId="query-select"
+                        components={{MenuList: props => MenuList("query", props)}}
                         placeholder="Select a saved query"
                         onChange={onItemSelect}
-                        data-testid="query-select"
-                      >
-                        {props.queries && props.queries.length && props.queries.map((key) => key.savedQuery.name).map((query, index) =>
-                          <Option value={query} key={index + 1} data-cy={`query-option-${query}`}>{query}</Option>
-                        )}
-                      </Select>
+                        aria-label="query-select"
+                        options={queryOptions}
+                        styles={reactSelectThemeConfig}
+                        formatOptionLabel={({value, label}) => {
+                          return (
+                            <span data-cy={`query-option-${value}`}>
+                              {label}
+                            </span>
+                          );
+                        }}
+                      />
                     </div>
                   </Col>
                 </Row>

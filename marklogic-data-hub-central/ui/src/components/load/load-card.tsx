@@ -1,8 +1,9 @@
 import React, {CSSProperties, useState} from "react";
 import styles from "./load-card.module.scss";
 import {Link, useHistory} from "react-router-dom";
-import {Select} from "antd";
 import {Row, Col, Modal} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -12,8 +13,6 @@ import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCCard, HCDivider, HCTooltip} from "@components/common";
-
-const {Option} = Select;
 
 interface Props {
   data: any;
@@ -374,6 +373,14 @@ const LoadCard: React.FC<Props> = (props) => {
     </Modal>
   );
 
+  const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
   return (
     <div id="load-card" aria-label="load-card" className={styles.loadCard}>
       <Row>
@@ -460,18 +467,25 @@ const LoadCard: React.FC<Props> = (props) => {
                                     Add step to an existing flow
                     {selectVisible ? <HCTooltip id="missing-permission-tooltip" text={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
                       <Select
-                        style={{width: "100%"}}
-                        value={selected[elem.name] ? selected[elem.name] : undefined}
-                        onChange={(flowName) => handleSelect({flowName: flowName, loadName: elem.name})}
+                        id={`${elem.name}-flowsList-select-wrapper`}
+                        inputId={`${elem.name}-flowsList`}
+                        components={{MenuList: props => MenuList(`${elem.name}-flowsList`, props)}}
                         placeholder="Select Flow"
-                        defaultActiveFirstOption={false}
-                        data-testid={`${elem.name}-flowsList`}
-                        disabled={!props.canWriteFlow}
-                      >
-                        {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
-                          <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
-                        )) : null}
-                      </Select>
+                        value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[elem.name]) : undefined}
+                        onChange={(option) => handleSelect({flowName: option.value, loadName: elem.name})}
+                        isSearchable={false}
+                        isDisabled={!props.canWriteFlow}
+                        aria-label={`${elem.name}-flowsList`}
+                        options={flowOptions}
+                        styles={reactSelectThemeConfig}
+                        formatOptionLabel={({value, label}) => {
+                          return (
+                            <span aria-label={`${value}-option`}>
+                              {label}
+                            </span>
+                          );
+                        }}
+                      />
                     </div></div></HCTooltip> : null}
                   </div>
                 </div>

@@ -15,15 +15,15 @@ test("Verify Start Time dropdown is rendered", () => {
 });
 
 test("Verify Custom date picker is rendered", () => {
-  const {getByText, getByPlaceholderText} = render(<MonitorSidebar
+  const {getByText, getByPlaceholderText, getByLabelText} = render(<MonitorSidebar
     facets={{}}
     facetRender = {jest.fn()}
     checkFacetRender = {jest.fn()}
   />
   );
 
-  expect(getByText("select time")).toBeInTheDocument();
-  fireEvent.click(getByText("select time"));
+  expect(getByText("Select time")).toBeInTheDocument();
+  fireEvent.keyDown(getByLabelText("date-select"), {key: "ArrowDown"});
   expect(getByText("Custom")).toBeInTheDocument();
   expect(getByText("Today")).toBeInTheDocument();
   expect(getByText("This Week")).toBeInTheDocument();

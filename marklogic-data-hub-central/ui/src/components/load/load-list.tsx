@@ -2,8 +2,10 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Select, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import {Row, Col, Modal, Dropdown} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import moment from "moment";
@@ -14,8 +16,6 @@ import {LoadingContext} from "../../util/loading-context";
 import {getViewSettings, setViewSettings} from "../../util/user-context";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCDivider, HCTooltip, HCTable} from "@components/common";
-
-const {Option} = Select;
 
 interface Props {
   data: any;
@@ -335,6 +335,14 @@ const LoadList: React.FC<Props> = (props) => {
     </Modal>
   );
 
+  const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
   const addToFlow = (name) => (
     <Dropdown align="end" className="d-inline" autoClose="outside">
       <Dropdown.Toggle
@@ -369,18 +377,25 @@ const LoadList: React.FC<Props> = (props) => {
           <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
             <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
               <Select
-                className={styles.flowSelect}
-                value={selected[name] ? selected[name] : undefined}
-                onChange={(flowName) => handleSelect({flowName: flowName, loadName: name})}
+                id={`${name}-flowsList-select-wrapper`}
+                inputId={`${name}-flowsList`}
+                components={{MenuList: props => MenuList(`${name}-flowsList`, props)}}
                 placeholder="Select Flow"
-                defaultActiveFirstOption={false}
-                disabled={!props.canWriteFlow}
-                data-testid={`${name}-flowsList`}
-              >
-                {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
-                  <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
-                )) : null}
-              </Select>
+                value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[name]) : undefined}
+                onChange={(option) => handleSelect({flowName: option.value, loadName: name})}
+                isSearchable={false}
+                isDisabled={!props.canWriteFlow}
+                aria-label={`${name}-flowsList`}
+                options={flowOptions}
+                styles={reactSelectThemeConfig}
+                formatOptionLabel={({value, label}) => {
+                  return (
+                    <span aria-label={value}>
+                      {label}
+                    </span>
+                  );
+                }}
+              />
             </div>
           </div>
         </Dropdown.Item>

@@ -21,8 +21,8 @@ describe("Base Entities Facet", () => {
       <BaseEntitiesFacet setCurrentBaseEntities={() => {}}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
-    fireEvent.click(dropdown);
-    expect(getByLabelText("base-option-all")).toBeInTheDocument();
+    fireEvent.keyDown(dropdown, {key: "ArrowDown"});
+    expect(getByLabelText("base-option-All Entities")).toBeInTheDocument();
   });
 
 });

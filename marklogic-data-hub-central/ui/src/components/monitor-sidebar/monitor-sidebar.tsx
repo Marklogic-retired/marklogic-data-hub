@@ -3,7 +3,8 @@ import {facetParser} from "../../util/data-conversion";
 import monitorPropertiesConfig from "../../config/monitoring.config";
 import MonitorFacet from "../monitor-facet/monitor-facet";
 import {MonitorContext} from "../../util/monitor-context";
-import {Select} from "antd";
+import Select from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import styles from "../facet/facet.module.scss";
 import moment from "moment";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -26,7 +27,6 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     clearMonitorGreyFacet,
     clearMonitorConstraint
   } = useContext(MonitorContext);
-  const {Option} = Select;
 
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(monitorOptions.selectedFacets);
   const [facetsList, setFacetsList] = useState<any[]>([]);
@@ -56,24 +56,24 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
   };
 
   const handleOptionSelect = (option: any) => {
-    setDateRangeValue(option);
-    if (option === "Custom") {
+    setDateRangeValue(option.value);
+    if (option.value === "Custom") {
       setDatePickerValue([null, null]);
     }
     let updateFacets = {...allSelectedFacets};
 
     let startDate, endDate;
-    if (option === "Today") {
+    if (option.value === "Today") {
       startDate = moment().startOf("day").format(timeFormat).toString();
-    } else if (option === "This Week") {
+    } else if (option.value === "This Week") {
       startDate = moment().startOf("week").format(timeFormat).toString();
-    } else if (option === "This Month") {
+    } else if (option.value === "This Month") {
       startDate = moment().startOf("month").format(timeFormat).toString();
     }
     endDate = moment().endOf("day").format(timeFormat).toString();
 
     updateFacets = {
-      ...updateFacets, startTime: [startDate, endDate, option]
+      ...updateFacets, startTime: [startDate, endDate, option.value]
     };
     setAllSelectedFacets(updateFacets);
     setAllMonitorGreyedOptions(updateFacets);
@@ -251,7 +251,7 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     setAllMonitorGreyedOptions(newAllSelectedfacets);
   };
 
-
+  const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
 
   return (
     <div className={styles.container}>
@@ -263,20 +263,18 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             </i>
           </HCTooltip>
         </div>
-        <div>
+        <div className={"my-3"}>
           <Select
-            style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}
+            id="date-select-wrapper"
+            inputId="date-select"
             placeholder="Select time"
-            id="date-select"
-            value={dateRangeValue}
-            onChange={value => handleOptionSelect(value)}
-            getPopupContainer={() => document.getElementById("date-select") || document.body}
-          >{dateRangeOptions.map((timeBucket, index) => {
-              return <Option key={index} value={timeBucket} data-cy={`date-select-option-${timeBucket}`} data-testid={`date-select-option-${timeBucket}`}>
-                {timeBucket}
-              </Option>;
-            })
-            }</Select>
+            value={selectTimeOptions.find(oItem => oItem.value === dateRangeValue)}
+            onChange={handleOptionSelect}
+            isSearchable={false}
+            aria-label="date-select"
+            options={selectTimeOptions}
+            styles={reactSelectThemeConfig}
+          />
         </div>
         <div className={styles.dateTimeWindow}>
           {timeWindow(dateRangeValue)}

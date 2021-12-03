@@ -101,7 +101,8 @@ describe("Add Matching step to a flow", () => {
     curatePage.openExistingFlowDropdown("Customer", matchStep);
 
     cy.log("**Select existing flow from the match step dropdown**");
-    curatePage.selectExistingFlowFromDropdown(flowName1);
+    curatePage.getExistingFlowFromDropdown(matchStep, flowName1).click();
+    curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(matchStep, flowName1);
     cy.waitForAsyncRequest();
 
@@ -187,7 +188,7 @@ describe("Add Matching step to a flow", () => {
   });
   it("Add the match step to a second flow and verify it was added", () => {
     curatePage.openExistingFlowDropdown("Customer", matchStep);
-    curatePage.getExistingFlowFromDropdown(flowName1).click();
+    curatePage.getExistingFlowFromDropdown(matchStep, flowName1).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(matchStep, flowName1);
     cy.waitForAsyncRequest();

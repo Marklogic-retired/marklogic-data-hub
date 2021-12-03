@@ -82,13 +82,13 @@ describe("Validate Merge warnings", () => {
   });
   it("Remove the warnings one by one", () => {
     cy.findByTestId("onMerge-edit").click();
-    curatePage.removeTargetCollection("Person");
+    curatePage.getExistingFlowFromDropdown_OldWay("Person");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
     curatePage.alertContent().eq(0).contains("Warning: Target Collections includes the source collection match-person");
     curatePage.alertContent().eq(0).contains("Please remove source collection from target collections");
     cy.findByTestId("onMerge-edit").click();
-    curatePage.removeTargetCollection("match-person");
+    curatePage.getExistingFlowFromDropdown_OldWay("match-person");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();
     cy.wait(1000);

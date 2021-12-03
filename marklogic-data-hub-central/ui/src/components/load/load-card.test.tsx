@@ -62,7 +62,7 @@ describe("Load Card component", () => {
     expect(getByTestId("testLoadXML-toExistingFlow")).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId("testLoadXML-flowsList"));
+    fireEvent.keyDown(getByLabelText("testLoadXML-flowsList"), {key: "ArrowDown"});
 
     //Choose FlowStepNoExist from the dropdown
     fireEvent.click(getByText("FlowStepNoExist"));
@@ -130,7 +130,7 @@ describe("Load Card component", () => {
     fireEvent.mouseOver(getByText("testLoadXML")); // Hover over the Load Card to get more options
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId("testLoadXML-flowsList"));
+    fireEvent.keyDown(getByLabelText("testLoadXML-flowsList"), {key: "ArrowDown"});
 
     //Choose FlowStepExist from the dropdown
     fireEvent.click(getByText("FlowStepExist"));
@@ -268,7 +268,7 @@ describe("Load Card component", () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, getAllByText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+    const {getByText, getAllByText, getByTestId, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={mockAddStepToNew}
       canReadOnly={authorityService.canReadLoad()}
@@ -285,7 +285,7 @@ describe("Load Card component", () => {
 
     // test adding to existing flow
     expect(getByTestId(`${loadStepName}-toExistingFlow`)).toBeInTheDocument();
-    fireEvent.click(getByTestId(`${loadStepName}-flowsList`));
+    fireEvent.keyDown(getByLabelText(`${loadStepName}-flowsList`), {key: "ArrowDown"});
     fireEvent.click(getByText(data.flows[0].name));
     fireEvent.click(getByText("Yes"));
     expect(mockAddStepToFlow).toBeCalledTimes(1);
@@ -299,7 +299,7 @@ describe("Load Card component", () => {
   test("Verify Load card does not allow a step to be added to flow and run in a flow with readFlow authority only", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion", "readFlow"]);
-    const {getByText, queryByTestId, getByTestId, queryByText, queryByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+    const {getByText, queryByTestId, getByTestId, queryByText, queryByLabelText, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
       {...ingestionData.loadCardProps}
       data={data.loadData.data}
       flows={data.flows}/>
@@ -332,7 +332,7 @@ describe("Load Card component", () => {
     fireEvent.mouseOver(getByText(loadStepName));
     // test adding to existing flow
     expect(queryByTestId(`${loadStepName}-toExistingFlow`)).toBeInTheDocument();
-    fireEvent.click(queryByTestId(`${loadStepName}-flowsList`));
+    fireEvent.keyDown(getByLabelText(`${loadStepName}-flowsList`), {key: "ArrowDown"});
     expect(queryByText(data.flows[0].name)).not.toBeInTheDocument();
 
     // test adding to new flow

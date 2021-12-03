@@ -112,9 +112,9 @@ describe("login", () => {
     loadPage.cancelButton().click();
     loadPage.deleteStepDisabled(stepName).should("exist");
     loadPage.stepName(stepName).trigger("mouseover");
-    loadPage.addToNewFlow(stepName).click();
+    loadPage.addToNewFlow(stepName).click({force: true});
     runPage.newFlowModal().should("not.exist");
-    loadPage.existingFlowsList(stepName).click();
+    loadPage.existingFlowsList(stepName).click({force: true});
     loadPage.existingFlowsList(flowName).should("not.exist");
 
     loadPage.loadView("table").click();

@@ -58,7 +58,6 @@ const ExpandCollapse: React.FC<Props> = (props) => {
             id={`expandBtn-${cmpRandomData}`}
             name={`expand-collapse-radiogroup-${cmpRandomData}`}
             value={"expand"}
-            defaultChecked={enabled === "expand"}
             checked={enabled === "expand"}
             onChange={e => onSelect(e.target.value)}
           />
@@ -81,7 +80,6 @@ const ExpandCollapse: React.FC<Props> = (props) => {
             id={`collapseBtn-${cmpRandomData}`}
             name={`expand-collapse-radiogroup-${cmpRandomData}`}
             value={"collapse"}
-            defaultChecked={enabled === "collapse"}
             checked={enabled === "collapse"}
             onChange={e => onSelect(e.target.value)}
           />

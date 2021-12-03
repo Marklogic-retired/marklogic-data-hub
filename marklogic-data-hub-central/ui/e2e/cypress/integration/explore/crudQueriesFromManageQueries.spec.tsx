@@ -226,7 +226,6 @@ describe("manage queries modal scenarios, developer role", () => {
 
   it("verify applying previously saved query scenario on the detail page", () => {
     //create a query
-    browsePage.selectEntity("Person");
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getShowMoreLink("fname").click();
     browsePage.getFacetItemCheckbox("fname", "Alice").click();

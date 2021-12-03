@@ -20,8 +20,8 @@ class MergeRuleModal {
   }
 
   selectMergeTypeDropdown(mergeType: string) {
-    cy.findByLabelText("mergeType-select").should("be.visible").click();
-    cy.waitUntil(() => cy.findByTestId(`mergeTypeOptions-${mergeType}`).should("be.visible")).click({force: true});
+    cy.get("#mergeType-select-wrapper").should("be.visible").click();
+    cy.get(`#mergeType-select-MenuList [data-testid="mergeTypeOptions-${mergeType}"`).should("be.visible").click({force: true});
   }
 
   setUriText(str: string) {
@@ -49,7 +49,7 @@ class MergeRuleModal {
   }
 
   selectStrategyName(strategyName: string) {
-    cy.findByLabelText("strategy-name-select").should("be.visible").click();
+    cy.get("#strategyName-select-wrapper").should("be.visible").click();
     cy.waitUntil(() => cy.findByTestId(`strategyNameOptions-${strategyName}`).should("be.visible")).click({force: true});
   }
 

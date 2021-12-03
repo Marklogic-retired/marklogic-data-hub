@@ -3,7 +3,7 @@ import "cypress-wait-until";
 class BrowsePage {
 
   getSelectedEntity() {
-    return cy.get("#entity-select").invoke("text");
+    return cy.get("#entity-select-wrapper").invoke("text");
   }
 
   getSpinner() {
@@ -24,8 +24,8 @@ class BrowsePage {
 
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
-    cy.get("#entity-select").click();
-    cy.get(`[data-cy="entity-option-${entity}"]`).click({force: true});
+    cy.get("#entity-select-wrapper").click();
+    cy.get(`#entity-select-MenuList [data-cy="entity-option-${entity}"]`).scrollIntoView().click({force: true});
     cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -434,6 +434,10 @@ class BrowsePage {
   }
 
   getSaveQueriesDropdown() {
+    return cy.get("#dropdownList-select-wrapper");
+  }
+
+  getSaveQueriesDropdownInput() {
     return cy.get("#dropdownList");
   }
 
@@ -525,8 +529,8 @@ class BrowsePage {
   }
 
   selectQuery(query: string) {
-    this.getSaveQueriesDropdown().click({force: true});
-    this.getQueryOption(query).click();
+    this.getSaveQueriesDropdownInput().click({force: true});
+    this.getQueryOption(query).click({force: true});
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   }
@@ -536,7 +540,7 @@ class BrowsePage {
   }
 
   getQueryOption(query: string) {
-    return cy.get(`[data-cy="query-option-${query}"]`);
+    return cy.get(`#query-select-MenuList [data-cy="query-option-${query}"]`);
   }
 
   // Switching queries confirmation buttons

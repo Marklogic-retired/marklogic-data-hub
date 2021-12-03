@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from "react";
-import {Input, Select} from "antd";
+import {Input} from "antd";
 import {Row, Col, Form, FormLabel} from "react-bootstrap";
+import CreatableSelect from "react-select/creatable";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import styles from "./entity-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../../../config/messages.config";
@@ -11,8 +13,6 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
-
-const {Option} = Select;
 
 type Props = {
   canReadWrite: any;
@@ -104,7 +104,13 @@ const EntitySettings: React.FC<Props> = (props) => {
 
   const handleAddColl = (value) => {
     if (value !== " ") {
-      setAdditionalCollections(value.filter((col) => !defaultCollections.includes(col)));
+      setAdditionalCollections(value.filter(col => !defaultCollections.includes(col.value)).map(option => option.value));
+    }
+  };
+
+  const handleCreateAdditionalColl = (value) => {
+    if (typeof value === "string") {
+      setAdditionalCollections([...additionalCollections, value]);
     }
   };
 
@@ -154,6 +160,8 @@ const EntitySettings: React.FC<Props> = (props) => {
     popoverVisibility ? setPopoverVisibilty(false) : setPopoverVisibilty(true);
   };
 
+  const additionalCollectionsOptions = additionalCollections.map(d => ({value: d, label: d}));
+
   const content = (
 
     <Popover id={`popover-overview`} className={styles.popoverEntitySettings}>
@@ -168,21 +176,19 @@ const EntitySettings: React.FC<Props> = (props) => {
               <Row className={"mb-3"}>
                 <FormLabel column lg={4}>{"Target Collections:"}</FormLabel>
                 <Col className={"d-flex"}>
-                  <Select
-                    id="additionalColl"
-                    mode="tags"
-                    style={{width: "100%"}}
+                  <CreatableSelect
+                    id="additionalColl-select-wrapper"
+                    inputId="additionalColl"
+                    isMulti
                     placeholder="Please add target collections"
-                    value={additionalCollections}
-                    disabled={!canReadWrite}
+                    value={additionalCollections.map(d => ({value: d, label: d}))}
+                    isDisabled={!canReadWrite}
                     onChange={handleAddColl}
-                    className={styles.inputWithTooltip}
+                    onCreateOption={handleCreateAdditionalColl}
                     aria-label="additionalColl-select"
-                  >
-                    {additionalCollections.map((col) => {
-                      return <Option value={col} key={col} label={col}>{col}</Option>;
-                    })}
-                  </Select>
+                    options={additionalCollectionsOptions}
+                    styles={reactSelectThemeConfig}
+                  />
                   <div className={"p-2 d-flex align-items-center"}>
                     <HCTooltip text={tooltips.additionalCollections} id="additional-collection-tooltip" placement="left">
                       <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />

@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState}  from "react";
-import {Select} from "antd";
+import Select from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {SearchContext} from "../../util/search-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faUser} from "@fortawesome/free-solid-svg-icons";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {entitiesSorting} from "../../util/entities-sorting";
-
-const {Option} = Select;
+import {HCDivider} from "@components/common";
 
 const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2};
 const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2};
@@ -50,31 +50,30 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   const [displayList, setDisplayList] = useState<any[]>(ENTITIES);
   const [showMore, setShowMore] = useState<boolean>(false);
 
-  const children = ENTITIES.map(element => <Option key={element.name} aria-label={`base-option-${element.name}`}>{element.name}</Option>);
+  const childrenOptions = ENTITIES.map(element => ({value: element.name, label: element.name, isDisabled: false}));
+  childrenOptions.unshift({
+    value: "-",
+    label: "-",
+    isDisabled: true
+  });
+  childrenOptions.unshift({
+    value: "All Entities",
+    label: "All Entities",
+    isDisabled: false
+  });
 
   const handleChange = (selection) => {
-    if (selection.length === 0) {
+    const selectedItems = selection.map(element => element.value);
+    if (selectedItems.length === 0) {
       setEntities(["All Entities"]);
       setEntitiesList(ENTITIES);
       setCurrentBaseEntities([]);
     } else {
-      const clearSelection = selection.filter(entity => entity !== "All Entities").map((entity => entity));
+      const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
       const filteredEntities = ENTITIES.filter(entity => clearSelection.includes(entity.name));
       setEntities(clearSelection);
       setEntitiesList(filteredEntities);
       setCurrentBaseEntities(filteredEntities);
-    }
-  };
-
-  const onSelect = (selected) => {
-    if (selected === "All Entities") {
-      setEntities(["All Entities"]);
-      setEntitiesList(ENTITIES);
-      setCurrentBaseEntities([]);
-      if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
-
-    } else {
-      if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     }
   };
 
@@ -97,17 +96,40 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   return (
     <>
       <Select
-        mode="multiple"
-        style={{width: "100%"}}
-        value={entities}
-        defaultValue={["All Entities"]}
+        id="entitiesSidebar-select-wrapper"
+        inputId="entitiesSidebar-select"
+        placeholder="Please select target database"
+        isMulti
+        value={entities?.map(d => ({value: d, label: d}))}
         onChange={handleChange}
-        onSelect={onSelect}
+        isSearchable={false}
         aria-label="base-entities-dropdown-list"
-      >
-        <Option key="All Entities" aria-label={`base-option-all`}>All Entities</Option>
-        {children}
-      </Select>
+        options={childrenOptions}
+        formatOptionLabel={({value, label}) => {
+          if (value === "-") {
+            return <HCDivider className={"m-0"} />;
+          }
+          return (
+            <span aria-label={`base-option-${value}`}>
+              {label}
+            </span>
+          );
+        }}
+        styles={{...reactSelectThemeConfig,
+          container: (provided, state) => ({
+            ...provided,
+            height: "auto",
+          }),
+          menu: (provided, state) => ({
+            ...provided,
+            height: "250px",
+          }),
+          menuList: (provided, state) => ({
+            ...provided,
+            height: "250px",
+          }),
+        }}
+      />
       <div>
         {displayList.map(({name, color, filter, amount}) =>
           <div style={{backgroundColor: color}} className={styles.entityItem}>

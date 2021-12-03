@@ -1,4 +1,5 @@
-class MergeStrategyModal {
+import ModalDialogBase from "../common/modal-dialog";
+class MergeStrategyModal extends ModalDialogBase {
 
   setStrategyName(str: string) {
     cy.get("#strategy-name").focus().clear().type(str);

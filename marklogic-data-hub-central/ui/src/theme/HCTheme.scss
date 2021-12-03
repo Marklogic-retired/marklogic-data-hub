@@ -334,3 +334,6 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
     all: unset;
     margin-left: 6px !important;
 }
+.active {
+    color: $text-color;
+}

@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Select} from "antd";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
+import Select from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import styles from "./threshold-modal.module.scss";
 
 import {CurationContext} from "../../../../util/curation-context";
@@ -24,8 +25,6 @@ const THRESHOLD_TYPE_OPTIONS = [
   {name: "Notify", value: "notify"},
   {name: "Custom", value: "custom"},
 ];
-
-const {Option} = Select;
 
 const ThresholdModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -282,10 +281,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
     resetModal();
   };
 
-  const onMatchTypeSelect = (value: string) => {
+  const onMatchTypeSelect = (selectedItem: any) => {
     setActionTypeErrorMessage("");
     setIsActionTypeTouched(true);
-    setActionType(value);
+    setActionType(selectedItem.value);
   };
 
   const hasFormChanged = () => {
@@ -335,9 +334,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
     onNo={discardCancel}
   />;
 
-  const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => {
-    return <Option key={index} value={matchType.value} aria-label={`${matchType.name}-option`}>{matchType.name}</Option>;
-  });
+  const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
 
   const renderCustomOptions = (
     <>
@@ -451,6 +448,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
     <Modal
       show={props.isVisible}
       size={"lg"}
+      data-testid="match-threshold-modal"
     >
       <Modal.Header>
         <span className={"fs-5"}>{Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}</span>
@@ -489,16 +487,22 @@ const ThresholdModal: React.FC<Props> = (props) => {
               <Row className={"me-5"}>
                 <Col className={actionTypeErrorMessage ? "d-flex has-error" : "d-flex"}>
                   <Select
-                    aria-label={"threshold-select"}
-                    className={styles.matchTypeSelect}
-                    size="default"
+                    id="threshold-select-wrapper"
+                    inputId="threshold-select"
                     placeholder="Select action"
-                    defaultValue="''"
-                    onSelect={onMatchTypeSelect}
-                    value={actionType}
-                  >
-                    {renderThresholdOptions}
-                  </Select>
+                    value={renderThresholdOptions.find(oItem => oItem.value === actionType)}
+                    onChange={onMatchTypeSelect}
+                    aria-label={"threshold-select"}
+                    options={renderThresholdOptions}
+                    styles={reactSelectThemeConfig}
+                    formatOptionLabel={({value, label}) => {
+                      return (
+                        <span aria-label={`${label}-option`}>
+                          {label}
+                        </span>
+                      );
+                    }}
+                  />
                 </Col>
                 <Col xs={12} className={styles.validationError}>
                   {actionTypeErrorMessage}

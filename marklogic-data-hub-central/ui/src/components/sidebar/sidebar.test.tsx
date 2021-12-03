@@ -26,7 +26,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
   });
 
   test("Verify createdOn dropdown is selected", () => {
-    const {getByText, getByPlaceholderText} = render(<Sidebar
+    const {getByText, getByPlaceholderText, getByLabelText} = render(<Sidebar
       entityDefArray={entityDefArray}
       facets={searchPayloadFacets}
       selectedEntities={[]}
@@ -34,7 +34,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
       checkFacetRender = {jest.fn()}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
-    userEvent.click(getByText("select time"));
+    fireEvent.keyDown(getByLabelText("date-select"), {key: "ArrowDown"});
     expect(getByText("Custom")).toBeInTheDocument();
     fireEvent.click(getByText("Custom"));
     expect(getByPlaceholderText("Start date ~ End date")).toBeInTheDocument();

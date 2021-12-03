@@ -61,24 +61,29 @@ class PropertyModal {
     return  cy.findByPlaceholderText("Select foreign key");
   }
   openForeignKeyDropdown() {
-    cy.findByLabelText("foreignKey-select").trigger("mouseover").click();
+    this.getForeignKeySelectWrapper().trigger("mouseover").click();
   }
   getForeignKey(propertyName: string) {
     return cy.waitUntil(() => cy.findByLabelText(`${propertyName}-option`));
   }
   checkForeignKeyDropdownLength(len: number) {
-    return cy.get(".ant-select-dropdown-menu").find("li").should("have.length", len);
+    return cy.get(`#foreignKey-select-MenuList [role="option"]`).should("have.length", len);
   }
 
   verifyPropertyType(entityType: string) {
     return cy.get(".ant-cascader-picker-label").should("have.text", entityType);
   }
+
+  getForeignKeySelectWrapper() {
+    return cy.get("#foreignKey-select-wrapper");
+  }
+
   verifyForeignKey(propertyName: string) {
-    return cy.get(".ant-select-selection-selected-value").should("have.text", propertyName);
+    return this.getForeignKeySelectWrapper().should("have.text", propertyName);
   }
 
   verifyForeignKeyPlaceholder() {
-    return cy.get(".ant-select-selection__placeholder").should("be.visible");
+    return this.getForeignKeySelectWrapper().should("have.text", "Select foreign key");
   }
 
   verifySameNamePropertyError(errorName: string) {

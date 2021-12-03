@@ -303,7 +303,6 @@ const Modeling: React.FC = () => {
           id="switch-view-graph"
           name="switch-view-radiogroup"
           value={"graph"}
-          defaultChecked={modelingOptions.view === "graph"}
           checked={modelingOptions.view === "graph"}
           onChange={e => handleViewChange(e.target.value)}
           tabIndex={0}
@@ -319,7 +318,6 @@ const Modeling: React.FC = () => {
           id="switch-view-table"
           name="switch-view-radiogroup"
           value={"table"}
-          defaultChecked={modelingOptions.view === "table"}
           checked={modelingOptions.view === "table"}
           onChange={e => handleViewChange(e.target.value)}
           tabIndex={1}

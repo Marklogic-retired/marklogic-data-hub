@@ -72,7 +72,7 @@ describe("Add Custom step to a flow", () => {
     curatePage.selectCustomTab("Customer");
 
     curatePage.openExistingFlowDropdown("Customer", stepName);
-    curatePage.getExistingFlowFromDropdown(flowName).scrollIntoView().click({force: true});
+    curatePage.getExistingFlowFromDropdown(stepName, flowName).scrollIntoView().click({force: true});
     curatePage.confirmAddStepToFlow(stepName, flowName);
 
     toolbar.getRunToolbarIcon().should("be.visible").click();

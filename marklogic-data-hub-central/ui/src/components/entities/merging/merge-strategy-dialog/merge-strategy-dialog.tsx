@@ -1,5 +1,6 @@
-import {Select} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
+import Select from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
 import {CurationContext} from "../../../../util/curation-context";
@@ -22,8 +23,6 @@ type Props = {
   isEditStrategy: boolean;
   toggleIsEditStrategy: (isEditStrategy: boolean) => void;
 };
-
-const {Option} = Select;
 
 const MergeStrategyDialog: React.FC<Props> = (props) => {
 
@@ -52,7 +51,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [deletePriorityName, setDeletePriorityName] = useState("");
 
   const dropdownTypes = ["Length"].concat(props.sourceNames);
-  const dropdownTypeOptions = dropdownTypes.map(elem => <Option data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</Option>);
+  const dropdownTypeOptions = dropdownTypes.map(elem => ({value: elem, label: elem}));
 
   const handleChange = (event) => {
     if (event.target.id === "strategy-name") {
@@ -120,8 +119,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   };
 
-  const handleDropDownOptions = (value) => {
-    setDropdownOption(value);
+  const handleDropDownOptions = (selectedItem) => {
+    setDropdownOption(selectedItem.value);
     setDropdownOptionTouched(true);
   };
 
@@ -506,7 +505,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 name={"maxValues"}
                 type={"radio"}
                 onChange={handleChange}
-                defaultChecked={radioValuesOptionClicked === 1}
                 checked={radioValuesOptionClicked === 1}
                 label={"All"}
                 value={1}
@@ -514,7 +512,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 className={"mb-0 flex-shrink-0"}
               />
               <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"}>
-                <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2}  aria-label="maxValuesOtherRadio" defaultChecked={radioValuesOptionClicked === 2} checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+                <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2}  aria-label="maxValuesOtherRadio" checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
                 <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
                 <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
                   <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
@@ -531,7 +529,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 name={"maxSources"}
                 type={"radio"}
                 onChange={handleChange}
-                defaultChecked={radioSourcesOptionClicked === 1}
                 checked={radioSourcesOptionClicked === 1}
                 label={"All"}
                 value={1}
@@ -539,7 +536,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 className={"mb-0 flex-shrink-0"}
               />
               <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"}>
-                <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} defaultChecked={radioSourcesOptionClicked === 2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
+                <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
                 <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
                 <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
                   <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
@@ -558,7 +555,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     name={"defaultYesNo"}
                     type={"radio"}
                     onChange={handleChange}
-                    defaultChecked={radioDefaultOptionClicked === 1}
                     checked={radioDefaultOptionClicked === 1}
                     label={"Yes"}
                     value={1}
@@ -571,7 +567,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     name={"defaultYesNo"}
                     type={"radio"}
                     onChange={handleChange}
-                    defaultChecked={radioDefaultOptionClicked === 2}
                     checked={radioDefaultOptionClicked === 2}
                     label={"No"}
                     value={2}
@@ -595,18 +590,26 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               </p>
             </div>
             <div className={styles.addButtonContainer}>
-              <Select
-                id="dropdownOptions"
-                placeholder=""
-                size="default"
-                value={dropdownOption}
-                onChange={handleDropDownOptions}
-                //disabled={!canWriteMatchMerge}
-                className={styles.dropdownOptionsSelect}
-                aria-label="dropdownOptions-select"
-              >
-                {dropdownTypeOptions}
-              </Select>
+              <div style={{width: "150px"}}>
+                <Select
+                  id="dropdownOptions-select-wrapper"
+                  inputId="dropdownOptions"
+                  placeholder=""
+                  value={dropdownTypeOptions.find(oItem => oItem.value === dropdownOption)}
+                  onChange={handleDropDownOptions}
+                  // isDisabled={!canWriteMatchMerge} //this was commented in previous version changed property but keep commented
+                  aria-label="dropdownOptions-select"
+                  options={dropdownTypeOptions}
+                  styles={reactSelectThemeConfig}
+                  formatOptionLabel={({value, label}) => {
+                    return (
+                      <span aria-label={`option-${value}`}>
+                        {label}
+                      </span>
+                    );
+                  }}
+                />
+              </div>
               <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
             </div>
             <div>

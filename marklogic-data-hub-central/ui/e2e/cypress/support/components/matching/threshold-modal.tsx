@@ -1,4 +1,9 @@
-class ThresholdModal {
+import modalDialogBase from "../common/modal-dialog";
+class ThresholdModal extends modalDialogBase {
+
+  getModal() {
+    return cy.get("#match-threshold-modal");
+  }
 
   setThresholdName(str: string) {
     cy.get("#name-input").focus().type(str);
@@ -9,7 +14,7 @@ class ThresholdModal {
   }
 
   selectActionDropdown(action: string) {
-    cy.findByLabelText("threshold-select").click();
+    cy.get("#threshold-select-wrapper").click();
     cy.findByLabelText(`${action}-option`).click({force: true});
   }
 
