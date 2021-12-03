@@ -355,8 +355,6 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getSaveQueriesDropdown().should("be.visible");
-    browsePage.getSelectedQuery().should("contain", "select a query");
-    browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     browsePage.getSelectedQuery().should("contain", "reset-query");
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();

@@ -1,7 +1,8 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Select} from "antd";
 import {Row, Col, Modal} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -31,8 +32,6 @@ interface Props {
   addStepToNew: any;
   canWriteFlow: any;
 }
-
-const {Option} = Select;
 
 const MatchingCard: React.FC<Props> = (props) => {
   const storage = getViewSettings();
@@ -393,6 +392,14 @@ const MatchingCard: React.FC<Props> = (props) => {
     ];
   };
 
+  const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
   return (
     <div className={styles.matchContainer}>
       <Row>
@@ -454,20 +461,27 @@ const MatchingCard: React.FC<Props> = (props) => {
                     <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
                       {selectVisible ? (
-                        <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="add-matching-step-to-flow-tooltip" placement={"bottom"} show={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
+                        <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="add-matching-step-to-flow-tooltip" placement={"top"} show={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
                           <Select
-                            style={{width: "100%"}}
-                            value={selected[step.name] ? selected[step.name] : undefined}
-                            onChange={(flowName) => handleSelect({flowName: flowName, matchingName: step.name})}
+                            id={`${step.name}-flowsList-select-wrapper`}
+                            inputId={`${step.name}-flowsList`}
+                            components={{MenuList: props => MenuList(`${step.name}-flowsList`, props)}}
                             placeholder="Select Flow"
-                            defaultActiveFirstOption={false}
-                            disabled={!props.canWriteMatchMerge}
-                            data-testid={`${step.name}-flowsList`}
-                          >
-                            {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
-                              <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
-                            )) : null}
-                          </Select>
+                            value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[step.name]) : undefined}
+                            onChange={(option) => handleSelect({flowName: option.value, matchingName: step.name})}
+                            isSearchable={false}
+                            isDisabled={!props.canWriteFlow}
+                            aria-label={`${step.name}-flowsList`}
+                            options={flowOptions}
+                            styles={reactSelectThemeConfig}
+                            formatOptionLabel={({value, label}) => {
+                              return (
+                                <span aria-label={`${value}-option`}>
+                                  {label}
+                                </span>
+                              );
+                            }}
+                          />
                         </div></HCTooltip>
                       ) : null}
                     </div>

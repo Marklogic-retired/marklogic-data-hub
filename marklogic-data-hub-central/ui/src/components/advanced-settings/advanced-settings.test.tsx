@@ -22,8 +22,10 @@ describe("Advanced step settings", () => {
 
   // NOTE: Detailed tests of create new settings functionality are in steps/steps.test
   test("Verify edit advanced settings for Load", async () => {
+    const clearStepData = {...data.advancedLoad};
+    clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText, queryByText} = render(
-      <AdvancedSettings {...data.advancedLoad} />
+      <AdvancedSettings {...clearStepData} />
     );
 
     //'Step Definition Name' should be present only for custom ingestion steps
@@ -66,8 +68,10 @@ describe("Advanced step settings", () => {
 
   /* Custom ingestion should be same as default-ingestion except "step definition name" field should be present */
   test("Verify advanced settings for Custom Load step", async () => {
+    const clearStepData = {...data.advancedCustomLoad};
+    clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText, queryByText, getByPlaceholderText} = render(
-      <AdvancedSettings {...data.advancedCustomLoad} />
+      <AdvancedSettings {...clearStepData} />
     );
 
     expect(queryByText("Source Database:")).not.toBeInTheDocument();
@@ -107,8 +111,10 @@ describe("Advanced step settings", () => {
   });
 
   test("Verify edit advanced settings for Mapping", async () => {
+    const clearStepData = {...data.advancedMapping};
+    clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText, getByLabelText} = render(
-      <AdvancedSettings {...data.advancedMapping} />
+      <AdvancedSettings {...clearStepData} />
     );
 
     expect(getByText("Source Database:")).toBeInTheDocument();
@@ -158,8 +164,10 @@ describe("Advanced step settings", () => {
   });
 
   test("Verify edit advanced settings for Matching", async () => {
+    const clearStepData = {...data.advancedMatching};
+    clearStepData.stepData.additionalCollections = [];
     const {getByText, getAllByText} = render(
-      <AdvancedSettings {...data.advancedMatching} />
+      <AdvancedSettings {...clearStepData} />
     );
 
     expect(getByText("Source Database:")).toBeInTheDocument();
@@ -431,15 +439,15 @@ describe("Advanced step settings", () => {
       getByPlaceholderText = renderResults.getByPlaceholderText;
     });
 
-    expect(document.querySelector("#sourceDatabase")).toHaveClass("ant-select-disabled");
-    expect(document.querySelector("#targetDatabase")).toHaveClass("ant-select-disabled");
-    expect(document.querySelector("#additionalColl")).toHaveClass("ant-select-disabled");
+    expect(document.querySelector("#sourceDatabase")).toHaveAttribute("disabled");
+    expect(document.querySelector("#targetDatabase")).toHaveAttribute("disabled");
+    expect(document.querySelector("#additionalColl")).toHaveAttribute("disabled");
     expect(getByPlaceholderText("Please enter target permissions")).toBeDisabled();
     expect(getByPlaceholderText("Please enter batch size")).toBeDisabled();
     expect(document.querySelector("#headers")).toHaveAttribute("disabled");
-    expect(document.querySelector("#targetFormat")).toHaveClass("ant-select-disabled");
-    expect(document.querySelector("#provGranularity")).toHaveClass("ant-select-disabled");
-    expect(document.querySelector("#validateEntity")).toHaveClass("ant-select-disabled");
+    expect(document.querySelector("#targetFormat")).toHaveAttribute("disabled");
+    expect(document.querySelector("#provGranularity")).toHaveAttribute("disabled");
+    expect(document.querySelector("#validateEntity")).toHaveAttribute("disabled");
 
     fireEvent.click(getByText("Interceptors"));
     expect(document.querySelector("#interceptors")).toHaveAttribute("disabled");

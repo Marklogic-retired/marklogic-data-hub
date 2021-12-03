@@ -70,11 +70,12 @@ describe("Custom Card component", () => {
 
     // Advanced settings values
     expect(getByText("Source Database:")).toBeInTheDocument();
-    expect(getByLabelText("sourceDatabase-select")).toBeEnabled();
-    expect(getByText("db1")).toBeInTheDocument();
+    const dropdownSourceDatabase = getByLabelText("sourceDatabase-select");
+    expect(dropdownSourceDatabase).toBeEnabled();
+    expect(getByText("data-hub-STAGING")).toBeInTheDocument();
 
     expect(getByText("Target Database:")).toBeInTheDocument();
-    expect(getByText("db2")).toBeInTheDocument();
+    expect(getByText("data-hub-FINAL")).toBeInTheDocument();
     expect(getByLabelText("targetDatabase-select")).toBeEnabled();
 
     expect(getByText("Batch Size:")).toBeInTheDocument();
@@ -146,9 +147,9 @@ describe("Custom Card component", () => {
 
     // Advanced settings values
     expect(getByText("Source Database:")).toBeInTheDocument();
-    expect(getByText("db1")).toBeInTheDocument();
+    expect(getByText("data-hub-STAGING")).toBeInTheDocument();
     expect(getByText("Target Database:")).toBeInTheDocument();
-    expect(getByText("db2")).toBeInTheDocument();
+    expect(getByText("data-hub-FINAL")).toBeInTheDocument();
     expect(getByText("Batch Size:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue("50");
     expect(getByPlaceholderText("Please enter batch size")).toBeDisabled();
@@ -219,7 +220,7 @@ describe("Custom Card component", () => {
     expect(getByTestId("customJSON-toExistingFlow")).toBeInTheDocument(); // 'Add to an existing Flow'
 
     // Open menu, choose flow
-    fireEvent.click(getByTestId("customJSON-flowsList"));
+    fireEvent.keyDown(getByLabelText("customJSON-flowsList"), {key: "ArrowDown"});
     fireEvent.click(getByLabelText("testFlow-option"));
 
     // Dialog appears, click 'Yes' button

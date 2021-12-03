@@ -99,7 +99,7 @@ describe("Add Merge step to a flow", () => {
   });
   it("Add the Merge step to an existing flow and Run the step(existing)", {defaultCommandTimeout: 120000}, () => {
     curatePage.openExistingFlowDropdown("Customer", mergeStep);
-    curatePage.getExistingFlowFromDropdown(flowName1).click({force: true});
+    curatePage.getExistingFlowFromDropdown(mergeStep, flowName1).click({force: true});
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mergeStep, flowName1);
     cy.waitForAsyncRequest();
@@ -175,7 +175,7 @@ describe("Add Merge step to a flow", () => {
   });
   it("Add the merge step to a second flow and verify it was added", () => {
     curatePage.openExistingFlowDropdown("Customer", mergeStep);
-    curatePage.getExistingFlowFromDropdown(flowName1).click();
+    curatePage.getExistingFlowFromDropdown(mergeStep, flowName1).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mergeStep, flowName1);
     cy.waitForAsyncRequest();

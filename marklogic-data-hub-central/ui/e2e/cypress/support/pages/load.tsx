@@ -138,12 +138,12 @@ class LoadPage {
   }
 
   selectSourceFormat(format: string) {
-    cy.get("#sourceFormat").click();
+    cy.get("#sourceFormat-select-wrapper").click();
     cy.findAllByText(`${format}`).last().click({force: true});
   }
 
   selectTargetFormat(format: string) {
-    cy.get("#targetFormat").click();
+    cy.get("#targetFormat-select-wrapper").click();
     cy.findAllByText(`${format}`).last().click();
   }
 
@@ -172,8 +172,7 @@ class LoadPage {
      * @param db - accepts `STAGING` or `FINAL`
      */
   selectTargetDB(db: string) {
-    cy.waitUntil(() => cy.findByLabelText("targetDatabase-select")).click();
-    cy.waitUntil(() => cy.findByTestId(`targetDbOptions-data-hub-${db}`)).click({force: true});
+    cy.get("#targetDatabase-select-wrapper").click().contains(`data-hub-${db}`).click({force: true});
   }
 
   /**
@@ -203,11 +202,6 @@ class LoadPage {
      */
   appendTargetPermissions(permissions: string) {
     return cy.get("#targetPermissions").type(`,${permissions}`);
-  }
-
-  selectProvGranularity(options: string) {
-    cy.get("#provGranularity").click();
-    cy.findByTestId(`provOptions-${options}`).click();
   }
 
   setBatchSize(batchSize: string) {
@@ -302,7 +296,7 @@ class LoadPage {
   }
 
   existingFlowsList(stepName: string) {
-    return cy.findByTestId(`${stepName}-flowsList`);
+    return cy.get(`#${stepName}-flowsList-select-wrapper`);
   }
 
   addStepToExistingFlow(stepName: string, flowName: string) {

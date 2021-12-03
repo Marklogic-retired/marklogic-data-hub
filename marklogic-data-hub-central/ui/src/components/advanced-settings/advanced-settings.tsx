@@ -1,6 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Select} from "antd";
+import Select, {components as SelectComponents} from "react-select";
+import CreatableSelect from "react-select/creatable";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {Form, Row, Col, FormCheck, FormLabel, FormControl} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
@@ -11,8 +13,6 @@ import AdvancedTargetCollections from "./advanced-target-collections";
 import {CurationContext} from "../../util/curation-context";
 import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
-
-const {Option} = Select;
 
 type Props = {
   tabKey: string;
@@ -71,7 +71,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const usesTargetFormat = stepType === "mapping";
   const defaultTargetFormat = StepsConfig.defaultTargetFormat;
-  const targetFormatOptions = ["JSON", "XML"].map(d => <Option data-testid="targetFormatOptions" key={d}>{d}</Option>);
+  const targetFormatOptions = ["JSON", "XML"].map(d => ({value: d, label: d}));
   const [targetFormat, setTargetFormat] = useState(defaultTargetFormat);
   const [targetFormatTouched, setTargetFormatTouched] = useState(false);
 
@@ -478,31 +478,38 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     sendPayload();
   };
 
-  const handleSourceDatabase = (value) => {
-    if (value === " ") {
+  const handleSourceDatabase = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setSourceDatabaseTouched(false);
     } else {
       setSourceDatabaseTouched(true);
-      setSourceDatabase(value);
+      setSourceDatabase(selectedItem.value);
     }
   };
 
-  const handleTargetDatabase = (value) => {
-    if (value === " ") {
+  const handleTargetDatabase = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setTargetDatabaseTouched(false);
     } else {
       setTargetDatabaseTouched(true);
-      setTargetDatabase(value);
+      setTargetDatabase(selectedItem.value);
     }
   };
 
   const handleAddColl = (value) => {
-    if (value === " ") {
+    if (value === []) {
       setAddCollTouched(false);
     } else {
       setAddCollTouched(true);
       // default collections will come from default settings retrieved. Don't want them to be added to additionalCollections property
-      setAdditionalCollections(value.filter((col) => !defaultCollections.includes(col)));
+      setAdditionalCollections(value.filter(col => !defaultCollections.includes(col.value)).map(option => option.value));
+    }
+  };
+
+  const handleCreateAdditionalColl = (value) => {
+    setAddCollTouched(true);
+    if (typeof value === "string") {
+      setAdditionalCollections([...additionalCollections, value]);
     }
   };
 
@@ -515,55 +522,62 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const handleTargetFormat = (value) => {
-    if (value === " " || value === targetFormat) {
+  const handleTargetFormat = (selectedItem) => {
+    if (selectedItem.value === " " || selectedItem.value === targetFormat) {
       setTargetFormatTouched(false);
     } else {
-      setTargetFormat(value);
+      setTargetFormat(selectedItem.value);
       setTargetFormatTouched(true);
     }
   };
 
-  const handleProvGranularity = (value) => {
-    if (value === " ") {
+  const handleProvGranularity = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setProvGranularityTouched(false);
     } else {
       setProvGranularityTouched(true);
-      setProvGranularity(value);
+      setProvGranularity(selectedItem.value);
     }
   };
 
-  const handleValidateEntity = (value) => {
-    if (value === " ") {
+  const handleValidateEntity = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setValidateEntityTouched(false);
     } else {
       setValidateEntityTouched(true);
-      setValidateEntity(value);
+      setValidateEntity(selectedItem.value);
     }
   };
-  const handleSourceRecordScope = (value) => {
+  const handleSourceRecordScope = (selectedItem) => {
     if (props.isEditing) {
-      if (props.stepData.sourceRecordScope !== value) {
+      if (props.stepData.sourceRecordScope !== selectedItem.value) {
         setSourceRecordScopeToggled(true);
       } else {
         setSourceRecordScopeToggled(false);
       }
     }
 
-    if (value === " ") {
+    if (selectedItem.value === " ") {
       setSourceRecordScopeTouched(false);
     } else {
       setSourceRecordScopeTouched(true);
-      setSourceRecordScope(value);
+      setSourceRecordScope(selectedItem.value);
     }
   };
 
-  const sourceDbOptions = databaseOptions.map(d => <Option data-testid={`sourceDbOptions-${d}`} key={d}>{d}</Option>);
-  const targetDbOptions = databaseOptions.map(d => <Option data-testid={`targetDbOptions-${d}`} key={d}>{d}</Option>);
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
 
-  const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid={`provOptions-${d}`} key={provGranularityOptions[d]}>{d}</Option>);
-  const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
-  const sourceRecordScopeValue = Object.keys(sourceRecordScopeOptions).map((d, index) => <Option data-testid={`sourceRecordScopeOptions-${index}`} key={sourceRecordScopeOptions[d]}>{d}</Option>);
+  const sourceDbOptions = databaseOptions.map(d => ({value: d, label: d}));
+  const targetDbOptions = databaseOptions.map(d => ({value: d, label: d}));
+  const additionalCollectionsOptions = additionalCollections.map(d => ({value: d, label: d}));
+
+  const provGranOpts = Object.keys(provGranularityOptions).map(d => ({value: provGranularityOptions[d], label: d}));
+  const valEntityOpts = Object.keys(validateEntityOptions).map((d, index) => ({value: validateEntityOptions[d], label: d}));
+  const sourceRecordScopeValue = Object.keys(sourceRecordScopeOptions).map((d, index) => ({value: sourceRecordScopeOptions[d], label: d}));
   return (
     <div>
       {(stepType === "matching" || stepType === "merging") ? curationOptions.activeStep.hasWarnings.length > 0 ? (
@@ -605,17 +619,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <FormLabel column lg={3}>{"Source Database:"}</FormLabel>
             <Col className={"d-flex"}>
               <Select
-                id="sourceDatabase"
+                id="sourceDatabase-select-wrapper"
+                inputId="sourceDatabase"
+                components={{MenuList: props => MenuList("sourceDatabase", props)}}
                 placeholder="Please select source database"
-                value={sourceDatabase}
+                value={sourceDbOptions.find(oItem => oItem.value === sourceDatabase)}
                 onChange={handleSourceDatabase}
-                disabled={!canReadWrite}
-                className={styles.inputWithTooltip}
+                isSearchable={false}
+                isDisabled={!canReadWrite}
                 aria-label="sourceDatabase-select"
                 onBlur={sendPayload}
-              >
-                {sourceDbOptions}
-              </Select>
+                options={sourceDbOptions}
+                styles={reactSelectThemeConfig}
+                formatOptionLabel={({value, label}) => {
+                  return (
+                    <span data-testid={`sourceDbOptions-${value}`}>
+                      {label}
+                    </span>
+                  );
+                }}
+              />
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.sourceDatabase}
@@ -626,23 +649,32 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 </HCTooltip>
               </div>
             </Col>
-          </Row> : null
+          </Row>: null
         }
         <Row className={"mb-3"}>
           <FormLabel column lg={3}>{"Target Database:"}</FormLabel>
           <Col className={"d-flex"}>
             <Select
-              id="targetDatabase"
+              id="targetDatabase-select-wrapper"
+              inputId="targetDatabase"
+              components={{MenuList: props => MenuList("targetDatabase", props)}}
               placeholder="Please select target database"
-              value={targetDatabase}
+              value={targetDbOptions.find(oItem => oItem.value === targetDatabase)}
               onChange={handleTargetDatabase}
-              disabled={!canReadWrite}
-              className={styles.inputWithTooltip}
+              isSearchable={false}
+              isDisabled={!canReadWrite}
               aria-label="targetDatabase-select"
               onBlur={sendPayload}
-            >
-              {targetDbOptions}
-            </Select>
+              options={targetDbOptions}
+              styles={reactSelectThemeConfig}
+              formatOptionLabel={({value, label}) => {
+                return (
+                  <span data-testid={`targetDbOptions-${value}`}>
+                    {label}
+                  </span>
+                );
+              }}
+            />
             <div className={"p-2 d-flex"}>
               <HCTooltip
                 text={tooltips.targetDatabase}
@@ -668,22 +700,20 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={3}>{"Target Collections:"}</FormLabel>
             <Col className={"d-flex"} data-testid={"target-collections"}>
-              <Select
-                id="additionalColl"
-                mode="tags"
-                style={{width: "100%"}}
+              <CreatableSelect
+                id="additionalColl-select-wrapper"
+                inputId="additionalColl"
+                isMulti
                 placeholder="Please add target collections"
-                value={additionalCollections}
-                disabled={!canReadWrite}
+                value={additionalCollections.map(d => ({value: d, label: d}))}
+                isDisabled={!canReadWrite}
                 onChange={handleAddColl}
-                className={styles.inputWithTooltip}
+                onCreateOption={handleCreateAdditionalColl}
                 aria-label="additionalColl-select"
                 onBlur={sendPayload}
-              >
-                {additionalCollections.map((col) => {
-                  return <Option value={col} key={col} label={col}>{col}</Option>;
-                })}
-              </Select>
+                options={additionalCollectionsOptions}
+                styles={reactSelectThemeConfig}
+              />
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.additionalCollections}
@@ -741,17 +771,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <FormLabel column lg={3}>{"Target Format:"}</FormLabel>
             <Col className={"d-flex"}>
               <Select
-                id="targetFormat"
+                id="targetFormat-select-wrapper"
+                inputId="targetFormat"
+                components={{MenuList: props => MenuList("targetFormat", props)}}
                 placeholder="Please select target format"
-                value={targetFormat}
+                value={targetFormatOptions.find(oItem => oItem.value === targetFormat)}
                 onChange={handleTargetFormat}
-                disabled={!canReadWrite}
-                className={styles.inputWithTooltip}
+                isSearchable={false}
+                isDisabled={!canReadWrite}
                 aria-label="targetFormat-select"
                 onBlur={sendPayload}
-              >
-                {targetFormatOptions}
-              </Select>
+                options={targetFormatOptions}
+                styles={reactSelectThemeConfig}
+                formatOptionLabel={({value, label}) => {
+                  return (
+                    <span data-testid={`targetFormatOptions-${value}`}>
+                      {label}
+                    </span>
+                  );
+                }}
+              />
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.targetFormat}
@@ -768,17 +807,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           <FormLabel column lg={3} className={"pe-0"}>{"Provenance Granularity:"}</FormLabel>
           <Col className={"d-flex"}>
             <Select
-              id="provGranularity"
+              id="provGranularity-select-wrapper"
+              inputId="provGranularity"
+              components={{MenuList: props => MenuList("provGranularity", props)}}
               placeholder="Please select provenance granularity"
-              value={provGranularity}
+              value={provGranOpts.find(oItem => oItem.value === provGranularity)}
               onChange={handleProvGranularity}
-              disabled={!canReadWrite}
-              className={styles.inputWithTooltip}
+              isSearchable={false}
+              isDisabled={!canReadWrite}
               aria-label="provGranularity-select"
               onBlur={sendPayload}
-            >
-              {provGranOpts}
-            </Select>
+              options={provGranOpts}
+              styles={reactSelectThemeConfig}
+              formatOptionLabel={({value, label}) => {
+                return (
+                  <span data-testid={`provOptions-${label}`}>
+                    {label}
+                  </span>
+                );
+              }}
+            />
             <div className={"p-2 d-flex"}>
               <HCTooltip
                 text={tooltips.provGranularity}
@@ -795,17 +843,26 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <FormLabel column lg={3}>{"Entity Validation:"}</FormLabel>
             <Col className={"d-flex"}>
               <Select
-                id="validateEntity"
+                id="validateEntity-select-wrapper"
+                inputId="validateEntity"
+                components={{MenuList: props => MenuList("validateEntity", props)}}
                 placeholder="Please select Entity Validation"
-                value={validateEntity}
+                value={valEntityOpts.find(oItem => oItem.value === validateEntity)}
                 onChange={handleValidateEntity}
-                disabled={!canReadWrite}
-                className={styles.inputWithTooltip}
+                isSearchable={false}
+                isDisabled={!canReadWrite}
                 aria-label="validateEntity-select"
                 onBlur={sendPayload}
-              >
-                {valEntityOpts}
-              </Select>
+                options={valEntityOpts}
+                styles={reactSelectThemeConfig}
+                formatOptionLabel={({value, label}) => {
+                  return (
+                    <span data-testid={`entityValOpts-${value}`}>
+                      {label}
+                    </span>
+                  );
+                }}
+              />
               <div className={"p-2 d-flex"}>
                 <HCTooltip
                   text={tooltips.validateEntity}
@@ -825,16 +882,25 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               <Row>
                 <Col xs={12} className={"d-flex"}>
                   <Select
-                    id="sourceRecordScope"
+                    id="sourceRecordScope-select-wrapper"
+                    inputId="sourceRecordScope"
+                    components={{MenuList: props => MenuList("sourceRecordScope", props)}}
                     placeholder="Please select Source Record Scope"
-                    value={sourceRecordScope}
+                    value={sourceRecordScopeValue.find(oItem => oItem.value === sourceRecordScope)}
                     onChange={handleSourceRecordScope}
-                    disabled={!canReadWrite}
-                    className={styles.inputWithTooltip}
+                    isSearchable={false}
+                    isDisabled={!canReadWrite}
                     aria-label="sourceRecordScope-select"
-                  >
-                    {sourceRecordScopeValue}
-                  </Select>
+                    options={sourceRecordScopeValue}
+                    styles={reactSelectThemeConfig}
+                    formatOptionLabel={({value, label}) => {
+                      return (
+                        <span data-testid={`sourceRecordScopeOptions-${value}`}>
+                          {label}
+                        </span>
+                      );
+                    }}
+                  />
                   <div className={"p-2 d-flex"}>
                     <HCTooltip text={tooltips.sourceRecordScope} id="source-record-scope-tooltip" placement="left">
                       <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
@@ -860,7 +926,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 data-testid="attachmentTrue"
                 name={"attachSourceDocument"}
                 type={"radio"}
-                defaultChecked={attachSourceDocument}
                 checked={attachSourceDocument}
                 onChange={handleChange}
                 label={"Yes"}
@@ -873,7 +938,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 data-testid="attachmentFalse"
                 name={"attachSourceDocument"}
                 type={"radio"}
-                defaultChecked={!attachSourceDocument}
                 checked={!attachSourceDocument}
                 onChange={handleChange}
                 label={"No"}
@@ -1004,7 +1068,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               {customHookExpanded ?
                 <ChevronDown className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} /> :
                 <ChevronRight className={styles.rightArrow} onClick={() => setCustomHookExpanded(!customHookExpanded)} />}
-              <span className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
+              <span aria-label="custom-hook-expand" className={styles.expandLabel} onClick={() => setCustomHookExpanded(!customHookExpanded)}>Custom Hook</span>
               <HCTooltip
                 text={tooltips.customHookDeprecated}
                 id="custom-hook-deprecated-tooltip"

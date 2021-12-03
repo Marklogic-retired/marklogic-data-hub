@@ -40,7 +40,7 @@ class CuratePage {
 
   openExistingFlowDropdown(entityTypeId: string, stepName: string) {
     this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
-    cy.findByTestId(`${stepName}-flowsList`).should("be.visible", {timeout: 5000}).scrollIntoView().click({force: true});
+    cy.get(`#${stepName}-flowsList-select-wrapper`).should("be.visible", {timeout: 5000}).scrollIntoView().click();
   }
 
   openStepDetails(stepName: string) {
@@ -51,8 +51,12 @@ class CuratePage {
      * Depends on openExistingFlowDropdown() being called first
      * @param flowName
      */
-  getExistingFlowFromDropdown(flowName: string) {
-    return cy.findByLabelText(`${flowName}-option`);
+  getExistingFlowFromDropdown(stepName: string, flowName: string) {
+    return cy.get(`#${stepName}-flowsList-select-MenuList [aria-label="${flowName}-option"]`);
+  }
+
+  getExistingFlowFromDropdown_OldWay(flowName: string) {
+    return cy.findByTitle(`${flowName}`).find(".ant-select-selection__choice__remove").click();
   }
   /**
    * Select an existing flow from a match step dropdown
@@ -207,8 +211,8 @@ class CuratePage {
     return cy.findByTestId(`${propertyName}-mapexpression`);
   }
 
-  targetCollectionDropdown() {
-    cy.get(".ant-select-dropdown").eq(0).click();
+  getAdditionalCollSelectWrapper() {
+    return cy.get("#additionalColl-select-wrapper");
   }
 
   alertContent() {
@@ -216,15 +220,15 @@ class CuratePage {
   }
 
   removeTargetCollection(collection: string) {
-    cy.get(`[title=${collection}] span[class="ant-select-selection__choice__remove"]`).click();
+    this.getAdditionalCollSelectWrapper().get(`[aria-label="Remove ${collection}"]`).click();
   }
 
   matchTargetCollection(collection: string) {
-    return cy.get(`[id="additionalColl"] [class="ant-select-selection__rendered"] [title=${collection}]`);
+    return this.getAdditionalCollSelectWrapper().findByText(collection).should("be.visible");
   }
 
   targetCollection(collection: string) {
-    cy.get("div[id=\"additionalColl\"]").type(collection);
+    this.getAdditionalCollSelectWrapper().type(collection).find("input").type("{enter}");
   }
 
   mergeTargetCollection(collection: string) {

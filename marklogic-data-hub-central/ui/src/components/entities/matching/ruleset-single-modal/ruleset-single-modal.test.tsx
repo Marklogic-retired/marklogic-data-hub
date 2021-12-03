@@ -1,6 +1,6 @@
 import React from "react";
 import {cleanup, render, screen, wait, within} from "@testing-library/react";
-import {waitFor} from "@testing-library/dom";
+import {waitFor, fireEvent} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import RulesetSingleModal from "./ruleset-single-modal";
@@ -56,7 +56,7 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("customerId")); });
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
 
     userEvent.click(getByText("Cancel"));
@@ -103,7 +103,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     await userEvent.click(getByTestId("property-to-match-dropdown"));
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Zip"));
 
     userEvent.click(getByText("Save"));
@@ -137,7 +137,7 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("nicknames")); });
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Synonym"));
     userEvent.type(getByLabelText("thesaurus-uri-input"), "/Users/jsmith/Documents/sample-data/4feec983");
     userEvent.type(getByLabelText("filter-input"), "<thsr:qualifier>birds</thsr:qualifier>");
@@ -173,7 +173,7 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("orders")); });
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Double Metaphone"));
     userEvent.type(getByLabelText("dictionary-uri-input"), "/Users/jsmith/Documents/sample-data/123ABC");
     userEvent.type(getByLabelText("distance-threshold-input"), "100");
@@ -209,7 +209,7 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("nicknames")); });
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Custom"));
     userEvent.type(getByLabelText("uri-input"), "/custom-modules/matching/nameMatch.xqy");
     userEvent.type(getByLabelText("function-input"), "nameMatch");
@@ -249,7 +249,7 @@ describe("Matching Ruleset Single Modal component", () => {
     userEvent.click(getByTestId("property-to-match-dropdown"));
     wait(() => { userEvent.click(getByText("nicknames")); });
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
 
     userEvent.click(getByText("Save"));
@@ -333,10 +333,9 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("name")).toBeInTheDocument();
     expect(getByText("Double Metaphone")).toBeInTheDocument();
 
-
     userEvent.click(screen.getByText("name"));
     userEvent.click(screen.getByText("orders"));
-    userEvent.click(screen.getByText("Double Metaphone"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Exact"));
 
     // To verify delete icon is present for editing single ruleset modal
@@ -373,7 +372,7 @@ describe("Matching Ruleset Single Modal component", () => {
     wait(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
     wait(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
 
-    userEvent.click(screen.getByText("Select match type"));
+    fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Synonym"));
     userEvent.type(getByLabelText("thesaurus-uri-input"), "/Users/jsmith/Documents/sample-data/4feec983");
     userEvent.type(getByLabelText("filter-input"), "<thsr:qualifier>birds</thsr:qualifier>");
@@ -424,10 +423,9 @@ describe("Matching Ruleset Single Modal component", () => {
       userEvent.click(screen.getByText("shipping"));
       userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
 
-      userEvent.click(screen.getByText("Select match type"));
+      fireEvent.keyDown(screen.getByLabelText("match-type-dropdown"), {key: "ArrowDown"});
       userEvent.click(screen.getByText("Exact"));
       userEvent.click(getByText("Save"));
     });
-
   });
 });

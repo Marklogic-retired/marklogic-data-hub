@@ -116,7 +116,7 @@ describe("Entity Modeling: Writer Role", () => {
 
     //verify removing foreign key from relationship is possible
     propertyTable.editProperty("address-OrderedBy");
-    cy.waitUntil(() => cy.findByLabelText("foreignKey-select").should("be.visible"));
+    cy.waitUntil(() => cy.get("#foreignKey-select-wrapper").should("be.visible"));
     propertyModal.openForeignKeyDropdown();
     propertyModal.getForeignKey("None").click();
     propertyModal.getSubmitButton().click();

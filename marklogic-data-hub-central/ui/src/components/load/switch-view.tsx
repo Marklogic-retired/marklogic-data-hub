@@ -58,7 +58,6 @@ const SwitchView: React.FC<Props> = (props) => {
             id="switch-view-card"
             name="switch-view-radiogroup"
             value={"card"}
-            defaultChecked={view === "card"}
             checked={view === "card"}
             onChange={e => onChange(e.target.value)}
           />
@@ -73,7 +72,6 @@ const SwitchView: React.FC<Props> = (props) => {
             id="switch-view-list"
             name="switch-view-radiogroup"
             value={"list"}
-            defaultChecked={view === "list"}
             checked={view === "list"}
             onChange={e => onChange(e.target.value)}
           />

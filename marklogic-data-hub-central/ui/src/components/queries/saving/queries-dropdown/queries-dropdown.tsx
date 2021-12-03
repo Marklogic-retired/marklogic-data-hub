@@ -1,6 +1,6 @@
-import {Select} from "antd";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import React, {useContext} from "react";
-import styles from "./queries-dropdown.module.scss";
 import {SearchContext} from "../../../../util/search-context";
 
 interface Props {
@@ -12,46 +12,73 @@ const PLACEHOLDER: string = "Select a saved query";
 
 const QueriesDropdown: React.FC<Props> = (props) => {
 
-  const {Option} = Select;
-
   const {
     savedQueryList,
     currentQueryName
   } = props;
 
   const {
-    searchOptions,
     setSidebarQuery,
   } = useContext(SearchContext);
-
-  const {sidebarQuery} = searchOptions;
 
 
   const savedQueryOptions = savedQueryList.map((key) => key.name);
 
-  const options = savedQueryOptions.map((query, index) =>
-    <Option value={query} key={index+1} aria-label={`query-option-${query}`} data-cy={`query-option-${query}`}>{query}</Option>
-  );
+  const options = savedQueryOptions.map(query => ({value: query, label: query}));
 
-  const onItemSelect = (queryName) => {
-    setSidebarQuery(queryName);
+  const onItemSelect = (selectedItem) => {
+    setSidebarQuery(selectedItem.value);
   };
 
-  return (
-    <div>
-      <Select
-        id="queriesDropdownList"
-        placeholder={PLACEHOLDER}
-        className={sidebarQuery === PLACEHOLDER ? styles.dropDownStyle_placeholder : styles.dropDownStyle}
-        onChange={onItemSelect}
-        value={currentQueryName}
-        aria-label="queries-dropdown-list"
-        dropdownClassName={styles.queriesDropdown}
-        dropdownStyle={{backgroundColor: "#e00b0b", color: "#e00b0b"}}>
-        {options}
-      </Select>
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
     </div>
+  );
 
+  return (
+    <Select
+      id="queriesDropdownList-select-wrapper"
+      inputId="queriesDropdownList"
+      components={{MenuList: props => MenuList("queriesDropdownList", props)}}
+      placeholder={PLACEHOLDER}
+      value={currentQueryName === PLACEHOLDER ? null : options.find(oItem => oItem.value === currentQueryName)}
+      onChange={onItemSelect}
+      aria-label="queries-dropdown-list"
+      options={options}
+      formatOptionLabel={({value, label}) => {
+        return (
+          <span aria-label={`query-option-${value}`} data-cy={`query-option-${value}`}>
+            {label}
+          </span>
+        );
+      }}
+      styles={{...reactSelectThemeConfig,
+        container: (provided, state) => ({
+          ...provided,
+          height: "32px",
+          width: "250px",
+        }),
+        control: (provided, state) => ({
+          ...provided,
+          border: "none",
+          borderRadius: "4px 0px 0px 4px",
+          borderColor: "none",
+          boxShadow: "none",
+          webkitBoxShadow: "none",
+          backgroundColor: "#f1f2f5",
+          minHeight: "34px",
+          "&:hover": {
+            borderColor: "none",
+          },
+          ":focus": {
+            border: "none",
+            boxShadow: "none",
+            webkitBoxShadow: "none"
+          }
+        }),
+      }}
+    />
   );
 };
 

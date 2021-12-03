@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
-import {Select} from "antd";
 import {Form, Row, Col, FormLabel} from "react-bootstrap";
+import Select from "react-select";
+import reactSelectThemeConfig from "../../../config/react-select-theme.config";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
 import StepsConfig from "../../../config/steps.config";
@@ -315,44 +316,44 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleSrcFormat = (value) => {
-    if (value === " ") {
+  const handleSrcFormat = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setSrcFormatTouched(false);
     } else {
       setSrcFormatTouched(true);
-      setSrcFormat(value);
+      setSrcFormat(selectedItem.value);
       if (props.stepData && props.stepData.srcFormat) {
-        if (value === props.stepData.srcFormat) {
+        if (selectedItem.value === props.stepData.srcFormat) {
           setSrcFormatTouched(false);
         }
       }
       if (!props.isEditing) {
-        if (value === "") {
+        if (selectedItem.value === "") {
           setSrcFormatTouched(false);
         }
       }
-      if (value === "csv") {
+      if (selectedItem.value === "csv") {
         setFieldSeparator(StepsConfig.defaultFieldSeparator);
       }
     }
   };
 
-  const handleFieldSeparator = (value) => {
-    if (value === " ") {
+  const handleFieldSeparator = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setFieldSeparatorTouched(false);
     } else {
       setFieldSeparatorTouched(true);
-      setFieldSeparator(value);
-      if (value === "Other") {
+      setFieldSeparator(selectedItem.value);
+      if (selectedItem.value === "Other") {
         setOtherSeparator("");
       }
       if (props.stepData && props.stepData.fieldSeparator) {
-        if (value === props.stepData.fieldSeparator) {
+        if (selectedItem.value === props.stepData.fieldSeparator) {
           setFieldSeparatorTouched(false);
         }
       }
       if (!props.isEditing) {
-        if (value === StepsConfig.defaultFieldSeparator) {
+        if (selectedItem.value === StepsConfig.defaultFieldSeparator) {
           setFieldSeparatorTouched(false);
         }
       }
@@ -378,32 +379,32 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     }
   };
 
-  const handleTgtFormat = (value) => {
-    if (value === " ") {
+  const handleTgtFormat = (selectedItem) => {
+    if (selectedItem.value === " ") {
       setTgtFormatTouched(false);
     } else {
       setTgtFormatTouched(true);
-      setTgtFormat(value);
+      setTgtFormat(selectedItem.value);
       if (props.stepData && props.stepData.tgtFormat) {
-        if (value === props.stepData.tgtFormat) {
+        if (selectedItem.value === props.stepData.tgtFormat) {
           setTgtFormatTouched(false);
         }
       }
       if (!props.isEditing) {
-        if (value === "") {
+        if (selectedItem.value === "") {
           setTgtFormatTouched(false);
         }
       }
-      if (value !== "json" && value !== "xml") {
+      if (selectedItem.value !== "json" && selectedItem.value !== "xml") {
         setSourceName("");
         setSourceType("");
       }
     }
   };
 
-  const soptions = Object.keys(srcOptions).map(d => <Select.Option key={srcOptions[d]}>{d}</Select.Option>);
-  const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
-  const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
+  const sourceFormatSelectOptions = Object.keys(srcOptions).map(d => ({value: srcOptions[d], label: d}));
+  const fieldSeparatorSelectOptions = Object.keys(fieldSeparatorOptions).map(d => ({value: fieldSeparatorOptions[d], label: d}));
+  const targetFormatSelectOptions = Object.keys(tgtOptions).map(d => ({value: tgtOptions[d], label: d}));
 
   return (
     <div className={styles.newDataLoadForm}>
@@ -471,18 +472,17 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           <FormLabel column lg={3}>{"Source Format:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
           <Col className={"d-flex"}>
             <Select
-              id="sourceFormat"
-              showSearch
+              id="sourceFormat-select-wrapper"
+              inputId="sourceFormat"
               placeholder="Enter source format"
-              optionFilterProp="children"
-              value={srcFormat}
+              value={sourceFormatSelectOptions.find(oItem => oItem.value === srcFormat)}
               onChange={handleSrcFormat}
-              disabled={props.canReadOnly && !props.canReadWrite}
-              style={{width: "95%"}}
+              isDisabled={props.canReadOnly && !props.canReadWrite}
+              aria-label="sourceFormat-select"
               onBlur={sendPayload}
-            >
-              {soptions}
-            </Select>
+              options={sourceFormatSelectOptions}
+              styles={reactSelectThemeConfig}
+            />
             <div className={"p-2 d-flex"}>
               <HCTooltip text={NewLoadTooltips.sourceFormat} id="source-format-tooltip" placement="left">
                 <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />
@@ -495,18 +495,17 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <FormLabel column lg={3}>{"Field Separator:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
             <Col className={"d-flex"}>
               <Select
-                id="fieldSeparator"
-                showSearch
+                id="fieldSeparator-select-wrapper"
+                inputId="fieldSeparator"
                 placeholder="Choose Field Separator"
-                optionFilterProp="children"
-                value={fieldSeparator}
+                value={fieldSeparatorSelectOptions.find(oItem => oItem.value === fieldSeparator)}
                 onChange={handleFieldSeparator}
-                style={{width: 120}}
-                disabled={props.canReadOnly && !props.canReadWrite}
+                isDisabled={props.canReadOnly && !props.canReadWrite}
+                aria-label="fieldSeparator-select"
                 onBlur={sendPayload}
-              >
-                {fsoptions}
-              </Select>
+                options={fieldSeparatorSelectOptions}
+                styles={reactSelectThemeConfig}
+              />
               {fieldSeparator === "Other" ?
                 <>
                   <div className={"d-flex ms-2"}>
@@ -539,15 +538,17 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           <FormLabel column lg={3}>{"Target Format:"}&nbsp;<span className={styles.asterisk}>*</span></FormLabel>
           <Col className={"d-flex"}>
             <Select
-              id="targetFormat"
+              id="targetFormat-select-wrapper"
+              inputId="targetFormat"
               placeholder="Enter target format"
-              value={tgtFormat}
+              value={targetFormatSelectOptions.find(oItem => oItem.value === tgtFormat)}
               onChange={handleTgtFormat}
-              disabled={props.canReadOnly && !props.canReadWrite}
-              style={{width: "95%"}}
-              onBlur={sendPayload}>
-              {toptions}
-            </Select>
+              isDisabled={props.canReadOnly && !props.canReadWrite}
+              aria-label="targetFormat-select"
+              onBlur={sendPayload}
+              options={targetFormatSelectOptions}
+              styles={reactSelectThemeConfig}
+            />
             <div className={"p-2 d-flex"}>
               <HCTooltip text={NewLoadTooltips.targetFormat} id="target-format-tooltip" placement="left">
                 <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} />

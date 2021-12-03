@@ -8,7 +8,7 @@ describe("<SaveQueryDropdown/>", () => {
 
 
   test("Save query dropdown renders without crashing", async () => {
-    const {getByTitle} = render(<SaveQueryDropdown
+    const {getByText} = render(<SaveQueryDropdown
       savedQueryList={[]}
       toggleApply={jest.fn()}
       getSaveQueryWithId ={jest.fn()}
@@ -24,7 +24,7 @@ describe("<SaveQueryDropdown/>", () => {
       isSaveQueryChanged={jest.fn()}
     />);
 
-    expect(getByTitle("select a query")).toBeInTheDocument();
+    expect(getByText("select a query")).toBeInTheDocument();
   });
 
 });

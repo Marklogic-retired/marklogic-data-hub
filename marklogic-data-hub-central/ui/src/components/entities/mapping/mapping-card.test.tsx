@@ -258,7 +258,7 @@ describe("Mapping Card component", () => {
     expect(getByTestId("Mapping2-toExistingFlow")).toBeInTheDocument(); // 'Add to an existing Flow'
 
     // Open menu, choose flow
-    fireEvent.click(getByTestId("Mapping2-flowsList"));
+    fireEvent.keyDown(getByLabelText("Mapping2-flowsList"), {key: "ArrowDown"});
     fireEvent.click(getByLabelText("testFlow-option"));
 
     // Dialog appears, click 'Yes' button
@@ -305,7 +305,7 @@ describe("Mapping Card component", () => {
 
     // Hover for options, open menu, choose flow
     fireEvent.mouseOver(getByText("Mapping1"));
-    fireEvent.click(getByTestId("Mapping1-flowsList"));
+    fireEvent.keyDown(getByLabelText("Mapping1-flowsList"), {key: "ArrowDown"});
     fireEvent.click(getByText("testFlow"));
 
     // Dialog appears, click 'Yes'
@@ -447,7 +447,7 @@ describe("Mapping Card component", () => {
     authorityService.setAuthorities(["readMapping", "writeFlow"]);
     const mappingStepName = mapping[0].name;
     const mockAddStepToFlow = jest.fn();
-    const {getByText, getAllByText, getByTestId} = render(
+    const {getByText, getAllByText, getByTestId, getByLabelText} = render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
         {...mappingProps}
         canReadOnly={authorityService.canReadMapping()}
@@ -462,7 +462,7 @@ describe("Mapping Card component", () => {
 
     // test adding to existing flow
     expect(getByTestId(`${mappingStepName}-toExistingFlow`)).toBeInTheDocument();
-    fireEvent.click(getByTestId(`${mappingStepName}-flowsList`));
+    fireEvent.keyDown(getByLabelText(`${mappingStepName}-flowsList`), {key: "ArrowDown"});
     fireEvent.click(getByText(data.flows.data[0].name));
     fireEvent.click(getByText("Yes"));
     expect(mockAddStepToFlow).toBeCalledTimes(1);
@@ -480,7 +480,7 @@ describe("Mapping Card component", () => {
     authorityService.setAuthorities(["readMapping", "readFlow"]);
     const mappingStepName = mapping[0].name;
     const mockAddStepToFlow = jest.fn();
-    const {getByText, queryByText, queryByTestId, getByRole} = render(
+    const {getByText, queryByText, queryByTestId, getByRole, getByLabelText} = render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
         {...mappingProps}
         canReadOnly={authorityService.canReadMapping()}
@@ -494,7 +494,7 @@ describe("Mapping Card component", () => {
 
     // test adding to existing flow
     expect(queryByTestId(`${mappingStepName}-toExistingFlow`)).toBeInTheDocument();
-    fireEvent.click(queryByTestId(`${mappingStepName}-flowsList`));
+    fireEvent.keyDown(getByLabelText(`${mappingStepName}-flowsList`), {key: "ArrowDown"});
     expect(queryByText(data.flows.data[0].name)).not.toBeInTheDocument();
 
     // test adding to new flow

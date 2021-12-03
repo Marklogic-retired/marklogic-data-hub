@@ -1,5 +1,6 @@
 import React from "react";
-import {render, fireEvent, screen, wait, waitForElement} from "@testing-library/react";
+import {render, fireEvent, screen, wait} from "@testing-library/react";
+import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import PropertyModal from "./property-modal";
@@ -218,9 +219,9 @@ describe("Property Modal Component", () => {
     userEvent.click(getAllByText("Customer")[1]);
 
     // Choose join property after menu is populated
-    userEvent.click(getByLabelText("foreignKey-select"));
+    fireEvent.keyDown(getByLabelText("foreignKey-select"), {key: "ArrowDown"});
     expect(mockPrimaryEntityTypes).toBeCalledTimes(3);
-    await wait(() => userEvent.click(getByText("customerId")));
+    userEvent.click(getByText("customerId"));
 
     const multipleRadio = screen.getByLabelText("multiple-no");
     fireEvent.change(multipleRadio, {target: {value: "no"}});
@@ -402,8 +403,8 @@ describe("Property Modal Component", () => {
 
     // Choose join property after menu is populated
     expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
-    userEvent.click(getByLabelText("foreignKey-select"));
-    await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
+    fireEvent.keyDown(getByLabelText("foreignKey-select"), {key: "ArrowDown"});
+    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByLabelText("None-option")).toBeInTheDocument();
     expect(getByLabelText("customerId-option")).toBeInTheDocument();
     expect(getByLabelText("name-option")).toBeInTheDocument();
@@ -644,20 +645,21 @@ describe("Property Modal Component", () => {
     expect(getByText("Relationship: Customer")).toBeInTheDocument();
 
     // Change Join Property
-    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
-    expect(getByText("customerId")).toBeInTheDocument();
-    userEvent.click(getByLabelText("foreignKey-select"));
-    await wait(() => userEvent.click(getByText("name")));
+    wait(() => {
+      expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
+      expect(getByText("customerId")).toBeInTheDocument();
+      userEvent.click(getByLabelText("foreignKey-select"));
+      userEvent.click(getByText("name"));
+      const multipleRadio = screen.getByLabelText("multiple-yes");
+      expect(multipleRadio["value"]).toBe("yes");
 
-    const multipleRadio = screen.getByLabelText("multiple-yes");
-    expect(multipleRadio["value"]).toBe("yes");
+      fireEvent.change(multipleRadio, {target: {value: "no"}});
+      expect(multipleRadio["value"]).toBe("no");
 
-    fireEvent.change(multipleRadio, {target: {value: "no"}});
-    expect(multipleRadio["value"]).toBe("no");
-
-    userEvent.click(getByLabelText("property-modal-submit"));
-    expect(editMock).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+      userEvent.click(getByLabelText("property-modal-submit"));
+      expect(editMock).toHaveBeenCalledTimes(1);
+      expect(mockGetSystemInfo).toBeCalledTimes(1);
+    });
   });
 
   test("can edit a structured type property and change property name", async () => {

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Icon, Select, Input, Menu, Dropdown, Button, Checkbox} from "antd";
+import {Icon, Input, Menu, Dropdown, Button, Checkbox} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -15,12 +15,13 @@ import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 import {Accordion, FormCheck} from "react-bootstrap";
+import Select from "react-select";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {HCDateTimePicker, HCTooltip} from "@components/common";
 import QueriesDropdown from "../queries/saving/queries-dropdown/queries-dropdown";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 
-const {Option} = Select;
 const tooltips = tooltipsConfig.browseDocuments;
 const {exploreSidebar} = tooltipsConfig;
 
@@ -413,8 +414,8 @@ const Sidebar: React.FC<Props> = (props) => {
   };
 
   const handleOptionSelect = (option: any) => {
-    setDateRangeValue(option);
-    if (option === "Custom") {
+    setDateRangeValue(option.value);
+    if (option.value === "Custom") {
       setDatePickerValue([null, null]);
     }
     let updateFacets = {...allSelectedFacets};
@@ -422,7 +423,7 @@ const Sidebar: React.FC<Props> = (props) => {
       ...updateFacets, createdOnRange:
       {
         dataType: "date",
-        stringValues: [option, (-1 * new Date().getTimezoneOffset())],
+        stringValues: [option.value, (-1 * new Date().getTimezoneOffset())],
         rangeValues: {lowerBound: "", upperBound: ""}
       }
     };
@@ -592,17 +593,18 @@ const Sidebar: React.FC<Props> = (props) => {
     props.setHubArtifactsVisibilityPreferences(!target.checked);
   };
 
+  const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
 
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
-      <div className={styles.query}>
+      <div className={`d-flex ms-2 me-3 mb-3 ${styles.query}`}>
         <QueriesDropdown
           savedQueryList={[{name: "active clients"}, {name: "disabled customers"}]}
           currentQueryName={currentQueryName}
         />
         {currentQueryName !== PLACEHOLDER &&
-          <div className={styles.queryIcons}>
-            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query" />
+          <div className={`d-flex ms-5`}>
+            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query"/>
             <Dropdown overlay={menu} trigger={["click"]}>
               <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
             </Dropdown>
@@ -627,7 +629,6 @@ const Sidebar: React.FC<Props> = (props) => {
             id="switch-datasource-entities"
             name="switch-datasource"
             value={"entities"}
-            defaultChecked={searchOptions.datasource === "entities"}
             checked={searchOptions.datasource === "entities"}
             onChange={e => setDatasourcePreferences(e.target.value)}
           />
@@ -643,7 +644,6 @@ const Sidebar: React.FC<Props> = (props) => {
             id="switch-datasource-all-data"
             name="switch-datasource"
             value={"all-data"}
-            defaultChecked={searchOptions.datasource === "all-data"}
             checked={searchOptions.datasource === "all-data"}
             onChange={e => setDatasourcePreferences(e.target.value)}
           />
@@ -666,7 +666,6 @@ const Sidebar: React.FC<Props> = (props) => {
                   id="switch-database-final"
                   name="switch-database"
                   value={"final"}
-                  defaultChecked={searchOptions.database === "final"}
                   checked={searchOptions.database === "final"}
                   onChange={e => props.setDatabasePreferences(e.target.value)}
                 />
@@ -681,7 +680,6 @@ const Sidebar: React.FC<Props> = (props) => {
                   id="switch-database-staging"
                   name="switch-database"
                   value={"staging"}
-                  defaultChecked={searchOptions.database === "staging"}
                   checked={searchOptions.database === "staging"}
                   onChange={e => props.setDatabasePreferences(e.target.value)}
                 />
@@ -867,20 +865,18 @@ const Sidebar: React.FC<Props> = (props) => {
                 <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></i>
               </HCTooltip>
             </div>
-            <div>
+            <div className={"my-3"}>
               <Select
-                style={{width: 150, paddingTop: "5px", paddingBottom: "5px"}}
+                id="date-select-wrapper"
+                inputId="date-select"
                 placeholder="Select time"
-                id="date-select"
-                value={dateRangeValue}
-                onChange={value => handleOptionSelect(value)}
-                getPopupContainer={() => document.getElementById("date-select") || document.body}
-              >{dateRangeOptions.map((timeBucket, index) => {
-                  return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
-                    {timeBucket}
-                  </Option>;
-                })
-                }</Select>
+                value={selectTimeOptions.find(oItem => oItem.value === dateRangeValue)}
+                onChange={handleOptionSelect}
+                isSearchable={false}
+                aria-label="date-select"
+                options={selectTimeOptions}
+                styles={reactSelectThemeConfig}
+              />
             </div>
             <div className={styles.dateTimeWindow} >
               {timeWindow(dateRangeValue)}

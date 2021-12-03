@@ -135,7 +135,7 @@ describe("Load data component", () => {
   });
 
   test("Verify Load settings from list view renders correctly", async () => {
-    const {getByText, getAllByText, getByTestId, getByTitle, queryByTitle, getByPlaceholderText} = render(
+    const {getByText, getAllByText, getByTestId, queryByTitle, getByPlaceholderText} = render(
       <MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>
     );
 
@@ -162,7 +162,7 @@ describe("Load data component", () => {
     let saveButton = getAllByText("Save"); // Each tab has a Save button
     expect(saveButton.length > 0);
     let stepName = loadData.loads.data[0].name;
-    let targetCollection = getByTitle("addedCollection"); // Additional target collection (Added by user)
+    let targetCollection = getByText("addedCollection"); // Additional target collection (Added by user)
 
     // Advanced settings values
     expect(getByText("Target Collections:")).toBeInTheDocument();
@@ -231,7 +231,7 @@ describe("Load data component", () => {
     await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId("testLoadXML-flowsList"));
+    fireEvent.keyDown(getByLabelText("testLoadXML-flowsList"), {key: "ArrowDown"});
 
     //Choose FlowStepNoExist from the dropdown
     fireEvent.click(getByText("FlowStepNoExist"));
@@ -271,7 +271,7 @@ describe("Load data component", () => {
     await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId("testLoadXML-flowsList"));
+    fireEvent.keyDown(getByLabelText("testLoadXML-flowsList"), {key: "ArrowDown"});
 
     //Choose FlowStepExist from the dropdown
     fireEvent.click(getByText("FlowStepExist"));
@@ -451,12 +451,12 @@ describe("Load data component", () => {
     //verify components and text appear on click
     await waitForElement(() => expect(getByTestId(`${loadStepName}-toNewFlow`)));
     await waitForElement(() => expect(getByTestId(`${loadStepName}-toExistingFlow`)));
-    await waitForElement(() => expect(getByTestId(`${loadStepName}-flowsList`)));
+    await waitForElement(() => expect(getByLabelText(`${loadStepName}-flowsList`)));
     await waitForElement(() => expect(getByText("Add step to a new flow")));
     await waitForElement(() => expect(getByText("Add step to an existing flow")));
 
     // test adding to existing flow
-    fireEvent.click(getByTestId(`${loadStepName}-flowsList`));
+    fireEvent.keyDown(getByLabelText(`${loadStepName}-flowsList`), {key: "ArrowDown"});
     fireEvent.click(getByText(data.flows[0].name));
     fireEvent.click(getByText("Yes"));
     expect(mockAddStepToFlow).toBeCalledTimes(1);

@@ -8,12 +8,16 @@ class RelationshipModal {
     return cy.get("#relationship").should("have.value", relationshipName);
   }
 
+  getForeignKeySelectWrapper() {
+    return cy.get("#foreignKey-dropdown-wrapper");
+  }
+
   verifyForeignKeyValue(foreignKeyValue: string) {
-    return cy.get(".ant-select-selection-selected-value").should("have.text", foreignKeyValue);
+    return this.getForeignKeySelectWrapper().should("have.text", foreignKeyValue);
   }
 
   verifyForeignKeyPlaceholder() {
-    return cy.get(".ant-select-selection__placeholder").should("be.visible");
+    return this.getForeignKeySelectWrapper().should("have.text", "Select foreign key");
   }
 
   editRelationshipName(relationshipName: string) {
@@ -50,12 +54,20 @@ class RelationshipModal {
   }
 
   editForeignKey(foreignKeyName: string) {
-    cy.findByTestId("foreignKey-dropdown").click();
-    cy.findByLabelText(`${foreignKeyName}-option`).click();
+    this.getForeignKeySelectWrapper().click();
+    cy.get(`#foreignKey-dropdown-MenuList [aria-label="${foreignKeyName}-option"]`).click();
   }
 
   toggleOptional() {
-    return cy.findByText("Optional").click();
+    return cy.get("#toggleOptional").click({force: true});
+  }
+
+  verifyHideOptionalBlock() {
+    cy.findByTestId("optionalContent").should("not.exist");
+  }
+
+  verifyVisibleOptionalBlock() {
+    cy.findByTestId("optionalContent").should("be.visible");
   }
 
   cancelModal() {

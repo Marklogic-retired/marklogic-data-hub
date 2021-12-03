@@ -40,7 +40,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
     browsePage.scrollSideBar();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").scrollIntoView().click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should("be.gte", 5);
@@ -62,7 +62,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("apply facet search and verify docs, hub/entity properties", () => {
     browsePage.selectEntity("All Entities");
     browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.getShowMoreLink("collection").click();
+    browsePage.getShowMoreLink("collection").click({force: true});
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.scrollSideBar();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").click();
@@ -79,7 +79,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("apply facet search and clear individual grey facet", () => {
     browsePage.selectEntity("All Entities");
     browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.getShowMoreLink("collection").click();
+    browsePage.getShowMoreLink("collection").click({force: true});
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
     browsePage.scrollSideBar();
@@ -90,7 +90,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("apply facet search and clear all grey facets", () => {
     browsePage.selectEntity("All Entities");
     browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.getShowMoreLink("collection").click();
+    browsePage.getShowMoreLink("collection").click({force: true});
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.showMoreCollection();
     browsePage.getFacetItemCheckbox("collection", "Customer").click();

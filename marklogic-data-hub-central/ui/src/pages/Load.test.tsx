@@ -57,8 +57,8 @@ describe("Load component", () => {
     expect(getByPlaceholderText("Enter name")).toHaveValue("testLoad");
     expect(getByPlaceholderText("Enter name")).toBeDisabled();
     expect(getByPlaceholderText("Enter description")).toBeDisabled();
-    expect(baseElement.querySelector("#sourceFormat")).toHaveClass("ant-select-disabled");
-    expect(baseElement.querySelector("#targetFormat")).toHaveClass("ant-select-disabled");
+    expect(baseElement.querySelector("#sourceFormat")).toHaveProperty("disabled");
+    expect(baseElement.querySelector("#targetFormat")).toHaveProperty("disabled");
     expect(baseElement.querySelector("#outputUriPrefix")).toHaveProperty("disabled");
 
     // Advanced settings

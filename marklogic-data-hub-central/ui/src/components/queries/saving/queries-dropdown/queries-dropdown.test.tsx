@@ -25,8 +25,7 @@ describe("Query Dropdown", () => {
         currentQueryName={""}
       />
     );
-    const dropdown = getByLabelText("queries-dropdown-list");
-    fireEvent.click(dropdown);
+    fireEvent.keyDown(getByLabelText("queries-dropdown-list"), {key: "ArrowDown"});
     expect(getByLabelText("query-option-newcustomers")).toBeInTheDocument();
   });
 

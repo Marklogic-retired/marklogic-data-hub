@@ -34,7 +34,6 @@ describe("Entity settings component tests", () => {
 
     //verify Target Collections, not able to send input to additional collections
     expect(getByText("Target Collections:")).toBeInTheDocument();
-    expect(getByText("Please add target collections")).toBeInTheDocument();
     expect(getByText("addedCollection")).toBeInTheDocument();
 
     //verify Default Collections

@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Select} from "antd";
 import {Row, Col, Modal} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../config/react-select-theme.config";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
@@ -9,8 +10,6 @@ import {Link, useHistory} from "react-router-dom";
 import {CustomStepTooltips, SecurityTooltips} from "../../../config/tooltips.config";
 import {HCTooltip, HCCard, HCButton} from "@components/common";
 import Steps from "../../steps/steps";
-
-const {Option} = Select;
 
 interface Props {
   data: any;
@@ -146,6 +145,14 @@ const CustomCard: React.FC<Props> = (props) => {
     setAddDialogVisible(true);
   };
 
+  const flowOptions = props.flows?.length > 0 ? props.flows.map((f, i) => ({value: f.name, label: f.name})) : {};
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
   return (
     <div className={styles.customContainer}>
       <Row>
@@ -200,26 +207,28 @@ const CustomCard: React.FC<Props> = (props) => {
                       {
                         /** dropdown of flow names to add this custom step to */
                         selectVisible ?
-                          <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="select-flow-tooltip" placement="bottom" show={tooltipVisible && !props.canWriteFlow}>
+                          <HCTooltip text={"Curate: "+SecurityTooltips.missingPermission} id="select-flow-tooltip" placement="top" show={tooltipVisible && !props.canWriteFlow}>
                             <div className={styles.cardLinkSelect} data-testid={`add-${elem.name}-select`}>
                               <Select
-                                style={{width: "100%"}}
-                                value={selected[elem.name] ? selected[elem.name] : undefined}
-                                onChange={(flowName) => handleSelect({flowName: flowName, stepName: elem.name})}
+                                id={`${elem.name}-flowsList-select-wrapper`}
+                                inputId={`${elem.name}-flowsList`}
+                                components={{MenuList: props => MenuList(`${elem.name}-flowsList`, props)}}
                                 placeholder="Select Flow"
-                                defaultActiveFirstOption={false}
-                                disabled={!props.canWriteFlow}
-                                data-testid={`${elem.name}-flowsList`}
-                                getPopupContainer={() => document.getElementById("entityTilesContainer") || document.body}
-                              >
-                                {
-                                  props.flows && props.flows.length > 0 ?
-                                    props.flows.map((f, i) => (
-                                      <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
-                                    ))
-                                    : null
-                                }
-                              </Select>
+                                value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[elem.name]) : undefined}
+                                onChange={(option) => handleSelect({flowName: option.value, stepName: elem.name})}
+                                isSearchable={false}
+                                isDisabled={!props.canWriteFlow}
+                                aria-label={`${elem.name}-flowsList`}
+                                options={flowOptions}
+                                styles={reactSelectThemeConfig}
+                                formatOptionLabel={({value, label}) => {
+                                  return (
+                                    <span aria-label={`${value}-option`}>
+                                      {label}
+                                    </span>
+                                  );
+                                }}
+                              />
                             </div>
                           </HCTooltip>
                           :

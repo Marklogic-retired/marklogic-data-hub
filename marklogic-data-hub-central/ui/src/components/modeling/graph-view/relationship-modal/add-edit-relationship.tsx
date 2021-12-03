@@ -1,7 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Select, Icon, Card, Dropdown, Tooltip} from "antd";
+import {Icon, Card, Dropdown, Tooltip} from "antd";
 import {Modal} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
@@ -36,7 +38,6 @@ type Props = {
   hubCentralConfig: any;
 }
 
-const {Option} = Select;
 const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
 
 const AddEditRelationship: React.FC<Props> = (props) => {
@@ -430,8 +431,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     }
   };
 
-  const handleOptionSelect = (value) => {
-    setJoinPropertyValue(value);
+  const handleOptionSelect = (selectedItem) => {
+    setJoinPropertyValue(selectedItem.value);
   };
 
   function handleMenuClick(event) {
@@ -496,24 +497,35 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     />
   );
 
+  const MenuList  = (props) => (
+    <div id="foreignKey-dropdown-MenuList">
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
+  const foreignKeyOptions = targetNodeJoinProperties.length > 0 ? targetNodeJoinProperties.map((prop, index) => ({value: prop.value, label: prop.label, isDisabled: prop.disabled})) : [];
+
   const foreignKeyDropdown = (
     <Select
+      id="foreignKey-dropdown-wrapper"
+      inputId="foreignKey-dropdown"
+      components={{MenuList}}
       placeholder="Select foreign key"
-      id="foreignKey-dropdown"
-      data-testid="foreignKey-dropdown"
-      disabled={emptyTargetEntity}
-      value={joinPropertyValue ? joinPropertyValue : undefined}
-      onChange={value => handleOptionSelect(value)}
-      className={styles.foreignKeyDropdown}
-      showArrow={true}
-      size={"default"}
-    >
-      {
-        targetNodeJoinProperties.length > 0 && targetNodeJoinProperties.map((prop, index) => (
-          <Option key={`${prop.label}-option`} value={prop.value} disabled={prop.disabled} aria-label={`${prop.label}-option`}>{prop.label === "None" ? "- " + prop.label + " -" : prop.label}</Option>
-        ))
-      }
-    </Select>
+      value={foreignKeyOptions.find(oItem => oItem.value === joinPropertyValue)}
+      onChange={handleOptionSelect}
+      isSearchable={false}
+      isDisabled={emptyTargetEntity}
+      aria-label="foreignKey-dropdown"
+      options={foreignKeyOptions}
+      styles={reactSelectThemeConfig}
+      formatOptionLabel={({value, label}) => {
+        return (
+          <span aria-label={`${label}-option`}>
+            {label === "None" ? "- " + label + " -" : label}
+          </span>
+        );
+      }}
+    />
   );
 
   const deleteEntityProperty= async () => {
@@ -669,12 +681,12 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             :
             <FontAwesomeIcon className={styles.optionalIcon} icon={faChevronDown} size={"sm"} onClick = {(e) => toggleOptionalIcon()}/>
           }
-          <span className={styles.optionalText} onClick = {(e) => toggleOptionalIcon()}>Optional</span>
+          <span id={"toggleOptional"} className={styles.optionalText} onClick = {(e) => toggleOptionalIcon()}>Optional</span>
         </div>
         { !optionalCollapsed && (
-          <div className={styles.foreignKeyContainer}>
+          <div data-testid={"optionalContent"} className={styles.foreignKeyContainer}>
             <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
-            <div className={styles.foreignKeyDropdownContainer}>
+            <div className={`mx-3 ${styles.foreignKeyDropdownContainer}`}>
               {foreignKeyDropdown}
               <Tooltip title={ModelingTooltips.foreignKeyInfo} placement={"bottom"}>
                 <Icon type="question-circle" data-testid={"foreign-key-tooltip"}className={styles.foreignKeyQuestionCircle} theme="filled"/>

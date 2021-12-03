@@ -229,7 +229,7 @@ describe("Steps settings component", () => {
     expect(getByText("Target Database:")).toBeInTheDocument();
     expect(getByText(StepsConfig.stagingDb)).toBeInTheDocument();
     expect(getByText("Target Collections:")).toBeInTheDocument();
-    const targetColl = document.querySelector(("[data-testid=\"target-collections\"] .ant-select-search__field"))!;
+    const targetColl = document.querySelector(("#additionalColl"))!;
     expect(targetColl).toBeEmpty();
     expect(getByText("Target Permissions:")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);

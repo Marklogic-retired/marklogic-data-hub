@@ -10,28 +10,28 @@ describe("zero state explorer component", () => {
   let columns = ["OrderID", "OrderDate", "StringField1", "StringField2", "StringField3", "NumberField1"];
 
   test("Verify Zero State components renders", () => {
-    const {getByTestId, getByText, getByPlaceholderText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
+    const {getByText, getByPlaceholderText, getByLabelText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
     expect(getByText(tiles.explore.intro)).toBeInTheDocument(); // tile intro text
     expect(getByText("All Entities")).toBeInTheDocument();
     expect(getByText("What do you want to explore?")).toBeInTheDocument();
     expect(getByText("- or -")).toBeInTheDocument();
     const searchInput = getByPlaceholderText("Enter text to search for");
     expect(searchInput).toHaveAttribute("value", "");
-    expect(getByTestId("entity-select")).toBeInTheDocument();
-    expect(getByTestId("query-select")).toBeInTheDocument();
+    expect(getByLabelText("entity-select")).toBeInTheDocument();
+    expect(getByLabelText("query-select")).toBeInTheDocument();
     expect(document.querySelector("[aria-label=\"switch-database-final\"]")).toBeInTheDocument();
     expect(document.querySelector("[aria-label=\"switch-database-staging\"]")).toBeInTheDocument();
   });
 
   test("Verify Zero State components renders when user does not have save query role", () => {
-    const {getByTestId, getByText, queryByTestId, queryByText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={false} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
+    const {getByTestId, getByText, queryByText, getByLabelText, queryByLabelText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={false} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
     expect(getByText(tiles.explore.intro)).toBeInTheDocument(); // tile intro text
     expect(getByText("All Entities")).toBeInTheDocument();
     expect(getByText("What do you want to explore?")).toBeInTheDocument();
     expect(getByTestId("search-bar")).toBeInTheDocument();
-    expect(getByTestId("entity-select")).toBeInTheDocument();
+    expect(getByLabelText("entity-select")).toBeInTheDocument();
     expect(queryByText("- or -")).not.toBeInTheDocument();
-    expect(queryByTestId("query-select")).not.toBeInTheDocument();
+    expect(queryByLabelText("query-select")).toBeNull();
   });
 
   test("Verify setQuery gets called", () => {

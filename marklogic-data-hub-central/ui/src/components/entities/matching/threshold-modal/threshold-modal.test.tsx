@@ -1,5 +1,6 @@
 import React from "react";
 import {render, screen} from "@testing-library/react";
+import {fireEvent} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import ThresholdModal from "./threshold-modal";
@@ -46,7 +47,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     expect(queryByText("Add Match Threshold")).toBeInTheDocument();
     userEvent.type(getByLabelText("name-input"), "nameThreshold");
-    userEvent.click(screen.getByText("Select action"));
+    fireEvent.keyDown(screen.getByLabelText("threshold-select"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Merge"));
 
     // To verify delete icon is not present while adding new threshold
@@ -85,7 +86,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     expect(queryByText("Add Match Threshold")).toBeInTheDocument();
     userEvent.type(getByLabelText("name-input"), "nameThreshold");
-    userEvent.click(screen.getByText("Select action"));
+    fireEvent.keyDown(screen.getByLabelText("threshold-select"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Merge"));
 
     userEvent.click(getByText("Cancel"));
@@ -123,7 +124,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     expect(queryByText("Add Match Threshold")).toBeInTheDocument();
     userEvent.type(getByLabelText("name-input"), "customThreshold");
-    userEvent.click(screen.getByText("Select action"));
+    fireEvent.keyDown(screen.getByLabelText("threshold-select"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Custom"));
     userEvent.type(getByLabelText("uri-input"), "/custom-modules/matching/nameMatch.xqy");
     userEvent.type(getByLabelText("function-input"), "nameMatch");
@@ -214,7 +215,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(queryByText("Edit Match Threshold")).toBeInTheDocument();
     userEvent.clear(getByLabelText("name-input"));
     userEvent.type(getByLabelText("name-input"), "testEdit");
-    userEvent.click(getByLabelText("threshold-select"));
+    fireEvent.keyDown(screen.getByLabelText("threshold-select"), {key: "ArrowDown"});
     userEvent.click(screen.getByText("Custom"));
     userEvent.type(getByLabelText("uri-input"), "/custom-modules/matching/nameMatch.xqy");
     userEvent.type(getByLabelText("function-input"), "nameMatch");

@@ -10,13 +10,13 @@ describe("Search Bar", () => {
   afterEach(cleanup);
 
   test("Verify the search bar and entity select options", () => {
-    const {getByPlaceholderText, getByText} = render(<SearchBar entities={entities} cardView={false}/>);
+    const {getByPlaceholderText, getByText, getByLabelText} = render(<SearchBar entities={entities} cardView={false}/>);
     const searchInput = getByPlaceholderText("Enter text to search for");
     expect(searchInput).toHaveAttribute("value", "");
     userEvent.type(searchInput, "test");
     expect(searchInput).toHaveAttribute("value", "test");
     expect(getByText("All Entities")).toBeInTheDocument();
-    fireEvent.click(getByText("All Entities"));
+    fireEvent.keyDown(getByLabelText("entity-select"), {key: "ArrowDown"});
     expect(getByText("Person")).toBeInTheDocument();
   });
 

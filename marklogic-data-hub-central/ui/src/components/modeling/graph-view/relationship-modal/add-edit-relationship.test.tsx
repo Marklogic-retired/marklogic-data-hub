@@ -52,13 +52,8 @@ describe("Add Edit Relationship component", () => {
     fireEvent.mouseOver(getByTestId("foreign-key-tooltip"));
     await wait(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
 
-    let joinPropertySelection = getByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-selection-selected-value");
-
-    expect(joinPropertySelection).toHaveTextContent("customerId");
-    fireEvent.click(getByTestId("foreignKey-dropdown"));
+    expect(getByText("customerId")).toBeInTheDocument();
+    fireEvent.keyDown(getByLabelText("foreignKey-dropdown"), {key: "ArrowDown"});
     expect(getByLabelText("None-option")).toBeInTheDocument();
     expect(getByLabelText("name-option")).toBeInTheDocument();
     expect(getByLabelText("email-option")).toBeInTheDocument();
@@ -67,11 +62,7 @@ describe("Add Edit Relationship component", () => {
     expect(getByLabelText("billing-option")).toBeInTheDocument();
 
     fireEvent.click(getByLabelText("email-option"));
-    joinPropertySelection = getByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-selection-selected-value");
-    wait(() => expect(joinPropertySelection).toHaveTextContent("email"));
+    expect(getByText("email")).toBeInTheDocument();
 
     //input fields should be populated with existing relationship info by default
     const relationshipInput = getByLabelText("relationship-textarea");

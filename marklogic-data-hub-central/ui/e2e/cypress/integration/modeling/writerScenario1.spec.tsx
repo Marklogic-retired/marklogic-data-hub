@@ -119,6 +119,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.newEntityDescription("Description has changed");
     entityTypeModal.getAddButton().click();
     entityTypeModal.getAddButton().should("not.exist");
+    entityTypeTable.getExpandEntityIcon("Buyer");
     propertyTable.editProperty("newId");
     propertyModal.getDeleteIcon("newId").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
