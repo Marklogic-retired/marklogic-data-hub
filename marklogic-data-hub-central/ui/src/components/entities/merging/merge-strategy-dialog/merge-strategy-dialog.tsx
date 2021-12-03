@@ -1,5 +1,5 @@
-import {Select, Switch} from "antd";
-import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
+import {Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import React, {useState, useEffect, useContext} from "react";
 import styles from "./merge-strategy-dialog.module.scss";
 import {CurationContext} from "../../../../util/curation-context";
@@ -610,10 +610,10 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
             </div>
             <div>
-              <div><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
+              <div className="d-flex align-items-center"><span className={styles.enableStrategySwitch}><b>Enable Merge Strategy Scale </b></span><FormCheck type="switch" aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={({target}) => toggleDisplayPriorityOrderTimeline(target.checked)} className={styles.switchToggleMergeStrategy}></FormCheck>
                 <span>
                   <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
-                    <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>
+                    <QuestionCircleFill color="#7F86B5" className={`${styles.questionCircle} ms-0`} size={13} aria-label="icon: question-circle"/>
                   </HCTooltip>
                 </span></div>
               {displayPriorityOrderTimeline ? renderPriorityOrderTimeline() : renderDefaultPriorityOrderTimeline()}

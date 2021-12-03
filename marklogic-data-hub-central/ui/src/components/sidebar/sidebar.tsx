@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Icon, Select, Input, Menu, Dropdown, Button, Tooltip, Checkbox, Switch} from "antd";
+import {Icon, Select, Input, Menu, Dropdown, Button, Tooltip, Checkbox} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -14,7 +14,7 @@ import DateFacet from "../date-facet/date-facet";
 import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
-import {Accordion} from "react-bootstrap";
+import {Accordion, FormCheck} from "react-bootstrap";
 import {HCDateTimePicker, HCTooltip} from "@components/common";
 import QueriesDropdown from "../queries/saving/queries-dropdown/queries-dropdown";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
@@ -148,7 +148,7 @@ const Sidebar: React.FC<Props> = (props) => {
           for (let i in newEntityFacets) {
             newEntityFacets[i].referenceType = "path";
             newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
-            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".")+1);
+            newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".") + 1);
           }
         }
         entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
@@ -552,25 +552,25 @@ const Sidebar: React.FC<Props> = (props) => {
     <Menu>
       <Menu.Item key="0">
         <span>
-          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
           Edit query details
         </span>
       </Menu.Item>
       <Menu.Item key="1">
         <span>
-          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon} />
           Revert query to saved state
         </span>
       </Menu.Item>
       <Menu.Item key="2">
         <span>
-          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
           Save query as
         </span>
       </Menu.Item>
       <Menu.Item key="3">
         <span style={{color: "#B32424"}}>
-          <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon}/>
+          <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon} />
           Delete query
         </span>
       </Menu.Item>
@@ -582,10 +582,13 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.panelTitle}>
         {title}
         <Tooltip title={tooltipTitle} placement="right">
-          <Icon type="info-circle" theme="filled" className={styles.entitiesInfoIcon}/>
+          <Icon type="info-circle" theme="filled" className={styles.entitiesInfoIcon} />
         </Tooltip>
       </div>
     );
+  };
+  const handleToggleDataHubArtifacts = ({target}) => {
+    props.setHubArtifactsVisibilityPreferences(!target.checked);
   };
 
   return (
@@ -597,9 +600,9 @@ const Sidebar: React.FC<Props> = (props) => {
         />
         {currentQueryName !== PLACEHOLDER &&
           <div className={styles.queryIcons}>
-            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query"/>
+            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query" />
             <Dropdown overlay={menu} trigger={["click"]}>
-              <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg"/>
+              <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
             </Dropdown>
           </div>
         }
@@ -607,13 +610,13 @@ const Sidebar: React.FC<Props> = (props) => {
       {currentQueryName !== PLACEHOLDER &&
         <div className={styles.clearQuery}>
           <Button size="small" type={"link"} onClick={clearSelectedQuery} >
-            <FontAwesomeIcon  icon={faWindowClose} size="sm"/>
+            <FontAwesomeIcon icon={faWindowClose} size="sm" />
             Clear query
           </Button>
         </div>
       }
       <div className={styles.searchInput}>
-        <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined"/>} placeholder="Search" size="small"/>
+        <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined" />} placeholder="Search" size="small" />
       </div>
       <div className={"m-3 switch-button-group"}>
         <span>
@@ -695,7 +698,7 @@ const Sidebar: React.FC<Props> = (props) => {
             <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
           </div>
           <Accordion.Body>
-            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities}/>
+            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities} />
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
@@ -707,18 +710,28 @@ const Sidebar: React.FC<Props> = (props) => {
                 panelTitle(<Checkbox indeterminate={indeterminate} onChange={onCheckAllChanges} checked={checkAll}> related entities types </Checkbox>, exploreSidebar.relatedEntities)}</Accordion.Button>
             </div>
             <Accordion.Body>
-              <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList}/>
+              <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} />
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
       }
 
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
-        <Switch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/>
-          Include Data Hub artifacts
-        <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
-          <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
-        </HCTooltip>
+        <FormCheck
+          type="switch"
+          data-testid="toggleHubArtifacts"
+          defaultChecked={!props.hideDataHubArtifacts}
+          onChange={handleToggleDataHubArtifacts}
+          className={styles.switchToggleDataHubArtifacts}
+          label={
+            <div>
+              <span>Include Data Hub artifacts</span>
+              <HCTooltip text={tooltips.includingDataHubArtifacts} id="include-data-artifacts-tooltip" placement="bottom">
+                <i><FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" /></i>
+              </HCTooltip>
+            </div>
+          }
+        />
       </div> : ""}
       {props.selectedEntities.length === 1 && (
         <Accordion id="entity-properties" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("entityProperties") ? "entityProperties" : ""} defaultActiveKey={activeKey.includes("entityProperties") ? "entityProperties" : ""}>

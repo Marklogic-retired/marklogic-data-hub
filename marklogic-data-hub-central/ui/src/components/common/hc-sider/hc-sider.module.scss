@@ -29,6 +29,7 @@ div.siderContainer {
     }
     div.containerWithFooter {
         max-height: calc(100% - 60px);
+        overflow-x: hidden;
         overflow-y: auto;
     }
     .icon {

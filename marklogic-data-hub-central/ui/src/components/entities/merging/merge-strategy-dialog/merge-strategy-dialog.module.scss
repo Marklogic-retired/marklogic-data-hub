@@ -1,14 +1,14 @@
 @import "../../../../theme/HCUtils.scss";
 
 .title {
-    font-size :24px;
+    font-size: 24px;
     font-weight: 500;
 }
 
 .submitButtonsForm {
     margin-top: 20px;
     display: flex;
-    justify-content: flex-end
+    justify-content: flex-end;
 }
 
 .submitButtons {
@@ -16,18 +16,18 @@
     width: 102%;
 }
 
-.priorityOrderContainer{
-    background-color: #F4F4F4;;
+.priorityOrderContainer {
+    background-color: #f4f4f4;
 }
 
-.priorityText{
+.priorityText {
     padding: 14px;
     font-weight: bold;
 }
 
 .questionCircle {
     font-size: 12px;
-    color: #7F86B5;
+    color: #7f86b5;
     margin-left: 12px;
 }
 
@@ -42,11 +42,11 @@
     }
 }
 
-.dropdownOptionsSelect{
-    width:120px !important;
+.dropdownOptionsSelect {
+    width: 120px !important;
 }
 
-.asterisk{
+.asterisk {
     color: $danger;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .enableStrategySwitch {
-    margin-left: 0.8vw;
+    padding: 0 6px 0 14px;
 }
 
 .deleteMessage {
@@ -76,3 +76,6 @@
     }
 }
 
+.switchToggleMergeStrategy {
+  font-size: 1.5em;
+}

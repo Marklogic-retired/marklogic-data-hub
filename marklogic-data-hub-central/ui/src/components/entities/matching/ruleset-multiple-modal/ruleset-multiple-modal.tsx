@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Switch, Table, Select} from "antd";
-import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
+import {Table, Select} from "antd";
+import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -846,7 +846,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
 
   const modalFooter = (
     <div className={styles.editFooter}>
-      {(Object.keys(curationRuleset).length !== 0) && <HCButton  aria-label="editMultipleRulesetDeleteIcon" size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
+      {(Object.keys(curationRuleset).length !== 0) && <HCButton aria-label="editMultipleRulesetDeleteIcon" size="sm" variant="link" onClick={() => { toggleDeleteConfirmModal(true); }}>
         <FontAwesomeIcon className={styles.trashIcon} icon={faTrashAlt} />
       </HCButton>}
       <div className={(Object.keys(curationRuleset).length === 0) ? styles.footerNewRuleset : styles.footer}>
@@ -867,7 +867,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     </div>
   );
 
-  const onToggleReduce = (checked) => {
+  const onToggleReduce = ({target}) => {
+    const {checked} = target;
     if (checked) {
       setReduceValue(true);
     } else {
@@ -1055,7 +1056,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       }
     },
     selectedRowKeys: selectedRowKeys,
-    getCheckboxProps: record => ({name: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? "hidden" : record.propertyPath),
+    getCheckboxProps: record => ({
+      name: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? "hidden" : record.propertyPath),
       style: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? {display: "none"} : {})
     }),
   };
@@ -1170,7 +1172,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
             <FormLabel column lg={"auto"}>{"Ruleset Name:"}<span className={styles.asterisk}>*</span></FormLabel>
             <Col>
               <Row>
-                <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"}  sm={6}>
+                <Col className={rulesetNameErrorMessage ? "d-flex has-error" : "d-flex"} sm={6}>
                   <HCInput
                     id="rulesetName-input"
                     ariaLabel="rulesetName-input"
@@ -1190,7 +1192,14 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           <Row className={"mb-3"}>
             <FormLabel column lg={"auto"} className={styles.reduceWeightText}>{"Reduce Weight"}</FormLabel>
             <Col className={"d-flex align-items-center"}>
-              <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+              <FormCheck
+                type="switch"
+                data-testid="reduceToggle"
+                defaultChecked={props.editRuleset.reduce}
+                className={styles.switchReduceToggle}
+                onChange={onToggleReduce}
+                aria-label="reduceToggle"
+              />
               <div className={"p-2 d-flex"}>
                 <HCTooltip text={<span aria-label="reduce-tooltip-text">{MatchingStepTooltips.reduceToggle}</span>} id="reduce-weight-tooltip" placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" className={styles.icon} size={13} />
