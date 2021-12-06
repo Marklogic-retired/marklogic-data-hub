@@ -1,7 +1,7 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Table, Select, Tooltip, Icon} from "antd";
+import {Table, Select, Icon} from "antd";
 import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
@@ -954,7 +954,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           disabled={!props.canReadWrite}>
           <Dropdown.Toggle id="functionIcon" variant="outline-light" className={styles.sourceDrop} disabled={!props.canReadWrite}
             size="sm">
-            <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+            <HCTooltip id="source-field-tooltip" text={props.canReadWrite && "Source Field"} placement="bottom">
               <i id="listIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-listIcon1`}>
                 <FontAwesomeIcon
                   icon={faList}
@@ -964,7 +964,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   onClick={(e) => handleSourceList(row)}
                 />
               </i>
-            </Tooltip>
+            </HCTooltip>
           </Dropdown.Toggle>
           <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
             <Dropdown.Item className={styles.dropdownMenuItem}>
@@ -981,7 +981,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           disabled={!props.canReadWrite}>
           <Dropdown.Toggle id="functionIcon" variant="outline-light" className={styles.sourceDrop} disabled={!props.canReadWrite}
             size="sm">
-            <Tooltip title={props.canReadWrite && "Source Field"} placement="bottom">
+            <HCTooltip id="source-field-tooltip" text={props.canReadWrite && "Source Field"} placement="bottom">
               <i id="listIcon" data-testid={`${row.name.split("/").pop()}-listIcon1`}>
                 <FontAwesomeIcon
                   icon={faList}
@@ -991,7 +991,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   onClick={(e) => handleSourceList(row)}
                 />
               </i>
-            </Tooltip>
+            </HCTooltip>
           </Dropdown.Toggle>
           <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
             <Dropdown.Item className={styles.dropdownMenuItem}>
@@ -1031,9 +1031,11 @@ const EntityMapTable: React.FC<Props> = (props) => {
           disabled={!props.canReadWrite}
           size="sm"
           variant="outline-light">
-          <Tooltip title={props.canReadWrite && "Function"} placement="bottom">
-            fx
-          </Tooltip>
+          <HCTooltip id="function-tooltip" text={props.canReadWrite && "Function"} placement="bottom">
+            <span>
+              fx
+            </span>
+          </HCTooltip>
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
@@ -1067,7 +1069,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
         <Dropdown.Toggle id="functionIcon" className={styles.refDrop} disabled={!props.canReadWrite}
           size="sm" variant="outline-light">
-          <Tooltip title={props.canReadWrite && "Reference"} placement="bottom">
+          <HCTooltip id="reference-tooltip" text={props.canReadWrite && "Reference"} placement="bottom">
             <i id="refIcon" data-testid={`${props.entityTypeTitle}-${row.name.split("/").pop()}-refIcon1`}>
               <FontAwesomeIcon
                 icon={faTerminal}
@@ -1077,7 +1079,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                 onClick={(e) => handleRefList(row.name)}
               />
             </i>
-          </Tooltip>
+          </HCTooltip>
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="p-0 m-0 border-0 bg-transparent rounded-0">
@@ -1484,7 +1486,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
           return {
             children:
               <div data-testid={`${props.entityTypeTitle}-` + row.name.split("/").pop() + "-value"} className={styles.mapValue}>
-                <Tooltip title={getTextForTooltip(row.name, row.isProperty)}>{getTextForValueField(row, row.isProperty)}</Tooltip>
+                <HCTooltip id={`${props.entityTypeTitle}-${row.name.split("/").pop()}-value-tooltip`} placement="top" text={getTextForTooltip(row.name, row.isProperty)}><span>{getTextForValueField(row, row.isProperty)}</span></HCTooltip>
               </div>,
             props: {colSpan: 1}
           };

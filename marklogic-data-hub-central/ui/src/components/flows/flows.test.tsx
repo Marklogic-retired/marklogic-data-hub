@@ -128,6 +128,7 @@ describe("Flows component", () => {
     await waitFor(() => expect(getByText("Delete Flow: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
     fireEvent.mouseOver(getByText("Add Step"));
     await waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    fireEvent.mouseOut(getByText("Add Step"));
     fireEvent.mouseOver(getByLabelText("create-flow-disabled"));
     await waitFor(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
 

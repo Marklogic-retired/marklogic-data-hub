@@ -199,7 +199,7 @@ class MappingStepDetail {
   }
 
   validateMapValueP(entityName: string, propertyName: string, value:string) {
-    cy.get(`[data-testid=${entityName}-${propertyName}-value] > p`).should("have.text", value);
+    cy.get(`[data-testid=${entityName}-${propertyName}-value] > span > p`).should("have.text", value);
   }
 
   validateMapValueString(entityName: string, propertyName: string, value:string) {

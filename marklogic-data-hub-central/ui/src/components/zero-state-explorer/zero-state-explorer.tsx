@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {Card, Select, Tooltip} from "antd";
+import {Card, Select} from "antd";
 import {Row, Col} from "react-bootstrap";
 import styles from "./zero-state-explorer.module.scss";
 import {SearchContext} from "../../util/search-context";
@@ -8,7 +8,7 @@ import {QueryOptions} from "../../types/query-types";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faThLarge} from "@fortawesome/free-solid-svg-icons";
 import tiles from "../../config/tiles.config";
-import {HCButton, HCCard, HCDivider, HCInput} from "@components/common";
+import {HCButton, HCCard, HCDivider, HCInput, HCTooltip} from "@components/common";
 
 const ZeroStateExplorer = (props) => {
   const {
@@ -210,8 +210,9 @@ const ZeroStateExplorer = (props) => {
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
                       <div className={"switch-button-group"}>
-                        <Tooltip
-                          title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
+                        <HCTooltip
+                          id="table-not-available-tooltip"
+                          text={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
                         >
                           <span>
@@ -228,10 +229,11 @@ const ZeroStateExplorer = (props) => {
                               <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
                             </label>
                           </span>
-                        </Tooltip>
+                        </HCTooltip>
 
-                        <Tooltip
-                          title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
+                        <HCTooltip
+                          id="snippet-not-available"
+                          text={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
                         >
                           <span>
@@ -248,10 +250,11 @@ const ZeroStateExplorer = (props) => {
                               <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
                             </label>
                           </span>
-                        </Tooltip>
+                        </HCTooltip>
 
-                        <Tooltip
-                          title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
+                        <HCTooltip
+                          id="card-not-available-tooltip"
+                          text={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
                           placement="bottom"
                         >
                           <span aria-label="switch-view-card" id="viewAsCard">
@@ -268,7 +271,7 @@ const ZeroStateExplorer = (props) => {
                               <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
                             </label>
                           </span>
-                        </Tooltip>
+                        </HCTooltip>
                       </div>
                     </div>
                   </Col>

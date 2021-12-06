@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
 import {faProjectDiagram, faTable} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Tooltip} from "antd";
 import "./Modeling.scss";
 
 import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
@@ -22,7 +21,7 @@ import GraphView from "../components/modeling/graph-view/graph-view";
 import ModelingLegend from "../components/modeling/modeling-legend/modeling-legend";
 import {defaultModelingView} from "../config/modeling.config";
 import PublishToDatabaseIcon from "../assets/publish-to-database-icon";
-import {HCAlert, HCButton} from "@components/common";
+import {HCAlert, HCButton, HCTooltip} from "@components/common";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
@@ -357,28 +356,27 @@ const Modeling: React.FC = () => {
                   <ModelingLegend/>
                   <div style={{float: "right"}}>
                     {canWriteEntityModel ?
-                      <Tooltip title={ModelingTooltips.addNewEntity}>
-                        {addButton}
-                      </Tooltip>
+                      <HCTooltip id="add-entity-tooltip" placement="top" text={ModelingTooltips.addNewEntity}>
+                        <span>{addButton}</span>
+                      </HCTooltip>
                       :
-                      <Tooltip
-                        title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess}
-                        placement="top" overlayStyle={{maxWidth: "175px"}}>
+                      <HCTooltip
+                        id="add-entity-disabled-tooltip"
+                        text={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess}
+                        placement="top" className={styles.tooltipOverlay}>
                         <span className={styles.disabledCursor}>{addButton}</span>
-                      </Tooltip>
+                      </HCTooltip>
                     }
                     {canWriteEntityModel ?
-                      <Tooltip title={ModelingTooltips.publish}
-                        overlayStyle={{maxWidth: "175px"}}>
-                        <span
-                          className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>{publishButton}</span>
-                      </Tooltip>
+                      <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} className={styles.tooltipOverlay} placement="top">
+                        <span className={modelingOptions.isModified ? styles.CursorButton : styles.disabledCursor}>
+                          {publishButton}
+                        </span>
+                      </HCTooltip>
                       :
-                      <Tooltip
-                        title={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess}
-                        placement="top" overlayStyle={{maxWidth: "225px"}}>
+                      <HCTooltip id="publis-disabled-tooltip" text={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess} placement="top" className={styles.tooltipOverlay}>
                         <span className={styles.disabledCursor}>{publishButton}</span>
-                      </Tooltip>
+                      </HCTooltip>
                     }
                   </div>
                 </div>

@@ -1,5 +1,5 @@
 import React, {CSSProperties, useContext, useState, useEffect} from "react";
-import {AutoComplete, Tooltip} from "antd";
+import {AutoComplete} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
@@ -157,9 +157,9 @@ const GraphView: React.FC<Props> = (props) => {
         </HCTooltip>
       }
     </span>
-    <Tooltip title={ModelingTooltips.publish}>
+    <HCTooltip id="publish-tooltip" text={ModelingTooltips.publish} placement="top">
       <span className={styles.disabledCursor}>{publishButton}</span>
-    </Tooltip>
+    </HCTooltip>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
       <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/></i>
     </HCTooltip>

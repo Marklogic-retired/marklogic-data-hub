@@ -363,7 +363,7 @@ class BrowsePage {
   }
 
   getColumnSelectorIcon() {
-    return cy.get("[data-cy=column-selector] > div > svg");
+    return cy.get("[data-cy=column-selector] > div > i > svg");
   }
 
   getColumnSelectorSearch() {

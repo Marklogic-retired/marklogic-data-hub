@@ -1,5 +1,4 @@
 import React, {useContext, useEffect} from "react";
-import {Tooltip} from "antd";
 import {SearchContext} from "../../util/search-context";
 import styles from "./selected-facets.module.scss";
 import moment from "moment";
@@ -217,23 +216,27 @@ const SelectedFacets: React.FC<Props> = (props) => {
         }
         return (
           (unCheckRest(item.constraint, item.facet)) &&
-          <Tooltip
+          <HCTooltip
+            id={index + "-" + item.facet}
             key={index + "-" + item.facet}
-            title={"Not yet applied"}
+            text={"Not yet applied"}
+            placement={"top"}
           >
-            <HCButton
-              size="sm"
-              variant="outline-blue"
-              className={styles.facetGreyButton}
-              key={index}
-              onClick={() => clearGreyFacet(item.constraint, item.facet)}
-              data-cy={`clear-grey-${item.facet}`}
-              data-testid={`clear-grey-${item.facet}`}
-            >
-              {facetName + ": " + item.facet}
-              <XLg className={styles.close}/>
-            </HCButton>
-          </Tooltip>
+            <span>
+              <HCButton
+                size="sm"
+                variant="outline-blue"
+                className={styles.facetGreyButton}
+                key={index}
+                onClick={() => clearGreyFacet(item.constraint, item.facet)}
+                data-cy={`clear-grey-${item.facet}`}
+                data-testid={`clear-grey-${item.facet}`}
+              >
+                {facetName + ": " + item.facet}
+                <XLg className={styles.close}/>
+              </HCButton>
+            </span>
+          </HCTooltip>
         );
       })}
       {props.greyFacets.length > 0 &&

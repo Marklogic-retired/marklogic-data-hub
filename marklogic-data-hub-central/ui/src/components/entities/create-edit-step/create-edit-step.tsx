@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {AutoComplete, Tooltip} from "antd";
+import {AutoComplete} from "antd";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
@@ -447,7 +447,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
           <Col>
             <Row>
               <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
-                {tobeDisabled ? <Tooltip title={NewMatchTooltips.nameField} placement={"bottom"}><div className={"d-flex w-100"}><HCInput
+                {tobeDisabled ? <HCTooltip id="disabled-namefield-tooltip" text={NewMatchTooltips.nameField} placement={"bottom"}><div className={"d-flex w-100"}><HCInput
                   id="name"
                   placeholder="Enter name"
                   value={stepName ? stepName : " "}
@@ -455,7 +455,7 @@ const CreateEditStep: React.FC<Props> = (props) => {
                   disabled={tobeDisabled}
                   className={styles.input}
                   onBlur={sendPayload}
-                /></div></Tooltip> : <HCInput
+                /></div></HCTooltip> : <HCInput
                   id="name"
                   placeholder="Enter name"
                   value={stepName ? stepName : " "}

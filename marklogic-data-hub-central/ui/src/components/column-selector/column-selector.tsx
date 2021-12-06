@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Tree, Tooltip} from "antd";
+import {Tree} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import styles from "./column-selector.module.scss";
@@ -177,9 +177,11 @@ const ColumnSelector: React.FC<Props> = (props) => {
   return (
     <OverlayTrigger placement="left-start" show={props.popoverVisibility} overlay={content} trigger="click">
       <div className={styles.fixedPopup}>
-        <Tooltip title="Select the columns to display." placement="topRight">
-          <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector-tooltip"/>
-        </Tooltip>
+        <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
+          <i>
+            <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" data-testid="column-selector-tooltip"/>
+          </i>
+        </HCTooltip>
       </div>
     </OverlayTrigger>
   );

@@ -1,5 +1,4 @@
 import React, {useState, CSSProperties, useEffect, useContext, createRef} from "react";
-import {Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckCircle} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt, faArrowAltCircleRight, faArrowAltCircleLeft} from "@fortawesome/free-regular-svg-icons";
@@ -1094,7 +1093,7 @@ const Flows: React.FC<Props> = (props) => {
                   >Create Flow</HCButton>
                 </span>
                 :
-                <Tooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: "175px"}}>
+                <HCTooltip id="missing-permission-tooltip" placement="top" text={SecurityTooltips.missingPermission} className={styles.tooltipOverlay}>
                   <span className={styles.disabledCursor}>
                     <HCButton
                       className={styles.createButtonDisabled}
@@ -1104,7 +1103,7 @@ const Flows: React.FC<Props> = (props) => {
                       tabIndex={-1}
                     >Create Flow</HCButton>
                   </span>
-                </Tooltip>
+                </HCTooltip>
             }
           </div>
           {panels}

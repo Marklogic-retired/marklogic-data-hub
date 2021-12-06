@@ -1,6 +1,6 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Select, Tooltip} from "antd";
+import {Select} from "antd";
 import {Row, Col, Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
@@ -60,7 +60,6 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const tooltipOverlayStyle={maxWidth: "200"};
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const OpenAddNew = () => {
@@ -353,43 +352,43 @@ const MatchingCard: React.FC<Props> = (props) => {
 
   const renderCardActions = (step, index) => {
     return [
-      <Tooltip title={"Step Details"} placement="bottom">
+      <HCTooltip id="step-details-tooltip" text={"Step Details"} placement="bottom">
         <i className={styles.stepDetails}>
           <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
-      </Tooltip>,
-      <Tooltip title={"Step Settings"} placement="bottom">
+      </HCTooltip>,
+      <HCTooltip id="step-settings-tooltip" text={"Step Settings"} placement="bottom">
         <i className={styles.editIcon} key ="last" role="edit-merging button">
           <FontAwesomeIcon icon={faCog} data-testid={step.name+"-edit"} onClick={() => OpenStepSettings(index)}/>
         </i>
-      </Tooltip>,
+      </HCTooltip>,
 
       props.canWriteMatchMerge ? (
-        <Tooltip title={"Run"} placement="bottom">
+        <HCTooltip id="run-tooltip" text={"Run"} placement="bottom">
           <i aria-label="icon: run">
             <PlayCircleFill className={styles.runIcon} data-testid={step.name+"-run"} onClick={() => handleStepRun(step.name)}/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ) : (
-        <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+        <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
           <i aria-label="icon: run">
             <PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-matching button" data-testid={step.name+"-disabled-run"} onClick={(event) => event.preventDefault()}/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ),
 
       props.canWriteMatchMerge ? (
-        <Tooltip title={"Delete"} placement="bottom">
+        <HCTooltip id="delete-tooltip" text={"Delete"} placement="bottom">
           <i key ="last" role="delete-merging button" data-testid={step.name+"-delete"} onClick={() => deleteStepClicked(step.name)}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ) : (
-        <Tooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+        <HCTooltip id="delete-disabled-tooltip" text={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
           <i className={styles.deleteIcon} role="disabled-delete-merging button" data-testid={step.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ),
     ];
   };
@@ -407,12 +406,12 @@ const MatchingCard: React.FC<Props> = (props) => {
             </HCCard>
           </Col>
         ) : <Col xs={"auto"}>
-          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><HCCard
+          <HCTooltip id="curate-disabled-tooltip" text={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
             className={styles.addNewCardDisabled}>
             <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled}/></div>
             <br/>
             <p className={styles.addNewContent}>Add New</p>
-          </HCCard></Tooltip>
+          </HCCard></HCTooltip>
         </Col>}
         {props.matchingStepsArray.length > 0 ? (
           props.matchingStepsArray.map((step, index) => (
