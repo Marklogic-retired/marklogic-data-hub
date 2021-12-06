@@ -21,7 +21,7 @@ const core = require('/data-hub/5/artifacts/core.sjs')
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const flowRunner = require("/data-hub/5/flow/flowRunner.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const sourcePropsLib = require('./sourcePropertiesLib.sjs');
+const sourcePropsLib = require('/data-hub/5/data-services/mapping/sourcePropertiesLib.sjs');
 const FlowExecutionContext = require("/data-hub/5/flow/flowExecutionContext.sjs");
 const StepExecutionContext = require("/data-hub/5/flow/stepExecutionContext.sjs");
 
@@ -74,18 +74,16 @@ catch(e){
 
 let doc = contentArray[0].value;
 
-// Populate return object.
 response.format = originalDoc.documentFormat;
 const isJson = response.format.toUpperCase() === 'JSON';
 if (isJson) {
   if (mappingStep.sourceRecordScope === "entireRecord") {
     response.data = doc;
   } else {
-    if (doc instanceof Node) {
+    if (doc.toObject && (typeof doc.toObject) === "function") {
       doc = doc.toObject();
     }
-    response.data = (doc.hasOwnProperty('envelope') && doc.envelope.hasOwnProperty('instance')) ?
-      doc.envelope.instance : doc;
+    response.data = (doc.envelope && doc.envelope.instance) ? doc.envelope.instance : doc;
   }
 
 } else {
@@ -99,7 +97,7 @@ if (isJson) {
     }
   }
 
-  const transformResult = require('./xmlToJsonForMapping.sjs').transform(xmlNode);
+  const transformResult = require('/data-hub/5/data-services/mapping/xmlToJsonForMapping.sjs').transform(xmlNode);
   response.data = transformResult.data;
 
   response.namespaces = Object.assign({ "entity-services": "http://marklogic.com/entity-services"}, transformResult.namespaces);
