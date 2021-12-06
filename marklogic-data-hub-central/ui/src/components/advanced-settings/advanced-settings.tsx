@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import Axios from "axios";
-import {Select, Tooltip} from "antd";
+import {Select} from "antd";
 import {Form, Row, Col, FormCheck, FormLabel, FormControl} from "react-bootstrap";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
@@ -1088,11 +1088,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         <Row className={"mt-4"}>
           <Col className={"d-flex justify-content-end"}>
             <HCButton aria-label="Cancel" variant="outline-light" size="sm" data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</HCButton>&nbsp;&nbsp;
-            {!canReadWrite || !isFormValid() ? <Tooltip title={tooltips.missingPermission} placement={"bottomRight"}>
+            {!canReadWrite || !isFormValid() ? <HCTooltip id="missing-permission-tooltip" text={tooltips.missingPermission} placement={"top-end"}>
               <span className={styles.disabledCursor}>
                 <HCButton size="sm" id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={true}>Save</HCButton>
               </span>
-            </Tooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
+            </HCTooltip> : <HCButton size="sm" id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} variant="primary" type="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</HCButton>}
           </Col>
         </Row>
       </Form>

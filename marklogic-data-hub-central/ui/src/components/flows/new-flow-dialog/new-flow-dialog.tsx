@@ -1,4 +1,3 @@
-import {Tooltip} from "antd";
 import {Form, Row, Col, FormLabel, Modal} from "react-bootstrap";
 import React, {useState, useEffect} from "react";
 import styles from "./new-flow-dialog.module.scss";
@@ -132,7 +131,7 @@ const NewFlowDialog = (props) => {
               <Row>
                 <Col className={(flowName || !isFlowNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
                   {tobeDisabled ?
-                    <Tooltip title={NewFlowTooltips.nameField} placement={"bottom"} >
+                    <HCTooltip id="disabled-namefield-tooltip" text={NewFlowTooltips.nameField} placement={"bottom"} >
                       <span className={"w-100"}>
                         <HCInput
                           id="name"
@@ -143,7 +142,7 @@ const NewFlowDialog = (props) => {
                           disabled={tobeDisabled}
                         />
                       </span>
-                    </Tooltip> :
+                    </HCTooltip> :
                     <HCInput
                       id="name"
                       placeholder="Enter name"

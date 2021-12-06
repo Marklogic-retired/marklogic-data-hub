@@ -341,9 +341,9 @@ const LoadList: React.FC<Props> = (props) => {
         as="span"
         aria-label="user-dropdown">
         { props.canWriteFlow ?
-          <Tooltip title={"Add to Flow"} placement="bottom">
+          <HCTooltip id="add-to-flow-tooltip" text={"Add to Flow"} placement="bottom">
             <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"}></span>
-          </Tooltip>
+          </HCTooltip>
           :
           <Tooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}>
             <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span>

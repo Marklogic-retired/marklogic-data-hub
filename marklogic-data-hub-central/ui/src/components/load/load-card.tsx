@@ -1,7 +1,7 @@
 import React, {CSSProperties, useState} from "react";
 import styles from "./load-card.module.scss";
 import {Link, useHistory} from "react-router-dom";
-import {Select, Tooltip} from "antd";
+import {Select} from "antd";
 import {Row, Col, Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
@@ -45,8 +45,6 @@ const LoadCard: React.FC<Props> = (props) => {
   const [selectVisible, setSelectVisible] = useState(false);
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const tooltipOverlayStyle = {maxWidth: "200"};
-  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   //To navigate to bench view with parameters
   let history = useHistory();
@@ -118,7 +116,6 @@ const LoadCard: React.FC<Props> = (props) => {
     // Handle all possible events from mouseover of card body
 
     setSelectVisible(true);
-    setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
       (e.target.className === "card-body" ||
 
@@ -135,7 +132,6 @@ const LoadCard: React.FC<Props> = (props) => {
 
     setShowLinks("");
     setSelectVisible(false);
-    setTooltipVisible(false);
   }
 
   function handleSelect(obj) {
@@ -388,13 +384,17 @@ const LoadCard: React.FC<Props> = (props) => {
             <p className={styles.addNewContent}>Add New</p>
           </HCCard>
         </Col> : <Col xs={"auto"}>
-          <Tooltip title={"Load: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><HCCard
-            className={styles.addNewCardDisabled}
-            data-testid="disabledAddNewCard">
-            <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled}/></div>
-            <br />
-            <p className={styles.addNewContentDisabled}>Add New</p>
-          </HCCard></Tooltip>
+          <HCTooltip id="disabled-load-tooltip" placement={"top"} text={"Load: "+SecurityTooltips.missingPermission} className={styles.tooltipOverlayStyle}>
+            <span>
+              <HCCard
+                className={styles.addNewCardDisabled}
+                data-testid="disabledAddNewCard">
+                <div aria-label="add-new-card-disabled"><PlusCircleFill className={styles.plusIconDisabled}/></div>
+                <br />
+                <p className={styles.addNewContentDisabled}>Add New</p>
+              </HCCard>
+            </span>
+          </HCTooltip>
         </Col>}{ props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col xs={"auto"} key={index}>
             <div
@@ -458,7 +458,7 @@ const LoadCard: React.FC<Props> = (props) => {
 
                   <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
-                    {selectVisible ? <Tooltip title={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
+                    {selectVisible ? <HCTooltip id="missing-permission-tooltip" text={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
                       <Select
                         style={{width: "100%"}}
                         value={selected[elem.name] ? selected[elem.name] : undefined}
@@ -472,7 +472,7 @@ const LoadCard: React.FC<Props> = (props) => {
                           <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                         )) : null}
                       </Select>
-                    </div></div></Tooltip> : null}
+                    </div></div></HCTooltip> : null}
                   </div>
                 </div>
               </HCCard>

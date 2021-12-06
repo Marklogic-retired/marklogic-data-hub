@@ -1212,11 +1212,12 @@ describe("RTL Source-to-entity map tests", () => {
     //Verify tooltip shows full value when hovering Source values
     fireEvent.mouseOver(getByText("extremelylongu..."));
     await waitForElement(() => getByText("extremelylongusername@marklogic.com"));
+    fireEvent.mouseOut(getByText("extremelylongu..."));
 
     //Verify tooltip shows all values in a list when hovering values with multiple items
     fireEvent.mouseOver(getByText((_, node) => node.textContent === "(7 more)"));
     await waitForElement(() => getByText("s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com"));
-
+    fireEvent.mouseOut(getByText((_, node) => node.textContent === "(7 more)"));
     // Test button should be enabled after mapping expression is saved
     expect(document.querySelector("#Test-btn")).toBeEnabled();
 

@@ -476,6 +476,8 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     setOptionalCollapsed(!optionalCollapsed);
   };
 
+  const cardinalityTooltipText = ModelingTooltips.cardinalityButton();
+
   const menu = (
     <DropDownWithSearch
       displayMenu={displaySourceMenu}
@@ -633,11 +635,13 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             </HCTooltip>
           </div>
           <hr className={styles.horizontalLine}></hr>
-          <Tooltip title={ModelingTooltips.cardinalityButton} placement={"bottom"}>
-            <HCButton variant="onlined-light" className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
-              {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
-            </HCButton>
-          </Tooltip>
+          <HCTooltip id="cardinality-tooltip" text={cardinalityTooltipText} placement={"bottom"}>
+            <span>
+              <HCButton variant="onlined-light" className={styles.cardinalityButton} data-testid="cardinalityButton" onClick={() => toggleCardinality()}>
+                {oneToManySelected ? <img data-testid="oneToManyIcon" className={styles.oneToManyIcon} src={oneToManyIcon} alt={""} onClick={() => toggleCardinality()}/> : <img data-testid="oneToOneIcon" className={styles.oneToOneIcon} src={oneToOneIcon} alt={""} onClick={() => toggleCardinality()}/>}
+              </HCButton>
+            </span>
+          </HCTooltip>
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>TARGET</span>
             <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>

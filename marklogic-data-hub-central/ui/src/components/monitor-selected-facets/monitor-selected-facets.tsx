@@ -1,6 +1,5 @@
 import React, {useContext} from "react";
 import styles from "../selected-facets/selected-facets.module.scss";
-import {Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheckSquare, faWindowClose} from "@fortawesome/free-solid-svg-icons";
 import {MonitorContext} from "../../util/monitor-context";
@@ -91,9 +90,11 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
         let displayName = item.constraint !== "startTime" ? facetName + ": " + item.facet : item.facet;
         return (
           (unCheckRest(item.constraint, item.facet)) &&
-          <Tooltip
+          <HCTooltip
+            id={index + "-" + item.facet}
             key={index + "-" + item.facet}
-            title={"Not yet applied"}
+            text={"Not yet applied"}
+            placement="top"
           >
             <HCButton
               size="sm"
@@ -106,7 +107,7 @@ export const MonitorSelectedFacets: (React.FC<Props>)  = (props) => {
               {displayName}
               <XLg className={styles.close}/>
             </HCButton>
-          </Tooltip>
+          </HCTooltip>
         );
       })}
       {props.greyFacets.length > 0 &&

@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
 import styles from "./system-info.module.scss";
-import {Tooltip} from "antd";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
@@ -175,7 +174,7 @@ const SystemInfo = (props) => {
                   <HCCard className={styles.download} >
                     <div className={styles.title}>Download Hub Central Files</div>
                     <p>{SystemInfoMessages.downloadHubCentralFiles}</p>
-                    <Tooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                    <HCTooltip id="missing-permission-tooltip" text={SecurityTooltips.missingPermission} placement="bottom">
                       <div className={styles.disabledButtonContainer}>
                         <HCButton
                           aria-label="Download"
@@ -183,7 +182,7 @@ const SystemInfo = (props) => {
                           disabled
                         >Download</HCButton>
                       </div>
-                    </Tooltip>
+                    </HCTooltip>
                   </HCCard>
                 </Col>:
                   <Col>

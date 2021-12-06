@@ -1,6 +1,6 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Select, Tooltip} from "antd";
+import {Select} from "antd";
 import {Row, Col, Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
@@ -46,7 +46,6 @@ const MergingCard: React.FC<Props> = (props) => {
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
-  const tooltipOverlayStyle={maxWidth: "200"};
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const [addToFlowVisible, setAddToFlowVisible] = useState(false);
@@ -351,43 +350,43 @@ const MergingCard: React.FC<Props> = (props) => {
 
   const renderCardActions = (step, index) => {
     return [
-      <Tooltip title={"Step Details"} placement="bottom">
+      <HCTooltip id="step-details-tooltip" text={"Step Details"} placement="bottom">
         <i className={styles.stepDetails}>
           <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
-      </Tooltip>,
-      <Tooltip title={"Step Settings"} placement="bottom">
+      </HCTooltip>,
+      <HCTooltip id="step-settings-tooltip" text={"Step Settings"} placement="bottom">
         <i className={styles.editIcon} key ="last" role="edit-merging button">
           <FontAwesomeIcon icon={faCog} data-testid={step.name+"-edit"} onClick={() => OpenStepSettings(index)}></FontAwesomeIcon>
         </i>
-      </Tooltip>,
+      </HCTooltip>,
 
       props.canWriteMatchMerge ? (
-        <Tooltip title={"Run"} placement="bottom">
+        <HCTooltip id="run-tooltip" text={"Run"} placement="bottom">
           <i aria-label="icon: run">
             <PlayCircleFill className={styles.runIcon} data-testid={step.name+"-run"} onClick={() => handleStepRun(step.name)}/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ) : (
-        <Tooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+        <HCTooltip id="run-disabled-tooltip" text={"Run: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
           <i aria-label="icon: run">
             <PlayCircleFill className={styles.disabledRunIcon} role="disabled-run-merging button" data-testid={step.name+"-disabled-run"} onClick={(event) => event.preventDefault()}/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ),
 
       props.canWriteMatchMerge ? (
-        <Tooltip title={"Delete"} placement="bottom">
+        <HCTooltip id="delete-tootlip" text={"Delete"} placement="bottom">
           <i className={styles.deleteIcon}key ="last" role="delete-merging button" data-testid={step.name+"-delete"} onClick={() => deleteStepClicked(step.name)}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ) : (
-        <Tooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+        <HCTooltip id="delete-disabled-tooltip" text={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}>
           <i role="disabled-delete-merging button" data-testid={step.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
           </i>
-        </Tooltip>
+        </HCTooltip>
       ),
     ];
   };
@@ -405,12 +404,12 @@ const MergingCard: React.FC<Props> = (props) => {
             </HCCard>
           </Col>
         ) : <Col>
-          <Tooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><HCCard
+          <HCTooltip id="curate-tooltip" text={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltipOverlay}><HCCard
             className={styles.addNewCardDisabled}>
             <div aria-label="add-new-card-disabled"><PlusCircleFill aria-label="icon: plus-circle" className={styles.plusIconDisabled} onClick={OpenAddNew}/></div>
             <br/>
             <p className={styles.addNewContent}>Add New</p>
-          </HCCard></Tooltip>
+          </HCCard></HCTooltip>
         </Col>}
         {props.mergingStepsArray && props.mergingStepsArray.length > 0 ? (
           props.mergingStepsArray.map((step, index) => (

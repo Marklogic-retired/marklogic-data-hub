@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {Select, Tooltip} from "antd";
+import {Select} from "antd";
 import {Form, Row, Col, FormLabel} from "react-bootstrap";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
@@ -415,7 +415,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <Row>
               <Col className={(stepName || !isStepNameTouched) ? (invalidChars ? "d-flex has-error" : "d-flex") : "d-flex has-error"}>
                 {tobeDisabled ?
-                  <Tooltip title={NewLoadTooltips.nameField} placement={"bottom"}>
+                  <HCTooltip id="name-step-tooltip" text={NewLoadTooltips.nameField} placement={"bottom"}>
                     <span className={"w-100"}>
                       <HCInput
                         id="name"
@@ -426,7 +426,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                         onBlur={sendPayload}
                       />
                     </span>
-                  </Tooltip> :
+                  </HCTooltip> :
                   <HCInput
                     id="name"
                     placeholder="Enter name"

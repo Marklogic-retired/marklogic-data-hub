@@ -1,7 +1,7 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
-import {Tooltip, Table} from "antd";
+import {Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
@@ -218,9 +218,11 @@ const JobResultsTableView = (props) => {
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup}>
           <OverlayTrigger placement="left-start" overlay={content} trigger="click" show={popoverVisibility}>
-            <Tooltip title="Select the columns to display." placement="topRight">
-              <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
-            </Tooltip>
+            <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
+              <i>
+                <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
+              </i>
+            </HCTooltip>
           </OverlayTrigger>
         </div>
       </div>

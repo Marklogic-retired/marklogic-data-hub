@@ -29,6 +29,10 @@ align-content: center;
 cursor: not-allowed !important;
 }
 
+.tooltipOverlay {
+  max-width: 200px;
+}
+
 .plusIconDisabled{
 font-size: 80px;
 margin-top: 16px;
