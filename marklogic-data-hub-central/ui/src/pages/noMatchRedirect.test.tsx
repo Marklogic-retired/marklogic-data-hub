@@ -17,11 +17,11 @@ describe("noMatchRedirect component test", () => {
 
     const {getByText, getByLabelText, rerender} = render(<Router history={history}><NoMatchRedirect /></Router>);
 
-    expect(getByText("404")).toBeInTheDocument();
-    expect(getByText("Sorry, the page you visited does not exist.")).toBeInTheDocument();
+    await (() => expect(getByText("Operation failed")).toBeInTheDocument());
+    await (() => expect(getByText("The operation failed due to unknown reasons")).toBeInTheDocument());
 
     //Should redirect to / when not authenticated
-    fireEvent.click(getByLabelText("back home"));
+    fireEvent.click(getByLabelText("Back"));
     expect(history.location.pathname.endsWith("/")).toBeTruthy();
 
     //Should redirect to /tiles when authenticated
@@ -30,7 +30,7 @@ describe("noMatchRedirect component test", () => {
         <UserContext.Provider value={userAuthenticated}><NoMatchRedirect /></UserContext.Provider>
       </AuthoritiesContext.Provider>
     </Router>);
-    fireEvent.click(getByLabelText("back home"));
+    fireEvent.click(getByLabelText("Back"));
     expect(history.location.pathname.endsWith("/tiles")).toBeTruthy();
   });
 

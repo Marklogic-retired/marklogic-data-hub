@@ -1,0 +1,37 @@
+@import "../../src/theme/HCVariables.scss";
+
+.spacer {
+    padding-top: 20px;
+  }
+  .errorContainer {
+    border: 1px solid $danger;
+    border-radius: 4px;
+    padding: 20px;
+    max-height: 350px;
+    overflow-y: auto;
+  }
+  .superiorMiddleContainer {
+    padding-bottom: 40px;
+    padding-top: 90px;
+  }
+  .copyButton {
+    width: 70;
+  }
+  .buttonCopyCol {
+    text-align: right;
+  }
+  
+  .backOperationFailed {
+    text-align: right;
+    color: $trash-icon;
+    font-size: 17px;
+  }
+  .backOperationFailed:hover {
+    color: $trash-icon-hover;
+  }
+  .contactLink {
+    color: $link;
+  }
+  .contactLink:hover {
+    color: $hover-link;
+  }
