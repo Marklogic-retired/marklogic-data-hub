@@ -57,8 +57,8 @@ export const UserContext = React.createContext<IUserContextInterface>({
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
-
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
+  const [encounteredErrors, setEncounteredErrors] = useState<string[]>([]);
   const [stompMessageSubscription, setStompMessageSubscription] = useState<Subscription|null>(null);
   const [unsubscribeId, setUnsubscribeId] = useState<string|null>(null);
   const sessionUser = localStorage.getItem("dataHubUser");
@@ -67,6 +67,37 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const initialTimeoutDate = new Date();
   initialTimeoutDate.setSeconds(initialTimeoutDate.getSeconds() + MAX_SESSION_TIME);
   const sessionTimeoutDate = useRef<Date>(initialTimeoutDate);
+
+  const getConfigHash = (config) => {
+    return CryptoJS.SHA256(`${config.method}:${config.url}:${config.data}`).toString();
+  };
+
+  axios.interceptors.request.use(
+    request => {
+      if (request) {
+        const requestHash = getConfigHash(request);
+        if (encounteredErrors.includes(requestHash)) {
+          throw new axios.Cancel(requestHash);
+        }
+      }
+      return request;
+    },
+    error => {
+      if (error instanceof axios.Cancel && encounteredErrors.includes(error.message)) {
+        return new Promise(r => setTimeout(r, 5000)).then(
+          (r) => {
+            // forget the error after 5 seconds.
+            if (encounteredErrors.includes(error.message)) {
+              encounteredErrors.splice(encounteredErrors.indexOf(error.message), 1);
+              setEncounteredErrors(encounteredErrors);
+            }
+            return r;
+          }
+        );
+      }
+      return Promise.reject(error);
+    }
+  );
 
   const setSessionTimeoutDate = (timeInSeconds) => {
     const timeoutDate = new Date();
@@ -202,94 +233,130 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       localStorage.setItem("loginResp", "");
       localStorage.setItem("hubCentralSessionToken", "");
       authoritiesService.setAuthorities([]);
+      setEncounteredErrors([]);
       resetEnvironment();
     });
   };
 
+  /*
+  * handleError - A consistent way to handle and present errors.
+  * @param error - The error response which we will decide to handle an error
+  * */
   const handleError = (error) => {
     const DEFAULT_MESSAGE = "Internal Server Error";
-    switch (error.response.status) {
-    case 401: {
-      localStorage.setItem("dataHubUser", "");
-      localStorage.setItem("loginResp", "");
-      setUser({...user, name: "", authenticated: false});
-      break;
-    }
-    case 400:
-    case 403:
-    case 405:
-    case 408:
-    case 414: {
-      console.error("HTTP ERROR", error.response);
-      let title = error.response.status + " " + error.response.statusText;
-      let message = DEFAULT_MESSAGE;
-
-      if (error.response.data.hasOwnProperty("message")) {
-        message = error.response.data.message;
+    let errorHash = "";
+    let errorAlreadyEncountered = false;
+    if (error.config && error.response && error.response.status >= 500) {
+      let config = error.config;
+      errorHash = getConfigHash(config);
+      errorAlreadyEncountered = encounteredErrors.includes(errorHash);
+      if (!errorAlreadyEncountered) {
+        console.warn("Request error will cause future exact requests to be canceled for the next 5 seconds.");
+        encounteredErrors.push(errorHash);
+        setEncounteredErrors(encounteredErrors);
       }
-      setUser({
-        ...user,
-        error: {
-          title: title,
-          message: message,
-          type: "ALERT"
-        }
-      });
-      break;
     }
-    case 404: {
-      setUser({
-        ...user,
-        // redirect: true,
-        error: {
-          title: error.response.data.error,
-          message: error.response.data.message || DEFAULT_MESSAGE,
-          type: "ALERT"
+    if (!errorAlreadyEncountered) {
+      if (error.response) {
+        switch (error.response.status) {
+        case 401: {
+          localStorage.setItem("dataHubUser", "");
+          localStorage.setItem("loginResp", "");
+          setUser({...user, name: "", authenticated: false});
+          break;
         }
-      });
-      break;
-    }
-    case 500:
-    case 501:
-    case 502:
-    case 503:
-    case 504:
-    case 505:
-    case 511: {
-      console.error("HTTP ERROR ", error.response);
-      let title = error.response.status + " " + error.response.statusText;
-      let message = DEFAULT_MESSAGE;
+        case 400:
+        case 403:
+        case 405:
+        case 408:
+        case 414: {
+          console.error("HTTP ERROR", error.response);
+          let title = error.response.status + " " + error.response.statusText;
+          let message = DEFAULT_MESSAGE;
 
-      if (error.response.data.hasOwnProperty("message")) {
-        message = error.response.data.message;
+          if (error.response.data.hasOwnProperty("message")) {
+            message = error.response.data.message;
+          }
+          setUser({
+            ...user,
+            error: {
+              title: title,
+              message: message,
+              type: "ALERT",
+              encounteredErrors
+            }
+          });
+          break;
+        }
+        case 404: {
+          setUser({
+            ...user,
+            // redirect: true,
+            error: {
+              title: error.response.data.error,
+              message: error.response.data.message || DEFAULT_MESSAGE,
+              type: "ALERT",
+              encounteredErrors
+            }
+          });
+          break;
+        }
+        case 500:
+        case 501:
+        case 502:
+        case 503:
+        case 504:
+        case 505:
+        case 511: {
+          console.error("HTTP ERROR ", error.response);
+          let title = error.response.status + " " + error.response.statusText;
+          let message = DEFAULT_MESSAGE;
+
+          if (error.response.data.hasOwnProperty("message")) {
+            message = error.response.data.message;
+          }
+          setUser({
+            ...user,
+            error: {
+              title,
+              message,
+              type: "MODAL",
+              encounteredErrors
+            }
+          });
+          break;
+        }
+        default: {
+          console.error("HTTP ERROR ", error.response);
+          setUser({
+            ...user,
+            error: {
+              title: DEFAULT_MESSAGE,
+              message: "Please check the console for more information",
+              type: "MODAL",
+              encounteredErrors
+            }
+          });
+          break;
+        }
+        }
+      } else {
+        console.error("ERROR ", error);
+        setUser({
+          ...user,
+          error: {
+            title: DEFAULT_MESSAGE,
+            message: "Please check the console for more information",
+            type: "MODAL",
+            encounteredErrors
+          }
+        });
       }
-      setUser({
-        ...user,
-        error: {
-          title,
-          message,
-          type: "MODAL"
-        }
-      });
-      break;
-    }
-    default: {
-      console.error("HTTP ERROR ", error.response);
-
-      setUser({
-        ...user,
-        error: {
-          title: DEFAULT_MESSAGE,
-          message: "Please check the console for more information",
-          type: "MODAL"
-        }
-      });
-      break;
-    }
     }
   };
 
   const clearErrorMessage = () => {
+    setEncounteredErrors([]);
     setUser({...user, error: {title: "", message: "", type: ""}});
   };
 

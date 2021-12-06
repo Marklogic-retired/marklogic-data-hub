@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {Mosaic, MosaicWindow} from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import {ArrowsAltOutlined, ShrinkOutlined, CloseOutlined} from "@ant-design/icons";
@@ -27,7 +27,7 @@ interface Props {
 }
 
 const Tiles: React.FC<Props> = (props) => {
-
+  const componentIsMounted = useRef(true);
   const options = props.options;
   const controls = props.options.controls;
   const viewId = props.id;
@@ -84,8 +84,8 @@ const Tiles: React.FC<Props> = (props) => {
 
   const getEntities = async () => {
     try {
-      const res= await primaryEntityTypes();
-      if (res) {
+      const res = await primaryEntityTypes();
+      if (res && componentIsMounted.current) {
         if (res.data.length === 0) setModelingInfoVisible(true);
       }
     } catch (error) {
@@ -107,6 +107,7 @@ const Tiles: React.FC<Props> = (props) => {
 
   useEffect(() => {
     getEntities();
+    return () => { componentIsMounted.current = false; };
   }, []);
 
   const modelingInfoViewChange = (visible) => {
