@@ -62,9 +62,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
 
   const getSaveQueries = async () => {
     try {
-      if (authorityService.isSavedQueryUser()) {
+      if (componentIsMounted.current && authorityService.isSavedQueryUser()) {
         const response = await fetchQueries();
-        if (response.data) {
+        if (componentIsMounted.current && response.data) {
           setSavedQueries(response.data);
         }
       }
