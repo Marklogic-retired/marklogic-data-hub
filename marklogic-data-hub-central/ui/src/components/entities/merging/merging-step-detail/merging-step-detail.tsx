@@ -358,7 +358,7 @@ const MergingStepDetail: React.FC = () => {
         <div id="strategyText">
           <HCTooltip text={multiSliderTooltips.viewOnlyTooltip} id="view-only-tooltip" placement="top">
             <div style={{opacity: "60%"}}>
-              <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderStrategyOptions} options={strategyOptions} /></div>
+              <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderStrategyOptions} options={strategyOptions}  borderMargin="14px"/></div>
             </div>
           </HCTooltip>
         </div>

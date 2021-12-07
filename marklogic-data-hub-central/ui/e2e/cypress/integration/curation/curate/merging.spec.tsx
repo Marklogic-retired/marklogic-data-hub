@@ -117,6 +117,29 @@ describe("Merging", () => {
     cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length.gt", 0));
     cy.findByText("myFavouriteEdited").should("exist");
+
+    // To test discard changes works consistently in merge strategy dialog
+    cy.findByText("myFavouriteEdited").click();
+    mergeStrategyModal.setStrategyName("myFavouriteEditedAgain");
+    mergeStrategyModal.cancelButton().click();
+    cy.waitUntil(() => confirmYesNo.getDiscardText().should("be.visible"));
+    cy.findByLabelText("DiscardChangesNoButton").click();
+
+    mergeStrategyModal.maxValueOtherRadio().click();
+    mergeStrategyModal.cancelButton().click();
+    cy.waitUntil(() => confirmYesNo.getDiscardText().should("be.visible"));
+    cy.findByLabelText("DiscardChangesNoButton").click();
+
+    mergeStrategyModal.maxSourcesOtherRadio().click();
+    cy.findByLabelText("maxSourcesOtherRadio").click();
+    mergeStrategyModal.cancelButton().click();
+    cy.waitUntil(() =>  confirmYesNo.getDiscardText().should("be.visible"));
+    cy.findByLabelText("DiscardChangesNoButton").click();
+
+    mergeStrategyModal.defaultStrategyYes().click();
+    mergeStrategyModal.cancelButton().click();
+    confirmYesNo.getDiscardText().should("be.visible");
+    cy.findByLabelText("DiscardChangesYesButton").click();
   });
   it("Cancel the strategy deletion ", () => {
     mergingStepDetail.getDeleteMergeStrategyButton("myFavouriteEdited").click();
@@ -252,6 +275,18 @@ describe("Merging", () => {
     //cy.waitForAsyncRequest();
     cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
+
+    // To test discard changes works consistently in merge rule dialog
+    cy.findByText("shipRegion").click();
+    mergeRuleModal.maxValueOtherRadio().click();
+    mergeRuleModal.cancelButton().click();
+    cy.waitUntil(() => confirmYesNo.getDiscardText().should("be.visible"));
+    cy.findByLabelText("DiscardChangesNoButton").click();
+
+    mergeRuleModal.maxSourcesOtherRadio().click();
+    mergeRuleModal.cancelButton().click();
+    cy.waitUntil(() =>  confirmYesNo.getDiscardText().should("be.visible"));
+    cy.findByLabelText("DiscardChangesYesButton").click();
   });
   it("Cancel deletion of merge rule of type property-specific ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("shipRegion").click();

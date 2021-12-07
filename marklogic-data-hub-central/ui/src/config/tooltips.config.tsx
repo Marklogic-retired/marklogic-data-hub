@@ -381,7 +381,7 @@ const MergingStepTooltips = {
 
   /* For strategies */
   nameStrategy: 'The name of this strategy.',
-  strategyScale: 'Enable the scale to change the position of priority order.',
+  strategyScale: 'Enable the scale to position or delete length and sources.',
 
   /* For rulesets */
   function: 'The merge function to run.',
@@ -525,7 +525,7 @@ const ErrorTooltips = {
 
 /* --- SLIDER --- */
 const multiSliderTooltips = {
-  priorityOrder: 'The length weights and source weights plotted on a slider from low to high. Each weight indicates the importance of the length or source when merging documents.',
+  priorityOrder: <span aria-label="priorityOrderTooltip">The length weights and source weights plotted on a slider from low to high. Each weight indicates the importance of the length or source when merging documents. The <b>Timestamp</b> node cannot be moved or deleted.</span>,
   timeStamp: 'Timestamp cannot be moved or deleted.',
   viewOnlyTooltip: 'Click the strategy name to change the priority order.'
 };
@@ -682,7 +682,7 @@ const MergeRuleTooltips = {
   maxSources: 'The maximum number of data sources from which to get values to merge. To copy values from a single source, set to 1.',
   priorityOrder: 'The relative importance of each metadata when merging documents.',
   disabledProperties: 'Disabled properties in the list are already used in other rules.',
-  strategyScale: 'Enable the scale to change the position of priority order.',
+  strategyScale: 'Enable the scale to position or delete length and sources.',
 };
 
 /* TO BE DEPRECATED. Please use MergingStepIntros.main. */
