@@ -22,10 +22,10 @@ const ConfirmYesNo: React.FC<Props> = (props) => {
         <div aria-label="confirm-body" className={"text-center"}>{ConfirmYesNoMessages[props.type]}</div>
         <div className={"d-flex justify-content-center pt-4 pb-2"}>
           <HCButton className={"me-2"} variant="outline-light" aria-label={props.labelNo ? props.labelNo : "No"} onClick={props.onNo}>
-            {props.labelNo ? props.labelNo : "No"}
+            {props.labelNo ? (props.labelNo === "DiscardChangesNoButton" ? "No" : props.labelNo) : "No"}
           </HCButton>
           <HCButton aria-label={props.labelYes ? props.labelYes : "Yes"} variant="primary" type="submit" onClick={props.onYes}>
-            {props.labelYes ? props.labelYes : "Yes"}
+            {props.labelYes ? (props.labelYes === "DiscardChangesYesButton" ? "Yes" : props.labelYes) : "Yes"}
           </HCButton>
         </div>
       </Modal.Body>

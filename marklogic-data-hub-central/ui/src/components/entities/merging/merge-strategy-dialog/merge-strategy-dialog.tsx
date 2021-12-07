@@ -37,6 +37,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [maxValuesTouched, setMaxValuesTouched] = useState(false);
   const [maxSources, setMaxSources] = useState<any>("");
   const [maxSourcesTouched, setMaxSourcesTouched] = useState(false);
+  const [defaultStrategyTouched, setDefaultStrategyTouched] = useState(false);
+  const [priorityOrderTouched, setPriorityOrderTouched] = useState(false);
   const [isCustomStrategy, setIsCustomStrategy] = useState(false);
   const [deleteModalVisibility, toggleDeleteModalVisibility] = useState(false);
   const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([defaultPriorityOption]);
@@ -63,15 +65,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
     if (event.target.id === "maxSourcesStrategyInput") {
       setMaxSources(event.target.value);
-      setMaxSourcesTouched(true);
       setRadioSourcesOptionClicked(2);
     }
     if (event.target.id === "maxValuesStrategyInput") {
       setMaxValues(event.target.value);
-      setMaxValuesTouched(true);
       setRadioValuesOptionClicked(2);
     }
     if (event.target.name === "defaultYesNo") {
+      setDefaultStrategyTouched(true);
       if (radioDefaultOptionClicked === 2) {
         let defaultStrategy = checkExistingDefaultStrategy();
         if (defaultStrategy) {
@@ -84,12 +85,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       }
     }
     if (event.target.name === "maxSources") {
+      setMaxSourcesTouched(true);
       setRadioSourcesOptionClicked(parseInt(event.target.value));
       if (event.target.value === 1) {
         setMaxSources("");
       }
     }
     if (event.target.name === "maxValues") {
+      setMaxValuesTouched(true);
       setRadioValuesOptionClicked(parseInt(event.target.value));
       if (event.target.value === 1) {
         setMaxValues("");
@@ -138,11 +141,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const renderPriorityOrderTimeline = () => {
-    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} /></div>;
+    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} borderMargin="14px"/></div>;
   };
 
   const renderDefaultPriorityOrderTimeline = () => {
-    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} /></div>;
+    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px"/></div>;
   };
 
   const timelineOrder = (a, b) => {
@@ -182,6 +185,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     },
     onMove: function(item, callback) {
       if (item.value.split(":")[0] !== "Timestamp") {
+        setPriorityOrderTouched(true);
         if (item.start >= 0 && item.start <= 100) {
           item.value= getStrategyName(item);
           callback(item);
@@ -226,6 +230,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const confirmAction = () => {
+    setPriorityOrderTouched(true);
     setPriorityOrderOptions(handleDeleteSliderOptions(priorityOptions, priorityOrderOptions));
     toggleDeleteModalVisibility(false);
   };
@@ -272,6 +277,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
   const onAddOptions = () => {
     const data = (addSliderOptions(priorityOrderOptions, dropdownOption));
+    priorityOrderOptions.map((option) => {
+      if (option.id.split(":")[0] === "Length" && dropdownOption === "Length") {
+        setPriorityOrderTouched(false);
+      } else setPriorityOrderTouched(true);
+    });
     setPriorityOrderOptions(data);
   };
 
@@ -329,8 +339,10 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const hasFormChanged = () => {
     if (!dropdownOptionTouched
       && !strategyNameTouched
-      && (!maxValuesTouched || maxValues.length === 0)
-      && (!maxSourcesTouched || maxSources.length === 0)
+      && !defaultStrategyTouched
+      && !priorityOrderTouched
+      && !maxValuesTouched
+      && !maxSourcesTouched
     ) {
       return false;
     } else {
@@ -357,6 +369,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     setMaxValuesTouched(false);
     setMaxSourcesTouched(false);
     setDropdownOptionTouched(false);
+    setDefaultStrategyTouched(false);
+    setPriorityOrderTouched(false);
   };
 
   const discardOk = () => {
@@ -374,6 +388,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
+    labelNo="DiscardChangesNoButton"
+    labelYes="DiscardChangesYesButton"
   />;
 
   useEffect(() => {
@@ -450,7 +466,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   return (
     <Modal
       show={props.createEditMergeStrategyDialog}
-      size={"lg"}
+      size={"xl"}
     >
       <Modal.Header>
         <span className={"fs-5"}>
@@ -494,11 +510,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 checked={radioValuesOptionClicked === 1}
                 label={"All"}
                 value={1}
-                aria-label={"All"}
+                aria-label="maxValuesAllRadio"
                 className={"mb-0 flex-shrink-0"}
               />
-              <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"} >
-                <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2} defaultChecked={radioValuesOptionClicked === 2} checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+              <Form.Check type={"radio"} id={"maxValues_val"} className={"d-flex align-items-center me-3"}>
+                <Form.Check.Input type={"radio"} name={"maxValues"} onChange={handleChange} value={2}  aria-label="maxValuesOtherRadio" defaultChecked={radioValuesOptionClicked === 2} checked={radioValuesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
                 <HCInput id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} />
                 <HCTooltip text={MergeRuleTooltips.maxValues} id="max-values-tooltip" placement="top">
                   <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
@@ -519,11 +535,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                 checked={radioSourcesOptionClicked === 1}
                 label={"All"}
                 value={1}
-                aria-label={"All"}
+                aria-label="maxSourcesAllRadio"
                 className={"mb-0 flex-shrink-0"}
               />
-              <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"} >
-                <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} defaultChecked={radioSourcesOptionClicked === 2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"} />
+              <Form.Check type={"radio"} id={"maxSources_val"} className={"d-flex align-items-center me-3"}>
+                <Form.Check.Input type={"radio"} name={"maxSources"} onChange={handleChange} value={2} defaultChecked={radioSourcesOptionClicked === 2} checked={radioSourcesOptionClicked === 2} className={"me-2 flex-shrink-0"}  aria-label="maxSourcesOtherRadio"/>
                 <HCInput id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}/>
                 <HCTooltip text={MergeRuleTooltips.maxSources} id="max-sources-tooltip" placement="top">
                   <QuestionCircleFill color="#7F86B5" className={`flex-shrink-0 ${styles.questionCircle}`} size={13} aria-label="icon: question-circle"/>
@@ -546,7 +562,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     checked={radioDefaultOptionClicked === 1}
                     label={"Yes"}
                     value={1}
-                    aria-label={"Yes"}
+                    aria-label="defaultStrategyYes"
                     className={"mb-0 flex-shrink-0"}
                   />
                   <Form.Check
@@ -559,7 +575,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     checked={radioDefaultOptionClicked === 2}
                     label={"No"}
                     value={2}
-                    aria-label={"No"}
+                    aria-label="defaultStrategyNo"
                     className={"mb-0 flex-shrink-0"}
                   />
                 </Col>
@@ -594,7 +610,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
               <HCButton aria-label="add-slider-button" variant="primary" className={styles.addSliderButton} onClick={onAddOptions}>Add</HCButton>
             </div>
             <div>
-              <div><span className={styles.enableStrategySwitch}><b>Enable Merge Strategy Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
+              <div><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
                 <span>
                   <HCTooltip text={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
                     <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} aria-label="icon: question-circle"/>

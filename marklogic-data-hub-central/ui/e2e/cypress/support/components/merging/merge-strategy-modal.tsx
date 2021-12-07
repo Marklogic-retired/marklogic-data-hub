@@ -23,6 +23,18 @@ class MergeStrategyModal {
   strategyMaxScoreInput(value: string) {
     cy.get("#maxSourcesStrategyInput").clear().type(value).type("{enter}");
   }
+
+  maxValueOtherRadio() {
+    return cy.findByLabelText("maxValuesOtherRadio");
+  }
+
+  maxSourcesOtherRadio() {
+    return cy.findByLabelText("maxSourcesOtherRadio");
+  }
+
+  defaultStrategyYes() {
+    return cy.findByLabelText("defaultStrategyYes");
+  }
 }
 
 const mergeStrategyModal = new MergeStrategyModal();

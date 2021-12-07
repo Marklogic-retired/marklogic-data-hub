@@ -638,19 +638,19 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const renderRulesetTimeline = () => {
-    return <div data-testid={"active-ruleset-timeline"}><TimelineVis items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked} /></div>;
+    return <div data-testid={"active-ruleset-timeline"}><TimelineVis items={rulesetItems} options={rulesetOptions} clickHandler={onRuleSetTimelineItemClicked} borderMargin="0px"/></div>;
   };
 
   const renderDefaultRulesetTimeline = () => {
-    return <div data-testid={"default-ruleset-timeline"}><TimelineVisDefault items={rulesetItems} options={rulesetOptions} /></div>;
+    return <div data-testid={"default-ruleset-timeline"}><TimelineVisDefault items={rulesetItems} options={rulesetOptions} borderMargin="0px"/></div>;
   };
 
   const renderDefaultThresholdTimeline = () => {
-    return <div data-testid={"default-threshold-timeline"}><TimelineVisDefault items={thresholdItems} options={thresholdOptions} /></div>;
+    return <div data-testid={"default-threshold-timeline"}><TimelineVisDefault items={thresholdItems} options={thresholdOptions} borderMargin="0px"/></div>;
   };
 
   const renderThresholdTimeline = () => {
-    return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} /></div>;
+    return <div data-testid={"active-threshold-timeline"}><TimelineVis items={thresholdItems} options={thresholdOptions} clickHandler={onThresholdTimelineItemClicked} borderMargin="0px"/></div>;
   };
 
   const updateThresholdItems = async (id, newvalue) => {
