@@ -234,3 +234,96 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
         }
     }
 }
+
+/* TreeSelect*/
+
+.rc-tree-select {
+    .rc-tree-select-selection {
+        display: flex;
+        justify-content: space-between;
+    }
+    .rc-tree-select-selector {
+        border: 0 !important;
+        padding: 4.5px 25px 4.5px 11px !important;
+        .rc-tree-select-selection-item {
+            top: 4px;
+            left: 11px;
+        }
+        .rc-tree-select-selection-placeholder {
+            top: 4px;
+            left: 11px;
+        }
+    }
+
+    .rc-tree-select-arrow {
+        right: 11px;
+        top: 4px;
+        svg {
+            transition: transform ease-out 0.2s;
+            font-size: 12px;
+            color: #bfbfbf;
+        }
+    }
+
+    &.rc-tree-select-open {
+        .rc-tree-select-arrow {
+            svg {
+                transform: rotateZ(180deg);
+            }
+        }
+    }
+}
+
+.rc-tree-select-dropdown {
+    border: 0;
+    box-shadow: 0 2px 8px #00000026;
+    overflow-x: hidden !important;
+    ul {
+        list-style: none;
+    }
+
+    .rc-tree-select-tree {
+        padding: 8px 0;
+    }
+    .clean-box {
+        padding: 8px;
+        clear: both;
+    }
+    .rc-tree-select-tree-switcher {
+        background: transparent !important;
+        background-image: none !important;
+        padding-left: 4px ;
+    }
+    .rc-tree-select-tree-list-holder {
+        overflow: hidden !important;
+    }
+
+    .rc-tree-select-tree {
+        .rc-tree-select-tree-node-content-wrapper {
+            display: inline-block;
+            width: calc(100% - 15px);
+            margin: 0;
+            padding: 3px 0 3px 5px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 2px;
+            cursor: pointer;
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+            .rc-tree-select-tree-iconEle {
+                background-image: none !important;
+                display: none;
+            }
+            &:hover {
+                background-color: #e9f7fe;
+            }
+
+            &.rc-tree-select-tree-node-selected {
+                background-color: #d5d9e3;
+                box-shadow: none;
+                border: 0;
+                opacity: 1;
+            }
+        }
+    }
+}

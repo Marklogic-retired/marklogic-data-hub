@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, wait, within} from "@testing-library/react";
+import {cleanup, render, screen, wait, within} from "@testing-library/react";
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
@@ -18,11 +18,16 @@ describe("Matching Ruleset Single Modal component", () => {
     jest.clearAllMocks();
   });
 
+  beforeAll(() => {
+    jest.clearAllMocks();
+    cleanup();
+  });
+
   it("can select an property to match and match type and click cancel", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText, queryByLabelText, rerender} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={false}
@@ -48,8 +53,8 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(screen.getByText("customerId"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => { userEvent.click(getByText("customerId")); });
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Exact"));
@@ -70,7 +75,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText, rerender} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={false}
@@ -96,15 +101,14 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(screen.getByText("nicknames"));
+    await userEvent.click(getByTestId("property-to-match-dropdown"));
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Zip"));
 
     userEvent.click(getByText("Save"));
 
-    await wait(() => {
+    wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -116,7 +120,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -130,8 +134,8 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(screen.getByText("nicknames"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => { userEvent.click(getByText("nicknames")); });
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Synonym"));
@@ -140,7 +144,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
 
     userEvent.click(getByText("Save"));
-    await wait(() => {
+    wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -152,7 +156,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -166,8 +170,8 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(screen.getByText("orders"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => { userEvent.click(getByText("orders")); });
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Double Metaphone"));
@@ -176,7 +180,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     userEvent.click(getByText("Save"));
 
-    await wait(() => {
+    wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -188,7 +192,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -202,8 +206,8 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(screen.getByText("nicknames"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => { userEvent.click(getByText("nicknames")); });
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Custom"));
@@ -213,7 +217,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
 
     userEvent.click(getByText("Save"));
-    await wait(() => {
+    wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -224,7 +228,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText} =  render(
+    const {queryByText, getByText, getByTestId} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -242,14 +246,14 @@ describe("Matching Ruleset Single Modal component", () => {
 
     userEvent.click(screen.getByLabelText("reduceToggle"));
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(screen.getByText("nicknames"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => { userEvent.click(getByText("nicknames")); });
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Exact"));
 
     userEvent.click(getByText("Save"));
-    await wait(() => {
+    wait(() => {
       const expectedMatchStep = {...customerMatchingStep.curationOptions.activeStep.stepArtifact};
       expectedMatchStep.matchRulesets = [...expectedMatchStep.matchRulesets, {
         name: "nicknames - Exact",
@@ -273,7 +277,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender} =  render(
+    const {queryByText, getByText, rerender} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={false}
@@ -315,7 +319,7 @@ describe("Matching Ruleset Single Modal component", () => {
       index: 0
     };
 
-    const {queryByText, getByText, getByLabelText} =  render(
+    const {queryByText, getByText, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -340,7 +344,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
     userEvent.click(screen.getByText("Save"));
 
-    await wait(() => {
+    wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -351,7 +355,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -365,9 +369,9 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     expect(getByLabelText("reduceToggle")).toBeInTheDocument();
 
-    userEvent.click(screen.getByText("Select property"));
-    userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down"));
-    userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
+    wait(() => { userEvent.click(within(getByLabelText("shipping-option")).getByLabelText("icon: caret-down")); });
+    wait(() => { userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option")); });
 
     userEvent.click(screen.getByText("Select match type"));
     userEvent.click(screen.getByText("Synonym"));
@@ -376,7 +380,7 @@ describe("Matching Ruleset Single Modal component", () => {
 
 
     userEvent.click(getByText("Save"));
-    await wait(() => {
+    wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -387,7 +391,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, getByLabelText, queryByLabelText} =  render(
+    const {queryByText, getByText, getByTestId, getByLabelText, queryByLabelText} = render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={true}
@@ -398,29 +402,32 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
-    userEvent.click(screen.getByText("Select property"));
+    userEvent.click(getByTestId("property-to-match-dropdown"));
 
-    userEvent.click(screen.getByText("shipping"));
-    expect(getByLabelText("shipping > street-option")).toBeInTheDocument();
-    expect(getByLabelText("shipping > city-option")).toBeInTheDocument();
-    expect(getByLabelText("shipping > state-option")).toBeInTheDocument();
-    userEvent.click(screen.getByText("zip"));
-    expect(getByLabelText("shipping > zip > fiveDigit-option")).toBeInTheDocument();
-    expect(getByLabelText("shipping > zip > plusFour-option")).toBeInTheDocument();
-    userEvent.click(screen.getByText("zip"));
-    expect(queryByLabelText("shipping > zip > fiveDigit-option")).not.toBeInTheDocument();
-    expect(queryByLabelText("shipping > zip > plusFour-option")).not.toBeInTheDocument();
+    wait(() => {
+      userEvent.click(getByText("shipping"));
+      expect(getByLabelText("shipping > street-option")).toBeInTheDocument();
+      expect(getByLabelText("shipping > city-option")).toBeInTheDocument();
+      expect(getByLabelText("shipping > state-option")).toBeInTheDocument();
+      userEvent.click(screen.getByText("zip"));
+      expect(getByLabelText("shipping > zip > fiveDigit-option")).toBeInTheDocument();
+      expect(getByLabelText("shipping > zip > plusFour-option")).toBeInTheDocument();
+      userEvent.click(screen.getByText("zip"));
+      expect(queryByLabelText("shipping > zip > fiveDigit-option")).not.toBeInTheDocument();
+      expect(queryByLabelText("shipping > zip > plusFour-option")).not.toBeInTheDocument();
 
-    userEvent.click(screen.getByText("shipping"));
-    expect(queryByLabelText("shipping > street-option")).not.toBeInTheDocument();
-    expect(queryByLabelText("shipping > city-option")).not.toBeInTheDocument();
-    expect(queryByLabelText("shipping > state-option")).not.toBeInTheDocument();
+      userEvent.click(screen.getByText("shipping"));
+      expect(queryByLabelText("shipping > street-option")).not.toBeInTheDocument();
+      expect(queryByLabelText("shipping > city-option")).not.toBeInTheDocument();
+      expect(queryByLabelText("shipping > state-option")).not.toBeInTheDocument();
 
-    userEvent.click(screen.getByText("shipping"));
-    userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
+      userEvent.click(screen.getByText("shipping"));
+      userEvent.click(within(getByLabelText("shipping > street-option")).getByLabelText("street-option"));
 
-    userEvent.click(screen.getByText("Select match type"));
-    userEvent.click(screen.getByText("Exact"));
-    userEvent.click(getByText("Save"));
+      userEvent.click(screen.getByText("Select match type"));
+      userEvent.click(screen.getByText("Exact"));
+      userEvent.click(getByText("Save"));
+    });
+
   });
 });

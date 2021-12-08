@@ -92,7 +92,7 @@ describe("Matching Step Detail view component", () => {
     expect(getByLabelText("multiPropertyRulesetOption")).toBeInTheDocument();
     userEvent.click(getByLabelText("singlePropertyRulesetOption"));
 
-    expect(screen.getByText("Select property")).toBeInTheDocument();
+    expect(screen.getByTestId("property-to-match-dropdown")).toBeInTheDocument();
 
     //Verify test match related fields are rendered properly
     expect(getByLabelText("testMatch")).toBeInTheDocument();
