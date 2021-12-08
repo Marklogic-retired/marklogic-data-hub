@@ -118,3 +118,7 @@ export const getSavedQueryPreview = async (id, database) => {
   });
 
 };
+
+export const graphSearchQuery = async (graphSearchPayload: any) => {
+  return await axios.post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data);
+};

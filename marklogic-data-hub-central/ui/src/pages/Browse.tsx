@@ -27,6 +27,7 @@ import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 import {CSSProperties} from "react";
 import GraphViewExplore from "../components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
+import {graphSearchQuery} from "../api/queries";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -81,6 +82,32 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const [graphView, setGraphView] = useState(state && state.graphView ? true : false);
 
+  const [graphSearchData, setGraphSearchData] = useState<any[]>([]);
+
+
+  const getGraphSearchResult = async (allEntities: any[]) => {
+    try {
+      let payload = {
+        "database": searchOptions.database,
+        "data": {
+          "query": {
+            "searchText": searchOptions.query,
+            "entityTypeIds": searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            "selectedFacets": searchOptions.selectedFacets,
+          },
+          "start": 0,
+          "pageLength": 100,
+        }
+      };
+      const response = await graphSearchQuery(payload);
+      if (componentIsMounted.current && response.data) {
+        setGraphSearchData(response.data);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
   const getEntityModel = async () => {
     try {
       const response = await axios(`/api/models`);
@@ -92,6 +119,7 @@ const Browse: React.FC<Props> = ({location}) => {
         setEntityDefArray(parsedEntityDef);
         setEntityDefinitionsArray(parsedEntityDef);
         setEntitiesData(response.data);
+        getGraphSearchResult(entityArray);
       }
     } catch (error) {
       handleError(error);
@@ -205,6 +233,7 @@ const Browse: React.FC<Props> = ({location}) => {
       setCardView(false);
     }
     fetchUpdatedSearchResults();
+    getGraphSearchResult(entities);
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
@@ -601,7 +630,7 @@ const Browse: React.FC<Props> = ({location}) => {
                     {graphView ?
                       <div>
                         <GraphViewExplore
-                          entityTypesInstances={data}
+                          entityTypesInstances={graphSearchData}
                           graphView={graphView}
                           coords={coords}
                           setCoords={setCoords}
