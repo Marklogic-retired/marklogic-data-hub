@@ -2,7 +2,7 @@
   <personId>10004</personId>
   <firstName>Rochella</firstName>
   <lastName>Woodburne</lastName>
-  <name>{first_name} {last_name}</name>
+  <name>Rochella Woodburne</name>
   <email>rwoodburne3@bizjournals.com</email>
   <phone>256-229-4980</phone>
   <image>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</image>
@@ -15,7 +15,12 @@
       <plusFour>3194</plusFour>
     </zip>
   </address>
+  <geo>
+    <lat>34.709368</lat>
+    <lon>-86.620290</lon>
+  </geo>
   <status>Active</status>
   <ssn>606-29-9085</ssn>
   <sources>USA Today</sources>
+  <createdOn>2001-06-04T08:15:30-05:00</createdOn>
 </person>

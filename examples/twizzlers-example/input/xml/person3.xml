@@ -2,7 +2,7 @@
   <personId>10003</personId>
   <firstName>Krissie</firstName>
   <lastName>Neale</lastName>
-  <name>{first_name} {last_name}</name>
+  <name>Krissie Neale</name>
   <email>kneale2@microsoft.com</email>
   <phone>804-375-4886</phone>
   <image>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</image>
@@ -11,12 +11,17 @@
     <city>Richmond</city>
     <state>VA</state>
     <zip>
-      <fiveDigit>23213</fiveDigit>
+      <fiveDigit>23219</fiveDigit>
       <plusFour>2690</plusFour>
     </zip>
   </address>
+  <geo>
+    <lat>37.539769</lat>
+    <lon>-77.435528</lon>
+  </geo>
   <status>Active</status>
   <ssn>479-51-6475</ssn>
   <sources>Washington Post</sources>
   <sources>USA Today</sources>
+  <createdOn>2007-09-08T08:15:30-05:00</createdOn>
 </person>
