@@ -86,3 +86,8 @@
 .disabledCursor{
   cursor: not-allowed;
 }
+
+.dropdown-item.active {
+  all: unset;
+  margin-left: 10px !important;
+}

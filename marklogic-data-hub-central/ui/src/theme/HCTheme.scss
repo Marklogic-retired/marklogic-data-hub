@@ -327,3 +327,10 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
         }
     }
 }
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: $item-light;
+}
+.dropdown-item.active {
+    all: unset;
+    margin-left: 6px !important;
+}

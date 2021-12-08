@@ -245,7 +245,7 @@ describe("Graph view page", () => {
     expect(getByLabelText("switch-view")).toBeInTheDocument();
     expect(document.querySelector("#switch-view-graph")).toBeChecked(); // Graph view is checked by default.
     expect(getByText("Entity Types")).toBeInTheDocument();
-    expect(getByLabelText("graph-view-filter-input")).toBeInTheDocument();
+    expect(document.querySelector((".rbt-input-main"))).toBeInTheDocument();
     userEvent.click(getByText("Add"));
     await waitFor(() => {
       expect(getByLabelText("add-entity-type")).toBeInTheDocument();
@@ -278,7 +278,7 @@ describe("Graph view page", () => {
 
     let graphViewButton = document.querySelector("#switch-view-graph");
     let tableViewButton = document.querySelector("#switch-view-table");
-    let filterInput = getByLabelText("graph-view-filter-input");
+    let filterInput = document.querySelector((".rbt-input-main"));
     let addEntityOrRelationshipBtn = getByLabelText("add-entity-type-relationship");
     let publishToDatabaseBtn = getByLabelText("publish-to-database");
     let graphExportIcon = getByLabelText("graph-export");

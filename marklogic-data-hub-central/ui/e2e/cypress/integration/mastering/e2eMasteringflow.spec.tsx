@@ -155,7 +155,8 @@ describe("Validate E2E Mastering Flow", () => {
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     createEditMappingDialog.setCollectionInput(loadStepName);
-    createEditMappingDialog.saveButton().click({force: true});
+    cy.waitUntil(() => cy.get(`[aria-label="${loadStepName}"]`).click({force: true}));
+    cy.waitUntil(() => cy.get(".rbt-input-main").should("have.value", loadStepName)).then(() => { createEditMappingDialog.saveButton().click({force: true}); });
     cy.waitForAsyncRequest();
     cy.waitUntil(() => curatePage.dataPresent().scrollIntoView().should("be.visible"));
     curatePage.verifyStepDetailsOpen(mapStep);
@@ -200,7 +201,8 @@ describe("Validate E2E Mastering Flow", () => {
     createEditStepDialog.stepNameInput().clear().type(matchStep);
     createEditStepDialog.stepDescriptionInput().clear().type("match patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(mapStep);
-    createEditStepDialog.saveButton("matching").click();
+    cy.waitUntil(() => cy.get(`[aria-label="${mapStep}"]`).click({force: true}));
+    cy.waitUntil(() => cy.get(".rbt-input-main").should("have.value", mapStep)).then(() => { createEditStepDialog.saveButton("matching").click(); });
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
@@ -329,7 +331,8 @@ describe("Validate E2E Mastering Flow", () => {
     createEditStepDialog.stepNameInput().clear().type(mergeStep, {timeout: 2000});
     createEditStepDialog.stepDescriptionInput().clear().type("merge patient step example", {timeout: 2000});
     createEditStepDialog.setCollectionInput(matchStep);
-    createEditStepDialog.saveButton("merging").click();
+    cy.waitUntil(() => cy.get(`[aria-label="${matchStep}"]`).click({force: true}));
+    cy.waitUntil(() => cy.get(".rbt-input-main").should("have.value", matchStep)).then(() => { createEditStepDialog.saveButton("merging").click(); });
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(mergeStep);
   });

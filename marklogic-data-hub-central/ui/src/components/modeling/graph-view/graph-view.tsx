@@ -1,5 +1,4 @@
 import React, {CSSProperties, useContext, useState, useEffect} from "react";
-import {AutoComplete} from "antd";
 import styles from "./graph-view.module.scss";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import PublishToDatabaseIcon from "../../../assets/publish-to-database-icon";
@@ -12,7 +11,9 @@ import GraphVis from "./graph-vis/graph-vis";
 import {ConfirmationType} from "../../../types/common-types";
 import {ChevronDown, Search} from "react-bootstrap-icons";
 import {Dropdown, DropdownButton} from "react-bootstrap";
-import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
+import {HCAlert, HCButton, HCTooltip} from "@components/common";
+import {Typeahead} from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 type Props = {
   entityTypes: any;
@@ -50,50 +51,49 @@ const GraphView: React.FC<Props> = (props) => {
     }
   }, [coordsChanged]);
 
+  useEffect(() => {
+    if (props.entityTypes) {
+      props.entityTypes.map((element) => {
+        element.label = element.entityName;
+      });
+    }
+    setFilterMenuSuggestions(props.entityTypes);
+  }, [props.entityTypes]);
+
+  useEffect(() => {
+  }, [modelingOptions]);
+
   const publishIconStyle: CSSProperties = {
     width: "1rem",
     fill: "currentColor"
   };
 
-  const handleFocus = () => {
-    setFilterMenuSuggestions([]);
-  };
-
-  const handleTypeaheadChange = (value: any) => {
-    setEntityFiltered(value);
+  const handleTypeaheadChange = (values: any) => {
+    setEntityFiltered("");
     setIsEntityFiltered(false);
-    if (value.length > 2) {
-      Object.keys(props.entityTypes).map((key) => {
-        let obj = filterMenuSuggestions;
-        if (value && !filterMenuSuggestions.includes(props.entityTypes[key]["entityName"]) && props.entityTypes[key]["entityName"].toLowerCase().indexOf(value.toLowerCase()) >= 0) {
-          obj.push(props.entityTypes[key]["entityName"]);
-        }
-        setFilterMenuSuggestions(obj);
-      });
-    } else {
-      setFilterMenuSuggestions([]);
-    }
+    let value = values ? values[0]?.label ? values[0].label : "" : "";
+    setEntityFiltered(value);
+    handleFilterSelect(value);
   };
 
   const handleFilterSelect = (value: any) => {
-    setFilterMenuSuggestions([]);
     setIsEntityFiltered(true);
     setSelectedEntity(value);
   };
 
-
-  const filter = <AutoComplete
+  const filter = <Typeahead
     className={styles.filterInput}
-    dataSource={filterMenuSuggestions}
-    value={entityFiltered}
-    onFocus={handleFocus}
-    onChange={handleTypeaheadChange}
-    onSelect={handleFilterSelect}
-    aria-label="graph-view-filter-autoComplete"
+    id="toggle-example"
+    options={filterMenuSuggestions}
     placeholder={"Filter"}
+    onChange={handleTypeaheadChange}
+    minLength={3}
+    defaultInputValue={entityFiltered}
   >
-    <HCInput ariaLabel="graph-view-filter-input" placeholder={"Filter"} suffix={<Search className={styles.searchIcon} />} size="sm"></HCInput>
-  </AutoComplete>;
+    <div className="rbt-aux">
+      <Search />
+    </div>
+  </Typeahead>;
 
   const handleAddMenu = (key) => {
     if (key === "addNewEntityType") {
