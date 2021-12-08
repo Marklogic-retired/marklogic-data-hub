@@ -2,7 +2,7 @@
   <personId>10002</personId>
   <firstName>Nadine</firstName>
   <lastName>Martinello</lastName>
-  <name>{first_name} {last_name}</name>
+  <name>Nadine Martinello</name>
   <email>nmartinello1@flickr.com</email>
   <phone>321-167-9412</phone>
   <image>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</image>
@@ -15,8 +15,13 @@
       <plusFour>8401</plusFour>
     </zip>
   </address>
+  <geo>
+    <lat>-80.6222</lat>
+    <lon>28.0934</lon>
+  </geo>
   <status>Active</status>
   <ssn>367-43-8886</ssn>
   <sources>Los Angeles Times</sources>
   <sources>New York Times</sources>
+  <createdOn>2011-11-08T08:15:30-05:00</createdOn>
 </person>

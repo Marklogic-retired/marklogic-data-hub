@@ -2,7 +2,7 @@
   <personId>10001</personId>
   <firstName>Georges</firstName>
   <lastName>Rutherford</lastName>
-  <name>{first_name} {last_name}</name>
+  <name>Georges Rutherford</name>
   <email>grutherford0@blogspot.com</email>
   <phone>336-873-3770</phone>
   <image>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</image>
@@ -15,8 +15,13 @@
       <plusFour>2771</plusFour>
     </zip>
   </address>
+  <geo>
+    <lat>-80.223362</lat>
+    <lon>36.090635</lon>
+  </geo>
   <status>Inactive</status>
   <ssn>627-91-9698</ssn>
   <sources>Washington Post</sources>
   <sources>New York Times</sources>
+  <createdOn>1994-11-05T08:15:30-05:00</createdOn>
 </person>
