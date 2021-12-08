@@ -1,13 +1,19 @@
 .structuredIcon {
-  color: #5B69AF;
-  font-size: 14px;
-  margin: 0 2px;
+    color: #5b69af;
+    font-size: 14px;
+    margin: 0 2px;
 }
 
 .arrayImage {
-  margin-bottom: 4px
+    margin-bottom: 4px;
 }
 
 .matchTypeSelect {
-  width: 400px !important;
+    width: 400px !important;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px !important;
+    span[class="rc-tree-select-selection__placeholder"] {
+        color: #bfbfbf;
+    }
 }

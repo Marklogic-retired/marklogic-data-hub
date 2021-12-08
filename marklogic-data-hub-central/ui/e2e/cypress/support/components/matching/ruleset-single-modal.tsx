@@ -1,7 +1,7 @@
 class RulesetSingleModal {
 
   selectPropertyToMatch(property: string) {
-    cy.get("[class^=\"entity-property-tree-select_matchTypeSelect\"] > .ant-select-selection").trigger("mouseover").click();
+    cy.get(".rc-tree-select-selector").trigger("mouseover").click();
     cy.findByLabelText(`${property}-option`).then($option => {
       $option[0].click();
     });
@@ -9,17 +9,13 @@ class RulesetSingleModal {
   }
 
   selectStructuredPropertyToMatch(parent: string, property: string) {
-    cy.get("[class^=\"entity-property-tree-select_matchTypeSelect\"] > .ant-select-selection").trigger("mouseover").click();
-    cy.findByLabelText(`${parent}-option`).within(() => {
-      cy.findByLabelText("icon: caret-down").then($option => {
-        $option[0].click();
-      });
-      cy.findByLabelText(`${property}-option`).within(() => {
-        cy.findByLabelText(`${property.split(" > ").pop()}-option`).then($option => {
-          $option[0].click();
-        });
-      });
-    });
+    const structuredProperty = property.split(" > ").pop();
+    //open the dropDown
+    cy.get(".rc-tree-select-selector").trigger("mouseover").click();
+    // select structured property
+    cy.get(`[aria-label="${parent}-option"]`).find(`[aria-label="icon: caret-down"]`).should("be.visible").click({force: true});
+    // click on the property selected
+    cy.get(`[aria-label="${structuredProperty}-option"]`).should("be.visible").click({force: true});
     cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
   }
 
