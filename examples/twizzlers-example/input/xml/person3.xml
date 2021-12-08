@@ -1,0 +1,22 @@
+<person>
+  <personId>10003</personId>
+  <firstName>Krissie</firstName>
+  <lastName>Neale</lastName>
+  <name>{first_name} {last_name}</name>
+  <email>kneale2@microsoft.com</email>
+  <phone>804-375-4886</phone>
+  <image>https://cdn1.marklogic.com/wp-content/uploads/2021/07/chuck-hollis.jpeg</image>
+  <address>
+    <street>082 Bayside Way</street>
+    <city>Richmond</city>
+    <state>VA</state>
+    <zip>
+      <fiveDigit>23213</fiveDigit>
+      <plusFour>2690</plusFour>
+    </zip>
+  </address>
+  <status>Active</status>
+  <ssn>479-51-6475</ssn>
+  <sources>Washington Post</sources>
+  <sources>USA Today</sources>
+</person>

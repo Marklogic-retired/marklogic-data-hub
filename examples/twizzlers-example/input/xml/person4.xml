@@ -1,0 +1,21 @@
+<person>
+  <personId>10004</personId>
+  <firstName>Rochella</firstName>
+  <lastName>Woodburne</lastName>
+  <name>{first_name} {last_name}</name>
+  <email>rwoodburne3@bizjournals.com</email>
+  <phone>256-229-4980</phone>
+  <image>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</image>
+  <address>
+    <street>50 Continental Pass</street>
+    <city>Huntsville</city>
+    <state>AL</state>
+    <zip>
+      <fiveDigit>35805</fiveDigit>
+      <plusFour>3194</plusFour>
+    </zip>
+  </address>
+  <status>Active</status>
+  <ssn>606-29-9085</ssn>
+  <sources>USA Today</sources>
+</person>

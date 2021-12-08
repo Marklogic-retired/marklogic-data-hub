@@ -1,0 +1,22 @@
+<person>
+  <personId>10002</personId>
+  <firstName>Nadine</firstName>
+  <lastName>Martinello</lastName>
+  <name>{first_name} {last_name}</name>
+  <email>nmartinello1@flickr.com</email>
+  <phone>321-167-9412</phone>
+  <image>https://cdn1.marklogic.com/wp-content/uploads/2020/11/george-bloom-headshot-300x300-1.jpg</image>
+  <address>
+    <street>7758 Morningstar Park</street>
+    <city>Melbourne</city>
+    <state>FL</state>
+    <zip>
+      <fiveDigit>32919</fiveDigit>
+      <plusFour>8401</plusFour>
+    </zip>
+  </address>
+  <status>Active</status>
+  <ssn>367-43-8886</ssn>
+  <sources>Los Angeles Times</sources>
+  <sources>New York Times</sources>
+</person>
