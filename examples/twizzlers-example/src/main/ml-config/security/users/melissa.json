@@ -1,0 +1,9 @@
+{
+  "user-name": "melissa",
+  "description": "Melissa is a Hub Operator",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-operator",
+    "data-hub-operator"
+  ]
+}

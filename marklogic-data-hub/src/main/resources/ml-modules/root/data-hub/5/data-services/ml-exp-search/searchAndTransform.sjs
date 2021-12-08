@@ -15,7 +15,13 @@
  */
 'use strict';
 
-const customizableSearchLib = require("/data-hub/5/ml-exp-search/custom-search-lib.sjs");
-
 var searchParams;
-customizableSearchLib.search(searchParams);
+
+const ConfigurableSearch = require("/data-hub/5/ml-exp-search/configurable-search-lib.sjs");
+const configurableSearch = new ConfigurableSearch();
+
+const searchResults = configurableSearch.getSearchResults(searchParams.toObject());
+const snippetResults = configurableSearch.getSnippetResults(searchResults);
+
+const combinedResponse = {searchResults, snippetResults};
+combinedResponse;

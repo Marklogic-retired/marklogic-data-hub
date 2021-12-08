@@ -1,0 +1,9 @@
+{
+  "user-name": "hub-developer",
+  "description": "Generic developer account",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-developer",
+    "pii-reader"
+  ]
+}
