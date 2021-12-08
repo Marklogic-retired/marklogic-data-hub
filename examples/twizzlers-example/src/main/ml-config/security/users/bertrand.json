@@ -1,0 +1,8 @@
+{
+  "user-name": "bertrand",
+  "description": "Bertrand is a Business Analyst",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-explorer"
+  ]
+}
