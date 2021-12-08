@@ -41,6 +41,7 @@ const GraphView: React.FC<Props> = (props) => {
   const [graphEditMode, setGraphEditMode] = useState(false);
   const [coordsChanged, setCoordsChanged] = useState(false);
   const [splitPaneResized, setSplitPaneResized] = useState(false);
+  const [exportPngButtonClicked, setExportPngButtonClicked] = useState(false);
 
   useEffect(() => {
     if (coordsChanged) {
@@ -161,7 +162,7 @@ const GraphView: React.FC<Props> = (props) => {
       <span className={styles.disabledCursor}>{publishButton}</span>
     </HCTooltip>
     <HCTooltip text={ModelingTooltips.exportGraph} id="export-graph-tooltip" placement="top-end">
-      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export"/></i>
+      <i><FontAwesomeIcon className={styles.graphExportIcon} icon={faFileExport} aria-label="graph-export" onClick={() => { setExportPngButtonClicked(true); }}/></i>
     </HCTooltip>
   </span>;
 
@@ -235,6 +236,8 @@ const GraphView: React.FC<Props> = (props) => {
           getColor={getColor}
           splitPaneResized={splitPaneResized}
           setSplitPaneResized={setSplitPaneResized}
+          exportPngButtonClicked = {exportPngButtonClicked}
+          setExportPngButtonClicked = {setExportPngButtonClicked}
         />
       </div>
     </div>;
