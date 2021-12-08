@@ -1,0 +1,9 @@
+{
+  "user-name": "stewart",
+  "description": "Stewart is a Data Architect",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-modeler",
+    "hub-central-downloader"
+  ]
+}

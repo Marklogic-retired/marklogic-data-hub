@@ -1,0 +1,10 @@
+{
+  "user-name": "pari",
+  "description": "Pari is a MarkLogic expert",
+  "password": "%%testPassword%%",
+  "role": [
+    "hub-central-developer",
+    "data-hub-developer",
+    "pii-reader"
+  ]
+}

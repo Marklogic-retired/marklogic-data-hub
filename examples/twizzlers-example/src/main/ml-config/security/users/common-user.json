@@ -1,0 +1,8 @@
+{
+  "user-name": "common-user",
+  "description": "Most limited user that can use Data Hub",
+  "password": "%%testPassword%%",
+  "role": [
+    "data-hub-common"
+  ]
+}
