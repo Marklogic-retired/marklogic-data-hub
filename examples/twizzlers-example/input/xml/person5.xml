@@ -1,0 +1,21 @@
+<person>
+  <personId>10005</personId>
+  <firstName>Tuesday</firstName>
+  <lastName>Sayer</lastName>
+  <name>{first_name} {last_name}</name>
+  <email>tsayer4@e-recht24.de</email>
+  <phone>806-236-3145</phone>
+  <image>https://cdn1.marklogic.com/wp-content/uploads/2020/04/JamesKenwood-headshot-600x600-1.jpg</image>
+  <address>
+    <street>0 Kensington Lane</street>
+    <city>Lubbock</city>
+    <state>TX</state>
+    <zip>
+      <fiveDigit>79415</fiveDigit>
+      <plusFour>7572</plusFour>
+    </zip>
+  </address>
+  <status>Inactive</status>
+  <ssn>297-10-2919</ssn>
+  <sources>New York Times</sources>
+</person>

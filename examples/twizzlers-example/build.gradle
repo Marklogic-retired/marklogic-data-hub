@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "net.saliman:gradle-properties-plugin:1.5.1"
+        classpath "com.marklogic:ml-data-hub:5.7-SNAPSHOT"
+    }
+}
+
+apply plugin: "net.saliman.properties"
+apply plugin: "com.marklogic.ml-data-hub"
+
+repositories {
+    mavenCentral()
+    maven { url "https://developer.marklogic.com/maven2/" }
+}
+
+configurations {
+    mlcp
+}
+
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.6.2"
+    mlcp files("lib")
+}
+
+// The following config is used for manual ad hoc testing of loading data via MLCP and the DHF MLCP transform
+task importPersonsViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Load person docs"
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = 8011
+    output_collections = "person"
+    input_file_path = "input/xml"
+    output_permissions = "data-hub-common,read,data-hub-common,update"
+}
+
+mlDeploy.finalizedBy importPersonsViaMlcp
