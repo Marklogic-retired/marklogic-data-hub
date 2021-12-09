@@ -1,8 +1,6 @@
 import React from "react";
 import {render, fireEvent, screen, wait} from "@testing-library/react";
-import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
-
 import PropertyModal from "./property-modal";
 import {
   StructuredTypeOptions,
@@ -75,7 +73,7 @@ describe("Property Modal Component", () => {
     expect(queryByText("Add Property")).toBeNull();
   });
 
-  test("Add a basic property type and duplicate name validation", () => {
+  test("Add a basic property type and duplicate name validation", async () => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
@@ -106,41 +104,42 @@ describe("Property Modal Component", () => {
     userEvent.clear(getByLabelText("input-name"));
     userEvent.type(getByLabelText("input-name"), "new-property-name");
 
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("string"));
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("string")));
 
     // Verify that the default values for Identifier, Multiple and PII properties is "no".
-    expect(screen.getByLabelText("identifier-no")).toBeChecked();
-    expect(screen.getByLabelText("multiple-no")).toBeChecked();
+    await(() => expect(screen.getByLabelText("identifier-no")).toBeChecked());
+    await(() => expect(screen.getByLabelText("multiple-no")).toBeChecked());
 
-    const identifierRadio = screen.getByLabelText("identifier-yes");
-    fireEvent.change(identifierRadio, {target: {value: "yes"}});
-    expect(identifierRadio["value"]).toBe("yes");
+    const identifierRadio =  await(() => screen.getByLabelText("identifier-yes"));
+    //const identifierRadio =  await waitFor(() => screen.getByLabelText("identifier-yes"));
+    await(() => fireEvent.change(screen.getByLabelText("identifier-yes"), {target: {value: "yes"}}));
+    await(() => expect(identifierRadio["value"]).toBe("yes"));
 
-    const multipleRadio = screen.getByLabelText("multiple-yes");
-    fireEvent.change(multipleRadio, {target: {value: "yes"}});
-    expect(multipleRadio["value"]).toBe("yes");
+    const multipleRadio = await(() => screen.getByLabelText("multiple-yes"));
+    await(() => fireEvent.change(screen.getByLabelText("multiple-yes"), {target: {value: "yes"}}));
+    await(() => expect(multipleRadio["value"]).toBe("yes"));
 
-    const piiRadio = screen.getByLabelText("pii-no");
-    expect(piiRadio).toBeChecked();
-    fireEvent.change(piiRadio, {target: {value: "no"}});
-    expect(piiRadio["value"]).toBe("no");
+    const piiRadio = await(() => screen.getByLabelText("pii-no"));
+    await(() => expect(piiRadio).toBeChecked());
+    await(() => fireEvent.change(screen.getByLabelText("pii-no"), {target: {value: "no"}}));
+    await(() => expect(piiRadio["value"]).toBe("no"));
 
-    // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
-    // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
-    // expect(wildcardCheckbox).toBeChecked();
+    const wildcardCheckbox = await(() => screen.getByLabelText("Wildcard Search"));
+    await(() => fireEvent.change(screen.getByLabelText("Wildcard Search"), {target: {checked: true}}));
+    await(() => expect(wildcardCheckbox).toBeChecked());
 
-    const facetableCheckbox = screen.getByLabelText("Facet");
-    fireEvent.change(facetableCheckbox, {target: {checked: true}});
-    expect(facetableCheckbox).toBeChecked();
+    const facetableCheckbox = await(() => screen.getByLabelText("Facet"));
+    await(() => fireEvent.change(screen.getByLabelText("Facet"), {target: {checked: true}}));
+    await(() => expect(facetableCheckbox).toBeChecked());
 
-    const sortableCheckbox = screen.getByLabelText("Sort");
-    fireEvent.change(sortableCheckbox, {target: {checked: true}});
-    expect(sortableCheckbox).toBeChecked();
+    const sortableCheckbox = await(() => screen.getByLabelText("Sort"));
+    await(() => fireEvent.change(screen.getByLabelText("Sort"), {target: {checked: true}}));
+    await(() => expect(sortableCheckbox).toBeChecked());
 
     userEvent.click(getByText("Add"));
-    expect(mockAdd).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+    await(() => expect(mockAdd).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
   });
 
   test("Add a Property with relationship type", async () => {
@@ -172,67 +171,71 @@ describe("Property Modal Component", () => {
     userEvent.type(getByPlaceholderText("Enter the property name"), "Entity-Property");
 
     // Choose related entity type
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Related Entity"));
-    userEvent.click(getAllByText("Customer")[1]);
-    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Related Entity")));
+    await(() => userEvent.click(getAllByText("Customer")[1]));
+    await(() => expect(mockPrimaryEntityTypes).toBeCalledTimes(1));
 
-    expect(screen.queryByLabelText("identifier-yes")).toBeNull();
-    expect(screen.queryByLabelText("pii-yes")).toBeNull();
-    expect(screen.queryByLabelText("Sort")).toBeNull();
-    expect(screen.queryByLabelText("Facet")).toBeNull();
+    await(() => expect(screen.queryByLabelText("identifier-yes")).toBeNull());
+    await(() => expect(screen.queryByLabelText("pii-yes")).toBeNull());
+    await(() => expect(screen.queryByLabelText("Sort")).toBeNull());
+    await(() => expect(screen.queryByLabelText("Facet")).toBeNull());
     //expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
 
     //join Property field should be contained in "now or later" box
-    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
+    await(() => expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument());
 
     //field should be empty and contain placeholder text
-    expect(getByText("Select foreign key")).toBeInTheDocument();
-    fireEvent.mouseOver(getByTestId("foreign-key-tooltip"));
-    await wait(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
+    await(() => expect(getByText("Select foreign key")).toBeInTheDocument());
+    await(() => fireEvent.mouseOver(getByTestId("foreign-key-tooltip")));
+    await(() => expect(getByText(ModelingTooltips.foreignKeyInfo)).toBeInTheDocument());
 
-    expect(getByLabelText("foreignKey-select")).toBeInTheDocument();
+    await(() => expect(getByLabelText("foreignKey-select")).toBeInTheDocument());
 
     //Join property select field should disappear after selecting a different property type like string
-    userEvent.click(getByLabelText("icon: close-circle")); //clear "Customer" from property field
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("string"));
+    let cleanButton:any = document.querySelector(".rc-cascader-clear");
+    userEvent.click(cleanButton);
+
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("string")));
     expect(screen.queryByLabelText("foreignKey-select")).toBeNull();
 
     //Try selection of a structured type after selecting related entity type again, join property select should disappear
-    userEvent.click(getByLabelText("icon: close-circle")); //clear "string" from property field
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Related Entity"));
-    userEvent.click(getAllByText("Customer")[1]);
-    expect(getByLabelText("foreignKey-select")).toBeInTheDocument();
+    userEvent.click(cleanButton); //clear "string" from property field
 
-    userEvent.click(getByLabelText("icon: close-circle")); //clear "Customer" from property field
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Structured"));
-    userEvent.click(getByText("Address"));
+
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Related Entity")));
+    await(() => userEvent.click(getAllByText("Customer")[1]));
+    await(() => expect(getByLabelText("foreignKey-select")).toBeInTheDocument());
+
+    userEvent.click(cleanButton); //clear "Customer" from property field
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Structured")));
+    await(() => userEvent.click(getByText("Address")));
     expect(screen.queryByLabelText("foreignKey-select")).toBeNull();
 
     //Now go back to related entity type to populate
-    userEvent.click(getByLabelText("icon: close-circle")); //clear "Address" from property field
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Related Entity"));
-    userEvent.click(getAllByText("Customer")[1]);
+    userEvent.click(cleanButton); //clear "Address" from property field
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Related Entity")));
+    await(() => userEvent.click(getAllByText("Customer")[1]));
 
     // Choose join property after menu is populated
-    fireEvent.keyDown(getByLabelText("foreignKey-select"), {key: "ArrowDown"});
-    expect(mockPrimaryEntityTypes).toBeCalledTimes(3);
-    userEvent.click(getByText("customerId"));
+    await(() => userEvent.click(getByLabelText("foreignKey-select")));
+    await(() => expect(mockPrimaryEntityTypes).toBeCalledTimes(3));
+    await(() => userEvent.click(getByText("customerId")));
 
-    const multipleRadio = screen.getByLabelText("multiple-no");
-    fireEvent.change(multipleRadio, {target: {value: "no"}});
-    expect(multipleRadio["value"]).toBe("no");
+    const multipleRadio:any = await(() => screen.getByLabelText("multiple-no"));
+    await(() => fireEvent.change(multipleRadio, {target: {value: "no"}}));
+    await(() => expect(multipleRadio["value"]).toBe("no"));
 
-    userEvent.click(getByLabelText("property-modal-submit"));
-    expect(mockAdd).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
-  });
+    await(() => userEvent.click(getByLabelText("property-modal-submit")));
+    await(() => expect(mockAdd).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
+  }, 10000);
 
-  test("can display error message for property name and type inputs and press cancel", () => {
+  test("can display error message for property name and type inputs and press cancel", async () => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
@@ -262,16 +265,16 @@ describe("Property Modal Component", () => {
     userEvent.click(getByText("Add"));
     expect(getByText("Type is required")).toBeInTheDocument();
 
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("More string types"));
-    userEvent.click(getByText("anyURI"));
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("More string types")));
+    await(() => userEvent.click(getByText("anyURI")));
 
     userEvent.click(getByText("Cancel"));
     expect(mockAdd).toHaveBeenCalledTimes(0);
     expect(mockGetSystemInfo).toBeCalledTimes(0);
   });
 
-  test("Add a Property with a structured type, no relationship type in dropdown", () => {
+  test("Add a Property with a structured type, no relationship type in dropdown", async() => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
@@ -297,23 +300,23 @@ describe("Property Modal Component", () => {
 
     userEvent.type(getByPlaceholderText("Enter the property name"), "alternate-address");
 
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Structured"));
-    userEvent.click(getByText("Address"));
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Structured")));
+    await(() => userEvent.click(getByText("Address")));
 
     expect(screen.queryByText("Related Entity")).toBeNull();
     expect(screen.queryByLabelText("identifier-yes")).toBeNull();
 
-    const multipleRadio = screen.getByLabelText("multiple-no");
-    fireEvent.change(multipleRadio, {target: {value: "no"}});
-    expect(multipleRadio["value"]).toBe("no");
+    const multipleRadio:any = await(() => screen.getByLabelText("multiple-no"));
+    await(() => fireEvent.change(multipleRadio, {target: {value: "no"}}));
+    await(() => expect(multipleRadio["value"]).toBe("no"));
 
     userEvent.click(getByLabelText("property-modal-submit"));
-    expect(mockAdd).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+    await(() => expect(mockAdd).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
   });
 
-  test("Add a new property to a structured type definition", () => {
+  test("Add a new property to a structured type definition", async() => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
@@ -342,26 +345,26 @@ describe("Property Modal Component", () => {
 
     userEvent.type(getByPlaceholderText("Enter the property name"), "email");
 
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("string"));
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("string")));
 
 
-    const multipleRadio = screen.getByLabelText("multiple-yes");
-    fireEvent.change(multipleRadio, {target: {value: "yes"}});
-    expect(multipleRadio["value"]).toBe("yes");
+    const multipleRadio:any = await(() => screen.getByLabelText("multiple-yes"));
+    await(() => fireEvent.change(multipleRadio, {target: {value: "yes"}}));
+    await(() => expect(multipleRadio["value"]).toBe("yes"));
 
-    const piiRadio = screen.getByLabelText("pii-yes");
-    fireEvent.change(piiRadio, {target: {value: "yes"}});
-    expect(piiRadio["value"]).toBe("yes");
-    expect(queryByLabelText("Sort")).toBeInTheDocument();
-    expect(queryByLabelText("Facet")).toBeInTheDocument();
+    const piiRadio:any = await(() => screen.getByLabelText("pii-yes"));
+    await(() => fireEvent.change(piiRadio, {target: {value: "yes"}}));
+    await(() => expect(piiRadio["value"]).toBe("yes"));
+    await(() => expect(queryByLabelText("Sort")).toBeInTheDocument());
+    await(() => expect(queryByLabelText("Facet")).toBeInTheDocument());
     // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
     // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     // expect(wildcardCheckbox).toBeChecked();
 
     userEvent.click(getByLabelText("property-modal-submit"));
-    expect(addMock).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+    await(() => expect(addMock).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
   });
 
   test("Add a Property with relationship type to a structured type definition", async () => {
@@ -396,27 +399,28 @@ describe("Property Modal Component", () => {
     userEvent.type(getByPlaceholderText("Enter the property name"), "email");
 
     // Choose related entity type
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Related Entity"));
-    userEvent.click(getAllByText("Customer")[1]);
-    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Related Entity")));
+    await(() => userEvent.click(getAllByText("Customer")[1]));
+    await(() => expect(mockPrimaryEntityTypes).toBeCalledTimes(1));
 
     // Choose join property after menu is populated
-    expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument();
-    fireEvent.keyDown(getByLabelText("foreignKey-select"), {key: "ArrowDown"});
-    await (waitFor(() => getAllByRole("option"), {"timeout": 200}));
-    expect(getByLabelText("None-option")).toBeInTheDocument();
-    expect(getByLabelText("customerId-option")).toBeInTheDocument();
-    expect(getByLabelText("name-option")).toBeInTheDocument();
-    expect(mockPrimaryEntityTypes).toBeCalledTimes(1);
-    await wait(() => userEvent.click(getByText("customerId")));
+    await(() => expect(getByText("You can select the foreign key now or later:")).toBeInTheDocument());
+    await(() => userEvent.click(getByLabelText("foreignKey-select")));
+    await(() => getAllByRole("option"));
+
+    await(() => expect(getByLabelText("None-option")).toBeInTheDocument());
+    await(() => expect(getByLabelText("customerId-option")).toBeInTheDocument());
+    await(() => expect(getByLabelText("name-option")).toBeInTheDocument());
+    await(() => expect(mockPrimaryEntityTypes).toBeCalledTimes(1));
+    await(() => userEvent.click(getByText("customerId")));
 
     userEvent.click(getByLabelText("property-modal-submit"));
-    expect(addMock).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
-  });
+    await(() => expect(addMock).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
+  }, 10000);
 
-  test("Add a Property with a newly created structured type", () => {
+  test("Add a Property with a newly created structured type", async() => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Customer");
@@ -442,33 +446,33 @@ describe("Property Modal Component", () => {
 
     userEvent.type(getByPlaceholderText("Enter the property name"), "alternate-address");
 
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("Structured"));
-    userEvent.click(getByText("New Property Type"));
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("Structured")));
+    await(() => userEvent.click(getByText("New Property Type")));
 
-    expect(screen.getByText("Add New Structured Property Type")).toBeInTheDocument();
-    userEvent.type(screen.getByLabelText("structured-input-name"), "Product");
+    await(() => expect(screen.getByText("Add New Structured Property Type")).toBeInTheDocument());
+    await(() => userEvent.type(screen.getByLabelText("structured-input-name"), "Product"));
 
-    fireEvent.submit(screen.getByLabelText("structured-input-name"));
+    await(() => fireEvent.submit(screen.getByLabelText("structured-input-name")));
 
-    expect(getByText("Structured: Product")).toBeInTheDocument();
+    await(() => expect(getByText("Structured: Product")).toBeInTheDocument());
 
-    const multipleRadio = screen.getByLabelText("multiple-yes");
-    fireEvent.change(multipleRadio, {target: {value: "yes"}});
-    expect(multipleRadio["value"]).toBe("yes");
+    const multipleRadio:any = await(() => screen.getByLabelText("multiple-yes"));
+    await(() => fireEvent.change(multipleRadio, {target: {value: "yes"}}));
+    await(() => expect(multipleRadio["value"]).toBe("yes"));
 
-    const piiRadio = screen.getByLabelText("pii-yes");
-    fireEvent.change(piiRadio, {target: {value: "yes"}});
-    expect(piiRadio["value"]).toBe("yes");
+    const piiRadio:any = await(() => screen.getByLabelText("pii-yes"));
+    await(() => fireEvent.change(piiRadio, {target: {value: "yes"}}));
+    await(() => expect(piiRadio["value"]).toBe("yes"));
 
     expect(queryByLabelText("Sort")).toBeNull();
     expect(queryByLabelText("Facet")).toBeNull();
     userEvent.click(getByLabelText("property-modal-submit"));
-    expect(addMock).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+    await(() => expect(addMock).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
   });
 
-  test("Add an identifier to a new Property", () => {
+  test("Add an identifier to a new Property", async () => {
     mockGetSystemInfo.mockResolvedValueOnce({status: 200, data: {}});
 
     let entityType = propertyTableEntities.find(entity => entity.entityName === "Order");
@@ -493,16 +497,16 @@ describe("Property Modal Component", () => {
     );
     userEvent.type(getByPlaceholderText("Enter the property name"), "newId");
 
-    userEvent.click(getByPlaceholderText("Select the property type"));
-    userEvent.click(getByText("string"));
+    await(() => userEvent.click(getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(getByText("string")));
 
-    const identifierRadio = screen.getByLabelText("identifier-yes");
-    fireEvent.change(identifierRadio, {target: {value: "yes"}});
-    expect(identifierRadio["value"]).toBe("yes");
+    const identifierRadio:any = await(() => screen.getByLabelText("identifier-yes"));
+    await(() => fireEvent.change(identifierRadio, {target: {value: "yes"}}));
+    await(() => expect(identifierRadio["value"]).toBe("yes"));
 
     userEvent.click(getByLabelText("property-modal-submit"));
-    expect(addMock).toHaveBeenCalledTimes(1);
-    expect(mockGetSystemInfo).toBeCalledTimes(1);
+    await(() => expect(addMock).toHaveBeenCalledTimes(1));
+    await(() => expect(mockGetSystemInfo).toBeCalledTimes(1));
   });
 
   test("can edit a basic property with step warning, but cancel changes", async () => {
@@ -642,7 +646,7 @@ describe("Property Modal Component", () => {
     expect(queryByText("Hide Steps...")).toBeNull();
 
     expect(getByText("Edit Property")).toBeInTheDocument();
-    expect(getByText("Relationship: Customer")).toBeInTheDocument();
+    await(() => expect(getByText("Relationship: Customer")).toBeInTheDocument());
 
     // Change Join Property
     wait(() => {

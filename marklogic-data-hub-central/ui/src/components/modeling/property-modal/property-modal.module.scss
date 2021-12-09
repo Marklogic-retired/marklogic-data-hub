@@ -19,6 +19,16 @@
   width: 390px;
 }
 
+.placeholderColor {
+  position: relative;
+  width: 390px;
+  color: #bfbfbf;
+}
+
+.placeholderColor span:nth-child(3) {
+  display: none;
+}
+
 .icon, .radioQuestionIcon, .checkboxQuestionIcon {
   font-size: 12px;
   color: #7F86B5;
@@ -119,4 +129,8 @@
 
  .validationError {
   @extend .validationError;
+}
+
+.rc-cascader-dropdown {
+  z-index: 9999;
 }
