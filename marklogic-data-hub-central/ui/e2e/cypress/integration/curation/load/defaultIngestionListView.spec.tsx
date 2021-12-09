@@ -187,7 +187,7 @@ describe("Validate CRUD functionality from list view", () => {
 
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    loadPage.loadView("table").click();
+    cy.waitUntil(() => loadPage.loadView("table")).click();
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();

@@ -36,6 +36,7 @@ const Load: React.FC = () => {
   const [flows, setFlows] = useState<any[]>([]);
   const [sortedInfo, setSortedInfo] = useState({columnKey: "", order: ""});
   const {handleError} = useContext(UserContext);
+  const [flowsLoading, setFlowsLoading] = useState(false);
 
   //For role based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -149,13 +150,16 @@ const Load: React.FC = () => {
   // GET all the flow artifacts
   const getFlows = async () => {
     try {
+      setFlowsLoading(true);
       let response = await axios.get("/api/flows");
       if (response.status === 200) {
         setFlows(response.data);
+        setFlowsLoading(false);
       }
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error getting flows", message);
+      setFlowsLoading(false);
     }
   };
 
@@ -222,6 +226,7 @@ const Load: React.FC = () => {
       <LoadList
         data={loadArtifacts}
         flows={flows}
+        flowsLoading={flowsLoading}
         deleteLoadArtifact={deleteLoadArtifact}
         createLoadArtifact={createLoadArtifact}
         updateLoadArtifact={updateLoadArtifact}

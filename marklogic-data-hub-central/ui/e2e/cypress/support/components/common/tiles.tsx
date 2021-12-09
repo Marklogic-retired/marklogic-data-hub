@@ -21,7 +21,7 @@ class Tiles {
   }
 
   waitForTableToLoad() {
-    cy.waitUntil(() => cy.get(".ant-table-row").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.get(".hc-table_row").should("have.length.gt", 0));
   }
 
   itemRowInTable(item: string) {

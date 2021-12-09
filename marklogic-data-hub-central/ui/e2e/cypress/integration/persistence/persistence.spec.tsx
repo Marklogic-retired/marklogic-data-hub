@@ -31,12 +31,12 @@ describe("Validate persistence across Hub Central", () => {
 
   it("Go to load tile, switch to list view, sort, and then visit another tile. When returning to load tile the list view is persisted", {defaultCommandTimeout: 120000}, () => {
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    loadPage.loadView("table").click();
-    cy.findByTestId("loadTableName").click();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.loadView("table").click();
     loadPage.addNewButton("list").should("be.visible");
-    cy.get("[aria-label=\"icon: caret-up\"]").should("have.class", "anticon anticon-caret-up ant-table-column-sorter-up on");
+    cy.waitUntil(() => cy.findByTestId("loadTableName").click());
+    cy.get("[aria-label=\"icon: caret-up\"]").should("have.attr", "class").and("match", /hc-table_activeCaret/);
   });
 
   it("Go to model tile, expand entity and property tables, and then visit another tile. When returning to the model tile, the expanded rows are persisted.", () => {

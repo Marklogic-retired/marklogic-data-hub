@@ -1,5 +1,7 @@
 // Test data
 
+import moment from "moment";
+
 const flows = [
   {
     name: "FlowA",
@@ -1964,7 +1966,51 @@ const loadDataPagination = {
 
 };
 
+const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
 
+const loadTableColumns: any = [
+  {
+    text: "Name",
+    dataField: "name",
+    key: "name",
+    sort: true,
+    sortFunc: columnSorter,
+  },
+  {
+    text: "Description",
+    dataField: "description",
+    key: "description",
+    sort: true,
+    sortFunc: columnSorter,
+  },
+  {
+    text: "Source Format",
+    dataField: "sourceFormat",
+    key: "sourceFormat",
+    sort: true,
+    sortFunc: columnSorter,
+  },
+  {
+    text: "Target Format",
+    dataField: "targetFormat",
+    key: "targetFormat",
+    sort: true,
+    sortFunc: columnSorter,
+  },
+  {
+    text: "Last Updated",
+    dataField: "lastUpdated",
+    key: "lastUpdated",
+    sort: true,
+    defaultSortOrder: "desc",
+    sortFunc: (a: any, b: any, order: string) => order === "asc" ? moment(a).unix() - moment(b).unix() : moment(b).unix() - moment(a).unix(),
+  },
+  {
+    text: "Action",
+    dataField: "actions",
+    key: "actions",
+  }
+];
 
 const data = {
   data: {
@@ -1974,6 +2020,7 @@ const data = {
   flows: flows,
   flowsAdd: flowsAdd,
   loadData: loadData,
+  loadTableColumns,
   mapReferences: mapReferences,
   mapProps: mapProps,
   newMap: newMap,

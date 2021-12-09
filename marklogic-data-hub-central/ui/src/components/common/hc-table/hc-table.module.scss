@@ -1,0 +1,105 @@
+@import "../../../theme/HCVariables.scss";
+.header {
+    color: #44499C;
+    background-color: #fafafa !important;
+    padding: 16px 16px !important;
+    overflow-wrap: break-word;
+    border: none !important;
+    border-bottom: 1px solid #e8e8e8;
+    font-weight: 500 !important;
+    
+    &:hover {
+        background: #e0e0e0 !important;
+    }
+    &.being-sorted {
+        background-color: #f5f5f5 !important;
+    }
+    &.hasExpandedRow {
+        background-color: #e8e8e8 !important;
+        color: #333;
+    }
+    &.subTableHeader {
+        background: #e0e0e0 !important;
+        color: #333;
+    }
+    &.childrenIndentHeader {
+        background: #e0e0e0 !important;
+        color: #333;
+    }
+}
+.tableCell {
+    padding: 16px 16px !important;
+    vertical-align: middle;
+    &.being-sorted {
+        background-color: #f5f5f5 !important;
+    }
+    .side-panel &:nth-child(2) {
+        background-color: red;
+    }
+}
+.borderedIndicator {
+    width: 17px;
+    height: 17px;
+    text-align: center !important;
+    line-height: 13px !important;
+    padding: 2px !important;
+    border: 1px solid #e8e8e8;
+    margin-right: 8px;
+}
+.expandedRowWrapper {
+    background-color: #fbfbfb !important;
+    padding-left: 9% !important;
+}
+.sidePanel {
+    background-color: inherit !important;
+    padding-left: 9% !important;
+}
+.noDataPlaceholder {
+    height: 80px;
+    display: table-cell;
+    vertical-align: middle;
+}
+.caretContainer {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: -4px;
+    position: relative;
+    left: 3px;
+}
+.caret {
+    color: $light;
+    font-size: 8px;
+}
+.activeCaret {
+    color: $primary;
+    font-size: 8px;
+}
+.subTableNested {
+    padding-left: 0 !important;
+}
+.childrenIndentExpanded {
+    padding-left: 0 !important;
+}
+.childrenIndentTableExpanded {
+    display: table;
+    width: 100%;
+}
+.childrenIndentTableRow {
+    display: table;
+    width: 100%;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid #e8e8e8;
+    }
+}
+.childrenIndentIndicatorCell {
+    display: table-cell;
+    width: 50px;
+    text-align: center;
+}
+.childrenIndentElementCell {
+    display: table-cell;
+}
+// border-top-left-radius: 4px;

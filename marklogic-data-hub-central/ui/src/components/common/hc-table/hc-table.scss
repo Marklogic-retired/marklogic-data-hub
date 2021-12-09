@@ -1,0 +1,110 @@
+@import "../../../theme/HCVariables.scss";
+.react-bootstrap-table {
+    .expand-cell-header {
+        border-top-left-radius: 4px;
+        background-color: #e8e8e8 !important;
+        padding: 16px 16px !important;
+        pointer-events: none;
+        color: transparent;
+        vertical-align: middle;
+        width: 50px;
+        min-width: 50px;
+
+        .hc-table_subTableHeader {
+            background: #e0e0e0 !important;
+            color: #333;
+        }
+    }
+    &.sub-table {
+        .expand-cell-header {
+            background: #e0e0e0 !important;
+        }
+        &.side-panel th:nth-child(2), &.side-panel td:nth-child(2) {
+            padding-left: 0px !important;
+        }
+        &.side-panel .reset-expansion-style {
+            background-color: initial !important;
+        }
+    }
+    .expand-cell {
+        vertical-align: middle;
+        width: 50px;
+        min-width: 50px;
+        text-align: center;
+    }
+    th:first-child {
+        border-top-left-radius: 4px;
+    } 
+    th:last-child {
+        border-top-right-radius: 4px;
+    }
+    + .react-bootstrap-table-pagination {
+        div:nth-child(1) {
+            order: 2;
+            width: auto;
+            .sizePageSelector {
+                button {
+                    padding: 2px 10px;
+                }
+                .dropdown-menu-end {
+                    min-width: 81px;
+                    text-align: center;
+                    a {
+                        padding-left: 0;
+                        padding-right: 0;
+                    }
+                    .item-active {
+                        span {
+                            color: $text-color;
+                            font-weight: 700;
+                        }
+                    }
+                }
+            }
+        }
+        div:nth-child(2) {
+            order: 1;
+            width: auto;
+            padding-right: 0;
+            flex: 1 0 auto;
+            ul {
+                justify-content: end;
+                li {
+                    a,
+                    span {
+                        border: none;
+                        padding: 1px 7px;
+                        box-shadow: none;
+                        background: #fff;
+                        margin-left: 0;
+                        &:hover,
+                        :focus {
+                            background: #fff;
+                        }
+                    }
+                    &.active {
+                        margin-left: 0 !important;
+                        .page-link {
+                            border: 1px solid $primary;
+                            background: #fff;
+                            border-radius: 4px;
+                            color: $text-color;
+                        }
+                    }
+                    &.disabled {
+                        cursor: not-allowed;
+                    }
+                    &:first-child {
+                        display: none;
+                    }
+                    &:last-child {
+                        display: none;
+                    }
+                }
+            }
+        }
+    }
+    .hc-table_row:not(:last-child) {
+        border-bottom: 1px solid #e8e8e8;
+    }
+}

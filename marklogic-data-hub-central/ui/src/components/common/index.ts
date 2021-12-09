@@ -8,6 +8,7 @@ export {default as HCDateTimePicker} from "./hc-datetime-picker/hc-datetime-pick
 export {default as HCDivider} from "./hc-divider/hc-divider";
 export {default as HCInput} from "./hc-input/hc-input";
 export {default as HCSlider} from "./hc-slider/hc-slider";
+export {default as HCTable} from "./hc-table/hc-table";
 export {default as HCTag} from "./hc-tag/hc-tag";
 export {default as HCTooltip} from "./hc-tooltip/hc-tooltip";
 export {default as HCSearch} from "./hc-search/hc-search";

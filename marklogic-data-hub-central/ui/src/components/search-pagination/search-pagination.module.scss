@@ -19,19 +19,46 @@
             background: #fff;
             border: 1px solid $primary;
             color: $primary;
-            font-weight: 700;
-            border-radius: 5px;
-            padding: 4px 10px;
+            border-radius: 4px;
+            padding: 1px 7px;
         }
     }
     a[class="page-link"],
     span[class="page-link"] {
+        margin-left: 0 !important;
         border: none;
         background: #fff;
-        padding: 4px 10px;
-        &:focus, &:hover {
+        padding: 2px 8px;
+        &:focus,
+        &:hover {
             border: none;
             box-shadow: none;
+        }
+    }
+    &:first-child {
+        li {
+            &:first-child {
+                a[class="page-link"],
+                span[class="page-link"] {
+                    span {
+                       display: none;
+                    }
+                    &::after {
+                        content: "<";
+                    }
+                }
+            }
+            &:last-child {
+                 a[class="page-link"],
+                span[class="page-link"] {
+                    span {
+                       display: none;
+                    }
+                    &::after {
+                        content: ">";
+                    }
+                }
+            }
         }
     }
 }
@@ -45,9 +72,7 @@
 .corner {
     a[class="page-link"],
     span[class="page-link"] {
-        font-weight: 800;
         font-size: 16px;
-        padding-top: 2px;
     }
 }
 .disable {
