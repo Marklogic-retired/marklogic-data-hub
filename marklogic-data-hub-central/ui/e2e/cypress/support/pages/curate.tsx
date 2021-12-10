@@ -40,7 +40,7 @@ class CuratePage {
 
   openExistingFlowDropdown(entityTypeId: string, stepName: string) {
     this.getEntityMappingStep(entityTypeId, stepName).should("be.visible", {timeout: 5000}).trigger("mouseover");
-    cy.findByTestId(`${stepName}-flowsList`).should("be.visible", {timeout: 5000}).click();
+    cy.findByTestId(`${stepName}-flowsList`).should("be.visible", {timeout: 5000}).scrollIntoView().click({force: true});
   }
 
   openStepDetails(stepName: string) {
@@ -53,6 +53,13 @@ class CuratePage {
      */
   getExistingFlowFromDropdown(flowName: string) {
     return cy.findByLabelText(`${flowName}-option`);
+  }
+  /**
+   * Select an existing flow from a match step dropdown
+   * @param flowName
+   */
+  selectExistingFlowFromDropdown(flowName: string) {
+    cy.get("li[role=\"option\"]", {timeout: 60000}).contains(flowName).click({force: true});
   }
 
   /**
@@ -67,19 +74,19 @@ class CuratePage {
   }
 
   selectMergeTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`)).click({force: true});
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="merge"]`)).click();
   }
 
   selectMatchTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click({force: true});
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="match"]`)).click();
   }
 
   selectCustomTab(entityTypeId: string) {
-    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`)).click({force: true});
+    cy.waitUntil(() => cy.get(`#${entityTypeId} [data-rr-ui-event-key="custom"]`)).click();
   }
 
   addNewStep(curateTabId: string) {
-    return cy.get(`#${curateTabId}`).findAllByLabelText("icon: plus-circle").first();
+    return cy.get(`#${curateTabId}`).findByLabelText("icon: plus-circle");
   }
 
   addNewStepDisabled(entityTypeId: string) {
@@ -189,7 +196,7 @@ class CuratePage {
   }
 
   confirmAddStepToFlow(stepName: string, flowName: string) {
-    cy.findByTestId(`${stepName}-to-${flowName}-Confirm`).click();
+    cy.findByTestId(`${stepName}-to-${flowName}-Confirm`).should("be.visible").click();
   }
 
   dataPresent() {
