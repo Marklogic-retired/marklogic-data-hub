@@ -31,7 +31,7 @@ class Search {
     let facets = searchParams.selectedFacets;
     let keys = Object.keys(facets);
     let constraintArr = [];
-    keys.forEach(key => constraintArr.push(facets[key].map(value => key+':' + value).join(" OR ")))
+    keys.forEach(key => constraintArr.push(facets[key].map(value => key+':' + '"' + value + '"').join(" OR ")))
     const facetConstraint = constraintArr.map(constraint => "(" + constraint + ")").join(" AND ");
 
     let searchConstraint = [];
@@ -49,14 +49,11 @@ class Search {
   }
 
   getSnippetResults(searchResults) {
-    const snippetResults = [];
-    searchResults = searchResults.toObject();
-    searchResults["response"]["result"].forEach(result => snippetResults.push(result["extracted"]["person"]));
-    return snippetResults;
+
   }
 
   getPrimaryKeyForAResult() {
-    // uri
+
   }
 
   getDocument() {

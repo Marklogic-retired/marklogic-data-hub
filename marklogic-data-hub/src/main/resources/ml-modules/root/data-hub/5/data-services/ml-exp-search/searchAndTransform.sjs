@@ -21,7 +21,6 @@ const ConfigurableSearch = require("/data-hub/5/ml-exp-search/configurable-searc
 const configurableSearch = new ConfigurableSearch();
 
 const searchResults = configurableSearch.getSearchResults(searchParams.toObject());
-const snippetResults = configurableSearch.getSnippetResults(searchResults);
 
-const combinedResponse = {searchResults, snippetResults};
+const combinedResponse = {searchResults};
 combinedResponse;
