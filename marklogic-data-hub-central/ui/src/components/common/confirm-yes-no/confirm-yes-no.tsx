@@ -29,12 +29,12 @@ const ConfirmYesNo: React.FC<Props> = (props) => {
       <div>
         <div className={styles.buttonNo}>
           <MLButton aria-label={props.labelNo ? props.labelNo : "No"} onClick={props.onNo}>
-            {props.labelNo ? props.labelNo : "No"}
+            {props.labelNo ? (props.labelNo === "DiscardChangesNoButton" ? "No" : props.labelNo) : "No"}
           </MLButton>
         </div>
         <div className={styles.buttonYes}>
           <MLButton aria-label={props.labelYes ? props.labelYes : "Yes"} type="primary" htmlType="submit" onClick={props.onYes}>
-            {props.labelYes ? props.labelYes : "Yes"}
+            {props.labelYes ? (props.labelYes === "DiscardChangesYesButton" ? "Yes" : props.labelYes) : "Yes"}
           </MLButton>
         </div>
       </div>

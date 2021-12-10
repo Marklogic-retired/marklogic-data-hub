@@ -41,6 +41,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [maxValuesTouched, setMaxValuesTouched] = useState(false);
   const [maxSources, setMaxSources] = useState<any>("");
   const [maxSourcesTouched, setMaxSourcesTouched] = useState(false);
+  const [defaultStrategyTouched, setDefaultStrategyTouched] = useState(false);
+  const [priorityOrderTouched, setPriorityOrderTouched] = useState(false);
   const [isCustomStrategy, setIsCustomStrategy] = useState(false);
   const [deleteModalVisibility, toggleDeleteModalVisibility] = useState(false);
   const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([defaultPriorityOption]);
@@ -72,15 +74,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
     if (event.target.id === "maxSourcesStrategyInput") {
       setMaxSources(event.target.value);
-      setMaxSourcesTouched(true);
       setRadioSourcesOptionClicked(2);
     }
     if (event.target.id === "maxValuesStrategyInput") {
       setMaxValues(event.target.value);
-      setMaxValuesTouched(true);
       setRadioValuesOptionClicked(2);
     }
     if (event.target.name === "defaultYesNo") {
+      setDefaultStrategyTouched(true);
       if (radioDefaultOptionClicked === 2) {
         let defaultStrategy = checkExistingDefaultStrategy();
         if (defaultStrategy) {
@@ -93,12 +94,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       }
     }
     if (event.target.name === "maxSources") {
+      setMaxSourcesTouched(true);
       setRadioSourcesOptionClicked(event.target.value);
       if (event.target.value === 1) {
         setMaxSources("");
       }
     }
     if (event.target.name === "maxValues") {
+      setMaxValuesTouched(true);
       setRadioValuesOptionClicked(event.target.value);
       if (event.target.value === 1) {
         setMaxValues("");
@@ -147,11 +150,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const renderPriorityOrderTimeline = () => {
-    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} /></div>;
+    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} borderMargin="14px"/></div>;
   };
 
   const renderDefaultPriorityOrderTimeline = () => {
-    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} /></div>;
+    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px"/></div>;
   };
 
   const timelineOrder = (a, b) => {
@@ -191,6 +194,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     },
     onMove: function(item, callback) {
       if (item.value.split(":")[0] !== "Timestamp") {
+        setPriorityOrderTouched(true);
         if (item.start >= 0 && item.start <= 100) {
           item.value= getStrategyName(item);
           callback(item);
@@ -235,6 +239,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   };
 
   const confirmAction = () => {
+    setPriorityOrderTouched(true);
     setPriorityOrderOptions(handleDeleteSliderOptions(priorityOptions, priorityOrderOptions));
     toggleDeleteModalVisibility(false);
   };
@@ -280,6 +285,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
   const onAddOptions =  () => {
     const data = (addSliderOptions(priorityOrderOptions, dropdownOption));
+    priorityOrderOptions.map((option) => {
+      if (option.id.split(":")[0] === "Length" && dropdownOption === "Length") {
+        setPriorityOrderTouched(false);
+      } else setPriorityOrderTouched(true);
+    });
     setPriorityOrderOptions(data);
   };
 
@@ -337,8 +347,10 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const hasFormChanged = () => {
     if (!dropdownOptionTouched
         && !strategyNameTouched
-        && (!maxValuesTouched || maxValues.length === 0)
-        && (!maxSourcesTouched || maxSources.length === 0)
+        && !defaultStrategyTouched
+        && !priorityOrderTouched
+        && !maxValuesTouched
+        && !maxSourcesTouched
     ) {
       return false;
     } else {
@@ -369,6 +381,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     setMaxValuesTouched(false);
     setMaxSourcesTouched(false);
     setDropdownOptionTouched(false);
+    setDefaultStrategyTouched(false);
+    setPriorityOrderTouched(false);
   };
 
   const discardOk = () => {
@@ -386,6 +400,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
+    labelNo="DiscardChangesNoButton"
+    labelYes="DiscardChangesYesButton"
   />;
 
   useEffect(() => {
@@ -497,8 +513,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           labelAlign="left"
         >
           <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange}  name={"maxValues"}>
-            <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
+            <Radio value={1} aria-label="maxValuesAllRadio"> All</Radio>
+            <Radio value={2} aria-label="maxValuesOtherRadio"><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
               <MLTooltip title={MergeRuleTooltips.maxValues}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
               </MLTooltip>
@@ -511,8 +527,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           labelAlign="left"
         >
           <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange}  name={"maxSources"}>
-            <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
+            <Radio value={1} aria-label="maxSourcesAllRadio"> All</Radio>
+            <Radio value={2} aria-label="maxSourcesOtherRadio"><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
               <MLTooltip title={MergeRuleTooltips.maxSources}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
               </MLTooltip>
@@ -527,8 +543,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           labelAlign="left"
         >
           <Radio.Group  value={radioDefaultOptionClicked} onChange={handleChange}  name={"defaultYesNo"}>
-            <Radio value={1} >Yes</Radio>
-            <Radio value={2} >No</Radio>
+            <Radio value={1} aria-label="defaultStrategyYes">Yes</Radio>
+            <Radio value={2} aria-label="defaultStrategyNo">No</Radio>
           </Radio.Group>
         </Form.Item>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
@@ -551,7 +567,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</MLButton>
           </div>
           <div>
-            <div><span className={styles.enableStrategySwitch}><b>Enable Merge Strategy Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
+            <div><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
               <span>
                 <MLTooltip title={MergingStepTooltips.strategyScale} id="priority-order-tooltip" placement="right">
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />

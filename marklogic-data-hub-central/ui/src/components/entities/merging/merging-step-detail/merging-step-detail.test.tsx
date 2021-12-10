@@ -10,7 +10,7 @@ import {customerMergingStep, customerMergingStepEmpty} from "../../../../assets/
 import MergingStepDetail from "./merging-step-detail";
 import userEvent from "@testing-library/user-event";
 import {updateMergingArtifact} from "../../../../api/merging";
-import {MergeStrategyTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
+import {MergeStrategyTooltips} from "../../../../config/tooltips.config";
 
 jest.mock("../../../../api/merging");
 const mockMergingUpdate = updateMergingArtifact as jest.Mock;
@@ -67,7 +67,7 @@ describe("Merging Step Detail view component", () => {
 
     //Verify priority option slider tooltip
     userEvent.hover(getByLabelText("icon: question-circle"));
-    expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
+    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
 
     //Verify default timeline is visible and no edit strategy button is present
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();

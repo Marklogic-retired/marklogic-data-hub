@@ -74,6 +74,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [priorityOptions, setPriorityOptions] = useState<any>();
   const [deletePriorityName, setDeletePriorityName] = useState("");
   const [deleteModalVisibility, toggleDeleteModalVisibility] = useState(false);
+  const [priorityOrderTouched, setPriorityOrderTouched] = useState(false);
 
   const titleLegend = <div className={styles.titleLegend}>
     <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
@@ -166,12 +167,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const updateMergeRuleItems = async(id, newValue, priorityOrderOptions:any[]) => {
     if (id.split(":")[0] !== "Timestamp") {
-      let editPriorityName;
-      if (id.split(":")[1] === "Length") {
-        editPriorityName = "Length";
-      } else {
-        editPriorityName = id.split(":")[0];
-      }
+      let editPriorityName = id.split(":")[1];
       for (let priorityOption of priorityOrderOptions) {
         let value = priorityOption.value;
         let priorityName;
@@ -189,11 +185,11 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const renderPriorityOrderTimeline = () => {
-    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} /></div>;
+    return <div data-testid={"active-priorityOrder-timeline"}><TimelineVis items={priorityOrderOptions} options={strategyOptions} clickHandler={onPriorityOrderTimelineItemClicked} borderMargin="14px"/></div>;
   };
 
   const renderDefaultPriorityOrderTimeline = () => {
-    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} /></div>;
+    return <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderOptions} options={strategyOptions} borderMargin="14px"/></div>;
   };
 
   const timelineOrder = (a, b) => {
@@ -234,6 +230,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     onMove: function(item, callback) {
       if (item.value.split(":")[0] !== "Timestamp") {
         if (item.start >= 0 && item.start <= 100) {
+          setPriorityOrderTouched(true);
           item.value= getStrategyName(item);
           callback(item);
           updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
@@ -305,6 +302,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const confirmAction = () => {
+    setPriorityOrderTouched(true);
     setPriorityOrderOptions(handleDeleteSliderOptions(priorityOptions, priorityOrderOptions));
     toggleDeleteModalVisibility(false);
   };
@@ -350,6 +348,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     setNamespaceTouched(false);
     setMaxValueRuleInputTouched(false);
     setMaxSourcesRuleInputTouched(false);
+    setPriorityOrderTouched(false);
   };
 
   const onCancel = () => {
@@ -380,7 +379,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       }
     } else if (mergeType === "Property-specific") {
       let checkPropertySpecificValues = hasPropertySpecificFormValuesChanged();
-      if (!propertyTouched && !mergeTypeTouched && !checkPropertySpecificValues) {
+      if (!propertyTouched && !mergeTypeTouched && !checkPropertySpecificValues && !priorityOrderTouched) {
         return false;
       } else {
         return true;
@@ -415,8 +414,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const hasPropertySpecificFormValuesChanged = () => {
     if (!dropdownOptionTouched
-        && (!maxSourcesRuleInputTouched || maxSourcesRuleInput.length === 0)
-        && !maxValueRuleInputTouched || maxValueRuleInput.length === 0
+        && !maxSourcesRuleInputTouched
+        && !maxValueRuleInputTouched
     ) {
       return false;
     } else {
@@ -501,14 +500,12 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       if (event.target.value === " ") {
         setStrategyValueTouched(false);
       } else {
-        setStrategyValueTouched(true);
         setStrategyValue(event.target.value);
       }
     } else if (event.target.id === "maxValuesRuleInput") {
       if (event.target.value === " ") {
         setMaxValueRuleInputTouched(false);
       } else {
-        setMaxValueRuleInputTouched(true);
         setMaxValueRuleInput(event.target.value);
         setRadioValuesOptionClicked(2);
       }
@@ -521,11 +518,13 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         setRadioSourcesOptionClicked(2);
       }
     } else if (event.target.name === "maxValues") {
+      setMaxValueRuleInputTouched(true);
       setRadioValuesOptionClicked(event.target.value);
       if (event.target.value === 1) {
         setMaxValueRuleInput("");
       }
     } else if (event.target.name === "maxSources") {
+      setMaxSourcesRuleInputTouched(true);
       setRadioSourcesOptionClicked(event.target.value);
       if (event.target.value === 1) {
         setMaxSourcesRuleInput("");
@@ -602,6 +601,11 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const onAddOptions =  () => {
+    priorityOrderOptions.map((option) => {
+      if (option.id.split(":")[0] === "Length" && dropdownOption === "Length") {
+        setPriorityOrderTouched(false);
+      } else setPriorityOrderTouched(true);
+    });
     setPriorityOrderOptions(addSliderOptions(priorityOrderOptions, dropdownOption));
   };
 
@@ -645,13 +649,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
+    labelNo="DiscardChangesNoButton"
+    labelYes="DiscardChangesYesButton"
   />;
 
   return (
     <Modal
       visible={props.createEditMergeRuleDialog}
       title={props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}
-      width={700}
+      width={1000}
       onCancel={() => onCancel()}
       onOk={() => onOk()}
       okText="Save"
@@ -809,8 +815,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 labelAlign="left"
               >
                 <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
-                  <Radio value={1} > All</Radio>
-                  <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
+                  <Radio value={1} aria-label="maxValuesAllRadio" > All</Radio>
+                  <Radio value={2} aria-label="maxValuesOtherRadio"><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
                 </Radio.Group>
                 <MLTooltip title={MergeRuleTooltips.maxValues}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -822,8 +828,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 labelAlign="left"
               >
                 <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
-                  <Radio value={1} > All</Radio>
-                  <Radio value={2} ><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
+                  <Radio value={1} aria-label="maxSourcesAllRadio"> All</Radio>
+                  <Radio value={2} aria-label="maxSourcesOtherRadio"><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
                 </Radio.Group>
                 <MLTooltip title={MergeRuleTooltips.maxSources}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />

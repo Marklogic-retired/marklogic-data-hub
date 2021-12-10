@@ -351,7 +351,7 @@ const MergingStepDetail: React.FC = () => {
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip></p>
       <div id="strategyText"><MLTooltip title={multiSliderTooltips.viewOnlyTooltip}><div style={{opacity: "60%"}}>
-        <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderStrategyOptions} options={strategyOptions} /></div>
+        <div data-testid={"default-priorityOrder-timeline"}><TimelineVisDefault items={priorityOrderStrategyOptions} options={strategyOptions} borderMargin="14px"/></div>
       </div></MLTooltip></div>
       </div>
     </>;
