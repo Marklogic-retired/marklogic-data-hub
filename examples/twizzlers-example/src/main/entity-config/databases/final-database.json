@@ -20,6 +20,13 @@
     "collation" : "http://marklogic.com/collation/codepoint"
   }, {
     "invalid-values" : "reject",
+    "localname" : "status",
+    "namespace-uri" : null,
+    "range-value-positions" : false,
+    "scalar-type" : "string",
+    "collation" : "http://marklogic.com/collation/codepoint"
+  }, {
+    "invalid-values" : "reject",
     "localname" : "personId",
     "namespace-uri" : null,
     "range-value-positions" : false,

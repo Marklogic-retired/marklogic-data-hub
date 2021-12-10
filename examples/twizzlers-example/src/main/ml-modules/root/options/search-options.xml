@@ -31,6 +31,12 @@
       <search:facet-option>limit=25</search:facet-option>
     </search:range>
   </search:constraint>
+  <search:constraint name="status">
+    <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
+      <search:element name="status" ns="" xmlns:es="http://marklogic.com/entity-services"/>
+      <search:facet-option>limit=25</search:facet-option>
+    </search:range>:q!
+  </search:constraint>
   <search:constraint name="email">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="email" ns="" xmlns:es="http://marklogic.com/entity-services"/>
@@ -76,6 +82,7 @@ Change or remove this additional-query to broaden search beyond entity instance 
 To return facets, change this option to 'true' and edit constraints
 -->
   <search:return-facets>true</search:return-facets>
+  <search:return-query>true</search:return-query>
   <!--
 To return snippets, comment out or remove this option
 -->
