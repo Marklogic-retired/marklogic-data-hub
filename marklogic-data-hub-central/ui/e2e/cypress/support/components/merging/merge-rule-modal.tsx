@@ -69,6 +69,14 @@ class MergeRuleModal {
     cy.get("#maxValuesRuleInput").clear().type(value).type("{enter}");
   }
 
+  maxValueOtherRadio() {
+    return cy.findByLabelText("maxValuesOtherRadio");
+  }
+
+  maxSourcesOtherRadio() {
+    return cy.findByLabelText("maxSourcesOtherRadio");
+  }
+
   ruleMaxScoreInput(value: string) {
     cy.get("#maxSourcesRuleInput").clear().type(value).type("{enter}");
   }

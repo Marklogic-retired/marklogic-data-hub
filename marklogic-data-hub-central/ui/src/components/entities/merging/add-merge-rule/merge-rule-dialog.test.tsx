@@ -6,7 +6,7 @@ import {CurationContext} from "../../../../util/curation-context";
 import {customerMergingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {updateMergingArtifact} from "../../../../api/merging";
 import userEvent from "@testing-library/user-event";
-import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
+import {MergeRuleTooltips} from "../../../../config/tooltips.config";
 
 
 jest.mock("../../../../api/merging");
@@ -115,7 +115,7 @@ describe("Merge Rule Dialog component", () => {
 
     //Verify priority Order slider tooltip
     userEvent.hover(getAllByLabelText("icon: question-circle")[3]);
-    expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
+    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
 
     //Default Timeline is visible by default
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();

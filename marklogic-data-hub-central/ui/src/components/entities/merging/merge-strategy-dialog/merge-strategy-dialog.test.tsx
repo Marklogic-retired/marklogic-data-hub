@@ -6,7 +6,6 @@ import {customerMergingStep} from "../../../../assets/mock-data/curation/curatio
 import MergeStrategyDialog from "./merge-strategy-dialog";
 import {updateMergingArtifact} from "../../../../api/merging";
 import userEvent from "@testing-library/user-event";
-import {multiSliderTooltips} from "../../../../config/tooltips.config";
 
 jest.mock("../../../../api/merging");
 const mockMergingUpdate = updateMergingArtifact as jest.Mock;
@@ -44,7 +43,7 @@ describe("Merge Strategy Dialog component", () => {
 
     //Verify priority option slider tooltip
     userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
-    expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
+    expect((await(waitForElement(() => getByLabelText("priorityOrderTooltip"))))).toBeInTheDocument();
 
     //Default Timeline is visible by default
     expect(queryByTestId("default-priorityOrder-timeline")).toBeInTheDocument();
