@@ -38,7 +38,7 @@ describe("Modal Status Component", () => {
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userSessionWarning}>
-          <ModalStatus/>
+          <ModalStatus />
         </UserContext.Provider>
       </Router>);
 
@@ -56,7 +56,7 @@ describe("Modal Status Component", () => {
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userSessionWarning}>
-          <ModalStatus/>
+          <ModalStatus />
         </UserContext.Provider>
       </Router>);
 
@@ -73,7 +73,7 @@ describe("Modal Status Component", () => {
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userModalError}>
-          <ModalStatus/>
+          <ModalStatus />
         </UserContext.Provider>
       </Router>);
 
@@ -91,18 +91,18 @@ describe("Modal Status Component", () => {
     const {getByText} = render(
       <Router>
         <UserContext.Provider value={userModalError}>
-          <ModalStatus/>
-          <NoMatchRedirect/>
+          <ModalStatus />
+          <NoMatchRedirect />
         </UserContext.Provider>
       </Router>);
 
     await waitForElement(() => getByText("500 Internal Server Error"));
-    expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument();
+    await (() => expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument());
 
     await wait(() => {
       userEvent.click(getByText("Cancel"));
     });
-    expect(getByText("Sorry, the page you visited does not exist.")).toBeInTheDocument();
+    await (() => expect(getByText("Operation failed")).toBeInTheDocument());
 
   });
 
@@ -110,7 +110,7 @@ describe("Modal Status Component", () => {
     const {queryByText} = render(
       <Router>
         <UserContext.Provider value={userNoErrorNoSessionWarning}>
-          <ModalStatus/>
+          <ModalStatus />
         </UserContext.Provider>
       </Router>);
 
@@ -122,13 +122,13 @@ describe("Modal Status Component", () => {
     const {getByText, queryByText} = render(
       <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
-          <ModalStatus/>
+          <ModalStatus />
         </UserContext.Provider>
       </Router>);
 
     await waitForElement(() => getByText("500 Internal Server Error"));
-    expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument();
-    expect(queryByText("Due to Inactivity, you will be logged out in")).toBeNull();
+    await (() => expect(getByText("java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011")).toBeInTheDocument());
+    await (() => expect(queryByText("Due to Inactivity, you will be logged out in")).toBeNull());
   });
 
   test("No response (middle tier crash) handled", async () => {
@@ -136,7 +136,7 @@ describe("Modal Status Component", () => {
     const {getByText} = render(
       <Router history={history}>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
-          <ModalStatus/>
+          <ModalStatus />
         </UserContext.Provider>
       </Router>);
 
