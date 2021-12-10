@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Table, Select, Tooltip} from "antd";
+import {Select, Tooltip} from "antd";
 import {Row, Col, Modal, Dropdown} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -13,7 +13,7 @@ import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {LoadingContext} from "../../util/loading-context";
 import {getViewSettings, setViewSettings} from "../../util/user-context";
 import {PlayCircleFill, PlusCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCDivider, HCTooltip} from "@components/common";
+import {HCButton, HCDivider, HCTooltip, HCTable} from "@components/common";
 
 const {Option} = Select;
 
@@ -29,6 +29,7 @@ interface Props {
   addStepToFlow: any;
   addStepToNew: any;
   sortOrderInfo: any;
+  flowsLoading: boolean;
 }
 
 const LoadList: React.FC<Props> = (props) => {
@@ -128,7 +129,7 @@ const LoadList: React.FC<Props> = (props) => {
     handleStepAdd(obj.loadName, obj.flowName);
   }
 
-  const handleTableChange = (pagination, filter, sorter) => {
+  const handleTableChange = (type, sorter: {columnKey: string; order: string}) => {
     setSortedInfo({columnKey: sorter.columnKey, order: sorter.order});
   };
 
@@ -409,66 +410,78 @@ const LoadList: React.FC<Props> = (props) => {
     </Modal.Body>
   </Modal>;
 
+  const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
+
   const columns: any = [
     {
-      title: <span data-testid="loadTableName">Name</span>,
-      dataIndex: "name",
+      text: "Name",
+      dataField: "name",
       key: "name",
-      render: (text: any, record: any) => (
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (
+        <><span data-testid="loadTableName">Name</span>{sortElement}</>
+      ),
+      formatter: (text: any, record: any) => (
         <span><span onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
       ),
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
-      sortOrder: (sortedInfo && sortedInfo.columnKey === "name") ? sortedInfo.order : "",
+      sortFunc: columnSorter,
     },
     {
-      title: <span data-testid="loadTableDescription">Description</span>,
-      dataIndex: "description",
+      text: "Description",
+      dataField: "description",
       key: "description",
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a: any, b: any) => a.description?.localeCompare(b.description),
-      sortOrder: (sortedInfo && sortedInfo.columnKey === "description") ? sortedInfo.order : "",
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (
+        <><span data-testid="loadTableDescription">Description</span>{sortElement}</>
+      ),
+      sortFunc: columnSorter,
     },
     {
-      title: <span data-testid="loadTableSourceFormat">Source Format</span>,
-      dataIndex: "sourceFormat",
+      text: "Source Format",
+      dataField: "sourceFormat",
       key: "sourceFormat",
-      render: (text, row) => (
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (
+        <><span data-testid="loadTableSourceFormat">Source Format</span>{sortElement}</>
+      ),
+      formatter: (text, row) => (
         <div>
           <div>{text === "csv" ? "Delimited Text" : text}</div>
           {row.sourceFormat === "csv" ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ""}
         </div>
       ),
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a: any, b: any) => a.sourceFormat.localeCompare(b.sourceFormat),
-      sortOrder: (sortedInfo && sortedInfo.columnKey === "sourceFormat") ? sortedInfo.order : "",
+      sortFunc: columnSorter,
     },
     {
-      title: <span data-testid="loadTableTargetFormat">Target Format</span>,
-      dataIndex: "targetFormat",
+      text: "Target Format",
+      dataField: "targetFormat",
       key: "targetFormat",
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a: any, b: any) => a.targetFormat.localeCompare(b.targetFormate),
-      sortOrder: (sortedInfo && sortedInfo.columnKey === "targetFormat") ? sortedInfo.order : "",
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (
+        <><span data-testid="loadTableTargetFormat">Target Format</span>{sortElement}</>
+      ),
+      sortFunc: columnSorter,
     },
     {
-      title: <span data-testid="loadTableDate">Last Updated</span>,
-      dataIndex: "lastUpdated",
+      text: "Last Updated",
+      dataField: "lastUpdated",
       key: "lastUpdated",
-      render: (text) => (
+      sort: true,
+      defaultSortOrder: "desc",
+      headerFormatter: (_, $, {sortElement}) => (
+        <><span data-testid="loadTableDate">Last Updated</span>{sortElement}</>
+      ),
+      formatter: (text) => (
         <div>{convertDateFromISO(text)}</div>
       ),
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a: any, b: any) => moment(a.lastUpdated).unix() - moment(b.lastUpdated).unix(),
-      defaultSortOrder: "descend",
-      sortOrder: (sortedInfo && sortedInfo.columnKey === "lastUpdated") ? sortedInfo.order : "descend",
+      sortFunc: (a: any, b: any, order: string) => order === "asc" ? moment(a).unix() - moment(b).unix() : moment(b).unix() - moment(a).unix(),
     },
     {
-      title: "Action",
-      dataIndex: "actions",
+      text: "Action",
+      dataField: "actions",
       key: "actions",
-      render: (text, row) => (
-        <span className={styles.actionButtonsContainer}>
+      formatter: (text, row) => {
+        return <span className={styles.actionButtonsContainer}>
           {props.canReadWrite ?
             <HCTooltip text="Run" id="run-action-tooltip" placement="bottom">
               <i aria-label="icon: run">
@@ -496,9 +509,8 @@ const LoadList: React.FC<Props> = (props) => {
               </i>
             </HCTooltip>
           }
-        </span>
-      ),
-
+        </span>;
+      },
     }
   ];
 
@@ -507,7 +519,7 @@ const LoadList: React.FC<Props> = (props) => {
     setPage(page);
   };
 
-  const handlePageSizeChange = (current, pageSize) => {
+  const handlePageSizeChange = (pageSize, current) => {
     setPageSize(current, pageSize);
   };
 
@@ -518,14 +530,15 @@ const LoadList: React.FC<Props> = (props) => {
           <HCButton aria-label="add-new-list" variant="primary" onClick={OpenAddNew}>Add New</HCButton>
         </div> : ""}
       </div>
-      <Table
-        pagination={{hideOnSinglePage: props.data.length <= 10, showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
-        className={styles.loadTable}
-        columns={columns}
-        dataSource={props.data}
-        rowKey="name"
-        onChange={handleTableChange}
-      />
+      {props.flowsLoading ? "" :
+        <HCTable
+          pagination={{hideOnSinglePage: props.data.length <= 10, showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
+          className={styles.loadTable}
+          columns={columns}
+          data={props.data}
+          rowKey="name"
+          onTableChange={handleTableChange}
+        />}
       {deleteConfirmation}
       {addConfirmation}
       {runNoFlowsConfirmation}

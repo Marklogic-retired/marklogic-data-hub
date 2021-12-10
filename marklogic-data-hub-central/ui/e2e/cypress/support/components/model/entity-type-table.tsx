@@ -18,7 +18,7 @@ class EntityTypeTable {
   }
 
   getExpandEntityIcon(entityName: string) {
-    cy.get(`[data-row-key="${entityName}"]`).children().children(`.ant-table-row-expand-icon`).click();
+    cy.get(`[data-testid="${entityName}-expand-icon"]`).click();
   }
 
   sortByEntityName() {
@@ -38,7 +38,7 @@ class EntityTypeTable {
   }
 
   waitForTableToLoad() {
-    cy.waitUntil(() => cy.get(".ant-table-row").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.get(".hc-table_row").should("have.length.gt", 0));
   }
 
   viewEntityInGraphView(entityName: string) {

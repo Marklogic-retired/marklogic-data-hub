@@ -129,15 +129,15 @@ describe("EntityTypeModal Component", () => {
     validateTableRow(entityTable, ["AnotherModel", "Customer", "Order", "Product", "Protein", "Provider", "TestEntityForMapping"]);
 
     //verify sort by instances works in ascending order
-    fireEvent.click(getByTestId("Instances"));
+    fireEvent.click(getByTestId("instances"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
     validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Customer", "Order"]);
     //verify sort by instances works in descending order
-    fireEvent.click(getByTestId("Instances"));
+    fireEvent.click(getByTestId("instances"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
     validateTableRow(entityTable, ["Order", "Customer", "AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Order", "Customer"]);
     //verify third click does not return to default, but returns to ascending order
-    fireEvent.click(getByTestId("Instances"));
+    fireEvent.click(getByTestId("instances"));
     entityTable = document.querySelectorAll(".ant-table-row-level-0");
     validateTableRow(entityTable, ["AnotherModel", "Protein", "Product", "Provider", "TestEntityForMapping", "Customer", "Order"]);
 

@@ -3,7 +3,6 @@ import {render, screen, fireEvent, within, cleanup} from "@testing-library/react
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
-import {onClosestTableRow} from "../../../util/test-utils";
 import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
 import curateData from "../../../assets/mock-data/curation/flows.data";
 import {ConfirmationType} from "../../../types/common-types";
@@ -253,18 +252,11 @@ describe("Entity Modeling Property Table Component", () => {
     //verify collapse all
     fireEvent.click(getByTestId("collapseBtn"));
 
-    //all nested properties should be present
-
-    //address
-    expect(onClosestTableRow(getAllByText("street")[0])?.style.display).toBe("none");
-    expect(onClosestTableRow(getAllByText("state")[0])?.style.display).toBe("none");
-    expect(onClosestTableRow(getAllByText("fiveDigit")[0])?.style.display).toBe("none");
-    expect(onClosestTableRow(getAllByText("plusFour")[0])?.style.display).toBe("none");
-    //billing
-    expect(onClosestTableRow(getAllByText("street")[1])?.style.display).toBe("none");
-    expect(onClosestTableRow(getAllByText("state")[1])?.style.display).toBe("none");
-    expect(onClosestTableRow(getAllByText("fiveDigit")[1])?.style.display).toBe("none");
-    expect(onClosestTableRow(getAllByText("plusFour")[1])?.style.display).toBe("none");
+    //all nested properties should not be present
+    await waitFor(() => expect(queryByText("street")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("state")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("fiveDigit")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("plusFour")).not.toBeInTheDocument());
   });
 
 

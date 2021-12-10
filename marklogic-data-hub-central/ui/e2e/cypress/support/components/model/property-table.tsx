@@ -75,6 +75,10 @@ class PropertyTable {
   verifyForeignKeyIcon(propertyName: string) {
     return cy.findByTestId(`foreign-${propertyName}`);
   }
+
+  getExpandIcon(propertyName: string) {
+    return cy.findByTestId(`${propertyName}-expand-icon`);
+  }
 }
 
 const propertyTable = new PropertyTable();

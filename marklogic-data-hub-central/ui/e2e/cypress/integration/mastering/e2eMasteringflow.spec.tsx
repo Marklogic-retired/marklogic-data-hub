@@ -103,8 +103,10 @@ describe("Validate E2E Mastering Flow", () => {
     entityTypeModal.newEntityDescription("An entity for patients");
     entityTypeModal.getAddButton().click();
     cy.waitForAsyncRequest();
+    cy.waitUntil(() => propertyTable.getExpandIcon("Patient").click());
   });
   it("Add properties", () => {
+    cy.waitUntil(() => propertyTable.getExpandIcon("Patient").click());
     propertyTable.getAddPropertyButton("Patient").should("be.visible").click();
     propertyModal.newPropertyName("FirstName");
     propertyModal.openPropertyDropdown();
@@ -138,7 +140,7 @@ describe("Validate E2E Mastering Flow", () => {
     propertyModal.getSubmitButton().click();
   });
   it("Save Patient entity", () => {
-    modelPage.getPublishButton().click();
+    modelPage.getPublishButton().click({force: true});
     confirmationModal.getYesButton(ConfirmationType.PublishAll);
     cy.waitForAsyncRequest();
     confirmationModal.getSaveAllEntityText().should("exist");

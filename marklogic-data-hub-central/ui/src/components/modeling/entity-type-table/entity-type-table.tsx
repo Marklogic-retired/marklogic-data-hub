@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
-import {Table, Tooltip} from "antd";
+import {Tooltip} from "antd";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -16,7 +16,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {queryDateConverter, relativeTimeConverter} from "../../../util/date-conversion";
 import {numberConverter} from "../../../util/number-conversion";
 import {ModelingTooltips, SecurityTooltips} from "../../../config/tooltips.config";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, HCTable} from "@components/common";
 
 type Props = {
   allEntityTypesData: any[];
@@ -36,6 +36,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const {handleError} = useContext(UserContext);
   const {modelingOptions, setGraphViewOptions} = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>(expandedRowStorage ? expandedRowStorage : []);
+  const [expandedNewRows, setExpandedNewRows] = useState<number[]>(expandedRowStorage ? expandedRowStorage.map(e => +e) : []);
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -47,6 +48,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.autoExpand) {
       setExpandedRows([props.autoExpand]);
+      setExpandedNewRows([+props.autoExpand]);
     }
   }, [props.autoExpand]);
 
@@ -54,10 +56,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     if (expandedRows === null) {
       return;
     }
+    if (expandedNewRows === null) {
+      return;
+    }
     const rowStorage = getViewSettings();
     const newStorage = {...rowStorage, model: {...rowStorage.model, entityExpandedRows: expandedRows}};
     setViewSettings(newStorage);
-  }, [expandedRows]);
+  }, [expandedRows, expandedNewRows]);
 
   useEffect(() => {
     // Deep copying props.allEntityTypesData since we dont want the prop to be mutated
@@ -142,11 +147,15 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
   const columns = [
     {
-      title: <span data-testid="entityName">Name</span>,
-      dataIndex: "entityName",
+      text: "Name",
+      dataField: "entityName",
       className: styles.tableText,
       width: 400,
-      render: text => {
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (
+        <><span data-testid="entityName">Name</span>{sortElement}</>
+      ),
+      formatter: text => {
         let entityName = text;
         return (
           <>
@@ -168,17 +177,18 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           </>
         );
       },
-      //sortDirections: ["ascend", "descend", "ascend"], // DHFPROD-7711 MLTable -> Table
-      sorter: (a, b) => {
-        return a["entityName"].localeCompare(b["entityName"]);
+      sortFunc: (a, b, order) => {
+        return order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
       }
     },
     {
-      title: <span data-testid="Instances">Instances</span>,
-      dataIndex: "instances",
+      text: "Instances",
+      dataField: "instances",
       className: styles.rightHeader,
       width: 100,
-      render: text => {
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (<><span data-testid="Instances">Instances</span>{sortElement}</>),
+      formatter: text => {
         let parseText = text.split(",");
         let instanceCount = numberConverter(parseInt(parseText[1]));
 
@@ -202,22 +212,23 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           </>
         );
       },
-      // sortDirections: ["ascend", "descend", "ascend"], // DHFPROD-7711 MLTable -> Table
-      sorter: (a, b) => {
-        let splitA = a["instances"].split(",");
-        let aCount = parseInt(splitA[1]);
-        let splitB = b["instances"].split(",");
-        let bCount = parseInt(splitB[1]);
+      sortFunc: (a, b, order) => {
+        let [, splitA] = a.split(",");
+        let aCount = parseInt(splitA);
+        let [, splitB] = b.split(",");
+        let bCount = parseInt(splitB);
 
-        return aCount - bCount;
+        return order === "asc" ? aCount - bCount : bCount - aCount;
       }
     },
     {
-      title: <span data-testid="lastProcessed">Last Processed</span>,
-      dataIndex: "lastProcessed",
+      text: "Last Processed",
+      dataField: "lastProcessed",
       className: styles.tableText,
       width: 100,
-      render: text => {
+      sort: true,
+      headerFormatter: (_, $, {sortElement}) => (<><span data-testid="lastProcessed">Last Processed</span>{sortElement}</>),
+      formatter: text => {
         let parseText = text.split(",");
         if (parseText[1] === "undefined") {
           return "n/a";
@@ -240,20 +251,19 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           );
         }
       },
-      //sortDirections: ["ascend", "descend", "ascend"], // DHFPROD-7711 MLTable -> Table
-      //defaultSortOrder: "descend", // DHFPROD-7711 MLTable -> Table
-      sorter: (a, b) => {
-        let splitA = a["lastProcessed"].split(",");
-        let splitB = b["lastProcessed"].split(",");
-        return splitA[2].localeCompare(splitB[2]);
+      sortFunc: (a, b, order) => {
+        let [, , splitA] = a.split(",");
+        let [, , splitB] = b.split(",");
+        return order === "asc" ? splitA.localeCompare(splitB) : splitB.localeCompare(splitA);
       }
     },
     {
-      title: <span data-testid="color">Color</span>,
-      dataIndex: "color",
+      text: "Color",
+      dataField: "color",
       className: styles.actions,
       width: 100,
-      render: text => {
+      headerFormatter: () => <span data-testid="color">Color</span>,
+      formatter: text => {
         let parseText = text.split(",");
         let entityName = parseText[0];
         let color = parseText[1];
@@ -265,11 +275,11 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       }
     },
     {
-      title: "Actions",
-      dataIndex: "actions",
+      text: "Actions",
+      dataField: "actions",
       className: styles.actions,
       width: 100,
-      render: text => {
+      formatter: text => {
         return (
           <div className={styles.iconContainer}>
             <HCTooltip text={ModelingTooltips.viewGraph} id="graph-view-tooltip" placement="top">
@@ -324,8 +334,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     />;
   };
 
-  const onExpand = (expanded, record) => {
+  const onExpand = (record, expanded, rowIndex) => {
     let newExpandedRows =  [...expandedRows];
+
     if (expanded) {
       if (newExpandedRows.indexOf(record.entityName) === -1) {
         newExpandedRows.push(record.entityName);
@@ -340,14 +351,14 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
   };
 
-  const renderTableData = allEntityTypes.map((entity) => {
+  const renderTableData = allEntityTypes.map((entity, index) => {
     let result = {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
       color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEEFF1"),
       actions: entity.entityName,
-      definitions: entity.model.definitions
+      definitions: entity.model.definitions,
     };
     return result;
   });
@@ -362,19 +373,17 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
-      <Table
+      <HCTable
         rowKey="entityName"
-        locale={{emptyText: " "}}
         className={styles.table}
         columns={columns}
         expandedRowRender={expandedRowRender}
         onExpand={onExpand}
         expandedRowKeys={expandedRows}
-        dataSource={renderTableData}
+        data={renderTableData}
         pagination={{defaultPageSize: 20, size: "small", hideOnSinglePage: renderTableData.length <= 20}}
-        size="middle"
+        showExpandIndicator={{bordered: true}}
       />
-      {/* sortDirections: ["ascend", "descend", "ascend"], */}
     </>
   );
 };

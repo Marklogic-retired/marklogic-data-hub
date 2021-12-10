@@ -441,7 +441,7 @@ describe("Load data component", () => {
       createLoadArtifact={mockCreateLoadArtifact}
       data={data.loadData.data}
       deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}/>
+      flows={data.flows} />
     </AuthoritiesContext.Provider></MemoryRouter>);
 
     const loadStepName = data.loadData.data[0].name;
@@ -480,7 +480,7 @@ describe("Load data component", () => {
       createLoadArtifact={mockCreateLoadArtifact}
       data={data.loadData.data}
       deleteLoadArtifact={mockDeleteLoadArtifact}
-      flows={data.flows}/>
+      flows={data.flows} />
     </AuthoritiesContext.Provider></MemoryRouter>);
     const loadStepName = data.loadData.data[0].name;
     // adding to new flow icon is disabled and shows correct tooltip
@@ -507,64 +507,73 @@ describe("Load data component", () => {
     expect(queryByTestId(`${loadStepName}-run-flowsList`)).not.toBeInTheDocument();
   });
 
-  test("Verify Load List pagination", async () => {
+
+  describe("Verify Load List pagination", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion", "writeIngestion", "writeFlow"]);
-    const {container, rerender} = render(
-      <MemoryRouter>
-        <AuthoritiesContext.Provider value={authorityService}>
-          <LoadingContext.Provider value={{
-            loadingOptions: {
-              start: 1,
-              pageNumber: 1,
-              pageSize: 10
-            },
-            setPageSize: jest.fn(),
-          }}>
-            <LoadList
-              {...data.loadDataPagination}
-              flows={data.flowsAdd}
-              sortOrderInfo
-              canWriteFlow={true}
-              addStepToFlow={jest.fn()}
-              addStepToNew={jest.fn()} />
-          </LoadingContext.Provider >
-        </AuthoritiesContext.Provider>
-      </MemoryRouter>
-    );
+    const setPage = (pageNumber: number) => { };
+    const setPageSize = (current: number, pageSize: number) => { };
+    const setPageMock = setPage as jest.MockedFunction<typeof setPage>;
+    const setPageSizeMock = setPageSize as jest.MockedFunction<typeof setPageSize>;
+    let loadingOptions = {
+      start: 1,
+      pageNumber: 1,
+      pageSize: 10,
+    };
+    it("Verify multiples pages", async () => {
+      const {container} = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <LoadingContext.Provider value={{
+              loadingOptions: loadingOptions,
+              setPage: setPageMock,
+              setPageSize: setPageSizeMock,
+            }}>
+              <LoadList
+                {...data.loadDataPagination}
+                flows={data.flowsAdd}
+                sortOrderInfo
+                canWriteFlow={true}
+                addStepToFlow={jest.fn()}
+                addStepToNew={jest.fn()} />
+            </LoadingContext.Provider >
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>
+      );
 
-    expect(container.querySelector(".ant-pagination li[title=\"1\"]")).toBeInTheDocument();
-    expect(container.querySelector(".ant-pagination li[title=\"2\"]")).toBeInTheDocument();
-    expect(container.querySelector(".ant-pagination li[title=\"3\"]")).not.toBeInTheDocument();
-    expect(container.querySelector(".ant-pagination .ant-select-selection-selected-value")).toHaveTextContent("10 / page");
-    expect(container.querySelectorAll(".ant-table-row")).toHaveLength(10);
+      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"1\"]")).toBeInTheDocument();
+      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"2\"]")).toBeInTheDocument();
+      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"3\"]")).not.toBeInTheDocument();
+      expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("10 / page");
+      expect(container.querySelectorAll(".hc-table_row")).toHaveLength(10);
+    });
+    it("Verify single pages", async () => {
+      loadingOptions.pageSize = 20;
+      const {container} = render(
+        <MemoryRouter>
+          <AuthoritiesContext.Provider value={authorityService}>
+            <LoadingContext.Provider value={{
+              loadingOptions: loadingOptions,
+              setPage: setPageMock,
+              setPageSize: setPageSizeMock,
+            }}>
+              <LoadList
+                {...data.loadDataPagination}
+                flows={data.flowsAdd}
+                sortOrderInfo
+                canWriteFlow={true}
+                addStepToFlow={jest.fn()}
+                addStepToNew={jest.fn()} />
+            </LoadingContext.Provider >
+          </AuthoritiesContext.Provider>
+        </MemoryRouter>
+      );
+      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"1\"]")).toBeInTheDocument();
+      expect(container.querySelector(".react-bootstrap-table-page-btns-ul li[title=\"2\"]")).not.toBeInTheDocument();
+      expect(container.querySelector(".react-bootstrap-table-pagination #size-per-page")).toHaveTextContent("20 / page");
+      expect(container.querySelectorAll(".hc-table_row")).toHaveLength(12);
+    });
 
-    rerender(<MemoryRouter>
-      <AuthoritiesContext.Provider value={authorityService}>
-        <LoadingContext.Provider value={{
-          loadingOptions: {
-            start: 1,
-            pageNumber: 1,
-            pageSize: 20
-          },
-          setPageSize: jest.fn(),
-        }}>
-          <LoadList
-
-            {...data.loadDataPagination}
-            flows={data.flowsAdd}
-            sortOrderInfo
-            canWriteFlow={true}
-            addStepToFlow={jest.fn()}
-            addStepToNew={jest.fn()} />
-        </LoadingContext.Provider >
-      </AuthoritiesContext.Provider>
-    </MemoryRouter>);
-
-    expect(container.querySelector(".ant-pagination li[title=\"1\"]")).toBeInTheDocument();
-    expect(container.querySelector(".ant-pagination li[title=\"2\"]")).not.toBeInTheDocument();
-    expect(container.querySelector(".ant-pagination .ant-select-selection-selected-value")).toHaveTextContent("20 / page");
-    expect(container.querySelectorAll(".ant-table-row")).toHaveLength(12);
   });
 
   test("Verify Load List pagination hiding", async () => {
