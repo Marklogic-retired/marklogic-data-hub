@@ -15,6 +15,7 @@
  */
 'use strict';
 const Search = require("/data-hub/5/ml-exp-search/search.sjs");
+const searchImpl = require("/data-hub/5/ml-exp-search/search-impl.xqy");
 
 class ConfigurableSearch extends Search {
   constructor() {
@@ -29,7 +30,7 @@ class ConfigurableSearch extends Search {
     return super.getSnippetResults(searchResults);
   }
 
-  getDocument() {
+  getDocument(uri) {
     return super.getDocument();
   }
 
