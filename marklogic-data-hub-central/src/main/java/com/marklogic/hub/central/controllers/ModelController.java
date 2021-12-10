@@ -72,8 +72,8 @@ public class ModelController extends BaseController {
         ObjectNode hubCentralConfigBase = getHubCentralConfigObject();
         JacksonHandle handle = new JacksonHandle().with(mergeObjects(hubCentralConfigBase, hubCentralConfig));
         DocumentMetadataHandle documentMetadataHandle = new DocumentMetadataHandle()
-                .withPermission("hub-central-user", DocumentMetadataHandle.Capability.READ)
-                .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE);
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ)
+            .withPermission("hub-central-entity-model-reader", DocumentMetadataHandle.Capability.UPDATE);
         getHubClient().getFinalClient().newJSONDocumentManager().write("/config/hubCentral.json", documentMetadataHandle, handle);
         return ResponseEntity.ok("");
     }
