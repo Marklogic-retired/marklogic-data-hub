@@ -873,6 +873,8 @@ const MatchingStepDetail: React.FC = () => {
                   className={styles.tableContent}
                   subTableHeader={true}
                   data={renderUriTableData}
+                  keyUtil="key"
+                  baseIndent={0}
                   rowKey="key"
                   // id="uriData"
                   pagination={false}
@@ -921,6 +923,8 @@ const MatchingStepDetail: React.FC = () => {
                 subTableHeader={true}
                 className={styles.tableContent}
                 data={renderUriTableData2}
+                keyUtil="key"
+                baseIndent={0}
                 rowKey="key"
                 // id="uriData"
                 pagination={false}

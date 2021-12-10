@@ -1,6 +1,6 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Table, Alert} from "antd";
+import {Alert} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -28,7 +28,9 @@ import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
 import {ChevronDown, ChevronRight, Search, ExclamationCircleFill, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
-import {HCAlert, HCButton, HCCard, HCCheckbox, HCInput, HCTooltip} from "@components/common";
+import {HCAlert, HCButton, HCCard, HCCheckbox, HCInput, HCTooltip, HCTable} from "@components/common";
+import Popover from "react-bootstrap/Popover";
+import {OverlayTrigger} from "react-bootstrap";
 
 const DEFAULT_MAPPING_STEP: MappingStep = {
   name: "",
@@ -83,6 +85,12 @@ const MappingStepDetail: React.FC = () => {
 
   const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
   const [srcPropertiesXML, setSrcPropertiesXML] = useState<any[]>([]);
+  const [filteredSrcProperties, setFilteredSrcProperties] = useState<any[]>([]);
+  const [filterActive, setFilterActive] = useState(false);
+  const [popoverVisibility, setPopoverVisibilty] = useState(false);
+  const [searchedKeys, setSearchedKeys] = useState<any[]>([]);
+  const [firstLeveKeysXML, setFirstLevelKeysXML] = useState<any[]>([]);
+
   const [mapExpTouched, setMapExpTouched] = useState(false);
   const [editingURI, setEditingUri] = useState(false);
   const [showEditURIOption, setShowEditURIOption] = useState(false);
@@ -109,6 +117,7 @@ const MappingStepDetail: React.FC = () => {
   // For Collapse all-Expand All buttons
   const [entityExpandedKeys, setEntityExpandedKeys] = useState<any[]>([]);
   const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
+  const [upperSrcExpandedKeys, setUpperSrcExpandedKeys] = useState<any[]>([1]);
   const [expandedEntityFlag, setExpandedEntityFlag] = useState(false);
   const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
   const [initialSourceKeys, setInitialSourceKeys] = useState<any[]>([]);
@@ -267,6 +276,11 @@ const MappingStepDetail: React.FC = () => {
 
         if (srcDocResp.data.format === "XML") {
           setSrcPropertiesXML(sDta[0].children);
+          let keys: any = [];
+          sDta[0].children.map(row => {
+            keys.push(row.rowKey);
+          });
+          setFirstLevelKeysXML(keys);
           updateMappingWithNamespaces(mappingStep);
         }
       }
@@ -674,10 +688,13 @@ const MappingStepDetail: React.FC = () => {
   };
 
   const toggleSourceTable = () => {
+    // setTableCollapsed(true);
     if (tableCollapsed) {
       setSrcPropertiesXML(sourceData[0].children);
+      setUpperSrcExpandedKeys([1]);
       setTableCollapsed(false);
     } else {
+      setUpperSrcExpandedKeys([]);
       setSrcPropertiesXML([]);
       setTableCollapsed(true);
     }
@@ -699,10 +716,6 @@ const MappingStepDetail: React.FC = () => {
         </span>
       </div>}
   </div> : "";
-
-  const expandTableIcon = (
-    <a onClick={() => toggleSourceTable()}>{tableCollapsed && srcPropertiesXML.length < 1 ? <ChevronRight/> :  <ChevronDown/>}</a>
-  );
 
   // Run when mapping details is opened or returned to
   useEffect(() => {
@@ -840,94 +853,40 @@ const MappingStepDetail: React.FC = () => {
   };
 
   //For filter search in source table
-  let searchInput: any;
+  let searchInput: any; // eslint-disable-line @typescript-eslint/no-unused-vars
   //For Source Table
   const [searchSourceText, setSearchSourceText] = useState("");
   const [searchedSourceColumn, setSearchedSourceColumn] = useState("");
 
-  const handleColSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
+  const handleColSearch = (searchTxt, dataIndex, srcData) => {
     if (dataIndex === "key") {
-      setSearchSourceText(selectedKeys[0]);
+      setSearchSourceText(searchTxt);
       setSearchedSourceColumn(dataIndex);
 
-      if (sourceData.length === 1 && sourceData[0].hasOwnProperty("children")) {
-        setSourceExpandedKeys([1, ...getKeysToExpandForFilter(sourceData, "rowKey", selectedKeys[0])]);
+      if (srcData.length === 1 && srcData[0].hasOwnProperty("children")) {
+        setSourceExpandedKeys([1, ...getKeysToExpandForFilter(srcData, "rowKey", searchTxt)]);
       } else {
-        setSourceExpandedKeys([...getKeysToExpandForFilter(sourceData, "rowKey", selectedKeys[0])]);
+        setSourceExpandedKeys([...getKeysToExpandForFilter(srcData, "rowKey", searchTxt)]);
       }
 
     }
   };
 
-  const handleSourceSearchReset = (clearFilters, dataIndex) => {
-    clearFilters();
-    if (dataIndex === "key") {
-      if (searchSourceText) {
-        setSourceExpandedKeys([...initialSourceKeys]);
-      }
-      setSearchSourceText("");
-      setSearchedSourceColumn("");
+  const handleSourceSearchReset = () => {
+    if (searchSourceText) {
+      setSourceExpandedKeys([...initialSourceKeys]);
     }
-  };
-
-  const getColumnFilterProps = dataIndex => ({
-    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
-      <div className={styles.filterContainer}>
-        <HCInput
-          ref={node => {
-            searchInput = node;
-          }}
-          dataTestid={`searchInput-${dataIndex}`}
-          placeholder={`Search name`}
-          value={selectedKeys[0]}
-          onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={(enter) => enter ? selectedKeys?.length > 0 ? handleColSearch(selectedKeys, confirm, dataIndex) : false : null}
-          className={styles.searchInput}
-        />
-        <div style={{height: 8}}></div>
-        <HCButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSourceSearchReset(clearFilters, dataIndex)} variant="outline-light" size="sm" className={styles.resetButton}>Reset</HCButton>
-        <HCButton
-          data-testid={`submitSearch-${dataIndex}`}
-          variant="primary"
-          onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
-          size="sm"
-          className={styles.searchSubmitButton}
-        >
-          <Search className={styles.searchIcon}/> Search
-        </HCButton>
-      </div>
-    ),
-    filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={filtered ? "active" : "inactive"} /></i>,
-    onFilter: (value, record) => {
-      let recordString = getPropValueFromDataIndex(record, dataIndex);
-      return sourceFormat === "xml" ? true : recordString.toString().toLowerCase().includes(value.toLowerCase());
-    },
-    onFilterDropdownVisibleChange: visible => {
-      if (visible) {
-        setTimeout(() => searchInput?.select());
-      }
-    }
-  });
-
-  const getPropValueFromDataIndex = (record, index) => {
-    let res;
-    if (record.hasOwnProperty("children")) {
-      res = "-" + record[index];
-      record["children"].forEach(obj => {
-        res = res + getPropValueFromDataIndex(obj, index);
-      });
-      return res;
-    } else {
-      return "-" + record[index];
-    }
+    setFilterActive(false);
+    setSearchSourceText("");
+    setSearchedSourceColumn("");
+    togglePopover();
   };
 
   const getRenderOutput = (textToSearchInto, valueToDisplay, columnName, searchedCol, searchTxt, rowNum) => {
-    if (searchedCol === columnName && rowNum !== 0) {
+    if (searchedCol === columnName && rowNum !== 0 && filterActive) {
       if (sourceFormat === "xml" && rowNum === 1) {
         return <div className={styles.filteredXMLHeader}>
-          <span className={styles.tableExpandIcon}>{expandTableIcon}</span>
+          {/* <span className={styles.tableExpandIcon}>{expandTableIcon}</span> */}
           <Highlighter
             highlightClassName={styles.highlightStyle}
             searchWords={[searchTxt]}
@@ -971,29 +930,130 @@ const MappingStepDetail: React.FC = () => {
     return allKeysToExpand;
   };
 
-  const columns = [
-    {
-      title: <span data-testid="sourceTableKey">Name</span>,
-      dataIndex: "key",
-      key: "rowKey",
-      ...getColumnFilterProps("key"),
-      sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
-      width: "60%",
-      defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
-      render: (text, row) => {
-        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
-        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div><span className={styles.tableExpandIcon}>{expandTableIcon}</span><span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
-        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
+  const filterByName = () => {
+    let filterVal = searchedKeys[0];
+    if (filterVal) {
+      let filteredArray;
+      setFilterActive(true);
+      //make copy of source data to filter on so as not to mutate the original
+      let srcPropertiesDefault: any = sourceFormat === "xml" ? srcPropertiesXML : sourceData;
+      let srcPropertiesCopy: any = JSON.parse(JSON.stringify(srcPropertiesDefault));
+
+      //recursively filter through properties + children
+      filteredArray = srcPropertiesCopy.filter(function f(o) {
+        if (o.key.toLowerCase().includes(filterVal.toLowerCase())) {
+          return true;
+        }
+        if (o.children) {
+          return (o.children = o.children.filter(f)).length;
+        }
+      });
+
+      handleColSearch(filterVal, "key", srcPropertiesDefault);
+      if (sourceFormat === "xml" && filteredArray.length < 1) {
+        // setFilteredSrcProperties(srcPropertiesDefault);
+      } else {
+        setFilteredSrcProperties(filteredArray);
       }
+      togglePopover();
+    } else {
+      handleSourceSearchReset();
+    }
+  };
+
+  const togglePopover = () => {
+    popoverVisibility ? setPopoverVisibilty(false) : setPopoverVisibilty(true);
+  };
+
+  const renderFilter = () => {
+    return <Popover id={`popover-filter`}>
+      <Popover.Body>
+        <HCInput
+          ref={node => {
+            searchInput = node; // eslint-disable-line @typescript-eslint/no-unused-vars
+          }}
+          dataTestid={`searchInput-source`}
+          placeholder={`Search name`}
+          value={searchedKeys[0]}
+          onChange={e => setSearchedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={(enter) => enter ? searchedKeys?.length > 0 ? "" : false : null}
+          className={styles.searchInput}
+        />
+        <div style={{height: 8}}></div>
+        <HCButton
+          data-testid={`resetSearch-source`}
+          variant="outline-light" size="sm"
+          className={styles.resetButton}
+          onClick={() => handleSourceSearchReset()}
+        >
+          Reset
+        </HCButton>
+        <HCButton
+          data-testid={`submitSearch-source`}
+          variant="primary"
+          onClick={() => filterByName()}
+          size="sm"
+          className={styles.searchSubmitButton}
+        >
+          <Search className={styles.searchIcon}/> Search
+        </HCButton>
+      </Popover.Body>
+    </Popover>;
+  };
+
+  const headerColumns = [
+    {
+      text: "Name",
+      headerFormatter: () => <div className={styles.nameHeader}><span data-testid="sourceTableKey" className={sourceFormat === "xml" ? styles.nameHeaderTextXML : styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-srcName`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
+      dataField: "key",
+      key: "rowKey",
+      // sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
+      width: 185,
+      formatter: (text, row, extraData) => {
+        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
+        let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div>
+          <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
+      },
+      formatExtraData: {filterActive}
     },
     {
-      title: <span data-testid="sourceTableValue">Value</span>,
-      dataIndex: "val",
+      text: "Value",
+      headerFormatter: () => <div className={styles.valueHeader}><span data-testid="sourceTableValue">Value</span></div>,
+      dataField: "val",
       key: "val",
-      ellipsis: true,
+      // ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
-      width: "40%",
-      render: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
+      width: 160,
+      formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
+    }
+  ];
+
+  const lowerXMLColumns = [
+    {
+      text: "Name",
+      headerFormatter: () => <div className={styles.nameHeader}><span data-testid="sourceTableKey" className={styles.nameHeaderText}>Name</span></div>,
+      dataField: "key",
+      key: "rowKey",
+      width: 185,
+      formatter: (text, row, index, extraData) => {
+        let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
+        let valueToDisplay = sourceFormat === "xml" && row.rowKey !== 1 ? <div>
+          {firstLeveKeysXML.includes(row.rowKey) ? row.children ? <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")}className={styles.tableExpandIcon}>{!extraData.sourceExpandedKeys?.includes(row.rowKey) ? <span><ChevronRight/></span> : <span><ChevronDown/></span>}</span> : <span className={styles.noTableExpandIcon}>{null}</span>: null}
+          <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
+        return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
+      },
+      formatExtraData: {sourceExpandedKeys, filterActive}
+    },
+    {
+      text: "Value",
+      headerFormatter: () => <div className={styles.valueHeader}><span data-testid="sourceTableValue">Value</span></div>,
+      dataField: "val",
+      key: "val",
+      // ellipsis: true,
+      sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
+      width: 160,
+      formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
     }
   ];
 
@@ -1032,24 +1092,6 @@ const MappingStepDetail: React.FC = () => {
       response = <span className={getClassNames(sourceFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
     return requiresToolTip ?  <HCTooltip text={text} id="source-value-tooltip" placement="bottom">{response}</HCTooltip> : response;
-  };
-
-  const customExpandIcon = (props) => {
-    if (props.expandable) {
-      if (props.expanded) {
-        return <a className={styles.expandIcon} onClick={e => {
-          props.onExpand(props.record, e);
-        }}><ChevronDown /> </a>;
-      } else {
-        return <a className={styles.expandIcon} onClick={e => {
-          props.onExpand(props.record, e);
-        }}><ChevronRight data-testid="expandedIcon" /> </a>;
-      }
-    } else {
-      return <span style={{color: "black"}} onClick={e => {
-        props.onExpand(props.record, e);
-      }}></span>;
-    }
   };
 
   // CSS properties for the alert message after saving the mapping
@@ -1335,7 +1377,7 @@ const MappingStepDetail: React.FC = () => {
     }
   };
 
-  const toggleSourceRowExpanded = (expanded, record, rowKey) => {
+  const toggleSourceRowExpanded = (record, expanded, rowKey) => {
     if (!sourceExpandedKeys.includes(record.rowKey)) {
       setSourceExpandedKeys(prevState => {
         let finalKeys = prevState.concat([record["rowKey"]]);
@@ -1501,43 +1543,44 @@ const MappingStepDetail: React.FC = () => {
                         sourceFormat === "xml" ?
                           <div>
                             <div id="upperTableXML">
-                              <Table
+                              <HCTable
+                                rowKey={"rowKey"}
+                                columns={headerColumns}
+                                data={[{rowKey: 1, key: sourceData[0]?.key}]}
+                                subTableHeader={false}
                                 pagination={false}
-                                expandIcon={(props) => customExpandIcon(props)}
-                                onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
-                                expandedRowKeys={sourceExpandedKeys}
+                                onExpand={toggleSourceTable}
+                                showExpandIndicator={true}
+                                expandedRowKeys={upperSrcExpandedKeys}
                                 className={styles.sourceTable}
-                                rowClassName={() => styles.sourceTableRows}
-                                scroll={{x: 300}}
-                                indentSize={20}
-                                //defaultExpandAllRows={true}
-                                //size="small"
-                                columns={columns}
-                                dataSource={[{rowKey: 1, key: sourceData[0]?.key}]}
-                                tableLayout="unset"
-                                rowKey={(record: any) => record.rowKey}
-                                getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                                showHeader={true}
+                                keyUtil={"rowKey"}
+                                baseIndent={0}
+                                expandedRowRender={(row) => {
+                                  const expandedRows = <div key={1} style={{display: "table", width: "100%"}} className="hc-table_row">
+                                    <div key={`indicator_${1}`} style={{display: "table-cell"}}></div>
+                                  </div>;
+                                  return expandedRows;
+                                }}
                               />
                             </div>
                             <div id="lowerTableXML">
                               {srcPropertiesXML.length > 0 ?
-                                <Table
-                                  pagination={paginationMapping}
-                                  expandIcon={(props) => customExpandIcon(props)}
+                                <HCTable
+                                  rowKey={"rowKey"}
+                                  columns={lowerXMLColumns}
+                                  data={filterActive ? filteredSrcProperties : srcPropertiesXML}
+                                  pagination={{size: "small", hideOnSinglePage: sourceData.length <= 20, showSizeChanger: true, pageSizeOptions: paginationMapping.pageSizeOptions, defaultCurrent: paginationMapping.start, current: paginationMapping.pageNumber, pageSize: paginationMapping.pageSize}}
                                   onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
-                                  expandedRowKeys={sourceExpandedKeys}
+                                  expandedRowKeys={[0, ...sourceExpandedKeys]}
                                   className={styles.sourceTable}
-                                  rowClassName={() => styles.sourceTableRows}
-                                  scroll={{x: 300}}
-                                  indentSize={20}
+                                  showExpandIndicator={true}
                                   showHeader={false}
-                                  //defaultExpandAllRows={true}
-                                  //size="small"
-                                  columns={columns}
-                                  dataSource={srcPropertiesXML}
-                                  tableLayout="unset"
-                                  rowKey={(record:any) => record.rowKey}
-                                  getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                                  childrenIndent={true}
+                                  subTableHeader={true}
+                                  nestedParams={{headerColumns: lowerXMLColumns, iconCellList: ["Name", "Value"], state: [sourceExpandedKeys, setSourceExpandedKeys]}}
+                                  keyUtil={"rowKey"}
+                                  baseIndent={40}
                                 />
                                 : null
                               }
@@ -1545,22 +1588,21 @@ const MappingStepDetail: React.FC = () => {
                           </div>
                           :
                           <div id="jsonTable">
-                            <Table
-                              pagination={paginationMapping}
-                              expandIcon={(props) => customExpandIcon(props)}
-                              onExpand={(expanded, record) => toggleSourceRowExpanded(expanded, record, "rowKey")}
+                            <HCTable
+                              rowKey={"rowKey"}
+                              columns={headerColumns}
+                              data={filterActive ? filteredSrcProperties : sourceData}
+                              pagination={{size: "small", hideOnSinglePage: sourceData.length <= 20, showSizeChanger: true, pageSizeOptions: paginationMapping.pageSizeOptions, defaultCurrent: paginationMapping.start, current: paginationMapping.pageNumber, pageSize: paginationMapping.pageSize}}
+                              onExpand={(record, expanded) => toggleSourceRowExpanded(record, expanded, "key")}
                               expandedRowKeys={sourceExpandedKeys}
                               className={styles.sourceTable}
-                              rowClassName={() => styles.sourceTableRows}
-                              scroll={{x: 300}}
-                              indentSize={20}
-                              //defaultExpandAllRows={true}
-                              //size="small"
-                              columns={columns}
-                              dataSource={sourceData}
-                              tableLayout="unset"
-                              rowKey={(record) => record.rowKey}
-                              getPopupContainer={() => document.getElementById("srcContainer") || document.body}
+                              showHeader={true}
+                              keyUtil={"rowKey"}
+                              showExpandIndicator={true}
+                              childrenIndent={true}
+                              subTableHeader={true}
+                              nestedParams={{headerColumns, iconCellList: ["Name", "Value"], state: [sourceExpandedKeys, setSourceExpandedKeys]}}
+                              baseIndent={30}
                             />
                           </div>
                       }

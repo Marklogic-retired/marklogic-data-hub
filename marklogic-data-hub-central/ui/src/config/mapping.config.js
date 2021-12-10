@@ -1,6 +1,9 @@
 export const paginationMapping = {
   defaultCurrent: 1,
   defaultPageSize: 20,
+  start: 1,
+  pageNumber: 1,
+  pageSize: 20,
   hideOnSinglePage: false,
   pageSizeOptions: ["1","2","5","10","20","50"],
   showSizeChanger: true,

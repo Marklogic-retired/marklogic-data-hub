@@ -183,7 +183,10 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     data={actionPreviewData}
     pagination={false}
     rowKey="key"
+    keyUtil="key"
+    baseIndent={0}
     subTableHeader={true}
+    showHeader={true}
     showExpandIndicator={true}
     childrenIndent={true}
     nestedParams={{headerColumns: testMatchedUriTableColumns, state: [expandedNestedRows, setExpandedNestedRows]}}

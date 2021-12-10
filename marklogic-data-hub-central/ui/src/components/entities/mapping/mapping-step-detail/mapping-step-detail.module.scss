@@ -17,6 +17,12 @@
     width: fit-content;
 }
 
+.filterIcon {
+    color: #bfbfbf;
+    font-size: 16px;
+    cursor: pointer;
+}
+
 .saveMessage{
     border: 1px solid #ff0000;
     margin-left: 60em;
@@ -63,9 +69,30 @@
     white-space: nowrap;
 }
 
+.nameHeaderText{
+    padding-right: 60%;
+}
+
+.nameHeaderTextXML{
+    padding-right: 65%;
+}
+
+.nameHeader{
+    width: 115%;
+}
+
+.valueHeader{
+    padding-bottom: 6px;
+}
+
+.noTableExpandIcon {
+  padding-right: 30px;
+  margin-left: -2px;
+}
+
 .tableExpandIcon {
-    padding-right: 5px;
-    margin-left: -15px;
+    padding-right: 4px;
+    margin-left: 10px;
 }
 
 .filteredXMLHeader {
@@ -79,9 +106,6 @@
     white-space: nowrap;
 }
 
-.filterContainer {
-    padding: 8px;
-}
 .searchInput {
     min-width: 8vw;
     margin-bottom: 8px;

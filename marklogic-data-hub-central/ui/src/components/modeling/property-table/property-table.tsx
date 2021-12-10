@@ -1042,8 +1042,11 @@ const PropertyTable: React.FC<Props> = (props) => {
               }}
               columns={headerColumns}
               data={tableData}
+              showHeader={true}
               onExpand={props.sidePanelView ? (record, expanded) => toggleSourceRowExpanded(record, expanded, "key") : onExpand}
               expandedRowKeys={props.sidePanelView ? sourceExpandedKeys : expandedRows}
+              keyUtil={"key"}
+              baseIndent={20}
               pagination={false}
               showExpandIndicator={{bordered: true}}
               childrenIndent={true}
