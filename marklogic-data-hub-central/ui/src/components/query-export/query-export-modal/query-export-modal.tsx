@@ -1,6 +1,5 @@
 import React, {useState, useContext} from "react";
-import {Table} from "antd";
-import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
+import {Row, Col, Modal, Form, FormLabel, Table} from "react-bootstrap";
 import {Accordion} from "react-bootstrap";
 import styles from "./query-export-modal.module.scss";
 import {SearchContext} from "../../../util/search-context";
@@ -141,7 +140,22 @@ const QueryExportModal = (props) => {
                 showIcon
               >{"Preview may improperly render new lines in property values"}</HCAlert>
               <br />
-              <Table data-testid="export-preview-table" className={styles.exportTable} dataSource={props.tableData} columns={props.tableColumns} pagination={false} size="small" scroll={{x: 500}} bordered />
+              {props.tableColumns && props.tableData &&
+                <Table data-testid="export-preview-table" bordered>
+                  <thead>
+                    <tr>
+                      {props.tableColumns.map(oHeader => <th key={oHeader.key}>{oHeader.title}</th>)}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {props.tableData.map(oRow => {
+                      return <tr key={oRow.key}>
+                        {props.tableColumns.map(oColumn => <td key={`row${oRow.key}-col${oColumn.key}`}>{oRow[oColumn.dataIndex]}</td>)}
+                      </tr>;
+                    })}
+                  </tbody>
+                </Table>
+              }
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>}
