@@ -40,7 +40,7 @@ describe("Query Dropdown", () => {
     expect(dropdown).toBeInTheDocument();
     const heading = getByTestId("entityHeading");
     expect(heading).toBeInTheDocument();
-    expect(heading.textContent).toBe("Order > 1234");
+    expect(heading.textContent).toBe("Order  1234");
     const uri = getByTestId("uriLabel");
     expect(uri).toBeInTheDocument();
     expect(uri.textContent).toBe("URI: 10260.json");

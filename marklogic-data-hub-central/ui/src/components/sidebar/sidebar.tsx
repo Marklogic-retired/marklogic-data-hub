@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Icon, Select, Input, Menu, Dropdown, Button, Tooltip, Checkbox} from "antd";
+import {Icon, Select, Input, Menu, Dropdown, Button, Checkbox} from "antd";
 import moment from "moment";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -577,19 +577,21 @@ const Sidebar: React.FC<Props> = (props) => {
     </Menu>
   );
 
+
   const panelTitle = (title, tooltipTitle) => {
     return (
       <div className={styles.panelTitle}>
         {title}
-        <Tooltip title={tooltipTitle} placement="right">
-          <Icon type="info-circle" theme="filled" className={styles.entitiesInfoIcon} />
-        </Tooltip>
+        <HCTooltip text={tooltipTitle} id="entities-tooltip" placement="right">
+          <i><FontAwesomeIcon className={styles.entitiesInfoIcon} icon={faInfoCircle} size="sm"  /></i>
+        </HCTooltip>
       </div>
     );
   };
   const handleToggleDataHubArtifacts = ({target}) => {
     props.setHubArtifactsVisibilityPreferences(!target.checked);
   };
+
 
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
@@ -698,7 +700,7 @@ const Sidebar: React.FC<Props> = (props) => {
             <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
           </div>
           <Accordion.Body>
-            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities} />
+            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities} setActiveAccordionRelatedEntities={setActiveAccordion} activeKey={activeKey}/>
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
@@ -706,7 +708,7 @@ const Sidebar: React.FC<Props> = (props) => {
         <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
           <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
             <div className={"p-0 d-flex"}>
-              <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
+              <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
                 panelTitle(<Checkbox indeterminate={indeterminate} onChange={onCheckAllChanges} checked={checkAll}> related entities types </Checkbox>, exploreSidebar.relatedEntities)}</Accordion.Button>
             </div>
             <Accordion.Body>
