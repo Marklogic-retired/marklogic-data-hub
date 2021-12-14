@@ -104,6 +104,9 @@
             }
         }
     }
+    .hc-table_row:hover {
+        background-color: #e9f7fe;
+    }
     .hc-table_row:not(:last-child) {
         border-bottom: 1px solid #e8e8e8;
     }

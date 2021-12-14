@@ -1,9 +1,9 @@
 import React from "react";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import {Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./expandable-table-view.module.scss";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
+import {HCTable} from "@components/common";
 
 interface Props {
     rowData: any;
@@ -15,93 +15,94 @@ let counter = 0;
 
 const testMatchedUriTableColumns = [
   {
-    title: "Ruleset",
-    dataIndex: "ruleName",
+    text: "Ruleset",
+    dataField: "ruleName",
     key: "ruleName "+ (counter++),
     width: "16%",
-    render: (ruleName, key) => (ruleName.map(property => {
+    formatter: (ruleName, key) => (ruleName.map(property => {
       return <span className={styles.rulesetColumn} key={key} aria-label={ruleName}>{property}
       </span>;
     }))
   },
   {
-    title: "Exact",
-    dataIndex: "matchedRulesetType",
+    text: "Exact",
+    dataField: "matchedRulesetType",
     key: "matchedRulesetType " + (counter++) + " exact",
     width: "6%",
-    render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
+    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
       return (rulesetType && rulesetType.toLowerCase() === "exact") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType} />
       </span>;
     }))
   },
   {
-    title: "Synonym",
-    dataIndex: "matchedRulesetType",
+    text: "Synonym",
+    dataField: "matchedRulesetType",
     key: "matchedRulesetType " + (counter++) + " synonym",
     width: "8%",
-    render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
+    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
       return (rulesetType && rulesetType.toLowerCase() === "synonym") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
-    title: "Double Metaphone",
-    dataIndex: "matchedRulesetType",
+    text: "Double Metaphone",
+    dataField: "matchedRulesetType",
     width: "10%",
     key: "matchedRulesetType " + (counter++) + " metaphone",
-    render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
+    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
       return (rulesetType && rulesetType.toLowerCase() === "double metaphone") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
-    title: "Zip",
-    dataIndex: "matchedRulesetType",
+    text: "Zip",
+    dataField: "matchedRulesetType",
     key: "matchedRulesetType " + (counter++) + " zip",
     width: "6%",
-    render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
+    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
       return (rulesetType && rulesetType.toLowerCase() === "zip") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
-    title: "Reduce",
-    dataIndex: "matchedRulesetType",
+    text: "Reduce",
+    dataField: "matchedRulesetType",
     key: "matchedRulesetType " + (counter++) + " reduce",
     width: "7%",
-    render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
+    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
       return (rulesetType && rulesetType.toLowerCase() === "reduce") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
-    title: "Custom",
-    dataIndex: "matchedRulesetType",
+    text: "Custom",
+    dataField: "matchedRulesetType",
     key: "matchedRulesetType " + (counter++) + " custom",
     width: "8%",
-    render: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
+    formatter: (matchedRulesetType, key, index) => (matchedRulesetType.map(rulesetType => {
       return (rulesetType && rulesetType.toLowerCase() === "custom") && <span className={styles.testMatchedColumns} key={key} aria-label={matchedRulesetType + " " + (index)}>
         <FontAwesomeIcon className={styles.checkIcon} icon={faCheck} data-testid={"facet-" + rulesetType}/>
       </span>;
     }))
   },
   {
-    title: "Match Score",
-    dataIndex: "scores",
+    text: "Match Score",
+    dataField: "scores",
     key: "matchedRulesetType " + (counter++) + " score",
     width: "15%",
-    render: (scores, key) =>  <span key={key}  aria-label={"score " + scores.scores[0]}>
+    formatter: (scores, key) =>  <span key={key}  aria-label={"score " + scores.scores[0]}>
       {scores.scores[0]>0 && <ProgressBar now={scores.scores[0]} label={scores.matchedRule[0] !== "Reduce" ? `${scores.scores[0]}` : `-${scores.scores[0]}`} variant={scores.matchedRule[0] !== "Reduce" ? "success" : "danger"}/>}
     </span>
   }
 ];
 
 const ExpandableTableView: React.FC<Props> = (props) => {
+  const [expandedNestedRows, setExpandedNestedRows] = React.useState([]);
   let allRuleset = props.allRuleset;
   let multipleRuleset=[{}];
   let data = props.entityData.stepArtifact.matchRulesets;
@@ -178,13 +179,16 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     }
 
   });
-  return <div className={styles.expandedTableView}><Table
-    columns={testMatchedUriTableColumns}
-    dataSource={actionPreviewData}
+  return <div className={styles.expandedTableView}><HCTable columns={testMatchedUriTableColumns}
+    data={actionPreviewData}
     pagination={false}
     rowKey="key"
-    // id="uriMatchedDataTable"
-  ></Table>
+    subTableHeader={true}
+    showExpandIndicator={true}
+    childrenIndent={true}
+    nestedParams={{headerColumns: testMatchedUriTableColumns, state: [expandedNestedRows, setExpandedNestedRows]}}
+  // id="uriMatchedDataTable"
+  />
   <div className={styles.boldTextDisplay}> Total Score: {props.rowData.score}</div></div>;
 };
 export default ExpandableTableView;
