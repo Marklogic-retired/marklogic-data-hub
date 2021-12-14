@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Table} from "antd";
 import {useHistory} from "react-router-dom";
 import {Row, Col, Accordion, Card, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -25,7 +24,7 @@ import TimelineVisDefault from "./timeline-vis-default/timeline-vis-default";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import styles from "./matching-step-detail.module.scss";
 import {DropdownButton, Dropdown} from "react-bootstrap";
-import {HCButton, HCCard, HCInput, HCTooltip} from "@components/common";
+import {HCButton, HCCard, HCInput, HCTooltip, HCTable} from "@components/common";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -294,9 +293,9 @@ const MatchingStepDetail: React.FC = () => {
 
   const UriColumns = [{
     key: "uriValue",
-    title: "uriValues",
-    dataIndex: "uriValue",
-    render: (text, key) => (
+    text: "uriValues",
+    dataField: "uriValue",
+    formatter: (text, key) => (
       <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
         <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri(key)} size="lg" /></i>
       </span>
@@ -305,9 +304,9 @@ const MatchingStepDetail: React.FC = () => {
 
   const UriColumns2 = [{
     key: "uriValue",
-    title: "uriValues",
-    dataIndex: "uriValue",
-    render: (text, key) => (
+    text: "uriValues",
+    dataField: "uriValue",
+    formatter: (text, key) => (
       <span className={styles.tableRow}>{text}<i className={styles.positionDeleteIcon} aria-label="deleteIcon">
         <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} onClick={() => handleDeleteUri2(key)} size="lg" /></i>
       </span>
@@ -876,10 +875,11 @@ const MatchingStepDetail: React.FC = () => {
               {duplicateUriWarning ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
               {singleUriWarning ? <div className={styles.duplicateUriWarning}>At least Two URIs are required.</div> : ""}
               <div className={styles.UriTable}>
-                {UriTableData.length > 0 ? <Table
+                {UriTableData.length > 0 ? <HCTable
                   columns={UriColumns}
                   className={styles.tableContent}
-                  dataSource={renderUriTableData}
+                  subTableHeader={true}
+                  data={renderUriTableData}
                   rowKey="key"
                   // id="uriData"
                   pagination={false}
@@ -923,10 +923,11 @@ const MatchingStepDetail: React.FC = () => {
             {duplicateUriWarning2 ? <div className={styles.duplicateUriWarning}>This URI has already been added.</div> : ""}
             {singleUriWarning2 ? <div className={styles.duplicateUriWarning}>At least one URI is required.</div> : ""}
             <div className={styles.UriTable}>
-              {UriTableData2.length > 0 ? <Table
+              {UriTableData2.length > 0 ? <HCTable
                 columns={UriColumns2}
+                subTableHeader={true}
                 className={styles.tableContent}
-                dataSource={renderUriTableData2}
+                data={renderUriTableData2}
                 rowKey="key"
                 // id="uriData"
                 pagination={false}
