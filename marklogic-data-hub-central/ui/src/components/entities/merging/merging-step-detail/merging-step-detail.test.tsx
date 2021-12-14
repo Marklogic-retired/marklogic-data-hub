@@ -63,7 +63,7 @@ describe("Merging Step Detail view component", () => {
 
     //check table data is rendered correctly
     expect(getByText("customMergeStrategy")).toBeInTheDocument();
-    userEvent.click(getByLabelText("right"));
+    userEvent.click(getByTestId("customMergeStrategy-expand-icon"));
 
     //Verify priority option slider tooltip
     userEvent.hover(getByLabelText("icon: question-circle"));

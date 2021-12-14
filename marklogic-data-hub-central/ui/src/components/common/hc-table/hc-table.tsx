@@ -44,8 +44,8 @@ function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams
         bordered = showExpandIndicator.bordered;
       }
 
-      return expanded ? <ChevronDown data-testid={`${rowKey}-expand-icon`} className={bordered ? styles.borderedIndicator : ""} /> :
-        <ChevronRight data-testid={`${rowKey}-expand-icon`} className={bordered ? styles.borderedIndicator : ""}/>;
+      return expanded ? <ChevronDown data-testid={`${rowKey}-expand-icon`} className={bordered ? styles.borderedIndicator : ""} aria-label="down"/> :
+        <ChevronRight data-testid={`${rowKey}-expand-icon`} className={bordered ? styles.borderedIndicator : ""} aria-label="right"/>;
     },
     expandHeaderColumnRenderer: () => "",
     nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.map(row => typeof rowKey === "string" && row[rowKey] && !row.children && row[rowKey]).filter(row => !!row),
