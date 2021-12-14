@@ -112,6 +112,9 @@
     width: 50px;
     min-width: 50px;
     text-align: center;
+    svg {
+        cursor: pointer;
+    }
 }
 .childrenIndentIndicatorEmptyCell {
     width: 4%;

@@ -31,6 +31,9 @@
         width: 50px;
         min-width: 50px;
         text-align: center;
+        svg {
+            cursor: pointer;
+        }
     }
     th:first-child {
         border-top-left-radius: 4px;
