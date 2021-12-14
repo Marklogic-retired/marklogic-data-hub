@@ -31,6 +31,8 @@ type Props = {
   getColor: any;
   splitPaneResized: any;
   setSplitPaneResized: any;
+  exportPngButtonClicked: boolean;
+  setExportPngButtonClicked: any;
 };
 
 let entityMetadata = {};
@@ -118,6 +120,18 @@ const GraphVis: React.FC<Props> = (props) => {
       }
     }
   }, [network, modelingOptions.view]);
+
+  useEffect(() => {
+    if (props.exportPngButtonClicked)  {
+      let canvas = document.getElementsByClassName("vis-network")[0]["canvas"];
+      let link = document.createElement("a");
+      link.href = canvas.toDataURL();
+      link.setAttribute("download", "graph-view-model");
+      document.body.appendChild(link);
+      link.click();
+      props.setExportPngButtonClicked(false);
+    }
+  }, [props.exportPngButtonClicked]);
 
   const updateNetworkHeight = async () => {
     let baseHeight = Math.round(window.innerHeight-network.body.container.offsetTop);

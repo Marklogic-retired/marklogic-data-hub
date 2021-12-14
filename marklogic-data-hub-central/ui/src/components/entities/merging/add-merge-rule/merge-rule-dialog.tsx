@@ -855,7 +855,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</MLButton>
                 </div>
                 <div>
-                  <div><span className={styles.enableStrategySwitch}><b>Enable Merge Strategy Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
+                  <div><span className={styles.enableStrategySwitch}><b>Enable Priority Order Scale </b></span><Switch aria-label="mergeStrategy-scale-switch" defaultChecked={false} onChange={(e) => toggleDisplayPriorityOrderTimeline(e)}></Switch>
                     <span>
                       <MLTooltip title={MergeRuleTooltips.strategyScale} id="priority-order-tooltip" placement="right">
                         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />

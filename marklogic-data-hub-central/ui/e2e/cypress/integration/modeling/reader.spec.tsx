@@ -95,6 +95,15 @@ describe("Entity Modeling: Reader Role", () => {
   it("can navigate to graph view from table view", () => {
     entityTypeTable.viewEntityInGraphView("Customer");
 
+    //To test graph view model png is downloaded successfully
+    graphView.getExportGraphIcon().click().then(
+      () => {
+        cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
+          (downloadPng) => {
+            expect(downloadPng).exist;
+          });
+      });
+
     // To verify modeling info is rendered properly in graph view
     modelPage.clickModelingInfoIcon();
     modelPage.verifyModelingInfo();
