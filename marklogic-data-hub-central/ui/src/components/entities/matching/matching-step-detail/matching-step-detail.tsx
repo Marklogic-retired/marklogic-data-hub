@@ -983,7 +983,7 @@ const MatchingStepDetail: React.FC = () => {
             </div>
             {rulesetDataList.map((rulesetDataList, index) => (
               <Accordion id="testMatchedPanel" className={"w-100"} flush key={index} activeKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""} defaultActiveKey={activeMatchedRuleset.includes(rulesetDataList.rulesetName) ? rulesetDataList.rulesetName : ""}>
-                <Accordion.Item eventKey={rulesetDataList.rulesetName}>
+                <Accordion.Item eventKey={rulesetDataList.rulesetName} style={{paddingBottom: index === Object.keys(rulesetDataList).length - 1 ? 20 : 0}}>
                   <Card>
                     <div className={"p-0 d-flex"}>
                       <Accordion.Button onClick={() => handleRulesetAccordionChange(rulesetDataList.rulesetName)}>

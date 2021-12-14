@@ -3,9 +3,10 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import filterFactory, {customFilter, FILTER_TYPES, Comparator} from "react-bootstrap-table2-filter";
 import {DropdownButton, Dropdown} from "react-bootstrap";
+import {CaretDownFill, CaretUpFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import styles from "./hc-table.module.scss";
 import "./hc-table.scss";
-import {CaretDownFill, CaretUpFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
+import HCButton from "../hc-button/hc-button";
 
 interface Props {
   childrenIndent?: boolean;
@@ -13,6 +14,7 @@ interface Props {
   columns: any;
   data: any;
   expandedRowKeys?: number[] | string[];
+  expandedContainerClassName?: string | ((record: any) => string);
   key?: string;
   nestedParams?: any;
   showExpandIndicator?: boolean | {bordered?: boolean};
@@ -28,9 +30,10 @@ interface Props {
 
 function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
   const expandConfig = {
-    className: `${styles.expandedRowWrapper} ${props.subTableHeader ? styles.subTableNested : ""} ${childrenIndent ? styles.childrenIndentExpanded : ""}`,
+    className: `${styles.expandedRowWrapper} ${props.subTableHeader ? styles.subTableNested : ""} ${childrenIndent ? styles.childrenIndentExpanded : ""}${props.expandedContainerClassName || ""}`,
     expanded: expandedRowKeys,
-    showExpandColumn: !!showExpandIndicator, // Check
+    showExpandColumn: !!showExpandIndicator,
+    expandByColumnOnly: !!showExpandIndicator,
     onExpand,
     renderer: expandedRowRender,
     expandColumnRenderer: ({expanded, rowKey, expandable}) => {
@@ -44,15 +47,22 @@ function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams
         bordered = showExpandIndicator.bordered;
       }
 
-      return expanded ? <ChevronDown data-testid={`${rowKey}-expand-icon`} className={bordered ? styles.borderedIndicator : ""} aria-label="down"/> :
-        <ChevronRight data-testid={`${rowKey}-expand-icon`} className={bordered ? styles.borderedIndicator : ""} aria-label="right"/>;
+      return <HCButton data-testid={`${rowKey}-expand-icon`} aria-label="Expand row" variant="outline-light" className={`${styles.expandButtonIndicator} ${bordered ? styles.borderedIndicator : ""}`}>
+        {expanded ?
+          <ChevronDown className={styles.iconIndicator} aria-label="down"/> :
+          <ChevronRight className={styles.iconIndicator} aria-label="right"/>}
+      </HCButton>;
     },
     expandHeaderColumnRenderer: () => "",
     nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.map(row => typeof rowKey === "string" && row[rowKey] && !row.children && row[rowKey]).filter(row => !!row),
   };
 
   if (childrenIndent && !expandedRowRender) {
-    expandConfig.renderer = row => renderNested({row, ...nestedParams});
+    if (!nestedParams || !nestedParams.state) {
+      console.error("Nested expand/collapse requires a `nestedParams` prop with the {headerColumns, state} structure");
+    }
+
+    expandConfig.renderer = (row, rowIndex) => renderNested({row, rowIndex, expandIndicatorStyle: showExpandIndicator, ...nestedParams});
   }
 
   const defaultSorted: Array<{dataField: string; order: string;}> = []; // expects { dataField: string; order: string; }
@@ -227,23 +237,25 @@ function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams
   );
 }
 
-const renderRow = ({row, headerColumns, iconCellList, state, showIndicator, isExpanded}) => {
+const renderRow = ({row, rowIndex, parentRowIndex, headerColumns, iconCellList, state, showIndicator, isExpanded, bordered}) => {
   const [expandedNestedRows] = state;
+  const nextColumnHasStaticWidth = headerColumns[0].width && !`${headerColumns[0].width}`.includes("%");
 
   return <div key={row.rowKey || row.key} className={`${styles.childrenIndentTableRow} hc-table_row`} data-row-key={row.key}>
     {showIndicator ? <div key={`indicator_${row.key}`} className={styles.childrenIndentIndicatorCell}>
-      {row.children ? <div onClick={() => { isExpanded(row.key); } }>{expandedNestedRows.includes(row.key) ? <ChevronDown data-testid={`${row.key}-expand-icon`} /> : <ChevronRight data-testid={`${row.key}-expand-icon`} />}</div>: null}
-    </div>: <div className={styles.childrenIndentIndicatorCell}>&nbsp;</div>}
+      {row.children ? <HCButton className={`${styles.expandButtonIndicator}${bordered ? " " + styles.borderedIndicator : "" }`} onClick={() => { isExpanded(row.key); }} aria-label="Expand row" data-testid={`${row.key}-expand-icon`} variant="outline-light">{expandedNestedRows.includes(row.key) ? <ChevronDown className={styles.iconIndicator}/> : <ChevronRight className={styles.iconIndicator}/>}</HCButton>: null}
+    </div>: <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>}
     {headerColumns.map((col) => {
-      const hasIconCell = iconCellList.lastIndexOf(col.dataField) !== -1;
-      const childElement = col.formatter ? col.formatter(row[col.dataField], row) : row[col.dataField];
+      const hasIconCell = iconCellList && iconCellList.lastIndexOf(col.dataField) !== -1;
+      const childElement = col.formatter ? col.formatter(row[col.dataField], row, rowIndex) : row[col.dataField];
 
       return <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? "12px" : "16px", width: col.width || "auto"}}>{childElement}</div>;
     })}</div>;
 };
 
-const renderNested = ({row, headerColumns, iconCellList, state}) => {
+const renderNested = ({row, parentRowIndex, headerColumns, iconCellList, state, expandIndicatorStyle}) => {
   const [expandedNestedRows, setExpandedNestedRows] = state;
+
   const isExpanded = (key) => {
     const index = expandedNestedRows.indexOf(key);
 
@@ -257,15 +269,23 @@ const renderNested = ({row, headerColumns, iconCellList, state}) => {
     }
   };
 
+  let bordered = false;
+
+  if (typeof expandIndicatorStyle === "object") {
+    bordered = expandIndicatorStyle.bordered;
+  }
+
   let result: any = [];
 
   if (row.children) {
     let childrenList: any = [...row.children];
+    let rowIndex = 0;
 
     while (childrenList.length > 0) {
       let currentRow = childrenList.shift();
-      let tableRow = renderRow({row: currentRow, headerColumns, iconCellList, state, showIndicator: currentRow.children, isExpanded});
+      let tableRow = renderRow({row: currentRow, rowIndex, parentRowIndex, headerColumns, iconCellList, state, showIndicator: currentRow.children, isExpanded, bordered});
       result.push(tableRow);
+      rowIndex = result.length;
       const children = currentRow.children;
 
       if (children && expandedNestedRows.includes(currentRow.key)) {

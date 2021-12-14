@@ -171,6 +171,7 @@ const MergingStepDetail: React.FC = () => {
       key: "strategyName",
       sort: true,
       width: 200,
+      className: styles.strategyNameColumn,
       sortFunc: columnSorter,
       formatter: text => {
         return (
@@ -438,6 +439,7 @@ const MergingStepDetail: React.FC = () => {
               expandedRowRender={expandedRowRender}
               pagination={{hideOnSinglePage: mergeStrategiesData.length <= 10}}
               showExpandIndicator={true}
+              expandedContainerClassName="mergeStrategySliders"
             />
           </div>
         </div>

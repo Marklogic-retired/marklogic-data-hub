@@ -37,14 +37,26 @@
         background-color: red;
     }
 }
-.borderedIndicator {
+.expandButtonIndicator { 
     width: 17px;
     height: 17px;
     text-align: center !important;
     line-height: 13px !important;
-    padding: 2px !important;
-    border: 1px solid #e8e8e8;
+    padding: 1px !important;
+    border: none !important;
+    border-radius: 0 !important;
     margin-right: 8px;
+    
+    &:focus, &:focus-visible {
+        box-shadow: none !important;
+    }
+}
+.borderedIndicator {
+    border: 1px solid #e8e8e8;
+    border-radius: 2px !important;
+}
+.iconIndicator {
+    font-size: 12px;
 }
 .expandedRowWrapper {
     background-color: #fbfbfb !important;
@@ -81,6 +93,7 @@
 }
 .childrenIndentExpanded {
     padding-left: 0 !important;
+    background-color: inherit !important;
 }
 .childrenIndentTableExpanded {
     display: table;
@@ -97,7 +110,12 @@
 .childrenIndentIndicatorCell {
     display: table-cell;
     width: 50px;
+    min-width: 50px;
     text-align: center;
+}
+.childrenIndentIndicatorEmptyCell {
+    width: 4%;
+    display: table-cell;
 }
 .childrenIndentElementCell {
     display: table-cell;

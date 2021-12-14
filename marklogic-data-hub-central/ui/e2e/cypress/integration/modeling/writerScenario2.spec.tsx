@@ -75,6 +75,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
+    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");
     //propertyTable.getWildcardIcon('street').should('exist');
