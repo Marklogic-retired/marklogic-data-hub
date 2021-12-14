@@ -14,13 +14,12 @@ import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faCheck} from "@fortawesome/free-solid-svg-icons";
 import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
-import {Table} from "antd";
 import {Modal} from "react-bootstrap";
 import {updateMergingArtifact} from "../../../../api/merging";
 import CustomPageHeader from "../../page-header/page-header";
 import {clearSessionStorageOnRefresh, getViewSettings, setViewSettings} from "../../../../util/user-context";
-import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCTooltip} from "@components/common";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import {HCButton, HCTable, HCTooltip} from "@components/common";
 import moment from "moment";
 import TimelineVisDefault from "../../matching/matching-step-detail/timeline-vis-default/timeline-vis-default";
 
@@ -163,15 +162,17 @@ const MergingStepDetail: React.FC = () => {
     toggleIsEditRule(true);
   };
 
+  const columnSorter = (a: any, b: any, order: string) => order === "asc" ? a.localeCompare(b) : b.localeCompare(a);
+
   const mergeStrategyColumns: any = [
     {
-      title: "Strategy Name",
-      dataIndex: "strategyName",
+      text: "Strategy Name",
+      dataField: "strategyName",
       key: "strategyName",
-      sorter: (a, b) => a.strategyName.localeCompare(b.strategyName),
+      sort: true,
       width: 200,
-      sortDirections: ["ascend", "descend", "ascend"],
-      render: text => {
+      sortFunc: columnSorter,
+      formatter: text => {
         return (
           <span className={styles.link}
             id={"strategy-name-link"}
@@ -181,64 +182,49 @@ const MergingStepDetail: React.FC = () => {
       }
     },
     {
-      title: "Max Values",
-      dataIndex: "maxValues",
+      text: "Max Values",
+      dataField: "maxValues",
       key: "maxValues",
-      sorter: (a, b) => {
-        a = a.maxValues || "";
-        b = b.maxValues || "";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["ascend", "descend", "ascend"],
+      sort: true,
       width: 200,
+      sortFunc: columnSorter,
     },
     {
-      title: "Max Sources",
-      dataIndex: "maxSources",
+      text: "Max Sources",
+      dataField: "maxSources",
       key: "maxSources",
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a, b) => {
-        a = a.maxSources || "";
-        b = b.maxSources || "";
-        return a.localeCompare(b);
-      },
+      sort: true,
       width: 200,
+      sortFunc: columnSorter,
     },
     {
-      title: "Default",
-      dataIndex: "default",
+      text: "Default",
+      dataField: "default",
       key: "default",
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a, b) => {
-        a = a.maxSources || "";
-        b = b.maxSources || "";
-        return a.localeCompare(b);
-      },
+      sort: true,
       width: 200,
+      sortFunc: columnSorter,
     },
     {
-      title: "Delete",
-      dataIndex: "delete",
+      text: "Delete",
+      dataField: "delete",
       key: "delete",
       align: "center" as "center",
-      render: text => <a data-testid={"delete"}>{text}</a>,
-      width: 75
+      headerAlign: "center",
+      width: 75,
+      formatter: text => <a data-testid={"delete"}>{text}</a>,
     }
   ];
 
   const mergeRuleColumns: any = [
     {
-      title: "Property",
-      dataIndex: "property",
+      text: "Property",
+      dataField: "property",
       key: "property",
-      sorter: (a, b) => {
-        a = a.property || "";
-        b = b.property || "";
-        return a.localeCompare(b);
-      },
+      sort: true,
       width: 200,
-      sortDirections: ["ascend", "descend", "ascend"],
-      render: text => {
+      sortFunc: columnSorter,
+      formatter: text => {
         let mergeRuleLabel = text?.split(" > ").join(".");
         return (
           <span className={styles.link}
@@ -249,36 +235,29 @@ const MergingStepDetail: React.FC = () => {
       }
     },
     {
-      title: "Merge Type",
-      dataIndex: "mergeType",
+      text: "Merge Type",
+      dataField: "mergeType",
       key: "mergeType",
-      sorter: (a, b) => {
-        a = a.mergeType || "";
-        b = b.mergeType || "";
-        return a.localeCompare(b);
-      },
-      sortDirections: ["ascend", "descend", "ascend"],
+      sort: true,
       width: 200,
+      sortFunc: columnSorter,
     },
     {
-      title: "Strategy",
-      dataIndex: "strategy",
+      text: "Strategy",
+      dataField: "strategy",
       key: "strategy",
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a, b) => {
-        a = a.strategy || "";
-        b = b.strategy || "";
-        return a.localeCompare(b);
-      },
+      sort: true,
       width: 200,
+      sortFunc: columnSorter,
     },
     {
-      title: "Delete",
-      dataIndex: "delete",
+      text: "Delete",
+      dataField: "delete",
       key: "delete",
       align: "center" as "center",
-      render: text => <a data-testid={"delete"} >{text}</a>,
-      width: 75
+      headerAlign: "center",
+      width: 75,
+      formatter: text => <a data-testid={"delete"} >{text}</a>,
     }
   ];
 
@@ -451,24 +430,14 @@ const MergingStepDetail: React.FC = () => {
             </div>
           </div>
           <div>
-            <Table
+            <HCTable
               rowKey="strategyName"
               className={styles.table}
               columns={mergeStrategyColumns}
-              dataSource={mergeStrategiesData}
-              size="middle"
+              data={mergeStrategiesData}
               expandedRowRender={expandedRowRender}
-              expandIcon={(expandProps) => {
-                if (expandProps.record.priorityOrder) {
-                  return (expandProps.expanded ? (
-                    <ChevronDown aria-label="down" className={styles.icon} onClick={e => expandProps.onExpand(expandProps.record, e)} />
-                  ) : (
-                    <ChevronRight aria-label="right" className={styles.icon} onClick={e => expandProps.onExpand(expandProps.record, e)} />
-                  )
-                  );
-                } else { return (false); }
-              }}
               pagination={{hideOnSinglePage: mergeStrategiesData.length <= 10}}
+              showExpandIndicator={true}
             />
           </div>
         </div>
@@ -488,12 +457,12 @@ const MergingStepDetail: React.FC = () => {
               }}>Add</HCButton>
             </div>
           </div>
-          <Table
+          <HCTable
             rowKey="property"
             className={styles.table}
             columns={mergeRuleColumns}
-            dataSource={mergeRulesData}
-            size="middle"
+            data={mergeRulesData}
+            subTableHeader={true}
           />
         </div>
         <MergeStrategyDialog
