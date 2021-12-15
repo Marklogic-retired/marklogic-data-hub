@@ -27,7 +27,7 @@ describe("Query Dropdown", () => {
     sortOrder: [],
   }};
 
-  const defaultSavedNode ={entityName: "Order", primaryKey: {propertyValue: "1234"}, uri: "10260.json", sources: "", entityInstance: {}};
+  const defaultSavedNode ={entityName: "Order", primaryKey: {propertyValue: "1234"}, uri: "10260.json", sources: "", entityInstance: {}, label: "1234"};
   test("Render graph side bar", () => {
     const {getByTestId} = render(
       <SearchContext.Provider value={{searchOptions: defaultSearchOptions, savedNode: defaultSavedNode}}>

@@ -128,51 +128,68 @@ let edges = [];
 
 result.map(item => {
 
+  let subjectLabel = item.subjectLabel;
+  if (item.subjectLabel !== undefined && item.subjectLabel.toString().length === 0) {
+    let subjectArr = item.subjectIRI.toString().split("/");
+    subjectLabel = subjectArr[subjectArr.length - 1];
+  }
+
+  const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
   if (!nodes[item.subjectIRI]) {
     nodeOrigin.id = item.subjectIRI;
-    nodeOrigin.label = item.subjectLabel;
+    nodeOrigin.label = subjectLabel;
     nodeOrigin.additionaProperties = null;
-    nodeOrigin.group = item.predicateIRI;
+    nodeOrigin.group = group;
     nodeOrigin.isConcept = false;
     nodeOrigin.count = 1;
     nodes[item.subjectIRI] = nodeOrigin;
   } else {
     nodeOrigin = nodes[item.subjectIRI];
-    nodeOrigin.label = item.subjectLabel || nodeOrigin.label;
-    nodeOrigin.group = item.predicateIRI || nodeOrigin.group;
+    nodeOrigin.label = subjectLabel || nodeOrigin.label;
+    nodeOrigin.group = group;
     nodeOrigin.additionaProperties = null;
     nodes[item.subjectIRI] = nodeOrigin;
   }
 
   if (item.nodeCount && item.nodeCount >= 1) {
-    let edge = {};
+    //Gather object node data as if count is 1
     let objectIRI = item.firstObjectIRI.toString();
+    let objectIRIArr = objectIRI.split("/");
+    if (item.firstObjectLabel === null) {
+      item.firstObjectLabel = objectIRIArr[objectIRIArr.length - 1];
+    }
     let objectLabel = item.firstObjectLabel.toString();
-    if (item.nodeCount > 1) { //If there are more than one we link the edge to the object entity type
-      let entityIRIArr = objectIRI.split("/");
-      let entityType = entityIRIArr[entityIRIArr.length - 2].split("-");
+    let objectId = item.firstObjectIRI.toString();
+    let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
+
+    //Override if count is more than 1. We will have a node with badge.
+    if (item.nodeCount > 1) {
+      let entityType = objectIRIArr[objectIRIArr.length - 2];
       objectIRI = entityType;
       objectLabel =  entityType;
+      objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
     }
+
+    let edge = {};
     edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
 
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
     edge.label = edgeLabel;
-
     edge.from = item.subjectIRI;
-    edge.to = objectIRI;
+    edge.to = objectId;
     edges.push(edge);
 
-    if (!nodes[item.objectIRI]) {
+    if (!nodes[objectId]) {
+
       let objectNode = {};
-      objectNode.id = item.subjectIRI + "-" + objectIRI;
+      objectNode.id = item.firstObjectIRI;
       objectNode.label = objectLabel;
-      objectNode.group = null;
+      objectNode.group = objectGroup;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
-      nodes[item.firstObjectIRI] = objectNode;
+      nodes[objectId] = objectNode;
     }
   }
   else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0){
@@ -180,8 +197,9 @@ result.map(item => {
 
       let predicateArr = item.predicateIRI.toString().split("/");
       let edgeLabel = predicateArr[predicateArr.length - 1];
+      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
       edge.label = edgeLabel;
-      edge.from = item.subjectIRI;
+      edge.from = item.subjectIRI.toString();
       edge.to = item.objectIRI;
       edges.push(edge);
   }

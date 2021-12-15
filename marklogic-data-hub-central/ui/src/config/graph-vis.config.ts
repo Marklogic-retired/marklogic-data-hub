@@ -125,6 +125,18 @@ let sampleMetadata = {
                   "graphY": -120,
                   "color":"#e3ebbc",
                    "icon":modelingInfoIcon
+            },
+            "Item": {
+              "graphX": 34,
+                  "graphY": -98,
+                  "color":"#e3ebbc",
+                  "icon":modelingInfoIcon
+            },
+            "Company": {
+              "graphX": 24,
+                  "graphY": -102,
+                  "color":"#e3ebbc",
+                  "icon":modelingInfoIcon
             }
         },
         "scale": 0.602620242936941,

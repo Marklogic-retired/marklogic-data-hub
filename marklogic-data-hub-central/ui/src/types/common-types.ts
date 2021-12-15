@@ -24,6 +24,7 @@ declare global {
   interface Window {
     pendo: any,
     usePendo: any,
-    graphVisApi: any
+    graphVisApi: any,
+    graphVisExploreApi: any
   }
 }

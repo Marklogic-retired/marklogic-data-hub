@@ -24,8 +24,9 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     savedNode
   } = useContext(SearchContext);
   const  {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
-  const {entityName, primaryKey, uri, sources, entityInstance} = savedNode;
+  const {entityName, group, primaryKey, uri, sources, entityInstance, label} = savedNode;
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
+  const entityInstanceTitle = group ? group.split("/").pop() : entityName;
 
   const handleTabChange = (key) => {
     setCurrentTab(key);
@@ -86,6 +87,9 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   if (primaryKey && Object.keys(primaryKey).length) {
     primaryKeyValue = primaryKey.propertyValue;
   }
+
+  const entityInstanceLabel = label ? label : primaryKeyValue;
+
   const state = {
     selectedValue: "instance",
     entity: entityTypeIds,
@@ -106,7 +110,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   return (
     <div data-testid="graphSidePanel" className={styles.sidePanel}>
       <div>
-        <span className={styles.selectedEntityHeading} data-testid="entityHeading">{entityName} {">"} {primaryKey.propertyValue}</span>
+        <span className={styles.selectedEntityHeading} data-testid="entityHeading">{entityInstanceTitle} {">"} {entityInstanceLabel}</span>
         <Link to={{pathname, state}} id={"instance"} data-cy="instance">
           <i><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></i>
         </Link>

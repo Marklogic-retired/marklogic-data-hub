@@ -97,9 +97,18 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   }, [network, props.graphView]);
 
+  useLayoutEffect(() => {
+    if (network) {
+      window.graphVisExploreApi = {
+        getNodePositions: (nodeIds?: any) => { return !nodeIds ? network.getPositions() : network.getPositions(nodeIds); },
+        canvasToDOM: (xCoordinate, yCoordinate) => { return network.canvasToDOM({x: xCoordinate, y: yCoordinate}); },
+      };
+    }
+  }, [network]);
+
 
   const selectedEntityExists = () => {
-    return props.entityTypeInstances.some(e => e.entityName === searchOptions.entityInstanceId.split("-")[0]);
+    return props.entityTypeInstances?.nodes?.some(e => e.entityName === searchOptions.entityInstanceId.split("-")[0]);
   };
 
   useEffect(() => {
@@ -134,27 +143,22 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const getNodes = () => {
     let nodes;
-    nodes = props.entityTypeInstances && props.entityTypeInstances?.map((e) => {
-      let key = e.entityName;
-      let entity = graphConfig.sampleMetadata["modeling"]["entities"][key];
-      let primaryKeyValue = e.primaryKey?.propertyValue;
-      let isUri = e.primaryKey?.propertyPath === "uri";
-      let nodeId = isUri ? e.uri : primaryKeyValue;
-      let entityInstanceId = key+"-"+nodeId;
-      let nodeLabel;
-      nodeId.length > 6 ? nodeLabel = nodeId.substring(0, 6) + "..." : nodeLabel = nodeId;
+    nodes = props.entityTypeInstances && props.entityTypeInstances?.nodes?.map((e) => {
+      let entityType = e.group.split("/").pop();
+      let entity = graphConfig.sampleMetadata["modeling"]["entities"][entityType];
+      let nodeId = e.id;
+      let nodeLabel = e.label.length > 9 ? e.label.substring(0, 6) + "..." : e.label;
       let positionX = undefined;
       let positionY = undefined;
-      if (props.coords && props.coords[entityInstanceId] && props.coords[entityInstanceId].x && props.coords[entityInstanceId].y) {
-        //tmp.physics.enabled = false;
-        positionX = props.coords[entityInstanceId].x;
-        positionY = props.coords[entityInstanceId].y;
+      if (props.coords && props.coords[nodeId] && props.coords[nodeId].x && props.coords[nodeId].y) {
+        positionX = props.coords[nodeId].x;
+        positionY = props.coords[nodeId].y;
       }
       return {
-        id: entityInstanceId,
+        id: nodeId,
         shape: "custom",
-        title: key,
-        //...graphConfig.defaultNodeProps,
+        title: e.label,
+        label: nodeLabel,
         color: entity["color"],
         x: positionX,
         y: positionY,
@@ -198,30 +202,73 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               ctx.drawImage(img, x-12, imagePositionY, 24, 24);
               ctx.fillText(nodeLabel, x, y+10);
             }
-            let expandable = false; // Use this to display ellipsis, when node has connected relationships
-            if (expandable) {
+            if (e.hasRelationships) {
               let ellipsisImg = new Image();
               ellipsisImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAABQCAYAAACu/a1QAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAnZJREFUeJzt189LVHEUBfBzv05SIqUIhS1q3apVCGlBpgkJisoM/QdtzHKUxJWbSEGaWgVB0K5FqSC4CCenxjZFGyFqIQW1CaWg0VSIee+dNgU1Pp0fbxHh+Szvvd/D9z7eWzxARERERERERERERERERP4FA4BUx3QjfE4Q6DJYXdFTxCYNadJGhhd6l3cbvd02c4IMJgi0mVlN8Wx+A2zW8/zR69nEym6jqfapZtJuGHEahuqi2cAKgIfVeX+sP5vYsFTHdCN9vDTgWAmH/74nmDOfLcln8bdh/VsXpk/Cx6IZDpabDeCTC2JN1zLdq6HZbVMXDZgFLFZuMIlX2PTPOficqGRxADBYHZ27u+OAj3sVLg4Ax33n3QxrjMUfVYO4X8niAGCGJtRWDTgCXRVe7nfQ2fHOufrC+p3W2SNmaIqSDbA7rHoo506ZWWOUZAO6XEnfeBHV+a2GwpoXy297IOUy2LZcAAgCFzmbQIOLGvI/0/J7lZbfq7T8XrXHlyc2o4bEHNYKa+YF36PmklgPq5shcjbAdUdDOlIEuXT1SeJLYT2ZiX8G8C5KNozzYeXa/bHXwPYHXhYi7UgbIZir7DzyRg6E9QxGGK4A9CrLZg4uGA3rXZ7r2iIwWEnur/QPzquadMMLvcvms4XEYlnHySULgvPJTPzFTjPJdF/GyHaAb8rKBp4HQdA8NJ94v9PM0NO+BwF5ieTH0u8Mn+QMquzMYLYnZ382xzvn6sN+UgrFHNbCXvXdTLZPH3bmF/29dT/2fR3M9pT8JhK0VOvjo4jhwG5zfj7GmsBb7c8mNkrNFhEREREREREREREREREREZFK/QT3i+BFtIzcWAAAAABJRU5ErkJggg==";
-              ctx.fillStyle = "black";
-              ctx.globalCompositeOperation = "color";
-              ctx.drawImage(ellipsisImg, x, y+20, 10, 10);
+              ctx.fillStyle = "#777";
+              //ctx.globalCompositeOperation = "color";
+              ctx.drawImage(ellipsisImg, x-5, y+20, 10, 10);
             }
           };
-          ctx.save();
-          ctx.restore();
           return {
             drawNode,
             nodeDimensions: {width: 1 * r, height: 1 * r},
           };
         }
       };
+
     });
+
     return nodes;
+  };
+
+  const getSmoothOpts = (to, from, edges) => {
+    let count = 0;
+    let reversed;
+    edges.forEach((edge, i) => {
+      if (to === edge.to && from === edge.from) {
+        count++;
+        // This works so...
+        reversed = (reversed === undefined) ? false : reversed;
+      } else if (from === edge.to && to === edge.from) {
+        count++;
+        reversed = (reversed === undefined) ? true : reversed;
+      }
+    });
+    // Space out same edges using visjs "smooth" options
+    let space = 0.16;
+    let type = "";
+    if (!reversed) {
+      type = (count % 2 === 0) ? "curvedCW" : "curvedCCW";
+    } else {
+      type = (count % 2 === 0) ? "curvedCCW" : "curvedCW";
+    }
+    return {
+      enabled: (count > 0),
+      type: type,
+      roundness: (count % 2 === 0) ? (space * count / 2) : (space * (count + 1) / 2)
+    };
   };
 
   const getEdges = () => {
     let edges: any = [];
     //handle logic for generating edges here
+    edges = props.entityTypeInstances.edges.map((edge, i) => {
+      return {
+        ...edge,
+        id: edge.id,
+        arrows: {
+          to: {
+            enabled: false,
+          }
+        },
+        color: "#666",
+        font: {
+          align: "top",
+        },
+        smooth: getSmoothOpts(edge.to, edge.from, edges)
+      };
+    });
     return edges;
   };
 
@@ -247,6 +294,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     interaction: {
       navigationButtons: true,
       hover: true,
+      zoomView: false
     },
     manipulation: {
       enabled: false
@@ -292,13 +340,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       const {nodes} = event;
       if (nodes.length > 0) {
         const [node]= nodes;
-        const entity  = node.substr(0, node.indexOf("-"));
-        const id = node.substr(node.indexOf("-")+1);
-        const nodeObject = props.entityTypeInstances.find(node => node.entityName === entity && node.primaryKey.propertyValue.toString() === id);
+        const nodeId = node;
+        const nodeObject = props.entityTypeInstances.nodes.find(node => node.id === nodeId);
         setSavedNode(nodeObject);
-        const primaryKeyValue = nodeObject.primaryKey.propertyValue;
-        const entityId = `${nodeObject.entityName}-${primaryKeyValue}`;
-        setGraphViewOptions(entityId);
+        setGraphViewOptions(node);
       }
     },
     click: (event) => {
@@ -381,17 +426,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       let networkScale: any = await network.getScale();
       //Zoom scale logic goes here
       handleZoom(event, networkScale);
-    },
-    release: (event) => {
-      //Add graph span logic here
-    //   if (!props.graphEditMode) {
-    //     let targetClassName = event.event.target.className;
-    //     let usingNavigationButtons = targetClassName || event.event.deltaX || event.event.deltaY ? true : false;
-    //     let usingZoomButtons = targetClassName === "vis-button vis-zoomOut" || targetClassName === "vis-button vis-zoomIn";
-    //     if (usingNavigationButtons && !usingZoomButtons) {
-    //       updateConfigOnNavigation(event);
-    //     }
-    //   }
     }
   };
 
