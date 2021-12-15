@@ -1,6 +1,6 @@
 class GraphView {
   getFilterInput() {
-    return cy.findByLabelText("graph-view-filter-input");
+    return cy.get(".rbt-input");
   }
 
   getAddButton() {

@@ -14,15 +14,15 @@ describe("Create Edit Step Dialog component", () => {
     jest.clearAllMocks();
   });
 
-  test("Verify Edit Merging dialog renders correctly", () => {
+  test("Verify Edit Merging dialog renders correctly", async () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(<CreateEditStep {...data.editMerging} />);
     expect(getByPlaceholderText("Enter name")).toHaveValue("mergeCustomers");
     expect(getByPlaceholderText("Enter name")).toBeDisabled();
     expect(getByPlaceholderText("Enter description")).toHaveValue("merge customer description");
 
     expect(getByLabelText("Collection")).toBeChecked();
-    const collInput = document.querySelector(("#collList .ant-input"));
-    expect(collInput).toHaveValue("matchCustomers");
+    const collInput = document.querySelector((".rbt-input-main"));
+    await(() => expect(collInput).toHaveValue("matchCustomers"));
 
     fireEvent.click(getByLabelText("Query"));
     expect(getByPlaceholderText("Enter source query")).toHaveTextContent("cts.collectionQuery(['matchCustomers'])");
@@ -63,7 +63,7 @@ describe("Create Edit Step Dialog component", () => {
     expect(collection).toBeChecked();
     expect(collection).toBeDisabled();
     expect(getByLabelText("Query")).toBeDisabled();
-    const collInput = document.querySelector(("#collList .ant-input"));
+    const collInput = document.querySelector((".rbt-input-main"));
     expect(collInput).toBeDisabled();
     expect(timestamp).toHaveValue("/envelope/headers/createdOn");
     expect(timestamp).toBeDisabled();
@@ -84,7 +84,7 @@ describe("Create Edit Step Dialog component", () => {
     expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
     expect(getByLabelText("Collection")).toBeInTheDocument();
     expect(getByLabelText("Query")).toBeInTheDocument();
-    expect(getByLabelText("collection-input")).toBeInTheDocument();
+    expect(document.querySelector((".rbt-input-main"))).toBeInTheDocument();
     expect(getByPlaceholderText("Enter path to the timestamp")).toBeInTheDocument();
     expect(getByText("Save")).toBeEnabled();
     expect(getByText("Cancel")).toBeEnabled();
@@ -164,7 +164,7 @@ describe("Create Edit Step Dialog component", () => {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
     });
-    expect(collInput).toHaveValue("testCollection");
+    await(() => expect(collInput).toHaveValue("testCollection"));
 
     fireEvent.click(getByText("Save"));
 
@@ -197,16 +197,16 @@ describe("Create Edit Step Dialog component", () => {
       "dataType": "string",
       "pattern": "ada"
     };
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
-    expect(getByText("Adams Cole")).toBeInTheDocument();
+    await(() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
+    await(() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
+    await(() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
     await wait(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
     });
-    expect(collInput).toHaveValue("testCollection");
+    await(() => expect(collInput).toHaveValue("testCollection"));
     fireEvent.click(getByLabelText("Query"));
     const queryInput = getByPlaceholderText("Enter source query");
     fireEvent.change(queryInput, {target: {value: "cts.collectionQuery([\"testCollection\"])"}});
@@ -241,16 +241,16 @@ describe("Create Edit Step Dialog component", () => {
       "dataType": "string",
       "pattern": "ada"
     };
-    expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
-    expect(getByText("Adams Cole")).toBeInTheDocument();
+    await(() => expect(axiosMock.post).toHaveBeenCalledWith(url, payload));
+    await(() => expect(axiosMock.post).toHaveBeenCalledTimes(1));
+    await(() => expect(getByText("Adams Cole")).toBeInTheDocument());
 
     await wait(() => {
       if (collInput) {
         fireEvent.change(collInput, {target: {value: "testCollection"}});
       }
     });
-    expect(collInput).toHaveValue("testCollection");
+    await(() => expect(collInput).toHaveValue("testCollection"));
     fireEvent.click(getByLabelText("Query"));
     const queryInput = getByPlaceholderText("Enter source query");
     fireEvent.change(queryInput, {target: {value: "cts.collectionQuery([\"testCollection\"])"}});

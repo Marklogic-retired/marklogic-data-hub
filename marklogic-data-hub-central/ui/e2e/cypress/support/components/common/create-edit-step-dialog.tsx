@@ -23,7 +23,7 @@ class CreateEditStepDialog {
      * @example 'order-ingest'
      */
   setCollectionInput(str: string) {
-    cy.get("#collList").type(str);
+    cy.get(".rbt-input-main").type(str);
   }
 
   /**

@@ -8,7 +8,7 @@ class ModelPage {
     cy.wait(1000);
     cy.get("body")
       .then(($body) => {
-        if ($body.find("[aria-label=graph-view-filter-input]").length) {
+        if ($body.find("[class*=\"rbt-input\"]")) {
           cy.get(`[data-icon="${view}"]`).first().trigger("mouseover").click({force: true});
         }
       });

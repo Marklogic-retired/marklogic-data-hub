@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useContext} from "react";
-import {AutoComplete} from "antd";
 import {Row, Col, Form, FormControl, FormLabel} from "react-bootstrap";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
@@ -12,6 +11,8 @@ import {QuestionCircleFill, Search} from "react-bootstrap-icons";
 import {HCInput, HCAlert, HCButton, HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
+import {Typeahead} from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 type Props = {
   tabKey: string;
@@ -256,10 +257,6 @@ const CreateEditStep: React.FC<Props> = (props) => {
     } else {
       setCollectionOptions([]);
     }
-  };
-
-  const handleFocus = () => {
-    setCollectionOptions([]);
   };
 
   const handleTypeaheadChange = (data: any) => {
@@ -557,22 +554,21 @@ const CreateEditStep: React.FC<Props> = (props) => {
                 </HCTooltip>
               </Col>
               <Col xs={12} className={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "d-flex pe-4" : "d-flex pe-4 has-error"}>
-                {selectedSource === "collection" ? <div className={"position-relative w-100 pe-3"}><AutoComplete
-                  id="collList"
-                  //mode="tags"
-                  dataSource={collectionOptions}
-                  aria-label="collection-input"
-                  placeholder={"Enter collection name"}
-                  value={collections}
-                  disabled={!props.canReadWrite}
-                  onSearch={handleSearch}
-                  onFocus={handleFocus}
-                  onChange={handleTypeaheadChange}
-                  onBlur={sendPayload}
-                  style={{width: "100%"}}
-                >
-                  {/* {collectionsList} */}
-                </AutoComplete>{props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
+                {selectedSource === "collection" ? <div className={"position-relative w-100 pe-3"}>
+                  <Typeahead
+                    id="collList"
+                    options={collectionOptions}
+                    aria-label="collection-input"
+                    placeholder={"Enter collection name"}
+                    value={collections}
+                    disabled={!props.canReadWrite}
+                    onInputChange={handleSearch}
+                    onChange={handleTypeaheadChange}
+                    onBlur={sendPayload}
+                    style={{width: "100%"}}
+                    minLength={3}
+                  ></Typeahead>
+                  {props.canReadWrite ? <Search className={styles.searchIcon} /> : ""}</div> : <div className={"w-100 pe-3"}><FormControl as="textarea"
                   id="srcQuery"
                   placeholder="Enter source query"
                   value={srcQuery}

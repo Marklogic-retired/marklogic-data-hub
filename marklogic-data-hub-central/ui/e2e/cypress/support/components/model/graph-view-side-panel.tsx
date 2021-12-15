@@ -58,11 +58,11 @@ class GraphViewSidePanel {
   }
 
   getGraphViewFilterInput() {
-    return cy.findByLabelText("graph-view-filter-input");
+    return cy.get(".rbt-input");
   }
 
   selectEntityDropdown() {
-    return cy.get(".ant-select-dropdown--single").click();
+    return cy.get(".dropdown-menu").click();
   }
 
   getPropertyTypeIcon(icon: string, property: string) {
