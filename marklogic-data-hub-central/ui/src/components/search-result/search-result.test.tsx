@@ -23,7 +23,6 @@ describe("Search Result view component", () => {
     selectedFacets: {},
     maxRowsPerPage: 100,
     selectedQuery: "select a query",
-    zeroState: false,
     manageQueryModal: false,
     selectedTableProperties: [],
     view: null,

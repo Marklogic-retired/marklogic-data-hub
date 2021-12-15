@@ -104,7 +104,6 @@ const QueryModal = (props) => {
       selectedFacets: {},
       selectedQuery: "select a query",
       propertiesToDisplay: [],
-      zeroState: searchOptions.zeroState,
       sortOrder: [],
       database: searchOptions.database,
     };
@@ -137,7 +136,6 @@ const QueryModal = (props) => {
             selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
             selectedQuery: query["savedQuery"]["name"],
             propertiesToDisplay: query.savedQuery.propertiesToDisplay,
-            zeroState: false,
             sortOrder: query.savedQuery.sortOrder,
             database: searchOptions.database,
           };

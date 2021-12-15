@@ -120,7 +120,6 @@ const Query: React.FC<Props> = (props) => {
             selectedFacets: response.data.savedQuery.query.selectedFacets,
             selectedQuery: response.data.savedQuery.name,
             propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
-            zeroState: searchOptions.zeroState,
             sortOrder: response.data.savedQuery.sortOrder,
             database: searchOptions.database,
           };
@@ -229,7 +228,7 @@ const Query: React.FC<Props> = (props) => {
   useEffect(() => {
     if (searchOptions.nextEntityType && !entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
       // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
-      if ((isSaveQueryChanged() || isNewQueryChanged()) && !searchOptions.zeroState) {
+      if ((isSaveQueryChanged() || isNewQueryChanged())) {
         toggleEntityConfirmation(true);
       } else {
         setCurrentQueryOnEntityChange();
@@ -318,7 +317,6 @@ const Query: React.FC<Props> = (props) => {
       selectedFacets: {},
       selectedQuery: "select a query",
       propertiesToDisplay: [],
-      zeroState: true,
       sortOrder: [],
       database: "final",
     };
@@ -346,7 +344,6 @@ const Query: React.FC<Props> = (props) => {
         selectedFacets: {},
         selectedQuery: "select a query",
         propertiesToDisplay: [],
-        zeroState: true,
         sortOrder: [],
         database: "final",
       };

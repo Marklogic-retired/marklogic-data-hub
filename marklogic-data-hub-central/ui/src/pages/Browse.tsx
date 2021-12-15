@@ -18,7 +18,6 @@ import {faStream, faTable, faProjectDiagram} from "@fortawesome/free-solid-svg-i
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import Query from "../components/queries/queries";
 import {AuthoritiesContext} from "../util/authorities";
-import ZeroStateExplorer from "../components/zero-state-explorer/zero-state-explorer";
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import {QueryOptions} from "../types/query-types";
 import Spinner from "react-bootstrap/Spinner";
@@ -47,7 +46,6 @@ const Browse: React.FC<Props> = ({location}) => {
     resetSearchOptions,
     applySaveQuery,
     setPageWithEntity,
-    setPageQueryOptions,
     setDatabase,
     setLatestDatabase,
     setEntityDefinitionsArray,
@@ -71,7 +69,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
-  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const resultsRef = useRef<HTMLDivElement>(null);
   let state: any = location.state;
   const [cardView, setCardView] = useState(state && state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
@@ -204,12 +201,12 @@ const Browse: React.FC<Props> = ({location}) => {
     let notSelectingCardViewWhenNoEntities = !cardView && (!entities.length && !searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
 
     if (entityTypesExistOrNoEntityTypeIsSelected &&
-      (
-        defaultOptionsForPageRefresh ||
-        selectingAllEntitiesOption ||
-        selectingAllDataOption ||
-        selectingEntityType
-      )) {
+            (
+              defaultOptionsForPageRefresh ||
+                selectingAllEntitiesOption ||
+                selectingAllDataOption ||
+                selectingEntityType
+            )) {
       getSearchResults(entities);
     } else {
       if (notSelectingCardViewWhenNoEntities) {
@@ -234,22 +231,21 @@ const Browse: React.FC<Props> = ({location}) => {
     }
     fetchUpdatedSearchResults();
     getGraphSearchResult(entities);
-  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type, hideDataHubArtifacts]);
+  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
     let state: any = location.state;
-    if (state && state["zeroState"] === false && state["isBackToResultsClicked"]) {
+    if (state && state["isBackToResultsClicked"]) {
       getSearchResults(entities);
     }
   }, []);
 
+
   useEffect(() => {
     let state: any = location.state;
-
-    if (searchOptions.zeroState && Object.keys(greyedOptions.selectedFacets).length) {
+    if (Object.keys(greyedOptions.selectedFacets).length) {
       clearAllGreyFacets();
     }
-
     if (state && state.hasOwnProperty("savedQuery")) {
       let savedQuery = state["savedQuery"];
       let options: QueryOptions = {
@@ -258,12 +254,20 @@ const Browse: React.FC<Props> = ({location}) => {
         selectedFacets: savedQuery["query"]["selectedFacets"],
         selectedQuery: savedQuery["name"],
         propertiesToDisplay: savedQuery.propertiesToDisplay,
-        zeroState: false,
         sortOrder: savedQuery.sortOrder,
         database: searchOptions.database,
       };
       applySaveQuery(options);
-    } else if (state && state.hasOwnProperty("zeroState") && !state["zeroState"]) {
+    } else if (state && state.hasOwnProperty("isBackToResultsClicked") && state["isBackToResultsClicked"]) {
+      setPageWithEntity(state["entity"],
+        state["pageNumber"],
+        state["start"],
+        state["searchFacets"],
+        state["query"],
+        state["sortOrder"],
+        state["targetDatabase"]);
+      state["tableView"] ? toggleTableView(true) : toggleTableView(false);
+    } else if (state && state.hasOwnProperty("uri")) {
       setPageWithEntity(state["entity"],
         state["pageNumber"],
         state["start"],
@@ -273,43 +277,34 @@ const Browse: React.FC<Props> = ({location}) => {
         state["targetDatabase"]);
       state["tableView"] ? toggleTableView(true) : toggleTableView(false);
     } else if (state
-      && state.hasOwnProperty("entityName")
-      && state.hasOwnProperty("targetDatabase")
-      && state.hasOwnProperty("jobId")
-      && state.hasOwnProperty("Collection")) {
+            && state.hasOwnProperty("entityName")
+            && state.hasOwnProperty("targetDatabase")
+            && state.hasOwnProperty("jobId")
+            && state.hasOwnProperty("Collection")) {
       setCardView(false);
       setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"], state["Collection"]);
     } else if (state
-      && state.hasOwnProperty("entityName")
-      && state.hasOwnProperty("targetDatabase")
-      && state.hasOwnProperty("jobId")) {
+            && state.hasOwnProperty("entityName")
+            && state.hasOwnProperty("targetDatabase")
+            && state.hasOwnProperty("jobId")) {
       setCardView(false);
       setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"]);
     } else if (state && state.hasOwnProperty("entityName") && state.hasOwnProperty("jobId")) {
       setCardView(false);
       setLatestJobFacet(state["jobId"], state["entityName"]);
     } else if (state && state.hasOwnProperty("entity")) {
-      setCardView(false);
-      setEntityClearQuery(state["entity"]);
+      if (Array.isArray(state["entity"])) {
+        setEntityClearQuery(state["entity"][0]);
+      } else {
+        setEntityClearQuery(state["entity"]);
+      }
     } else if (state && state.hasOwnProperty("targetDatabase") && state.hasOwnProperty("jobId")) {
       setCardView(true);
       setLatestDatabase(state["targetDatabase"], state["jobId"]);
+    } else if (state && state.hasOwnProperty("tileIconClicked") && state["tileIconClicked"]) {
+      resetSearchOptions(true);
     }
-  }, [searchOptions.zeroState]);
-
-  const setZeroStateQueryOptions = () => {
-    let options: QueryOptions = {
-      searchText: "",
-      entityTypeIds: [],
-      selectedFacets: {},
-      selectedQuery: "select a query",
-      propertiesToDisplay: [],
-      zeroState: true,
-      sortOrder: [],
-      database: "final",
-    };
-    applySaveQuery(options);
-  };
+  }, [state]);
 
   const initializeUserPreferences = async () => {
     let state: any = location.state;
@@ -318,39 +313,10 @@ const Browse: React.FC<Props> = ({location}) => {
       let parsedPreferences = JSON.parse(defaultPreferences);
       if (state) {
         if (state["tileIconClicked"]) {
-          await setZeroStateQueryOptions();
           let preferencesObject = {
             ...parsedPreferences,
-            zeroState: searchOptions.zeroState
           };
           updateUserPreferences(user.name, preferencesObject);
-        }
-      } else {
-        if (!parsedPreferences.zeroState && searchOptions.zeroState) {
-          let options: any = {
-            searchText: parsedPreferences.query.searchText || "",
-            entityTypeIds: parsedPreferences.query.entityTypeIds || [],
-            selectedFacets: parsedPreferences.query.selectedFacets || {},
-            selectedQuery: searchOptions.selectedQuery || "select a saved query",
-            sidebarQuery: searchOptions.sidebarQuery,
-            start: parsedPreferences.start || 1,
-            pageNumber: parsedPreferences.pageNumber || 1,
-            pageLength: parsedPreferences.pageLength,
-            propertiesToDisplay: searchOptions.selectedTableProperties || [],
-            zeroState: parsedPreferences.zeroState,
-            sortOrder: parsedPreferences.sortOrder || [],
-            database: parsedPreferences.database
-          };
-          await setPageQueryOptions(options);
-          if (parsedPreferences.hasOwnProperty("tableView") && parsedPreferences.hasOwnProperty("cardView")) {
-            if (parsedPreferences.cardView) {
-              setCardView(parsedPreferences.cardView);
-            } else {
-              toggleTableView(parsedPreferences.tableView);
-            }
-          }
-        } else if (parsedPreferences.zeroState) {
-          await setZeroStateQueryOptions();
         }
       }
     }
@@ -371,7 +337,6 @@ const Browse: React.FC<Props> = ({location}) => {
       selectedQuery: searchOptions.selectedQuery,
       queries: queries,
       propertiesToDisplay: searchOptions.selectedTableProperties,
-      zeroState: searchOptions.zeroState,
       sortOrder: searchOptions.sortOrder,
       cardView: cardView,
       database: searchOptions.database
@@ -491,140 +456,132 @@ const Browse: React.FC<Props> = ({location}) => {
   const numberOfResultsBanner = <span>Viewing 100 of 1000 results {helpIcon()}</span>;
 
 
-  if (searchOptions.zeroState) {
-    return (
-      <>
-        <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView} cardView={cardView} />
-        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} toggleDataHubArtifacts={toggleDataHubArtifacts} />
-      </>
-    );
-  } else {
-    return (
-      <div className={styles.layout}>
-        <HCSider placement="left" show={true} footer={<SidebarFooter />}>
-          <Sidebar
-            facets={facets}
-            selectedEntities={searchOptions.entityTypeIds}
-            entityDefArray={entityDefArray}
-            facetRender={updateSelectedFacets}
-            checkFacetRender={updateCheckedFacets}
-            setDatabasePreferences={setDatabasePreferences}
-            greyFacets={greyFacets}
-            setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
-            hideDataHubArtifacts={hideDataHubArtifacts}
-            cardView={cardView}
-          />
-        </HCSider>
-        <div className={styles.content} id="browseContainer">
+  return (
+    <div className={styles.layout}>
+      <HCSider placement="left" show={true} footer={<SidebarFooter />}>
+        <Sidebar
+          facets={facets}
+          selectedEntities={searchOptions.entityTypeIds}
+          entityDefArray={entityDefArray}
+          facetRender={updateSelectedFacets}
+          checkFacetRender={updateCheckedFacets}
+          setDatabasePreferences={setDatabasePreferences}
+          greyFacets={greyFacets}
+          setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
+          hideDataHubArtifacts={hideDataHubArtifacts}
+          cardView={cardView}
+        />
+      </HCSider>
+      <div className={styles.content} id="browseContainer">
 
-          {user.error.type === "ALERT" ?
-            <AsyncLoader />
-            :
+        {user.error.type === "ALERT" ?
+          <AsyncLoader />
+          :
 
-            <>
-              <div className={styles.stickyHeader}>
-                {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
-                <div className={styles.searchBar} ref={searchBarRef} >
+          <>
+            <div className={styles.stickyHeader}>
+              {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
+              <div className={styles.searchBar} ref={searchBarRef} >
 
-                  {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
-                  {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
-                    <span>
-                      {!graphView ? <div><SearchSummary
+                {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
+                {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
+                  <span>
+                    {!graphView ? <div><SearchSummary
+                      total={totalDocuments}
+                      start={searchOptions.start}
+                      length={searchOptions.pageLength}
+                      pageSize={searchOptions.pageSize}
+                    />
+                    <div id="top-search-pagination-bar">
+                      <SearchPagination
                         total={totalDocuments}
-                        start={searchOptions.start}
-                        length={searchOptions.pageLength}
+                        pageNumber={searchOptions.pageNumber}
                         pageSize={searchOptions.pageSize}
+                        pageLength={searchOptions.pageLength}
+                        maxRowsPerPage={searchOptions.maxRowsPerPage}
                       />
-                      <div id="top-search-pagination-bar">
-                        <SearchPagination
-                          total={totalDocuments}
-                          pageNumber={searchOptions.pageNumber}
-                          pageSize={searchOptions.pageSize}
-                          pageLength={searchOptions.pageLength}
-                          maxRowsPerPage={searchOptions.maxRowsPerPage}
-                        />
+                    </div>
+                    </div> : ""
+                    }
+
+                    <div className={styles.spinViews}>
+                      <div style={switchViewsGraphStyle()}>
+                        {graphView ? numberOfResultsBanner : ""}
+                        {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
+                        {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
+                          <div className={"switch-button-group outline"}>
+                            <span>
+                              <input
+                                type="radio"
+                                id="switch-view-graph"
+                                name="switch-view-radiogroup"
+                                value={"graph"}
+                                onChange={e => handleViewChange(e.target.value)}
+                              />
+                              <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
+                                <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} id={"graphView"} style={{height: "40px"}}>
+                                  <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
+                                </label>
+                              </HCTooltip>
+                            </span>
+
+                            <span>
+                              <input
+                                type="radio"
+                                id="switch-view-table"
+                                name="switch-view-radiogroup"
+                                value={"table"}
+                                defaultChecked={tableView}
+                                onChange={e => handleViewChange(e.target.value)}
+                              />
+                              <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
+                                <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`d-flex justify-content-center align-items-center`} id={"tableView"} style={{height: "40px"}}>
+                                  <i data-cy="table-view">
+                                    <FontAwesomeIcon icon={faTable} />
+                                  </i>
+                                </label>
+                              </HCTooltip>
+                            </span>
+
+                            <span>
+                              <input
+                                type="radio"
+                                id="switch-view-snippet"
+                                name="switch-view-radiogroup"
+                                value={"snippet"}
+                                defaultChecked={!tableView}
+                                onChange={e => handleViewChange(e.target.value)}
+                              />
+                              <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
+                                <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={`d-flex justify-content-center align-items-center`} id={"snippetView"} style={{height: "40px"}}>
+                                  <i data-cy="facet-view">
+                                    <FontAwesomeIcon icon={faStream} />
+                                  </i>
+                                </label>
+                              </HCTooltip>
+                            </span>
+                          </div>
+                        </div> : ""}
                       </div>
-                      </div> : ""
-                      }
-
-                      <div className={styles.spinViews}>
-                        <div style={switchViewsGraphStyle()}>
-                          {graphView ? numberOfResultsBanner : ""}
-                          {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
-                          {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
-                            <div className={"switch-button-group outline"}>
-                              <span>
-                                <input
-                                  type="radio"
-                                  id="switch-view-graph"
-                                  name="switch-view-radiogroup"
-                                  value={"graph"}
-                                  onChange={e => handleViewChange(e.target.value)}
-                                />
-                                <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
-                                  <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} id={"graphView"} style={{height: "40px"}}>
-                                    <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
-                                  </label>
-                                </HCTooltip>
-                              </span>
-
-                              <span>
-                                <input
-                                  type="radio"
-                                  id="switch-view-table"
-                                  name="switch-view-radiogroup"
-                                  value={"table"}
-                                  defaultChecked={tableView}
-                                  onChange={e => handleViewChange(e.target.value)}
-                                />
-                                <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
-                                  <label aria-label="switch-view-table" htmlFor="switch-view-table" className={`d-flex justify-content-center align-items-center`} id={"tableView"} style={{height: "40px"}}>
-                                    <i data-cy="table-view">
-                                      <FontAwesomeIcon icon={faTable} />
-                                    </i>
-                                  </label>
-                                </HCTooltip>
-                              </span>
-
-                              <span>
-                                <input
-                                  type="radio"
-                                  id="switch-view-snippet"
-                                  name="switch-view-radiogroup"
-                                  value={"snippet"}
-                                  defaultChecked={!tableView}
-                                  onChange={e => handleViewChange(e.target.value)}
-                                />
-                                <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
-                                  <label aria-label="switch-view-snippet" htmlFor="switch-view-snippet" className={`d-flex justify-content-center align-items-center`} id={"snippetView"} style={{height: "40px"}}>
-                                    <i data-cy="facet-view">
-                                      <FontAwesomeIcon icon={faStream} />
-                                    </i>
-                                  </label>
-                                </HCTooltip>
-                              </span>
-                            </div>
-                          </div> : ""}
-                        </div>
-                      </div></span>}
-                </div>
-                <Query queries={queries || []}
-                  setQueries={setQueries}
-                  isSavedQueryUser={isSavedQueryUser}
-                  columns={columns}
-                  setIsLoading={setIsLoading}
-                  entities={entities}
-                  selectedFacets={selectedFacets}
-                  greyFacets={greyFacets}
-                  isColumnSelectorTouched={isColumnSelectorTouched}
-                  setColumnSelectorTouched={setColumnSelectorTouched}
-                  entityDefArray={entityDefArray}
-                  database={searchOptions.database}
-                  setCardView={setCardView}
-                  cardView={cardView}
-                />
+                    </div></span>}
               </div>
-              {!showNoDefinitionAlertMessage &&
+              <Query queries={queries || []}
+                setQueries={setQueries}
+                isSavedQueryUser={isSavedQueryUser}
+                columns={columns}
+                setIsLoading={setIsLoading}
+                entities={entities}
+                selectedFacets={selectedFacets}
+                greyFacets={greyFacets}
+                isColumnSelectorTouched={isColumnSelectorTouched}
+                setColumnSelectorTouched={setColumnSelectorTouched}
+                entityDefArray={entityDefArray}
+                database={searchOptions.database}
+                setCardView={setCardView}
+                cardView={cardView}
+              />
+            </div>
+            {!showNoDefinitionAlertMessage &&
                 <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
                   <div>
                     {graphView ?
@@ -664,7 +621,7 @@ const Browse: React.FC<Props> = ({location}) => {
                   </div>
                   <br />
                 </div>}
-              {!showNoDefinitionAlertMessage && !graphView &&
+            {!showNoDefinitionAlertMessage && !graphView &&
                 <div>
                   <SearchSummary
                     total={totalDocuments}
@@ -680,12 +637,11 @@ const Browse: React.FC<Props> = ({location}) => {
                     maxRowsPerPage={searchOptions.maxRowsPerPage}
                   />
                 </div>}
-            </>
-          }
-        </div>
+          </>
+        }
       </div>
-    );
-  }
+    </div>
+  );
 };
 
 export default withRouter(Browse);

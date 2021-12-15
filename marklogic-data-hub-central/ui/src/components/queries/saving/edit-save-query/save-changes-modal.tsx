@@ -107,7 +107,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             selectedFacets: facets,
             selectedQuery: queryName,
             propertiesToDisplay: searchOptions.selectedTableProperties,
-            zeroState: searchOptions.zeroState,
             sortOrder: searchOptions?.sortOrder || [],
             database: searchOptions.database,
           };
@@ -133,7 +132,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             selectedFacets: {},
             selectedQuery: "select a query",
             propertiesToDisplay: [],
-            zeroState: true,
             sortOrder: [],
             database: "final",
           };

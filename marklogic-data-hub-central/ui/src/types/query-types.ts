@@ -4,7 +4,6 @@ export interface QueryOptions {
     selectedFacets: {};
     selectedQuery: string;
     propertiesToDisplay: string[];
-    zeroState: boolean;
     sortOrder: any[];
     database: string;
   }

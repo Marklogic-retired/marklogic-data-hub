@@ -32,7 +32,6 @@ describe.skip("json scenario for snippet on browse documents page", () => {
   });
   it("select \"all entities\" verify docs, hub/entity properties", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
@@ -198,6 +197,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentUri().should("contain", "/json/customers/Cust5.json");
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText().clear();
     // });
     // it("verify instance view of the document without pk", () => {
     browsePage.selectEntity("All Entities");

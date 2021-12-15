@@ -45,4 +45,4 @@ Then run the Cypress tests. Use appropriate run scripts defined in package.json 
         * npm run cy:run -- --spec "cypress/integration/login/*"
         * npm run cy:run -- --spec "cypress/integration/modeling/*"
         * npm run cy:run -- --spec "cypress/integration/curation/*"
-        * npm run cy:run -- --spec "cypress/integration/explorer/*"
+        * npm run cy:run -- --spec "cypress/integration/explore/*"

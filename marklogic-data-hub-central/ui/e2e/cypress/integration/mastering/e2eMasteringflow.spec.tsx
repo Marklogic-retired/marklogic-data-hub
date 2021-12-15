@@ -392,7 +392,6 @@ describe("Validate E2E Mastering Flow", () => {
   it("Explore other collections", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.selectEntity("All Data");
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     cy.waitForModalToDisappear();
     browsePage.showMoreCollection();
     cy.get("#hc-sider-content").scrollTo("bottom");
