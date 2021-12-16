@@ -32,8 +32,8 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.waitForAsyncRequest();
   });
   it("Apply facet search,open save modal, save new query", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.getExploreButton().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     browsePage.selectEntity("Customer");
@@ -234,7 +234,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getHubPropertiesExpanded();
-    cy.waitUntil(() => browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON")).click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getFacetApplyButton().click();
     browsePage.search("Adams Cole");
     browsePage.getSaveModalIcon().click();
@@ -369,15 +369,17 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => browsePage.getResetQueryButton()).click();
-    cy.waitUntil(() => browsePage.getResetConfirmationYes()).click();
-    cy.waitUntil(() => browsePage.getEditSaveChangesButton()).click();
-    cy.waitUntil(() => browsePage.getExploreButton());
+
+    browsePage.getResetQueryButton().should("be.visible").click();
+    browsePage.getResetConfirmationYes().should("be.visible").click();
+
+    browsePage.getEditSaveChangesButton().should("be.visible").click();
+    browsePage.getExploreButton().should("be.visible");
     browsePage.getExploreButton().should("be.visible");
     browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => browsePage.getTotalDocuments());
+    browsePage.getTotalDocuments();
     browsePage.selectEntity("Customer");
     browsePage.selectQuery("reset-query");
     cy.waitForAsyncRequest();
@@ -425,8 +427,8 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getExploreButton().should("be.visible");
   });
   it("verify export array/structured data warning", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     // TODO DHFPROD-7711 skip since fails for Ant Design Table component
@@ -465,8 +467,8 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.wait(1000);
   });
   it("Verify facets checked on sidebar", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.getExploreButton().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     browsePage.getFacetItemCheckbox("collection", "Person").click();

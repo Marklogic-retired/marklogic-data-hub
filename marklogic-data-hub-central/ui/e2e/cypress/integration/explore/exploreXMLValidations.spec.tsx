@@ -30,11 +30,10 @@ describe("xml scenario for snippet view on browse documents page", () => {
   });
   after(() => {
     cy.resetTestUser();
-    cy.waitForAsyncRequest();
   });
   it("select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    toolbar.getExploreToolbarIcon().should("be.visible").click();
+    browsePage.getExploreButton().click();
     browsePage.clickFacetView();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
@@ -127,7 +126,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
     browsePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+
+    browsePage.getSearchText().should("be.visible");
   });
   it("verify source view of the document", () => {
     browsePage.getSearchText().clear();
@@ -138,14 +138,14 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getSourceView().click();
     detailPage.getDocumentXML().should("exist");
     browsePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText().should("be.visible");
   });
   it("select Customer xml entity instances and verify table", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
     browsePage.scrollSideBar();
-    cy.waitUntil(() => browsePage.getFacetItemCheckbox("collection", "mapCustomersXML")).click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersXML").should("be.visible").click();
     browsePage.getGreySelectedFacets("mapCustomersXML").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.clickTableView();
@@ -168,7 +168,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
     browsePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText().should("be.visible");
   });
   it("verify source view of the document", () => {
     browsePage.getSearchText().clear();
@@ -179,7 +179,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getSourceView().click();
     detailPage.getDocumentXML().should("exist");
     browsePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
   });
   it("verify metadata view of the document", () => {
@@ -197,12 +197,12 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentProperties().should("not.exist");
     detailPage.getDocumentNoPropertiesMessage().should("exist");
     browsePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
   });
   it("verify record view of the XML document in non-entity detail page", () => {
     browsePage.selectEntity("All Data");
-    cy.waitUntil(() => browsePage.getNavigationIconForDocument("/dictionary/first-names.xml")).click({force: true});
+    browsePage.getNavigationIconForDocument("/dictionary/first-names.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getRecordView().should("exist");
     detailPage.getDocumentXML().should("exist");
@@ -223,15 +223,15 @@ describe("xml scenario for snippet view on browse documents page", () => {
   it("verify metadata view of the document properties", () => {
     browsePage.selectEntity("All Data");
     browsePage.search("robert");
-    cy.waitUntil(() => browsePage.getNavigationIconForDocument("/thesaurus/nicknames.xml")).click({force: true});
+    browsePage.getNavigationIconForDocument("/thesaurus/nicknames.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPageNonEntity.getDocumentProperties().should("exist");
     detailPageNonEntity.getDocumentNoPropertiesMessage().should("not.exist");
     browsePage.backToResults();
-    cy.waitUntil(() => browsePage.getSearchText());
+    browsePage.getSearchText().should("be.visible");
     browsePage.getSearchText().clear();
     browsePage.search("201");
-    cy.waitUntil(() => browsePage.getNavigationIconForDocument("/xml/customers/CustXMLDoc1.xml")).click({force: true});
+    browsePage.getNavigationIconForDocument("/xml/customers/CustXMLDoc1.xml").click({force: true});
     browsePage.waitForSpinnerToDisappear();
     detailPage.getMetadataView().click();
     detailPage.getDocumentProperties().should("exist");
