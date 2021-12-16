@@ -1,0 +1,29 @@
+{
+  "role-name": "data-hub-security-admin",
+  "description": "Permits configuring roles and privileges for a Data Hub application",
+  "role": [
+    "manage"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "create-data-role",
+      "action": "http://marklogic.com/xdmp/privileges/create-data-role",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "data-hub-create-custom-privilege",
+      "action": "http://marklogic.com/xdmp/privileges/admin/create-user-privilege/datahub.marklogic.com/custom/",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "grant-my-privileges",
+      "action": "http://marklogic.com/xdmp/privileges/grant-my-privileges",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "role-set-external-names",
+      "action": "http://marklogic.com/xdmp/privileges/role-set-external-names",
+      "kind": "execute"
+    }
+  ]
+}

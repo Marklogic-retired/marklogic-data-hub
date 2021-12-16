@@ -1,0 +1,21 @@
+{
+  "role-name": "data-hub-user-reader",
+  "description": "Permits reading a user's roles, a role's roles, and a role's privileges",
+  "privilege": [
+    {
+      "privilege-name": "xdmp:role-privileges",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-role-privileges",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:role-roles",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-role-roles",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:user-roles",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-user-roles",
+      "kind": "execute"
+    }
+  ]
+}

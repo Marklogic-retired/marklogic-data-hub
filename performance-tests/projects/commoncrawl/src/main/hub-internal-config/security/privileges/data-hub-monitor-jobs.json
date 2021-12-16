@@ -1,0 +1,6 @@
+{
+  "privilege-name": "data-hub-monitor-jobs",
+  "action": "http://marklogic.com/data-hub/privileges/monitor-jobs",
+  "kind": "execute"
+}
+

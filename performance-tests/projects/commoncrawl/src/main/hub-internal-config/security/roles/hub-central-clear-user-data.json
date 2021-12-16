@@ -1,0 +1,17 @@
+{
+  "role-name": "hub-central-clear-user-data",
+  "description": "Permits clearing user data via Hub Central",
+  "role": [
+    "data-hub-custom-writer",
+    "data-hub-entity-model-writer",
+    "data-hub-flow-writer",
+    "data-hub-ingestion-writer",
+    "data-hub-mapping-writer",
+    "data-hub-match-merge-writer",
+    "data-hub-operator",
+    "data-hub-step-definition-writer",
+    "hub-central-user",
+    "manage-user",
+    "tde-admin"
+  ]
+}

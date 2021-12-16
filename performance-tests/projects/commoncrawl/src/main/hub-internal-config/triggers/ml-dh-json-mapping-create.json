@@ -1,0 +1,39 @@
+{
+  "name": "ml-dh-json-mapping-create",
+  "description": "MarkLogic Data Hub JSON mapping creation trigger",
+  "event": {
+    "data-event": {
+      "collection-scope": {
+        "uri": "http://marklogic.com/data-hub/mappings"
+      },
+      "document-content": {
+        "update-kind": "create"
+      },
+      "when": "pre-commit"
+    }
+  },
+  "module": "data-hub/5/triggers/mapping/mappingJSONtoXML.sjs",
+  "module-db": "%%mlModulesDbName%%",
+  "module-root": "/",
+  "enabled": true,
+  "recursive": true,
+  "task-priority": "normal",
+  "permission": [
+    {
+      "role-name": "%%mlFlowDeveloperRole%%",
+      "capability": "update"
+    },
+    {
+      "role-name": "%%mlFlowOperatorRole%%",
+      "capability": "read"
+    },
+    {
+      "role-name": "data-hub-developer",
+      "capability": "update"
+    },
+    {
+      "role-name": "data-hub-operator",
+      "capability": "read"
+    }
+  ]
+}

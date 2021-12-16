@@ -1,13 +1,218 @@
 {
   "name" : "mastering",
+  "description" : "",
   "batchSize" : 100,
   "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
   "steps" : {
     "1" : {
-      "stepId" : "matching-matching"
+      "name" : "matching",
+      "description" : "",
+      "options" : {
+        "stepUpdate" : false,
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"MapWat\"])",
+        "acceptsBatch" : true,
+        "targetEntity" : "WebSite",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "matching", "WebSite" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "matchOptions" : {
+          "propertyDefs" : {
+            "property" : [ {
+              "localname" : "host",
+              "name" : "host"
+            }, {
+              "localname" : "twitter",
+              "name" : "twitter"
+            }, {
+              "localname" : "og",
+              "name" : "og"
+            }, {
+              "localname" : "fb",
+              "name" : "fb"
+            }, {
+              "localname" : "google",
+              "name" : "google"
+            } ]
+          },
+          "algorithms" : {
+            "algorithm" : [ {
+              "name" : "double-metaphone",
+              "function" : "double-metaphone",
+              "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+              "at" : "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy"
+            }, {
+              "name" : "thesaurus",
+              "function" : "thesaurus",
+              "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+              "at" : "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy"
+            }, {
+              "name" : "zip-match",
+              "function" : "zip-match",
+              "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+              "at" : "/com.marklogic.smart-mastering/algorithms/zip.xqy"
+            }, {
+              "name" : "standard-reduction",
+              "function" : "standard-reduction"
+            } ]
+          },
+          "collections" : {
+            "content" : [ ]
+          },
+          "scoring" : {
+            "add" : [ {
+              "propertyName" : "host",
+              "weight" : "10"
+            }, {
+              "propertyName" : "twitter",
+              "weight" : "8"
+            }, {
+              "propertyName" : "og",
+              "weight" : "8"
+            }, {
+              "propertyName" : "fb",
+              "weight" : "8"
+            }, {
+              "propertyName" : "google",
+              "weight" : "8"
+            } ],
+            "expand" : [ ],
+            "reduce" : [ ]
+          },
+          "actions" : {
+            "action" : [ ]
+          },
+          "thresholds" : {
+            "threshold" : [ {
+              "above" : "18",
+              "label" : "merge",
+              "action" : "merge"
+            } ]
+          },
+          "tuning" : {
+            "maxScan" : 200
+          }
+        },
+        "sourceCollection" : "MapWat",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-matching",
+      "stepDefinitionType" : "MATCHING"
     },
     "2" : {
-      "stepId" : "merging-merging"
+      "name" : "merging",
+      "description" : "",
+      "options" : {
+        "stepUpdate" : false,
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"datahubMasteringMatchSummary-WebSite\"])",
+        "acceptsBatch" : false,
+        "targetEntity" : "WebSite",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "merging", "WebSite" ],
+        "mergeOptions" : {
+          "matchOptions" : "",
+          "propertyDefs" : {
+            "properties" : [ {
+              "localname" : "id",
+              "name" : "id"
+            }, {
+              "localname" : "server",
+              "name" : "server"
+            }, {
+              "localname" : "host",
+              "name" : "host"
+            }, {
+              "localname" : "fb",
+              "name" : "fb"
+            }, {
+              "localname" : "date",
+              "name" : "date"
+            }, {
+              "localname" : "og",
+              "name" : "og"
+            }, {
+              "localname" : "twitter",
+              "name" : "twitter"
+            }, {
+              "localname" : "google",
+              "name" : "google"
+            } ],
+            "namespaces" : { }
+          },
+          "algorithms" : {
+            "stdAlgorithm" : {
+              "timestamp" : {
+                "path" : "//timestamp"
+              }
+            },
+            "custom" : [ ],
+            "collections" : { }
+          },
+          "mergeStrategies" : [ ],
+          "merging" : [ {
+            "propertyName" : "id",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "server",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "host",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "fb",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "date",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "og",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "twitter",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "google",
+            "maxValues" : "1",
+            "sourceWeights" : [ ]
+          } ]
+        },
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "sourceCollection" : "datahubMasteringMatchSummary-WebSite",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 1,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-merging",
+      "stepDefinitionType" : "MERGING"
     }
   }
 }

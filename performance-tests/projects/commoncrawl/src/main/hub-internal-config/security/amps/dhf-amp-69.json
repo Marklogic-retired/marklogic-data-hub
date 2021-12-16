@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/smart-mastering/survivorship/merging",
+  "local-name" : "locked-uris",
+  "document-uri" : "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "rest-reader-internal" ]
+}

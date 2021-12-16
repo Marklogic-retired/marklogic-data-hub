@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-prune-provenance",
+  "action": "http://marklogic.com/data-hub/privileges/prune-provenance",
+  "kind": "execute"
+}

@@ -1,10 +1,42 @@
 {
   "name" : "mapping",
+  "description" : "null",
   "batchSize" : 100,
   "threadCount" : 32,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
   "steps" : {
     "1" : {
-      "stepId" : "MapWat-mapping"
+      "name" : "MapWat",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.andQuery([cts.collectionQuery([\"WebPage\"]), cts.jsonPropertyValueQuery(\"WARC-Type\", \"response\")])",
+        "mapping" : {
+          "name" : "mapping-MapWat",
+          "version" : 0
+        },
+        "targetEntity" : "WebSite",
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "MapWat", "WebSite" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "validateEntity" : false,
+        "sourceCollection" : "",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
     }
   }
 }

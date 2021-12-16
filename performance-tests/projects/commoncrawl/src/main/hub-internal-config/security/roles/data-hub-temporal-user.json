@@ -1,0 +1,16 @@
+{
+  "role-name": "data-hub-temporal-user",
+  "description": "Permits temporal operations on documents",
+  "privilege": [
+    {
+      "privilege-name": "temporal:document-protect",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-document-protect",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "temporal:statement-set-system-time",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-statement-set-system-time",
+      "kind": "execute"
+    }
+  ]
+}

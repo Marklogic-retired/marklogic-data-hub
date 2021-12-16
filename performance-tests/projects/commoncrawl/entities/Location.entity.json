@@ -8,31 +8,28 @@
     "Location" : {
       "required" : [ ],
       "pii" : [ ],
+      "elementRangeIndex" : [ "ip_from", "ip_to", "country_name", "region_name", "city" ],
+      "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
         "ip_from" : {
           "datatype" : "unsignedLong",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "ip_to" : {
-          "datatype" : "unsignedLong",
-          "facetable" : true
+          "datatype" : "unsignedLong"
         },
         "country_name" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "region_name" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "city" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "latitude" : {
           "datatype" : "float"

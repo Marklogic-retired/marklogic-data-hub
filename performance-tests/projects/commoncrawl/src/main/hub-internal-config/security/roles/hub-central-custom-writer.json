@@ -1,0 +1,10 @@
+{
+  "role-name": "hub-central-custom-writer",
+  "description": "Permits editing custom steps in Hub Central",
+  "role": [
+    "hub-central-custom-reader",
+    "data-hub-step-definition-writer",
+    "data-hub-common-writer",
+    "data-hub-custom-writer"
+  ]
+}

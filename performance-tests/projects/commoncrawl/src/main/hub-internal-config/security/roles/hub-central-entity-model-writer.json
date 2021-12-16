@@ -1,0 +1,40 @@
+{
+  "role-name": "hub-central-entity-model-writer",
+  "description": "Permits writing entity models in Hub Central",
+  "role": [
+    "hub-central-entity-model-reader",
+    "data-hub-entity-model-writer",
+    "data-hub-mapping-reader",
+    "data-hub-match-merge-reader",
+    "data-hub-custom-reader",
+    "data-hub-flow-reader",
+    "tde-admin"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "rest-admin",
+      "action": "http://marklogic.com/xdmp/privileges/rest-admin",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "manage",
+      "action": "http://marklogic.com/xdmp/privileges/manage",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "protect-path",
+      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "add-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/add-query-rolesets",
+      "kind": "execute"
+    }
+  ]
+}

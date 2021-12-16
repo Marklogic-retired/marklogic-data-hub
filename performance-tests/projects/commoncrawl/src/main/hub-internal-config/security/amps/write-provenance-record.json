@@ -1,0 +1,7 @@
+{
+  "namespace" : "http://marklogic.com/data-hub/dh-provenance-services",
+  "local-name" : "dhps-document-insert",
+  "document-uri" : "/data-hub/5/provenance/dh-provenance.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "ps-internal" ]
+}

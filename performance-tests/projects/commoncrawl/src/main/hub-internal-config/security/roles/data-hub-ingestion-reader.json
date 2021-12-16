@@ -1,0 +1,11 @@
+{
+  "role-name": "data-hub-ingestion-reader",
+  "description": "Permits reading an ingestion step",
+  "privilege": [
+    {
+      "privilege-name": "data-hub-read-ingestion",
+      "action": "http://marklogic.com/data-hub/privileges/read-ingestion",
+      "kind": "execute"
+    }
+  ]
+}

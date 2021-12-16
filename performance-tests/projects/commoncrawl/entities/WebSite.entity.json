@@ -8,6 +8,8 @@
     "WebSite" : {
       "required" : [ "uri", "id", "type" ],
       "pii" : [ ],
+      "elementRangeIndex" : [ "id", "server", "host", "twitter", "fb", "og", "references", "timestamp", "google" ],
+      "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
         "uri" : {
@@ -18,8 +20,7 @@
         },
         "id" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "type" : {
           "datatype" : "string",
@@ -27,51 +28,43 @@
         },
         "server" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "location" : {
           "$ref" : "#/definitions/Location"
         },
         "host" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "metadata" : {
           "$ref" : "#/definitions/Metadata"
         },
         "twitter" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "fb" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "og" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         },
         "references" : {
           "datatype" : "array",
           "items" : {
             "datatype" : "anyURI",
             "collation" : "http://marklogic.com/collation/codepoint"
-          },
-          "facetable" : true
+          }
         },
         "timestamp" : {
-          "datatype" : "dateTime",
-          "facetable" : true
+          "datatype" : "dateTime"
         },
         "google" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint",
-          "facetable" : true
+          "collation" : "http://marklogic.com/collation/codepoint"
         }
       }
     },

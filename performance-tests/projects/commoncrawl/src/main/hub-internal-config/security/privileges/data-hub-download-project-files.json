@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-download-project-files",
+  "action": "http://marklogic.com/data-hub/privileges/download-project-files",
+  "kind": "execute"
+}

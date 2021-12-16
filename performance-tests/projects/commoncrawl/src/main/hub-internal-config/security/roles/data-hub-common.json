@@ -1,0 +1,116 @@
+{
+  "role-name": "data-hub-common",
+  "description": "Contains a common set of privileges/roles needed for Data Hub 5+ operation",
+  "role": [
+    "rest-extension-user",
+    "rest-reader",
+    "data-hub-module-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "cancel-my-requests",
+      "action": "http://marklogic.com/xdmp/privileges/cancel-my-requests",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "debug-any-requests",
+      "action": "http://marklogic.com/xdmp/privileges/debug-any-requests",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "debug-my-requests",
+      "action": "http://marklogic.com/xdmp/privileges/debug-my-requests",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "my-transaction-locks",
+      "action": "http://marklogic.com/xdmp/privileges/my-transaction-locks",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "profile-my-requests",
+      "action": "http://marklogic.com/xdmp/privileges/profile-my-requests",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "sem:sparql",
+      "action": "http://marklogic.com/xdmp/privileges/sem-sparql",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "set-my-time-limit",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-set-request-time-limit-my",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "set-my-transaction-name",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-set-transaction-name-my",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "status-builtins",
+      "action": "http://marklogic.com/xdmp/privileges/status",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "term-query",
+      "action": "http://marklogic.com/xdmp/privileges/term-query",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdbc:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdbc-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke-in",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke-in",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:plan",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-plan",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:sql",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-sql",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:timestamp",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-timestamp",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:value",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-value",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:with-namespaces",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-with-namespaces",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-invoke",
+      "kind": "execute"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "role-name": "data-hub-custom-writer",
+  "description": "Permits writing a custom step",
+  "role": [
+    "data-hub-custom-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-write-custom",
+      "action": "http://marklogic.com/data-hub/privileges/write-custom",
+      "kind": "execute"
+    }
+  ]
+}

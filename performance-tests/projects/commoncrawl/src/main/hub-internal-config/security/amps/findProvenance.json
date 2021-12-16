@@ -1,0 +1,6 @@
+{
+  "local-name" : "findProvenance",
+  "document-uri" : "/data-hub/5/impl/prov.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "ps-user" ]
+}

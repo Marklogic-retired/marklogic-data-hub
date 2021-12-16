@@ -8,6 +8,8 @@
     "Metadata" : {
       "required" : [ ],
       "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
         "fetchTimeMs" : {

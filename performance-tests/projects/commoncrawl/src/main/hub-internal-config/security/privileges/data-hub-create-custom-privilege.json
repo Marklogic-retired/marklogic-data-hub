@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-create-custom-privilege",
+  "action": "http://marklogic.com/xdmp/privileges/admin/create-user-privilege/datahub.marklogic.com/custom/",
+  "kind": "execute"
+}
