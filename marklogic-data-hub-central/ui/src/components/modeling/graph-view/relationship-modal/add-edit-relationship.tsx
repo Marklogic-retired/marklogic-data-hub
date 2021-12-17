@@ -98,6 +98,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         setEmptyTargetEntity(false);
         createJoinMenu(targetEntityIdx);
       } else {
+        setOptionalCollapsed(true);
         setEmptyTargetEntity(true);
       }
     }
@@ -332,6 +333,7 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         }
         setCardinalityToggled(false);
         setOptionalCollapsed(true);
+        setJoinPropertyValue("");
         setErrorMessage("");
         setSubmitClicked(false);
       }
