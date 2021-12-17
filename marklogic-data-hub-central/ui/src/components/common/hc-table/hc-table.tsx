@@ -13,6 +13,7 @@ interface Props {
   className?: string;
   columns: any;
   data: any;
+  rowStyle?: any;
   expandedRowKeys?: number[] | string[];
   expandedContainerClassName?: string | ((record: any) => string);
   key?: string;
@@ -28,7 +29,7 @@ interface Props {
   onTableChange?: (type: string, newState: any) => void;
 }
 
-function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
+function HCTable({className, rowStyle, childrenIndent, data, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
   const expandConfig = {
     className: `${styles.expandedRowWrapper} ${props.subTableHeader ? styles.subTableNested : ""} ${childrenIndent ? styles.childrenIndentExpanded : ""}${props.expandedContainerClassName || ""}`,
     expanded: expandedRowKeys,
@@ -168,12 +169,12 @@ function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams
     }
 
     column.sortCaret = (order, _) => {
-      let carets = (<><CaretUpFill className={styles.caret} aria-label="icon: caret-up"/><CaretDownFill className={styles.caret} aria-label="icon: caret-down"/></>);
+      let carets = (<><CaretUpFill className={styles.caret} aria-label="icon: caret-up" /><CaretDownFill className={styles.caret} aria-label="icon: caret-down" /></>);
 
       if (order === "asc") {
-        carets = (<><CaretUpFill className={styles.activeCaret} aria-label="icon: caret-up" /><CaretDownFill className={styles.caret} aria-abel="icon: caret-down"/></>);
+        carets = (<><CaretUpFill className={styles.activeCaret} aria-label="icon: caret-up" /><CaretDownFill className={styles.caret} aria-abel="icon: caret-down" /></>);
       } else if (order === "desc") {
-        carets = (<><CaretUpFill className={styles.caret} aria-label="icon: caret-up" /><CaretDownFill className={styles.activeCaret} aria-label="icon: caret-down"/></>);
+        carets = (<><CaretUpFill className={styles.caret} aria-label="icon: caret-up" /><CaretDownFill className={styles.activeCaret} aria-label="icon: caret-down" /></>);
       }
       return <div className={styles.caretContainer}>{carets}</div>;
     };
@@ -207,9 +208,10 @@ function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams
       // Check DHFPROD-8040 for implementation pointers for column.filterRenderer
     }
 
-    if (column.width) {
-      column.style={width: `${column.width}px`};
+    if (column.width && !column.style) {
+      column.style = {width: `${column.width}`};
     }
+
   });
 
   let rowClasses = `hc-table_row ${rowClassName || ""}`;
@@ -224,6 +226,7 @@ function HCTable({className, childrenIndent, data, expandedRowKeys, nestedParams
       keyField={rowKey}
       bordered={false}
       data={data}
+      rowStyle={rowStyle}
       defaultSortDirection="asc"
       defaultSorted={defaultSorted}
       expandRow={expandConfig}

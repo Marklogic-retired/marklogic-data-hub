@@ -9,7 +9,7 @@
 }
 
 .matchedRow {
-    background : #39944D;
+    background: #39944d;
 }
 
 .nameColumnStyle {
@@ -17,7 +17,7 @@
 }
 
 .matchIcon {
-    background : #85BF97;
+    background: #85bf97;
     margin-left: 95%;
     width: 2vh;
     height: 2vh;
@@ -45,20 +45,37 @@
 
 .uri1 {
     font-weight: bold;
-    color: #5B69AF;
+    color: #5b69af;
     min-width: 40.5% !important;
-    max-width: 40.5% !important;;
+    max-width: 40.5% !important;
     margin-left: 20%;
 }
 
 .uri2 {
     font-weight: bold;
-    color: #5B69AF;
-     margin-right: 10%;
-     min-width: 37%;
-     max-width: 37%;
+    color: #5b69af;
+    margin-right: 10%;
+    min-width: 37%;
+    max-width: 37%;
 }
 
-.modal1400w{
+.modal1400w {
     @extend .modal1400w;
+}
+
+.compareValuesModelTable {
+    padding-top: 1rem;
+    tr {
+        th {
+            height: 54px;
+        }
+        &:hover {
+            td {
+                background-color: #e9f7fe !important;
+            }
+            th {
+                background: #fafafa !important;
+            }
+        }
+    }
 }

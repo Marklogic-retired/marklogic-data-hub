@@ -1,29 +1,30 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Table} from "antd";
 import {Modal} from "react-bootstrap";
 import "./compare-values-modal.scss";
 import styles from "./compare-values-modal.module.scss";
 import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "../../../../util/curation-context";
 import backgroundImage from "../../../../assets/white-for-dark-bg.png";
+import {HCTable} from "@components/common";
 
 interface Props {
-   isVisible: any;
-   toggleModal: (isVisible: boolean) => void;
-   previewMatchActivity: any;
-   uriInfo: any;
-   activeStepDetails: any;
-   entityProperties:any;
-   uriCompared:any;
-   entityDefinitionsArray:any;
-   uris:any
+  isVisible: any;
+  toggleModal: (isVisible: boolean) => void;
+  previewMatchActivity: any;
+  uriInfo: any;
+  activeStepDetails: any;
+  entityProperties: any;
+  uriCompared: any;
+  entityDefinitionsArray: any;
+  uris: any
 }
 
 const CompareValuesModal: React.FC<Props> = (props) => {
   let property1, property2;
   const {curationOptions} = useContext(CurationContext);
-  const [matchedProperties, setMatchedProperties] = useState<any []>([]);
-  const [compareValuesTableData, setCompareValuesTableData] = useState<any []>([]);
+  const [matchedProperties, setMatchedProperties] = useState<any[]>([]);
+  const [compareValuesTableData, setCompareValuesTableData] = useState<any[]>([]);
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
   useEffect(() => {
     if (props.isVisible && props.uriInfo) {
@@ -50,10 +51,10 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           if (name.length > 1) {
             matchedProperties.push(name[0]);
           } else {
-            for (let i=0;i<curationOptions.activeStep.stepArtifact.matchRulesets.length;i++) {
-              let ruleset=curationOptions.activeStep.stepArtifact.matchRulesets[i];
+            for (let i = 0; i < curationOptions.activeStep.stepArtifact.matchRulesets.length; i++) {
+              let ruleset = curationOptions.activeStep.stepArtifact.matchRulesets[i];
               if (ruleset.name === matchRuleset) {
-                for (let j=0;j<ruleset.matchRules.length;j++) {
+                for (let j = 0; j < ruleset.matchRules.length; j++) {
                   matchedProperties.push(ruleset.matchRules[j].entityPropertyPath);
                 }
               }
@@ -71,7 +72,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
   const getPropertyPath = (parentKeys: any, structuredTypeName: string, propertyName: string, propertyPath?: string, arrayIndex?: number, parentPropertyName?: string) => {
     let updatedPropertyPath = "";
     if (!propertyPath) {
-      if (parentPropertyName && arrayIndex !== undefined && arrayIndex >=0) {
+      if (parentPropertyName && arrayIndex !== undefined && arrayIndex >= 0) {
         parentKeys.forEach(parentsKey => {
           let key = parentsKey.split(",")[0];
           if (key === parentPropertyName) {
@@ -119,11 +120,11 @@ const CompareValuesModal: React.FC<Props> = (props) => {
     return entityTypeDefinition?.properties.map((property, index) => {
       let propertyRow: any = {};
       let counter = 0;
-      let propertyValueInURI1="";
-      let propertyValueInURI2="";
+      let propertyValueInURI1 = "";
+      let propertyValueInURI2 = "";
       if (props.uriInfo) {
-        property1=props.uriInfo[0]["result1Instance"][props.activeStepDetails.entityName];
-        property2=props.uriInfo[1]["result2Instance"][props.activeStepDetails.entityName];
+        property1 = props.uriInfo[0]["result1Instance"][props.activeStepDetails.entityName];
+        property2 = props.uriInfo[1]["result2Instance"][props.activeStepDetails.entityName];
       }
       if (property.datatype === "structured") {
         const parseStructuredProperty = (entityDefinitionsArray, property, parentDefinitionName, parentKey, parentKeys, allParentKeys, propertyPath, indexArray?: number, localParentKey?: string) => {
@@ -132,7 +133,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
             if (parentKey && !parentKeys.includes(parentKey)) {
               parentKeys.push(parentKey);
             } else {
-              parentKeys.push(property.name + "," + index + (counter+1));
+              parentKeys.push(property.name + "," + index + (counter + 1));
             }
           }
           if (localParentKey && !allParentKeys.includes(localParentKey)) {
@@ -144,17 +145,17 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           }
 
           if (parsedRef.length > 0 && parsedRef[1] === "definitions") {
-            let updatedPropertyPath= propertyPath ? propertyPath : property.name;
-            let URI1Value:any = propertyValueFromPath(updatedPropertyPath, property1);
-            let URI2Value:any = propertyValueFromPath(updatedPropertyPath, property2);
+            let updatedPropertyPath = propertyPath ? propertyPath : property.name;
+            let URI1Value: any = propertyValueFromPath(updatedPropertyPath, property1);
+            let URI2Value: any = propertyValueFromPath(updatedPropertyPath, property2);
             let arrLength = 0;
             if ((URI1Value && Array.isArray(URI1Value)) || (URI2Value && Array.isArray(URI2Value))) {
               arrLength = URI1Value.length > URI2Value.length ? URI1Value.length : URI2Value.length;
             }
             let structuredType = entityDefinitionsArray.find(entity => entity.name === parsedRef[2]);
-            let structuredTypePropertiesArray:any = [];
+            let structuredTypePropertiesArray: any = [];
             let structuredTypeProperties: any;
-            if (arrLength>0) {
+            if (arrLength > 0) {
               let parentKeysTempArray = [...parentKeys];
               for (let i = 0; i < arrLength; i++) {
                 let allParentKeysTempArray = [...allParentKeys];
@@ -195,7 +196,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
                   propertyValueInURI1: {value: propertyValueInURI1, matchedRow: false},
                   propertyValueInURI2: {value: propertyValueInURI2, matchedRow: false},
                   structured: structuredType.name,
-                  propertyName: {name: (i+1)+" "+structuredType.name, matchedRow: matchedProperties.includes(property.name)},
+                  propertyName: {name: (i + 1) + " " + structuredType.name, matchedRow: matchedProperties.includes(property.name)},
                   propertyPath: getPropertyPath(parentKeysArray, structuredType.name, structuredType.name, propertyPath, i),
                   children: structTypeProperties,
                   hasChildren: true,
@@ -264,9 +265,9 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         if (props.uriInfo !== undefined) {
           propertyValueInURI1 = property1[property.name];
           propertyValueInURI2 = property2[property.name];
-          if (propertyValueInURI1 === undefined ||  propertyValueInURI2 === undefined) {
-            propertyValueInURI1="";
-            propertyValueInURI2="";
+          if (propertyValueInURI1 === undefined || propertyValueInURI2 === undefined) {
+            propertyValueInURI1 = "";
+            propertyValueInURI2 = "";
           }
         }
         let matchedRow = !propertyValueInURI1 || !propertyValueInURI2 ? false : matchedProperties.includes(property.name);
@@ -289,48 +290,101 @@ const CompareValuesModal: React.FC<Props> = (props) => {
 
   const columns = [
     {
-      dataIndex: "propertyName",
+      dataField: "propertyName",
       key: "propertyPath",
+      title: (cell) => `${cell.name}`,
+      ellipsis: true,
       width: "20%",
-      ellipsis: true,
-      render: (text, row) => {
+      style: (property) => {
+        if (property?.matchedRow) {
+          return {
+            backgroundColor: "#85BF97",
+            width: "20%",
+            backgroundImage: "url(" + backgroundImage + ")",
+          };
+        }
         return {
-          props: {
-            style: {backgroundImage: text.matchedRow ? "url("+ backgroundImage+")" : "", backgroundColor: text.matchedRow ? "#85BF97" : ""}
-          },
-          children: <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""} aria-label={text.name}>{text.name}</span>
+          backgroundColor: "",
+          width: "20%",
         };
-      }
+      },
+      formatter: (text, row) => {
+        return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""} aria-label={text.name}>{text.name}</span>;
+      },
     },
     {
-      dataIndex: "propertyValueInURI1",
+      dataField: "propertyValueInURI1",
       key: "propertyValueInURI1",
-      width: "40%",
+      title: (cell) => `${cell.value}`,
       ellipsis: true,
-      render: (property, key) => {
+      width: "40%",
+      style: (property) => {
+        if (property?.matchedRow) {
+          return {
+            backgroundColor: "#85BF97",
+            width: "40%",
+            backgroundImage: "url(" + backgroundImage + ")",
+          };
+        }
         return {
-          props: {
-            style: {backgroundImage: property.matchedRow ? "url("+ backgroundImage+")" : "", backgroundColor: property.matchedRow ? "#85BF97" : ""}
-          },
-          children: <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>
+          backgroundColor: "",
+          width: "40%",
         };
+      },
+      formatter: (property, key) => {
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>;
       }
     },
     {
-      dataIndex: "propertyValueInURI2",
+      dataField: "propertyValueInURI2",
       key: "propertyValueInURI2",
-      width: "40%",
+      title: (cell) => `${cell.value}`,
       ellipsis: true,
-      render: (property, key) => {
+      width: "calc(40% - 50px)",
+      style: (property) => {
+        if (property?.matchedRow) {
+          return {
+            backgroundColor: "#85BF97",
+            width: "calc(40% - 50px)",
+            backgroundImage: "url(" + backgroundImage + ")",
+          };
+        }
         return {
-          props: {
-            style: {backgroundImage: property.matchedRow ? "url("+ backgroundImage+")" : "", backgroundColor: property.matchedRow ? "#85BF97" : ""}
-          },
-          children: <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>
+          backgroundColor: "",
+          width: "calc(40% - 50px)",
         };
+      },
+      formatter: (property, key) => {
+        return <span key={key} aria-label={(property.value && property.value.length > 0) ? property.value : "empty"}>{property.value}</span>;
       }
     },
   ];
+
+  const onExpand = (record, expanded, rowIndex) => {
+    let newExpandedRows = [...expandedRows];
+
+    if (expanded) {
+      if (newExpandedRows.indexOf(record.key) === -1) {
+        newExpandedRows.push(record.key);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== record.key);
+    }
+
+    setExpandedRows(newExpandedRows);
+  };
+
+  const rowStyle2 = (row) => {
+    const {propertyName} = row;
+    if (propertyName?.matchedRow) {
+      return {
+        backgroundColor: "#85BF97",
+        backgroundImage: "url(" + backgroundImage + ")",
+      };
+    }
+
+    return {};
+  };
 
   return <Modal
     show={props.isVisible}
@@ -354,14 +408,20 @@ const CompareValuesModal: React.FC<Props> = (props) => {
         <span><img src={backgroundImage} className={styles.matchIcon}></img></span>
         <span className={styles.matchIconText}>Match</span>
       </div>
-      <Table
-        dataSource={compareValuesTableData}
-        className={styles.compareValuesTable}
-        columns={columns}
-        rowKey="key"
-        //id="compareValuesTable"
-      >
-      </Table>
+      <div>
+        <HCTable columns={columns}
+          className={`compare-values-model ${styles.compareValuesModelTable}`}
+          data={compareValuesTableData}
+          onExpand={onExpand}
+          expandedRowKeys={expandedRows}
+          showExpandIndicator={{bordered: false}}
+          nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
+          childrenIndent={true}
+          pagination={true}
+          rowStyle={rowStyle2}
+          rowKey="key"
+        />
+      </div>
     </Modal.Body>
   </Modal>;
 };

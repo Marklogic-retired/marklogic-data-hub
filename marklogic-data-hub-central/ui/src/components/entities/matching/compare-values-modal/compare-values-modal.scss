@@ -15,9 +15,36 @@
 }
 
 #compareValuesTable td:nth-child(2) {
-    background-color: #D2EAE2;
+    background-color: #d2eae2;
 }
 
 #compareValuesTable td:nth-child(3) {
-    background-color: #BFC5F3;
+    background-color: #bfc5f3;
+}
+
+.react-bootstrap-table {
+    &.compare-values-model {
+        thead {
+            tr {
+                th {
+                    background-color: #e0e0e0 !important;
+                }
+            }
+        }
+        tr {
+            &:hover {
+                td {
+                    background-color: #e9f7fe !important;
+                }
+                td.reset-expansion-style {
+                    background-color: #fff !important;
+                    .hc-table_row {
+                        &:hover {
+                            background-color: #e9f7fe !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
