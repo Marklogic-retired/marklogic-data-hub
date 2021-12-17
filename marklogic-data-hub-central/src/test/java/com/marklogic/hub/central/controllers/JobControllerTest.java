@@ -52,6 +52,8 @@ public class JobControllerTest extends AbstractMvcTest {
 
     @BeforeEach
     public void setupJobs() {
+        resetDatabases();
+
         // Ensure that TDEs are installed as part as finish deployment.
         if (!initialized) {
             runAsAdmin();
