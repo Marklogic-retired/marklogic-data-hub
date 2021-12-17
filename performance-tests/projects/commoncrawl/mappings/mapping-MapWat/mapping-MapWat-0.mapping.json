@@ -1,0 +1,96 @@
+{
+  "lang" : "zxx",
+  "name" : "mapping-MapWat",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://marklogic.com/cc/WebSite-0.0.1/WebSite",
+  "sourceContext" : "/",
+  "sourceURI" : "/webpage/0/0_0.json.gz-0-126153.json",
+  "properties" : {
+    "opengraph_id" : {
+      "sourcedFrom" : "//HTML-Metadata/twitter_site"
+    },
+    "server" : {
+      "sourcedFrom" : "normalizeServer(//Headers/Server)"
+    },
+    "metadata" : {
+      "sourcedFrom" : "retrieveMetadata(//WARC-Target-URI)",
+      "targetEntityType" : "#/definitions/Metadata",
+      "properties" : {
+        "fetchTimeMs" : {
+          "sourcedFrom" : "./fetchTimeMs"
+        },
+        "languages" : {
+          "sourcedFrom" : "./languages"
+        },
+        "charsetDetected" : {
+          "sourcedFrom" : "./charset_detected"
+        },
+        "charset_detected" : {
+          "sourcedFrom" : "./charset_detected"
+        }
+      }
+    },
+    "references" : {
+      "sourcedFrom" : "retrieveLinks(//HTML-Metadata)/references"
+    },
+    "google" : {
+      "sourcedFrom" : "retrieveSocialInfo(//HTML-Metadata)/google"
+    },
+    "type" : {
+      "sourcedFrom" : "//WARC-Type"
+    },
+    "title" : {
+      "sourcedFrom" : "//Metas/Title"
+    },
+    "uri" : {
+      "sourcedFrom" : "//WARC-Target-URI"
+    },
+    "twitter" : {
+      "sourcedFrom" : "retrieveSocialInfo(//HTML-Metadata)/twitter"
+    },
+    "host" : {
+      "sourcedFrom" : "retrieveHost(//WARC-Target-URI)"
+    },
+    "og" : {
+      "sourcedFrom" : "retrieveSocialInfo(//HTML-Metadata)/og"
+    },
+    "location" : {
+      "sourcedFrom" : "retrieveLocation(//WARC-IP-Address)",
+      "targetEntityType" : "#/definitions/Location",
+      "properties" : {
+        "ip_from" : {
+          "sourcedFrom" : "./ip_from"
+        },
+        "ip_to" : {
+          "sourcedFrom" : "./ip_to"
+        },
+        "country_name" : {
+          "sourcedFrom" : "./country_name"
+        },
+        "region_name" : {
+          "sourcedFrom" : "./region_name"
+        },
+        "city" : {
+          "sourcedFrom" : "./city_name"
+        },
+        "latitude" : {
+          "sourcedFrom" : "./latitude"
+        },
+        "longitude" : {
+          "sourcedFrom" : "./longitude"
+        }
+      }
+    },
+    "id" : {
+      "sourcedFrom" : "//WARC-Record-ID"
+    },
+    "fb" : {
+      "sourcedFrom" : "retrieveSocialInfo(//HTML-Metadata)/fb"
+    },
+    "timestamp" : {
+      "sourcedFrom" : "Envelope/WARC-Header-Metadata/WARC-Date"
+    }
+  },
+  "namespaces" : { }
+}

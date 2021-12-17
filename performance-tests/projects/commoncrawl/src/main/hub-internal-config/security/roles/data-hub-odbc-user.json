@@ -1,0 +1,11 @@
+{
+  "role-name": "data-hub-odbc-user",
+  "description": "Primarily intended for supporting queries against an ODBC app server in a DHS environment",
+  "privilege": [
+    {
+      "privilege-name": "odbc:eval",
+      "action": "http://marklogic.com/xdmp/privileges/odbc-eval",
+      "kind": "execute"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "role-name": "hub-central-user",
+  "description": "This role grants access to Hub Central. It also grants read access to entity models due to many Hub Central features depending on reading entity models.",
+  "role": [
+    "data-hub-common",
+    "data-hub-entity-model-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "hub-central-login",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/login",
+      "kind": "execute"
+    }
+  ]
+}

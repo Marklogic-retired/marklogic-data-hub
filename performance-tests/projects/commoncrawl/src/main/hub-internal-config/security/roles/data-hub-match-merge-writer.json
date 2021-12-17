@@ -1,0 +1,16 @@
+{
+  "role-name": "data-hub-match-merge-writer",
+  "description": "Permits writing a matching or merging configuration",
+  "role": [
+    "data-hub-common-writer",
+    "data-hub-step-definition-reader",
+    "data-hub-match-merge-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-write-match-merge",
+      "action": "http://marklogic.com/data-hub/privileges/write-match-merge",
+      "kind": "execute"
+    }
+  ]
+}

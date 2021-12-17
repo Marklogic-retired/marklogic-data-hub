@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-entity-model-reader",
+  "description": "Permits reading entity models in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-entity-model-reader"
+  ]
+}

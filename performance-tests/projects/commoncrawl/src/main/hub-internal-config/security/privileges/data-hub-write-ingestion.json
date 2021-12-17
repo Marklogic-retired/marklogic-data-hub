@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-write-ingestion",
+  "action": "http://marklogic.com/data-hub/privileges/write-ingestion",
+  "kind": "execute"
+}

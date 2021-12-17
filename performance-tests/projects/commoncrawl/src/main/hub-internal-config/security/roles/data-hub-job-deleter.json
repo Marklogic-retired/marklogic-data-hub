@@ -1,0 +1,13 @@
+{
+  "role-name": "data-hub-job-deleter",
+  "description": "Permits deleting job documents",
+  "role": [
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-delete-jobs",
+      "action": "http://marklogic.com/data-hub/privileges/delete-jobs",
+      "kind": "execute"
+    }
+  ]
+}

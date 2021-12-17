@@ -1,0 +1,31 @@
+{
+  "role-name": "hub-central-mapping-reader",
+  "description": "Permits reading/reviewing mapping steps in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-entity-model-reader",
+    "data-hub-mapping-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "xdmp:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-eval",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-eval",
+      "kind": "execute"
+    }
+  ]
+}

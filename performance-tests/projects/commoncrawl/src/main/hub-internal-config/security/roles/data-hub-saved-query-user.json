@@ -1,0 +1,8 @@
+{
+  "role-name": "data-hub-saved-query-user",
+  "description": "Permits read, update and delete saved query documents",
+  "role": [
+    "data-hub-common-writer"
+  ],
+  "privilege": []
+}

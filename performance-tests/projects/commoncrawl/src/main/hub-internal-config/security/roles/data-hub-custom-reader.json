@@ -1,0 +1,11 @@
+{
+  "role-name": "data-hub-custom-reader",
+  "description": "Permits reading a custom step",
+  "privilege": [
+    {
+      "privilege-name": "data-hub-read-custom",
+      "action": "http://marklogic.com/data-hub/privileges/read-custom",
+      "kind": "execute"
+    }
+  ]
+}

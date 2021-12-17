@@ -1,0 +1,12 @@
+{
+  "role-name": "hub-central-curator",
+  "description": "Permits managing ingestion, mapping, match/merge steps, flows and running steps in Hub Central.",
+  "role": [
+    "hub-central-flow-writer",
+    "hub-central-load-writer",
+    "hub-central-mapping-writer",
+    "hub-central-match-merge-writer",
+    "hub-central-custom-writer",
+    "hub-central-entity-model-reader"
+  ]
+}

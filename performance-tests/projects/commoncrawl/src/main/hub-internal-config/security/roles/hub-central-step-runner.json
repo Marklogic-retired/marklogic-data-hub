@@ -1,0 +1,37 @@
+{
+  "role-name": "hub-central-step-runner",
+  "description": "Permits reading flows and running steps in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-common-writer",
+    "data-hub-flow-reader",
+    "data-hub-ingestion-reader",
+    "data-hub-job-reader",
+    "data-hub-mapping-reader",
+    "data-hub-match-merge-reader",
+    "data-hub-custom-reader",
+    "data-hub-step-definition-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-run-step",
+      "action": "http://marklogic.com/data-hub/privileges/run-step",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:eval",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-invoke",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:xslt-invoke",
+      "action": "http://marklogic.com/xdmp/privileges/xslt-invoke",
+      "kind": "execute"
+    }
+  ]
+}

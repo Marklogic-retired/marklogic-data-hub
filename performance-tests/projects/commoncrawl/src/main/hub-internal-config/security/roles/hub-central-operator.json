@@ -1,0 +1,18 @@
+{
+  "role-name": "hub-central-operator",
+  "description": "Permits operating a Data Hub application via Hub Central",
+  "role": [
+    "hub-central-user",
+    "hub-central-entity-model-reader",
+    "hub-central-load-reader",
+    "hub-central-mapping-reader",
+    "hub-central-match-merge-reader",
+    "hub-central-custom-reader",
+    "hub-central-step-runner",
+    "hub-central-saved-query-user",
+    "hub-central-entity-exporter",
+    "hub-central-job-monitor",
+    "redaction-user"
+  ],
+  "privilege": []
+}

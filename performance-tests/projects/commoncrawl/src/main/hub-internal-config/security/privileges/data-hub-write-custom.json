@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-write-custom",
+  "action": "http://marklogic.com/data-hub/privileges/write-custom",
+  "kind": "execute"
+}

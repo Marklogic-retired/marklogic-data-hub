@@ -1,0 +1,7 @@
+{
+  "role-name": "data-hub-admin",
+  "description": "Permits developing and operating a Data Hub application, along with clearing databases",
+  "role": [
+    "data-hub-developer"
+  ]
+}

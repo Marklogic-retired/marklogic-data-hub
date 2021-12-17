@@ -1,0 +1,4 @@
+{
+  "role-name": "data-hub-mapping-reader",
+  "description": "Permits reading mapping documents"
+}

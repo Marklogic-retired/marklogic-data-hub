@@ -1,0 +1,16 @@
+{
+  "role-name": "hub-central-developer",
+  "description": "Permits developing and operating a Data Hub application via Hub Central",
+  "role": [
+    "hub-central-operator",
+    "hub-central-entity-model-writer",
+    "hub-central-flow-writer",
+    "hub-central-load-writer",
+    "hub-central-mapping-writer",
+    "hub-central-custom-writer",
+    "hub-central-match-merge-writer",
+    "hub-central-downloader",
+    "hub-central-clear-user-data"
+  ],
+  "privilege": []
+}

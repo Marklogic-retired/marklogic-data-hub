@@ -1,0 +1,15 @@
+{
+  "role-name": "hub-central-saved-query-user",
+  "description": "Permits reading and writing saved query documents in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-saved-query-user"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "hub-central-save-entity-query",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/save-entity-query",
+      "kind": "execute"
+    }
+  ]
+}

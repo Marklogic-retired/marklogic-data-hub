@@ -1,0 +1,11 @@
+{
+  "lang" : "zxx",
+  "name" : "mapping2-mapping2",
+  "description" : "",
+  "version" : 0,
+  "targetEntityType" : "http://marklogic.com/cc/WebSite-0.0.1/WebSite",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties" : { },
+  "namespaces" : { }
+}

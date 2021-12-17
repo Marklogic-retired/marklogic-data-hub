@@ -1,0 +1,14 @@
+{
+  "role-name": "data-hub-job-monitor",
+  "description": "Permits access to job monitoring features in DHF",
+  "role": [
+    "data-hub-job-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-monitor-jobs",
+      "action": "http://marklogic.com/data-hub/privileges/monitor-jobs",
+      "kind": "execute"
+    }
+  ]
+}

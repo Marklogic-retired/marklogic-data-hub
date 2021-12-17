@@ -1,0 +1,21 @@
+{
+  "role-name": "hub-central-downloader",
+  "description": "Permits downloading user configuration files in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-entity-model-reader",
+    "data-hub-flow-reader",
+    "data-hub-ingestion-reader",
+    "data-hub-mapping-reader",
+    "data-hub-match-merge-reader",
+    "data-hub-custom-reader",
+    "data-hub-step-definition-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-download-project-files",
+      "action": "http://marklogic.com/data-hub/privileges/download-project-files",
+      "kind": "execute"
+    }
+  ]
+}

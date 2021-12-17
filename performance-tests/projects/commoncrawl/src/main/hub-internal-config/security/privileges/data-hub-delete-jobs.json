@@ -1,0 +1,6 @@
+{
+  "privilege-name": "data-hub-delete-jobs",
+  "action": "http://marklogic.com/data-hub/privileges/delete-jobs",
+  "kind": "execute"
+}
+

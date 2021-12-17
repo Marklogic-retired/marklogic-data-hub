@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-flow-writer",
+  "description": "Permits reading and writing to flows in Hub Central",
+  "role": [
+    "hub-central-step-runner",
+    "data-hub-flow-writer"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "role-name": "data-hub-developer",
+  "description": "Permits developing and operating a Data Hub application",
+  "role": [
+    "data-hub-operator",
+    "manage-user",
+    "ps-user",
+    "tde-admin",
+    "data-hub-module-writer",
+    "data-hub-flow-writer",
+    "data-hub-mapping-writer",
+    "data-hub-step-definition-writer",
+    "data-hub-entity-model-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "add-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/add-query-rolesets",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "any-uri",
+      "action": "http://marklogic.com/xdmp/privileges/any-uri",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "create-trigger",
+      "action": "http://marklogic.com/xdmp/privileges/create-trigger",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "database-node-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/database-node-query-rolesets",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "get-system-logs",
+      "action": "http://marklogic.com/xdmp/privileges/logs/system",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "node-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/node-query-rolesets",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "path-add-permissions",
+      "action": "http://marklogic.com/xdmp/privileges/path-add-permissions",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "path-get-permissions",
+      "action": "http://marklogic.com/xdmp/privileges/path-get-permissions",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "path-remove-permissions",
+      "action": "http://marklogic.com/xdmp/privileges/path-remove-permissions",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "path-set-permissions",
+      "action": "http://marklogic.com/xdmp/privileges/path-set-permissions",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "protect-path",
+      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-path",
+      "action": "http://marklogic.com/xdmp/privileges/remove-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/remove-query-rolesets",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "rest-admin",
+      "action": "http://marklogic.com/xdmp/privileges/rest-admin",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "temporal-admin",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-admin",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "unprotect-path",
+      "action": "http://marklogic.com/xdmp/privileges/unprotect-path",
+      "kind": "execute"
+    }
+  ]
+}

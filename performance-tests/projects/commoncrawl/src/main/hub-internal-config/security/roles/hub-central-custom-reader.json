@@ -1,0 +1,9 @@
+{
+  "role-name": "hub-central-custom-reader",
+  "description": "Permits reading/reviewing custom steps in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-custom-reader",
+    "data-hub-step-definition-reader"
+  ]
+}

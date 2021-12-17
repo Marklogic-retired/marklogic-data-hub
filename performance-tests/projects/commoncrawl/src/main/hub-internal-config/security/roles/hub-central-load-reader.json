@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-load-reader",
+  "description": "Permits reading/reviewing load steps in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-ingestion-reader"
+  ]
+}

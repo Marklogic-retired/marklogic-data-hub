@@ -1,0 +1,6 @@
+{
+  "local-name" : "updateBatch",
+  "document-uri" : "/data-hub/5/impl/jobs.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-job-internal" ]
+}
