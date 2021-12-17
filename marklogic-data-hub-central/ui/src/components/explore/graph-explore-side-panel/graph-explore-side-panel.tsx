@@ -2,7 +2,7 @@ import {faCode, faExternalLinkAlt, faThList} from "@fortawesome/free-solid-svg-i
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useContext, useState} from "react";
 import {Tab, Tabs} from "react-bootstrap";
-import {XLg} from "react-bootstrap-icons";
+import {ChevronRight, XLg} from "react-bootstrap-icons";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../../util/search-context";
 import styles from "./graph-explore-side-panel.module.scss";
@@ -110,9 +110,9 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   return (
     <div data-testid="graphSidePanel" className={styles.sidePanel}>
       <div>
-        <span className={styles.selectedEntityHeading} data-testid="entityHeading">{entityInstanceTitle} {">"} {entityInstanceLabel}</span>
+        <span className={styles.selectedEntityHeading} data-testid="entityHeading">{entityInstanceTitle} <ChevronRight className={styles.arrowRight}/> {entityInstanceLabel}</span>
         <Link to={{pathname, state}} id={"instance"} data-cy="instance">
-          <i><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></i>
+          <i><FontAwesomeIcon icon={faExternalLinkAlt} size="lg" style={{"marginTop": "-10px"}}/></i>
         </Link>
         <span>
           <i className={styles.close} aria-label={"closeGraphExploreSidePanel"} onClick={onCloseSidePanel}>

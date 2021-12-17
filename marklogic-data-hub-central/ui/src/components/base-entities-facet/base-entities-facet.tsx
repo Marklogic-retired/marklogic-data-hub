@@ -33,6 +33,8 @@ const SHOW_MINIMUM = 5;
 
 interface Props {
   setCurrentBaseEntities: (entities: any[]) => void;
+  setActiveAccordionRelatedEntities: (entity: string)=>void;
+  activeKey:any[]
 }
 
 const BaseEntitiesFacet: React.FC<Props> = (props) => {
@@ -68,6 +70,11 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     if (selected === "All Entities") {
       setEntities(["All Entities"]);
       setEntitiesList(ENTITIES);
+      setCurrentBaseEntities([]);
+      if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
+
+    } else {
+      if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     }
   };
 
@@ -116,7 +123,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
           </div>
         )}
       </div>
-      <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities">
+
+      <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (entitiesList.length > SHOW_MINIMUM) ? "block" : "none"}}>
         {(showMore) ? "<< less" : "more >>"}
       </div>
     </>
