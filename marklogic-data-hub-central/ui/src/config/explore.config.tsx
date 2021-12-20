@@ -19,4 +19,6 @@ export const graphViewConfig = {
   }
 }
 
+export const defaultIcon = "FaShapes";
+
 export const expandThresholdExceededWarning = (entityType) => (`This group of ${entityType} records cannot be fully expanded. Expanding this group will exceed the maximum threshold the graph can display. To view the records in this group, see the following table.`);

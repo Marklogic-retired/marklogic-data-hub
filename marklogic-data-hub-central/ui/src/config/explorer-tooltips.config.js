@@ -27,6 +27,17 @@ const tooltipsConfig = {
     singleNode: (entityId) => (`${entityId}
     Click to view details.`),
     singleNodeNoLabel: "Click to view details."
+  },
+  exploreSettings: {
+    exploreSettingsMenuIcon: "Explore Settings",
+    disabledManageQueryOption: "There are no saved queries.",
+    disabledEntityTypeDisplaySettingsOption: "There are no entities."
+  },
+  entityTypeDisplaySettings: {
+    color: "Select a color to associate it with the entity type throughout your project.",
+    icon: "Select an icon to associate it with nodes for the entity type throughout your project.",
+    entityLabel: "The entity label is the value from the property selected that will display on an instance of the associated entity type",
+    propertiesOnHover: "Properties on Hover appear in a tooltip when hovering over an instance of the associated entity type. This can be multiple values."
   }
 };
 
