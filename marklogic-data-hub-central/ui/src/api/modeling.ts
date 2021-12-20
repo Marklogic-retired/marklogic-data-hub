@@ -5,6 +5,10 @@ export const primaryEntityTypes = async () => {
   return await axios.get(`/api/models/primaryEntityTypes?includeDrafts=true`);
 };
 
+export const publishedEntityTypes = async () => {
+  return await axios.get(`/api/models/primaryEntityTypes`);
+};
+
 export const createEntityType = async (entityPayload: any) => {
   return await axios.post("/api/models", entityPayload);
 };

@@ -105,4 +105,11 @@
 .popoverModelInfoBody {
     padding: 0px !important;
 }
+
+.settingsIcon {
+    padding: "0px";
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
   

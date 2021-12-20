@@ -1,0 +1,60 @@
+@import "../../../theme/HCUtils.scss";
+
+.modal1400w {
+    width: 1000vw;
+  }
+  
+.headerLabel {
+    color: black;
+}
+
+.valueContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.icon{
+    margin-top: 4px;
+    font-size: 22px;
+}
+.infoIcon {
+    margin-left: 5px;
+    margin-top: -2px;
+}
+
+.editIcon {
+    font-size: 26px;
+    color: #394494;
+    background-color: #f8f8f8;
+    padding: 5px 3px 5px 3px;
+    margin-bottom: -2px;
+    margin-right: -3px;
+    cursor: pointer;
+}
+
+.editIcon:hover {
+    color: #7fade3;
+}
+
+.questionCircle {
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 8px;
+    margin-left: 10px;
+    color: #7f86b5;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  .saveButton {
+    margin-left: 5px;
+  }
+}
+
+.columnData{
+  margin-left: 10px;
+}

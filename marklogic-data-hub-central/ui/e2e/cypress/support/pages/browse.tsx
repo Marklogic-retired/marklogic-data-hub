@@ -525,8 +525,12 @@ class BrowsePage {
     this.getHCTableRows().should("have.length.gt", 0);
   }
 
+  getExploreSettingsMenuIcon() {
+    return cy.get("[aria-label=explore-settings-menu]");
+  }
+
   getManageQueriesButton() {
-    return cy.get("#manage-queries-button");
+    return cy.get("[aria-label=manageQueries]");
   }
 
   //saved query dropdown
