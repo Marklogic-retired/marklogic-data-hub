@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Tree} from "antd";
+import "rc-tree/assets/index.less";
+import Tree from "rc-tree";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import styles from "./column-selector.module.scss";
@@ -151,8 +152,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
               data-testid="popover-tree"
               className="draggable-tree"
               draggable
-              blockNode
               checkable
+              showIcon={false}
               onExpand={onExpand}
               expandedKeys={expandedKeys}
               autoExpandParent={autoExpandParent}

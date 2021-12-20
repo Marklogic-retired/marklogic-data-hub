@@ -304,7 +304,7 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
             width: calc(100% - 15px);
             margin: 0;
             padding: 3px 0 3px 5px;
-            color: #333;
+            color: $text-color;
             text-decoration: none;
             border-radius: 2px;
             cursor: pointer;
@@ -315,7 +315,7 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
                 display: none;
             }
             &:hover {
-                background-color: #e9f7fe;
+                background-color: $item-light;
             }
 
             &.rc-tree-select-tree-node-selected {
@@ -423,4 +423,126 @@ ul.rc-cascader-menu {
 }
 .rc-cascader-arrow-icon {
     font-size: 20px;
+}
+
+.rc-tree {
+    font-size: 14px;
+    .rc-tree-treenode {
+        padding: 4px 0;
+        cursor: pointer;
+        &:hover {
+            background-color: $item-light;
+        }
+        
+        span{
+
+            &.rc-tree-checkbox {
+                position: relative;
+                top: 0;
+                left: 0;
+                width: 16px;
+                height: 16px;
+                background-color: #fff;
+                border: 1px solid #d9d9d9;
+                border-radius: 2px;
+                border-collapse: separate;
+                -webkit-transition: all .3s;
+                transition: all .3s;
+                background: none;
+            }
+
+            &.rc-tree-checkbox-checked {
+                background-color: $primary;
+                border-color: $primary;
+                &::before {
+                    position: absolute;
+                    display: table;
+                    border: 2px solid #fff;
+                    width: 10px;
+                    height: 5px;
+                    border-top: 0;
+                    border-right: 0;
+                    top: 4px;
+                    left: 2px;
+                    -webkit-transform: rotate(-45deg);
+                    -ms-transform: rotate(-45deg);
+                    transform: rotate(-45deg);
+                    opacity: 1;
+                    -webkit-transition: $tree-animation;
+                    transition: $tree-animation;
+                    content: " ";
+                }
+            }
+
+            &.rc-tree-checkbox-indeterminate {                
+                &::after {
+                    position: absolute;
+                    top: 3px;
+                    left: 3px;
+                    width: 8px;
+                    height: 8px;
+                    background-color: $primary;
+                    border-radius: unset;
+                    animation: .36s ease-in-out;
+                    animation-fill-mode: backwards;
+                    content: "";
+                    visibility: inherit;
+                }
+            }
+
+            &.rc-tree-checkbox-disabled {
+                cursor: not-allowed;
+                color: $light;
+                &.rc-tree-checkbox-checked {
+                    background-color: $light;
+                    border-color: $light;
+                }
+            }
+        }
+        &.rc-tree-treenode-disabled,
+        &.rc-tree-treenode-disabled .rc-tree-node-content-wrapper {
+            cursor: not-allowed !important;
+        }
+
+        .rc-tree-switcher {
+            &.rc-tree-switcher_close {
+                background: none;
+
+                &::after {
+                    position: absolute;
+                    content: "";
+                    width: 0; 
+                    height: 0; 
+                    border-left: 6px solid $text-color;
+                    border-top: 5px solid transparent;
+                    border-bottom: 5px solid transparent; 
+                    -webkit-transition: $tree-animation;
+                    transition: $tree-animation;
+                }
+            }
+            
+            &.rc-tree-switcher_open {
+                background: none;
+                
+                &::after {
+                    position: absolute;
+                    content: "";
+                    width: 0; 
+                    height: 0; 
+                    border-left: 6px solid $text-color;
+                    border-top: 5px solid transparent;
+                    border-bottom: 5px solid transparent; 
+                    transform: rotate(90deg) scale(1);
+                    -webkit-transition: $tree-animation;
+                    transition: $tree-animation;
+                }
+            }
+        }
+    }
+
+    .rc-tree-node-selected {
+        background-color: transparent;
+        box-shadow: unset;
+        opacity: 1;
+    }
 }
