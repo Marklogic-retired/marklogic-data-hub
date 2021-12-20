@@ -10,12 +10,15 @@ import {SearchContext} from "../../util/search-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 import infoIcon from "../../assets/icon_helpInfo.png";
-import {primaryEntityTypes} from "../../api/modeling";
+import {getHubCentralConfig, primaryEntityTypes} from "../../api/modeling";
 import {ToolbarBulbIconInfo} from "../../config/tooltips.config";
 import {ArrowsAngleContract, ArrowsAngleExpand, XLg} from "react-bootstrap-icons";
-import {HCButton, HCTooltip} from "@components/common";
+import {HCTooltip} from "@components/common";
 import Popover from "react-bootstrap/Popover";
-import {OverlayTrigger} from "react-bootstrap";
+import {Dropdown, NavDropdown, OverlayTrigger} from "react-bootstrap";
+import EntityTypeDisplaySettingsModal from "@components/explore/entity-type-display-settings-modal/entity-type-display-settings-modal";
+import {UserContext} from "../../util/user-context";
+import tooltipsConfig from "../../config/explorer-tooltips.config";
 
 interface Props {
   id: string;
@@ -27,6 +30,8 @@ interface Props {
   newStepToFlowOptions: any;
 }
 
+const exploreSettingsTooltips = tooltipsConfig.exploreSettings;
+
 const Tiles: React.FC<Props> = (props) => {
   const componentIsMounted = useRef(true);
   const options = props.options;
@@ -35,11 +40,14 @@ const Tiles: React.FC<Props> = (props) => {
   const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
   const [manageQueryModal, setManageQueryModal] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+  const [exploreSettingsModal, setExploreSettingsModal] = useState(false);
 
   /*** For Manage Queries - Explore tab ****/
   const auth = useContext(AuthoritiesContext);
   const canExportQuery = auth.canExportEntityInstances();
   const isSavedQueryUser = auth.isSavedQueryUser();
+
+  const {handleError} = useContext(UserContext);
 
   const queryModal = <QueryModal
     canExportQuery={canExportQuery}
@@ -114,6 +122,66 @@ const Tiles: React.FC<Props> = (props) => {
     else setInfoVisible(false);
   };
 
+  const [hubCentralConfig, setHubCentralConfig] = useState<any>([]);
+
+  const getHubCentralConfigFromServer = async () => {
+    try {
+      const response = await getHubCentralConfig();
+      if (response["status"] === 200) {
+        setHubCentralConfig(response.data);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const openExploreSettingsModal = () => {
+    getHubCentralConfigFromServer();
+    setExploreSettingsModal(true);
+  };
+
+  const handleExploreSettingsMenu = (key) => {
+    if (key === "manageQueries") {
+      onMenuClick();
+    }
+    if (key === "entityTypeDisplaySettings") {
+      openExploreSettingsModal();
+    }
+  };
+
+  const exploreSettingsMenu = (
+    <NavDropdown
+      aria-label="explore-settings-menu"
+      id="explore-settings-menu"
+      align="end"
+      title={<HCTooltip text={exploreSettingsTooltips.exploreSettingsMenuIcon} id="explore-settings-tooltip" placement="bottom"><span aria-label="explore-settingsIcon-menu"><FontAwesomeIcon icon={faCog} className={styles.settingsIcon} size="lg" /></span></HCTooltip>}
+      onSelect={handleExploreSettingsMenu}
+    >
+      <HCTooltip aria-label="" text={savedQueries && !savedQueries.length ? exploreSettingsTooltips.disabledManageQueryOption : ""} id="manage-queries-option-tooltip" placement="top">
+        <div>
+          <Dropdown.Item eventKey="manageQueries" disabled={savedQueries && !savedQueries.length}>
+            <span aria-label={"manageQueries"}>Manage Queries</span>
+          </Dropdown.Item>
+        </div>
+      </HCTooltip>
+      <HCTooltip aria-label="" text={entityDefinitionsArray && !entityDefinitionsArray.length ? exploreSettingsTooltips.disabledEntityTypeDisplaySettingsOption : ""} id="entityTypeDisplaySettings-option-tooltip" placement="top">
+        <div>
+          <Dropdown.Item eventKey="entityTypeDisplaySettings" disabled={entityDefinitionsArray && !entityDefinitionsArray.length}>
+            <span aria-label={"entityTypeDisplaySettings"}>Entity Type Display Settings</span>
+          </Dropdown.Item>
+        </div>
+      </HCTooltip>
+    </NavDropdown>
+  );
+
+  const entityTypeDisplaySettingsModal = <EntityTypeDisplaySettingsModal
+    isVisible={exploreSettingsModal}
+    toggleModal={setExploreSettingsModal}
+    hubCentralConfig={hubCentralConfig}
+    entityDefinitionsArray={entityDefinitionsArray}
+  />;
+
+
   const renderHeader = function (props) {
     return (
       <div
@@ -156,18 +224,12 @@ const Tiles: React.FC<Props> = (props) => {
         </div>
         <div className={styles.controls}>
           {showControl("menu") ? (
-            savedQueries.length ? ( // only display if there are saved queries
-              <>
-                <div>
-                  <i className={styles.faCog} aria-label={"menu"} style={{color: options["color"]}}>
-                    <HCButton variant="outline-light" id="manage-queries-button" onClick={onMenuClick} >
-                      <FontAwesomeIcon icon={faCog} style={{color: "#394494", fontSize: "14px", paddingRight: "4px", paddingTop: "1px"}} /> Manage Queries
-                    </HCButton>
-                  </i>
-                </div>
-                {manageQueryModal && queryModal}
-              </>
-            ) : null
+            <>
+              <div>
+                {exploreSettingsMenu}
+              </div>
+              {savedQueries && savedQueries.length > 0 ? manageQueryModal && queryModal : null}
+            </>
           ) : null}
           {showControl("newTab") ? (
             <i className={styles.fa} aria-label={"newTab"} style={{color: options["controlColor"]}} onClick={onClickNewTab}>
@@ -198,6 +260,7 @@ const Tiles: React.FC<Props> = (props) => {
             </i>
           ) : null}
         </div>
+        {entityTypeDisplaySettingsModal}
       </div>
     );
   };
