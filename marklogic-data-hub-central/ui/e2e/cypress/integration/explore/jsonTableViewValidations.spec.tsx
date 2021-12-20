@@ -129,7 +129,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
     browsePage.getGreySelectedFacets("coleadams39@nutralab.com").should("exist");
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should("be.equal", 2);
@@ -222,8 +222,8 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getGreySelectedFacets("Adams Cole").should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click();
-    browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click();
+    browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").scrollIntoView().click({force: true});
+    browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").click({force: true});
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("exist");
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").should("be.checked");
     browsePage.getFacetItemCheckbox("flow", "CurateCustomerJSON").should("exist");

@@ -7,7 +7,7 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Tooltip, Table} from "antd";
+import {Tooltip} from "antd";
 import {Row, Col, Tabs, Tab} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,6 +18,7 @@ import {SearchContext} from "../util/search-context";
 import {fetchQueries} from "../api/queries";
 import {AuthoritiesContext} from "../util/authorities";
 import {ArrowLeftShort} from "react-bootstrap-icons";
+import {HCTable} from "@components/common";
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -62,7 +63,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const componentIsMounted = useRef(true);
   const authorityService = useContext(AuthoritiesContext);
   let tableView = detailPagePreferences.hasOwnProperty("tableView") ? detailPagePreferences["tableView"] : true;
-  let graphView= false;
+  let graphView = false;
   if (location.state) {
     graphView = !!location.state["graphView"];
   }
@@ -231,11 +232,16 @@ const Detail: React.FC<Props> = ({history, location}) => {
     return parsedData;
   };
 
+
   const collectionColumns = [
     {
       title: "Collection",
+      text: "Collection",
       dataIndex: "collection",
       key: "collection",
+      formatter: (_, row) => {
+        return <span>{row?.collection}</span>;
+      }
     }
   ];
   const generateCollections = (collections) => {
@@ -254,13 +260,21 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const recordMetadataColumns = [
     {
       title: "Property",
+      text: "Property",
       dataIndex: "property",
       key: "property",
+      formatter: (_, row) => {
+        return <span>{row?.property}</span>;
+      }
     },
     {
       title: "Value",
+      text: "Value",
       dataIndex: "value",
       key: "value",
+      formatter: (_, row) => {
+        return <span>{row?.value}</span>;
+      }
     }
   ];
 
@@ -281,13 +295,21 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const recordPermissionsColumns = [
     {
       title: "Role",
+      text: "Role",
       dataIndex: "role",
       key: "role",
+      formatter: (_, row) => {
+        return <span>{row?.role}</span>;
+      }
     },
     {
       title: "Capability",
+      text: "Capability",
       dataIndex: "capability",
       key: "capability",
+      formatter: (_, row) => {
+        return <span>{row?.capability}</span>;
+      }
     }
   ];
 
@@ -466,21 +488,24 @@ const Detail: React.FC<Props> = ({history, location}) => {
                       (collections) &&
                       <div className={styles.collectionsTableContainer}>
                         <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                        <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
+                        {/* <Table bordered dataSource={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" /> */}
+                        <HCTable pagination={true} data={collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" rowKey="key" />
                       </div>
                     }
                     {
                       (recordPermissions) &&
                       <div className={styles.recordPermissionsTableContainer}>
                         <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                        <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
+                        {/* <Table bordered dataSource={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" /> */}
+                        <HCTable pagination={true} data={recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" rowKey="key" />
                       </div>
                     }
                     {
                       (recordMetadata) &&
                       <div className={styles.recordMetadataTableContainer}>
                         <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                        <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
+                        {/* <Table bordered dataSource={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" /> */}
+                        <HCTable pagination={true} data={recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" rowKey="key" />
                       </div>
                     }
                     <div className={styles.documentPropertiesContainer}>
