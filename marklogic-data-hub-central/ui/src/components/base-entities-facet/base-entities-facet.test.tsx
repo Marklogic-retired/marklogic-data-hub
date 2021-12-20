@@ -10,7 +10,7 @@ describe("Base Entities Facet", () => {
   test("Render base entities", () => {
 
     const {getByLabelText} = render(
-      <BaseEntitiesFacet setCurrentBaseEntities={() => {}}/>
+      <BaseEntitiesFacet currentBaseEntities={[]} setCurrentBaseEntities={jest.fn()} setActiveAccordionRelatedEntities={jest.fn()} activeKey={["baseEntities"]} setEntitySpecificPanel={jest.fn()}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     expect(dropdown).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe("Base Entities Facet", () => {
 
   test("Render base entities dropdown options", () => {
     const {getByLabelText} = render(
-      <BaseEntitiesFacet setCurrentBaseEntities={() => {}}/>
+      <BaseEntitiesFacet currentBaseEntities={[]} setCurrentBaseEntities={jest.fn()} setActiveAccordionRelatedEntities={jest.fn()} activeKey={["baseEntities"]} setEntitySpecificPanel={jest.fn()}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     fireEvent.keyDown(dropdown, {key: "ArrowDown"});

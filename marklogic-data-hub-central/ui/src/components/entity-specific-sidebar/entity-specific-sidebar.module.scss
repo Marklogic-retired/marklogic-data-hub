@@ -1,0 +1,18 @@
+@import "../../theme/HCVariables.scss";
+
+.entityHeader {
+    padding: 8px;
+    color: $secondary-gray;
+    font-weight: bold;
+    display: flex;
+    font-size: 24px;
+}
+
+.entityHeaderIcon {
+    padding-right: 7px;
+}
+
+.entityHeaderName {
+    align-self: flex-end;
+    font-size: 14px;
+}

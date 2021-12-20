@@ -294,6 +294,10 @@ class BrowsePage {
     return cy.get("[data-cy=table-view]");
   }
 
+  getGraphView() {
+    return cy.get("[data-cy=graph-view]");
+  }
+
   clickTableView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
@@ -685,6 +689,10 @@ class BrowsePage {
 
   sliderMinimum() {
     return cy.findByTestId("numeric-slider-min");
+  }
+
+  getSearchField() {
+    return cy.get(`input[aria-label="graph-view-filter-input"]`);
   }
 }
 
