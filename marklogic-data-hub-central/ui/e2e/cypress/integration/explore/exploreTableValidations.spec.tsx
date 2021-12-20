@@ -45,8 +45,7 @@ describe("Validate table and column selector in explore", () => {
     browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click({force: true});
     browsePage.getColumnSelector().should("be.visible");
-    browsePage.getTreeItemTitle(2).should("have.class", "draggable");
-    browsePage.getTreeItem(2).should("have.class", "ant-tree-treenode-checkbox-checked");
+    browsePage.getTreeItem(2).should("have.class", "rc-tree-treenode-draggable").should("have.class", "rc-tree-treenode-checkbox-checked");
     // Validate that alert message is displayed if there is no matching definition
     browsePage.selectEntity("ProductDetail");
     cy.findByLabelText("titleNoDefinition").should("be.visible");

@@ -372,7 +372,7 @@ class BrowsePage {
 
   selectColumnSelectorProperty(name:string) {
     cy.waitUntil(() => cy.findByTestId("column-selector-popover"));
-    cy.get("li[data-testid=node-" + name + "] .ant-tree-checkbox").click({force: true});
+    cy.get("[data-testid=node-" + name + "] .rc-tree-checkbox").click({force: true});
   }
 
   getDataExportIcon() {
@@ -393,22 +393,22 @@ class BrowsePage {
   }
 
   getTreeItems() {
-    return cy.get(".popover-body ul > li");
+    return cy.get(".popover-body .rc-tree-list-holder-inner > .rc-tree-treenode");
   }
 
   getTreeItem(index: number) {
-    return cy.get(`.popover-body ul > li:nth-child(${index})`);
+    return cy.get(`.popover-body .rc-tree-list-holder-inner > .rc-tree-treenode:nth-child(${index})`);
   }
 
   getTreeItemTitle(index: number) {
-    return cy.get(`.popover-body ul > li:nth-child(${index}) span:last-child`);
+    return cy.get(`.popover-body rc-tree-list-holder-inner > .rc-tree-treenode:nth-child(${index}) span.rc-tree-title`);
   }
   getTreeItemChecked(index: number) {
-    cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).should("not.have.class", "ant-tree-checkbox-checked") ? cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
+    cy.get(`.popover-body .rc-tree-list-holder-inner > .rc-tree-treenode:nth-child(${index}) .rc-tree-checkbox`).should("not.have.class", "rc-tree-checkbox-checked") ? cy.get(`.popover-body .rc-tree-list-holder-inner > .rc-tree-treenode:nth-child(${index}) .rc-tree-checkbox`).click() : "";
   }
 
   getTreeItemUnchecked(index: number) {
-    cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).should("have.class", "ant-tree-checkbox-checked") ? cy.get(`.popover-body ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
+    cy.get(`.popover-body .rc-tree-list-holder-inner > .rc-tree-treenode:nth-child(${index}) .rc-tree-checkbox`).should("have.class", "rc-tree-checkbox-checked") ? cy.get(`.popover-body .rc-tree-list-holder-inner > .rc-tree-treenode:nth-child(${index}) .rc-tree-checkbox`).click() : "";
   }
 
   //Save queries
