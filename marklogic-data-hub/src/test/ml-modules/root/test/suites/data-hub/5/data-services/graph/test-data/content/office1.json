@@ -1,0 +1,63 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "Office"
+        }
+      ],
+      "createdOn": "2021-11-22T01:35:36.267443-08:00",
+      "createdBy": "admin"
+    },
+    "triples": [
+    ],
+    "instance": {
+      "info": {
+        "title": "Office",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Office": {
+        "officeId": 1,
+        "name": "office name",
+        "nicknames": [
+          "of1"
+        ],
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Mex"
+              ],
+              "city": "Montevideo",
+              "state": "Ohio",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "43210",
+                  "plusFour": "0241"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Keys Crescent Ln"
+            ],
+            "city": "Cincinnati",
+            "state": "Ohio",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "45206",
+                "plusFour": "6783"
+              }
+            }
+          }
+        }
+      }
+    },
+    "attachments": {
+    }
+  }
+}

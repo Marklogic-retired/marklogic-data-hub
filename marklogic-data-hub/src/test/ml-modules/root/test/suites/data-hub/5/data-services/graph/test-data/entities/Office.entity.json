@@ -1,21 +1,21 @@
 {
   "info": {
-    "title": "Customer",
+    "title": "Office",
     "version": "0.0.1",
 "baseUri": "http://example.org/",
 "draft": false
   },
   "definitions": {
-    "Customer": {
+    "Office": {
       "required": [
         "name"
       ],
       "pii": [
         "pin"
       ],
-      "primaryKey": "customerId",
+      "primaryKey": "officeId",
       "properties": {
-        "customerId": {
+        "officeId": {
           "datatype": "integer",
           "sortable": true
         },
@@ -44,11 +44,6 @@
             "datatype": "string"
           }
         },
-        "hasOffice": {
-          "datatype": "integer",
-          "relatedEntityType": "http://example.org/Office-0.0.1/Office",
-          "joinPropertyName": "officeId"
-        },
         "shipping": {
           "datatype": "array",
           "description": "Example of a multi-value property of structured values",
@@ -67,7 +62,7 @@
         "status": {
           "datatype": "string"
         },
-        "customerSince": {
+        "officeSince": {
           "datatype": "date"
         },
         "orders": {

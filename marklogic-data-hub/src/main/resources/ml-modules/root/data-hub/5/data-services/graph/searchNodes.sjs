@@ -51,25 +51,38 @@ if(query == null) {
 
 let queryObj = JSON.parse(query);
 var selectedFacets = queryObj.selectedFacets;
-
 var allEntityTypeIRIs = [];
 var entityTypeIRIs = [];
-
 start = start || 0;
 pageLength = pageLength || 1000;
+var hashmapPredicate = new Map();
 
 fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   model = model.toObject();
+  const predicateList = [];
   const entityName = model.info.title;
-
-
   const entityNameIri = entityLib.getEntityTypeId(model, entityName);
-
-
   if(selectedFacets && selectedFacets.relatedEntityTypeIds && selectedFacets.relatedEntityTypeIds.includes(entityName)) {
     allEntityTypeIRIs.push(sem.iri(entityNameIri));
-  }
+    let entityProperties = model.definitions[entityName].properties;
+    for(let entityPropertyName in entityProperties){
+      let entityPropertyValue = entityProperties[entityPropertyName];
+      if(entityPropertyValue["relatedEntityType"] != null){
+        predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
+      }else{
+        if(entityPropertyValue["items"] != null){
+          let items = entityPropertyValue["items"]
+          if(items["relatedEntityType"] != null){
+            predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
 
+          }
+        }
+      }
+    }
+    if(predicateList.length >= 1){
+      hashmapPredicate.set(entityName, predicateList);
+    }
+  }
   if (queryObj.entityTypeIds.includes(entityName)) {
     entityTypeIRIs.push(sem.iri(entityNameIri));
   }
@@ -128,12 +141,12 @@ let edges = [];
 
 result.map(item => {
 
+  let hasRelationships = false;
   let subjectLabel = item.subjectLabel;
   if (item.subjectLabel !== undefined && item.subjectLabel.toString().length === 0) {
     let subjectArr = item.subjectIRI.toString().split("/");
     subjectLabel = subjectArr[subjectArr.length - 1];
   }
-
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
   if (!nodes[item.subjectIRI]) {
@@ -153,7 +166,6 @@ result.map(item => {
   }
 
   if (item.nodeCount && item.nodeCount >= 1) {
-    //Gather object node data as if count is 1
     let objectIRI = item.firstObjectIRI.toString();
     let objectIRIArr = objectIRI.split("/");
     if (item.firstObjectLabel === null) {
@@ -162,7 +174,15 @@ result.map(item => {
     let objectLabel = item.firstObjectLabel.toString();
     let objectId = item.firstObjectIRI.toString();
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
-
+      if(item.nodeCount == 1){
+        //has predicates
+        if(hashmapPredicate.has(objectIRIArr[objectIRIArr.length - 2])){
+          const relationshipsFirstObjectCount = cts.estimate(cts.andQuery([cts.tripleRangeQuery(sem.iri(item.firstObjectIRI), hashmapPredicate.get(objectIRIArr[objectIRIArr.length - 2]), null)]));
+          if(relationshipsFirstObjectCount >= 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
+            hasRelationships = true;
+          }
+        }
+      }
     //Override if count is more than 1. We will have a node with badge.
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
@@ -170,31 +190,27 @@ result.map(item => {
       objectLabel =  entityType;
       objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
     }
-
     let edge = {};
     edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
-
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
     edge.label = edgeLabel;
     edge.from = item.subjectIRI;
     edge.to = objectId;
     edges.push(edge);
-
     if (!nodes[objectId]) {
-
       let objectNode = {};
       objectNode.id = item.firstObjectIRI;
       objectNode.label = objectLabel;
       objectNode.group = objectGroup;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
+      objectNode.hasRelationships = hasRelationships;
       nodes[objectId] = objectNode;
     }
   }
   else if (item.predicateIRI !== undefined && item.predicateIRI.toString().length > 0){
       let edge = {};
-
       let predicateArr = item.predicateIRI.toString().split("/");
       let edgeLabel = predicateArr[predicateArr.length - 1];
       edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + item.objectIRI;
@@ -203,13 +219,11 @@ result.map(item => {
       edge.to = item.objectIRI;
       edges.push(edge);
   }
-
 })
 
+
 const totalEstimate = cts.estimate(cts.andQuery([cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
-
 const nodesValues = hubUtils.getObjectValues(nodes)
-
 const response = {
   'total': totalEstimate,
   'start': start,
@@ -219,4 +233,3 @@ const response = {
 };
 
 response;
-
