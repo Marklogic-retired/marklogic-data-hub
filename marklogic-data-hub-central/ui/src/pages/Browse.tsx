@@ -27,6 +27,29 @@ import {CSSProperties} from "react";
 import GraphViewExplore from "../components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery} from "../api/queries";
+import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-specific-sidebar";
+import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
+
+//TODO: remove this, it's just for mocking porpouses and show default data en specif sidebar when non entity was selected
+const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
+const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
+const SPORTS = {name: "Sports", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
+const WORK = {name: "Work", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
+const CUSTOMERS = {name: "Customers", color: "#D5D3DD", amount: 100, filter: 1, icon: "faShoppingCart"};
+const EMPLOYEE = {name: "Employee", color: "#F0F6D9", amount: 340, icon: "faBell"};
+const ITEM = {name: "Item", color: "#D9F5F0", amount: 40, icon: "faBox"};
+const ORDERS = {name: "Orders", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
+
+const ENTITIES = [
+  {...ADDRESS, relatedEntities: []},
+  {...BACK_ACCOUNT, relatedEntities: []},
+  {...SPORTS, relatedEntities: []},
+  {...WORK, relatedEntities: []},
+  {...CUSTOMERS, relatedEntities: [ADDRESS, BACK_ACCOUNT, SPORTS, WORK, EMPLOYEE, ITEM, ORDERS]},
+  {...EMPLOYEE, relatedEntities: []},
+  {...ITEM, relatedEntities: [ADDRESS, WORK, ORDERS]},
+  {...ORDERS, relatedEntities: []}
+];
 
 
 interface Props extends RouteComponentProps<any> {
@@ -76,8 +99,33 @@ const Browse: React.FC<Props> = ({location}) => {
   const [entitiesData, setEntitiesData] = useState<any[]>([]);
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
   const [coords, setCoords] = useState<any>(undefined);
-
+  const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
+  const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
+  const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
   const [graphView, setGraphView] = useState(state && state.graphView ? true : false);
+  const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
+  const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
+  const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
+
+  const handleEntitySelected = (entity: any) => {
+    setEntitySpecificPanel(entity);
+    setShowEntitySpecificPanel(true);
+    if (currentBaseEntities.length > 0) {
+      setCurrentEntitiesIcons(currentBaseEntities);
+    } else {
+      setCurrentEntitiesIcons(ENTITIES.slice(0, 5));
+    }
+  };
+
+  const updateVisibility = (status: boolean) => {
+    setShowMainSidebar(status);
+    setShowEntitySpecificPanel(status);
+  };
+
+  const closeSpecificSidebar = () => {
+    setEntitySpecificPanel(undefined);
+    setShowEntitySpecificPanel(false);
+  };
 
   const [graphSearchData, setGraphSearchData] = useState<any[]>([]);
 
@@ -458,20 +506,42 @@ const Browse: React.FC<Props> = ({location}) => {
 
   return (
     <div className={styles.layout}>
-      <HCSider placement="left" show={true} footer={<SidebarFooter />}>
-        <Sidebar
-          facets={facets}
-          selectedEntities={searchOptions.entityTypeIds}
-          entityDefArray={entityDefArray}
-          facetRender={updateSelectedFacets}
-          checkFacetRender={updateCheckedFacets}
-          setDatabasePreferences={setDatabasePreferences}
-          greyFacets={greyFacets}
-          setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
-          hideDataHubArtifacts={hideDataHubArtifacts}
-          cardView={cardView}
-        />
-      </HCSider>
+      {showEntitySpecificPanel ?
+        <HCSider placement="left" show={showMainSidebar} width="55px">
+          <EntityIconsSidebar
+            currentBaseEntities={currentEntitiesIcons}
+            onClose={closeSpecificSidebar}
+            currentRelatedEntities={currentRelatedEntities}
+            updateSelectedEntity={setEntitySpecificPanel}
+          />
+        </HCSider>
+        : <HCSider placement="left" show={showMainSidebar} footer={<SidebarFooter />}>
+          <Sidebar
+            facets={facets}
+            selectedEntities={searchOptions.entityTypeIds}
+            entityDefArray={entityDefArray}
+            facetRender={updateSelectedFacets}
+            checkFacetRender={updateCheckedFacets}
+            setDatabasePreferences={setDatabasePreferences}
+            greyFacets={greyFacets}
+            setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
+            hideDataHubArtifacts={hideDataHubArtifacts}
+            cardView={cardView}
+            setEntitySpecificPanel={handleEntitySelected}
+            currentBaseEntities={currentBaseEntities}
+            setCurrentBaseEntities={setCurrentBaseEntities}
+            currentRelatedEntities={currentRelatedEntities}
+            setCurrentRelatedEntities={setCurrentRelatedEntities}
+          />
+        </HCSider>
+      }
+      {entitySpecificPanel &&
+        <HCSider color={entitySpecificPanel.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
+          <EntitySpecificSidebar
+            entitySelected={entitySpecificPanel}
+          />
+        </HCSider>
+      }
       <div className={styles.content} id="browseContainer">
 
         {user.error.type === "ALERT" ?
@@ -486,22 +556,15 @@ const Browse: React.FC<Props> = ({location}) => {
                 {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
                 {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
                   <span>
-                    {!graphView ? <div><SearchSummary
-                      total={totalDocuments}
-                      start={searchOptions.start}
-                      length={searchOptions.pageLength}
-                      pageSize={searchOptions.pageSize}
-                    />
-                    <div id="top-search-pagination-bar">
-                      <SearchPagination
-                        total={totalDocuments}
-                        pageNumber={searchOptions.pageNumber}
-                        pageSize={searchOptions.pageSize}
-                        pageLength={searchOptions.pageLength}
-                        maxRowsPerPage={searchOptions.maxRowsPerPage}
-                      />
-                    </div>
-                    </div> : ""
+                    {!graphView &&
+                      <div>
+                        <SearchSummary
+                          total={totalDocuments}
+                          start={searchOptions.start}
+                          length={searchOptions.pageLength}
+                          pageSize={searchOptions.pageSize}
+                        />
+                      </div>
                     }
 
                     <div className={styles.spinViews}>

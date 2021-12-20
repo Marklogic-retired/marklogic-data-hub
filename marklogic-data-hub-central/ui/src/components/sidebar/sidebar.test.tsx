@@ -21,6 +21,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
       selectedEntities={[]}
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
   });
@@ -32,6 +36,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
       selectedEntities={[]}
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
     />);
     expect(getByText("Select time")).toBeInTheDocument();
     fireEvent.keyDown(getByLabelText("date-select"), {key: "ArrowDown"});
@@ -47,6 +55,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
       selectedEntities={[]}
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
     />);
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
     userEvent.click(getByText("Hub Properties"));
@@ -60,6 +72,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
       selectedEntities={["Customer"]}
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
     />);
     expect(document.querySelector("#entity-properties .accordion-button")).toHaveAttribute("aria-expanded", "true");
     expect(document.querySelector("#hub-properties .accordion-button")).toHaveAttribute("aria-expanded", "false");
@@ -76,6 +92,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
       selectedEntities={["Customer"]}
       facetRender = {jest.fn()}
       checkFacetRender = {jest.fn()}
+      currentRelatedEntities={new Map<string, any>()}
+      setCurrentRelatedEntities={jest.fn()}
+      currentBaseEntities={[]}
+      setCurrentBaseEntities={jest.fn()}
     />);
     expect(getByText("Entity Properties")).toBeInTheDocument(); //Checking if Entity Properties label is available
 
@@ -103,6 +123,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
         setDatabasePreferences={jest.fn()}
+        currentRelatedEntities={new Map<string, any>()}
+        setCurrentRelatedEntities={jest.fn()}
+        currentBaseEntities={[]}
+        setCurrentBaseEntities={jest.fn()}
       />
     );
 
@@ -125,6 +149,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
         setDatabasePreferences={jest.fn()}
+        currentRelatedEntities={new Map<string, any>()}
+        setCurrentRelatedEntities={jest.fn()}
+        currentBaseEntities={[]}
+        setCurrentBaseEntities={jest.fn()}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -149,6 +177,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
         setDatabasePreferences={jest.fn()}
+        currentRelatedEntities={new Map<string, any>()}
+        setCurrentRelatedEntities={jest.fn()}
+        currentBaseEntities={[]}
+        setCurrentBaseEntities={jest.fn()}
       />
     );
     expect(document.querySelector("#database .accordion-button.after-indicator")).toHaveAttribute("aria-expanded", "true");
@@ -182,6 +214,10 @@ describe("Sidebar createdOn face time window dropdown", () => {
         cardView={true}
         hideDataHubArtifacts={true}
         setHubArtifactsVisibilityPreferences={jest.fn()}
+        currentRelatedEntities={new Map<string, any>()}
+        setCurrentRelatedEntities={jest.fn()}
+        currentBaseEntities={[]}
+        setCurrentBaseEntities={jest.fn()}
       />
     );
 

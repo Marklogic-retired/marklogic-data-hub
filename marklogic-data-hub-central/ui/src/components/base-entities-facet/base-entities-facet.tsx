@@ -3,20 +3,21 @@ import Select from "react-select";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {SearchContext} from "../../util/search-context";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUser} from "@fortawesome/free-solid-svg-icons";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {entitiesSorting} from "../../util/entities-sorting";
 import {HCDivider} from "@components/common";
+import * as Icons from "@fortawesome/free-solid-svg-icons";
+import {MINIMUM_ENTITIES} from "../../config/exploreSidebar";
 
-const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2};
-const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2};
-const SPORTS = {name: "Sports", color: "#E3DEEB", amount: 599};
-const WORK = {name: "Work", color: "#C9EBC4", amount: 9000};
-const CUSTOMERS = {name: "Customers", color: "#D5D3DD", amount: 100, filter: 1};
-const EMPLOYEE = {name: "Employee", color: "#F0F6D9", amount: 340};
-const ITEM = {name: "Item", color: "#D9F5F0", amount: 40};
-const ORDERS = {name: "Orders", color: "#EDD9C5", amount: 10, filter: 2};
+const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
+const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
+const SPORTS = {name: "Sports", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
+const WORK = {name: "Work", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
+const CUSTOMERS = {name: "Customers", color: "#D5D3DD", amount: 100, filter: 1, icon: "faShoppingCart"};
+const EMPLOYEE = {name: "Employee", color: "#F0F6D9", amount: 340, icon: "faBell"};
+const ITEM = {name: "Item", color: "#D9F5F0", amount: 40, icon: "faBox"};
+const ORDERS = {name: "Orders", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
 
 const ENTITIES = [
   {...ADDRESS, relatedEntities: []},
@@ -29,20 +30,21 @@ const ENTITIES = [
   {...ORDERS, relatedEntities: []}
 ];
 
-const SHOW_MINIMUM = 5;
-
 interface Props {
+  currentBaseEntities: any;
   setCurrentBaseEntities: (entities: any[]) => void;
   setActiveAccordionRelatedEntities: (entity: string)=>void;
   activeKey:any[]
+  setEntitySpecificPanel: (entity: any) => void;
 }
 
 const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
-  const {setCurrentBaseEntities} = props;
+  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities} = props;
 
   const {
     searchOptions: {baseEntities},
+    setBaseEntities,
   } = useContext(SearchContext);
 
   const [entities, setEntities] = useState<string[]>(baseEntities);
@@ -68,12 +70,15 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       setEntities(["All Entities"]);
       setEntitiesList(ENTITIES);
       setCurrentBaseEntities([]);
+      if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
       const filteredEntities = ENTITIES.filter(entity => clearSelection.includes(entity.name));
       setEntities(clearSelection);
       setEntitiesList(filteredEntities);
       setCurrentBaseEntities(filteredEntities);
+      setBaseEntities(clearSelection);
+      if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     }
   };
 
@@ -81,17 +86,22 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (!showMore) {
-      const entitiesListSlice = entitiesList.slice(0, SHOW_MINIMUM);
+      const entitiesListSlice = entitiesList.slice(0, MINIMUM_ENTITIES);
       setDisplayList(entitiesListSlice);
     } else {
       setDisplayList(entitiesList);
     }
   }, [showMore, entitiesList]);
 
+  useEffect(() => {
+    if (currentBaseEntities.length > 0) {
+      setDisplayList(currentBaseEntities);
+    }
+  }, []);
+
   const onShowMore = () => {
     setShowMore(!showMore);
   };
-
 
   return (
     <>
@@ -130,23 +140,33 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
           }),
         }}
       />
-      <div>
-        {displayList.map(({name, color, filter, amount}) =>
-          <div style={{backgroundColor: color}} className={styles.entityItem}>
-            <FontAwesomeIcon icon={faUser} className={styles.entityIcon}/>
-            <span className={styles.entityName}>{name}</span>
-            <span className={styles.entityChevron}>
-              <ChevronDoubleRight/>
-            </span>
-            <span className={styles.entityAmount}>
-              {filter && showFilter(filter)}
-              {amount}
-            </span>
-          </div>
+      <div aria-label="base-entities-selection">
+        {displayList.map(({name, color, filter, amount, icon}) => {
+          const entityIcon = Icons[icon];
+          return (
+            <div
+              key={name}
+              aria-label={`base-entities-${name}`}
+              style={{backgroundColor: color}}
+              className={styles.entityItem}
+              onClick={() => setEntitySpecificPanel({name, color, icon})}
+            >
+              <FontAwesomeIcon icon={entityIcon} className={styles.entityIcon}/>
+              <span className={styles.entityName}>{name}</span>
+              <span className={styles.entityChevron}>
+                <ChevronDoubleRight/>
+              </span>
+              <span className={styles.entityAmount}>
+                {filter && showFilter(filter)}
+                {amount}
+              </span>
+            </div>
+          );
+        }
         )}
       </div>
 
-      <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (entitiesList.length > SHOW_MINIMUM) ? "block" : "none"}}>
+      <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (entitiesList.length > MINIMUM_ENTITIES) ? "block" : "none"}}>
         {(showMore) ? "<< less" : "more >>"}
       </div>
     </>

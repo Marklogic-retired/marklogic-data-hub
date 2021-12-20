@@ -1,0 +1,44 @@
+@import "../../theme/HCVariables.scss";
+
+.entityIconList, .relatedEntityIconList {
+    color: $secondary-gray;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    font-size: 15px;
+}
+
+.entityIconList {
+    margin-top: 12px;
+}
+
+.relatedEntityIconList {
+    margin-top: 4px;
+}
+
+.chevronBack {
+    font-size: 16px;
+    align-self: center;
+    padding-block: 1px;
+    margin-bottom: 10px;
+    color: $secondary-gray;
+}
+
+.entityIconListItem{
+    padding-block: 12px;
+    padding-left: 17px;
+    margin-block: 3px;
+    align-self: end;
+    width: 50px;
+    font-size: 14px;
+    border-radius: 3px 0px 0px 3px;
+    cursor: pointer;
+}
+
+.separator {
+    margin-left: 14px;
+    margin-top: 4px;
+    width: 51%;
+    border-bottom: 1px solid $separator;
+}

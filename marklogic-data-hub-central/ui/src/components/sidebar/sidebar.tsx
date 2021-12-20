@@ -36,6 +36,11 @@ interface Props {
   setHubArtifactsVisibilityPreferences: any;
   hideDataHubArtifacts: boolean;
   cardView: boolean;
+  setEntitySpecificPanel: (entity: any) => void;
+  currentBaseEntities: any[];
+  setCurrentBaseEntities: (entity: any[]) => void;
+  currentRelatedEntities: Map<string, any>;
+  setCurrentRelatedEntities: (entity: Map<string, any>) => void;
 }
 
 const PLACEHOLDER: string = "Select a saved query";
@@ -62,8 +67,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
   const [currentQueryName, setCurrentQueryName] = useState(searchOptions.sidebarQuery);
-  const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
-  const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
 
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
@@ -79,18 +82,18 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     let final = new Map();
-    currentBaseEntities.forEach(base => {
+    props.currentBaseEntities.forEach(base => {
       base.relatedEntities.map(entity => {
         final.set(entity.name, {...entity, checked: true});
       });
     });
-    setCurrentRelatedEntities(final);
-  }, [currentBaseEntities]);
+    props.setCurrentRelatedEntities(final);
+  }, [props.currentBaseEntities]);
 
 
   const onSettingCheckedList = (list) => {
-    setIndeterminate(!!list.length && list.length < currentRelatedEntities.size);
-    setCheckAll(list.length === currentRelatedEntities.size);
+    setIndeterminate(!!list.length && list.length < props.currentRelatedEntities.size);
+    setCheckAll(list.length === props.currentRelatedEntities.size);
   };
 
   const onCheckAllChanges = ({target}) => {
@@ -98,10 +101,10 @@ const Sidebar: React.FC<Props> = (props) => {
     setIndeterminate(false);
     setCheckAll(checked);
     let final = new Map();
-    Array.from(currentRelatedEntities.values()).forEach(entity => {
+    Array.from(props.currentRelatedEntities.values()).forEach(entity => {
       final.set(entity.name, {...entity, checked});
     });
-    setCurrentRelatedEntities(final);
+    props.setCurrentRelatedEntities(final);
   };
 
 
@@ -137,7 +140,11 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties", "baseEntities"]);
+        props.selectedEntities.length === 1
+          ? setActiveKey(["database", "entityProperties"])
+          : activeKey.includes("related-entities")
+            ? setActiveKey(["database", "hubProperties", "entityProperties", "baseEntities", "related-entities"])
+            : setActiveKey(["database", "hubProperties", "entityProperties", "baseEntities"]);
       }
 
       let entityFacets: any[] = [];
@@ -578,7 +585,6 @@ const Sidebar: React.FC<Props> = (props) => {
     </Menu>
   );
 
-
   const panelTitle = (title, tooltipTitle) => {
     return (
       <div className={styles.panelTitle}>
@@ -698,11 +704,17 @@ const Sidebar: React.FC<Props> = (props) => {
             <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
           </div>
           <Accordion.Body>
-            <BaseEntitiesFacet setCurrentBaseEntities={setCurrentBaseEntities} setActiveAccordionRelatedEntities={setActiveAccordion} activeKey={activeKey}/>
+            <BaseEntitiesFacet
+              setCurrentBaseEntities={props.setCurrentBaseEntities}
+              setEntitySpecificPanel={props.setEntitySpecificPanel}
+              currentBaseEntities={props.currentBaseEntities}
+              setActiveAccordionRelatedEntities={setActiveAccordion}
+              activeKey={activeKey}
+            />
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-      {currentRelatedEntities.size > 0 &&
+      {props.currentRelatedEntities.size > 0 &&
         <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
           <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
             <div className={"p-0 d-flex"}>
@@ -710,7 +722,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 panelTitle(<Checkbox indeterminate={indeterminate} onChange={onCheckAllChanges} checked={checkAll}> related entities types </Checkbox>, exploreSidebar.relatedEntities)}</Accordion.Button>
             </div>
             <Accordion.Body>
-              <RelatedEntitiesFacet currentRelatedEntities={currentRelatedEntities} setCurrentRelatedEntities={setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} />
+              <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
