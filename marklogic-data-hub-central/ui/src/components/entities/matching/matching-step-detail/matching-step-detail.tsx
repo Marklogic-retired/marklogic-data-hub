@@ -109,32 +109,25 @@ const MatchingStepDetail: React.FC = () => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
       const matchingStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
       if (matchingStepArtifact.matchRulesets) {
-        if (matchingStepArtifact.matchRulesets.length > 0) {
-          let rulesetItems = matchingStepArtifact.matchRulesets.map((item, id) => ({
-            id: id,
-            start: item.weight,
-            reduce: item.reduce ? item.reduce : false,
-            value: item.name + ":" + item.weight.toString()
-          }));
-          setRulesetItems(rulesetItems);
-          toggleMoreRulesetText(false);
-        } else {
-          toggleMoreRulesetText(true);
-        }
+        let rulesetItems = matchingStepArtifact.matchRulesets.map((item, id) => ({
+          id: id,
+          start: item.weight,
+          reduce: item.reduce ? item.reduce : false,
+          value: item.name + ":" + item.weight.toString()
+        }));
+        setRulesetItems(rulesetItems);
+        toggleMoreRulesetText(false);
+        if (matchingStepArtifact.matchRulesets.length === 0) { toggleMoreRulesetText(true); }
       }
       if (matchingStepArtifact.thresholds) {
-        if (matchingStepArtifact.thresholds.length > 0) {
-          let thresholdItems = matchingStepArtifact.thresholds.map((item, id) => ({
-            id: id,
-            start: item.score,
-            value: item.thresholdName + " - " + item.action + ":" + item.score.toString(),
-          }));
-
-          setThresholdItems(thresholdItems);
-          toggleMoreThresholdText(false);
-        } else {
-          toggleMoreThresholdText(true);
-        }
+        let thresholdItems = matchingStepArtifact.thresholds.map((item, id) => ({
+          id: id,
+          start: item.score,
+          value: item.thresholdName + " - " + item.action + ":" + item.score.toString(),
+        }));
+        setThresholdItems(thresholdItems);
+        toggleMoreThresholdText(false);
+        if (matchingStepArtifact.thresholds.length === 0) { toggleMoreThresholdText(true); }
       }
       setMatchingStep(matchingStepArtifact);
       handleMatchingActivity(matchingStepArtifact.name);
