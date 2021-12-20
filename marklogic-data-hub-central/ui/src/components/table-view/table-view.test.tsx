@@ -16,7 +16,7 @@ describe("Table view component", () => {
     });
 
     test("table view renders", () => {
-      expect(wrapper.find(".ant-table-tbody")).toHaveLength(1);
+      expect(wrapper.find(".react-bootstrap-table")).toHaveLength(1);
     });
   });
   // TODO add XML test cases

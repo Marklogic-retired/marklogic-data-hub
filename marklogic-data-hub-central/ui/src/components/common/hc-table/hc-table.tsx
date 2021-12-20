@@ -51,12 +51,12 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
 
       return <HCButton data-testid={`${rowKey}-expand-icon`} aria-label="Expand row" variant="outline-light" className={`${styles.expandButtonIndicator} ${bordered ? styles.borderedIndicator : ""}`}>
         {expanded ?
-          <ChevronDown className={styles.iconIndicator} aria-label="down"/> :
-          <ChevronRight className={styles.iconIndicator} aria-label="right"/>}
+          <ChevronDown className={styles.iconIndicator} aria-label="down" /> :
+          <ChevronRight className={styles.iconIndicator} aria-label="right" />}
       </HCButton>;
     },
     expandHeaderColumnRenderer: () => "",
-    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.map(row => typeof rowKey === "string" && row[rowKey] && !row.children && row[rowKey]).filter(row => !!row),
+    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof rowKey === "string" && !row.children).map(element => typeof rowKey === "string" && typeof element[rowKey] !== undefined && element[rowKey]),
   };
 
   const generateIndentList = (data, indentLevel, indentArray) => {
@@ -270,7 +270,7 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseInde
   const nextColumnHasStaticWidth = headerColumns[0].width && !`${headerColumns[0].width}`.includes("%");
 
   let expandKey = keyUtil === "rowKey" ? row.rowKey : row.key;
-  let expandIcon = row.children ? <div onClick={() => { isExpanded(expandKey); } }>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</div>: null;
+  let expandIcon = row.children ? <div onClick={() => { isExpanded(expandKey); }}>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</div> : null;
   let indentation = 0;
   if (indentList[expandKey]) {
     indentation = indentList[expandKey];

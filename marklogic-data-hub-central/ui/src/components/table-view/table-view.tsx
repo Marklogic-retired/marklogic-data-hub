@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Table} from "antd";
 import styles from "./table-view.module.scss";
+import {HCTable} from "@components/common";
 
 interface Props {
   document: any;
@@ -10,16 +10,16 @@ interface Props {
 }
 
 const TableView: React.FC<Props> = (props) => {
-  const [expanded, setExpanded] = useState(false);
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
-  let data : any[] = [];
+  let data: any[] = [];
   let counter = 0;
   let expandRow: number[] = [];
   let currRow: number[] = [];
 
 
   const parseJson = (obj: Object) => {
-    let parsedData : any[] = [];
+    let parsedData: any[] = [];
     for (let i in obj) {
       if (props.location && JSON.stringify(props.location) === JSON.stringify(obj[i])) {
         expandRow = currRow.concat(expandRow);
@@ -40,46 +40,55 @@ const TableView: React.FC<Props> = (props) => {
     data = parseJson(props.document);
   }
 
-  const handleClick = () => {
-    expanded === false ? setExpanded(true) : setExpanded(false);
-  };
-
-
   const columns = [
     {
+      text: "Property",
       title: "Property",
-      dataIndex: "property",
+      dataField: "property",
+      key: "property",
       width: props.isEntityInstance ? "20%" : "40%",
+      formatter: (value) => {
+        return <span>{value}</span>;
+      }
     },
     {
+      text: "Value",
       title: "Value",
-      dataIndex: "value",
-      render: (value: string) => {
-        const pStyle = {
-          whiteSpace: !expanded ? "nowrap" : "normal",
-          textOverflow: "ellipsis",
-          overflow: "hidden",
-          maxWidth: "150ex",
-          cursor: "pointer",
-          padding: "0",
-          margin: "0"
-        } as React.CSSProperties;
-        return <p onClick={() => handleClick()} style={pStyle}>{value}</p>;
+      dataField: "value",
+      key: "value",
+      formatter: (value) => {
+        return <span>{value}</span>;
       },
       width: props.isEntityInstance ? "80%" : "60%",
     }
   ];
 
+  const onExpand = (record, expanded) => {
+    let newExpandedRows = [...expandedRows];
+
+    if (expanded) {
+      if (newExpandedRows.indexOf(record.key) === -1) {
+        newExpandedRows.push(record.key);
+      }
+    } else {
+      newExpandedRows = newExpandedRows.filter(row => row !== record.key);
+    }
+
+    setExpandedRows(newExpandedRows);
+  };
 
   return (
-    <Table
-      className={props.isEntityInstance ? "document-table-demo": styles.tableViewNonEntity}
-      rowKey="key"
-      dataSource={data}
-      columns={columns}
-      pagination={false}
+    <HCTable columns={columns}
+      className={props.isEntityInstance ? "document-table-demo" : styles.tableViewNonEntity}
+      data={data}
+      onExpand={onExpand}
+      expandedRowKeys={expandedRows}
+      showExpandIndicator={{bordered: true}}
+      nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
+      childrenIndent={true}
       data-cy="document-table"
-      defaultExpandedRowKeys={expandRow}
+      rowKey="key"
+      showHeader={true}
     />
   );
 };

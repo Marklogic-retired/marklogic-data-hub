@@ -33,7 +33,7 @@ class DetailPage {
   }
 
   getDocumentTable() {
-    return cy.get("[data-cy=document-table]");
+    return cy.get(".document-table-demo");
   }
 
   getDocumentJSON() {
@@ -49,15 +49,15 @@ class DetailPage {
   }
 
   getDocumentCollections() {
-    return cy.findByTestId("collections-table");
+    return cy.get(`[class^="Detail_collectionsTable"]`);
   }
 
   getDocumentPermissions() {
-    return cy.findByTestId("record-permissions-table");
+    return cy.get(`[class^="Detail_recordPermissionsTable"]`);
   }
 
   getDocumentMetadataValues() {
-    return cy.findByTestId("record-metadata-table");
+    return cy.get(`[class^="Detail_recordMetadataTable"]`);
   }
 
   getDocumentProperties() {

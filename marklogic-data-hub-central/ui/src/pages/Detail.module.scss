@@ -31,6 +31,7 @@
 .detailContent {
     background: #fff;
     padding: 18px 36px;
+    height: 100%;
 }
 
 ul.tabsContainer {
@@ -171,6 +172,13 @@ button.tabActive {
 
 .collectionsTable {
     padding-top: 5px;
+    th {
+        color: $text-color !important;
+        background-color: $bg-clean !important;
+        &:hover {
+            background-color: $bg-clean !important;
+        }
+    }
 }
 
 .recordMetadataTableLabel {
@@ -180,6 +188,13 @@ button.tabActive {
 
 .recordMetadataTable {
     padding-top: 5px;
+    th {
+        color: $text-color !important;
+        background-color: $bg-clean !important;
+        &:hover {
+            background-color: $bg-clean !important;
+        }
+    }
 }
 .recordPermissionsTableLabel {
     padding-top: 20px;
@@ -188,6 +203,13 @@ button.tabActive {
 
 .recordPermissionsTable {
     padding-top: 5px;
+    th {
+        color: $text-color !important;
+        background-color: $bg-clean !important;
+        &:hover {
+            background-color: $bg-clean !important;
+        }
+    }
 }
 
 .provTableLabel {
@@ -234,5 +256,7 @@ button.tabActive {
 }
 
 .documentContainer {
-    overflow: auto;
+    height: calc(100% - 144px);
+    overflow-y: auto;
+    overflow-x: hidden;
 }

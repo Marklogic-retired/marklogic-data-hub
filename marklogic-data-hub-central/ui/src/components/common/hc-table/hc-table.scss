@@ -24,7 +24,8 @@
         .expand-cell-header {
             background: #e0e0e0 !important;
         }
-        &.side-panel th:nth-child(2), &.side-panel td:nth-child(2) {
+        &.side-panel th:nth-child(2),
+        &.side-panel td:nth-child(2) {
             padding-left: 0px !important;
         }
         &.side-panel .reset-expansion-style {
@@ -47,7 +48,7 @@
 
     th:first-child {
         border-top-left-radius: 4px;
-    } 
+    }
     th:last-child {
         border-top-right-radius: 4px;
     }
@@ -122,5 +123,17 @@
     }
     .hc-table_row:not(:last-child) {
         border-bottom: 1px solid #e8e8e8;
+    }
+}
+
+.document-table-demo {
+    .table {
+        thead {
+            tr {
+                th {
+                    background: $bg-clean !important;
+                }
+            }
+        }
     }
 }
