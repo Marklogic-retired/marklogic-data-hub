@@ -137,3 +137,16 @@
         }
     }
 }
+
+.job-results-table {
+    width: max-content;
+    .table {
+        thead {
+            tr {
+                th {
+                    background: $bg-clean !important;
+                }
+            }
+        }
+    }
+}

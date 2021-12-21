@@ -1,7 +1,7 @@
 import "cypress-wait-until";
 class MonitorPage {
   getTableRows() {
-    return cy.get(".ant-table-row");
+    return cy.get(".hc-table_row");
   }
   waitForMonitorTableToLoad() {
     cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
@@ -21,9 +21,9 @@ class MonitorPage {
     cy.get(`[data-testid=${facetType}-facet] input`).eq(index).then(($btn) => {
       let facet = $btn.val();
       cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]").should("exist");
-      cy.get(".ant-table-row").then(($row) => {
+      cy.get(".hc-table_row").then(($row) => {
         for (let i=0; i < $row.length; i++) {
-          cy.get(".ant-table-row").eq(i).should("contain.text", facet);
+          cy.get(".hc-table_row").eq(i).should("contain.text", facet);
         }
       });
       cy.findByTestId(`clear-${facet}`).trigger("mouseover").dblclick({force: true});

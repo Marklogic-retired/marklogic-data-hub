@@ -1,14 +1,13 @@
 import React, {useContext, useState} from "react";
 import styles from "./job-results-table-view.module.scss";
 import {dateConverter, renderDuration} from "../../util/date-conversion";
-import {Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faColumns} from "@fortawesome/free-solid-svg-icons";
 import "./job-results-table-view.scss";
 import {MonitorContext} from "../../util/monitor-context";
 import JobResponse from "../job-response/job-response";
 import {CheckCircleFill, ClockFill, XCircleFill} from "react-bootstrap-icons";
-import {HCButton, HCCheckbox, HCDivider, HCTooltip} from "@components/common";
+import {HCButton, HCCheckbox, HCDivider, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
 
@@ -38,37 +37,37 @@ const JobResultsTableView = (props) => {
 
   const MANDATORY_HEADERS = [
     {
-      title: "Job ID",
-      dataIndex: "jobId",
+      text: "Job ID",
+      dataField: "jobId",
       visible: true,
       width: 200,
-      sortable: false,
-      render: (jobId) => {
+      sort: false,
+      formatter: (jobId) => {
         return <><a onClick={() => handleOpenJobResponse(jobId)}>{jobId}</a></>;
       }
     },
     {
-      title: "Step Name",
-      dataIndex: "stepName",
+      text: "Step Name",
+      dataField: "stepName",
       visible: true,
       width: 200,
-      sortable: true,
+      sort: true,
     },
     {
-      title: "Step Type",
-      dataIndex: "stepDefinitionType",
+      text: "Step Type",
+      dataField: "stepDefinitionType",
       visible: true,
       width: 150,
-      sortable: true
+      sort: true
     },
     {
-      title: "Status",
-      dataIndex: "jobStatus",
+      text: "Status",
+      dataField: "jobStatus",
       visible: true,
       width: 100,
-      sortable: false,
+      sort: false,
       align: "center",
-      render: (status) => {
+      formatter: (status) => {
         if (status === "running" || /^running/.test(status)) {
           return <>
             <HCTooltip text="Running" id="running-tooltip" placement="bottom">
@@ -92,59 +91,59 @@ const JobResultsTableView = (props) => {
       }
     },
     {
-      title: "Entity",
-      dataIndex: "entityName",
+      text: "Entity",
+      dataField: "entityName",
       visible: true,
       width: 100,
-      sortable: true
+      sort: true
     },
     {
-      title: "Start Time",
-      dataIndex: "startTime",
+      text: "Start Time",
+      dataField: "startTime",
       visible: true,
       width: 150,
-      sortable: true,
-      render: ((startTime:string) => dateConverter(startTime))
+      sort: true,
+      formatter: ((startTime:string) => dateConverter(startTime))
     },
     {
-      title: "Duration",
-      dataIndex: "duration",
+      text: "Duration",
+      dataField: "duration",
       visible: true,
-      sortable: false,
+      sort: false,
       width: 100,
-      render: ((duration:string) => renderDuration(duration))
+      formatter: ((duration:string) => renderDuration(duration))
     },
     {
-      title: "Records Written",
-      dataIndex: "successfulItemCount",
+      text: "Records Written",
+      dataField: "successfulItemCount",
       visible: true,
       width: 150,
-      sortable: false,
+      sort: false,
       align: "right",
     }
   ];
 
   const CONFIGURABLE_HEADERS = [
     {
-      title: "User",
-      dataIndex: "user",
+      text: "User",
+      dataField: "user",
       visible: true,
       width: 150,
-      sortable: false
+      sort: false
     },
     {
-      title: "Flow Name",
-      dataIndex: "flowName",
+      text: "Flow Name",
+      dataField: "flowName",
       visible: true,
       width: 150,
-      sortable: false
+      sort: false
     }
   ];
 
   const DEFAULT_JOB_RESULTS_HEADER = [...MANDATORY_HEADERS, ...CONFIGURABLE_HEADERS];
-  const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item => (item.sortable ?{...item, sorter: (a, b, sortOrder) => {
+  const allColumnHeaders = DEFAULT_JOB_RESULTS_HEADER.map(item => (item.sort ?{...item, sorter: (a, b, sortOrder) => {
     if (sorting === true) {
-      setMonitorSortOrder(item.dataIndex, sortOrder);
+      setMonitorSortOrder(item.dataField, sortOrder);
       sorting = false;
     }
     return a-b; // DHFPROD-7711 MLTable -> Table
@@ -167,7 +166,7 @@ const JobResultsTableView = (props) => {
   };
 
   const onApply = () => {
-    const checkedColumns = CONFIGURABLE_HEADERS.filter(columnHeader => checkedAttributes[columnHeader.dataIndex]);
+    const checkedColumns = CONFIGURABLE_HEADERS.filter(columnHeader => checkedAttributes[columnHeader.dataField]);
     const filteredColumns =  [...MANDATORY_HEADERS, ...checkedColumns];
     setCurrentColumnHeaders(filteredColumns);
     setPreviousCheckedAttributes({...checkedAttributes});
@@ -227,10 +226,11 @@ const JobResultsTableView = (props) => {
         </div>
       </div>
       <div className={styles.tabular}>
-        <Table bordered
-          data-testid="job-result-table"
+        <HCTable
+          className="job-results-table" 
+          data-testid="job-results-table"
           rowKey="startTime"
-          dataSource={props.data}
+          data={props.data}
           pagination={false}
           columns={currentColumnHeaders}
         />
