@@ -44,7 +44,10 @@ const resultsTest3 = searchNodes(multipleQuery);
 assertions.concat([
   test.assertEqual(3, resultsTest3.total),
   test.assertEqual(3, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
-  test.assertEqual(2, resultsTest3.edges.length)
+  test.assertEqual(2, resultsTest3.edges.length),
+  test.assertFalse(resultsTest3.nodes[0].hasRelationships),
+  test.assertFalse(resultsTest3.nodes[1].hasRelationships),
+  test.assertFalse(resultsTest3.nodes[2].hasRelationships)
 ]);
 
 
@@ -61,7 +64,29 @@ const resultsTest4 = searchNodes(withRelatedQuery);
 assertions.concat([
   test.assertEqual(4, resultsTest4.total),
   test.assertEqual(3, resultsTest4.nodes.length, xdmp.toJsonString(resultsTest4)),
-  test.assertEqual(2, resultsTest4.edges.length)
+  test.assertEqual(2, resultsTest4.edges.length),
+  test.assertFalse(resultsTest4.nodes[0].hasRelationships),
+  test.assertFalse(resultsTest4.nodes[1].hasRelationships),
+  test.assertTrue(resultsTest4.nodes[2].hasRelationships)
 ]);
+
+const nodeLeafQuery = {
+  "searchText": "",
+  "entityTypeIds": [ "BabyRegistry" ],
+  "selectedFacets": {
+    "relatedEntityTypeIds": ["Customer"]
+  }
+};
+
+const resultsTest5 = searchNodes(nodeLeafQuery);
+
+assertions.concat([
+  test.assertEqual(2, resultsTest5.total),
+  test.assertEqual(2, resultsTest5.nodes.length, xdmp.toJsonString(resultsTest5)),
+  test.assertEqual(1, resultsTest5.edges.length),
+  test.assertTrue(resultsTest5.nodes[1].hasRelationships)
+]);
+
+
 
 assertions;
