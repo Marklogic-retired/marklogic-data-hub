@@ -545,6 +545,27 @@ function findEntityIdentifiers(uris, entityType) {
   return fn.head(hent.findEntityIdentifiers(hubUtils.normalizeToSequence(uris), entityType));
 }
 
+function getPredicatesByModel(model) {
+  const predicateList = [];
+  const entityName = model.info.title;
+  const entityNameIri = getEntityTypeId(model, entityName);
+  let entityProperties = model.definitions[entityName].properties;
+  for(let entityPropertyName in entityProperties){
+    let entityPropertyValue = entityProperties[entityPropertyName];
+    if(entityPropertyValue["relatedEntityType"] != null){
+      predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
+    }else{
+      if(entityPropertyValue["items"] != null){
+        let items = entityPropertyValue["items"]
+        if(items["relatedEntityType"] != null){
+          predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
+        }
+      }
+    }
+  }
+  return predicateList;
+}
+
 module.exports = {
   deleteDraftModel,
   findForeignKeyReferencesInOtherModels,
@@ -563,6 +584,7 @@ module.exports = {
   getDraftModelUri,
   getEntityTypeId,
   getEntityTypeIdParts,
+  getPredicatesByModel,
   getLatestJobData,
   getModelCollection,
   getModelUri,
