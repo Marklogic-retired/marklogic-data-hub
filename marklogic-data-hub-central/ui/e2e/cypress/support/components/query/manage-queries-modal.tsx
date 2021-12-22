@@ -5,13 +5,12 @@ class ManageQuery {
   }
 
   getEditQuery() {
-    return cy.get(`[data-testid=edit]`).first();
+    return cy.get(`[aria-label=editIcon]`).first();
   }
 
   getDeleteQuery() {
-    cy.get(`[data-testid=delete]`).first().click({force: true});
-    cy.waitUntil(() => queryComponent.getDeleteQueryYesButton().should("have.length.gt", 0));
-    cy.get(".btn-primary").contains("Yes").click({force: true});
+    cy.get(`[data-icon="trash-alt"]`).first().click({force: true});
+    queryComponent.getDeleteQueryYesButton().should("be.visible").click({force: true});
   }
 
   getEditQueryName() {
@@ -30,12 +29,12 @@ class ManageQuery {
     return cy.get("#edit-query-dialog-cancel");
   }
 
-  getQueryByName(query:string) {
+  getQueryByName(query: string) {
     return cy.get(`[data-id=${query}]`).first();
   }
 
   getDeleteQueryYesButton() {
-    return cy.get(".btn-primary").contains("Yes");
+    return cy.get(".btn.btn-primary").contains("Yes");
   }
 
   getExportFileButton() {
@@ -51,15 +50,15 @@ class ManageQuery {
   }
 
   getEditQueryIconForFirstRow() {
-    return cy.get(".ant-table-row:first-child [data-testid=edit]");
+    return cy.get("[aria-label='editIcon']").first();
   }
 
   getExportQueryIconForFirstRow() {
-    return cy.get(".ant-table-row:first-child [data-testid=export]");
+    return cy.get("[aria-label='exportIcon']").first();
   }
 
   getDeleteQueryIconForFirstRow() {
-    return cy.get(".ant-table-row:first-child [data-testid=delete]");
+    return cy.get("[aria-label='deleteIcon']").first();
   }
 }
 

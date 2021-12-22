@@ -28,6 +28,7 @@ interface Props {
   expandedRowRender?: (record: any, rowIndex?: number) => string | React.ReactNode;
   onExpand?: (record: any, expanded: boolean, rowIndex?: number) => void;
   onTableChange?: (type: string, newState: any) => void;
+  rowEvents?: any;
 }
 
 function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, baseIndent = 0, showHeader = true, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
@@ -252,6 +253,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
       pagination={paginationFactoryObject}
       rowClasses={rowClassName || rowClasses}
       wrapperClasses={props.subTableHeader ? `${className || ""} sub-table` : className || ""}
+      rowEvents={ props.rowEvents }
       {...props}
     />
   );

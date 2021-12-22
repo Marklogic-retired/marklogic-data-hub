@@ -175,7 +175,7 @@ class BrowsePage {
     return cy.get("[data-cy=clear-all-grey-button]");
   }
 
-  getDateFacetPicker(options?: {time?: string}) {
+  getDateFacetPicker(options?: { time?: string }) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"]`);
   }
@@ -184,7 +184,7 @@ class BrowsePage {
     return cy.get("#selected-facets > button").contains(facet);
   }
 
-  selectDateRange(options?: {time?: string}) {
+  selectDateRange(options?: { time?: string }) {
     this.getDateFacetPicker(options).click();
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child")).click({force: true});
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child")).click({force: true});
@@ -194,7 +194,7 @@ class BrowsePage {
     }
   }
 
-  getDateFacetClearIcon(options?: {time?: string}) {
+  getDateFacetClearIcon(options?: { time?: string }) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"] ~ svg[data-testid="datetime-picker-reset"]`);
   }
@@ -216,11 +216,11 @@ class BrowsePage {
   }
 
   getGreyRangeFacet(lowerBound: number) {
-    return cy.get("#selected-facets [data-cy=\"clear-grey-"+ lowerBound +"\"]");
+    return cy.get("#selected-facets [data-cy=\"clear-grey-" + lowerBound + "\"]");
   }
 
   getRangeFacet(lowerBound: number) {
-    return cy.get("#selected-facets [data-cy=\"clear-"+ lowerBound +"\"]");
+    return cy.get("#selected-facets [data-cy=\"clear-" + lowerBound + "\"]");
   }
 
   clickPopoverSearch(facetName: string) {
@@ -322,8 +322,13 @@ class BrowsePage {
     return cy.get(`.ant-table-column-sorter-down.on`);
   }
 
+  //TODO: Refactor - is duplicated
   getTableRows() {
     return cy.get(".ant-table-row");
+  }
+
+  getHCTableRows() {
+    return cy.get(".hc-table_row");
   }
 
   getCard() {
@@ -370,7 +375,7 @@ class BrowsePage {
     return cy.get("input[placeholder=Search]");
   }
 
-  selectColumnSelectorProperty(name:string) {
+  selectColumnSelectorProperty(name: string) {
     cy.waitUntil(() => cy.findByTestId("column-selector-popover"));
     cy.get("[data-testid=node-" + name + "] .rc-tree-checkbox").click({force: true});
   }
@@ -510,9 +515,10 @@ class BrowsePage {
     return cy.get("[data-testid=manage-queries-modal-icon]");
   }
 
+  //Was replaced the table wich use this method, so we updated selector to use the new one
   getManageQueriesModalOpened() {
     this.getManageQueriesButton().scrollIntoView().click({force: true});
-    this.waitForTableToLoad();
+    this.getHCTableRows().should("have.length.gt", 0);
   }
 
   getManageQueriesButton() {
@@ -582,7 +588,7 @@ class BrowsePage {
     return cy.get("#query-selector");
   }
 
-  getQueryByName(query:string) {
+  getQueryByName(query: string) {
     return cy.get(`[data-cy=query-option-${query}]`);
   }
 
