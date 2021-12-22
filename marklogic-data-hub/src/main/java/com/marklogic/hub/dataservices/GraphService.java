@@ -18,6 +18,7 @@ public interface GraphService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_searchNodes;
+            private BaseProxy.DBFunctionRequest req_nodeExpand;
 
             private GraphServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -25,6 +26,8 @@ public interface GraphService {
 
                 this.req_searchNodes = this.baseProxy.request(
                     "searchNodes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_nodeExpand = this.baseProxy.request(
+                    "nodeExpand.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
 
             }
 
@@ -44,10 +47,27 @@ public interface GraphService {
                         ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public JsonNode nodeExpand(JsonNode nodeInfo, Integer limit) {
+                return nodeExpand(
+                    this.req_nodeExpand.on(this.dbClient), nodeInfo, limit
+                );
+            }
+            private JsonNode nodeExpand(BaseProxy.DBFunctionRequest request, JsonNode nodeInfo, Integer limit) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    request
+                        .withParams(
+                            BaseProxy.documentParam("nodeInfo", true, BaseProxy.JsonDocumentType.fromJsonNode(nodeInfo)),
+                            BaseProxy.atomicParam("limit", true, BaseProxy.IntegerType.fromInteger(limit))
+                        ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new GraphServiceImpl(db, serviceDeclaration);
     }
 
     JsonNode searchNodes(JsonNode searchQuery);
+    JsonNode nodeExpand(JsonNode nodeInfo, Integer limit);
 }

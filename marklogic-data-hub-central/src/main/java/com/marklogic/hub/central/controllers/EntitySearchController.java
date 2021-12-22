@@ -155,6 +155,14 @@ public class EntitySearchController extends BaseController {
         return getGraphService(database).searchNodes(searchQuery);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/nodeExpand")
+    @ResponseBody
+    @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
+        response = EntitySearchResponseSchema.class)
+    public JsonNode graphExpand(@RequestBody JsonNode searchQuery, @RequestParam(defaultValue = "final") String database,  @RequestParam(defaultValue = "100") Integer limit) {
+        return getGraphService(database).nodeExpand(searchQuery, limit);
+    }
+
     private EntitySearchManager newEntitySearchManager(String database) {
         return new EntitySearchManager(getHubClient(), database);
     }

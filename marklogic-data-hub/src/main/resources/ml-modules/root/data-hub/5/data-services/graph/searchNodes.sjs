@@ -18,28 +18,11 @@
 
 // No privilege required: No special privilege is needed for this endpoint
 const sem = require("/MarkLogic/semantics.xqy");
-const op = require('/MarkLogic/optic');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
-// Alterations to rdf:type values that qualify as Concepts in Hub Central graph views go in this function.
-function getRdfConceptTypes() {
-  return [
-    sem.curieExpand("rdf:Class"),
-    sem.curieExpand("owl:Class"),
-    sem.curieExpand("skos:Concept")
-  ];
-}
-
-// Alterations to label predicates in order of priority
-function getOrderedLabelPredicates() {
-  return [
-    sem.curieExpand("skos:prefLabel"),
-    sem.curieExpand("skos:label"),
-    sem.curieExpand("rdfs:label")
-  ];
-}
 
 var query;
 var start;
@@ -59,26 +42,13 @@ var hashmapPredicate = new Map();
 
 fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   model = model.toObject();
-  const predicateList = [];
   const entityName = model.info.title;
   const entityNameIri = entityLib.getEntityTypeId(model, entityName);
+
   if(selectedFacets && selectedFacets.relatedEntityTypeIds && selectedFacets.relatedEntityTypeIds.includes(entityName)) {
     allEntityTypeIRIs.push(sem.iri(entityNameIri));
-    let entityProperties = model.definitions[entityName].properties;
-    for(let entityPropertyName in entityProperties){
-      let entityPropertyValue = entityProperties[entityPropertyName];
-      if(entityPropertyValue["relatedEntityType"] != null){
-        predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
-      }else{
-        if(entityPropertyValue["items"] != null){
-          let items = entityPropertyValue["items"]
-          if(items["relatedEntityType"] != null){
-            predicateList.push(sem.iri(entityNameIri+"/"+entityPropertyName));
 
-          }
-        }
-      }
-    }
+    const predicateList = entityLib.getPredicatesByModel(model);
     if(predicateList.length >= 1){
       hashmapPredicate.set(entityName, predicateList);
     }
@@ -89,79 +59,36 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
 });
 
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
-const ctsQuery = cts.trueQuery();
-const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 SELECT ?subjectIRI ?subjectLabel WHERE {
-                    ?subjectIRI rdf:type @entityTypeIRIs.
-                    OPTIONAL {
-                      ?subjectIRI @labelIRI ?subjectLabel.
-                    }
-                  }`).where(ctsQuery);
-const firstLevelConnectionsPlan = op.fromSPARQL(`
-              PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-              SELECT * WHERE {
-              {
-                SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (COUNT(?objectIRI) AS ?nodeCount) WHERE {
-                    ?objectIRI rdf:type @entityTypeOrConceptIRI.
-                    ?subjectIRI ?predicateIRI ?objectIRI.
-                    OPTIONAL {
-                      ?predicateIRI @labelIRI ?predicateLabel.
-                    }
-                }
-                GROUP BY ?subjectIRI ?predicateIRI ?predicateLabel
-              }
-              {
-                    OPTIONAL {
-                      ?firstObjectIRI @labelIRI ?firstObjectLabel.
-                    }
-              }
-              }
-`);
-let joinOn = op.on(op.col("subjectIRI"),op.col("subjectIRI"));
-let fullPlan = subjectPlan.joinLeftOuter(firstLevelConnectionsPlan, joinOn);
-if (entityTypeIRIs.length > 1) {
-  let otherEntityIRIs = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 SELECT ?subjectIRI  ?predicateIRI  ?predicateLabel  ?objectIRI  ?objectLabel WHERE {
-                    ?subjectIRI rdf:type @entityTypeIRIs;
-                                ?predicateIRI ?objectIRI.
-                    ?objectIRI rdf:type @entityTypeIRIs.
-                    OPTIONAL {
-                      ?predicateIRI @labelIRI ?predicateLabel.
-                    }
-                    OPTIONAL {
-                      ?objectIRI @labelIRI ?objectLabel.
-                    }
-                  }`).where(ctsQuery);
-  fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn));
-}
 
-const result = fullPlan.result(null, {entityTypeIRIs, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs);
+
 let nodes = [];
 let edges = [];
 
 result.map(item => {
 
-  let hasRelationships = false;
   let subjectLabel = item.subjectLabel;
   if (item.subjectLabel !== undefined && item.subjectLabel.toString().length === 0) {
     let subjectArr = item.subjectIRI.toString().split("/");
     subjectLabel = subjectArr[subjectArr.length - 1];
   }
+
   const group = item.subjectIRI.toString().substring(0, item.subjectIRI.toString().length - subjectLabel.length - 1);
   let nodeOrigin = {};
   if (!nodes[item.subjectIRI]) {
     nodeOrigin.id = item.subjectIRI;
     nodeOrigin.label = subjectLabel;
-    nodeOrigin.additionaProperties = null;
+    nodeOrigin.additionalProperties = null;
     nodeOrigin.group = group;
     nodeOrigin.isConcept = false;
+    nodeOrigin.hasRelationships = false;
     nodeOrigin.count = 1;
     nodes[item.subjectIRI] = nodeOrigin;
   } else {
     nodeOrigin = nodes[item.subjectIRI];
     nodeOrigin.label = subjectLabel || nodeOrigin.label;
     nodeOrigin.group = group;
-    nodeOrigin.additionaProperties = null;
+    nodeOrigin.additionalProperties = null;
     nodes[item.subjectIRI] = nodeOrigin;
   }
 
@@ -174,15 +101,10 @@ result.map(item => {
     let objectLabel = item.firstObjectLabel.toString();
     let objectId = item.firstObjectIRI.toString();
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
-      if(item.nodeCount == 1){
-        //has predicates
-        if(hashmapPredicate.has(objectIRIArr[objectIRIArr.length - 2])){
-          const relationshipsFirstObjectCount = cts.estimate(cts.andQuery([cts.tripleRangeQuery(sem.iri(item.firstObjectIRI), hashmapPredicate.get(objectIRIArr[objectIRIArr.length - 2]), null)]));
-          if(relationshipsFirstObjectCount >= 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
-            hasRelationships = true;
-          }
-        }
-      }
+    let hasRelationships = false;
+    if(item.nodeCount == 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
+        hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
+    }
     //Override if count is more than 1. We will have a node with badge.
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];

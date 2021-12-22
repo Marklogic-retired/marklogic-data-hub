@@ -1,0 +1,27 @@
+{
+    "functionName": "nodeExpand",
+    "desc": "Returns a list of nodes and edges that are the result of an expansion of a certain node.",
+    "params": [
+        {
+            "name": "nodeInfo",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+            "schema" : {
+               "type" : "object",
+               "properties" : {
+                "parentIRI" : {
+                  "type" : "string"
+                },
+                  "predicateFilter" : {
+                    "type" : "string"
+                  }
+               }
+           }
+        },
+         {
+           "name" : "limit",
+           "datatype" : "int",
+           "desc" : "The size of the result"
+         }
+    ]
+}
