@@ -305,19 +305,19 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.clear(screen.getByLabelText("input-name"));
     userEvent.type(screen.getByLabelText("input-name"), "altName");
 
-    userEvent.click(screen.getByPlaceholderText("Select the property type"));
-    userEvent.click(screen.getByText("dateTime"));
+    await(() => userEvent.click(screen.getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(screen.getByText("dateTime")));
 
-    const facetableCheckbox = screen.getByLabelText("Facet");
-    fireEvent.change(facetableCheckbox, {target: {checked: true}});
-    expect(facetableCheckbox).toBeChecked();
+    const facetableCheckbox:any = await(() => screen.getByLabelText("Facet"));
+    await(() => fireEvent.change(facetableCheckbox, {target: {checked: true}}));
+    await(() => expect(facetableCheckbox).toBeChecked());
 
-    const sortableCheckbox = screen.getByLabelText("Sort");
-    fireEvent.change(sortableCheckbox, {target: {checked: true}});
-    expect(sortableCheckbox).toBeChecked();
+    const sortableCheckbox:any = await(() => screen.getByLabelText("Sort"));
+    await(() => fireEvent.change(sortableCheckbox, {target: {checked: true}}));
+    await(() => expect(sortableCheckbox).toBeChecked());
 
     fireEvent.submit(screen.getByLabelText("input-name"));
-    await waitFor(() => expect(getByTestId("altName-span")).toBeInTheDocument());
+    await(() => expect(getByTestId("altName-span")).toBeInTheDocument());
   });
 
   test("can add a Property to the table and then edit it", async () => {
@@ -337,20 +337,20 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getByLabelText("Concept-add-property"));
 
     userEvent.type(screen.getByLabelText("input-name"), "conceptDate");
-    userEvent.click(screen.getByPlaceholderText("Select the property type"));
-    userEvent.click(screen.getByText("dateTime"));
+    await(() => userEvent.click(screen.getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(screen.getByText("dateTime")));
 
     fireEvent.submit(screen.getByLabelText("input-name"));
 
-    await waitFor(() => expect(getByTestId("conceptDate-span")).toBeInTheDocument());
+    await(() => expect(getByTestId("conceptDate-span")).toBeInTheDocument());
 
-    userEvent.click(screen.getByTestId("conceptDate-span"));
+    await(() => userEvent.click(screen.getByTestId("conceptDate-span")));
 
-    userEvent.clear(screen.getByLabelText("input-name"));
-    userEvent.type(screen.getByLabelText("input-name"), "conception");
+    await(() => userEvent.clear(screen.getByLabelText("input-name")));
+    await(() => userEvent.type(screen.getByLabelText("input-name"), "conception"));
 
     fireEvent.submit(screen.getByLabelText("input-name"));
-    await waitFor(() => expect(getByTestId("conception-span")).toBeInTheDocument());
+    await(() => expect(getByTestId("conception-span")).toBeInTheDocument());
   });
 
   test("can add a new structured type property to the table and then edit it", async () => {
@@ -370,27 +370,27 @@ describe("Entity Modeling Property Table Component", () => {
     userEvent.click(screen.getByLabelText("Concept-add-property"));
 
     userEvent.type(screen.getByLabelText("input-name"), "newStructure");
-    userEvent.click(screen.getByPlaceholderText("Select the property type"));
-    userEvent.click(screen.getByText("Structured"));
-    userEvent.click(screen.getByText("New Property Type"));
+    await(() => userEvent.click(screen.getByPlaceholderText("Select the property type")));
+    await(() => userEvent.click(screen.getByText("Structured")));
+    await(() => userEvent.click(screen.getByText("New Property Type")));
 
-    expect(screen.getByText("Add New Structured Property Type")).toBeInTheDocument();
-    userEvent.type(screen.getByLabelText("structured-input-name"), "Product");
-    fireEvent.submit(screen.getByLabelText("structured-input-name"));
-
-    fireEvent.submit(screen.getByLabelText("input-name"));
-
-    await waitFor(() => expect(getByTestId("newStructure-newStructure-span")).toBeInTheDocument());
-
-    userEvent.click(screen.getByTestId("newStructure-newStructure-span"));
-    userEvent.clear(screen.getByLabelText("input-name"));
-    userEvent.type(screen.getByLabelText("input-name"), "basicName");
-    userEvent.click(screen.getByLabelText("type-dropdown"));
-    userEvent.click(screen.getByText("More date types"));
-    userEvent.click(screen.getByText("dayTimeDuration"));
+    await(() => expect(screen.getByText("Add New Structured Property Type")).toBeInTheDocument());
+    await(() => userEvent.type(screen.getByLabelText("structured-input-name"), "Product"));
+    await(() => fireEvent.submit(screen.getByLabelText("structured-input-name")));
 
     fireEvent.submit(screen.getByLabelText("input-name"));
-    await waitFor(() => expect(getByTestId("conception-span")).toBeInTheDocument());
+
+    await(() => expect(getByTestId("newStructure-newStructure-span")).toBeInTheDocument());
+
+    await(() => userEvent.click(screen.getByTestId("newStructure-newStructure-span")));
+    await(() => userEvent.clear(screen.getByLabelText("input-name")));
+    await(() => userEvent.type(screen.getByLabelText("input-name"), "basicName"));
+    await(() => userEvent.click(screen.getByLabelText("type-dropdown")));
+    await(() => userEvent.click(screen.getByText("More date types")));
+    await(() => userEvent.click(screen.getByText("dayTimeDuration")));
+
+    fireEvent.submit(screen.getByLabelText("input-name"));
+    await(() => expect(getByTestId("conception-span")).toBeInTheDocument());
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement

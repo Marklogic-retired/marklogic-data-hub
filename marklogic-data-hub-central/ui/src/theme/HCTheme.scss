@@ -337,3 +337,90 @@ div[role="dialog"][aria-modal="true"]:nth-last-child(5) {
 .active {
     color: $text-color;
 }
+
+/* Cascader*/
+.rc-cascader-dropdown {
+    z-index: 9999;
+    min-width: 300px;
+    background-color: $white;
+    border: 0px;
+}
+.rc-cascader-selector {
+    font-size: 15px;
+    line-height: 33px;
+    border: 0px !important;
+}
+.rc-cascader-selection-search {
+    border: 1px solid $light !important;
+    border-radius: 4px;
+}
+.rc-cascader-selection-search:hover {
+    border-color: $border-input !important;
+}
+.rc-cascader-open div span:nth-child(1)  {
+    box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+    -webkit-box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+    -moz-box-shadow: 0 0 0 2px rgba(91, 105, 175, 0.2);
+}
+.rc-cascader-selection-search-input {
+    height: 33px;
+    cursor: pointer;
+    border: 1px solid $light !important;
+    border-radius: 4px;
+}
+.rc-cascader-focused {
+    border-radius: 4px;
+}
+.rc-cascader-menus {
+    min-height: 360px;
+    box-shadow: #00000026 0px 8px 14px !important;
+}
+.rc-cascader-menu {
+    min-height: 360px;
+    min-width: 170px;
+    border-left: 1px solid $light;
+}
+ul.rc-cascader-menu {
+    list-style-type: none !important;
+    background-color: $white !important;
+    li {
+        padding: 5px 10px 5px 10px !important;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    li:hover {
+        background-color: $background-hover;
+    }
+}
+.rc-cascader-menu-item-expand-icon  {
+    padding-right: 10px;
+}
+
+.rc-cascader-menu-item-active {
+    background-color: $background-light;
+    font-weight: 700;
+}
+
+.rc-cascader-selection-item {
+    padding-left: 3px;
+}
+.rc-cascader-clear {
+    height: 33px;
+    width: 15px;
+    padding-top: 5px;
+    color: $icon-light;
+    cursor: pointer;
+}
+.rc-cascader-clear-icon {
+    font-size: 20px;
+}
+.rc-cascader-arrow {
+    height: 33px;
+    width: 15px;
+    padding-top: 0px;
+    color: $icon-light;
+}
+.rc-cascader-arrow-icon {
+    font-size: 20px;
+}

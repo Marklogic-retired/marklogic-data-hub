@@ -154,7 +154,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getAddPropertyToStructureType("Extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("integer").click();
+    propertyModal.getTypeFromDropdownCascaderRC("integer").click();
     propertyModal.getYesRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();

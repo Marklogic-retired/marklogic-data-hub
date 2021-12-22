@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Cascader} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "../../../config/react-select-theme.config";
@@ -13,6 +12,10 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
+import Cascader from "rc-cascader";
+import "rc-cascader/assets/index.less";
+
+
 
 import {
   StructuredTypeOptions,
@@ -149,8 +152,11 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [selectedPropertyOptions, setSelectedPropertyOptions] = useState(DEFAULT_SELECTED_PROPERTY_OPTIONS);
   const [entityPropertyNamesArray, setEntityPropertyNamesArray] = useState<string[]>([]);
 
+  const [placeHolderColor, setPlaceHolderColor] = useState(true);
+
   useEffect(() => {
     if (props.isVisible) {
+      setPlaceHolderColor(true);
       setEntityPropertiesNamesArray(props.entityDefinitionsArray);
       updateTypeDropdown();
       if (props.editPropertyOptions.isEdit) {
@@ -267,6 +273,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   };
 
   const onPropertyTypeChange = (value, selectedOptions) => {
+    setPlaceHolderColor(false);
     if (value.length) {
       let newSelectedPropertyOptions = {...selectedPropertyOptions};
       let typeValue = "";
@@ -762,6 +769,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   });
 
   const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
+  const placeHolderOrEditValue = [props?.editPropertyOptions?.propertyOptions?.type].length ? [props?.editPropertyOptions?.propertyOptions?.type][0] !== "" ? false : true: true;
 
   const modalFooter = <div className={`w-100 ${props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}`}>
     { props.editPropertyOptions.isEdit &&
@@ -904,9 +912,10 @@ const PropertyModal: React.FC<Props> = (props) => {
                     }
                   }}
                   onChange={onPropertyTypeChange}
-                  value={typeDisplayValue}
-                  className={styles.input}
-                  style={{"width": "419px"}}
+                  className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor:styles.input}
+                  style={{"width": "520px"}}
+                  defaultValue={placeHolderOrEditValue ? ["Select the property type"]: [props.editPropertyOptions.propertyOptions.type] }
+                  allowClear={true}
                 />
               </Col>
               <Col xs={12} className={styles.validationError}>

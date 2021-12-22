@@ -12,15 +12,19 @@ class PropertyModal {
   }
 
   openPropertyDropdown() {
-    cy.get(".ant-cascader-picker").trigger("mouseover").click();
+    cy.get(".rc-cascader-selection-search").trigger("mouseover").click();
   }
 
   clearPropertyDropdown() {
-    cy.findByLabelText("icon: close-circle").trigger("mouseover").click();
+    cy.get(".rc-cascader-clear-icon").trigger("mouseover").click();
   }
 
   getTypeFromDropdown(type: string) {
     return cy.get(`ul > li`).first().get(`[title="${type}"]`).should("be.visible");
+  }
+
+  getTypeFromDropdownCascaderRC(type: string) {
+    return cy.get(`.rc-cascader-menus > ul > li`).first().get(`[data-value="${type}"]`).should("be.visible");
   }
 
   getCascadedTypeFromDropdown(type: string) {
