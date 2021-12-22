@@ -549,7 +549,10 @@ const LoadList: React.FC<Props> = (props) => {
         <HCTable
           pagination={{hideOnSinglePage: props.data.length <= 10, showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
           className={styles.loadTable}
+          showHeader={true}
           columns={columns}
+          keyUtil={"key"}
+          baseIndent={15}
           data={props.data}
           rowKey="name"
           onTableChange={handleTableChange}

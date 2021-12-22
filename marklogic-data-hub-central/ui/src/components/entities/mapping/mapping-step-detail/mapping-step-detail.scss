@@ -21,14 +21,27 @@
   .ant-table-column-has-actions.ant-table-column-has-filters.ant-table-column-has-sorters.ant-table-row-cell-break-word{
     padding-left: 44px;    
     }
+
+  .popover{
+    display: none !important;
+  }
   }
 
   #upperTableXML {
-    .ant-table-column-has-actions.ant-table-column-has-filters.ant-table-column-has-sorters.ant-table-row-cell-break-word{
-      padding-left: 22px;    
-      }
-    .ant-table-wrapper { 
-      margin-top: 20px;
+    .table {
+      margin-bottom: 0 !important;
+    }
+    .reset-expansion-style {
+      display: none;
+    }
+  }
+
+  .hc-table_row{
+    td {
+      background-color: inherit !important;
+    }
+    &:hover {
+      background-color: #e9f7fe !important;
     }
   }
 }

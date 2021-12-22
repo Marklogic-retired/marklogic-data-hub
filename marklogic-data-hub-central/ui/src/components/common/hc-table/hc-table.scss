@@ -15,6 +15,11 @@
             color: #333;
         }
     }
+    .expand-cell-header {
+      width: 20px;
+      min-width: 20px;
+      background: #e8e8e8 !important;
+    }
     &.sub-table {
         .expand-cell-header {
             background: #e0e0e0 !important;
@@ -28,13 +33,18 @@
     }
     .expand-cell {
         vertical-align: middle;
-        width: 50px;
-        min-width: 50px;
+        background-color: inherit !important; 
+        width: 20px;
+        min-width: 20px;
         text-align: center;
         svg {
             cursor: pointer;
         }
     }
+    #lowerTable th {
+      display: none;
+    }
+
     th:first-child {
         border-top-left-radius: 4px;
     } 

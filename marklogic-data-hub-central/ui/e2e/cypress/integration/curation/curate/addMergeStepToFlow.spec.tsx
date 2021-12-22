@@ -175,7 +175,7 @@ describe("Add Merge step to a flow", () => {
   });
   it("Add the merge step to a second flow and verify it was added", () => {
     curatePage.openExistingFlowDropdown("Customer", mergeStep);
-    curatePage.getExistingFlowFromDropdown(mergeStep, flowName1).click();
+    curatePage.getExistingFlowFromDropdown(mergeStep, flowName1).click({force: true});
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mergeStep, flowName1);
     cy.waitForAsyncRequest();
