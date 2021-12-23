@@ -20,7 +20,6 @@ import {AuthoritiesContext} from "../util/authorities";
 import {SearchContext} from "../util/search-context";
 import {useHistory, useLocation} from "react-router-dom";
 import MergingStepDetail from "../components/entities/merging/merging-step-detail/merging-step-detail";
-import {ConfigProvider} from "antd";
 import MappingStepDetail from "../components/entities/mapping/mapping-step-detail/mapping-step-detail";
 import {ErrorMessageContext} from "../util/error-message-context";
 import {HCButton} from "@components/common";
@@ -141,25 +140,15 @@ const TilesView = (props) => {
       { (searchOptions.view !== null) ?  (
         <div className={styles.tilesViewContainer}>
           { (selection !== "") ?  (
-            <ConfigProvider
-              getPopupContainer={(node) => {
-                if (node) {
-                  return node.parentNode ?  node.parentNode as HTMLElement : document.body;
-                } else {
-                  return document.body;
-                }
-              }}
-            >
-              <Tiles
-                id={selection}
-                view={searchOptions.view}
-                currentNode={currentNode}
-                options={options}
-                onMenuClick={onMenuClick}
-                onTileClose={onTileClose}
-                newStepToFlowOptions={getNewStepToFlowOptions()}
-              />
-            </ConfigProvider>
+            <Tiles
+              id={selection}
+              view={searchOptions.view}
+              currentNode={currentNode}
+              options={options}
+              onMenuClick={onMenuClick}
+              onTileClose={onTileClose}
+              newStepToFlowOptions={getNewStepToFlowOptions()}
+            />
           ) : null }
         </div>) :
         <Overview enabled={enabled} environment={getEnvironment()}/>
