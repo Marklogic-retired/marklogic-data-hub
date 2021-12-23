@@ -418,7 +418,6 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
           childrenIndent={true}
           pagination={true}
-          showHeader={true}
           rowStyle={rowStyle2}
           keyUtil="key"
           baseIndent={0}

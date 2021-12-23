@@ -436,13 +436,11 @@ const MergingStepDetail: React.FC = () => {
               className={styles.table}
               columns={mergeStrategyColumns}
               data={mergeStrategiesData}
-              showHeader={true}
               expandedRowRender={expandedRowRender}
               pagination={{hideOnSinglePage: mergeStrategiesData.length <= 10}}
               showExpandIndicator={true}
               expandedContainerClassName="mergeStrategySliders"
               keyUtil="key"
-              baseIndent={0}
             />
           </div>
         </div>
@@ -468,7 +466,6 @@ const MergingStepDetail: React.FC = () => {
             columns={mergeRuleColumns}
             data={mergeRulesData}
             subTableHeader={true}
-            showHeader={true}
             keyUtil="key"
             baseIndent={0}
           />
