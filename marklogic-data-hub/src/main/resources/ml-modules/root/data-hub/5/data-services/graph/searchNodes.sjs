@@ -18,6 +18,7 @@
 
 // No privilege required: No special privilege is needed for this endpoint
 const sem = require("/MarkLogic/semantics.xqy");
+const search = require('/MarkLogic/appservices/search/search');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
@@ -58,9 +59,15 @@ fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   }
 });
 
+let ctsQuery = cts.trueQuery();
+if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
+  const searchTxtResponse = fn.head(search.parse(queryObj.searchText));
+  ctsQuery = cts.query(searchTxtResponse);
+}
+
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
 
-const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs);
+const result = graphUtils.getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQuery);
 
 let nodes = [];
 let edges = [];
@@ -144,7 +151,14 @@ result.map(item => {
 })
 
 
-const totalEstimate = cts.estimate(cts.andQuery([cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
+let totalEstimate = 0;
+if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
+  const searchTxtResponse = fn.head(search.parse(queryObj.searchText));
+  totalEstimate = cts.estimate(cts.andQuery([cts.query(searchTxtResponse), cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
+} else {
+  totalEstimate = cts.estimate(cts.andQuery([cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
+}
+
 const nodesValues = hubUtils.getObjectValues(nodes)
 const response = {
   'total': totalEstimate,
