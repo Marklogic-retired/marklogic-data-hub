@@ -87,6 +87,21 @@ assertions.concat([
   test.assertTrue(resultsTest5.nodes[1].hasRelationships)
 ]);
 
+const searchTextQuery = {
+  "searchText": "Infant Newborn Toddler",
+  "entityTypeIds": [ "Product", "Office" ],
+};
+
+const resultsTestSearchBy = searchNodes(searchTextQuery);
+
+assertions.concat([
+  test.assertEqual(2, resultsTestSearchBy.total),
+  test.assertEqual(2, resultsTestSearchBy.nodes.length),
+  test.assertEqual(0, resultsTestSearchBy.edges.length),
+  test.assertFalse(resultsTestSearchBy.nodes[0].hasRelationships),
+  test.assertEqual(resultsTestSearchBy.nodes[0].group, "http://example.org/Product-1.0.0/Product"),
+  test.assertEqual(resultsTestSearchBy.nodes[1].group, "http://example.org/Product-1.0.0/Product"),
+]);
 
 
 assertions;

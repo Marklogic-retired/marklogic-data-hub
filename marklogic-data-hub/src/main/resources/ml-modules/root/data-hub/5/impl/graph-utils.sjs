@@ -38,14 +38,14 @@ function getOrderedLabelPredicates() {
   ];
 }
 
-function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs) {
+function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQueryCustom) {
   const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                  SELECT ?subjectIRI ?subjectLabel WHERE {
                     ?subjectIRI rdf:type @entityTypeIRIs.
                     OPTIONAL {
                       ?subjectIRI @labelIRI ?subjectLabel.
                     }
-                  }`).where(ctsQuery);
+                  }`).where(ctsQueryCustom);
   const firstLevelConnectionsPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       SELECT * WHERE {
