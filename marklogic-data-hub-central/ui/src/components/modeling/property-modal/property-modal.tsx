@@ -154,6 +154,44 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const [placeHolderColor, setPlaceHolderColor] = useState(true);
 
+  function editDisplayValue() {
+    let typeDisplayValueAux;
+
+    if (props.editPropertyOptions.isEdit) {
+      let isCommonType = COMMON_PROPERTY_TYPES.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+
+      if (props.editPropertyOptions.isEdit) {
+        typeDisplayValueAux = [props.editPropertyOptions.propertyOptions.type];
+        if (!isCommonType && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
+
+          let type = "";
+          let isMoreStringType = MORE_STRING_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+          let isMoreNumberType = MORE_NUMBER_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+          let isMoreDateType = MORE_DATE_TYPES.children.some(property => property.value === props.editPropertyOptions.propertyOptions.type);
+
+          if (isMoreStringType) {
+            type = "moreStringTypes";
+          } else if (isMoreNumberType) {
+            type = "moreNumberTypes";
+          } else if (isMoreDateType) {
+            type = "moreDateTypes";
+          }
+          typeDisplayValueAux = [type, props.editPropertyOptions.propertyOptions.type];
+        } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.RelatedEntity) {
+          typeDisplayValueAux = ["relatedEntity", props.editPropertyOptions.propertyOptions.joinPropertyType];
+        } else if (props.structuredTypeOptions.isStructured) {
+          if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) {
+            typeDisplayValueAux = ["structured", props.editPropertyOptions.propertyOptions.type];
+          }
+        }
+      }
+    } else {
+      typeDisplayValueAux = ["Select the property type"];
+    }
+
+    return typeDisplayValueAux;
+  }
+
   useEffect(() => {
     if (props.isVisible) {
       setPlaceHolderColor(true);
@@ -308,7 +346,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         break;
       case "moreStringTypes":
       case "moreNumberTypes":
-      case "moreDateTypes" :
+      case "moreDateTypes":
         newSelectedPropertyOptions.propertyType = PropertyType.Basic;
         typeValue = value[1];
         if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName) {
@@ -498,7 +536,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     if (props.structuredTypeOptions.isStructured) {
       let splitName = props.structuredTypeOptions.name.split(",");
-      let structuredTypeName = splitName[splitName.length-1];
+      let structuredTypeName = splitName[splitName.length - 1];
       let structuredTypeDefinition = props.entityDefinitionsArray.find(entity => entity.name === structuredTypeName);
       if (structuredTypeDefinition && structuredTypeDefinition["properties"].length) {
         propertyNamesArray = structuredTypeDefinition["properties"].map(property => property.name);
@@ -735,8 +773,8 @@ const PropertyModal: React.FC<Props> = (props) => {
             className={"mb-0"}
           />
           <div className={"p-2 d-flex align-items-center"}>
-            <HCTooltip text={radio.tooltip} id={radio.value+"-tooltip"} placement="top">
-              <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon}/>
+            <HCTooltip text={radio.tooltip} id={radio.value + "-tooltip"} placement="top">
+              <QuestionCircleFill color="#7F86B5" size={13} className={styles.radioQuestionIcon} />
             </HCTooltip>
           </div>
         </Col>
@@ -759,7 +797,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             <FormCheck.Label className={styles.formCheckLabel}>{checkbox.label}</FormCheck.Label>
           </FormCheck>
           <div className={"p-2 ps-4 d-flex align-items-center"}>
-            <HCTooltip text={checkbox.tooltip} id={checkbox.value+"-tooltip"} placement="top">
+            <HCTooltip text={checkbox.tooltip} id={checkbox.value + "-tooltip"} placement="top">
               <QuestionCircleFill color="#7F86B5" size={13} />
             </HCTooltip>
           </div>
@@ -769,10 +807,10 @@ const PropertyModal: React.FC<Props> = (props) => {
   });
 
   const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
-  const placeHolderOrEditValue = [props?.editPropertyOptions?.propertyOptions?.type].length ? [props?.editPropertyOptions?.propertyOptions?.type][0] !== "" ? false : true: true;
+  const placeHolderOrEditValue = [props?.editPropertyOptions?.propertyOptions?.type].length ? [props?.editPropertyOptions?.propertyOptions?.type][0] !== "" ? false : true : true;
 
   const modalFooter = <div className={`w-100 ${props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}`}>
-    { props.editPropertyOptions.isEdit &&
+    {props.editPropertyOptions.isEdit &&
       <HCButton variant="link" onClick={async () => {
         if (confirmType === ConfirmationType.Identifer) {
           await getEntityReferences();
@@ -800,7 +838,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const foreignKeyOptions = joinProperties.map((prop, index) => ({value: prop.value, label: prop.label === "None" ? "- " + prop.label + " -" : prop.label, isDisabled: prop.disabled}));
 
-  const MenuList  = (selector, props) => (
+  const MenuList = (selector, props) => (
     <div id={`${selector}-select-MenuList`}>
       <SelectComponents.MenuList {...props} />
     </div>
@@ -851,7 +889,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           </Col>
         </Row>
 
-        { props.structuredTypeOptions.isStructured
+        {props.structuredTypeOptions.isStructured
           && selectedPropertyOptions.type !== props.structuredTypeOptions.name
           && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name && (
           <Row className={"mb-3"}>
@@ -878,7 +916,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                 />
                 <div className={"p-2 d-flex align-items-center"}>
                   <HCTooltip text={ModelingTooltips.nameEntityProperty} id="property-name-tooltip" placement="top">
-                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon}/>
+                    <QuestionCircleFill color="#7F86B5" size={13} className={styles.icon} />
                   </HCTooltip>
                 </div>
               </Col>
@@ -898,7 +936,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                   aria-label="type-dropdown"
                   placeholder="Select the property type"
                   options={dropdownOptions}
-                  displayRender={ label => {
+                  displayRender={label => {
                     if (label[label.length - 1]) {
                       if (label[0] === "Related Entity") {
                         return "Relationship: " + label[label.length - 1];
@@ -912,9 +950,9 @@ const PropertyModal: React.FC<Props> = (props) => {
                     }
                   }}
                   onChange={onPropertyTypeChange}
-                  className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor:styles.input}
+                  className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor : styles.input}
                   style={{"width": "520px"}}
-                  defaultValue={placeHolderOrEditValue ? ["Select the property type"]: [props.editPropertyOptions.propertyOptions.type] }
+                  defaultValue={placeHolderOrEditValue ? ["Select the property type"] : editDisplayValue()}
                   allowClear={true}
                 />
               </Col>
@@ -925,7 +963,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           </Col>
         </Row>
 
-        { showJoinProperty && (
+        {showJoinProperty && (
           <div className={`mb-3 ${styles.joinPropertyContainer}`}>
             <span className={styles.joinPropertyText}>You can select the foreign key now or later:</span>
             <div className={`ms-3 ${styles.joinPropertyInput}`}>
@@ -955,11 +993,11 @@ const PropertyModal: React.FC<Props> = (props) => {
               </div>
             </div>
           </div>
-        ) }
+        )}
 
         {renderRadios}
 
-        { showConfigurationOptions && (
+        {showConfigurationOptions && (
           <>
             <h4>Configuration Options</h4>
             {renderCheckboxes}

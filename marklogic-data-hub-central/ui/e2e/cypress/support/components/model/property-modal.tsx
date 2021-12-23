@@ -75,7 +75,7 @@ class PropertyModal {
   }
 
   verifyPropertyType(entityType: string) {
-    return cy.get(".ant-cascader-picker-label").should("have.text", entityType);
+    return cy.get(".rc-cascader-selection-item").should("have.text", entityType);
   }
 
   getForeignKeySelectWrapper() {

@@ -96,11 +96,12 @@ describe("Entity Modeling: Graph View", () => {
     propertyModal.newPropertyName("personType");
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("Related Entity").click();
-    propertyModal.getCascadedTypeFromDropdown("Person").click();
-    propertyModal.openForeignKeyDropdown();
-    propertyModal.getForeignKey("id").click();
-    propertyModal.getSubmitButton().click();
-    propertyTable.getProperty("personType").should("exist");
+    propertyModal.getCascadedTypeFromDropdown("Person").click().then(() => {
+      propertyModal.openForeignKeyDropdown();
+      propertyModal.getForeignKey("id").click();
+      propertyModal.getSubmitButton().click();
+      propertyTable.getProperty("personType").should("exist");
+    });
 
     //Add second property to Patients Entity and delete it
     propertyTable.getAddPropertyButton("Patients").click();
