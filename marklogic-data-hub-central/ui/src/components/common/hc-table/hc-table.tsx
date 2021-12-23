@@ -23,14 +23,14 @@ interface Props {
   rowClassName?: string | ((record: any) => string);
   rowKey?: string | ((record: any) => string);
   subTableHeader?: boolean;
-  keyUtil: any;
-  baseIndent: number;
+  keyUtil?: any;
+  baseIndent?: number;
   expandedRowRender?: (record: any, rowIndex?: number) => string | React.ReactNode;
   onExpand?: (record: any, expanded: boolean, rowIndex?: number) => void;
   onTableChange?: (type: string, newState: any) => void;
 }
 
-function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, baseIndent, showHeader, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
+function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, baseIndent = 0, showHeader = true, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
   const expandConfig = {
     className: `${showHeader ? styles.expandedRowWrapper : ""} ${props.subTableHeader ? styles.subTableNested : ""} ${childrenIndent ? styles.childrenIndentExpanded : ""}${props.expandedContainerClassName || ""}`,
     expanded: expandedRowKeys,
@@ -284,14 +284,27 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseInde
     indentation -= isMappingXML(showHeader) ? 1.2 : 2;
   }
 
+  const isKeyColumn = (colIndex) => colIndex === 0;
+
   return <div key={expandKey} className={`${styles.childrenIndentTableRow} hc-table_row`} data-row-key={expandKey}>
-    {showIndicator ? <div key={`indicator_${expandKey}`} className={styles.childrenIndentIndicatorCell}>
-    </div>: <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>}
-    {headerColumns.map((col) => {
+    {showIndicator ?
+      <div key={`indicator_${expandKey}`} className={styles.childrenIndentIndicatorCell}></div>:
+      <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>
+    }
+    {headerColumns.map((col, colIndex) => {
       const hasIconCell = iconCellList?.lastIndexOf(col.dataField) !== -1;
       const childElement = col.formatter ? col.formatter(row[col.dataField], row, rowIndex) : row[col.dataField];
-      return col.text === "Name" || col.text === "Property Name" ? <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px 12px 12px ${indentation*baseIndent}px` : `16px 16px 16px ${indentation*baseIndent}px`, width: col.width || "auto"}}>{(col.text === "Name" || col.text === "Property Name") && expandIcon ? <div className={styles.childrenTextContainer}><div>{(col.text==="Name" || col.text === "Property Name") ? expandIcon : null}</div><div className={styles.childElementText}>{childElement}</div></div> : <div>{childElement}</div>}</div>
-        : <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px` : `16px`, width: col.width || "auto"}}>{childElement}</div>;
+      return isKeyColumn(colIndex) ?
+        <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px 12px 12px ${indentation*baseIndent}px` : `16px 16px 16px ${indentation*baseIndent}px`, width: col.width || "auto"}}>
+          {isKeyColumn(colIndex) && expandIcon ?
+            <div className={styles.childrenTextContainer}><div>
+              {isKeyColumn(colIndex) ? expandIcon : null}</div>
+            <div className={styles.childElementText}>{childElement}</div>
+            </div> : <div>{childElement}</div>}
+        </div>
+        : <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px` : `16px`, width: col.width || "auto"}}>
+          {childElement}
+        </div>;
     })}</div>;
 };
 

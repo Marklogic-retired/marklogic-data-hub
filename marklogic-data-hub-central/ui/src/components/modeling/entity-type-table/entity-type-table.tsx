@@ -379,7 +379,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         columns={columns}
         keyUtil={"key"}
         baseIndent={15}
-        showHeader={true}
         expandedRowRender={expandedRowRender}
         onExpand={onExpand}
         expandedRowKeys={expandedRows}
