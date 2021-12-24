@@ -1,10 +1,9 @@
-import React, {useContext} from "react";
-import {Table} from "antd";
+import React, {useContext, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExternalLinkAlt} from "@fortawesome/free-solid-svg-icons";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, HCTable} from "@components/common";
 
 interface Props {
   item: any;
@@ -14,6 +13,7 @@ interface Props {
 
 
 const ExpandableTableView: React.FC<Props> = (props) => {
+  const [expandedNestedRows, setExpandedNestedRows]= useState([]);
 
   const {
     searchOptions,
@@ -72,29 +72,39 @@ const ExpandableTableView: React.FC<Props> = (props) => {
 
   const columns = [
     {
-      title: "Property",
-      dataIndex: "property",
-      width: "20%",
+      text: "Property",
+      headerFormatter: () => <span aria-label="property-header">Property</span>,
+      dataField: "property",
+      width: 200,
     },
     {
-      title: "Value",
-      dataIndex: "value",
-      width: "20%",
+      text: "Value",
+      headerFormatter: () => <span aria-label="value-header">Value</span>,
+      dataField: "value",
+      width: 200,
     },
     {
-      title: "View",
-      dataIndex: "view",
-      width: "20%",
+      text: "View",
+      headerFormatter: () => <span aria-label="view-header">View</span>,
+      dataField: "view",
+      width: 200,
     }
   ];
 
   return (
-    <Table
+    <HCTable
+      keyUtil={"key"}
+      className="expandable-table-view"
       rowKey="key"
-      dataSource={data}
       columns={columns}
+      data={data}
       pagination={false}
       data-cy="expandable-table-view"
+      subTableHeader={false}
+      showExpandIndicator={{bordered: true}}
+      childrenIndent={true}
+      nestedParams={{headerColumns: columns, state: [expandedNestedRows, setExpandedNestedRows]}}
+      baseIndent={10}
     />
   );
 };

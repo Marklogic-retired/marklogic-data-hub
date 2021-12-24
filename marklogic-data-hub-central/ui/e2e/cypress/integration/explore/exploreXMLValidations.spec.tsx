@@ -113,7 +113,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getDocumentRecordType(0).should("exist");
     browsePage.getDocumentRecordType(0).should("be.equal", "xml");
   });
-  it("verify instance view of the document", () => {
+  it.skip("verify instance view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Randolph");
@@ -129,7 +129,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
   });
-  it("verify source view of the document", () => {
+  it.skip("verify source view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Randolph");
@@ -140,7 +140,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
   });
-  it("select Customer xml entity instances and verify table", () => {
+  it.skip("select Customer xml entity instances and verify table", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getHubPropertiesExpanded();
@@ -156,7 +156,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getTableColumns().should("have.length", 6);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });
-  it("verify instance view of the document", () => {
+  it.skip("verify instance view of the document", () => {
     browsePage.search("Bowman");
     browsePage.getTotalDocuments().should("be.equal", 1);
     browsePage.getTableViewInstanceIcon().click();
@@ -170,7 +170,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.backToResults();
     cy.waitUntil(() => browsePage.getSearchText());
   });
-  it("verify source view of the document", () => {
+  it.skip("verify source view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Bowman");
@@ -182,7 +182,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.waitUntil(() => browsePage.getSearchText());
     browsePage.getSearchText().clear();
   });
-  it("verify metadata view of the document", () => {
+  it.skip("verify metadata view of the document", () => {
     browsePage.getSearchText().clear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Bowman");
@@ -220,7 +220,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Data");
   });
-  it("verify metadata view of the document properties", () => {
+  it.skip("verify metadata view of the document properties", () => {
     browsePage.selectEntity("All Data");
     browsePage.search("robert");
     cy.waitUntil(() => browsePage.getNavigationIconForDocument("/thesaurus/nicknames.xml")).click({force: true});

@@ -34,7 +34,7 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    //browsePage.waitForTableToLoad();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.waitForSpinnerToDisappear();
@@ -100,7 +100,7 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    //browsePage.waitForTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
     //verify gray facets don't persist when switching between browse and run views.
     browsePage.selectEntity("Person");
@@ -115,7 +115,7 @@ describe("Verify numeric/date facet can be applied", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.waitForTableToLoad();
+    //browsePage.waitForTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
   });
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
@@ -131,6 +131,6 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    //browsePage.waitForTableToLoad();
   });
 });
