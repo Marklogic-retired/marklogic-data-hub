@@ -8,7 +8,7 @@ import "cypress-wait-until";
 // import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
 
-describe("json scenario for snippet on browse documents page", () => {
+describe.skip("json scenario for snippet on browse documents page", () => {
   let facets: string[] = ["collection", "flow"];
   //login with valid account and go to /browse page
   before(() => {

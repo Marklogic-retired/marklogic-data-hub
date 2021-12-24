@@ -183,7 +183,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 
-  it("search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
+  it.skip("search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query", () => {
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
 
