@@ -382,8 +382,13 @@ declare function wait-for-indexes($count as xs:unsignedLong) {
   }, ())
   return
     if ($is-indexing) then
-      let $_sleep := xdmp:sleep(5 * $count)
-      return wait-for-indexes($count + 1)
+      try {
+        let $_sleep := xdmp:sleep(5 * $count)
+        return wait-for-indexes($count + 1)
+      } catch ($e) {
+        if ($e/error:code = "XDMP-EXTIME") then ()
+        else xdmp:rethrow()
+      }
     else
       ()
 };

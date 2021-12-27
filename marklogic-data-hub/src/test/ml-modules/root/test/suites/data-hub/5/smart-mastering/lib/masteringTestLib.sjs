@@ -98,30 +98,31 @@ function assertMatchExists(matchSummary, urisOfMatchingDocuments) {
     urisOfMatchingDocuments = [urisOfMatchingDocuments];
   }
 
-  const uriToProcess = matchSummary.URIsToProcess[0];
+  const expectedPrefix = "/com.marklogic.smart-mastering/merged/";
+  const uriToProcess = matchSummary.URIsToProcess.filter((uri) => uri.startsWith(expectedPrefix))[0];
   const actionDetails = matchSummary.actionDetails[uriToProcess];
 
   // Add the input doc
   const expectedUriCount = urisOfMatchingDocuments.length + 1;
 
-  const prettyActionDetailsUris = xdmp.toJsonString(actionDetails.uris);
-  const expectedPrefix = "/com.marklogic.smart-mastering/merged/";
+  const actualUris = actionDetails ? actionDetails.uris : [];
+  const prettyActionDetailsUris = xdmp.toJsonString(actualUris);
 
   let assertions = [
     test.assertTrue(uriToProcess.startsWith(expectedPrefix),
       `Since a merge is expected, the URI to process should start with ${expectedPrefix}; actual URI: ${uriToProcess}`
     ),
-    test.assertEqual(expectedUriCount, actionDetails.uris.length,
+    test.assertEqual(expectedUriCount, actualUris.length,
       `Expected ${expectedUriCount} matching URIs; actual URIs: ${prettyActionDetailsUris}`
     ),
-    test.assertTrue(actionDetails.uris.includes(TEST_DOC_URI), 
+    test.assertTrue(actualUris.includes(TEST_DOC_URI),
       `Expected the test doc ${TEST_DOC_URI} to be in actionDetails.uris; actual URIs: ${prettyActionDetailsUris}`
     )
   ];
 
   urisOfMatchingDocuments.forEach(uri => {
     assertions.push(
-      test.assertTrue(actionDetails.uris.includes(uri), 
+      test.assertTrue(actualUris.includes(uri),
         `Expected actionDetails.uris to include ${uri}; actual URIs: ${prettyActionDetailsUris}`
       )
     );
