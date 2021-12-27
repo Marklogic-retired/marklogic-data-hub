@@ -1,16 +1,18 @@
 @font-face {
-  font-family: 'MLCustomFont';
-  src: url('../../fonts/ML_IconFont.ttf') format('truetype');
-  src: url('../../fonts/icomoon.ttf') format('truetype');
+    font-family: "MLCustomFont";
+    src: url("../../fonts/ML_IconFont.ttf") format("truetype");
+    src: url("../../fonts/icomoon.ttf") format("truetype");
 }
+
+@import "../../theme/HCVariables.scss";
 
 .queryExport {
-  margin-right: 5px;
-  margin-top: 8px;
-  height: 10px;
+    margin-right: 5px;
+    margin-top: 8px;
+    height: 10px;
 }
 
-.iconHover:hover{
+.iconHover:hover {
     color: var(--hoverColor);
 }
 
@@ -20,47 +22,46 @@
 }
 
 .columnSelector {
-  margin-right: 1px;
-  margin-top: 5px;
-  height: 10px;
+    margin-right: 1px;
+    margin-top: 5px;
+    height: 10px;
 }
 
 .icon {
-  display: flex;
-  justify-content: flex-end;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .nestedTable {
-  padding: 30px;
-  margin: 0px;
+    padding: 30px;
+    margin: 0px;
 }
 
 .redirectIcons a {
-    color: #44499C;
-    cursor:pointer;
+    color: #44499c;
+    cursor: pointer;
     padding: 0px 8px;
 }
 
 .jsonIcon:before {
-  content: "\e94c";
-  font-family: MLCustomFont;
-  font-size: 18px;
-  position: relative;
-  font-weight: 200;
-  top: -2px;
-  display: inline-block;
+    content: "\e94c";
+    font-family: MLCustomFont;
+    font-size: 18px;
+    position: relative;
+    font-weight: 200;
+    top: -2px;
+    display: inline-block;
 }
 
-.jsonIcon:hover:before{
+.jsonIcon:hover:before {
     color: var(--hoverColor);
 }
 
 .graphIcon {
-    color: #44499C;
-    cursor:pointer;
+    color: #44499c;
+    cursor: pointer;
     padding: 0px 8px;
 }
-.redirectIcons{
+.redirectIcons {
     display: flex;
 }
-

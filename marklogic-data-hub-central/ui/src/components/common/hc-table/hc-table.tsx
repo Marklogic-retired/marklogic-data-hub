@@ -295,14 +295,14 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseInde
       const hasIconCell = iconCellList?.lastIndexOf(col.dataField) !== -1;
       const childElement = col.formatter ? col.formatter(row[col.dataField], row, rowIndex) : row[col.dataField];
       return isKeyColumn(colIndex) ?
-        <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px 12px 12px ${indentation*baseIndent}px` : `16px 16px 16px ${indentation*baseIndent}px`, width: col.width || "auto"}}>
+        <div key={`${col.dataField}-${colIndex}`} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px 12px 12px ${indentation*baseIndent}px` : `16px 16px 16px ${indentation*baseIndent}px`, width: col.width || "auto"}}>
           {isKeyColumn(colIndex) && expandIcon ?
             <div className={styles.childrenTextContainer}><div>
               {isKeyColumn(colIndex) ? expandIcon : null}</div>
             <div className={styles.childElementText}>{childElement}</div>
             </div> : <div>{childElement}</div>}
         </div>
-        : <div key={col.dataField} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px` : `16px`, width: col.width || "auto"}}>
+        : <div key={`${col.dataField}-${colIndex}`} className={styles.childrenIndentElementCell} style={{padding: hasIconCell ? `12px` : `16px`, width: col.width || "auto"}}>
           {childElement}
         </div>;
     })}</div>;

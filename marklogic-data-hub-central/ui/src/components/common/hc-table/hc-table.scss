@@ -16,9 +16,9 @@
         }
     }
     .expand-cell-header {
-      width: 20px;
-      min-width: 20px;
-      background: #e8e8e8 !important;
+        width: 20px;
+        min-width: 20px;
+        background: #e8e8e8 !important;
     }
     &.sub-table {
         .expand-cell-header {
@@ -33,8 +33,8 @@
         }
     }
     .expand-cell {
-        vertical-align: middle;
-        background-color: inherit !important; 
+        vertical-align: middle !important;
+        background-color: inherit !important;
         width: 20px;
         min-width: 20px;
         text-align: center;
@@ -43,7 +43,7 @@
         }
     }
     #lowerTable th {
-      display: none;
+        display: none;
     }
 
     th:first-child {
@@ -145,6 +145,54 @@
             tr {
                 th {
                     background: $bg-clean !important;
+                }
+            }
+        }
+    }
+}
+
+
+.exploreInternalTable {
+    padding: 30px 20px 30px 8px;
+    margin: 0;
+    table {
+        thead {
+            tr {
+                th {
+                    background-color: $bg-clean !important;
+                    &:hover {
+                        background-color: $bg-clean !important;
+                    }
+                }
+            }
+        }
+        tbody {
+            tr {
+                td {
+                    border-right: 1px solid $bg-clean;
+                    &:first-child {
+                        border-left: 1px solid $bg-clean;
+                        border-right: 0;
+                        min-width: 50px !important;
+                    }
+
+                    &.reset-expansion-style {
+                        padding: 0;
+                    }
+                    + td:last-child {
+                        padding-left: 16px !important;
+                    }
+
+                    .hc-table_row {
+                        & > div {
+                            border-right: 1px solid $bg-clean;
+                            &:first-child {
+                                border-color: transparent;
+                                width: 50px;
+                                min-width: 50px;
+                            }
+                        }
+                    }
                 }
             }
         }

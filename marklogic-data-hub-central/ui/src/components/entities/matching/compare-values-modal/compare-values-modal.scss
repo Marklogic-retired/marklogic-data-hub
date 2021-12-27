@@ -32,6 +32,11 @@
             }
         }
         tr {
+            td {
+                &.expand-cell {
+                    background-color: transparent !important;
+                }
+            }
             &:hover {
                 td {
                     background-color: #e9f7fe !important;

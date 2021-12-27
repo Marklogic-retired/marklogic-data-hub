@@ -28,7 +28,7 @@
         color: #333;
     }
     &.childrenIndentHeader {
-        background: #e0e0e0 !important;
+        background: #e0e0e0;
         color: #333;
     }
 }
@@ -139,13 +139,14 @@
 
 .childrenTextContainer {
     position: relative;
-    margin-left: -15px;
+    display: flex;
+    gap: 5px;
+     svg {
+        cursor: pointer;
+    }
 }
 
 .childElementText {
-    position: absolute;
-    left: 19px;
-    bottom: 6px;
 }
 
 .childrenIndentElementCell {

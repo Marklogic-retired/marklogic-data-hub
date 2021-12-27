@@ -227,7 +227,7 @@ const JobResultsTableView = (props) => {
       </div>
       <div className={styles.tabular}>
         <HCTable
-          className="job-results-table" 
+          className="job-results-table"
           data-testid="job-results-table"
           rowKey="startTime"
           data={props.data}
