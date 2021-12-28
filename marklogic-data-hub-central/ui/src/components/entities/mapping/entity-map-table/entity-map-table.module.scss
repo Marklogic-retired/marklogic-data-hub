@@ -13,7 +13,18 @@
   }
 }
 
+.nameHeaderText {
+  padding-right: 60%;;
+}
+
+.filterIcon {
+  color: #bfbfbf;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .entityTopRow {
+  width: 101%;
   margin-top: -10px;
 }
 
@@ -21,12 +32,12 @@
   margin-top: -8px;
   width: 96%;
   display: inline-block;
-  padding-left: 10px;
+  padding-left: 21px;
 }
 
 .entitySettingsLink {
   display: inline-block;
-  padding-right: 17px;
+  margin-left: -20px;
   font-size: 20px !important;
   color: #44499C;
   cursor: pointer;
@@ -37,7 +48,7 @@
 
 .deleteEntityLink {
   display: inline-block;
-  margin-left: -10px;
+  margin-left: 10px;
   font-size: 20px !important;
   color: #44499C;
   cursor: pointer;
@@ -54,19 +65,20 @@
 
 .mapRelatedEntitiesText {
   display: inline-block;
-  margin-left: -8px;
+  padding-top: 12px;
 }
 
 .entityFilterContainer {
-  width: 98%;
+  width: 100%;
   margin-top: 10px;
 }
 
 .entityFilter {
   display: inline-block;
-  width: 91%;
-  padding-left: 15px;
+  width: 100%;
+  padding-left: 135px;
   padding-bottom: 3px;
+  margin-top: -25px;
 }
 
 .entityFilterDropdown {
@@ -293,8 +305,26 @@
   padding-right: 1px;
 }
 
-.tableExpandIcon {
+//for entity table expand/collapse
+.expandTableIcon {
   margin-left: -18px;
+  vertical-align:middle;
+  text-align: left;
+  font-size: 13px;
+  padding-right: 5px;
+}
+
+//for property row expand/collapse
+.tableExpandIcon {
+  margin-left: 18px;
+  vertical-align:middle;
+  text-align: left;
+  font-size: 13px;
+  padding-right: 5px;
+}
+
+.noTableExpandIcon {
+  margin-left: 33px;
   vertical-align:middle;
   text-align: left;
   font-size: 13px;

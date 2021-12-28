@@ -5,7 +5,6 @@ import {waitFor} from "@testing-library/dom";
 import MappingStepDetail from "./mapping-step-detail";
 import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
-import {onClosestTableRow} from "../../../../util/test-utils";
 import {CurationContext} from "../../../../util/curation-context";
 import {personMappingStepEmpty, personMappingStepWithData, personMappingStepWithRelatedEntityData} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {updateMappingArtifact, getMappingArtifactByMapName, getMappingFunctions, getMappingRefs} from "../../../../api/mapping";
@@ -326,11 +325,6 @@ describe("RTL Source-to-entity map tests", () => {
     //For Source table testing
     let sourcefilterIcon = getByTestId("filterIcon-srcName");
 
-    //For Entity table testing
-    let entityfilterIcon = getByTestId("filterIcon-name");
-    let inputSearchEntity = getByTestId("searchInput-name");
-    let resetEntitySearch = getByTestId("ResetSearch-name");
-
     /* Test filter for JSON Source data in Source table  */
     fireEvent.click(sourcefilterIcon);
     let inputSearchSource = getByTestId("searchInput-source");
@@ -385,18 +379,23 @@ describe("RTL Source-to-entity map tests", () => {
     fireEvent.blur(exp);
     expect(getByText("concat(propName,'-NEW')")).toBeInTheDocument();
 
+    //For Entity table testing
+    let entityfilterIcon = getByTestId("filterIcon-Person-entity");
+
     //Moving along with the filter test
     fireEvent.click(entityfilterIcon);
 
+    let inputSearchEntity = getByTestId("searchInput-entity");
+
     fireEvent.change(inputSearchEntity, {target: {value: "craft"}}); //Enter a case-insensitive value in inputEntitySearch field
     expect(inputSearchEntity).toHaveValue("craft");
-    fireEvent.click(getByTestId("submitSearch-name")); //Click on Search button to apply the filter with the desired string
+    fireEvent.click(getByTestId("submitSearch-entity")); //Click on Search button to apply the filter with the desired string
 
     //Entity type title should remain in the first row after filter is applied
-    let entTableTopRow: any;
-    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
-    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+    // let entTableTopRow: any;
+    // let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    // entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    // expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
     //Check if the expected values are available/not available in search result.
     expect(getByText("Craft")).toBeInTheDocument();
@@ -417,6 +416,8 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Reset the search filter on Entity table
     fireEvent.click(entityfilterIcon);
+
+    let resetEntitySearch = getByTestId("resetSearch-entity");
     fireEvent.click(resetEntitySearch);
 
     //Check if the table goes back to the default state after resetting the filter on Entity table.
@@ -486,29 +487,30 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText;
+    let getByTestId, getByLabelText, getByText, getAllByText, getAllByTestId;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
       getByText = renderResults.getByText;
       getAllByText = renderResults.getAllByText;
+      getAllByTestId = renderResults.getAllByTestId;
     });
 
     //expand nested levels first
     fireEvent.click(within(getByTestId("entityContainer")).getByLabelText("radio-button-expand"));
 
     //Entity type title should be visible
-    let entTableTopRow: any;
-    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
-    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+    // let entTableTopRow: any;
+    // let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    // entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    // expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
-    // Verify related entity filter in the first row
-    expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
+    // // Verify related entity filter in the first row
+    // expect(getByText("Map related entities:").closest("tr")).toBe(entTableTopRow);
 
-    //Verify entity settings icon also exist in the first row
-    expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
+    // //Verify entity settings icon also exist in the first row
+    // expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
     let entitiesFilter = getByText(
       (_content, element) =>
@@ -554,50 +556,55 @@ describe("RTL Source-to-entity map tests", () => {
     expect(entityFilters).toHaveLength(3);
 
     //For Entity table testing
-    let entityfilterIcon = getByTestId("filterIcon-name");
-    let inputSearchEntity = getByTestId("searchInput-name");
+    let entityfilterIcon = getAllByTestId("filterIcon-Person-entity")[0];
     /* Test filter on Entity table  */
 
     //Filter by the properties of main and related tables
     fireEvent.click(entityfilterIcon);
+    let inputSearchEntity = getByTestId("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "orderId"}});
     expect(inputSearchEntity).toHaveValue("orderId");
-    fireEvent.click(getByTestId("submitSearch-name"));
+    fireEvent.click(getByTestId("submitSearch-entity"));
     expect(getByText("orderId")).toBeInTheDocument();
     expect(getByText("orderId")).toHaveStyle("background-color: yellow");
 
     fireEvent.click(entityfilterIcon);
+    inputSearchEntity = getByTestId("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "arrivalDate"}});
     expect(inputSearchEntity).toHaveValue("arrivalDate");
-    fireEvent.click(getByTestId("submitSearch-name"));
+    fireEvent.click(getByTestId("submitSearch-entity"));
     expect(getByText("arrivalDate")).toBeInTheDocument();
     expect(getByText("arrivalDate")).toHaveStyle("background-color: yellow");
 
     fireEvent.click(entityfilterIcon);
+    inputSearchEntity = getByTestId("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "babyRegistryId"}});
     expect(inputSearchEntity).toHaveValue("babyRegistryId");
-    fireEvent.click(getByTestId("submitSearch-name"));
+    fireEvent.click(getByTestId("submitSearch-entity"));
     expect(getByText("babyRegistryId")).toBeInTheDocument();
     expect(getByText("babyRegistryId")).toHaveStyle("background-color: yellow");
 
     fireEvent.click(entityfilterIcon);
+    inputSearchEntity = getByTestId("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "deliveredTo"}});
     expect(inputSearchEntity).toHaveValue("deliveredTo");
-    fireEvent.click(getByTestId("submitSearch-name"));
+    fireEvent.click(getByTestId("submitSearch-entity"));
     expect(getByText("deliveredTo")).toBeInTheDocument();
     expect(getByText("deliveredTo")).toHaveStyle("background-color: yellow");
 
     fireEvent.click(entityfilterIcon);
+    inputSearchEntity = getByTestId("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "orderedBy"}});
     expect(inputSearchEntity).toHaveValue("orderedBy");
-    fireEvent.click(getByTestId("submitSearch-name"));
+    fireEvent.click(getByTestId("submitSearch-entity"));
     expect(getByText("orderedBy")).toBeInTheDocument();
     expect(getByText("orderedBy")).toHaveStyle("background-color: yellow");
 
     fireEvent.click(entityfilterIcon);
+    inputSearchEntity = getByTestId("searchInput-entity");
     fireEvent.change(inputSearchEntity, {target: {value: "lineItems"}});
     expect(inputSearchEntity).toHaveValue("lineItems");
-    fireEvent.click(getByTestId("submitSearch-name"));
+    fireEvent.click(getByTestId("submitSearch-entity"));
     expect(getByText("lineItems")).toBeInTheDocument();
     expect(getByText("lineItems")).toHaveStyle("background-color: yellow");
   });
@@ -608,11 +615,12 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataMultipleSiblings});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
 
-    let getByText, getByTestId;
+    let getByText, getByTestId, getAllByTestId;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
+      getAllByTestId = renderResults.getAllByTestId;
     });
 
     //Set the data for testing in xpath expression
@@ -635,7 +643,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(Value).toBeChecked();
 
     fireEvent.click(Name); //Uncheck Name column
-    let colHeader: any = getByTestId("entityTableType").closest("tr");
+    let colHeader: any = getAllByTestId("entityTableType")[0].closest("tr");
     let entityTableHeaderRow = within(colHeader);
     expect(entityTableHeaderRow.queryByText("Name")).not.toBeInTheDocument();
 
@@ -684,16 +692,16 @@ describe("RTL Source-to-entity map tests", () => {
     //Verify utility in first row of Entity table
 
     //Entity type title should be visible
-    let entTableTopRow: any;
-    let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
-    entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
-    expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
+    // let entTableTopRow: any;
+    // let entTableRow = document.querySelectorAll("#entityContainer .ant-table-row-level-0");
+    // entTableRow.forEach(item => { if (item.getAttribute("data-row-key") === "0") { return entTableTopRow = item; } });
+    // expect(entTableTopRow).toHaveTextContent(data.mapProps.entityTypeTitle);
 
-    // Verify related entity filter in the first row
-    expect(getAllByText("Map related entities:")[0].closest("tr")).toBe(entTableTopRow);
+    // // Verify related entity filter in the first row
+    // expect(getAllByText("Map related entities:")[0].closest("tr")).toBe(entTableTopRow);
 
-    //Verify entity settings icon also exist in the first row
-    expect(getAllByLabelText("entitySettings")[0].closest("tr")).toBe(entTableTopRow);
+    // //Verify entity settings icon also exist in the first row
+    // expect(getAllByLabelText("entitySettings")[0].closest("tr")).toBe(entTableTopRow);
 
     //All mapped entity tables should be present on the screen by default
     expect(getByLabelText("Person-title")).toBeInTheDocument();
@@ -1413,13 +1421,13 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("artCraft")).toBeInTheDocument();
 
     //Check if indentation is right
-    expect(getByText("artCraft").closest("td")?.firstElementChild).toHaveStyle("padding-left: 56px;");
+    expect(getByText("artCraft").parentElement.parentElement.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 59.49999999999999px`);
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
-    expect(onClosestTableRow(getByText("artCraft"))?.style.display).toBe("none"); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
-    expect(onClosestTableRow(getByText("itemTypes"))?.style.display).toBe("none");
-    expect(onClosestTableRow(getByText("itemCategory"))?.style.display).toBe("none");
+    await waitFor(() => expect(queryByText("artCraft")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("itemTypes")).not.toBeInTheDocument());
+    await waitFor(() => expect(queryByText("itemCategory")).not.toBeInTheDocument());
   });
 
   test("CollapseAll/Expand All feature in XML Source data table", async () => {
@@ -2313,8 +2321,8 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(sourceSelector);
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     let proteinDogOption = (getAllByTestId("nutFree:proteinDog-option"));
-    expect(proteinDogOption.length).toEqual(2);
-    fireEvent.click(proteinDogOption[1]);
+    expect(proteinDogOption.length).toEqual(1);
+    fireEvent.click(proteinDogOption[0]);
     mapExp = getByTestId("items-mapexpression");
     expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog");
 

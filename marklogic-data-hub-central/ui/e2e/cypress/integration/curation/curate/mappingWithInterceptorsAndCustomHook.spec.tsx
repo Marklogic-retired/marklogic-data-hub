@@ -164,7 +164,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.validateMapValue("Order", "shippedDate", "1996-07-17T00:28:30");
   });
   it("Verify mapping step filtering for Entity table", () => {
-    mappingStepDetail.toggleEntityFilterMenu();
+    mappingStepDetail.searchIcon("Order").click();
     mappingStepDetail.setEntitySearch("city");
     mappingStepDetail.validateMapValue("Order", "city", "Houston");
     mappingStepDetail.submitEntitySearch().click();
@@ -174,7 +174,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     mappingStepDetail.validateMapValue("Order", "city", "Houston");
     mappingStepDetail.validateMapValue("Order", "state", "100 Main Street");
     mappingStepDetail.lessLink().click();
-    mappingStepDetail.toggleEntityFilterMenu();
+    mappingStepDetail.searchIcon("Order").click();
     mappingStepDetail.resetEntitySearch().click();
   });
   it("Edit Map step", () => {

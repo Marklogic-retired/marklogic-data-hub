@@ -89,7 +89,7 @@ const MappingStepDetail: React.FC = () => {
   const [filterActive, setFilterActive] = useState(false);
   const [popoverVisibility, setPopoverVisibilty] = useState(false);
   const [searchedKeys, setSearchedKeys] = useState<any[]>([]);
-  const [firstLeveKeysXML, setFirstLevelKeysXML] = useState<any[]>([]);
+  const [firstLevelKeysXML, setFirstLevelKeysXML] = useState<any[]>([]);
 
   const [mapExpTouched, setMapExpTouched] = useState(false);
   const [editingURI, setEditingUri] = useState(false);
@@ -879,6 +879,7 @@ const MappingStepDetail: React.FC = () => {
     setFilterActive(false);
     setSearchSourceText("");
     setSearchedSourceColumn("");
+    setSearchedKeys([]);
     togglePopover();
   };
 
@@ -1009,7 +1010,7 @@ const MappingStepDetail: React.FC = () => {
       key: "rowKey",
       // sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
       width: 185,
-      formatter: (text, row, extraData) => {
+      formatter: (text, row, index, extraData) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
         let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div>
           <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
@@ -1039,7 +1040,7 @@ const MappingStepDetail: React.FC = () => {
       formatter: (text, row, index, extraData) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
         let valueToDisplay = sourceFormat === "xml" && row.rowKey !== 1 ? <div>
-          {firstLeveKeysXML.includes(row.rowKey) ? row.children ? <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")}className={styles.tableExpandIcon}>{!extraData.sourceExpandedKeys?.includes(row.rowKey) ? <span><ChevronRight/></span> : <span><ChevronDown/></span>}</span> : <span className={styles.noTableExpandIcon}>{null}</span>: null}
+          {firstLevelKeysXML.includes(row.rowKey) ? row.children ? <span onClick={() => toggleSourceRowExpanded(row, "", "rowKey")} className={styles.tableExpandIcon}>{!extraData.sourceExpandedKeys?.includes(row.rowKey) ? <span><ChevronRight/></span> : <span><ChevronDown/></span>}</span> : <span className={styles.noTableExpandIcon}>{null}</span>: null}
           <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="xml-source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span></div>: <span className={styles.sourceName}>{text?.split(":").length > 1 ? <span><HCTooltip text={text?.split(":")[0]+" = \""+namespaces[text?.split(":")[0]]+"\""} id="source-name-tooltip" placement="top"><span className={styles.namespace}>{text?.split(":")[0]+": "}</span></HCTooltip><span>{text?.split(":")[1]}</span></span> : text}</span>;
         return getRenderOutput(textToSearchInto, valueToDisplay, "key", searchedSourceColumn, searchSourceText, row.rowKey);
       },

@@ -278,11 +278,12 @@ describe("Entity Modeling: Graph View", () => {
     graphView.addNewRelationship().click({force: true});
     cy.waitUntil(() => graphView.verifyEditInfoMessage().should("exist"));
 
+    modelPage.scrollPageBottom();
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];
       graphVis.getGraphVisCanvas().trigger("pointerdown", PersonCoordinates.x, PersonCoordinates.y, {button: 0});
-      graphVis.getGraphVisCanvas().trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
+      graphVis.getGraphVisCanvas().trigger("pointermove", ClientCoordinates.x, ClientCoordinates.y, {button: 0, force: true});
       graphVis.getGraphVisCanvas().trigger("pointerup", ClientCoordinates.x, ClientCoordinates.y, {button: 0});
     });
 
@@ -343,6 +344,7 @@ describe("Entity Modeling: Graph View", () => {
     // cy.contains("recommendedByUserHav...");
 
     //verify relationship was created and properties are present
+    modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
     propertyTable.editProperty("referredBy");
