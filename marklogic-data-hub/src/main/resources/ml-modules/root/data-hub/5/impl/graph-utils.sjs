@@ -40,18 +40,22 @@ function getOrderedLabelPredicates() {
 
 function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQueryCustom) {
   const subjectPlan = op.fromSPARQL(`PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                 SELECT ?subjectIRI ?subjectLabel WHERE {
-                    ?subjectIRI rdf:type @entityTypeIRIs.
+                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                 SELECT ?subjectIRI ?subjectLabel ?docURI WHERE {
+                    ?subjectIRI rdf:type @entityTypeIRIs;
+                    rdfs:isDefinedBy ?docURI.
                     OPTIONAL {
                       ?subjectIRI @labelIRI ?subjectLabel.
                     }
                   }`).where(ctsQueryCustom);
   const firstLevelConnectionsPlan = op.fromSPARQL(`
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       SELECT * WHERE {
       {
-        SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (COUNT(?objectIRI) AS ?nodeCount) WHERE {
-            ?objectIRI rdf:type @entityTypeOrConceptIRI.
+         SELECT ?subjectIRI ?predicateIRI ?predicateLabel (MIN(?objectIRI) AS ?firstObjectIRI) (MIN(?docURI) AS ?firstDocURI) (COUNT(?objectIRI) AS ?nodeCount) WHERE {
+            ?objectIRI rdf:type @entityTypeOrConceptIRI;
+            rdfs:isDefinedBy ?docURI.
             ?subjectIRI ?predicateIRI ?objectIRI.
             OPTIONAL {
               ?predicateIRI @labelIRI ?predicateLabel.

@@ -583,7 +583,9 @@ const Browse: React.FC<Props> = ({location}) => {
                               />
                               <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
                                 <label aria-label="switch-view-graph" htmlFor="switch-view-graph" className={`d-flex justify-content-center align-items-center`} id={"graphView"} style={{height: "40px"}}>
-                                  <i>{<FontAwesomeIcon icon={faProjectDiagram} />}</i>
+                                  <i data-cy="graph-view">
+                                    <FontAwesomeIcon icon={faProjectDiagram} />
+                                  </i>
                                 </label>
                               </HCTooltip>
                             </span>

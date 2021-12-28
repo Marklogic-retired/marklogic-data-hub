@@ -1,16 +1,19 @@
 import React, {useState} from "react";
 import styles from "./table-view.module.scss";
 import {HCTable} from "@components/common";
+import ExpandCollapse from "@components/expand-collapse/expand-collapse";
 
 interface Props {
   document: any;
   contentType: string;
   location: {};
   isEntityInstance: boolean;
+  isSidePanel?: boolean;
 }
 
 const TableView: React.FC<Props> = (props) => {
-  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [expandedRows, setExpandedRows] = useState<any[]>([]);
+  const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
 
   let data: any[] = [];
   let counter = 0;
@@ -40,6 +43,7 @@ const TableView: React.FC<Props> = (props) => {
     data = parseJson(props.document);
   }
 
+
   const columns = [
     {
       text: "Property",
@@ -63,6 +67,29 @@ const TableView: React.FC<Props> = (props) => {
     }
   ];
 
+  const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand: any = [], expanded?) => {
+    dataArr.forEach(obj => {
+      if (obj.hasOwnProperty("children")) {
+        allKeysToExpand.push(obj[rowKey]);
+        if (rowKey === "key" && (!expandedSourceFlag || expanded)) {
+          getKeysToExpandFromTable(obj["children"], rowKey, allKeysToExpand);
+        }
+      }
+    });
+    return allKeysToExpand;
+  };
+
+  const handleSourceExpandCollapse = (option) => {
+    let keys = getKeysToExpandFromTable(data, "key", [], true);
+    if (option === "collapse") {
+      setExpandedRows([]);
+      setExpandedSourceFlag(false);
+    } else {
+      setExpandedRows([...keys]);
+      setExpandedSourceFlag(true);
+    }
+  };
+
   const onExpand = (record, expanded) => {
     let newExpandedRows = [...expandedRows];
 
@@ -76,21 +103,29 @@ const TableView: React.FC<Props> = (props) => {
 
     setExpandedRows(newExpandedRows);
   };
-
   return (
-    <HCTable columns={columns}
-      className={props.isEntityInstance ? "document-table-demo" : styles.tableViewNonEntity}
-      data={data}
-      onExpand={onExpand}
-      expandedRowKeys={expandedRows}
-      showExpandIndicator={{bordered: true}}
-      nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
-      childrenIndent={true}
-      data-cy="document-table"
-      rowKey="key"
-      showHeader={true}
-      baseIndent={25}
-    />
+    <>
+      {props.isSidePanel &&
+          <div className={styles.extraButtonContainer}>
+            <span>
+              <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} />
+            </span>
+          </div>
+      }
+      <HCTable columns={columns}
+        className={props.isEntityInstance ? "document-table-demo" : styles.tableViewNonEntity}
+        data={data}
+        onExpand={onExpand}
+        expandedRowKeys={[0, ...expandedRows]}
+        showExpandIndicator={{bordered: true}}
+        nestedParams={{headerColumns: columns, iconCellList: [], state: [expandedRows, setExpandedRows]}}
+        childrenIndent={true}
+        data-cy="document-table"
+        rowKey="key"
+        showHeader={true}
+        baseIndent={20}
+      />
+    </>
   );
 };
 

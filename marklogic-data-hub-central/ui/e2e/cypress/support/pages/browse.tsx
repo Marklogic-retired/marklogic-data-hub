@@ -308,6 +308,10 @@ class BrowsePage {
     return cy.get("[data-cy=table-view]").click();
   }
 
+  clickGraphView() {
+    return this.getGraphView().click();
+  }
+
   getSideBarCollapseIcon() {
     return cy.get("#sidebar-collapse-icon");
   }
