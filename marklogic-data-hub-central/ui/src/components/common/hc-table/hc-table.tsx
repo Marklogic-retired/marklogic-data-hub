@@ -267,6 +267,10 @@ const isMappingXML = (showHeader) => {
   return !showHeader ? true : false;
 };
 
+const isEntityMapping = (keyUtil, showHeader) => {
+  return keyUtil === "key" && !showHeader;
+};
+
 const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseIndent, headerColumns, showHeader, iconCellList, state, showIndicator, isExpanded, bordered}) => {
   const [expandedNestedRows] = state;
   const nextColumnHasStaticWidth = headerColumns[0].width && !`${headerColumns[0].width}`.includes("%");
@@ -284,11 +288,14 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseInde
   //temp fix for mapping tables after merge conflicts
   if (isMapping(keyUtil)) {
     indentation -= isMappingXML(showHeader) ? 1.2 : 2;
+  } else if (isEntityMapping(keyUtil, showHeader)) {
+    //entity map tables case
+    indentation -= 1.6;
   }
 
   const isKeyColumn = (colIndex) => colIndex === 0;
 
-  return <div key={expandKey} className={`${styles.childrenIndentTableRow} hc-table_row`} data-row-key={expandKey}>
+  return <div key={expandKey} className={`${isEntityMapping(keyUtil, showHeader) ? styles.childrenIndentTableRowColored : styles.childrenIndentTableRow} hc-table_row`} data-row-key={expandKey}>
     {showIndicator ?
       <div key={`indicator_${expandKey}`} className={styles.childrenIndentIndicatorCell}></div>:
       <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>

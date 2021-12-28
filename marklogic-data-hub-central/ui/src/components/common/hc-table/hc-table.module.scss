@@ -123,6 +123,17 @@
         border-bottom: 1px solid #e8e8e8;
     }
 }
+
+//for entity map tables, need darker border in order to show up
+.childrenIndentTableRowColored {
+  display: table;
+  width: 100%;
+
+  &:not(:last-child) {
+      border-bottom: 1px solid #CCCCCC !important;
+  }
+}
+
 .childrenIndentIndicatorCell {
     display: table-cell;
     width: 50px;

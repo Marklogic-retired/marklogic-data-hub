@@ -15,8 +15,8 @@ class MappingStepDetail {
     return cy.findByTestId("navigate-uris-left");
   }
 
-  getPaginationPageSizeOptions() {
-    return cy.get(`.ant-pagination-options .ant-select-selection-selected-value`);
+  getPaginationPageSizeOptions(entityName: string) {
+    return cy.get(`[data-testid=${entityName}-table] > :nth-child(2) > .row > :nth-child(1) > .test > .sizePageSelector > #size-per-page`);
   }
 
   expandSource() {
@@ -28,19 +28,19 @@ class MappingStepDetail {
   }
 
   toggleSourceFilterMenu() {
-    cy.findByTestId("filterIcon-key").click();
+    cy.findByTestId("filterIcon-srcName").click();
   }
 
   setSourceSearch(propertyName: string) {
-    cy.get("#searchInput-key").focus().type(propertyName);
+    cy.get("#searchInput-source").focus().type(propertyName);
   }
 
   resetSourceSearch() {
-    return cy.findByTestId("ResetSearch-key");
+    return cy.findByTestId("resetSearch-source");
   }
 
   submitSourceSearch() {
-    return cy.findByTestId("submitSearch-key");
+    return cy.findByTestId("submitSearch-source");
   }
 
   expandEntity() {
@@ -51,20 +51,16 @@ class MappingStepDetail {
     return cy.get("#entityContainer #collapseIcon");
   }
 
-  toggleEntityFilterMenu () {
-    cy.findByTestId("filterIcon-name").click();
-  }
-
   setEntitySearch(propertyName: string) {
-    cy.findByTestId("searchInput-name").focus().type(propertyName);
+    cy.findByTestId("searchInput-entity").focus().type(propertyName);
   }
 
   resetEntitySearch() {
-    return cy.findByTestId("ResetSearch-name");
+    return cy.findByTestId("resetSearch-entity");
   }
 
   submitEntitySearch() {
-    return cy.findByTestId("submitSearch-name");
+    return cy.findByTestId("submitSearch-entity");
   }
 
   stepSettingsLink() {
@@ -267,16 +263,16 @@ class MappingStepDetail {
     return cy.findByLabelText("additionalColl-select");
   }
 
-  searchIcon() {
-    return cy.findByTestId("filterIcon-name");
+  searchIcon(entityName: string) {
+    return cy.get(`[data-testid=filterIcon-${entityName}-entity]`).parent();
   }
 
   searchName() {
-    return cy.findByTestId("searchInput-name");
+    return cy.findByTestId("searchInput-entity");
   }
 
   searchButton() {
-    return cy.findByTestId("submitSearch-name");
+    return cy.findByTestId("submitSearch-entity");
   }
 
   customerEntity() {
@@ -284,9 +280,9 @@ class MappingStepDetail {
   }
 
   XPathInfoIcon() {
-    cy.findByTestId("XPathInfoIcon").trigger("mouseover");
+    cy.get(`#mainTable > thead > tr > :nth-child(3) > span > [data-testid=XPathInfoIcon]`).trigger("mouseover");
     cy.findByText("Documentation:").should("be.visible");
-    cy.findByTestId("XPathInfoIcon").trigger("mouseout");
+    cy.get(`#mainTable > thead > tr > :nth-child(3) > span > [data-testid=XPathInfoIcon]`).trigger("mouseout");
   }
 
   relatedInfoIcon() {

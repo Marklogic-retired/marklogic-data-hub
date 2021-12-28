@@ -120,29 +120,8 @@ describe("Mapping", () => {
     mappingStepDetail.validateMapValue("Person", "id", "444-44-4440");
     mappingStepDetail.validateMapValueString("Relation (relatedTo Person)", "relatedTo", "444-44-4440");
     mappingStepDetail.validateMapURIValue("Relation (relatedTo Person)", "/Relation/444-44-4440.j...");
-
-    //Will be validated in unit test
-    //mappingStepDetail.getURIValue("Relation (relatedTo Person)", "/Relation/444-44-4440.json");
-
-    // Search by name for non structured property
-    mappingStepDetail.searchIcon().click();
-    mappingStepDetail.searchName().type("URI");
-    mappingStepDetail.searchButton().click();
-    cy.findAllByText("URI").should("have.length.gt", 1);
   });
 
-  it("Verify more/less functionality on filtering by name for structured properties", () => {
-    mappingStepDetail.goBackToCurateHomePage();
-    mappingStepDetail.customerEntity().click();
-    curatePage.openMappingStepDetail("Customer", "mapCustomersJSON");
-    browsePage.waitForSpinnerToDisappear();
-    mappingStepDetail.searchIcon().click();
-    mappingStepDetail.searchName().type("street");
-    mappingStepDetail.searchButton().click();
-    cy.findAllByText("more").should("have.length.gt", 1);
-    cy.findAllByText("more").first().click();
-    cy.findByText("less").should("be.visible");
-  });
   it("Switch views and return to mapping details, verify persistence of expressions", () => {
     mappingStepDetail.goBackToCurateHomePage();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Person")).should("be.visible");
@@ -264,9 +243,7 @@ describe("Mapping", () => {
     mappingStepDetail.getRelatedEntityFromList("Relation (relatedTo Person)");
     cy.get("#entityContainer").scrollTo("bottom",  {ensureScrollable: false});
     mappingStepDetail.entityTitle("Person").should("not.be.visible");
-    mappingStepDetail.getPaginationPageSizeOptions().then(attr => {
-      attr[0].click();
-    });
+    mappingStepDetail.getPaginationPageSizeOptions("person").click();
     browsePage.getPageSizeOption("10 / page").click({force: true});
     mappingStepDetail.entityTitle("Person").should("be.visible");
   });

@@ -16,3 +16,12 @@
     background-image: url("../../../../assets/grey-for-white-bg.png");
   }
 }
+
+.hc-table_row{
+  td {
+    background-color: inherit !important;
+  }
+  &:hover {
+    background-color: #e9f7fe !important;
+  }
+}
