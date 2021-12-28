@@ -1,5 +1,4 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Table} from "antd";
 import {Modal} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faFileExport} from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +16,7 @@ import {getExportPreview} from "../../../query-export/export-preview/export-prev
 import {QueryOptions} from "../../../../types/query-types";
 import {useHistory, useLocation} from "react-router-dom";
 import HCButton from "../../../common/hc-button/hc-button";
+import {HCTable} from "@components/common";
 
 const QueryModal = (props) => {
   const {
@@ -157,7 +157,7 @@ const QueryModal = (props) => {
         query = selectedQuery;
       }
     });
-    let arrayProperties : any[] = [];
+    let arrayProperties: any[] = [];
     props.entityDefArray && props.entityDefArray.forEach(entity => {
       if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
         entity.properties && entity.properties.forEach(prop => {
@@ -177,32 +177,57 @@ const QueryModal = (props) => {
 
   const columns: any = [
     {
-      title: "Name",
-      dataIndex: "name",
+      text: "Name",
+      dataField: "name",
       key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      width: 200,
-      sortDirections: ["ascend", "descend", "ascend"],
-      defaultSortOrder: "ascend",
-      render: text => <a data-id={text} data-testid={text} className={styles.name} onClick={onApply}>{text}</a>,
+      sort: true,
+      formatter: (text, key) => (
+        <span className={styles.tableRow}>
+          <a data-id={text} data-testid={text} className={styles.name} onClick={onApply}>{text}</a>
+        </span>
+      ),
     },
     {
-      title: "Description",
-      dataIndex: "description",
+      text: "Description",
+      dataField: "description",
       key: "description",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      sortDirections: ["ascend", "descend", "ascend"],
-      width: 200,
-      render: text => <div className={styles.cell}>{text}</div>,
+      sort: true,
     },
     {
-      title: "Edited",
-      dataIndex: "edited",
+      text: "Edited",
+      dataField: "edited",
       key: "edited",
-      sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a, b) => a.edited.localeCompare(b.edited),
-      width: 200,
-      render: text => <div className={styles.cell}>{text}</div>,
+      sort: true,
+    },
+    {
+      text: "Edit",
+      dataField: "edit",
+      key: "edit",
+      formatter: (text, key) => (
+        <span className={styles.tableRow}>{text}<i aria-label="editIcon">
+          <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" className={styles.manageQueryIconsHover} onClick={onEdit} size="lg" /></i>
+        </span>
+      ),
+    },
+    {
+      text: "Export",
+      dataField: "export",
+      key: "export",
+      formatter: (text, row) => (
+        <span className={styles.tableRow}>{text}<i aria-label="exportIcon">
+          <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} onClick={() => displayExportModal(row.key)} /></i>
+        </span>
+      ),
+    },
+    {
+      text: "Delete",
+      dataField: "delete",
+      key: "delete",
+      formatter: (text, row) => (
+        <span className={styles.tableRow}>{text}<i aria-label="deleteIcon">
+          <FontAwesomeIcon icon={faTrashAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} onClick={() => onDelete(row)} /></i>
+        </span>
+      ),
     }
   ];
 
@@ -265,7 +290,7 @@ const QueryModal = (props) => {
   }
 
   const updateTableData = () => {
-    let data : any[] = [];
+    let data: any[] = [];
     queries && queries.length > 0 && queries.forEach(query => {
       data.push(
         {
@@ -273,11 +298,11 @@ const QueryModal = (props) => {
           name: query["savedQuery"]["name"],
           description: query["savedQuery"]["description"],
           edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
-          edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>,
-          export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>,
+          //edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} />,
+          //export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} />,
           // TODO: Uncomment once link for query is implemented
           // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
-          delete: <FontAwesomeIcon icon={faTrashAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>
+          //delete: <FontAwesomeIcon icon={faTrashAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover} />
         }
       );
     });
@@ -323,6 +348,17 @@ const QueryModal = (props) => {
     }
   };
 
+  const rowEvents = {
+    onClick: (e, row, rowIndex) => {
+      queries.forEach((query) => {
+        if (query["savedQuery"]["id"] === row.key) {
+          setQuery(query);
+          setCurrentQueryName(row.name);
+        }
+      });
+    },
+  };
+
   return (
     <div>
       <ExportQueryModal hasStructured={hasStructured} queries={queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} />
@@ -336,21 +372,13 @@ const QueryModal = (props) => {
           <button type="button" className="btn-close manage-modal-close-icon" aria-label="Close" onClick={onClose}></button>
         </Modal.Header>
         <Modal.Body>
-          <Table columns={columns} dataSource={data}
-            onRow={(record) => {
-              return {
-                onClick: () => {
-                  queries.forEach((query) => {
-                    if (query["savedQuery"]["id"] === record.key) {
-                      setQuery(query);
-                      setCurrentQueryName(record.name);
-                    }
-                  });
-                }
-              };
-            }}
-          >
-          </Table>
+          <HCTable
+            columns={columns}
+            data={data}
+            rowEvents={rowEvents}
+            pagination={true}
+            rowKey="QueryManageKey"
+          />
         </Modal.Body>
       </Modal>
       <EditQueryDialog
