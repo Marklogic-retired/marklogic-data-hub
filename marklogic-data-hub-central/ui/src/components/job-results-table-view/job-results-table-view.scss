@@ -1,3 +1,14 @@
 .ant-menu-vertical{
     border-right: 0px #ffffff;
 }
+
+
+.job-results-table table thead tr th:hover {
+    background-color: #e8e8e8 !important;
+}
+
+.job-results-table th:nth-child(2):hover, .job-results-table th:nth-child(3):hover, .job-results-table th:nth-child(5):hover, .job-results-table th:nth-child(6):hover {
+    background-color: #e0e0e0 !important;
+    cursor: pointer;
+}
+
