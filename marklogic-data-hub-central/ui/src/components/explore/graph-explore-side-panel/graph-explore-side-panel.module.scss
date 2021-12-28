@@ -40,12 +40,15 @@
         display: flex;
         align-items: flex-end;
         justify-content: flex-start;
-        margin-left: 0;
 
         button.tab {
             border: 0 !important;
             border-bottom: 2px solid transparent !important;
             margin-right: -1px;
         }
+    }
+
+    .instanceTabContainer {
+        padding-top: 5px;
     }
 }

@@ -63,24 +63,28 @@ const GraphViewExplore: React.FC<Props> = (props) => {
 
   const relationshipsToggle = <span>{HCSwitch}</span>;
 
-  const graphViewExploreMainPanel =
-    <div className={styles.graphViewExploreContainer}>
-      <div className={styles.graphHeader}>
-        {relationshipsToggle}
-        {headerButtons}
+  const graphViewExploreMainPanel = (
+    Array.isArray(props.entityTypesInstances)
+      ? <span></span>
+      : (<div className={styles.graphViewExploreContainer}>
+        <div className={styles.graphHeader}>
+          {relationshipsToggle}
+          {headerButtons}
+        </div>
+        <div className={styles.borderBelowHeader}></div>
+        <div>
+          <GraphVisExplore
+            entityTypeInstances={props.entityTypesInstances}
+            splitPaneResized={splitPaneResized}
+            setSplitPaneResized={setSplitPaneResized}
+            graphView={props.graphView}
+            coords={props.coords}
+            setCoords={props.setCoords}
+          />
+        </div>
       </div>
-      <div className={styles.borderBelowHeader}></div>
-      <div>
-        <GraphVisExplore
-          entityTypeInstances={props.entityTypesInstances}
-          splitPaneResized={splitPaneResized}
-          setSplitPaneResized={setSplitPaneResized}
-          graphView={props.graphView}
-          coords={props.coords}
-          setCoords={props.setCoords}
-        />
-      </div>
-    </div>;
+      )
+  );
 
   const handleSplitPaneResize = () => {
     setSplitPaneResized(true);

@@ -102,6 +102,8 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       window.graphVisExploreApi = {
         getNodePositions: (nodeIds?: any) => { return !nodeIds ? network.getPositions() : network.getPositions(nodeIds); },
         canvasToDOM: (xCoordinate, yCoordinate) => { return network.canvasToDOM({x: xCoordinate, y: yCoordinate}); },
+        focus: (nodeId: any) => { network.focus(nodeId); },
+        stopStabilization: () => { network.stopSimulation(); },
       };
     }
   }, [network]);

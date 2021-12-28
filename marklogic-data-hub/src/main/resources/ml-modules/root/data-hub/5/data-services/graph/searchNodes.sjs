@@ -84,6 +84,7 @@ result.map(item => {
   let nodeOrigin = {};
   if (!nodes[item.subjectIRI]) {
     nodeOrigin.id = item.subjectIRI;
+    nodeOrigin.docUri = item.docURI;
     nodeOrigin.label = subjectLabel;
     nodeOrigin.additionalProperties = null;
     nodeOrigin.group = group;
@@ -107,6 +108,7 @@ result.map(item => {
     }
     let objectLabel = item.firstObjectLabel.toString();
     let objectId = item.firstObjectIRI.toString();
+    let objectUri = item.firstDocURI.toString();
     let objectGroup = objectIRI.substring(0, objectIRI.length - objectIRIArr[objectIRIArr.length - 1].length - 1);
     let hasRelationships = false;
     if(item.nodeCount == 1 && !queryObj.entityTypeIds.includes(objectIRIArr[objectIRIArr.length - 2])){
@@ -130,6 +132,7 @@ result.map(item => {
     if (!nodes[objectId]) {
       let objectNode = {};
       objectNode.id = item.firstObjectIRI;
+      objectNode.docUri = objectUri;
       objectNode.label = objectLabel;
       objectNode.group = objectGroup;
       objectNode.isConcept = false;

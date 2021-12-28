@@ -278,6 +278,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.selectEntity("Customer");
     browsePage.selectQuery("new-query");
+    cy.wait(5000);
     browsePage.waitForSpinnerToDisappear();
     browsePage.getAppliedFacets("Adams Cole").should("exist");
     browsePage.getSortIndicatorAsc().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
