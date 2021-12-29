@@ -692,7 +692,7 @@ class BrowsePage {
   }
 
   getSearchField() {
-    return cy.get(`input[aria-label="graph-view-filter-input"]`);
+    return cy.get(`#graph-view-filter-input`);
   }
 }
 

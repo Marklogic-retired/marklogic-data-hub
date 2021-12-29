@@ -395,7 +395,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
 
   const handleChange = (event) => {
 
-    if (event.target.id === "targetPermissions") {
+    if (event.target.id.match("targetPermissions") !== null) {
       setTargetPermissions(event.target.value);
       setTargetPermissionsTouched(true);
       if (!targetPermissionsValid && isPermissionsValid()) {

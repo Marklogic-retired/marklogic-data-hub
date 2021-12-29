@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useContext, useLayoutEffect} from "react";
 import Graph from "react-graph-vis";
 import graphConfig from "../../../config/graph-vis.config";
-import {Dropdown, Menu} from "antd";
 import * as _ from "lodash";
 import entityIcon from "../../../assets/Entity-Services.png";
 import {SearchContext} from "../../../util/search-context";
@@ -24,7 +23,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   };
 
   const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  //const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
   const [hasStabilized, setHasStabilized] = useState(false);
   const {
@@ -301,16 +300,18 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     },
   };
 
-  const menuClick = async (event) => {
+  /* TODO: Graph context menu (DHFPROD-8284) */
+
+  /*   const menuClick = async (event) => {
     setContextMenuVisible(false);
     if (event.key === "1") {
       if (network) {
         //add logic for menu selection here
       }
     }
-  };
+  }; */
 
-  const menu = () => {
+  /*   const menu = () => {
     return (
       <Menu id="contextMenu" onClick={menuClick}>
         { clickedNode &&
@@ -321,16 +322,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         }
       </Menu>
     );
-  };
+  }; */
 
-  useEffect(() => {
+  /*  useEffect(() => {
     if (clickedNode) {
       setContextMenuVisible(true);
     } else {
       setContextMenuVisible(false);
     }
   }, [clickedNode]);
-
+ */
   const handleZoom = _.debounce((event, scale) => {
     //Zoom logic goes here
   }, 400);
@@ -431,20 +432,20 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   return (
     <div id="graphVisExplore">
-      <Dropdown
+      {/* <Dropdown
         overlay={menu}
         trigger={["contextMenu"]}
         visible={contextMenuVisible}
-      >
-        <div>
-          <Graph
-            graph={graphData}
-            options={options}
-            events={events}
-            getNetwork={initNetworkInstance}
-          />
-        </div>
-      </Dropdown>
+      > */}
+      <div>
+        <Graph
+          graph={graphData}
+          options={options}
+          events={events}
+          getNetwork={initNetworkInstance}
+        />
+      </div>
+      {/*   </Dropdown> */}
     </div>
   );
 };

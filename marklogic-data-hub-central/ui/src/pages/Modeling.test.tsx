@@ -1,6 +1,5 @@
 import React from "react";
 import {render, wait, screen, fireEvent} from "@testing-library/react";
-import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import {BrowserRouter as Router} from "react-router-dom";
 
@@ -238,7 +237,7 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalled());
+    await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
@@ -247,22 +246,20 @@ describe("Graph view page", () => {
     expect(getByText("Entity Types")).toBeInTheDocument();
     expect(document.querySelector((".rbt-input-main"))).toBeInTheDocument();
     userEvent.click(getByText("Add"));
-    await waitFor(() => {
-      expect(getByLabelText("add-entity-type")).toBeInTheDocument();
-      expect(getByLabelText("add-relationship")).toBeInTheDocument();
-    });
+    await expect(getByLabelText("add-entity-type")).toBeInTheDocument();
+    await expect(getByLabelText("add-relationship")).toBeInTheDocument();
 
     userEvent.hover(getByLabelText("publish-to-database"));
-    await waitFor(() => expect(getByText(ModelingTooltips.publish)).toBeInTheDocument());
+    await expect(getByText(ModelingTooltips.publish)).toBeInTheDocument();
     userEvent.hover(getByLabelText("graph-export"));
-    await waitFor(() => expect(getByText(ModelingTooltips.exportGraph)).toBeInTheDocument());
+    await expect(getByText(ModelingTooltips.exportGraph)).toBeInTheDocument();
   });
 
   it("can toggle between graph view and table view properly", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({status: 200, data: getEntityTypes});
     mockUpdateEntityModels.mockResolvedValueOnce({status: 200});
 
-    const {getByText, getByLabelText, queryByLabelText, rerender} = render(
+    const {getByText, getByLabelText, queryByLabelText, rerender, getAllByText} = render(
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
           <Router>
@@ -272,9 +269,9 @@ describe("Graph view page", () => {
       </AuthoritiesContext.Provider>
     );
 
-    await waitFor(() => expect(mockPrimaryEntityType).toHaveBeenCalled());
+    await expect(mockPrimaryEntityType).toHaveBeenCalled();
 
-    expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
+    expect(getAllByText(tiles.model.intro)[0]).toBeInTheDocument(); // tile intro text
 
     let graphViewButton = document.querySelector("#switch-view-graph");
     let tableViewButton = document.querySelector("#switch-view-table");

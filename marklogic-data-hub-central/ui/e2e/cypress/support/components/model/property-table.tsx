@@ -47,7 +47,7 @@ class PropertyTable {
   }
 
   getAddPropertyToStructureType(structureTypeName: string) {
-    return cy.findAllByTestId(`add-struct-${structureTypeName}`).eq(0);
+    return cy.findAllByTestId(`add-struct-${structureTypeName}`).eq(0).scrollIntoView();
   }
 
   editProperty(propertyName: string) {

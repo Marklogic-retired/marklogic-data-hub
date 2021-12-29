@@ -22,7 +22,7 @@ class GraphViewSidePanel {
     return cy.findByTestId(`${entityName}`);
   }
   getEntityTypeDescription() {
-    return cy.findByTestId("description");
+    return cy.get("#description");
   }
 
   getEditEntityTypeColor() {
@@ -46,15 +46,15 @@ class GraphViewSidePanel {
   }
 
   getEntityDescription() {
-    return cy.findByTestId("description");
+    return cy.get("#description");
   }
 
   getEntityNamespace() {
-    return cy.findByTestId("namespace");
+    return cy.get("#namespace");
   }
 
   getEntityPrefix() {
-    return cy.findByTestId("prefix");
+    return cy.get("#prefix");
   }
 
   getGraphViewFilterInput() {
