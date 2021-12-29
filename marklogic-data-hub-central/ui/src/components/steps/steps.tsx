@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {TabPane, Tabs, Tab, Modal} from "react-bootstrap";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
@@ -10,6 +10,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {ErrorTooltips} from "../../config/tooltips.config";
 import {ConfirmYesNo, HCTooltip} from "@components/common";
+import {CurationContext} from "../../util/curation-context";
 
 interface Props {
     isEditing: boolean;
@@ -42,8 +43,9 @@ const Steps: React.FC<Props> = (props) => {
   const [basicPayload, setBasicPayload] = useState({});
   const [advancedPayload, setAdvancedPayload] = useState({});
   const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
+  const {setLoadModalClickedCalled} = useContext(CurationContext);
 
-  // Adavnced settings needs step name (and target entity name for mapping) for default collections
+  // Advanced settings needs step name (and target entity name for mapping) for default collections
   useEffect(() => {
     if (basicPayload["name"]) {
       if (props.activityType === StepType.Mapping && props.targetEntityName) {
@@ -213,9 +215,14 @@ const Steps: React.FC<Props> = (props) => {
     props.openStepDetails(name);
   };
 
+  const handleIsModelClicked = () => {
+    if (setLoadModalClickedCalled !== undefined) setLoadModalClickedCalled(true);
+  };
+
   return <Modal
     show={props.openStepSettings}
     size={"lg"}
+    onClick={() => handleIsModelClicked()}
   >
     <Modal.Header className={"bb-none pb-0"}>
       <div className={`fs-3 position-absolute ${styles.title}`}>{getTitle()}</div>

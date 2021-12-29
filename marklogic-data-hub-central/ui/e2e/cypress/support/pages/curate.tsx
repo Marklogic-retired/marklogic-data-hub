@@ -228,7 +228,7 @@ class CuratePage {
   }
 
   targetCollection(collection: string) {
-    this.getAdditionalCollSelectWrapper().type(collection).find("input").type("{enter}");
+    this.getAdditionalCollSelectWrapper().type(collection).find("input").typeTab();
   }
 
   mergeTargetCollection(collection: string) {

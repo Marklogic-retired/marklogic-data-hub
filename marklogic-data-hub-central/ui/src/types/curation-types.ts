@@ -13,6 +13,8 @@ export interface CurationContextInterface {
   updateActiveStepArtifact: (stepArtifact: any) => void;
   validateCalled: (boolean);
   validateMerge:(boolean);
+  loadModalClicked:(boolean);
+  setLoadModalClickedCalled:  (isLoadModalClicked: any) => void;
   setValidateMatchCalled: (validateCalled: boolean) => void;
   setValidateMergeCalled: (validateCalled: boolean) => void;
   setActiveStepWarning: (warning: any) => void;

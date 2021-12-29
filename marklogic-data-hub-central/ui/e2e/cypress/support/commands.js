@@ -305,6 +305,15 @@ Cypress.Commands.add("publishEntityModel", () => {
   modelPage.getEntityModifiedAlert().should("not.exist");
 });
 
+Cypress.Commands.add("typeTab", (shiftKey, ctrlKey) => {
+  cy.focused().trigger("keydown", {
+    keyCode: 9,
+    which: 9,
+    shiftKey: shiftKey,
+    ctrlKey: ctrlKey
+  });
+});
+
 /**
  * These commands will save the Local Storage Data so that we can use it to preserve the session without the need to re-login before each "it" block
  */

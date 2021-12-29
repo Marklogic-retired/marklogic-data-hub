@@ -154,6 +154,10 @@ tr.ant-table-row:hover > td {
   font-weight: normal;
 }
 
+.tooltip .tooltip-inner a {
+  color: white;
+}
+
 .react-resizable > .ant-table-header-column {
   cursor: move;
 }
@@ -282,7 +286,7 @@ ul.ant-cascader-menu:nth-child(2) {
   top: 55px !important;
 }
 
-#entityTableContainer { 
+#entityTableContainer {
   #upperTable {
     .table {
       margin-bottom: 0px !important;
@@ -311,7 +315,7 @@ ul.ant-cascader-menu:nth-child(2) {
     max-width: 13vw;
     white-space: nowrap;
     text-overflow: ellipsis !important;
-    overflow: hidden;    
+    overflow: hidden;
   }
 }
 

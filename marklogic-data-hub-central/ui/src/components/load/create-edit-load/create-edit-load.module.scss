@@ -77,10 +77,38 @@ span.readOnlyLabel {
     width: 95%;
 }
 
+.input:focus {
+    outline: 2px solid #7f86b5;
+    outline-offset: 2px;
+}
+
+.editLoadTooltip:focus {
+    outline: 2px solid #7f86b5;
+    outline-offset: 2px;
+}
+
+.tooltipRef {
+    margin-left: 10px;
+}
+
+.tooltipRef:focus {
+    outline: 2px solid #7f86b5;
+    outline-offset: 2px;
+}
+
+.inputRef {
+    margin-right: 10px;
+}
+
+.inputRef:focus {
+    outline: 2px solid #7f86b5;
+    outline-offset: 2px;
+}
+
 .lineBreak {
     line-height: 1px;
-     width: 0px;
-     margin-bottom: -20px;
+    width: 0px;
+    margin-bottom: -20px;
 }
 
 .newLoadCardTitle{

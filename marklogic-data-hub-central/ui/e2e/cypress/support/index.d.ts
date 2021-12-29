@@ -118,5 +118,12 @@ declare namespace Cypress {
        * Restore (preserve) Local Storage Data
        */
       restoreLocalStorage(): Chainable<Element>
+
+      /**
+       * Custom command to trigger tab out
+       * @example
+       * cy.get("input").typeTab()
+       */
+      typeTab(): Chainable<Element>
     }
   }
