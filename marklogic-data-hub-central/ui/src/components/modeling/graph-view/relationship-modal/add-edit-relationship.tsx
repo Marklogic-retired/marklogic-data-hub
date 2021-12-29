@@ -1,16 +1,17 @@
 import React, {useState, useEffect, useContext} from "react";
-import {ModelingContext} from "../../../../util/modeling-context";
-import {Icon, Card, Dropdown, Tooltip} from "antd";
-import {Modal} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
-import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
-import styles from "./add-edit-relationship.module.scss";
-// import graphConfig from "../../../../config/graph-vis.config";
-import oneToManyIcon from "../../../../assets/one-to-many.svg";
-import oneToOneIcon from "../../../../assets/one-to-one.svg";
+import {Modal, Dropdown} from "react-bootstrap";
+import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
+import {DropDownWithSearch, HCButton, HCInput, HCTooltip, HCCard} from "@components/common";
 import {faExclamationCircle, faChevronDown, faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
+import styles from "./add-edit-relationship.module.scss";
+import {ModelingContext} from "../../../../util/modeling-context";
+// import graphConfig from "../../../../config/graph-vis.config";
+import oneToManyIcon from "../../../../assets/one-to-many.svg";
+import oneToOneIcon from "../../../../assets/one-to-one.svg";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
 import ConfirmationModal from "../../../confirmation-modal/confirmation-modal";
 import {ConfirmationType} from "../../../../types/common-types";
@@ -21,8 +22,6 @@ import {
   PropertyType,
   EntityModified
 } from "../../../../types/modeling-types";
-import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "@components/common";
 
 type Props = {
   openRelationshipModal: boolean;
@@ -625,9 +624,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
         <div aria-label="relationshipActions" className={styles.relationshipDisplay}>
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>SOURCE</span>
-            <Card data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}}>
+            <HCCard data-testid={"sourceEntityNode"} style={{width: 204, backgroundColor: props.relationshipInfo.sourceNodeColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
               <p data-testid={`${props.relationshipInfo.sourceNodeName}-sourceNodeName`} className={styles.entityName}><b>{props.relationshipInfo.sourceNodeName}</b></p>
-            </Card>
+            </HCCard>
           </div>
           <div className={styles.relationshipInputContainer}>
             <HCInput
@@ -659,16 +658,21 @@ const AddEditRelationship: React.FC<Props> = (props) => {
           <div className={styles.nodeDisplay}>
             <span className={styles.nodeLabel}>TARGET</span>
             <div className={submitClicked && emptyTargetEntity ? styles.targetEntityErrorContainer : styles.targetEntityContainer}>
-              <Card data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor}}>
+              <HCCard data-testid={"targetEntityNode"} style={{width: 204, backgroundColor: targetEntityColor}} bodyClassName={styles.cardBody} className={styles.cardContainer}>
                 <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
-              </Card>
+              </HCCard>
               {!props.isEditing ?
-                <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
-                  <span className={styles.dropdownArrow}>
-                    {
-                      <ChevronDown className={styles.dropdownMenuIcon} data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
-                    }
+                <Dropdown placement="bottom" className={styles.dropdown}>
+                  <Dropdown.Toggle className={styles.dropdownTrigger} >
+                    <span >
+                      {
+                        <ChevronDown className={styles.dropdownMenuIcon} data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
+                      }
                   </span>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className={styles.dropdownMenu} >
+                    {menu}
+                  </Dropdown.Menu>
                 </Dropdown>
                 : null }
             </div>
@@ -688,9 +692,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
             <span className={styles.foreignKeyText}>You can select the foreign key now or later:</span>
             <div className={`mx-3 ${styles.foreignKeyDropdownContainer}`}>
               {foreignKeyDropdown}
-              <Tooltip title={ModelingTooltips.foreignKeyInfo} placement={"bottom"}>
-                <Icon type="question-circle" data-testid={"foreign-key-tooltip"}className={styles.foreignKeyQuestionCircle} theme="filled"/>
-              </Tooltip>
+              <HCTooltip id="foreign-key-tooltip" text={ModelingTooltips.foreignKeyInfo} placement={"right"}>
+                <QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/>
+              </HCTooltip>
             </div>
           </div>
         )
