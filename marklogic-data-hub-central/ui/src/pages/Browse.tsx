@@ -28,8 +28,7 @@ import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery} from "../api/queries";
 import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
-import {updateHubCentralConfig, getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
-import {hubCentralConfig} from "../types/modeling-types"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import {getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import SelectedFacets from "@components/selected-facets/selected-facets";
 
 
@@ -148,6 +147,7 @@ const Browse: React.FC<Props> = ({location}) => {
             "searchText": searchOptions.query,
             "entityTypeIds": searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
             "selectedFacets": searchOptions.selectedFacets,
+            "relatedEntityTypeIds": [] //Should be updated once the mock data is removed in the side panels
           },
           "start": 0,
           "pageLength": 100,

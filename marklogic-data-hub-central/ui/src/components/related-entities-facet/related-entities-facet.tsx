@@ -3,11 +3,12 @@ import styles from "./related-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {entitiesSorting} from "../../util/entities-sorting";
-import {MINIMUM_ENTITIES} from "../../config/exploreSidebar";
+import {exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
 const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
+const {MINIMUM_ENTITIES} = exploreSidebar;
 interface Props {
   currentRelatedEntities: Map<string, any>;
   onSettingCheckedList: (checkAll: any) => void;
