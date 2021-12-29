@@ -89,6 +89,7 @@ const TableView: React.FC<Props> = (props) => {
       data-cy="document-table"
       rowKey="key"
       showHeader={true}
+      baseIndent={25}
     />
   );
 };

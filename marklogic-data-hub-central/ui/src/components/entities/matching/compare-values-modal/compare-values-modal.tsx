@@ -346,7 +346,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           return {
             backgroundColor: "#85BF97",
             width: "calc(40% - 50px)",
-            backgroundImage: "url(" + backgroundImage + ")",
+            backgroundImage: `url(${backgroundImage})`,
           };
         }
         return {

@@ -9,19 +9,19 @@ import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-sol
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
 import {MLTable} from "@marklogic/design-system";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, HCTable} from "@components/common";
 
 /* eslint-disable */
 interface Props {
-    data: any;
-    entityPropertyDefinitions: any[];
-    selectedPropertyDefinitions: any[];
-    columns: any;
-    hasStructured: boolean;
-    tableView: boolean;
-    entityDefArray: any[];
-    database: string;
-    handleViewChange: any
+  data: any;
+  entityPropertyDefinitions: any[];
+  selectedPropertyDefinitions: any[];
+  columns: any;
+  hasStructured: boolean;
+  tableView: boolean;
+  entityDefArray: any[];
+  database: string;
+  handleViewChange: any
 }
 /* eslint-enable */
 
@@ -67,6 +67,7 @@ const ResultsTabularView = (props) => {
 
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [primaryKey, setPrimaryKey] = useState<string>("");
+  const [expandedNestedTableRows, setExpandedNestedTableRows] = useState<string[]>([]);
 
   const {
     searchOptions,
@@ -126,7 +127,7 @@ const ResultsTabularView = (props) => {
           ...setSortOptions(item),
           render: (value) => {
             if (Array.isArray(value)) {
-              let values : any[] = [];
+              let values: any[] = [];
               value.forEach(item => {
                 let val = item === null ? "null" : item === "" ? "\"\"" : item;
                 if (val !== undefined) {
@@ -188,7 +189,7 @@ const ResultsTabularView = (props) => {
           }
         },
         sortOrder: (searchOptions.sortOrder.length && (searchOptions.sortOrder[0].propertyName === item.propertyLabel)
-             && searchOptions.sortOrder[0].hasOwnProperty("sortDirection")) ? (searchOptions.sortOrder[0].sortDirection === "ascending") ?"ascend":"descend" : null,
+          && searchOptions.sortOrder[0].hasOwnProperty("sortDirection")) ? (searchOptions.sortOrder[0].sortDirection === "ascending") ? "ascend" : "descend" : null,
       } : "");
 
   const updatedTableHeader = () => {
@@ -222,69 +223,69 @@ const ResultsTabularView = (props) => {
     };
     let options = {};
     let detailView =
-            <div className={styles.redirectIcons}>
-              <Link to={{
-                pathname: `${path.pathname}`, state: {
-                  selectedValue: "instance",
-                  entity: searchOptions.entityTypeIds,
-                  pageNumber: searchOptions.pageNumber,
-                  start: searchOptions.start,
-                  searchFacets: searchOptions.selectedFacets,
-                  query: searchOptions.query,
-                  tableView: props.tableView,
-                  sortOrder: searchOptions.sortOrder,
-                  sources: item.sources,
-                  primaryKey: path.primaryKey,
-                  uri: item.uri,
-                  entityInstance: item.entityInstance,
-                  targetDatabase: searchOptions.database
-                }
-              }} id={"instance"}
-              data-cy="instance">
-                <HCTooltip text="Show the processed data" id="processed-data-tooltip" placement="top-end">
-                  <i><FontAwesomeIcon className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></i>
-                </HCTooltip>
-              </Link>
-              <Link to={{
-                pathname: `${path.pathname}`,
-                state: {
-                  selectedValue: "source",
-                  entity: searchOptions.entityTypeIds,
-                  pageNumber: searchOptions.pageNumber,
-                  start: searchOptions.start,
-                  searchFacets: searchOptions.selectedFacets,
-                  query: searchOptions.query,
-                  tableView: props.tableView,
-                  sortOrder: searchOptions.sortOrder,
-                  sources: item.sources,
-                  primaryKey: path.primaryKey,
-                  uri: item.uri,
-                  entityInstance: item.entityInstance,
-                  targetDatabase: searchOptions.database
-                }
-              }} id={"source"}
-              data-cy="source">
-                <HCTooltip text={"Show the complete " + item.format.toUpperCase()} id="show-json-tooltip" placement="top-end">
-                  {item.format.toUpperCase() !== "XML" ?
-                    <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></i>
-                    :
-                    <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
-                  }
-                </HCTooltip>
-              </Link>
-              <div className={styles.graphIcon}>
-                <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
-                  <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
-                    size="sm"  data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)}/></i>
-                </HCTooltip>
-              </div>
-            </div>;
+      <div className={styles.redirectIcons}>
+        <Link to={{
+          pathname: `${path.pathname}`, state: {
+            selectedValue: "instance",
+            entity: searchOptions.entityTypeIds,
+            pageNumber: searchOptions.pageNumber,
+            start: searchOptions.start,
+            searchFacets: searchOptions.selectedFacets,
+            query: searchOptions.query,
+            tableView: props.tableView,
+            sortOrder: searchOptions.sortOrder,
+            sources: item.sources,
+            primaryKey: path.primaryKey,
+            uri: item.uri,
+            entityInstance: item.entityInstance,
+            targetDatabase: searchOptions.database
+          }
+        }} id={"instance"}
+        data-cy="instance">
+          <HCTooltip text="Show the processed data" id="processed-data-tooltip" placement="top-end">
+            <i><FontAwesomeIcon className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></i>
+          </HCTooltip>
+        </Link>
+        <Link to={{
+          pathname: `${path.pathname}`,
+          state: {
+            selectedValue: "source",
+            entity: searchOptions.entityTypeIds,
+            pageNumber: searchOptions.pageNumber,
+            start: searchOptions.start,
+            searchFacets: searchOptions.selectedFacets,
+            query: searchOptions.query,
+            tableView: props.tableView,
+            sortOrder: searchOptions.sortOrder,
+            sources: item.sources,
+            primaryKey: path.primaryKey,
+            uri: item.uri,
+            entityInstance: item.entityInstance,
+            targetDatabase: searchOptions.database
+          }
+        }} id={"source"}
+        data-cy="source">
+          <HCTooltip text={"Show the complete " + item.format.toUpperCase()} id="show-json-tooltip" placement="top-end">
+            {item.format.toUpperCase() !== "XML" ?
+              <i><FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></i>
+              :
+              <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
+            }
+          </HCTooltip>
+        </Link>
+        <div className={styles.graphIcon}>
+          <HCTooltip text={"View entity in graph view"} id="show-table-graph" placement="top-end">
+            <i><FontAwesomeIcon className={styles.iconHover} icon={faProjectDiagram}
+              size="sm" data-testid={`${primaryKeyValue}-graphOnSeparatePage`} onClick={() => navigateToGraphView(item)} /></i>
+          </HCTooltip>
+        </div>
+      </div>;
     if (props.selectedEntities?.length === 0 && item.hasOwnProperty("entityName")) {
       let itemIdentifier = item.identifier?.propertyValue;
       let itemEntityName = item.entityName;
       let document = item.uri.split("/")[item.uri.split("/").length - 1];
       let createdOn = item.createdOn;
-      const identifierCell = isUri ?  <HCTooltip text={item.uri} id={itemIdentifier+"-tooltip"} placement="top"><span>".../" + {document}</span></HCTooltip> : itemIdentifier;
+      const identifierCell = isUri ? <HCTooltip text={item.uri} id={itemIdentifier + "-tooltip"} placement="top"><span>".../" + {document}</span></HCTooltip> : itemIdentifier;
       options = {
         primaryKey: primaryKeyValue,
         identifier: identifierCell,
@@ -347,7 +348,7 @@ const ResultsTabularView = (props) => {
   const dataSource = props.data.map((item) => {
     return tableDataRender(item);
   })
-  ;
+    ;
 
   useEffect(() => {
     if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
@@ -360,19 +361,44 @@ const ResultsTabularView = (props) => {
       if (entity.name === props.selectedEntities[0]) {
         entity.primaryKey && setPrimaryKey(entity.primaryKey);
       }
+      setExpandedNestedTableRows([]);
     }));
   }, [props.selectedEntities, searchOptions.selectedTableProperties]);
 
   const expandedRowRender = (rowId) => {
     const nestedColumns = [
-      {title: "Property", dataIndex: "property", width: "33%"},
-      {title: "Value", dataIndex: "value", width: "34%"},
-      {title: "View", dataIndex: "view", width: "33%"},
+      {
+        text: "Property",
+        title: "Property",
+        dataField: "property",
+        width: "33%",
+        formatter: (_, row) => {
+          return <span>{row.property}</span>;
+        },
+      },
+      {
+        text: "Value",
+        title: "Value",
+        dataField: "value",
+        width: "calc(34% - 50px)",
+        formatter: (_, row) => {
+          return <span>{row.value}</span>;
+        },
+      },
+      {
+        text: "View",
+        title: "View",
+        dataField: "view",
+        width: "33%",
+        formatter: (_, row) => {
+          return <span>{row.view}</span>;
+        },
+      },
     ];
 
     let nestedData: any[] = [];
     const parseJson = (obj: Object) => {
-      let parsedData : any[] = [];
+      let parsedData: any[] = [];
       for (let i in obj) {
         if (obj[i] !== null && typeof (obj[i]) === "object") {
           parsedData.push({
@@ -423,13 +449,36 @@ const ResultsTabularView = (props) => {
 
     nestedData = parseJson(props.data[index]?.entityInstance);
 
-    return <MLTable
-      rowKey="key"
-      columns={nestedColumns}
-      dataSource={nestedData}
-      pagination={false}
-      className={styles.nestedTable}
-    />;
+
+    const onExpand = (record, expanded) => {
+      let newExpandedNestedTableRows = [...expandedNestedTableRows];
+
+      if (expanded) {
+        if (newExpandedNestedTableRows.indexOf(record.key) === -1) {
+          newExpandedNestedTableRows.push(record.key);
+        }
+      } else {
+        newExpandedNestedTableRows = newExpandedNestedTableRows.filter(row => row !== record.key);
+      }
+
+      setExpandedNestedTableRows(newExpandedNestedTableRows);
+    };
+
+    return (
+      <HCTable
+        rowKey="key"
+        columns={nestedColumns}
+        data={nestedData}
+        pagination={false}
+        expandedRowKeys={expandedNestedTableRows}
+        showExpandIndicator={{bordered: true}}
+        nestedParams={{headerColumns: nestedColumns, iconCellList: [], state: [expandedNestedTableRows, setExpandedNestedTableRows]}}
+        onExpand={onExpand}
+        childrenIndent={true}
+        className={`exploreInternalTable`}
+        baseIndent={25}
+      />
+    );
   };
 
   return (
