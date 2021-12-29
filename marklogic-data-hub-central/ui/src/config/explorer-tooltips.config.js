@@ -18,6 +18,12 @@ const tooltipsConfig = {
     relatedEntities:
       "Related entity filters only filter on their respective entity type and will not affect base entity results.",
   },
+
+  graphVis: {
+    groupNode: (entityType) => (`Group of ${entityType} records
+    Click to expand 3 sample records in this group.
+      Double click to expand all records in this group.`)
+  }
 };
 
 export default tooltipsConfig;

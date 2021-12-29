@@ -6,7 +6,7 @@ import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {entitiesSorting} from "../../util/entities-sorting";
 import {HCDivider} from "@components/common";
-import {MINIMUM_ENTITIES} from "../../config/exploreSidebar";
+import {exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 interface Props {
@@ -18,6 +18,8 @@ interface Props {
   setEntitySpecificPanel: (entity: any) => void;
     setIsAllEntitiesSelected: (isSelected: boolean) => void;
 }
+
+const {MINIMUM_ENTITIES} = exploreSidebar;
 
 const BaseEntitiesFacet: React.FC<Props> = (props) => {
 

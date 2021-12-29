@@ -6,6 +6,11 @@ import * as _ from "lodash";
 import {SearchContext} from "../../../util/search-context";
 import {renderToStaticMarkup} from "react-dom/server";
 import * as FontIcon from "react-icons/fa";
+import {graphViewConfig} from "../../../config/explore.config";
+import tooltipsConfig from "../../../config/explorer-tooltips.config";
+import {Link} from "react-router-dom";
+import {updateUserPreferences, getUserPreferences} from "../../../services/user-preferences";
+import {UserContext} from "../../../util/user-context";
 
 type Props = {
   entityTypeInstances: any;
@@ -27,13 +32,16 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
-  const [clickedNode, setClickedNode] = useState(undefined);
+  const [clickedNode, setClickedNode] = useState<undefined | string>(undefined);
   const [hasStabilized, setHasStabilized] = useState(false);
   const {
     searchOptions,
     setGraphViewOptions,
     setSavedNode,
   } = useContext(SearchContext);
+  const {
+    user
+  } = useContext(UserContext);
 
   // Get network instance on init
   const [network, setNetwork] = useState<any>(null);
@@ -46,7 +54,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const [graphDataLoaded, setGraphDataLoaded] = useState(false);
   // Load coords *once* on init
-
 
   useEffect(() => {
     if (props.splitPaneResized) {
@@ -122,6 +129,22 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return props.entityTypeInstances?.nodes?.some(e => e.entityName === searchOptions.entityInstanceId.split("-")[0]);
   };
 
+  const setUserPreferences = () => {
+    let defaultPreferences = getUserPreferences(user.name);
+    if (defaultPreferences !== null) {
+      let parsedPreferences = JSON.parse(defaultPreferences);
+      let preferencesObject = {
+        ...parsedPreferences,
+        graphViewOptions: {
+          groupNodeId: clickedNode,
+          parentIRI: "http://marklogic/dummyIRI",
+          predicateFilter: "dummyPredicateFilter"
+        }
+      };
+      updateUserPreferences(user.name, preferencesObject);
+    }
+  };
+
   useEffect(() => {
     if (network && searchOptions.entityInstanceId && graphDataLoaded) {
       if (selectedEntityExists()) {
@@ -154,7 +177,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   const getNodes = () => {
     let nodes;
-    nodes = props.entityTypeInstances && props.entityTypeInstances?.nodes?.map((e) => {
+    nodes = props.entityTypeInstances?.nodes?.map((e) => {
       let entityType = e.group.split("/").pop();
       let entity = props.hubCentralConfig?.modeling?.entities[entityType];
       let nodeId = e.id;
@@ -168,7 +191,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       return {
         id: nodeId,
         shape: "custom",
-        title: e.label,
+        title: e.count > 1 ? tooltipsConfig.graphVis.groupNode(entityType) : e.label,
         label: nodeLabel,
         color: colorExistsForEntity(entityType) ? entity["color"] : "#EEEFF1",
         x: positionX,
@@ -183,7 +206,10 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               scale = network.getScale();
             }
             let displayLabel = scale > 0.6;
-            const radius = displayLabel ? r*1.5 : r;
+            let radiusByCount = r + ((e.count/10) * 5);
+            let maxRadius = 84;
+            let rad = e.count > 10 ? (radiusByCount >= 84 ? maxRadius : radiusByCount) : r;
+            const radius = displayLabel ? rad*1.5 : rad;
             const imagePositionY = displayLabel ? y-25: y-15;
             ctx.beginPath();
             ctx.arc(x, y, radius, 0, 2*Math.PI);
@@ -218,9 +244,39 @@ const GraphVisExplore: React.FC<Props> = (props) => {
               let ellipsisImg = new Image();
               ellipsisImg.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAD8AAABQCAYAAACu/a1QAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAnZJREFUeJzt189LVHEUBfBzv05SIqUIhS1q3apVCGlBpgkJisoM/QdtzHKUxJWbSEGaWgVB0K5FqSC4CCenxjZFGyFqIQW1CaWg0VSIee+dNgU1Pp0fbxHh+Szvvd/D9z7eWzxARERERERERERERERERP4FA4BUx3QjfE4Q6DJYXdFTxCYNadJGhhd6l3cbvd02c4IMJgi0mVlN8Wx+A2zW8/zR69nEym6jqfapZtJuGHEahuqi2cAKgIfVeX+sP5vYsFTHdCN9vDTgWAmH/74nmDOfLcln8bdh/VsXpk/Cx6IZDpabDeCTC2JN1zLdq6HZbVMXDZgFLFZuMIlX2PTPOficqGRxADBYHZ27u+OAj3sVLg4Ax33n3QxrjMUfVYO4X8niAGCGJtRWDTgCXRVe7nfQ2fHOufrC+p3W2SNmaIqSDbA7rHoo506ZWWOUZAO6XEnfeBHV+a2GwpoXy297IOUy2LZcAAgCFzmbQIOLGvI/0/J7lZbfq7T8XrXHlyc2o4bEHNYKa+YF36PmklgPq5shcjbAdUdDOlIEuXT1SeJLYT2ZiX8G8C5KNozzYeXa/bHXwPYHXhYi7UgbIZir7DzyRg6E9QxGGK4A9CrLZg4uGA3rXZ7r2iIwWEnur/QPzquadMMLvcvms4XEYlnHySULgvPJTPzFTjPJdF/GyHaAb8rKBp4HQdA8NJ94v9PM0NO+BwF5ieTH0u8Mn+QMquzMYLYnZ382xzvn6sN+UgrFHNbCXvXdTLZPH3bmF/29dT/2fR3M9pT8JhK0VOvjo4jhwG5zfj7GmsBb7c8mNkrNFhEREREREREREREREREREZFK/QT3i+BFtIzcWAAAAABJRU5ErkJggg==";
               ctx.fillStyle = "#777";
-              //ctx.globalCompositeOperation = "color";
               ctx.drawImage(ellipsisImg, x-5, y+20, 10, 10);
             }
+            if (e.count >= 2 && displayLabel) {
+              //Creating the group node badge
+              let updatedX = x + (rad < 84 ? radius*Math.sin(60) : rad*Math.sin(45));
+              let xOffset = rad < 84 ? 28 : -28;
+              let badgeCoordinateX = updatedX + xOffset;
+              let updatedY = y + radius*Math.cos(60);
+              let badgeCoordinateY = updatedY-5;
+              let countString = ctx.measureText(e.count.toString());
+              let countWidth = (countString.width < 16 ? 16 : countString.width) + 7;
+              roundedRect(ctx, badgeCoordinateX, badgeCoordinateY, countWidth, 20, 5);
+
+              //Adding the count in the badge
+              ctx.fill();
+              ctx.fillStyle = "#FFFFFF";
+              let textLength = e.count.toString().length;
+              let textLengthOffset = textLength > 1 ? 4 : 7;
+              let textCoordinateX = badgeCoordinateX + textLengthOffset;
+              let textCoordinateY = updatedY + 5;
+              ctx.textAlign = "left";
+              ctx.fillText(e.count, textCoordinateX, textCoordinateY);
+            }
+          };
+          const roundedRect = (ctx, x, y, width, height, radius) => {
+            ctx.beginPath();
+            ctx.moveTo(x, y + radius);
+            ctx.arcTo(x, y + height, x + radius, y + height, radius);
+            ctx.arcTo(x + width, y + height, x + width, y + height - radius, radius);
+            ctx.arcTo(x + width, y, x + width - radius, y, radius);
+            ctx.arcTo(x, y, x, y + radius, radius);
+            ctx.stroke();
+            ctx.fillStyle = graphViewConfig.groupNodeBadgeColor;
           };
           return {
             drawNode,
@@ -314,10 +370,11 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     },
   };
 
-  const dummyClick = async (event) => {
+  const handleMenuClick = async (event) => {
     setContextMenuVisible(false);
     if (network) {
       //add logic for menu selection here
+      setUserPreferences();
     }
   };
 
@@ -325,8 +382,14 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     return (
       <div id="contextMenu"  className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
         { clickedNode &&
-        <div key="1" className={styles.contextMenuItem} onClick={dummyClick}>
-        Dummy option
+        <div key="1" className={styles.contextMenuItem} onClick={handleMenuClick}>
+          <Link to={
+            {
+              pathname: "/tiles/explore",
+            }
+          } target="_blank">
+                View all related {clickedNode.split("-").pop()} records in a table
+          </Link>
         </div>
         }
       </div>
