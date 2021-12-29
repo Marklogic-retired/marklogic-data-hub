@@ -26,11 +26,13 @@ interface Props {
   onFocus?: any;
   onKeyPress?: any;
   onPressEnter?: any;
+  onKeyDown?: any;
   ref?: any;
   disabled?: boolean;
   error?: boolean;
   errorMessage?: string;
   classNameErrorMessage?: string;
+  tabIndex?:number;
 }
 
 function HCInput(props: Props) {
@@ -104,6 +106,7 @@ function HCInput(props: Props) {
           onKeyPress={(event) => props?.onPressEnter ? handleKeyPressEnter(event) ? props?.onPressEnter(true) : false : props?.onKeyPress}
           ref={props?.ref}
           disabled={props?.disabled}
+          tabIndex={props.tabIndex}
         />
 
         {props?.allowClear && !props?.disabled && <InputGroup.Text

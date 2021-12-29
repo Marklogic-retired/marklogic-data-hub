@@ -5,12 +5,17 @@ import {faKey, faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "../components/tiles/tiles.module.scss";
 import modelIcon from "../assets/model-overview-helpInfo.svg";
 import "./tooltips.config.scss";
+import {Tooltip} from "react-bootstrap";
 
 /* --- MODELING --- */
 
 const ModelingIntros = {
   main: 'The entity model is comprised of entity types that describe and standardize your data. You need these entity types to curate your data.'
 };
+
+const keyboardNavigationTooltips = {
+    dropdownUserInfo: <span>Press <strong>Tab</strong> and then the <strong>Down arrow</strong> key to expand the drop-down menu. Select an option using the <strong>Up arrow</strong> key and <strong>Down arrow</strong> key, and then press <strong>Enter</strong>.</span>
+}
 
 const ModelingTooltips = {
   /* Buttons */
@@ -737,6 +742,7 @@ const ToolbarBulbIconInfo = {
 
 export {
   ModelingIntros,
+  keyboardNavigationTooltips,
   ModelingTooltips,
   ModelingPlaceholders,
   ModelingMessages,
