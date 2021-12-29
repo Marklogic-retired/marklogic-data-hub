@@ -20,7 +20,7 @@ const HCTooltip: React.FC<Props> = (props) => {
   return <OverlayTrigger data-testid="ml-tooltip-component" popperConfig={{strategy: "fixed"}}
     placement={placement}
     overlay={<Tooltip {...props} id={id}>{text}</Tooltip>}
-    show={show || undefined}
+    show={show}
   >
     {children}
   </OverlayTrigger>;
