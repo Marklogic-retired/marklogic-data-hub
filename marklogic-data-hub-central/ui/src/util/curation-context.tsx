@@ -28,6 +28,8 @@ export const CurationContext = React.createContext<CurationContextInterface>({
   updateActiveStepArtifact: () => {},
   validateCalled: false,
   validateMerge: false,
+  loadModalClicked: false,
+  setLoadModalClickedCalled: () => {},
   setValidateMatchCalled: () => {},
   setValidateMergeCalled: () => {},
   setActiveStepWarning: () => {},
@@ -44,6 +46,7 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
   const [mappingOptions, setMappingOptions] = useState<MappingOptionsInterface>(DEFAULT_MAPPING_OPTIONS);
   const [validateCalled, setValidateCalled] = useState(false);
   const [validateMerge, setValidateMerge] = useState(false);
+  const [loadModalClicked, setLoadModalClicked] = useState(false);
   /**
     * Sets the current active step in the curate tile
     * Transforms definitions object payload into array of objects with static key values
@@ -69,6 +72,10 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setValidateMergeCalled = (validateMergeCalledUpdate: boolean) => {
     setValidateMerge(validateMergeCalledUpdate);
+  };
+
+  const setLoadModalClickedCalled = (isLoadModalClicked: boolean) => {
+    setLoadModalClicked(isLoadModalClicked);
   };
 
   const setActiveStepWarning = (warning: any[]) => {
@@ -122,6 +129,8 @@ const CurationProvider: React.FC<{ children: any }> = ({children}) => {
       updateActiveStepArtifact,
       validateCalled,
       validateMerge,
+      loadModalClicked,
+      setLoadModalClickedCalled,
       setValidateMatchCalled,
       setValidateMergeCalled,
       setActiveStepWarning,

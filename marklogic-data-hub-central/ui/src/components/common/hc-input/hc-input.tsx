@@ -26,14 +26,16 @@ interface Props {
   onFocus?: any;
   onKeyPress?: any;
   onPressEnter?: any;
+  onKeyDown?: any;
   ref?: any;
   disabled?: boolean;
   error?: boolean;
   errorMessage?: string;
   classNameErrorMessage?: string;
+  tabIndex?:number;
 }
 
-function HCInput(props: Props) {
+const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
 
   const [showIconClear, setShowIconClear] = useState(false);
   const [count, setCount] = useState(0);
@@ -70,6 +72,11 @@ function HCInput(props: Props) {
     if (onBlur) { onBlur(event); }
   };
 
+  const inputRefAux = React.createRef<HTMLInputElement>();
+  const handleOnKeyDown = (event, onKeyDown) => {
+    if (onKeyDown) { onKeyDown(event, inputRefAux); }
+  };
+
   useEffect(() => { if (props?.value) setMessage(props.value === " "? "" : props.value); }, [props?.value]);
 
   return (
@@ -102,8 +109,10 @@ function HCInput(props: Props) {
           onFocus={(event) => handleOnFocus(event, props?.onFocus)}
           onChange={(event) => handleMessage(event, props?.onChange)}
           onKeyPress={(event) => props?.onPressEnter ? handleKeyPressEnter(event) ? props?.onPressEnter(true) : false : props?.onKeyPress}
-          ref={props?.ref}
+          ref={ref}
           disabled={props?.disabled}
+          tabIndex={props.tabIndex}
+          onKeyDown={(event) => handleOnKeyDown(event, props?.onKeyDown)}
         />
 
         {props?.allowClear && !props?.disabled && <InputGroup.Text
@@ -128,6 +137,5 @@ function HCInput(props: Props) {
       {props?.errorMessage && !showIconClear && <span className={[styles.errorMessage, props?.classNameErrorMessage].join(" ")}>{props.errorMessage}</span>}
     </>
   );
-}
-
+});
 export default HCInput;

@@ -15,6 +15,11 @@
     }
 }
 
+.buttonFocusHighlight:focus {
+    outline: 2px solid #7f86b5;
+    outline-offset: 2px;
+}
+
 .questionCircle {
     font-size: 12px;
     vertical-align: top;
@@ -85,6 +90,7 @@ span.readOnlyLabel {
     line-height: 160%;
     padding-bottom: 2px;
     vertical-align: middle;
+    margin-left: -6px;
 }
 
 .inputBatchSize {
@@ -188,4 +194,14 @@ span.readOnlyLabel {
     border-radius: 4px;
     margin-left: 0.5vw;
     padding: 3px;
+}
+
+.tooltipRef {
+    margin-left: 10px;
+}
+
+.tooltipRef:focus {
+    outline: 2px solid #7f86b5;
+    outline-offset: 2px;
+    height: 32px;
 }
