@@ -21,7 +21,7 @@ function verifyResults(content, results) {
     let notifyActionObject = fn.head(notifyAction).toObject();
     let customActionMatchResults = customActionObject.actions[0].matchResults[0];
     return assertions.concat([
-        test.assertEqual(2, mergeActionObject.uris.length, `merge action should be only on 2 URIs. Results: ${JSON.stringify(mergeActionObject)}`),
+        test.assertEqual(3, mergeActionObject.uris.length, `merge action should be only on 3 URIs. Results: ${JSON.stringify(mergeActionObject)}`),
         test.assertTrue(mergeActionObject.uris.some((uri) => /CustMatchMerge1\./.test(uri)), `merge action should have URI matching "CustMatchMerge1.". Results: ${JSON.stringify(mergeActionObject)}`),
         test.assertTrue(mergeActionObject.uris.some((uri) => /CustMatchMerge2\./.test(uri)), `merge action should have URI matching "CustMatchMerge2.". Results: ${JSON.stringify(mergeActionObject)}`),
         test.assertEqual(2, notifyActionObject.uris.length, `notify action should be only on 2 URIs. Results: ${JSON.stringify(notifyActionObject)}`),

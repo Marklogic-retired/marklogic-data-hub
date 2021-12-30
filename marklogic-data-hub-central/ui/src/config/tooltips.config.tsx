@@ -525,8 +525,8 @@ const ErrorTooltips = {
 
 /* --- SLIDER --- */
 const multiSliderTooltips = {
-  priorityOrder: <span aria-label="priorityOrderTooltip">The length weights and source weights plotted on a slider from low to high. Each weight indicates the importance of the length or source when merging documents. The <b>Timestamp</b> node cannot be moved or deleted.</span>,
-  timeStamp: 'Timestamp cannot be moved or deleted.',
+  priorityOrder: <span aria-label="priorityOrderTooltip">The length weights and source weights plotted on a slider from low to high. Each weight indicates the importance of the length or source when merging documents. The <b>Timestamp</b> node cannot be deleted.</span>,
+  timeStamp: 'The Timestamp node cannot be deleted.',
   viewOnlyTooltip: 'Click the strategy name to change the priority order.'
 };
 

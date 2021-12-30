@@ -69,17 +69,23 @@ declare function merging:standard(
     else
       ()
   let $source-priority := $property-spec/(m:source-weights|sourceWeights|priorityOrder)/(*:source|sources)
+  let $time-weight := fn:head(($property-spec/priorityOrder/timeWeight ! fn:number(.), 0))
   let $length-weight := fn:head(($property-spec/(*:length/(@weight|weight)|priorityOrder/lengthWeight)! fn:number(.),0))
   let $condensed-properties := merging:standard-condense-properties(
     $property-name,
     $all-properties,
     $property-spec
   )
+  let $distinct-sources := ($condensed-properties ! . => map:get("sources")) union ()
+  let $scores-by-dateTime := merging:score-by-dateTime($distinct-sources, $time-weight)
   let $selected-sources := fn:subsequence(
-    for $source in ($condensed-properties ! . => map:get("sources")) union ()
+    for $source in $distinct-sources
     let $source-score := fn:number(fn:head(($source-priority[(@name|name|sourceName) = $source/name]/(@weight|*:weight), 0)))
     let $source-dateTime := fn:max($source/dateTime[. ne ""] ! xs:dateTime(.))
-    order by $source-score descending, $source-dateTime descending
+    let $time-score := $source-dateTime ! map:get($scores-by-dateTime, fn:string(.))
+    let $whole-score := fn:string-join((if ($time-score > $source-score) then ($time-score, $source-score) else ($source-score, $time-score)) ! fn:string(.), " ")
+    (: Use numeric collation for proper sorting  :)
+    order by $whole-score descending collation "http://marklogic.com/collation//MO", $source-dateTime descending
     return (
       xdmp:trace($const:TRACE-MERGE-RESULTS, "Source name: '" || $source/name || "' weight: '" || $source-score || "'"),
       $source
@@ -104,6 +110,7 @@ declare function merging:standard(
         let $prop-value := map:get($property, "values")
         let $sources := map:get($property,"sources")
         let $source-dateTime := fn:max($sources/dateTime[. ne ""] ! xs:dateTime(.))
+        let $time-score := $source-dateTime ! map:get($scores-by-dateTime, fn:string(.))
         let $length-score :=
           if ($length-weight gt 0) then
             if (fn:string-length(fn:string-join($prop-value/descendant-or-self::text()," ")) eq $max-length) then
@@ -116,7 +123,7 @@ declare function merging:standard(
             (: See MDM-529 for why the below is needed :)
             fn:head($source-priority[(@name|name|sourceName) = $source/name]/(@weight|*:weight))
         )
-        let $weight := fn:max(($length-score, $source-score))
+        let $weight := fn:max(($time-score, $length-score, $source-score))
         where fn:exists($sources[fn:exists(. intersect $selected-sources)])
         stable order by $weight descending, $source-score descending, $source-dateTime descending
         return
@@ -130,6 +137,15 @@ declare function merging:standard(
     xdmp:trace($const:TRACE-MERGE-RESULTS, "Selected properties: '" || xdmp:to-json-string($selected-properties)),
     $selected-properties
   )
+};
+
+declare function merging:score-by-dateTime($distinct-sources, $time-weight) {
+    let $all-ordered-dateTimes := for $dt in fn:distinct-values($distinct-sources/dateTime[. ne ""] ! xs:dateTime(.)) order by $dt ascending return $dt
+    let $all-dateTimes-count := fn:count($all-ordered-dateTimes)
+    return map:new(
+      for $dt at $pos in $all-ordered-dateTimes
+      return map:entry(fn:string($dt), ($pos div $all-dateTimes-count) * $time-weight)
+    )
 };
 
 declare function merging:standard-condense-properties(

@@ -25,6 +25,7 @@
       "maxValues": 1,
       "priorityOrder": {
         "lengthWeight": 0,
+        "timeWeight": 9,
         "sources": [
           {
             "sourceName": "source 1",
@@ -43,6 +44,7 @@
       "maxValues": 1,
       "priorityOrder": {
         "lengthWeight": 0,
+        "timeWeight": 9,
         "sources": [
           {
             "sourceName": "source 1",
