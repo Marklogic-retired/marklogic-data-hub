@@ -120,6 +120,14 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
           let priorityOrderRuleOptions: any[] = [defaultPriorityOption];
           setMergeType("Property-specific");
           if (mergeRule.hasOwnProperty("priorityOrder")) {
+            if (mergeRule.priorityOrder.hasOwnProperty("timeWeight")) {
+              const priorityOrderTimeObject = {
+                id: mergeRule.entityPropertyPath + ":Timestamp:",
+                start: mergeRule.priorityOrder.timeWeight,
+                value: "Timestamp:" + mergeRule.priorityOrder.timeWeight.toString(),
+              };
+              priorityOrderRuleOptions[0] = priorityOrderTimeObject;
+            }
             for (let source of mergeRule.priorityOrder.sources) {
               const priorityOrderSourceObject = {
                 id: mergeRule.entityPropertyPath + ":Source - " + source.sourceName,
@@ -162,19 +170,16 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const updateMergeRuleItems = async(id, newValue, priorityOrderOptions:any[]) => {
-    if (id.split(":")[0] !== "Timestamp") {
-      let editPriorityName = id.split(":")[1];
-      for (let priorityOption of priorityOrderOptions) {
-        let value = priorityOption.value;
-        let priorityName;
-        if (value.split(":")[0] === "Length") priorityName = "Length";
-        else priorityName = value.split(":")[0];
-        if (priorityName === editPriorityName) {
-          let name = "";
-          if (editPriorityName !== "Length" && editPriorityName !== "Timestamp") { name = priorityName + ":" + parseInt(newValue); } else if (editPriorityName === "Length") { name = "Length:" + parseInt(newValue); } else if (editPriorityName === "Timestamp") { name = "Timestamp:0"; }
-          priorityOption.start = parseInt(newValue);
-          priorityOption.value = name;
-        }
+    let editPriorityName = id.split(":")[1];
+    for (let priorityOption of priorityOrderOptions) {
+      let value = priorityOption.value;
+      let priorityName;
+      if (value.split(":")[0] === "Length") priorityName = "Length";
+      else priorityName = value.split(":")[0];
+      if (priorityName === editPriorityName) {
+        let name = priorityName + ":" + parseInt(newValue);
+        priorityOption.start = parseInt(newValue);
+        priorityOption.value = name;
       }
     }
     return priorityOrderOptions;
@@ -224,30 +229,23 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       step: 5
     },
     onMove: function(item, callback) {
-      if (item.value && item.value.split(":")[0] !== "Timestamp") {
-        if (item.start >= 0 && item.start <= 100) {
-          setPriorityOrderTouched(true);
-          item.value= getStrategyName(item);
-          callback(item);
-          updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
-        } else {
-          if (item.start < 1) {
-            item.start = 1;
-            item.value = getStrategyName(item);
-          } else {
-            item.start = 100;
-            item.value = getStrategyName(item);
-          }
-          callback(item);
-          updateMergeRuleItems(item.id, item.start, priorityOrderOptions);
-        }
-        setPriorityOrderOptions(priorityOrderOptions);
-      } else {
-        item.start = 0;
+      if (item.start >= 0 && item.start <= 100) {
+        setPriorityOrderTouched(true);
+        item.value= getStrategyName(item);
         callback(item);
-        updateMergeRuleItems("Timestamp:0", 0, priorityOrderOptions);
-        setPriorityOrderOptions(priorityOrderOptions);
+        updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
+      } else {
+        if (item.start < 1) {
+          item.start = 1;
+          item.value = getStrategyName(item);
+        } else {
+          item.start = 100;
+          item.value = getStrategyName(item);
+        }
+        callback(item);
+        updateMergeRuleItems(item.id, item.start, priorityOrderOptions);
       }
+      setPriorityOrderOptions(priorityOrderOptions);
     },
     format: {
       minorLabels: function (date, scale, step) {

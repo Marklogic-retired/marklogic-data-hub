@@ -5,6 +5,8 @@ export const parsePriorityOrder = (priorityOptions) => {
     if (key.hasOwnProperty("value")) {
       if (key.value.split(":")[0] === "Length") {
         priorityOrder.lengthWeight = key.start;
+      } else if (key.value.split(":")[0] === "Timestamp") {
+        priorityOrder.timeWeight = key.start;
       } else {
         if (key.value.split(":")[0].split(" - ")[0] === "Source") {
           priorityOrder.sources.push(

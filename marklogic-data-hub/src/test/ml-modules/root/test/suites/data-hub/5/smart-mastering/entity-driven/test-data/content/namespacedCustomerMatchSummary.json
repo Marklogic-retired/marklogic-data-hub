@@ -1,7 +1,8 @@
 {
   "matchSummary": {
     "URIsToProcess": [
-      "NsCustMerged"
+      "NsCustMerged",
+      "NsCustMergedTimestamp"
     ],
     "actionDetails": {
       "NsCustMerged": {
@@ -9,6 +10,13 @@
         "uris": [
           "/content/NsCustMatchMerge1.xml",
           "/content/NsCustMatchMerge2.xml"
+        ]
+      },
+      "NsCustMergedTimestamp": {
+        "action": "merge",
+        "uris": [
+          "/content/NsCustMatchMerge3.xml",
+          "/content/NsCustMatchMerge1.xml"
         ]
       }
     }

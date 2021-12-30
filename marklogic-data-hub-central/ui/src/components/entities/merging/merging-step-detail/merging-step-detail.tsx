@@ -309,6 +309,14 @@ const MergingStepDetail: React.FC = () => {
     let priorityOrderStrategyOptions: any[] = [defaultPriorityOption];
     mergingStep.mergeStrategies.map((strategy) => {
       if (strategy.hasOwnProperty("priorityOrder") && strategy.strategyName === strategyObj.strategyName) {
+        if (strategy.priorityOrder.hasOwnProperty("timeWeight")) {
+          const priorityOrderTimeObject = {
+            id: "Timestamp:" + strategy.priorityOrder.timeWeight.toString(),
+            value: "Timestamp:"+  strategy.priorityOrder.timeWeight.toString(),
+            start: strategy.priorityOrder.timeWeight,
+          };
+          priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
+        }
         strategy.priorityOrder.sources.map((key) => {
           const priorityOrderSourceObject = {
             id: strategy.strategyName + ":" + key.sourceName,

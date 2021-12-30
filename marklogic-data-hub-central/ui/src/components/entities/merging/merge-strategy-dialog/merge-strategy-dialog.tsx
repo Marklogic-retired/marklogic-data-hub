@@ -130,8 +130,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       let id2=priority.id;
       let priorityName  = id2.split(":")[0];
       if (priorityName === editPriorityName) {
-        let name="";
-        if (editPriorityName !== "Length" && editPriorityName !== "Timestamp") { name = priorityName + ":"+ parseInt(newValue); } else if (editPriorityName === "Length") { name =  "Length:" + parseInt(newValue); } else if (editPriorityName === "Timestamp") { name =  "Timestamp:0"; }
+        let name = priorityName + ":" + parseInt(newValue);
         priority.start=parseInt(newValue);
         priority.value= name;
       }
@@ -183,30 +182,23 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
       step: 5
     },
     onMove: function(item, callback) {
-      if (item.value.split(":")[0] !== "Timestamp") {
-        setPriorityOrderTouched(true);
-        if (item.start >= 0 && item.start <= 100) {
-          item.value= getStrategyName(item);
-          callback(item);
-          updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
-        } else {
-          if (item.start < 1) {
-            item.start = 1;
-            item.value = getStrategyName(item);
-          } else {
-            item.start = 100;
-            item.value = getStrategyName(item);
-          }
-          callback(item);
-          updateMergeRuleItems(item.id, item.start, priorityOrderOptions);
-        }
-        setPriorityOrderOptions(priorityOrderOptions);
-      } else {
-        item.start = 0;
+      setPriorityOrderTouched(true);
+      if (item.start >= 0 && item.start <= 100) {
+        item.value= getStrategyName(item);
         callback(item);
-        updateMergeRuleItems("Timestamp:0", 0, priorityOrderOptions);
-        setPriorityOrderOptions(priorityOrderOptions);
+        updateMergeRuleItems(item.id, item.start.getMilliseconds().toString(), priorityOrderOptions);
+      } else {
+        if (item.start < 1) {
+          item.start = 1;
+          item.value = getStrategyName(item);
+        } else {
+          item.start = 100;
+          item.value = getStrategyName(item);
+        }
+        callback(item);
+        updateMergeRuleItems(item.id, item.start, priorityOrderOptions);
       }
+      setPriorityOrderOptions(priorityOrderOptions);
     },
     format: {
       minorLabels: function (date, scale, step) {
@@ -412,6 +404,14 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     for (let key of mergeStrategiesData) {
       if (props.strategyName === key.strategyName) {
         if (key.hasOwnProperty("priorityOrder")) {
+          if (key.priorityOrder.hasOwnProperty("timeWeight")) {
+            const priorityOrderTimeObject = {
+              id: "Timestamp:" + key.priorityOrder.timeWeight.toString(),
+              value: "Timestamp:"+  key.priorityOrder.timeWeight.toString(),
+              start: key.priorityOrder.timeWeight,
+            };
+            priorityOrderStrategyOptions[0] = priorityOrderTimeObject;
+          }
           for (let key1 of key.priorityOrder.sources) {
             const priorityOrderSourceObject = {
               id: "Source - " + key1.sourceName + ":" + key1.weight.toString(),
