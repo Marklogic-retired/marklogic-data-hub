@@ -373,7 +373,12 @@ declare function run-with-roles-and-privileges($roles, $privileges, $func-or-mod
 
 declare function wait-for-indexes()
 {
-  wait-for-indexes(1)
+  try {
+    wait-for-indexes(1)
+  } catch ($e) {
+    if ($e/error:code = "XDMP-EXTIME") then ()
+    else xdmp:rethrow()
+  }
 };
 
 declare function wait-for-indexes($count as xs:unsignedLong) {
@@ -382,13 +387,8 @@ declare function wait-for-indexes($count as xs:unsignedLong) {
   }, ())
   return
     if ($is-indexing) then
-      try {
-        let $_sleep := xdmp:sleep(5 * $count)
-        return wait-for-indexes($count + 1)
-      } catch ($e) {
-        if ($e/error:code = "XDMP-EXTIME") then ()
-        else xdmp:rethrow()
-      }
+      let $_sleep := xdmp:sleep(5 * $count)
+      return wait-for-indexes($count + 1)
     else
       ()
 };
