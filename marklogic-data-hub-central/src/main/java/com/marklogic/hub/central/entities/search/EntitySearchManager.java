@@ -52,7 +52,6 @@ import java.io.Reader;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class EntitySearchManager {
 
@@ -127,13 +126,43 @@ public class EntitySearchManager {
         }
     }
 
+    public StructuredQueryDefinition graphSearchQuery(SearchQuery searchQuery) {
+
+        if (searchQuery.getQuery().getSelectedFacets().isEmpty()) {
+            return null;
+        }
+        QueryManager queryMgr = searchDatabaseClient.newQueryManager();
+
+        // Setting criteria and searching
+        StringHandle resultHandle = new StringHandle();
+        resultHandle.setFormat(Format.JSON);
+        try {
+            //buildQuery includes datetime conversion which could cause DateTimeException or DateTimeParseException
+            StructuredQueryDefinition queryDefinition = buildQuery(queryMgr, searchQuery);
+            return queryDefinition;
+
+        } catch (MarkLogicServerException e) {
+            logger.error(e.getLocalizedMessage());
+            // Resorting to string contains check as there isn't any other discernible difference
+            if (e.getLocalizedMessage().contains(QUERY_OPTIONS)) {
+                logger.error("If this is a configuration issue, fix the configuration issues as shown in"
+                    + " the logs for enabling faceted search on the entity properties."
+                    + "\n"
+                    + "If the " + QUERY_OPTIONS
+                    + " search options file is missing, please look into documentation "
+                    + "for creating the options file. If the database is indexing then it might take some "
+                    + "time for the file to get generated. This file is required to enable "
+                    + "various search features.");
+            }
+            throw e;
+        }
+    }
+
     private StructuredQueryDefinition buildQuery(QueryManager queryMgr, SearchQuery searchQuery) {
         queryMgr.setPageLength(searchQuery.getPageLength());
         StructuredQueryBuilder queryBuilder = queryMgr.newStructuredQueryBuilder(QUERY_OPTIONS);
-
         List<StructuredQueryDefinition> queries = new ArrayList<>();
         searchQuery.getQuery().getSelectedFacets().forEach((facetType, data) -> {
-            // If a property is not a Hub property, then it is an Entity Property
             StructuredQueryDefinition facetDef = facetHandlerMap.getOrDefault(facetType, new EntityPropertyFacetHandler(facetType))
                     .buildQuery(data, queryBuilder);
 
@@ -188,6 +217,10 @@ public class EntitySearchManager {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getQueryOptions(){
+        return  getQueryOptions(QUERY_OPTIONS);
     }
 
     protected SearchQuery transformToSearchQuery(JsonNode queryDocument) {

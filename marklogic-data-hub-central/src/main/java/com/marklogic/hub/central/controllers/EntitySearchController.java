@@ -20,6 +20,7 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.central.entities.search.EntitySearchManager;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
@@ -151,8 +152,17 @@ public class EntitySearchController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
         response = EntitySearchResponseSchema.class)
-    public JsonNode graphSearch(@RequestBody JsonNode searchQuery, @RequestParam(defaultValue = "final") String database) {
-        return getGraphService(database).searchNodes(searchQuery);
+    public JsonNode graphSearch(@RequestBody SearchQuery searchQuery, @RequestParam(defaultValue = "final") String database) {
+        StructuredQueryDefinition structuredQueryDefinition = newEntitySearchManager(database).graphSearchQuery(searchQuery);
+        String structuredQuery = null;
+        String queryOptions = null;
+        if (structuredQueryDefinition != null) {
+            structuredQuery = structuredQueryDefinition.serialize();
+            queryOptions =  newEntitySearchManager(database).getQueryOptions();
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode searchJsonNode = mapper.convertValue(searchQuery, JsonNode.class);
+        return getGraphService(database).searchNodes(searchJsonNode, structuredQuery, queryOptions);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/nodeExpand")

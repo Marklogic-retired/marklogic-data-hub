@@ -33,6 +33,18 @@
            "name" : "pageLength",
            "datatype" : "long",
            "desc" : "The length of the page"
+         },
+         {
+           "name" : "structuredQuery",
+           "datatype" : "string",
+           "desc" : "Structure query definitions",
+           "nullable": true
+         },
+         {
+           "name" : "queryOptions",
+           "datatype" : "string",
+           "desc" : "Customize your searches using query options",
+           "nullable": true
          }
     ]
 }

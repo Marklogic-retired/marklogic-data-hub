@@ -125,6 +125,7 @@ if (isByEntityType) {
 
     let nodeExpanded = {};
     nodeExpanded.id = objectIRI;
+    nodeExpanded.docURI = item.docURI;
     nodeExpanded.label = nodeLabel;
     nodeExpanded.group = group;
     nodeExpanded.additionalProperties = null;
@@ -152,6 +153,8 @@ if (isByEntityType) {
     let objectId = subjectArr[subjectArr.length - 1];
     let nodeId = objectIRI;
     let nodeLabel = item.firstObjectLabel;
+    let nodeDocUri = item.firstDocURI;
+    let nodeCount = 1;
     if (item.firstObjectLabel !== undefined && item.firstObjectLabel.toString().length === 0) {
       nodeLabel = objectId;
     }
@@ -159,6 +162,8 @@ if (isByEntityType) {
     if(item.nodeCount && item.nodeCount > 1) {
       nodeLabel = subjectArr[subjectArr.length - 2];
       nodeId = nodeToExpand + "-" + subjectArr[subjectArr.length - 2];
+      nodeCount = item.nodeCount;
+      nodeDocUri = null;
     }
 
     const group = objectIRI.substring(0, objectIRI.length - objectId.length - 1);
@@ -170,12 +175,13 @@ if (isByEntityType) {
 
     let nodeExpanded = {};
     nodeExpanded.id = nodeId;
+    nodeExpanded.docURI = nodeDocUri;
     nodeExpanded.label = nodeLabel;
     nodeExpanded.group = group;
     nodeExpanded.additionalProperties = null;
     nodeExpanded.isConcept = false;
-    nodeExpanded.hasRelationships = false;
-    nodeExpanded.count = hasRelationships;
+    nodeExpanded.hasRelationships = hasRelationships;
+    nodeExpanded.count = nodeCount;
     nodes.push(nodeExpanded);
 
     let predicateArr = item.predicateIRI.toString().split("/");
