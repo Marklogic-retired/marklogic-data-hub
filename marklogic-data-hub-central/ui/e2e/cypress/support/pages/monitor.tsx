@@ -83,6 +83,33 @@ class MonitorPage {
     cy.waitUntil(() => cy.findByTestId("spinner").should("have.length", 0));
   }
 
+  getTableHeaders() {
+    return cy.get(`th[class^="hc-table_header"]`);
+  }
+
+  getColumnSelectorIcon() {
+    return cy.get(`[data-testid="column-selector-icon"]`).scrollIntoView();
+  }
+
+  getColumnSelectorPopover() {
+    return cy.get(`[data-testid="column-selector-popover"]`).scrollIntoView();
+  }
+
+  getColumnSelectorColumns() {
+    return cy.get(`[aria-label="column-option"]`);
+  }
+
+  getColumnSelectorCheckboxs() {
+    return cy.get(`input[data-testId^="columnOptionsCheckBox"]`);
+  }
+
+  getColumnSelectorCancelButton() {
+    return cy.get(`[data-testId="cancel-column-selector"]`);
+  }
+
+  getColumnSelectorApplyButton() {
+    return cy.get(`[data-testid="apply-column-selector"]`);
+  }
 }
 const monitorPage = new MonitorPage();
 export default monitorPage;
