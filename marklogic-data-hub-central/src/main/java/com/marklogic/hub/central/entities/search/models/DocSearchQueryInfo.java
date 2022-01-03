@@ -35,6 +35,7 @@ public class DocSearchQueryInfo {
     // http://example.org/MyEntity-1.0/MyEntity, whereas a type is "MyEntity" .
     // This cannot easily be changed in the DHF 5.x timeframe due to saved queries using this name.
     private List<String> entityTypeIds;
+    private List<String> relatedEntityTypeIds;
 
     private Map<String, FacetData> selectedFacets;
 
@@ -42,6 +43,7 @@ public class DocSearchQueryInfo {
         this.hideHubArtifacts = true;
         this.searchText = "";
         this.entityTypeIds = new ArrayList<>();
+        this.relatedEntityTypeIds = new ArrayList<>();
         this.selectedFacets = new HashMap<>();
     }
 
@@ -114,6 +116,14 @@ public class DocSearchQueryInfo {
 
     public void setEntityTypeIds(List<String> entityTypeIds) {
         this.entityTypeIds = entityTypeIds;
+    }
+
+    public List<String> getRelatedEntityTypeIds() {
+        return relatedEntityTypeIds;
+    }
+
+    public void setRelatedEntityTypeIds(List<String> relatedEntityTypeIds) {
+        this.relatedEntityTypeIds = relatedEntityTypeIds;
     }
 
     public Map<String, FacetData> getSelectedFacets() {

@@ -9,12 +9,14 @@ describe("Verify ingestion for all filetypes", () => {
   before(() => {
     cy.visit("/");
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
+    // cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest(); //***Revert this back with DHFPROD-8371
+    cy.loginAsDeveloper().withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
   });
   beforeEach(() => {
-    cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
+    // cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();  //***Revert this back with DHFPROD-8371
+    cy.loginAsDeveloper().withRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
     cy.waitForAsyncRequest();

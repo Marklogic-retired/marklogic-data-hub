@@ -24,29 +24,66 @@ const graphUtils = require("/data-hub/5/impl/graph-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
+const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
+  <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
+  <return-facets xmlns="http://marklogic.com/appservices/search">false</return-facets>
+  <return-frequencies xmlns="http://marklogic.com/appservices/search">false</return-frequencies>
+  <return-metrics xmlns="http://marklogic.com/appservices/search">false</return-metrics>
+  <return-plan xmlns="http://marklogic.com/appservices/search">false</return-plan>
+  <return-qtext xmlns="http://marklogic.com/appservices/search">false</return-qtext>
+  <return-results xmlns="http://marklogic.com/appservices/search">false</return-results>
+  <return-similar xmlns="http://marklogic.com/appservices/search">false</return-similar>
+  <return-values xmlns="http://marklogic.com/appservices/search">false</return-values>
+  <return-query xmlns="http://marklogic.com/appservices/search">true</return-query>`;
+
+const stylesheet = fn.head(xdmp.unquote(`<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+   <xsl:template match="node()|@*">
+      <xsl:copy>
+         <xsl:apply-templates select="node()|@*" />
+      </xsl:copy>
+   </xsl:template>
+   <xsl:template match="*:return-aggregates|*:return-constraints|*:return-facets|*:return-frequencies|*:return-metrics|*:return-plan|*:return-qtext|*:return-results|*:return-similar|*:return-values|*:return-query" />
+   <xsl:template match="*:options">
+      <xsl:copy>
+         <xsl:apply-templates select="node()|@*" />
+         ${returnFlags}
+      </xsl:copy>
+   </xsl:template>
+</xsl:stylesheet>`));
+
 
 var query;
 var start;
 var pageLength;
+var structuredQuery;
+var queryOptions;
 
 if(query == null) {
   httpUtils.throwBadRequest("Request cannot be empty");
 }
 
 let queryObj = JSON.parse(query);
-var selectedFacets = queryObj.selectedFacets;
+var relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
 var allEntityTypeIRIs = [];
 var entityTypeIRIs = [];
 start = start || 0;
 pageLength = pageLength || 1000;
 var hashmapPredicate = new Map();
+var qrySearch;
+if(structuredQuery !== undefined && structuredQuery.toString().length > 0) {
+  structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
+  queryOptions = fn.head(xdmp.unquote(queryOptions)).root;
+  const newOptions = fn.head(xdmp.xsltEval(stylesheet, queryOptions)).root;
+  const searchResponse = fn.head(search.resolve(structuredQuery, newOptions));
+  qrySearch = cts.query(searchResponse.xpath('./*/*'));
+}
 
 fn.collection(entityLib.getModelCollection()).toArray().forEach(model => {
   model = model.toObject();
   const entityName = model.info.title;
   const entityNameIri = entityLib.getEntityTypeId(model, entityName);
 
-  if(selectedFacets && selectedFacets.relatedEntityTypeIds && selectedFacets.relatedEntityTypeIds.includes(entityName)) {
+  if(relatedEntityTypeIds && relatedEntityTypeIds.includes(entityName)) {
     allEntityTypeIRIs.push(sem.iri(entityNameIri));
 
     const predicateList = entityLib.getPredicatesByModel(model);
@@ -63,6 +100,14 @@ let ctsQuery = cts.trueQuery();
 if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
   const searchTxtResponse = fn.head(search.parse(queryObj.searchText));
   ctsQuery = cts.query(searchTxtResponse);
+  if(qrySearch !== undefined){
+    ctsQuery = cts.andQuery([qrySearch,ctsQuery]);
+  }
+}else{
+  // if doesn't has search text, but could has facetSelects
+  if(qrySearch !== undefined){
+    ctsQuery = qrySearch;
+  }
 }
 
 const relatedEntityTypeIRIs = allEntityTypeIRIs.filter((e1) => !entityTypeIRIs.some((e2) => fn.string(e1) === fn.string(e2)));
@@ -119,6 +164,7 @@ result.map(item => {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
       objectIRI = entityType;
       objectLabel =  entityType;
+      objectUri = null;
       objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
     }
     let edge = {};
@@ -135,6 +181,7 @@ result.map(item => {
       objectNode.docUri = objectUri;
       objectNode.label = objectLabel;
       objectNode.group = objectGroup;
+      objectNode.docUri = objectUri;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
       objectNode.hasRelationships = hasRelationships;
@@ -154,14 +201,7 @@ result.map(item => {
 })
 
 
-let totalEstimate = 0;
-if(queryObj.searchText !== undefined && queryObj.searchText.toString().length > 0) {
-  const searchTxtResponse = fn.head(search.parse(queryObj.searchText));
-  totalEstimate = cts.estimate(cts.andQuery([cts.query(searchTxtResponse), cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
-} else {
-  totalEstimate = cts.estimate(cts.andQuery([cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
-}
-
+const totalEstimate = cts.estimate(cts.andQuery([ctsQuery, cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
 const nodesValues = hubUtils.getObjectValues(nodes)
 const response = {
   'total': totalEstimate,
