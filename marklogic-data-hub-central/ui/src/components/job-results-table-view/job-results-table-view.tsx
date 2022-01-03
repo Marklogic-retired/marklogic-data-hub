@@ -185,7 +185,7 @@ const JobResultsTableView = (props) => {
         <div data-testid="column-selector-popover" className={styles.popover}>
           <div className={styles.content}>
             {Object.keys(checkedAttributes).map(attribute => (
-              <div key={attribute} className={styles.DropdownMenuItem}>
+              <div key={attribute} className={styles.DropdownMenuItem} aria-label={"column-option"}>
                 <HCCheckbox
                   id={`column-${attribute}-id`}
                   handleClick={handleColOptionsChecked}
@@ -200,9 +200,9 @@ const JobResultsTableView = (props) => {
             <HCDivider className={styles.divider} />
             <div className={styles.footer}>
               <div>
-                <HCButton size="sm" variant="outline-light" onClick={onCancel} >Cancel</HCButton>
+                <HCButton size="sm" variant="outline-light" onClick={onCancel} data-testid={"cancel-column-selector"} >Cancel</HCButton>
                 <span>  </span>
-                <HCButton variant="primary" size="sm" onClick={onApply} disabled={false} >Apply</HCButton>
+                <HCButton variant="primary" size="sm" onClick={onApply} disabled={false} data-testid={"apply-column-selector"} >Apply</HCButton>
               </div>
             </div>
           </footer>
@@ -217,11 +217,13 @@ const JobResultsTableView = (props) => {
       <div className={styles.columnSelector} data-cy="column-selector">
         <div className={styles.fixedPopup}>
           <OverlayTrigger placement="left-start" overlay={content} trigger="click" show={popoverVisibility}>
-            <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
-              <i>
-                <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
-              </i>
-            </HCTooltip>
+            <span data-testid={"tooltip-wrapper"}>
+              <HCTooltip id="select-columns-tooltip" text="Select the columns to display." placement="top-end">
+                <i>
+                  <FontAwesomeIcon onClick={() => { setPopoverVisibility(true); }} className={styles.columnIcon} icon={faColumns} color="#5B69AF" size="lg" data-testid="column-selector-icon"/>
+                </i>
+              </HCTooltip>
+            </span>
           </OverlayTrigger>
         </div>
       </div>

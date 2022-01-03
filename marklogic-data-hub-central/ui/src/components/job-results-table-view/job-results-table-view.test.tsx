@@ -112,6 +112,29 @@ describe("Job results Table view component", () => {
 });
 
 describe("Column Selector in Job results Table view component", () => {
+  test("Verify visibility of columns selector popover", async () => {
+    const {getByText, getByTestId, queryByTestId} = render(
+      <Router>
+        <JobResultsTableView
+          data={jobResults.results}
+        />
+      </Router>
+    );
+
+    // check the initial non visibility of the popover
+    expect(queryByTestId("column-selector-popover")).toBeNull();
+
+    // This element must exist between the popover overlay and the tooltip for the correct visualization of the element.
+    expect(getByTestId("tooltip-wrapper")).toBeInTheDocument();
+
+    expect(getByTestId("column-selector-icon")).toBeInTheDocument();
+    fireEvent.mouseOver(getByTestId("column-selector-icon"));
+    await (waitForElement(() => (getByText("Select the columns to display."))));
+    await fireEvent.click(getByTestId("column-selector-icon"));
+
+    expect(getByTestId("column-selector-popover")).toBeVisible();
+  });
+
   test("Verify default values are checked", async () => {
     const {getByText, getByTestId} = render(
       <Router>
