@@ -2,5 +2,15 @@
   "OrderID": "10248",
   "OrderDate": "1996-07-04T14:25:55",
   "ShipAddress": "123 Main St",
-  "ShipCity": "Reims"
+  "ShipCity": "Reims",
+  "Products": [
+    {
+      "ProductID": "23241",
+      "ProductName": "Mop"
+    },
+    {
+      "ProductID": "23242",
+      "ProductName": "Floor Cleaner"
+    }
+  ]
 }
