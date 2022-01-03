@@ -54,9 +54,8 @@ assertions.concat([
 const withRelatedQuery = {
   "searchText": "",
   "entityTypeIds": [ "BabyRegistry" ],
-  "selectedFacets": {
-    "relatedEntityTypeIds": ["Product", "Customer"]
-  }
+  "relatedEntityTypeIds": ["Product", "Customer"]
+
 };
 
 const resultsTest4 = searchNodes(withRelatedQuery);
@@ -73,9 +72,7 @@ assertions.concat([
 const nodeLeafQuery = {
   "searchText": "",
   "entityTypeIds": [ "BabyRegistry" ],
-  "selectedFacets": {
-    "relatedEntityTypeIds": ["Customer"]
-  }
+  "relatedEntityTypeIds": ["Customer"]
 };
 
 const resultsTest5 = searchNodes(nodeLeafQuery);

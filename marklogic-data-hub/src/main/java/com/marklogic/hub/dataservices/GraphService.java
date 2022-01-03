@@ -32,18 +32,20 @@ public interface GraphService {
             }
 
             @Override
-            public JsonNode searchNodes(JsonNode searchQuery) {
+            public JsonNode searchNodes(JsonNode searchQuery, String structuredQuery, String queryOptions) {
                 return searchNodes(
-                    this.req_searchNodes.on(this.dbClient), searchQuery
+                    this.req_searchNodes.on(this.dbClient), searchQuery,  structuredQuery, queryOptions
                 );
             }
-            private JsonNode searchNodes(BaseProxy.DBFunctionRequest request, JsonNode searchQuery) {
+            private JsonNode searchNodes(BaseProxy.DBFunctionRequest request, JsonNode searchQuery, String structuredQuery, String queryOptions) {
                 return BaseProxy.JsonDocumentType.toJsonNode(
                     request
                         .withParams(
                             BaseProxy.documentParam("query", true, BaseProxy.JsonDocumentType.fromJsonNode(searchQuery.get("query"))),
                             BaseProxy.atomicParam("start", true, BaseProxy.StringType.fromString(searchQuery.get("start").toString())),
-                            BaseProxy.atomicParam("pageLength", true, BaseProxy.StringType.fromString(searchQuery.get("pageLength").toString()))
+                            BaseProxy.atomicParam("pageLength", true, BaseProxy.StringType.fromString(searchQuery.get("pageLength").toString())),
+                            BaseProxy.atomicParam("structuredQuery", true, BaseProxy.StringType.fromString(structuredQuery)),
+                            BaseProxy.atomicParam("queryOptions", true, BaseProxy.StringType.fromString(queryOptions))
                         ).responseSingle(false, Format.JSON)
                 );
             }
@@ -68,6 +70,6 @@ public interface GraphService {
         return new GraphServiceImpl(db, serviceDeclaration);
     }
 
-    JsonNode searchNodes(JsonNode searchQuery);
+    JsonNode searchNodes(JsonNode searchQuery, String structuredQuery, String queryOptions);
     JsonNode nodeExpand(JsonNode nodeInfo, Integer limit);
 }

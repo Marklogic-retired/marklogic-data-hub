@@ -21,6 +21,7 @@
          {
            "name" : "limit",
            "datatype" : "int",
+           "nullable": true,
            "desc" : "The size of the result"
          }
     ]
