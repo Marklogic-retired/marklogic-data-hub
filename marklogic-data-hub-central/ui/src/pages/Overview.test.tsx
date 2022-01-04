@@ -5,12 +5,14 @@ import userEvent from "@testing-library/user-event";
 import {render, fireEvent} from "@testing-library/react";
 import Overview from "./Overview";
 import overviewConfig from "../config/overview.config";
+import data from "../assets/mock-data/system-info.data";
 
 describe("Overview component", () => {
 
   it("Verify content display", async () => {
 
-    const {getByText, getByLabelText, getAllByText} = render(<Overview/>);
+    let enabled = ["load", "model", "curate", "run", "explore"];
+    const {getByText, getByLabelText, getAllByText} = render(<Overview enabled={enabled} environment={data.environment}/>);
 
     expect(getByLabelText("overview")).toBeInTheDocument();
 
@@ -35,7 +37,7 @@ describe("Overview component", () => {
     history.push("/tiles"); // initial state
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText, queryAllByText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+    const {getByLabelText, queryAllByText} = render(<Router history={history}><Overview enabled={enabled} environment={data.environment}/></Router>);
 
     enabled.forEach((card, i) => {
       expect(getByLabelText(card + "-card")).toHaveClass(`enabled`);
@@ -52,7 +54,7 @@ describe("Overview component", () => {
     history.push("/tiles"); // initial state
 
     let disabled = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText, getAllByText} = render(<Router history={history}><Overview enabled={[]}/></Router>);
+    const {getByLabelText, getAllByText} = render(<Router history={history}><Overview enabled={[]} environment={data.environment}/></Router>);
 
     disabled.forEach((card, i) => {
       expect(getByLabelText(card + "-card")).toHaveClass(`disabled`);
@@ -70,7 +72,7 @@ describe("Overview component", () => {
     history.push("/tiles");
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+    const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled} environment={data.environment}/></Router>);
 
     enabled.forEach((id, i) => {
       let card = getByLabelText(id + "-card");
@@ -91,7 +93,7 @@ describe("Overview component", () => {
     history.push("/tiles");
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+    const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled} environment={data.environment}/></Router>);
 
     getByLabelText("load-card").focus();
     expect(getByLabelText("load-card")).toHaveFocus();
@@ -116,7 +118,7 @@ describe("Overview component", () => {
     history.push("/tiles");
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+    const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled} environment={data.environment}/></Router>);
 
     // map of which card to go next if up/down/left/right arrow keys are pressed on a card
     const directionMap = {
@@ -152,7 +154,7 @@ describe("Overview component", () => {
     history.push("/tiles"); // initial state
 
     let enabled = ["load", "model", "curate", "run", "explore"];
-    const {getAllByText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+    const {getAllByText} = render(<Router history={history}><Overview enabled={enabled} environment={data.environment}/></Router>);
 
     // Mock method for opening links
     const mockedWindowOpen = jest.fn();
@@ -164,7 +166,7 @@ describe("Overview component", () => {
     expect(documentationLinks.length === enabled.length); // All cards should have Documentation links
     documentationLinks.forEach((docLink, i) => {
       fireEvent.click(docLink);
-      expect(mockedWindowOpen).toBeCalledWith(overviewConfig.documentationLinks[enabled[i]], "_blank");
+      expect(mockedWindowOpen).toBeCalledWith(overviewConfig.documentationLinks.tileSpecificLink(5.3, enabled[i]), "_blank");
     });
 
     // Check Video Tutorial links

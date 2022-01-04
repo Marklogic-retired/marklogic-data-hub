@@ -27,6 +27,26 @@ export function getEnvironment():any {
   }
 }
 
+export function parseVersion(value):any {
+  if (value === "") {
+    return "";
+  } else {
+    let version = "";
+    let flag = false;
+    for (let c in value) {
+      if (value[c] !== "." && value[c] !== "-") {
+        version += value[c];
+      } else if (value[c] === "." && flag === false) {
+        flag = true;
+        version += value[c];
+      } else {
+        break;
+      }
+    }
+    return version;
+  }
+}
+
 export function resetEnvironment() {
   localStorage.setItem("environment", JSON.stringify(defaultEnv));
 }

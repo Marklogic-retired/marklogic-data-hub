@@ -3,6 +3,7 @@ import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-do
 import axios from "axios";
 import {Layout, Icon, Avatar, Menu, Dropdown} from "antd";
 import {UserContext} from "../../util/user-context";
+import {parseVersion} from "../../util/environment";
 import logo from "./logo.svg";
 import styles from "./header.module.scss";
 import {Application} from "../../config/application.config";
@@ -57,26 +58,6 @@ const Header:React.FC<Props> = (props) => {
   const getVersionLink = () => {
     let versionNum = parseVersion(props.environment.dataHubVersion);
     return "https://docs.marklogic.com/datahub/" + versionNum;
-  };
-
-  const parseVersion = (value) => {
-    if (value === "") {
-      return "";
-    } else {
-      let version = "";
-      let flag = false;
-      for (let c in value) {
-        if (value[c] !== "." && value[c] !== "-") {
-          version += value[c];
-        } else if (value[c] === "." && flag === false) {
-          flag = true;
-          version += value[c];
-        } else {
-          break;
-        }
-      }
-      return version;
-    }
   };
 
   const logoutKeyDownHandler = (event) => {
