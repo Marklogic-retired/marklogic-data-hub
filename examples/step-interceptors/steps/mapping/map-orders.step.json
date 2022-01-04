@@ -20,6 +20,10 @@
     {
       "path": "/org.example/addPermissions.sjs",
       "when": "beforeContentPersisted"
+    },
+    {
+      "path": "/custom-modules/step-interceptors/breakoutProducts.sjs",
+      "when": "beforeContentPersisted"
     }
   ],
   "sourceQuery": "cts.collectionQuery('order-input')",
@@ -40,6 +44,18 @@
     },
     "OrderID": {
       "sourcedFrom": "OrderID"
+    },
+    "Products": {
+      "sourcedFrom": "Products",
+      "properties": {
+        "ProductID": {
+          "sourcedFrom": "ProductID"
+        },
+        "ProductName": {
+          "sourcedFrom": "ProductName"
+        }
+      },
+      "targetEntityType": "#/definitions/Product"
     }
   },
   "namespaces": {},

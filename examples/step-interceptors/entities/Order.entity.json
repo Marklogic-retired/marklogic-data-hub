@@ -15,6 +15,22 @@
         },
         "ShipAddress": {
           "datatype": "string"
+        },
+        "Products": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Product"
+          }
+        }
+      }
+    },
+    "Product": {
+      "properties": {
+        "ProductID": {
+          "datatype": "string"
+        },
+        "ProductName": {
+          "datatype": "string"
         }
       }
     }
