@@ -1,12 +1,21 @@
 const VERSION = "5.5";
 
-const documentationLinkRoot = "https://docs.marklogic.com/datahub/" + VERSION + "/";
+const documentationLinkRoot = "https://docs.marklogic.com/datahub/";
 const documentationLinks = {
-    load: documentationLinkRoot + "flows/loading-with-hubcentral.html",
-    model: documentationLinkRoot + "entities/modeling-with-hubcentral.html",
-    curate: documentationLinkRoot + "flows/curating-with-hubcentral.html",
-    run: documentationLinkRoot + "flows/running-steps-with-hubcentral.html",
-    explore: documentationLinkRoot + "tools/hubcentral/exploring-with-hubcentral.html",
+    tileSpecificLink: function (versionNum, tile) {
+      switch (tile) {
+        case "load": 
+          return documentationLinkRoot + versionNum + "/" + "flows/loading-with-hubcentral.html"
+        case "model": 
+          return documentationLinkRoot + versionNum + "/" + "entities/modeling-with-hubcentral.html" 
+        case "curate":
+          return documentationLinkRoot + versionNum + "/" + "flows/curating-with-hubcentral.html"
+        case "run":
+          return documentationLinkRoot + versionNum + "/" + "flows/running-steps-with-hubcentral.html"
+        case "explore": 
+          return documentationLinkRoot + versionNum + "/" + "tools/hubcentral/exploring-with-hubcentral.html"
+      }
+    }
 }
 
 // TODO Video Tutorial links currently pegged to version 5.4, see: DHFPROD-7513
