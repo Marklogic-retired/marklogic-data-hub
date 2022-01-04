@@ -210,7 +210,7 @@ describe("Mapping", () => {
     cy.waitUntil(() => mappingStepDetail.relatedFilterSelection("Person", "Relation (relatedTo Person)")).should("exist");
     // Related entity exists before deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("exist");
-    mappingStepDetail.relatedFilterSelectionDeleteIcon("Person", "Relation (relatedTo Person)").click();
+    mappingStepDetail.relatedFilterSelectionDeleteIcon("Person", "Relation (relatedTo Person)").click({force: true});
     mappingStepDetail.deleteConfirmationButtonYes().click({force: true});
     // Related entity does not exist after deletion
     mappingStepDetail.entityTitle("Relation (relatedTo Person)").should("not.exist");

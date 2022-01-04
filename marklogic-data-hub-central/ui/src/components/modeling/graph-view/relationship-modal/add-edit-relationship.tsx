@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useContext} from "react";
 import {ModelingContext} from "../../../../util/modeling-context";
-import {Icon, Card, Dropdown, Tooltip} from "antd";
-import {Modal} from "react-bootstrap";
+import {Icon, Card, Tooltip} from "antd";
+import {Modal, Dropdown} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import styles from "./add-edit-relationship.module.scss";
 // import graphConfig from "../../../../config/graph-vis.config";
 import oneToManyIcon from "../../../../assets/one-to-many.svg";
 import oneToOneIcon from "../../../../assets/one-to-one.svg";
-import {faExclamationCircle, faChevronDown, faChevronRight} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationCircle, faChevronDown, faChevronRight, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {ModelingTooltips} from "../../../../config/tooltips.config";
@@ -22,7 +22,7 @@ import {
   EntityModified
 } from "../../../../types/modeling-types";
 import {ChevronDown, QuestionCircleFill} from "react-bootstrap-icons";
-import {DropDownWithSearch, HCButton, HCInput, HCTooltip} from "@components/common";
+import {HCButton, HCInput, HCTooltip} from "@components/common";
 
 type Props = {
   openRelationshipModal: boolean;
@@ -60,10 +60,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
   const [targetEntityName, setTargetEntityName] = useState("");
   const [targetEntityColor, setTargetEntityColor] = useState("");
   const [emptyTargetEntity, setEmptyTargetEntity] = useState(false);
-  const [displayEntityList, setDisplayEntityList] = useState(false);
-  const [displaySourceMenu, setDisplaySourceMenu] = useState(false);
   const [optionalCollapsed, setOptionalCollapsed] = useState(true);
   const [cardinalityToggled, setCardinalityToggled] = useState(false);
+  const [filterEntity, setFilterEntity] = useState("");
 
   const initRelationship = (sourceEntityIdx) => {
     let sourceEntityDetails = props.entityTypes[sourceEntityIdx];
@@ -458,11 +457,9 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     } else {
       setTargetEntityColor("#EEEFF1"); //assigning default color if entity is not assigned a color yet
     }
-    setDisplaySourceMenu(prev => false);
-    setDisplayEntityList(prev => false);
   }
 
-  //format entity types to tuples for DropDownWithSearch to work
+  //format entity types to tuples to work
   const entityTypesToTuples = (entityTypes) => {
     let entityTuples:any = [];
     entityTypes.map(entity => {
@@ -471,31 +468,35 @@ const AddEditRelationship: React.FC<Props> = (props) => {
     return entityTuples;
   };
 
-  const toggleDropdown = () => {
-    setDisplayEntityList(!displayEntityList);
-  };
-
   const toggleOptionalIcon = () => {
     setOptionalCollapsed(!optionalCollapsed);
   };
 
   const cardinalityTooltipText = ModelingTooltips.cardinalityButton();
 
-  const menu = (
-    <DropDownWithSearch
-      displayMenu={displaySourceMenu}
-      setDisplayMenu={setDisplaySourceMenu}
-      setDisplaySelectList={setDisplayEntityList}
-      displaySelectList={displayEntityList}
-      itemValue={""}
-      onItemSelect={handleMenuClick}
-      srcData={entityTypesToTuples(props.entityTypes)}
-      propName={""}
-      handleDropdownMenu={{}}
-      indentList={null}
-      modelling={true}
+  const DropdownMenu = <Dropdown.Menu style={{minWidth: "250px"}} align={"end"}>
+    <HCInput
+      value={filterEntity}
+      id="inputEntitySearch"
+      className={`mx-2 my-2 w-auto`}
+      onChange={(e) => setFilterEntity(e.target.value)}
+      suffix={<FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>}
     />
-  );
+    {
+      entityTypesToTuples(props.entityTypes)
+        .filter(oElement => !filterEntity || oElement.value.toLowerCase().includes(filterEntity.toLowerCase()))
+        .map((item, index) =>
+          <Dropdown.Item
+            data-testid={`${item.value}-option`}
+            onClick={() => handleMenuClick(item.value)}
+            eventKey={index}
+            role={"option"}
+          >
+            {item.value}
+          </Dropdown.Item>
+        )
+    }
+  </Dropdown.Menu>;
 
   const MenuList  = (props) => (
     <div id="foreignKey-dropdown-MenuList">
@@ -663,12 +664,12 @@ const AddEditRelationship: React.FC<Props> = (props) => {
                 <p data-testid={`${targetEntityName}-targetNodeName`} className={styles.entityName}>{emptyTargetEntity ? targetEntityName : <b>{targetEntityName}</b>}</p>
               </Card>
               {!props.isEditing ?
-                <Dropdown overlay={menu} overlayClassName={styles.dropdownMenu} trigger={["click"]} placement="bottomRight">
-                  <span className={styles.dropdownArrow}>
-                    {
-                      <ChevronDown className={styles.dropdownMenuIcon} data-testid={"targetEntityDropdown"} onClick={(e) => toggleDropdown()}/>
-                    }
-                  </span>
+                <Dropdown>
+                  <Dropdown.Toggle data-testid={"targetEntityDropdown"} className={`p-0 border-none rounded-0 ${styles.dropdownButtonMenu}`}>
+                    <ChevronDown />
+                  </Dropdown.Toggle>
+
+                  {DropdownMenu}
                 </Dropdown>
                 : null }
             </div>

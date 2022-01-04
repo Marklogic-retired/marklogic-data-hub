@@ -1,6 +1,6 @@
 import React from "react";
 import {cleanup, render, screen, wait, within} from "@testing-library/react";
-import {waitFor, fireEvent} from "@testing-library/dom";
+import {fireEvent} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 
 import RulesetSingleModal from "./ruleset-single-modal";
@@ -242,7 +242,7 @@ describe("Matching Ruleset Single Modal component", () => {
     expect(getByText("Reduce Weight")).toBeInTheDocument();
     let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
     userEvent.hover(reduceInfoCircleIcon);
-    await waitFor(() => expect(screen.getByLabelText("reduce-tooltip-text")));
+    expect(screen.getByLabelText("reduce-tooltip-text"));
 
     userEvent.click(screen.getByLabelText("reduceToggle"));
 

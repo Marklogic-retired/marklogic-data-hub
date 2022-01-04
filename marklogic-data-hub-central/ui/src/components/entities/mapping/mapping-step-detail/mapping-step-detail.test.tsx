@@ -487,13 +487,13 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText, getAllByTestId;
+    let getByTestId, getByLabelText, getAllByLabelText, getByText, getAllByTestId;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
       getByText = renderResults.getByText;
-      getAllByText = renderResults.getAllByText;
+      getAllByLabelText = renderResults.getAllByLabelText;
       getAllByTestId = renderResults.getAllByTestId;
     });
 
@@ -512,27 +512,19 @@ describe("RTL Source-to-entity map tests", () => {
     // //Verify entity settings icon also exist in the first row
     // expect(getByLabelText("entitySettings").closest("tr")).toBe(entTableTopRow);
 
-    let entitiesFilter = getByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-search__field"
-    );
+    await wait(() => fireEvent.keyDown(getByLabelText("entities-filter-select"), {key: "ArrowDown"})); // focus on the search box
 
-    fireEvent.click(entitiesFilter); // focus on the search box
 
     //Related entity options should appear
     expect(getByText("Order (orderedBy Person)")).toBeInTheDocument();
     expect(getByText("BabyRegistry (ownedBy Person)")).toBeInTheDocument();
 
     //Select both Order and BabyRegistry related entities to display
-    fireEvent.click(getByText("Order (orderedBy Person)"));
-    fireEvent.click(getByText("BabyRegistry (ownedBy Person)"));
+    fireEvent.click(getByLabelText("Order (orderedBy Person)-option"));
+    await wait(() => fireEvent.keyDown(getAllByLabelText("entities-filter-select")[0], {key: "ArrowDown"})); // focus on the search box again
+    fireEvent.click(getByLabelText("BabyRegistry (ownedBy Person)-option"));
 
-    let entityFilterValue = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-selection__choice__content"
-    );
+    let entityFilterValue = getAllByLabelText("multioption-container");
 
     //Both selected values should appear in primary table filter
     expect(entityFilterValue[0]).toHaveTextContent("Order (orderedBy Person)");
@@ -547,11 +539,7 @@ describe("RTL Source-to-entity map tests", () => {
     await wait(() => expect(document.querySelector("#tooltip-orderedBy")).toBeInTheDocument());
 
     //Verify that there are now three entity filters, one in the primary table and one in each related table
-    let entityFilters = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-search__field"
-    );
+    let entityFilters = getAllByLabelText("entities-filter-select");
 
     expect(entityFilters).toHaveLength(3);
 
@@ -673,13 +661,12 @@ describe("RTL Source-to-entity map tests", () => {
     mockGetSourceDoc.mockResolvedValue({status: 200, data: data.jsonSourceDataDefault});
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personRelatedEntityDef});
 
-    let getByTestId, getByLabelText, getByText, getAllByText, queryByTestId, getAllByLabelText, queryByLabelText, getByPlaceholderText;
+    let getByTestId, getByLabelText, getByText, queryByTestId, getAllByLabelText, queryByLabelText, getByPlaceholderText;
     await act(async () => {
       const renderResults = defaultRender(personMappingStepWithRelatedEntityData);
       getByTestId = renderResults.getByTestId;
       getByLabelText = renderResults.getByLabelText;
       getByText = renderResults.getByText;
-      getAllByText = renderResults.getAllByText;
       queryByTestId = renderResults.queryByTestId;
       getAllByLabelText = renderResults.getAllByLabelText;
       queryByLabelText = renderResults.queryByLabelText;
@@ -747,11 +734,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Test deletion of BabyRegistry related entity through the X button on the filter label of its parent table (Person) now
 
-    let entityFilterValue = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-selection__choice"
-    );
+    let entityFilterValue = getAllByLabelText("multioption-container");
 
     //Verify BabyRegistry label exists in the Person table's filter
     expect(entityFilterValue[1]).toHaveTextContent("BabyRegistry (ownedBy Person)");
@@ -765,11 +748,7 @@ describe("RTL Source-to-entity map tests", () => {
     //Confirm deletion of BabyRegistry table
     fireEvent.click(getByText("Yes"));
 
-    entityFilterValue = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-selection__choice"
-    );
+    entityFilterValue = getAllByLabelText("multioption-container");
 
     //BabyRegistry (ownedBy Person) table should no longer be shown
     await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
@@ -783,62 +762,6 @@ describe("RTL Source-to-entity map tests", () => {
     await wait(() => expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument());
     await wait(() => expect(queryByLabelText("BabyRegistry (ownedBy Person)-title")).not.toBeInTheDocument());
     await wait(() => expect(queryByLabelText("Product (BabyRegistry hasProduct)-title")).not.toBeInTheDocument());
-
-    let targetEntityFilter = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-search__field"
-    )[0];
-
-    fireEvent.click(targetEntityFilter); // focus on the search box
-
-    //Related entity options should appear
-    expect(getByLabelText("Order (orderedBy Person)-option")).toBeInTheDocument();
-    expect(getByLabelText("BabyRegistry (ownedBy Person)-option")).toBeInTheDocument();
-
-    //Select BabyRegistry related entity to display
-    fireEvent.click(getByLabelText("BabyRegistry (ownedBy Person)-option"));
-
-    entityFilterValue = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-selection__choice"
-    );
-
-    //Order and BabyRegistry tables should be present on the screen
-    expect(getByLabelText("Order (orderedBy Person)-title")).toBeInTheDocument();
-    expect(getByLabelText("BabyRegistry (ownedBy Person)-title")).toBeInTheDocument();
-
-    //Verify that there are now three entity filters, one in the primary table and one in each related table
-    let entityFilters = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-                element.className === "ant-select-search__field"
-    );
-
-    expect(entityFilters).toHaveLength(3);
-
-    //Verify related entities can be opened from a related entity table
-
-    fireEvent.click(getByTestId("BabyRegistry (ownedBy Person)-entities-filter"));
-    fireEvent.click(getByText("Product (BabyRegistry hasProduct)"));
-
-    let relatedEntityFilterValue = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-selection__choice__content"
-    );
-
-    //Selected value should appear in BabyRegistry table filter
-    expect(relatedEntityFilterValue[3]).toHaveTextContent("Product (BabyRegistry hasProduct)");
-
-    //BabyRegistry's Product and Order's Product tables should be present on the screen
-    expect(getByLabelText("Product (Order hasProduct)-title")).toBeInTheDocument();
-    expect(getByLabelText("Product (BabyRegistry hasProduct)-title")).toBeInTheDocument();
-
-    //Both Products have no related entities so no filter should be available
-    expect(queryByTestId("Product (Order hasProduct)-entities-filter")).not.toBeInTheDocument();
-    expect(queryByTestId("Product (BabyRegistry hasProduct)-entities-filter")).not.toBeInTheDocument();
 
     //verify advanced settings of related entity
     //click on the related entity table order settings
@@ -1490,15 +1413,15 @@ describe("RTL Source-to-entity map tests", () => {
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
     mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[2]});
 
-    let getByText, getAllByText, getByTestId, queryByText, getAllByRole, queryByTestId;
+    let getByText, getByTestId, queryByText, getAllByRole, queryByTestId, getByLabelText;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      getAllByText = renderResults.getAllByText;
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
       queryByText = renderResults.queryByText;
       getAllByRole = renderResults.getAllByRole;
       queryByTestId = renderResults.queryByTestId;
+      getByLabelText = renderResults.getByLabelText;
     });
 
     //Prepare the map expression field for function signature later
@@ -1508,11 +1431,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     let functionSelector = getByTestId("propAttribute-104-functionIcon");
     fireEvent.click(functionSelector);
-    let inputBox = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-search__field"
-    )[0];
+    let inputBox = getByLabelText("dropdownList-select-wrapper");
 
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByText("concat")).toBeInTheDocument();
@@ -1569,13 +1488,14 @@ describe("RTL Source-to-entity map tests", () => {
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
     mockGetMappingValidationResp.mockResolvedValueOnce({status: 200, data: mappingStepPerson.artifacts[2]});
 
-    let getAllByText, getByTestId, getAllByRole, queryByTestId;
+    let getByTestId, getAllByRole, queryByTestId, getByLabelText;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
-      getAllByText = renderResults.getAllByText;
+      // getAllByText = renderResults.getAllByText;
       getByTestId = renderResults.getByTestId;
       getAllByRole = renderResults.getAllByRole;
       queryByTestId = renderResults.queryByTestId;
+      getByLabelText = renderResults.getByLabelText;
     });
 
     // Prepare the map expression field for reference input
@@ -1586,11 +1506,9 @@ describe("RTL Source-to-entity map tests", () => {
     // Open reference menu and verify options
     let referenceSelector = getByTestId("Person-propAttribute-refIcon");
     fireEvent.click(referenceSelector);
-    let inputBox = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-search__field"
-    )[0];
+
+    let inputBox = getByLabelText("dropdownList-select-wrapper");
+
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     expect(getByTestId("$URI-option")).toBeInTheDocument();
     expect(getByTestId("$ZIP_POINTS-option")).toBeInTheDocument();
@@ -2071,13 +1989,14 @@ describe("RTL Source Selector/Source Search tests", () => {
     mockGetNestedEntities.mockResolvedValue({status: 200, data: personNestedEntityDef});
     mockUpdateMapArtifact.mockResolvedValueOnce({status: 200, data: true});
 
-    let getByTestId, getAllByText, getAllByRole, queryByTestId;
+    let getByTestId, getAllByText, getAllByRole, queryByTestId, getByLabelText;
     await act(async () => {
       const renderResults = renderWithRouter(personMappingStepWithData, authorityService);
       getByTestId = renderResults.getByTestId;
       getAllByText = renderResults.getAllByText;
       getAllByRole = renderResults.getAllByRole;
       queryByTestId = renderResults.queryByTestId;
+      getByLabelText = renderResults.getByLabelText;
     });
 
     let sourceSelector = await waitForElement(() => getByTestId("itemTypes-listIcon"));
@@ -2092,11 +2011,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     let lastName = getAllByText("LastName");
     expect(lastName.length).toEqual(2);
 
-    let inputBox = getAllByText(
-      (_content, element) =>
-        element.className !== null &&
-        element.className === "ant-select-search__field"
-    )[0];
+    let inputBox = getByLabelText("dropdownList-select-wrapper");
 
     fireEvent.click(inputBox);
     fireEvent.change(inputBox, {target: {value: "Fir"}});
@@ -2230,7 +2145,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     expect(firstName.length).toEqual(2);
 
     //Check if indentation is right
-    expect(firstName[1]).toHaveStyle("line-height: 2vh; text-indent: 20px;");
+    expect(firstName[1]).toHaveStyle("line-height: 2vh; padding-left: 20px;");
 
     //Verify Array icon is present when item has no children but value was an Array of simple values.
     expect(getByTestId("proteinDog-optionIcon")).toHaveAttribute("src", "icon_array.png");
@@ -2283,7 +2198,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     expect(lastName.length).toEqual(2);
 
     //Check if indentation is right
-    expect(lastName[1]).toHaveStyle("line-height: 2vh; text-indent: 40px;");
+    expect(lastName[1]).toHaveStyle("line-height: 2vh; padding-left: 40px;");
 
     //Verify Array icon is not present when item has no children
     expect(getByTestId("FirstNamePreferred-optionIcon")).toHaveAttribute("src", "");
