@@ -31,14 +31,12 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+
   it("Switch on zero state page and select query parameters for final database", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
-    browsePage.getFinalDatabaseButton().click();
-    browsePage.getTableViewButton().click();
     browsePage.selectEntity("All Data");
     browsePage.getSearchText().type("Adams");
-    browsePage.getExploreButton().click();
+    cy.get("[data-testid='hc-inputSearch-btn']").click();
     //verify the query data for final database on explore page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -132,54 +130,14 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
-    browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Entities");
   });
-  it("verify Include Hub Data artifacts switch for All Data option on browse page", () => {
-    //switch on zero state page and select query parameters for final database
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
-    browsePage.getFinalDatabaseButton().click();
-    browsePage.getTableViewButton().click();
-    browsePage.selectEntity("All Data");
-    browsePage.getExploreButton().click();
-    //verify the query data for final database on explore page
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
 
-    //Include Data Hub Artifacts switch should not be checked by default
-    browsePage.getIncludeHubArtifactsSwitch().should("not.be.checked");
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getAllDataSnippetByUri("/steps/custom/mapping-step.step.json").should("not.exist");
-
-    //Toggle the switch to see if the hub artifact is visible now
-    browsePage.getIncludeHubArtifactsSwitch().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    cy.waitUntil(() => browsePage.getAllDataSnippetByUri("/steps/custom/mapping-step.step.json")).should("exist");
-  });
-  it("Switch on zero state page and select query parameters for final database", () => {
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
-    browsePage.getFinalDatabaseButton().click();
-    browsePage.getTableViewButton().click();
-    browsePage.selectEntity("Customer");
-    browsePage.getSearchText().type("Adams");
-    browsePage.getExploreButton().click();
-    browsePage.waitForSpinnerToDisappear();
-  });
   it("Verify query parameters for final database on browse page", () => {
-    browsePage.waitForTableToLoad();
-    browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
-    browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.getSearchText().should("have.value", "Adams");
-    browsePage.getTotalDocuments().should("be.equal", 2);
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     //Verify if the pagination gets reset upon cliking on database buttons
-    browsePage.clearSearchText();
     browsePage.selectEntity("All Entities");
     browsePage.getTotalDocuments().then(val => {
       browsePage.getPaginationPageSizeOptions().select("10 / page");
@@ -201,26 +159,10 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 0);
   });
-  it("switch on zero state page and select query parameters for staging database", () => {
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitUntil(() => browsePage.getStagingDatabaseButton()).click();
-    browsePage.selectEntity("Customer");
-    browsePage.getSearchText().type("Powers");
-    browsePage.getSnippetViewButton().click();
-    browsePage.getExploreButton().click();
-    browsePage.waitForSpinnerToDisappear();
-  });
-  it("verify query parameters for staging database on browse page", () => {
-    cy.waitUntil(() => browsePage.getSnippetViewResult());
-    browsePage.getStagingDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
-    browsePage.getSelectedEntity().should("contain", "Customer");
-    browsePage.getSearchText().should("have.value", "Powers");
-    browsePage.getDocuments().should("not.exist");
-    //verify the number of documents is 0
-    browsePage.getTotalDocuments().should("be.equal", 0);
-  });
+
   it("Switch to final database and verify the number of documents for the search string is 1", () => {
+
+    toolbar.getExploreToolbarIcon().click();
     browsePage.getFinalDatabaseButton().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Powers");

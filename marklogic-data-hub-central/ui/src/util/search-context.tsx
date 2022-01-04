@@ -15,7 +15,6 @@ type SearchContextInterface = {
   maxRowsPerPage: number,
   selectedQuery: string,
   sidebarQuery: string,
-  zeroState: boolean,
   selectedTableProperties: any,
   view: JSX.Element|null,
   tileId: string,
@@ -38,7 +37,6 @@ const defaultSearchOptions = {
   maxRowsPerPage: 100,
   sidebarQuery: "Select a saved query",
   selectedQuery: "select a query",
-  zeroState: true,
   selectedTableProperties: [],
   view: null,
   tileId: "",
@@ -67,7 +65,7 @@ interface ISearchContextInterface {
   clearRangeFacet: (range: string) => void;
   clearGreyDateFacet: () => void;
   clearGreyRangeFacet: (range: string) => void;
-  resetSearchOptions: () => void;
+  resetSearchOptions: (tileIconClicked?:boolean) => void;
   setAllSearchFacets: (facets: any) => void;
   greyedOptions: SearchContextInterface;
   setAllGreyedOptions: (facets: any) => void;
@@ -78,12 +76,10 @@ interface ISearchContextInterface {
   applySaveQuery: (query: QueryOptions) => void;
   setSelectedQuery: (query: string) => void;
   setSidebarQuery: (query: string) => void;
-  setZeroState: (zeroState: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
-  setView: (tileId:string, viewId: JSX.Element| null, zeroState?:boolean) => void;
+  setView: (tileId:string, viewId: JSX.Element| null) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
-  setPageQueryOptions: (query: any) => void;
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
   setDatabase: (option: string) => void;
@@ -131,12 +127,10 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   applySaveQuery: () => { },
   setSelectedQuery: () => { },
   setSidebarQuery: () => { },
-  setZeroState: () => { },
   setSelectedTableProperties: () => { },
   setView: () => { },
   setPageWithEntity: () => { },
   setSortOrder: () => { },
-  setPageQueryOptions: () => { },
   setDatabase: () => { },
   setLatestDatabase: () => { },
   setGraphViewOptions: () => { },
@@ -275,7 +269,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       selectedTableProperties: [],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
-      zeroState: false
     });
   };
 
@@ -291,11 +284,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       start: 1,
       selectedFacets: facets,
       entityTypeIds: entityName === "All Entities" ? [] : [entityName],
-      nextEntityType: entityName === "All Entities" ? "All Entities" : entityName,
+      nextEntityType: entityName === "All Entities" ? "" : entityName,
       selectedTableProperties: [],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
-      zeroState: false,
       database: targetDatabase ? targetDatabase : "final"
     });
   };
@@ -308,10 +300,9 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       start: 1,
       selectedFacets: facets,
       entityTypeIds: [],
-      nextEntityType: "All Data",
+      nextEntityType: "",
       pageNumber: 1,
       selectedTableProperties: [],
-      zeroState: false,
       database: targetDatabase
     });
   };
@@ -394,9 +385,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
 
-  const resetSearchOptions = () => {
-    setSearchOptions({...defaultSearchOptions});
+  const resetSearchOptions = (tileIconClicked=false) => {
+    if (tileIconClicked) { setSearchOptions({...defaultSearchOptions, tileId: "explore", view: searchOptions.view, nextEntityType: "All Entities"}); } else { setSearchOptions({...defaultSearchOptions}); }
   };
+
 
   const setAllSearchFacets = (facets: any) => {
     setSearchOptions({
@@ -407,8 +399,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       pageLength: searchOptions.pageSize
     });
   };
-
-
 
 
   const clearGreyDateFacet = () => {
@@ -508,12 +498,11 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       selectedFacets: query.selectedFacets,
       query: query.searchText,
       entityTypeIds: query.entityTypeIds,
-      nextEntityType: query.entityTypeIds[0],
+      nextEntityType: query.entityTypeIds.length ? query.entityTypeIds[0]:"All Entities",
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
       selectedQuery: query.selectedQuery,
       selectedTableProperties: query.propertiesToDisplay,
-      zeroState: query.zeroState,
       sortOrder: query.sortOrder,
       database: query.database,
     });
@@ -543,18 +532,11 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setZeroState = (zeroState: boolean) => {
-    setSearchOptions({
-      ...searchOptions,
-      zeroState: zeroState,
-    });
-  };
 
-  const setView = (tileId:string, viewId: JSX.Element|null, zeroState=false) => {
+  const setView = (tileId:string, viewId: JSX.Element|null) => {
     setSearchOptions({
       ...searchOptions,
       view: viewId,
-      zeroState: zeroState,
       tileId: tileId,
 
     });
@@ -569,7 +551,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       start: start,
       pageNumber: pageNumber,
       sortOrder: sortOrder,
-      zeroState: false,
       database: targetDatabase,
     });
   };
@@ -596,24 +577,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({
       ...searchOptions,
       sortOrder: sortingOrder
-    });
-  };
-
-  const setPageQueryOptions = (query: any) => {
-    setSearchOptions({
-      ...searchOptions,
-      start: query.start || 1,
-      selectedFacets: query.selectedFacets,
-      query: query.searchText,
-      entityTypeIds: query.entityTypeIds,
-      nextEntityType: query.entityTypeIds[0],
-      pageNumber: query.pageNumber || 1,
-      pageLength: searchOptions.pageSize,
-      selectedQuery: query.selectedQuery,
-      selectedTableProperties: query.propertiesToDisplay,
-      zeroState: query.zeroState,
-      sortOrder: query.sortOrder,
-      database: query.database,
     });
   };
 
@@ -693,12 +656,10 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       applySaveQuery,
       setSelectedQuery,
       setSidebarQuery,
-      setZeroState,
       setSelectedTableProperties,
       setView,
       setPageWithEntity,
       setSortOrder,
-      setPageQueryOptions,
       setDatabase,
       setLatestDatabase,
       setGraphViewOptions,

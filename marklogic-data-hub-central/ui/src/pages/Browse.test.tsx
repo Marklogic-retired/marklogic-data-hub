@@ -21,7 +21,6 @@ describe("Explorer Browse page tests ", () => {
     selectedFacets: {},
     maxRowsPerPage: 100,
     selectedQuery: "select a query",
-    zeroState: false,
     selectedTableProperties: [],
     view: null,
     sortOrder: [],

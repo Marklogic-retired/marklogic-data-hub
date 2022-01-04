@@ -24,7 +24,6 @@ describe("json scenario for table on browse documents page", () => {
     cy.loginAsDeveloper().withRequest();
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
   });

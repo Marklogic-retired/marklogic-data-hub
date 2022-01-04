@@ -33,7 +33,6 @@ describe("xml scenario for snippet view on browse documents page", () => {
   });
   it("select Customer XML entity instances and verify entity, docs, hub/entity properties", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
-    browsePage.getExploreButton().click();
     browsePage.clickFacetView();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");

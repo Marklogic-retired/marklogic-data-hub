@@ -330,7 +330,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
   //Apply user preferences on each page render
   const handleUserPreferences = () => {
     let userPref: any = {
-      zeroState: false,
       entity: detailPagePreferences.query["entityTypeIds"] ? detailPagePreferences.query["entityTypeIds"] : "",
       pageNumber: detailPagePreferences["pageNumber"] ? detailPagePreferences["pageNumber"] : 1,
       start: detailPagePreferences["start"] ? detailPagePreferences["start"] : 1,
@@ -398,7 +397,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const selectedSearchOptions = {
     pathname: "/tiles/explore",
     state: {
-      zeroState: false,
       entity: state && state.hasOwnProperty("entity") ? state["entity"] : parentPagePreferences["entity"],
       pageNumber: state && state.hasOwnProperty("pageNumber") ? state["pageNumber"] : parentPagePreferences["pageNumber"],
       start: state && state.hasOwnProperty("start") ? state["start"] : parentPagePreferences["start"],

@@ -6,6 +6,7 @@ import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
 import curatePage from "../../support/pages/curate";
 import {ConfirmationType} from "../../support/types/modeling-types";
+import browsePage from "../../support/pages/browse";
 
 describe("customRole", () => {
 
@@ -57,7 +58,7 @@ describe("customRole", () => {
 
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitForAsyncRequest();
-    cy.findByText("Search, filter, review, and export your data.");
+    browsePage.getSelectedEntity().should("contain", "All Entities");
 
   });
 

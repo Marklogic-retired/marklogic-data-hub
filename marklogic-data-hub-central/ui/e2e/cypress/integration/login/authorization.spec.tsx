@@ -70,7 +70,6 @@ describe("login", () => {
     toolbar.getExploreToolbarIcon().trigger("mouseover");
     cy.contains("Explore");
     toolbar.getExploreToolbarIcon().click();
-    cy.findByText("Search, filter, review, and export your data.");
     tiles.getExploreTile().should("exist");
     projectInfo.getAboutProject().click();
     projectInfo.waitForInfoPageToLoad();

@@ -33,7 +33,6 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("Create Queries", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     browsePage.selectEntity("Customer");
@@ -60,7 +59,6 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("manage queries, edit, apply, delete query", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     //edit query
@@ -137,6 +135,7 @@ describe("manage queries modal scenarios, developer role", () => {
   });
   it("verify manage queries modal visibility and removing query scenario on the detail page", () => {
     //create a query
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.selectEntity("Person");
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getShowMoreLink("fname").click();
@@ -150,10 +149,9 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveQueryName().type("personQuery-detail");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getManageQueryCloseIcon().click();
+    //browsePage.getManageQueryCloseIcon().click();
     //switch to explorer zero state page
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
     //open record instance view for the first document
@@ -182,7 +180,6 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.wait(1000);
     browsePage.getTotalDocuments().should("not.be.equal", 0);
   });
-
   it("verify query selection from All Data view page, doesn't stay on card view", () => {
     //create a query first
     browsePage.selectEntity("Person");
@@ -268,10 +265,9 @@ describe("manage queries modal scenarios, developer role", () => {
 
   it("verify editing previously saved query, updates the currently applied query name in browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
-    browsePage.getSelectedEntity().should("contain", "All Entities");
+    //browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("personQuery");
 

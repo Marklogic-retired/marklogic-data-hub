@@ -49,7 +49,6 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
           selectedFacets: response.data.savedQuery.query.selectedFacets,
           selectedQuery: searchOptions.selectedQuery,
           propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
-          zeroState: searchOptions.zeroState,
           sortOrder: response.data.savedQuery.sortOrder,
           database: searchOptions.database,
         };

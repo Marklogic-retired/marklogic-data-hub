@@ -32,7 +32,6 @@ describe("User without hub-central-saved-query-user role should not see saved qu
   });
   it("verifies user without hub-central-saved-query-user role can explore data", () => {
     browsePage.getSaveQueriesDropdown().should("not.exist");
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
   });

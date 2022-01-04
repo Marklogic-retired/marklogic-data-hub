@@ -32,7 +32,6 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     //browsePage.waitForTableToLoad();
     browsePage.selectEntity("Customer");
@@ -59,7 +58,6 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForTableToLoad();
   });
@@ -97,7 +95,6 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetItemCheckbox("fname", "Alice").click();
     browsePage.getGreySelectedFacets("Alice").should("exist");
     toolbar.getExploreToolbarIcon().click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
     //browsePage.waitForTableToLoad();
@@ -120,7 +117,6 @@ describe("Verify numeric/date facet can be applied", () => {
   });
   it("Verify clearing date time range facet clears corresponding selected facet", () => {
     toolbar.getExploreToolbarIcon().click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.selectEntity("Client");
     browsePage.selectDateRange({time: "updated"});
     browsePage.getFacetApplyButton().click();
@@ -128,9 +124,5 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getDateFacetPicker({time: "updated"}).trigger("mouseover");
     cy.waitUntil(() => browsePage.getDateFacetClearIcon({time: "updated"})).click({force: true});
     browsePage.getFacetApplyButton().should("not.exist");
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
-    browsePage.waitForSpinnerToDisappear();
-    //browsePage.waitForTableToLoad();
   });
 });
