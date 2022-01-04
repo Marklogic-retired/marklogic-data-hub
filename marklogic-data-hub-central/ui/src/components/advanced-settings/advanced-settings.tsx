@@ -704,6 +704,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
                 id="additionalColl-select-wrapper"
                 inputId="additionalColl"
                 isMulti
+                isClearable={false}
                 placeholder="Please add target collections"
                 value={additionalCollections.map(d => ({value: d, label: d}))}
                 isDisabled={!canReadWrite}

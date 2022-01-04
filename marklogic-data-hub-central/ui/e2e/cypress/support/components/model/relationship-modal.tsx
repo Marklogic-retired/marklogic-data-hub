@@ -79,7 +79,7 @@ class RelationshipModal {
   }
 
   searchEntityDropdown(searchInput: string) {
-    cy.get(".ant-select-search__field__wrap > #dropdownList").type(searchInput);
+    cy.get("#inputEntitySearch").type(searchInput);
   }
 
   confirmationOptions(option: string) {

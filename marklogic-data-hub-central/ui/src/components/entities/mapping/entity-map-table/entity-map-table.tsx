@@ -1,7 +1,8 @@
 import React, {useState, useEffect, CSSProperties} from "react";
 import styles from "./entity-map-table.module.scss";
 import "./entity-map-table.scss";
-import {Select} from "antd";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import {Modal, ButtonGroup, Dropdown, Spinner, FormControl} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Highlighter from "react-highlight-words";
@@ -67,7 +68,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [mapExp, setMapExp] = useState({});
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
-  const {Option} = Select;
   let searchInput: any;
   let tempMapExp: any = {};
   let mapExpUI: any = {};
@@ -620,14 +620,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
     }).signature;
   };
 
-  const onFunctionSelect = (e) => {
-    setFunctionValue(e);
-    insertContent(functionsDef(e), propName);
+  const onFunctionSelect = ({value}) => {
+    setFunctionValue(value);
+    insertContent(functionsDef(value), propName);
   };
 
-  const onRefSelect = (e) => {
-    setRefValue(e);
-    insertContent(e, propName);
+  const onRefSelect = ({value}) => {
+    setRefValue(value);
+    insertContent(value, propName);
   };
 
   const insertContent = async (content, propName) => {
@@ -656,9 +656,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
     simulateMouseClick(dummyNode.current);
   };
 
-  const onSourceSelect = (e) => {
-    setSourceValue(e);
-    insertSource(e, propName);
+  const onSourceSelect = ({value}) => {
+    setSourceValue(value);
+    insertSource(value, propName);
   };
 
   const insertSource = async (content, propName) => {
@@ -1068,29 +1068,96 @@ const EntityMapTable: React.FC<Props> = (props) => {
     );
   };
 
+  const relatedEntitiesFilterOptions = props.relatedEntityTypeProperties?.filter(entity => {
+    let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
+    let entityIdSections = entity["entityMappingId"].split(":");
+    let entityId = entityIdSections.length > 2 ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] : /([^.]+)/.exec(entityIdSections[0])![1];
+    return (entityId && entityId === entityTitle);
+  }).map((entity, i) => ({value: entity.entityLabel, label: entity.entityLabel}));
+
+  const handleOptionSelect = (selected) => {
+    const newlySelectedValues = selected.map(option => option.value);
+    let selectedArray: any = [];
+    let entityArray = props.relatedEntityTypeProperties;
+
+    //check for removed values
+    if (newlySelectedValues.length < selectedOptions.length) {
+      let removedItem = selectedOptions.filter(options => newlySelectedValues.indexOf(options) < 0);
+      let index = entityArray.findIndex(object => object.entityLabel === removedItem[0]);
+      let entityToRemove = entityArray[index];
+      setRemovedEntity(entityToRemove);
+      findReferringEntities(entityToRemove.relatedEntityMappings);
+      setPendingOptions(newlySelectedValues);
+      setDeleteDialogVisible(true);
+    } else if (newlySelectedValues.length !== 0) {
+      //in the properties array, push the object that has the key which matches the value of the entity name selected
+      newlySelectedValues.forEach(val => {
+        let index = entityArray.findIndex(object => object.entityLabel === val);
+        if (!props.relatedEntitiesSelected.includes((entityArray[index]))) {
+          selectedArray.push(entityArray[index]);
+        }
+      });
+      props.setRelatedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
+      setSelectedOptions(newlySelectedValues);
+      setFilterValues(newlySelectedValues);
+    }
+  };
+
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`} aria-label={"select-MenuList"}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
+  const MultiValueRemove = props => {
+    return (
+      <SelectComponents.MultiValueRemove {...props}>
+        <span aria-label="icon: close">
+          <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path></svg>
+        </span>
+      </SelectComponents.MultiValueRemove>
+    );
+  };
+
+  const MultiValueContainer = props => {
+    return (
+      <span aria-label={"multioption-container"} title={props.data.value}>
+        <SelectComponents.MultiValueContainer {...props} />
+      </span>
+    );
+  };
+
   const relatedEntitiesFilter = (
     <Select
-      mode="multiple"
-      style={{width: "98%"}}
+      id={`${props.entityTypeTitle}-entities-filter-select-wrapper`}
+      inputId={`${props.entityTypeTitle}-entities-filter-select`}
+      components={{MultiValueContainer, MultiValueRemove, MenuList: internProps => MenuList(`${props.entityTypeTitle}-entities-filter`, internProps)}}
       placeholder="Select"
-      key={props.relatedEntityTypeProperties.length > 0 ? "loaded" : "notloaded"}
-      id={`${props.entityTypeTitle}-entities-filter`}
-      data-testid={`${props.entityTypeTitle}-entities-filter`}
-      onChange={value => handleOptionSelect(value)}
-      value={filterValues}
-      defaultValue={getDefaultEntities()}
-      dropdownClassName={props.isRelatedEntity ? styles.relatedEntityFilterDropdown : styles.entityFilterDropdown}
-    >
-      {props.relatedEntityTypeProperties?.map((entity, i) => {
-        let entityTitle = props.isRelatedEntity ? props.entityTypeTitle.substring(0, props.entityTypeTitle.indexOf(" ")) : props.entityTypeTitle;
-        let entityIdSections = entity["entityMappingId"].split(":");
-        let entityId = entityIdSections.length > 2 ? /([^.]+)/.exec(entityIdSections[entityIdSections.length - 2])![1] : /([^.]+)/.exec(entityIdSections[0])![1];
-        if (entityId && entityId === entityTitle) {
-          let entityLabel = entity.entityLabel;
-          return <Option aria-label={`${entityLabel}-option`} value={entityLabel} key={i}>{entityLabel}</Option>;
-        }
-      })}
-    </Select>
+      aria-label={"entities-filter-select"}
+      isMulti
+      isClearable={false}
+      value={filterValues.map(d => ({value: d, label: d}))}
+      onChange={handleOptionSelect}
+      isSearchable={false}
+      options={relatedEntitiesFilterOptions}
+      styles={{...reactSelectThemeConfig,
+        container: (provided, state) => ({
+          ...provided,
+          lineHeight: "21px"
+        }),
+        control: (provided, state) => ({
+          ...provided,
+          cursor: "default"
+        }),
+      }}
+      formatOptionLabel={(option: {value, label}) => {
+        return (
+          <span aria-label={`${option.label}-option`} role={"option"}>
+            {option.label}
+          </span>
+        );
+      }}
+    />
   );
 
   const expandTableIcon = (
@@ -1139,33 +1206,6 @@ const EntityMapTable: React.FC<Props> = (props) => {
     } else {
       setEntityProperties([]);
       setTableCollapsed(true);
-    }
-  };
-
-  const handleOptionSelect = (newlySelectedValues) => {
-    let selectedArray: any = [];
-    let entityArray = props.relatedEntityTypeProperties;
-
-    //check for removed values
-    if (newlySelectedValues.length < selectedOptions.length) {
-      let removedItem = selectedOptions.filter(options => newlySelectedValues.indexOf(options) < 0);
-      let index = entityArray.findIndex(object => object.entityLabel === removedItem[0]);
-      let entityToRemove = entityArray[index];
-      setRemovedEntity(entityToRemove);
-      findReferringEntities(entityToRemove.relatedEntityMappings);
-      setPendingOptions(newlySelectedValues);
-      setDeleteDialogVisible(true);
-    } else if (newlySelectedValues.length !== 0) {
-      //in the properties array, push the object that has the key which matches the value of the entity name selected
-      newlySelectedValues.forEach(val => {
-        let index = entityArray.findIndex(object => object.entityLabel === val);
-        if (!props.relatedEntitiesSelected.includes((entityArray[index]))) {
-          selectedArray.push(entityArray[index]);
-        }
-      });
-      props.setRelatedEntitiesSelected(prevState => ([...prevState, ...selectedArray]));
-      setSelectedOptions(newlySelectedValues);
-      setFilterValues(newlySelectedValues);
     }
   };
 

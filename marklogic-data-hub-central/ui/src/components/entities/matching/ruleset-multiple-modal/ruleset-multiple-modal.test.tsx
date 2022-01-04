@@ -1,5 +1,5 @@
 import React from "react";
-import {act, render, screen} from "@testing-library/react";
+import {act, render, screen, wait} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import RulesetMultipleModal from "./ruleset-multiple-modal";
@@ -7,7 +7,7 @@ import RulesetMultipleModal from "./ruleset-multiple-modal";
 import {CurationContext} from "../../../../util/curation-context";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import {customerMatchingStep, customerMatchStepWithLargePropCount} from "../../../../assets/mock-data/curation/curation-context-mock";
-import {waitFor, within, fireEvent} from "@testing-library/dom";
+import {within, fireEvent} from "@testing-library/dom";
 
 jest.mock("../../../../api/matching");
 jest.setTimeout(30000);
@@ -60,7 +60,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     let reduceInfoCircleIcon = screen.getByLabelText("icon: question-circle");
     userEvent.hover(reduceInfoCircleIcon);
-    await waitFor(() => expect(screen.getByLabelText("reduce-tooltip-text")));
+    await wait(() => expect(screen.getByLabelText("reduce-tooltip-text")));
 
     expect(getByText("Match on:")).toBeInTheDocument();
     expect(getByLabelText("modalTitleLegend")).toBeInTheDocument();
@@ -172,7 +172,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     let selectAllCheckbox:any = document.querySelector(`.selection-cell-header input[type="checkbox"]`);
     expect(selectAllCheckbox).not.toBeChecked();
-    await waitFor(() => userEvent.click(selectAllCheckbox));
+    await wait(() => userEvent.click(selectAllCheckbox));
 
     // Check if all the properties are selected now.
     expect(customerId).toBeChecked();
@@ -224,7 +224,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(getByLabelText("synonym-option"));
 
     expect(customerId).toBeChecked();
-    await waitFor(() => expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument());
   });
 
   it("can reset match type for a row and match on tag by de-selection using row selection checkbox ", async () => {
@@ -252,7 +252,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     fireEvent.keyDown(screen.getByLabelText("customerId-match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(getByLabelText("synonym-option"));
     expect(customerId).toBeChecked();
-    await waitFor(() => expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument());
+    await wait(() => expect(getByLabelText("customerId-matchOn-tag")).toBeInTheDocument());
 
     //Provide values for thesaurus and filter input fields
     userEvent.type(getByLabelText("customerId-thesaurus-uri-input"), "/thesaurus/uri/sample.json");
@@ -316,13 +316,13 @@ describe("Matching Multiple Rulesets Modal component", () => {
     validateMatchOnTag("shipping.street-matchOn-tag");
 
     let allZipExpandIcon: any = document.querySelector(`svg[data-testid^="zip"]`);
-    await waitFor(() => userEvent.click(allZipExpandIcon)); // ToDo: fix auto-expanded inner children
+    await wait(() => userEvent.click(allZipExpandIcon)); // ToDo: fix auto-expanded inner children
 
     let shippingZipFiveDigit:any = document.querySelector(`[name="shipping.zip.fiveDigit"]`);
     expect(shippingZipFiveDigit).toBeInTheDocument();
-    await waitFor(() => userEvent.click(shippingZipFiveDigit));
+    await wait(() => userEvent.click(shippingZipFiveDigit));
 
-    await waitFor(() => validateMatchOnTag("shipping.zip.fiveDigit-matchOn-tag"));
+    await wait(() => validateMatchOnTag("shipping.zip.fiveDigit-matchOn-tag"));
 
     //Removing the match tag resets the row selection.
     userEvent.click(within(getByLabelText("customerId-matchOn-tag")).getByTestId("iconClose-tagComponent"));
@@ -394,7 +394,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.type(getByLabelText("rulesetName-input"), "Customer ruleset");
 
     userEvent.click(getByText("Save"));
-    await waitFor(() => {
+    await wait(() => {
       expect(queryByText("A ruleset name is required")).not.toBeInTheDocument();
     });
   });
@@ -446,7 +446,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     fireEvent.keyDown(screen.getByLabelText("customerId-match-type-dropdown"), {key: "ArrowDown"});
     userEvent.click(getByLabelText("exact-option"));
     userEvent.click(getByText("Save"));
-    await waitFor(() => {
+    await wait(() => {
       expect(queryByTestId("customerId-match-type-err")).not.toBeInTheDocument();
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
@@ -485,7 +485,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     userEvent.click(getByText("Save"));
 
-    await waitFor(() => {
+    await wait(() => {
       expect(queryByTestId("customerId-thesaurus-uri-err")).not.toBeInTheDocument();
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
@@ -527,13 +527,13 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(getByText("Save"));
 
     expect(getByTestId("customerId-distance-threshold-err")).toBeInTheDocument();
-    await waitFor(() => expect(queryByTestId("customerId-dictionary-uri-err")).not.toBeInTheDocument());
+    await wait(() => expect(queryByTestId("customerId-dictionary-uri-err")).not.toBeInTheDocument());
 
     userEvent.type(getByLabelText("customerId-distance-threshold-input"), "10");
 
     userEvent.click(getByText("Save"));
 
-    await waitFor(() => {
+    await wait(() => {
       expect(queryByTestId("customerId-dictionary-uri-err")).not.toBeInTheDocument();
       expect(queryByTestId("customerId-distance-threshold-err")).not.toBeInTheDocument();
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
@@ -583,13 +583,13 @@ describe("Matching Multiple Rulesets Modal component", () => {
     userEvent.click(getByText("Save"));
 
     expect(getByTestId("customerId-function-err")).toBeInTheDocument();
-    await waitFor(() => expect(queryByTestId("customerId-uri-err")).not.toBeInTheDocument());
+    await wait(() => expect(queryByTestId("customerId-uri-err")).not.toBeInTheDocument());
 
     userEvent.type(getByLabelText("customerId-function-input"), "concat(string1,string2)");
 
     userEvent.click(getByText("Save"));
 
-    await waitFor(() => {
+    await wait(() => {
       expect(queryByTestId("customerId-uri-err")).not.toBeInTheDocument();
       expect(queryByTestId("customerId-function-err")).not.toBeInTheDocument();
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
@@ -623,7 +623,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     userEvent.click(getByText("Save"));
 
-    await waitFor(() => {
+    await wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -655,7 +655,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
 
     userEvent.click(getByText("Save"));
 
-    await waitFor(() => {
+    await wait(() => {
       expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
       expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
       expect(toggleModalMock).toHaveBeenCalledTimes(1);
@@ -770,7 +770,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     expect(testProp30).not.toBeInTheDocument();
     expect(previousPageLink).toHaveClass("disabled");
     //Navigating to page 2
-    waitFor(() => {
+    wait(() => {
       userEvent.click(page2_Option);
       expect(customerId).not.toBeInTheDocument();
       expect(name).not.toBeInTheDocument();

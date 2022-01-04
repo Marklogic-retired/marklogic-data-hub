@@ -80,7 +80,7 @@ class MappingStepDetail {
   }
 
   relatedFilterMenu (entityName: string) {
-    cy.get(`#${entityName}-entities-filter`).click();
+    cy.get(`#${entityName}-entities-filter-select-wrapper`).click();
   }
 
   deleteConfirmationButtonYes() {
@@ -92,11 +92,11 @@ class MappingStepDetail {
   }
 
   relatedFilterSelection(entityName: string, relatedName: string) {
-    return cy.get(`#${entityName}-entities-filter li[title="${relatedName}"]`);
+    return cy.get(`#${entityName}-entities-filter-select-wrapper [title="${relatedName}"]`);
   }
 
   relatedFilterSelectionDeleteIcon(entityName: string, relatedName: string) {
-    return cy.get(`#${entityName}-entities-filter li[title="${relatedName}"]`).find("span.ant-select-selection__choice__remove");
+    return cy.get(`#${entityName}-entities-filter-select-wrapper [title="${relatedName}"]`).find(`[aria-label="icon: close"]`);
   }
 
   entityTitle (title: string) {
