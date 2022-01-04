@@ -1,6 +1,5 @@
 
 import React, {useState, useEffect, CSSProperties, useRef, useContext} from "react";
-import {Alert} from "antd";
 import styles from "./mapping-step-detail.module.scss";
 import "./mapping-step-detail.scss";
 import EntityMapTable from "../entity-map-table/entity-map-table";
@@ -26,7 +25,7 @@ import Steps from "../../../steps/steps";
 import {AdvMapTooltips, MappingStepMessages} from "../../../../config/tooltips.config";
 import ModelingLegend from "../../../modeling/modeling-legend/modeling-legend";
 import CustomPageHeader from "../../page-header/page-header";
-import {ChevronDown, ChevronRight, Search, ExclamationCircleFill, XLg, CheckSquare} from "react-bootstrap-icons";
+import {ChevronDown, ChevronRight, Search, XLg, CheckSquare} from "react-bootstrap-icons";
 import {Dropdown} from "react-bootstrap";
 import {HCAlert, HCButton, HCCard, HCCheckbox, HCInput, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
@@ -1514,27 +1513,23 @@ const MappingStepDetail: React.FC = () => {
                         <span className={styles.sourceCollapseButtons}>{interceptorExecuted && interceptorExecutionError !== "" ? "" : <ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""}/>}</span>
                       </div>
                       <br/><br/><br/>
-                      <Alert
+                      <HCAlert
                         className={styles.interceptorFailureAlert}
-                        closable={false}
-                        message={<span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br/><br/> <b>Error Details:</b> <br/> {interceptorExecutionError}</span>}
                         showIcon={true}
-                        icon={<ExclamationCircleFill className={styles.interceptorFailureIcon}/>}
-                        type="info"
-                      />
+                        variant="info"
+                      >
+                        <span aria-label="interceptorError">{MappingStepMessages.interceptorError}<br/><br/> <b>Error Details:</b> <br/> {interceptorExecutionError}</span>
+                      </HCAlert>
                     </div>
                     :
                     <div id="dataPresent">
                       <br/><br/><br/>
                       {!isLoading  && !emptyData  && interceptorExecuted && interceptorExecutionError === "" ?
-                        <Alert
+                        <HCAlert
                           className={styles.interceptorSuccessAlert}
-                          closable={true}
-                          message={<span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span>}
                           showIcon={true}
-                          icon={<ExclamationCircleFill className={styles.interceptorSuccessIcon}/>}
-                          type="info"
-                        /> : null}
+                          variant="info"
+                        ><span aria-label="interceptorMessage">{MappingStepMessages.interceptorMessage}</span></HCAlert> : null}
                       <div className={styles.sourceButtons}>
                         <span className={styles.navigationButtons}>{navigationButtons}</span>
                         <span className={styles.sourceCollapseButtons}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span>

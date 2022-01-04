@@ -7,7 +7,6 @@ import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
-import {Tooltip} from "antd";
 import {Row, Col, Tabs, Tab} from "react-bootstrap";
 import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -18,7 +17,7 @@ import {SearchContext} from "../util/search-context";
 import {fetchQueries} from "../api/queries";
 import {AuthoritiesContext} from "../util/authorities";
 import {ArrowLeftShort} from "react-bootstrap-icons";
-import {HCTable} from "@components/common";
+import {HCTable, HCTooltip} from "@components/common";
 
 interface Props extends RouteComponentProps<any> { }
 
@@ -432,26 +431,32 @@ const Detail: React.FC<Props> = ({history, location}) => {
               <div id="menu" className={styles.menu}>
                 <Tabs onSelect={(event) => handleClick(event)} variant="tabs" className={styles.tabsContainer}>
                   <Tab eventKey="instance" id="instance" data-cy="instance-view" tabClassName={`${styles.tabActive} ${selected === "instance" && styles.active}`}
-                    title={<Tooltip title={"Show the processed data"}>
-                      <FontAwesomeIcon icon={faThList} size="lg" />
-                      <span className={styles.subMenu}>Instance</span>
-                    </Tooltip>}>
+                    title={<HCTooltip id="instance-view-tooltip" placement="top" text={"Show the processed data"}>
+                      <span>
+                        <FontAwesomeIcon icon={faThList} size="lg" />
+                        <span className={styles.subMenu}>Instance</span>
+                      </span>
+                    </HCTooltip>}>
                   </Tab>
                   <Tab eventKey="full" id="full" data-cy="source-view" tabClassName={`${styles.tabActive} ${selected === "full" && styles.active}`}
-                    title={<Tooltip title={"Show the complete " + contentType.toUpperCase()} >
-                      {contentType.toUpperCase() === "XML" ?
-                        <FontAwesomeIcon icon={faCode} size="lg" />
-                        :
-                        <span className={styles.jsonIcon}></span>
-                      }
-                      <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
-                    </Tooltip>}>
+                    title={<HCTooltip id="source-view-tooltip" placement="top" text={"Show the complete " + contentType.toUpperCase()} >
+                      <span>
+                        {contentType.toUpperCase() === "XML" ?
+                          <FontAwesomeIcon icon={faCode} size="lg" />
+                          :
+                          <span className={styles.jsonIcon}></span>
+                        }
+                        <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
+                      </span>
+                    </HCTooltip>}>
                   </Tab>
                   <Tab eventKey="metadata" id="metadata" data-cy="metadata-view" tabClassName={`${styles.tabActive} ${selected === "metadata" && styles.active}`} title={
-                    <Tooltip title={"Show the metadata"}>
-                      <FontAwesomeIcon icon={faInfoCircle} size="lg" />
-                      <span className={styles.subMenu}>Metadata</span>
-                    </Tooltip>
+                    <HCTooltip id="metadata-tooltip" placement="top" text={"Show the metadata"}>
+                      <span>
+                        <FontAwesomeIcon icon={faInfoCircle} size="lg" />
+                        <span className={styles.subMenu}>Metadata</span>
+                      </span>
+                    </HCTooltip>
                   }>
                   </Tab>
                 </Tabs>
