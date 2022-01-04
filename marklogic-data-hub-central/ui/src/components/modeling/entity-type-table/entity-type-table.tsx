@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Link} from "react-router-dom";
-import {Tooltip} from "antd";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -268,9 +267,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let entityName = parseText[0];
         let color = parseText[1];
         return (
-          <Tooltip title={<span>This color is associated with the <b>{entityName}</b> entity type throughout your project.</span>}>
+          <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> entity type throughout your project.</span>}>
             <div style={{width: "24px", height: "26px", background: color, marginLeft: "45%"}} data-testid={`${entityName}-${color}-color`}></div>
-          </Tooltip>
+          </HCTooltip>
         );
       }
     },

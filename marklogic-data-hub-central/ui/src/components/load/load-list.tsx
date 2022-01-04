@@ -2,7 +2,6 @@ import React, {useState, useEffect, useContext} from "react";
 import {Link, useLocation, useHistory} from "react-router-dom";
 import styles from "./load-list.module.scss";
 import "./load-list.scss";
-import {Tooltip} from "antd";
 import {Row, Col, Modal, Dropdown} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
@@ -353,9 +352,9 @@ const LoadList: React.FC<Props> = (props) => {
             <span className={"AddToFlowIcon"} aria-label={name + "-add-icon"}></span>
           </HCTooltip>
           :
-          <Tooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}>
+          <HCTooltip id="missing-permission-tooltip" text={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" className={styles.tooltip}>
             <span aria-label={name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span>
-          </Tooltip>}
+          </HCTooltip>}
       </Dropdown.Toggle>
       <Dropdown.Menu className={styles.dropdownMenu}>
         <Dropdown.Item className={styles.DropdownMenuItem} eventKey="0" key="0">
