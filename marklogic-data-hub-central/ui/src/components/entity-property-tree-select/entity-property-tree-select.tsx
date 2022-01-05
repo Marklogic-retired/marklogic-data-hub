@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import styles from "./entity-property-tree-select.module.scss";
@@ -12,6 +12,7 @@ type Props = {
   propertyDropdownOptions: Property[],
   entityDefinitionsArray: Definition[],
   value: string | undefined,
+  isForMerge: boolean | undefined,
   onValueSelected: (value: string | undefined) => void;
 };
 
@@ -29,6 +30,30 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   let mergeRulesData = curationOptions.activeStep.stepArtifact.mergeRules;
   let newMergeRuleOptions: any[] = curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && mergeRulesData.map(i => i.entityPropertyPath);
   const [expandedKeys, setExpandedKeys] = useState<any[]>([]);
+  const [selectedTree, setSelectedTree] = useState<(string|undefined)[]>([]);
+
+  const obtainChildProperties = (propertyOption: Property) => {
+    let propertyNames = [propertyOption.name];
+    if (propertyOption.datatype === "structured" && propertyOption.ref !== "") {
+      let parsedRef = propertyOption.ref.split("/");
+      let structuredType = parsedRef[parsedRef.length - 1];
+      let structuredTypeDefinition: Definition = props.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === structuredType) || DEFAULT_ENTITY_DEFINITION;
+      structuredTypeDefinition.properties.forEach((childPropOption) => {
+        propertyNames = propertyNames.concat(obtainChildProperties(childPropOption).map((name) => `${propertyOption.name} > ${name}`));
+      });
+    }
+    return propertyNames;
+  };
+
+  useEffect(() => {
+    let propOption = props.propertyDropdownOptions.find((propOption) => propOption.name === props.value);
+    if (propOption && propOption.datatype === "structured" && propOption.ref !== "") {
+      setSelectedTree(obtainChildProperties(propOption));
+    } else {
+      setSelectedTree([props.value]);
+    }
+  },
+  [props.value]);
 
   const onChange = (value) => {
     props.onValueSelected(value);
@@ -71,28 +96,32 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
           return renderStructuredPropertyOption(structProperty, entityPropertyName, parentKeys);
         } else {
           let keys = parentKeys.join(" > ");
+          let value = `${keys} > ${structProperty.name}`;
+          let isActive = selectedTree.includes(value) || selectedTree.some((selected) => value.startsWith(`${selected} >`));
           return (
             <TreeNode
-              key={`${entityPropertyName}-${property.name}-${structProperty.name}-${index}`}
-              value={`${keys} > ${structProperty.name}`}
+              active={isActive}
+              className={ isActive ? styles.activeTreeNode: ""}
+              key={value}
+              value={value}
               title={renderBasicPropertyTitle(structProperty)}
-              aria-label={`${keys} > ${structProperty.name}-option`}
+              aria-label={`${value}-option`}
             />
           );
         }
       });
-      let label = "";
-      if (entityPropertyName === property.name) {
-        label = `${property.name}-option`;
-      } else {
-        label = `${entityPropertyName} > ${property.name}-option`;
-      }
+      let isFirstLevelProperty = entityPropertyName === property.name;
+      let value = isFirstLevelProperty ? entityPropertyName : `${entityPropertyName} > ${property.name}`;
+      let label = `${value}-option`;
+      let isActive = selectedTree.includes(value) || selectedTree.some((selected) => value.startsWith(`${selected} >`));
       return (
         <TreeNode
-          selectable={false}
-          key={`${entityPropertyName}-${property.name}-parent`}
-          value={`${entityPropertyName} > ${property.name}`}
-          title={getStructuredTitle(`${entityPropertyName}-${property.name}-parent`)}
+          active={isActive}
+          className={ isActive ? styles.activeTreeNode: ""}
+          selectable={isFirstLevelProperty && props.isForMerge}
+          key={value}
+          value={value}
+          title={getStructuredTitle(value)}
           aria-label={label}
         >
           {structuredProperties}
@@ -105,9 +134,9 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     if (property.datatype === "structured") {
       return renderStructuredPropertyOption(property, property.name, []);
     } else if (curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && newMergeRuleOptions.indexOf(property.name) !== -1) {
-      return <TreeNode key={index} value={property.name} disabled title={renderBasicPropertyTitle(property)} />;
+      return <TreeNode key={property.name} value={property.name} disabled title={renderBasicPropertyTitle(property)} />;
     } else {
-      return <TreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)} />;
+      return <TreeNode key={property.name} value={property.name} title={renderBasicPropertyTitle(property)} />;
     }
   });
 

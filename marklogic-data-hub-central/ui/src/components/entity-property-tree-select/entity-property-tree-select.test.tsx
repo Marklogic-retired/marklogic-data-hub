@@ -15,6 +15,7 @@ describe("Entity Property Tree Select component", () => {
 
     const {getByText} =  render(
       <EntityPropertyTreeSelect
+        isForMerge={false}
         propertyDropdownOptions={entityTypeDefinition?.properties || []}
         entityDefinitionsArray={customerEntityDefsArray}
         value={undefined}
