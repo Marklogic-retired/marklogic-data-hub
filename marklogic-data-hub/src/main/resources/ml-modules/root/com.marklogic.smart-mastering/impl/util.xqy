@@ -283,12 +283,13 @@ declare function util-impl:process-items-in-set-time(
     for $item in $items
     return $fun($item)
   } catch ($e) {
-    if ($e/error:code eq "XDMP-EXTIME") then (
+    if ($e/error:code = ("XDMP-EXTIME", "SVC-EXTIME")) then (
       let $items-cost := $items ! $item-cost-fun(.)
       let $high-outliers-cost := util-impl:determine-high-outliers($items-cost)
       let $high-outlier-indexes := $high-outliers-cost ! fn:index-of($items-cost, .)
-      let $high-outliers := $items[fn:position() = $high-outlier-indexes]
-      let $others := $items[fn:not(fn:position() = $high-outlier-indexes)]
+      let $others := if (fn:count($high-outlier-indexes) eq 0) then () else $items[fn:not(fn:position() = $high-outlier-indexes)]
+      (: If there are no high outliers, than all items have a high cost and should be handled by our high outlier function :)
+      let $high-outliers := if (fn:empty($others)) then $items else $items[fn:position() = $high-outlier-indexes]
       return (
         util-impl:process-items-in-set-time(
           $fun,
