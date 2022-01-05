@@ -2,17 +2,17 @@
   "info": {
     "title": "Person",
     "version": "0.0.1",
-"baseUri": "http://example.org/",
-"draft": false
+    "baseUri": "http://example.org/",
+    "draft": false
   },
   "definitions": {
     "Person": {
       "primaryKey": "id",
-      "required": [ ],
+      "required": [],
       "pii": [
         "SSN"
       ],
-      "wordLexicon": [ ],
+      "wordLexicon": [],
       "properties": {
         "id": {
           "datatype": "string",
@@ -51,8 +51,8 @@
         "DateOfBirth": {
           "datatype": "date"
         }
-},
-"description": ""
-      }
-}
+      },
+      "description": ""
+    }
+  }
 }

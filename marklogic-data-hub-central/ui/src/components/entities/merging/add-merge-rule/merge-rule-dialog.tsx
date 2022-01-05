@@ -682,6 +682,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 <Row>
                   <Col className={propertyErrorMessage ? "d-flex has-error" : "d-flex"}>
                     <EntityPropertyTreeSelect
+                      isForMerge={true}
                       propertyDropdownOptions={entityTypeDefinition.properties}
                       entityDefinitionsArray={curationOptions.entityDefinitionsArray}
                       value={property}

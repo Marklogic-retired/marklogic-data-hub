@@ -7,6 +7,7 @@ import {
   entityTypeTable,
   propertyModal,
   propertyTable,
+  structuredTypeModal,
 } from "../../support/components/model/index";
 import modelPage from "../../support/pages/model";
 import {confirmationModal, createEditStepDialog, multiSlider, toolbar, tiles} from "../../support/components/common/index";
@@ -134,6 +135,14 @@ describe("Validate E2E Mastering Flow", () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown("More date types").click();
     propertyModal.getCascadedTypeFromDropdown("date").click();
+    propertyModal.getSubmitButton().click();
+    propertyTable.getAddPropertyButton("Patient").should("be.visible").click();
+    propertyModal.newPropertyName("Details");
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown("Structured").click();
+    propertyModal.getCascadedTypeFromDropdown("New Property Type").click();
+    structuredTypeModal.newName("DetailsProperty");
+    structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
   });
   it("Save Patient entity", () => {
@@ -362,6 +371,12 @@ describe("Validate E2E Mastering Flow", () => {
     cy.waitForAsyncRequest();
     mergingStepDetail.addMergeRuleButton().click();
     mergeRuleModal.selectPropertyToMerge("ZipCode");
+    mergeRuleModal.selectMergeTypeDropdown("Strategy");
+    mergeRuleModal.selectStrategyName("retain-single-value");
+    mergeRuleModal.saveButton();
+    cy.waitForAsyncRequest();
+    mergingStepDetail.addMergeRuleButton().click();
+    mergeRuleModal.selectPropertyToMerge("Details");
     mergeRuleModal.selectMergeTypeDropdown("Strategy");
     mergeRuleModal.selectStrategyName("retain-single-value");
     mergeRuleModal.saveButton();

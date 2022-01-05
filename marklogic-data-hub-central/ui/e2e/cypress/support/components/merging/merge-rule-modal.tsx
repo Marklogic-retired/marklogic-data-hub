@@ -3,7 +3,15 @@ class MergeRuleModal {
   selectPropertyToMerge(property: string) {
     cy.get(".rc-tree-select-selector").trigger("mouseover").click();
     cy.findByLabelText(`${property}-option`).then($option => {
-      $option[0].click();
+      if ($option[0].click) {
+        $option[0].click();
+      }
+      // supports structured properties with a different element with the click event
+      for (let i = 0; i < $option[0].children.length; i++) {
+        if ($option[0].children[i].click) {
+          $option[0].children[i].click();
+        }
+      }
     });
     cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
   }
