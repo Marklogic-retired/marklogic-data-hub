@@ -1,7 +1,7 @@
 import React from "react";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
-import {DropdownButton, Dropdown} from "react-bootstrap";
+import {DropdownButton, Dropdown, FormCheck} from "react-bootstrap";
 import {CaretDownFill, CaretUpFill, ChevronDown, ChevronRight} from "react-bootstrap-icons";
 import styles from "./hc-table.module.scss";
 import "./hc-table.scss";
@@ -22,6 +22,7 @@ interface Props {
   pagination?: boolean | any;
   rowClassName?: string | ((record: any) => string);
   rowKey?: string | ((record: any) => string);
+  rowSelection?: any;
   subTableHeader?: boolean;
   keyUtil?: any;
   baseIndent?: number;
@@ -31,7 +32,7 @@ interface Props {
   rowEvents?: any;
 }
 
-function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRowKeys, nestedParams, pagination, rowClassName, rowKey, baseIndent = 0, showHeader = true, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
+function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRowKeys, nestedParams, pagination, rowClassName, baseIndent = 0, showHeader = true, showExpandIndicator = false, onExpand, expandedRowRender, ...props}: Props): JSX.Element {
   const expandConfig = {
     className: `${showHeader ? styles.expandedRowWrapper : ""} ${props.subTableHeader ? styles.subTableNested : ""} ${childrenIndent ? styles.childrenIndentExpanded : ""}${props.expandedContainerClassName || ""}`,
     expanded: expandedRowKeys,
@@ -57,7 +58,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
       </HCButton>;
     },
     expandHeaderColumnRenderer: () => "",
-    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof rowKey === "string" && !row.children).map(element => typeof rowKey === "string" && typeof element[rowKey] !== undefined && element[rowKey]),
+    nonExpandable: !props.subTableHeader && !childrenIndent ? [] : data.filter(row => typeof props.rowKey === "string" && !row.children).map(element => typeof props.rowKey === "string" && typeof element[props.rowKey] !== undefined && element[props.rowKey]),
   };
 
   const generateIndentList = (data, indentLevel, indentArray) => {
@@ -75,12 +76,59 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
   indentList = generateIndentList(data, 1, indentList);
 
   //expandedRowRender used on basic tables with no nesting such as entity-type-table, else below is called
+  const selectRow = props.rowSelection ? {
+    mode: "checkbox",
+    clickToSelect: false,
+    selectionRenderer: ({mode, checked, disabled, rowKey, rowIndex, record, childrenIndent}) => {
+      let renderedRow = record;
+
+      if (!record) {
+        if (typeof props.rowKey === "string") {
+          renderedRow = data.find(row => row[(props.rowKey as string)] === rowKey);
+        } else {
+          renderedRow = data[rowIndex];
+        }
+      }
+
+      return renderedRow && renderedRow.hasChildren ? "" : <FormCheck>
+        <FormCheck.Input type="checkbox" checked={checked} disabled={disabled} name={renderedRow[props.rowKey as string]} data-testid={`${renderedRow[props.rowKey as string]}-checkbox`} onChange={(e) => {
+          if (childrenIndent) {
+            selectRow.onSelect(renderedRow, !checked);
+          }
+        }} />
+      </FormCheck>;
+    },
+    selectColumnStyle: ({rowKey, rowIndex, record}) => {
+      let renderedRow = record;
+
+      if (!record) {
+        if (typeof props.rowKey === "string") {
+          renderedRow = data.find(row => row[(props.rowKey as string)] === rowKey);
+        } else {
+          renderedRow = data[rowIndex];
+        }
+      }
+
+      const styleObject: any = {
+        textAlign: "center",
+        verticalAlign: "middle",
+      };
+
+      if (renderedRow.hasOwnProperty("structured") && renderedRow.structured !== "" && renderedRow.hasChildren) {
+        styleObject.display = "none";
+      }
+
+      return styleObject;
+    },
+    ...props.rowSelection,
+  } : undefined;
+
   if (childrenIndent && !expandedRowRender) {
     if (!nestedParams || !nestedParams.state) {
       console.error("Nested expand/collapse requires a `nestedParams` prop with the {headerColumns, state} structure");
     }
 
-    expandConfig.renderer = (row, rowIndex) => renderNested({row, data, keyUtil, baseIndent, showHeader, indentList, rowIndex, expandIndicatorStyle: showExpandIndicator, ...nestedParams});
+    expandConfig.renderer = (row, rowIndex) => renderNested({row, data, keyUtil, baseIndent, showHeader, indentList, rowIndex, expandIndicatorStyle: showExpandIndicator, selectRow, rowKey: props.rowKey, ...nestedParams});
   }
 
   const defaultSorted: Array<{dataField: string; order: string;}> = []; // expects { dataField: string; order: string; }
@@ -150,6 +198,8 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
       options.pageStartIndex = pagination.defaultCurrent;
     }
 
+    options.prePageTitle = "Previous Page";
+    options.nextPageTitle = "Next Page";
     paginationFactoryObject = paginationFactory(options);
   }
 
@@ -241,7 +291,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
     <BootstrapTable
       id={showHeader ? "mainTable" : "lowerTable"}
       key={props.key}
-      keyField={rowKey}
+      keyField={props.rowKey}
       bordered={false}
       data={data}
       rowStyle={rowStyle}
@@ -252,6 +302,7 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
       noDataIndication={noDataIndication}
       pagination={paginationFactoryObject}
       rowClasses={rowClassName || rowClasses}
+      selectRow={selectRow}
       wrapperClasses={props.subTableHeader ? `${className || ""} sub-table` : className || ""}
       rowEvents={ props.rowEvents }
       {...props}
@@ -271,9 +322,10 @@ const isEntityMapping = (keyUtil, showHeader) => {
   return keyUtil === "key" && !showHeader;
 };
 
-const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseIndent, headerColumns, showHeader, iconCellList, state, showIndicator, isExpanded, bordered}) => {
+const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseIndent, headerColumns, showHeader, iconCellList, state, showIndicator, isExpanded, bordered, selectRow, rowKey}) => {
   const [expandedNestedRows] = state;
   const nextColumnHasStaticWidth = headerColumns[0].width && !`${headerColumns[0].width}`.includes("%");
+  const selected = selectRow && selectRow.selected;
 
   let expandKey = keyUtil === "rowKey" ? row.rowKey : row.key;
   let expandIcon = row.children ? <div onClick={() => { isExpanded(expandKey); }}>{expandedNestedRows.includes(expandKey) ? <ChevronDown data-testid={`${expandKey}-expand-icon`} /> : <ChevronRight data-testid={`${expandKey}-expand-icon`} />}</div> : null;
@@ -294,12 +346,14 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseInde
   }
 
   const isKeyColumn = (colIndex) => colIndex === 0;
+  const dataRowKey = typeof row[rowKey] === "string" && row[rowKey].includes(".") ? row[rowKey] : expandKey;
 
-  return <div key={expandKey} className={`${isEntityMapping(keyUtil, showHeader) ? styles.childrenIndentTableRowColored : styles.childrenIndentTableRow} hc-table_row`} data-row-key={expandKey}>
+  return <div key={expandKey} className={`${isEntityMapping(keyUtil, showHeader) ? styles.childrenIndentTableRowColored : styles.childrenIndentTableRow} hc-table_row`} data-row-key={dataRowKey}>
     {showIndicator ?
       <div key={`indicator_${expandKey}`} className={styles.childrenIndentIndicatorCell}></div>:
       <div className={nextColumnHasStaticWidth ? styles.childrenIndentIndicatorCell : styles.childrenIndentIndicatorEmptyCell}></div>
     }
+    {selectRow ? <div style={{...selectRow.selectColumnStyle({record: row})}} className={styles.childrenIndentSelectCell}>{selectRow.selectionRenderer && selectRow.selectionRenderer({disabled: false, record: row, childrenIndent: true, checked: row[rowKey] !== undefined && selected.includes(row[rowKey])})}</div> : null}
     {headerColumns.map((col, colIndex) => {
       const hasIconCell = iconCellList?.lastIndexOf(col.dataField) !== -1;
       const childElement = col.formatter ? col.formatter(row[col.dataField], row, rowIndex) : row[col.dataField];
@@ -317,12 +371,11 @@ const renderRow = ({row, rowIndex, parentRowIndex, keyUtil, indentList, baseInde
     })}</div>;
 };
 
-const renderNested = ({row, parentRowIndex, keyUtil, baseIndent, indentList, headerColumns, showHeader, iconCellList, state, expandIndicatorStyle}) => {
+const renderNested = ({row, parentRowIndex, keyUtil, baseIndent, indentList, headerColumns, showHeader, iconCellList, state, expandIndicatorStyle, selectRow, rowKey}) => {
   const [expandedNestedRows, setExpandedNestedRows] = state;
 
   const isExpanded = (key) => {
     const index = expandedNestedRows.indexOf(key);
-
     if (index === -1) {
       const addedKeys = [...expandedNestedRows, key];
       setExpandedNestedRows(addedKeys);
@@ -347,7 +400,7 @@ const renderNested = ({row, parentRowIndex, keyUtil, baseIndent, indentList, hea
 
     while (childrenList.length > 0) {
       let currentRow = childrenList.shift();
-      let tableRow = renderRow({row: currentRow, rowIndex, parentRowIndex, keyUtil, baseIndent, indentList, headerColumns, showHeader, iconCellList, state, showIndicator: currentRow.children, isExpanded, bordered});
+      let tableRow = renderRow({row: currentRow, rowIndex, parentRowIndex, keyUtil, baseIndent, indentList, headerColumns, showHeader, iconCellList, state, showIndicator: currentRow.children, isExpanded, bordered, selectRow, rowKey});
       result.push(tableRow);
       rowIndex = result.length;
       const children = currentRow.children;

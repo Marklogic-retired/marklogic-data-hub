@@ -5,13 +5,13 @@ class RulesetMultipleModal {
   }
 
   selectPropertyToMatch(property: string) {
-    cy.get(`[data-row-key="${property}"] .ant-checkbox-input`).trigger("mouseover").click();
-    cy.waitUntil(() => cy.get(`[data-row-key="${property}"] .ant-checkbox-checked`).should("be.visible"), {timeout: 10000});
+    cy.get(`[data-testid="${property}-checkbox"]`).trigger("mouseover").click();
+    cy.waitUntil(() => cy.get(`[data-testid="${property}-checkbox"]`).should("be.visible"), {timeout: 10000});
   }
 
   selectMatchTypeDropdown(property: string, matchType: string) {
-    cy.findByLabelText(`${property}-match-type-dropdown`).should("be.visible", {timeout: 10000}).click({force: true});
-    cy.get(`[data-row-key="${property}"]`).within(() => cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should("have.length.gt", 0)).click({force: true}));
+    cy.get(`#${property}-select-wrapper`).should("be.visible").click();
+    cy.get(`#${property}-select-MenuList [aria-label="${matchType}-option"`).should("be.visible").click({force: true});
   }
 
   cancelButton() {

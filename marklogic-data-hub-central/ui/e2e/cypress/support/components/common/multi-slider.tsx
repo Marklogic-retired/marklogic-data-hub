@@ -85,7 +85,7 @@ class MultiSlider {
   }
 
   enableEdit(name: string) {
-    cy.findByLabelText(`${name}-scale-switch`).click();
+    cy.get(`[aria-label="${name}-scale-switch"]`).click({force: true});
   }
 }
 

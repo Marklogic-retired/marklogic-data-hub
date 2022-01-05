@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext, CSSProperties} from "react";
-import {Table, Select} from "antd";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
+import Select, {components as SelectComponents} from "react-select";
+import reactSelectThemeConfig from "../../../../config/react-select-theme.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
@@ -14,8 +15,8 @@ import ExpandCollapse from "../../../expand-collapse/expand-collapse";
 import {MatchingStep, MatchRule, MatchRuleset} from "../../../../types/curation-types";
 import {updateMatchingArtifact} from "../../../../api/matching";
 import DeleteModal from "../delete-modal/delete-modal";
-import {ChevronDown, ChevronRight, QuestionCircleFill} from "react-bootstrap-icons";
-import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip} from "@components/common";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+import {ConfirmYesNo, HCAlert, HCInput, HCButton, HCTag, HCTooltip, HCTable} from "@components/common";
 
 type Props = {
   editRuleset: any;
@@ -34,8 +35,6 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Zip", value: "zip"},
   {name: "Custom", value: "custom"},
 ];
-
-const {Option} = Select;
 
 const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
@@ -545,10 +544,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onMatchTypeSelect = (propertyPath: string, value: string) => {
+  const onMatchTypeSelect = (propertyPath: string, option: any) => {
     setMatchTypeErrorMessages({...matchTypeErrorMessages, [propertyPath]: ""});
     setIsMatchTypeTouched(true);
-    setMatchTypes({...matchTypes, [propertyPath]: value});
+    setMatchTypes({...matchTypes, [propertyPath]: option.value});
     if (!selectedRowKeys.includes(propertyPath)) {
       let selectedKeys = [...selectedRowKeys, propertyPath];
       setSelectedRowKeys(selectedKeys);
@@ -670,13 +669,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return errorCheck;
   };
 
-  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => {
-    return <Option key={index} value={matchType.value} aria-label={`${matchType.value}-option`}>{matchType.name}</Option>;
-  });
-
   const inputUriStyle = (propertyPath, fieldType) => {
     const inputFieldStyle: CSSProperties = {
-      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "22vw" : (fieldType === "distance-threshold-input" ? "25vw" : "13vw"),
+      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? "18vw" : "13vw"),
       marginRight: "5px",
       marginLeft: ["distance-threshold-input", "function-input"].includes(fieldType) ? "15px" : "0px",
       justifyContent: "top",
@@ -685,18 +680,9 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     return inputFieldStyle;
   };
 
-  const matchTypeCSS = (propertyPath) => {
-    const matchTypeStyle: CSSProperties = {
-      width: "160px",
-      border: checkFieldInErrors(propertyPath, "match-type-input") ? "0.6px solid red" : "",
-      borderRadius: "5px"
-    };
-    return matchTypeStyle;
-  };
-
   const validationErrorStyle = (fieldType) => {
     const validationErrStyle: CSSProperties = {
-      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "22vw" : (fieldType === "distance-threshold-input" ? "25vw" : "13vw"),
+      width: ["dictionary-uri-input", "thesaurus-uri-input"].includes(fieldType) ? "17vw" : (fieldType === "distance-threshold-input" ? "18vw" : "13vw"),
       lineHeight: "normal",
       paddingTop: "6px",
       paddingLeft: "2px",
@@ -876,41 +862,84 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     }
   };
 
+  const MenuList  = (selector, props) => (
+    <div id={`${selector}-select-MenuList`}>
+      <SelectComponents.MenuList {...props} />
+    </div>
+  );
+
+  const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => ({value: matchType.value, label: matchType.name}));
+
   const multipleRulesetsTableColumns = [
     {
-      title: <span data-testid="nameTitle">Name</span>,
-      dataIndex: "propertyName",
+      text: "Name",
+      dataField: "propertyName",
       key: "propertyPath",
       width: "17%",
       ellipsis: true,
-      render: (text, row) => {
+      headerFormatter: () => <span data-testid="nameTitle">Name</span>,
+      formatter: (text, row) => {
         return <span className={row.hasOwnProperty("children") ? styles.nameColumnStyle : ""}>{text} {row.hasOwnProperty("children") ? <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup} /> : ""} {row.multiple ? <img className={styles.arrayImage} src={arrayIcon} /> : ""}</span>;
+      },
+      attrs: (cell, row, rowIndex, colIndex) => {
+        if (row.hasChildren) {
+          return {
+            colspan: 4,
+          };
+        }
       }
     },
     {
       ellipsis: true,
-      title: <span data-testid="matchTypeTitle">Match Type</span>,
+      text: "Match Type",
       width: "15%",
-      render: (text, row) => {
+      headerFormatter: () => <span data-testid="matchTypeTitle">Match Type</span>,
+      style: (cell, row) => {
+        if (row.hasChildren) {
+          return {display: "none"};
+        }
+        return "";
+      },
+      formatter: (text, row, extraData) => {
         return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
           <Select
-            aria-label={`${row.propertyPath}-match-type-dropdown`}
-            style={matchTypeCSS(row.propertyPath)}
-            size="default"
+            id={`${row.propertyPath}-select-wrapper`}
+            inputId={`${row.propertyPath}-select`}
+            components={{MenuList: props => MenuList(`${row.propertyPath}`, props)}}
             placeholder="Select match type"
-            onSelect={(e) => onMatchTypeSelect(row.propertyPath, e)}
-            value={matchTypes[row.propertyPath]}
-          >
-            {renderMatchOptions}
-          </Select>
+            value={Object.keys(matchTypes).length > 0 ? renderMatchOptions.find(item => item.value === matchTypes[row.propertyPath]) : undefined}
+            onChange={(e) => onMatchTypeSelect(row.propertyPath, e)}
+            aria-label={`${row.propertyPath}-match-type-dropdown`}
+            isSearchable={false}
+            options={renderMatchOptions}
+            formatOptionLabel={({value, label}) => {
+              return (
+                <span aria-label={`${value}-option`}>
+                  {label}
+                </span>
+              );
+            }}
+            styles={{...reactSelectThemeConfig,
+              container: (provided, state) => ({
+                ...provided,
+                width: "180px",
+              }),
+              control: (provided, state) => ({
+                ...provided,
+                border: state.menuIsOpen ? "1px solid #808cbd" : (checkFieldInErrors(row.propertyPath, "match-type-input") ? "1px solid #b32424" : "1px solid #d9d9d9"),
+              })
+            }}
+          />
           {checkFieldInErrors(row.propertyPath, "match-type-input") ? <div id="errorInMatchType" data-testid={row.propertyPath + "-match-type-err"} style={validationErrorStyle("match-type-input")}>{!matchTypes[row.propertyPath] ? "A match type is required" : ""}</div> : ""}
         </div> : null;
-      }
+      },
+      formatExtraData: {selectedRowKeys, matchTypeErrorMessages, thesaurusErrorMessages, dictionaryErrorMessages, distanceThresholdErrorMessages, uriErrorMessages, functionErrorMessages}
     },
     {
-      title: <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
-      width: "68%",
-      render: (text, row) => {
+      text: "Match Type Details",
+      //width: "58%",
+      headerFormatter: () => <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
+      formatter: (text, row, extraData) => {
         switch (matchTypes[row.propertyPath]) {
         case "synonym": return renderSynonymOptions(row.propertyPath);
         case "doubleMetaphone": return renderDoubleMetaphoneOptions(row.propertyPath);
@@ -918,7 +947,14 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         default:
           break;
         }
-      }
+      },
+      style: (cell, row) => {
+        if (row.hasChildren) {
+          return {display: "none"};
+        }
+        return "";
+      },
+      formatExtraData: {selectedRowKeys, matchTypes, matchTypeErrorMessages, thesaurusErrorMessages, dictionaryErrorMessages, distanceThresholdErrorMessages, uriErrorMessages, functionErrorMessages}
     }
   ];
 
@@ -944,8 +980,10 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   const getMatchOnTags = (selectedRowKeys) => {
     let matchTags = {};
     selectedRowKeys.forEach(key => {
-      let tag = key.split(".").join(" > ");
-      matchTags[`${key}`] = tag;
+      if (key) {
+        let tag = key.split(".").join(" > ");
+        matchTags[`${key}`] = tag;
+      }
     });
     return matchTags;
   };
@@ -1046,20 +1084,37 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
   };
 
   const rowSelection = {
-    onChange: (selected, selectedRows) => {
-      let fkeys = selectedRows.map(row => row.propertyPath);
-      setSelectedRowKeys([...fkeys]);
-    },
-    onSelect: (record, selected, selectedRows) => {
+    onSelect: (record, selected) => {
+      if (selectedRowKeys.includes(record.propertyPath)) {
+        setSelectedRowKeys([...selectedRowKeys.filter(key => key !== record.propertyPath)]);
+      } else {
+        setSelectedRowKeys([...selectedRowKeys, record.propertyPath]);
+      }
+
       if (!selected) {
         handlePropertyDeselection(record.propertyPath);
       }
     },
-    selectedRowKeys: selectedRowKeys,
-    getCheckboxProps: record => ({
-      name: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? "hidden" : record.propertyPath),
-      style: (record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren ? {display: "none"} : {})
-    }),
+    onSelectAll: (isSelect) => {
+      if (isSelect) {
+        const recursiveSelectAllKeys = (dataArr, allKeys:Array<string> = []) => {
+          dataArr.forEach((obj: {children?: any[], propertyPath: string}) => {
+            if (obj.hasOwnProperty("children")) {
+              recursiveSelectAllKeys(obj["children"], allKeys);
+            } else {
+              allKeys.push(obj.propertyPath);
+            }
+          });
+          return allKeys;
+        };
+        let keys = recursiveSelectAllKeys(multipleRulesetsData);
+        setSelectedRowKeys([...keys]);
+      } else {
+        setSelectedRowKeys([]);
+      }
+    },
+    selected: selectedRowKeys,
+    nonSelectable: multipleRulesetsData.filter(record => record.hasOwnProperty("structured") && record.structured !== "" && record.hasChildren).map(record => record.propertyPath),
   };
 
   const closeMatchOnTag = (tagKey) => {
@@ -1132,7 +1187,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     showSizeChanger: true,
     pageSizeOptions: ["10", "20", "40", "60"]
   };
-
+  /*
   const customExpandIcon = (props) => {
     if (props.expandable) {
       if (props.expanded) {
@@ -1145,7 +1200,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         }}><ChevronRight data-testid="expandedIcon" /> </a>;
       }
     }
-  };
+  }; */
 
   const confirmAction = () => {
     props.toggleModal(false);
@@ -1223,22 +1278,24 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
           </div>
 
           <div id="multipleRulesetsTableContainer" data-testid="multipleRulesetsTableContainer">
-            <Table
+            <HCTable
               pagination={paginationOptions}
               className={styles.entityTable}
-              expandIcon={(props) => customExpandIcon(props)}
-              onExpand={(expanded, record) => toggleRowExpanded(expanded, record)}
+              onExpand={(record, expanded) => toggleRowExpanded(expanded, record)}
               expandedRowKeys={expandedRowKeys}
               rowClassName={() => styles.entityTableRows}
               rowSelection={{...rowSelection}}
-              indentSize={18}
               columns={multipleRulesetsTableColumns}
-              scroll={{y: "60vh", x: 1000}}
-              dataSource={multipleRulesetsData}
-              tableLayout="unset"
+              data={multipleRulesetsData}
               rowKey="propertyPath"
-              getPopupContainer={() => document.getElementById("multipleRulesetsTableContainer") || document.body}
-            /></div>
+              showExpandIndicator={true}
+              childrenIndent={true}
+              nestedParams={{headerColumns: multipleRulesetsTableColumns, state: [expandedRowKeys, setExpandedRowKeys]}}
+              keyUtil="key"
+              baseIndent={18}
+              subTableHeader={true}
+            />
+          </div>
           {modalFooter}
         </Form>
         {discardChanges}
