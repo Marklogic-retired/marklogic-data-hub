@@ -374,20 +374,20 @@ declare function run-with-roles-and-privileges($roles, $privileges, $func-or-mod
 declare function wait-for-indexes()
 {
   try {
-    wait-for-indexes(1)
+    run-with-roles-and-privileges("admin", (), function() {
+      wait-for-indexes(1)
+    }, ())
   } catch ($e) {
-    if ($e/error:code = "XDMP-EXTIME") then ()
+    if ($e/error:code = ("XDMP-EXTIME", "SVC-EXTIME")) then ()
     else xdmp:rethrow()
   }
 };
 
 declare function wait-for-indexes($count as xs:unsignedLong) {
-  let $is-indexing := run-with-roles-and-privileges("admin", (), function() {
-    0 lt fn:sum(xdmp:forest-counts(xdmp:database-forests(xdmp:database()), (), "preview-reindexer")/*:reindex-refragment-fragment-count, 0)
-  }, ())
+  let $is-indexing := 0 lt fn:sum(xdmp:forest-counts(xdmp:database-forests(xdmp:database()), (), "preview-reindexer")/*:reindex-refragment-fragment-count, 0)
   return
-    if ($is-indexing) then
-      let $_sleep := xdmp:sleep(5 * $count)
+    if ($is-indexing and $count lt 250) then
+      let $_sleep := xdmp:sleep(250 * (($count idiv 100) + 1))
       return wait-for-indexes($count + 1)
     else
       ()
