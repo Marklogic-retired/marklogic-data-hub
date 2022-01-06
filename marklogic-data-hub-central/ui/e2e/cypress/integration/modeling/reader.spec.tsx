@@ -96,19 +96,6 @@ describe("Entity Modeling: Reader Role", () => {
   it("can navigate to graph view from table view", () => {
     entityTypeTable.viewEntityInGraphView("Customer");
 
-    //To test graph view model png is downloaded successfully
-    graphView.getExportGraphIcon().click().then(
-      () => {
-        cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
-          (downloadPng) => {
-            expect(downloadPng).exist;
-          });
-      });
-
-    // To verify modeling info is rendered properly in graph view
-    modelPage.clickModelingInfoIcon();
-    modelPage.verifyModelingInfo();
-
     graphView.getFilterInput().should("be.visible");
     graphView.getAddButton().should("be.disabled");
     graphView.getPublishToDatabaseButton().should("be.visible");
@@ -158,6 +145,19 @@ describe("Entity Modeling: Reader Role", () => {
 
     graphViewSidePanel.closeSidePanel();
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
+
+    //To test graph view model png is downloaded successfully
+    graphView.getExportGraphIcon().click().then(
+      () => {
+        cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
+          (downloadPng) => {
+            expect(downloadPng).exist;
+          });
+      });
+
+    // To verify modeling info is rendered properly in graph view
+    modelPage.clickModelingInfoIcon();
+    modelPage.verifyModelingInfo();
 
 
     //To verify Pan and Zoom in buttons are rendered properly
