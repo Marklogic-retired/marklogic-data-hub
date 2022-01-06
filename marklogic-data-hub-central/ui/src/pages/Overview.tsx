@@ -8,8 +8,11 @@ import modelingInfoIcon from "../assets/icon_helpInfo.png";
 import {ToolbarBulbIconInfo} from "../config/tooltips.config";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
+import {parseVersion} from "../util/environment";
+
 interface Props {
     enabled: any;
+    environment: any;
 }
 
 const Overview: React.FC<Props> = (props) => {
@@ -29,7 +32,8 @@ const Overview: React.FC<Props> = (props) => {
 
   const openDocumentation = (e, type) => {
     if (e) e.stopPropagation(); // Stop click from also opening tile
-    window.open(overviewConfig.documentationLinks[type], "_blank");
+    let versionNum = parseVersion(props.environment.dataHubVersion);
+    window.open(overviewConfig.documentationLinks.tileSpecificLink(versionNum, type), "_blank");
   };
 
   const openVideo = (e, type) => {

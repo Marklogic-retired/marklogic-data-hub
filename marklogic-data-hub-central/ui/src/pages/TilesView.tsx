@@ -4,6 +4,7 @@ import Toolbar from "../components/tiles/toolbar";
 import Tiles from "../components/tiles/tiles";
 import styles from "./TilesView.module.scss";
 import "./TilesView.scss";
+import {getEnvironment} from "../util/environment";
 
 import Overview from "./Overview";
 import Load from "./Load";
@@ -161,7 +162,7 @@ const TilesView = (props) => {
             </ConfigProvider>
           ) : null }
         </div>) :
-        <Overview enabled={enabled}/>
+        <Overview enabled={enabled} environment={getEnvironment()}/>
       }
       <Toolbar tiles={tiles} enabled={enabled}/>
       <Modal
