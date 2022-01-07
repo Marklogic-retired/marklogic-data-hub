@@ -9,16 +9,16 @@ describe("DropDownWithSearch component", () => {
 
   test("DropDownWithSearch component renders ", () => {
     const {container} = render(<DropDownWithSearch {...data.dropDownWithSearch} />);
-    expect(container.querySelector("#dropdownList")).toBeInTheDocument();
+    expect(container.querySelector("#dropdownList-select-wrapper")).toBeInTheDocument();
   });
 
   test("DropDownWithSearch component has minWidth", () => {
     const {container} = render(<DropDownWithSearch {...data.dropDownWithSearch} />);
-    expect(container.querySelector("#dropdownList")).toHaveStyle("width: " + minWidth);
+    expect(container.querySelector("#dropdownList-select-wrapper")).toHaveStyle("width: " + minWidth);
   });
 
   test("DropDownWithSearch component has maxWidth", () => {
     const {container} = render(<DropDownWithSearch {...data.dropDownWithSearch} indentList={[500, 500]} />);
-    expect(container.querySelector("#dropdownList")).toHaveStyle("width: " + maxWidth);
+    expect(container.querySelector("#dropdownList-select-wrapper")).toHaveStyle("width: " + maxWidth);
   });
 });

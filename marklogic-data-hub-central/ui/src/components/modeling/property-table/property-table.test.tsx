@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, within, cleanup} from "@testing-library/react";
+import {render, screen, fireEvent, within, cleanup, wait} from "@testing-library/react";
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
@@ -117,22 +117,22 @@ describe("Entity Modeling Property Table Component", () => {
     );
 
     fireEvent.mouseOver(getByLabelText("identifier-header"));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("multiple-header"));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("sort-header"));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("facet-header"));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
 
     // fireEvent.mouseOver(getByLabelText('wildcard-header'));
     // await wait (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText("pii-header"));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
+    await wait(() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
 
     expect(getByTestId("identifier-concept_name")).toBeInTheDocument();
     expect(getByTestId("multiple-synonyms")).toBeInTheDocument();
@@ -253,10 +253,10 @@ describe("Entity Modeling Property Table Component", () => {
     fireEvent.click(getByTestId("collapseBtn"));
 
     //all nested properties should not be present
-    await waitFor(() => expect(queryByText("street")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("state")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("fiveDigit")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("plusFour")).not.toBeInTheDocument());
+    await wait(() => expect(queryByText("street")).not.toBeInTheDocument());
+    await wait(() => expect(queryByText("state")).not.toBeInTheDocument());
+    await wait(() => expect(queryByText("fiveDigit")).not.toBeInTheDocument());
+    await wait(() => expect(queryByText("plusFour")).not.toBeInTheDocument());
   });
 
 

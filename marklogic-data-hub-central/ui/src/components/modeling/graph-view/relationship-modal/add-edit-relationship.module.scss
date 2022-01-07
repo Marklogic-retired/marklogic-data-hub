@@ -180,12 +180,19 @@
     text-align: center;
 }
 
-.dropdownMenu {
-  width: 212px;
-}
+.dropdownButtonMenu {
+    height: 100%;
+    width: 17px;
+    background-color: #fafafa !important;
+    color: $text-color !important;
+    border: none !important;
 
-.dropdownMenuIcon {
-  margin-top: 30px;
+    &:hover,
+    &:active,
+    &:focus{
+      outline: none !important;
+      box-shadow: none !important;
+    }
 }
 
 .oneToManyIcon {
@@ -194,8 +201,6 @@
 
 .oneToOneIcon {
     padding-bottom: 3px;
-    // padding-left: 6px;
-    // padding-right: 6px;
 }
 
 .iconTrashReadOnly {

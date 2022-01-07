@@ -110,6 +110,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         inputId="entitiesSidebar-select"
         placeholder="Please select target database"
         isMulti
+        isClearable={false}
         value={entities?.map(d => ({value: d, label: d}))}
         onChange={handleChange}
         isSearchable={false}
