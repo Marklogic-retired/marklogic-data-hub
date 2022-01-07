@@ -90,7 +90,7 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));
 
 
-        // test windows paths
+        // testDecodingSpecialCharsInFilePathName windows paths
         startPath = Paths.get("c:\\temp\\my-project\\plugins\\entities");
         dir = Paths.get("c:\\temp\\my-project\\plugins\\entities\\my-entity");
         assertTrue(loadUserArtifactsCommand.isArtifactDir(dir, startPath));

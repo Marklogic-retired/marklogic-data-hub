@@ -34,8 +34,8 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
     }
 
     /**
-     * The CreateGranularPrivilegesCommand is assumed to have been run as part of bootstrapping the test application,
-     * so this test just verifies the results of that command having been run.
+     * The CreateGranularPrivilegesCommand is assumed to have been run as part of bootstrapping the testDecodingSpecialCharsInFilePathName application,
+     * so this testDecodingSpecialCharsInFilePathName just verifies the results of that command having been run.
      */
     @Test
     void verifyGranularPrivilegesExist() {
@@ -115,9 +115,9 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
         ResourcesFragment databasesXml = new DatabaseManager(getHubClient().getManageClient()).getAsXml();
         final String finalDbId = databasesXml.getIdForNameOrId("data-hub-FINAL");
 
-        // Setup a test privilege that we want to create via the command's logic; it has the same action as one of the
+        // Setup a testDecodingSpecialCharsInFilePathName privilege that we want to create via the command's logic; it has the same action as one of the
         // privileges that we know the command creates
-        Privilege p = new Privilege(null, "aaa-test-privilege");
+        Privilege p = new Privilege(null, "aaa-testDecodingSpecialCharsInFilePathName-privilege");
         p.setKind("execute");
         p.addRole("qconsole-user");
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId);
@@ -128,11 +128,11 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
         final PrivilegeManager privilegeManager = new PrivilegeManager(getHubClient().getManageClient());
 
         try {
-            // Now apply the logic in the command for saving this test privilege
+            // Now apply the logic in the command for saving this testDecodingSpecialCharsInFilePathName privilege
             CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig());
             command.saveGranularPrivileges(getHubClient().getManageClient(), privileges);
 
-            assertFalse(privilegeManager.exists("aaa-test-privilege"), "The test privilege should not have been created " +
+            assertFalse(privilegeManager.exists("aaa-testDecodingSpecialCharsInFilePathName-privilege"), "The testDecodingSpecialCharsInFilePathName privilege should not have been created " +
                 "since there's an existing DHF granular privilege with the same action");
             assertTrue(privilegeManager.exists("admin-database-index-data-hub-FINAL"));
 

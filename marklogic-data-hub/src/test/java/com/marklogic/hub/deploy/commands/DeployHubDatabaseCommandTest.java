@@ -22,7 +22,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
         command = new DeployHubDatabaseCommand(getHubConfig(), null, "doesnt-matter.json");
 
         payload = objectMapper.createObjectNode();
-        payload.put("database-name", "test");
+        payload.put("database-name", "testDecodingSpecialCharsInFilePathName");
     }
 
     @Test
@@ -30,7 +30,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
         payload.put("language", "en");
 
         ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(newCommandContext(), payload.toString()));
-        assertEquals("test", updatedPayload.get("database-name").asText());
+        assertEquals("testDecodingSpecialCharsInFilePathName", updatedPayload.get("database-name").asText());
         assertTrue(updatedPayload.has("language"), "language should still be present since it's a valid database property");
     }
 
@@ -39,7 +39,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
         payload.put("language", "zxx");
 
         ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(newCommandContext(), payload.toString()));
-        assertEquals("test", updatedPayload.get("database-name").asText());
+        assertEquals("testDecodingSpecialCharsInFilePathName", updatedPayload.get("database-name").asText());
         assertFalse(updatedPayload.has("language"), "A language with a value of 'zxx' should have been removed; this " +
             "should be very unusual, as it likely was not added by a user (who in theory would have selected a valid " +
             "value), but we have had some tests fail where a database payload does have a language (instead of 'lang') " +
@@ -53,7 +53,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
         payload.put("triggers-database", "test2");
 
         ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(newCommandContext(), payload.toString()));
-        assertEquals("test", updatedPayload.get("database-name").asText());
+        assertEquals("testDecodingSpecialCharsInFilePathName", updatedPayload.get("database-name").asText());
         assertFalse(updatedPayload.has("schema-database"));
         assertFalse(updatedPayload.has("triggers-database"));
     }

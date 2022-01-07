@@ -10,17 +10,17 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * This is intended as a quick performance test of loading a significant number of artifacts of a certain type. Each
- * test is meant to finish under a second or so, which indicates that performance is acceptable for the number of
- * artifacts being loaded in each test. The tests are not doing assertions on the amount of time, as those
+ * This is intended as a quick performance testDecodingSpecialCharsInFilePathName of loading a significant number of artifacts of a certain type. Each
+ * testDecodingSpecialCharsInFilePathName is meant to finish under a second or so, which indicates that performance is acceptable for the number of
+ * artifacts being loaded in each testDecodingSpecialCharsInFilePathName. The tests are not doing assertions on the amount of time, as those
  * assertions are likely to be very brittle. Instead, the time to load artifacts is logged for manual inspection.
  */
 public class LoadUserArtifactsPerformanceTest extends AbstractHubCoreTest {
 
     /**
-     * The root cause that led to this test being created was that when an entity model is saved, the use of
+     * The root cause that led to this testDecodingSpecialCharsInFilePathName being created was that when an entity model is saved, the use of
      * xdmp.invoke to write a document to a different database plus the existence of a pre and post triggers on that
-     * document led to some significant performance delays. So this test is used as a quick sanity check that a
+     * document led to some significant performance delays. So this testDecodingSpecialCharsInFilePathName is used as a quick sanity check that a
      * reasonably large number of entity models can be written in a second or so.
      *
      * @throws Exception
@@ -59,7 +59,7 @@ public class LoadUserArtifactsPerformanceTest extends AbstractHubCoreTest {
     }
 
     /**
-     * This test is included as a quick verification that writing artifacts to both staging and final works just fine
+     * This testDecodingSpecialCharsInFilePathName is included as a quick verification that writing artifacts to both staging and final works just fine
      * when there's not a pre-commit trigger involved.
      *
      * @throws Exception

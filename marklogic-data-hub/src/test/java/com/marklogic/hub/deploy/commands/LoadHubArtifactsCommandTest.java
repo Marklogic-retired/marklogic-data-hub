@@ -37,7 +37,7 @@ public class LoadHubArtifactsCommandTest extends AbstractHubCoreTest {
         assertEquals("http://marklogic.com/data-hub/flow", collections.next());
         assertEquals("hub-core-artifact", collections.next(),
             "This collection is being introduced in 5.3.0 so that marklogic-data-hub-central has an easy way of not deleting artifacts " +
-                "installed as part of DH Core. We'll soon take advantage of this in the DH Core test suite, along with " +
+                "installed as part of DH Core. We'll soon take advantage of this in the DH Core testDecodingSpecialCharsInFilePathName suite, along with " +
                 "an upcoming capability for uninstalling user project files without uninstalling DH Core.");
 
         DocumentMetadataHandle.DocumentPermissions perms = h.getPermissions();

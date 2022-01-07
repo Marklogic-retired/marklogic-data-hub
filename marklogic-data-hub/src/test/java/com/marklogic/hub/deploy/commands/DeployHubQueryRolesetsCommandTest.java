@@ -55,7 +55,7 @@ public class DeployHubQueryRolesetsCommandTest extends AbstractSecurityTest {
                     "been deployed. This is the best we can do in DHF based on ML 10.0-3.");
             } else {
                 logger.info("On the nightly build for 10.0-4, the bug with query rolesets has been fixed. " +
-                    "Once 10.0-4 is released, we can update this test to verify the above condition is longer met.");
+                    "Once 10.0-4 is released, we can update this testDecodingSpecialCharsInFilePathName to verify the above condition is longer met.");
             }
         } finally {
             // The lack of an exception from this verifies that the roleset was deleted successfully
