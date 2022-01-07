@@ -33,7 +33,7 @@ describe("Verify numeric/date facet can be applied", () => {
   it("Apply numeric facet values multiple times, clears the previous values and applies the new one", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    //browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.waitForSpinnerToDisappear();
@@ -59,7 +59,7 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getFacetApplyButton().should("not.exist");
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
   });
   it("Verify functionality of clear and apply facet buttons", () => {
     //verify no facets selected case.
@@ -97,7 +97,7 @@ describe("Verify numeric/date facet can be applied", () => {
     toolbar.getExploreToolbarIcon().click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
-    //browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
     //verify gray facets don't persist when switching between browse and run views.
     browsePage.selectEntity("Person");
@@ -112,7 +112,7 @@ describe("Verify numeric/date facet can be applied", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    //browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.getGreySelectedFacets("Alice").should("not.exist");
   });
   it("Verify clearing date time range facet clears corresponding selected facet", () => {

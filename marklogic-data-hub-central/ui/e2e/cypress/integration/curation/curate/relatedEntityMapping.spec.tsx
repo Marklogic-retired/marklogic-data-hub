@@ -161,7 +161,7 @@ describe("Mapping", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
 
     // Verify Explore results
     browsePage.getSelectedEntity().should("contain", "All Entities");

@@ -34,7 +34,7 @@ describe.skip("json scenario for snippet on browse documents page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.clickFacetView();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getDocuments().each(function (item, i) {

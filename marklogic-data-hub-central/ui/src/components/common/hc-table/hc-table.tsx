@@ -8,10 +8,12 @@ import "./hc-table.scss";
 import HCButton from "../hc-button/hc-button";
 
 interface Props {
+  bordered?: boolean;
   childrenIndent?: boolean;
   className?: string;
   columns: any;
   data: any;
+  dynamicSortColumns?: boolean;
   rowStyle?: any;
   expandedRowKeys?: number[] | string[];
   expandedContainerClassName?: string | ((record: any) => string);
@@ -19,6 +21,7 @@ interface Props {
   nestedParams?: any;
   showExpandIndicator?: boolean | {bordered?: boolean};
   showHeader?: boolean;
+  sort?: {dataField: string, order: string};
   pagination?: boolean | any;
   rowClassName?: string | ((record: any) => string);
   rowKey?: string | ((record: any) => string);
@@ -183,6 +186,10 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
         dataField: column.dataField,
         order: column.defaultSortOrder,
       });
+
+      if (props.onTableChange && defaultSorted.length > 0 && props.dynamicSortColumns) {
+        props.sort = {...defaultSorted[0]};
+      }
     }
 
     column.sortCaret = (order, _) => {
@@ -232,10 +239,6 @@ function HCTable({className, rowStyle, childrenIndent, data, keyUtil, expandedRo
   });
 
   let rowClasses = `hc-table_row ${rowClassName || ""}`;
-
-  if (props.onTableChange) {
-    delete props.onTableChange;
-  }
 
   return (
     <BootstrapTable

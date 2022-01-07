@@ -8,7 +8,6 @@ import {Link} from "react-router-dom";
 import {faExternalLinkAlt, faCode, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {dateConverter} from "../../util/date-conversion";
-import {MLTable} from "@marklogic/design-system";
 import {HCTooltip, HCTable} from "@components/common";
 
 /* eslint-disable */
@@ -27,39 +26,44 @@ interface Props {
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
   {
-    title: "Identifier",
-    dataIndex: "identifier",
+    text: "Identifier",
+    dataField: "identifier",
     key: "0-i",
     visible: true,
-    width: 150
+    width: 150,
+    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
   },
   {
-    title: "Entity Type",
-    dataIndex: "entityName",
+    text: "Entity Type",
+    dataField: "entityName",
     key: "0-1",
     visible: true,
-    width: 150
+    width: 150,
+    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
   },
   {
-    title: "Record Type",
+    text: "Record Type",
     key: "0-2",
-    dataIndex: "recordType",
+    dataField: "recordType",
     visible: true,
-    width: 150
+    width: 150,
+    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
   },
   {
-    title: "Created",
-    dataIndex: "createdOn",
+    text: "Created",
+    dataField: "createdOn",
     key: "0-c",
     visible: true,
-    width: 150
+    width: 150,
+    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
   },
   {
-    title: "Detail View",
-    dataIndex: "detailView",
+    text: "Detail View",
+    dataField: "detailView",
     key: "0-d",
     visible: true,
-    width: 150
+    width: 150,
+    headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
   }
 ];
 
@@ -110,12 +114,28 @@ const ResultsTabularView = (props) => {
   let sortingOrder = false;
   const tableHeaderRender = (selectedTableColumns) => {
     const columns = selectedTableColumns.map((item) => {
-      if (!item.hasOwnProperty("properties")) {
+      if (item.hasOwnProperty("properties")) {
         return {
-          dataIndex: item.propertyPath,
+          dataField: item.propertyPath,
           key: item.propertyPath,
-          title: <span data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>,
+          text: item.propertyLabel,
+          className: "nestedColumn",
+          headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
           type: item.datatype,
+          formatter: (cell) => {
+            const innerHeaders = Object.keys(cell[0])?.reduce((acc: any, elem) => {
+              if (elem === "key") return acc;
+              const value = elem.split(".").pop();
+              return [...acc, value];
+            }, []);
+            return (innerHeaders?.map((col, index) => <HCTooltip
+              key={col}
+              text={col}
+              id={`title-tooltip-${index}`}
+              placement="top">
+              <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col}</div>
+            </HCTooltip>));
+          },
           onCell: () => {
             return {
               style: {
@@ -125,79 +145,58 @@ const ResultsTabularView = (props) => {
             };
           },
           ...setSortOptions(item),
-          render: (value) => {
-            if (Array.isArray(value)) {
-              let values: any[] = [];
-              value.forEach(item => {
-                let val = item === null ? "null" : item === "" ? "\"\"" : item;
-                if (val !== undefined) {
-                  let title = val.toString();
-                  if (title) {
-                    values.push(
-                      <HCTooltip
-                        key={title}
-                        text={title}
-                        id="title-tooltip"
-                        placement="top">
-                        <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{title}</div>
-                      </HCTooltip>
-                    );
-                  }
-                }
-              });
-              return {
-                children: values
-              };
-            } else {
-              if (value) {
-                return {
-                  children: (
-                    <HCTooltip text={value} id="title-tooltip" placement="top">
-                      <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{value}</div>
-                    </HCTooltip>
-                  )
-                };
-              }
-            }
-          },
         };
       } else {
         return {
-          dataIndex: item.propertyPath,
+          dataField: item.propertyPath,
           key: item.propertyPath,
-          title: <span data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>,
+          text: item.propertyLabel,
+          headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
           type: item.datatype,
           ...setSortOptions(item),
-          columns: tableHeaderRender(item.properties)
+          formatter: (value) => {
+            if (!Array.isArray(value)) return (<div>{value}</div>);
+            return (value?.map((el, index) => <HCTooltip
+              key={el}
+              text={el}
+              id={`title-tooltip-${index}`}
+              placement="top">
+              <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{el}</div>
+            </HCTooltip>));
+          }
         };
       }
     });
     return columns;
   };
 
-  const handleChange = (sorter) => {
+  const handleChange = (type, sorter: {columnKey: string; order: string}) => {
     if (searchOptions.sortOrder.length && searchOptions.sortOrder[0].sortDirection === "descending") { setSortOrder(searchOptions.sortOrder[0].propertyName, null); }
   };
 
   const setSortOptions = (item) => (
     item.sortable ?
       {
-        sorter: (a: any, b: any, sortOrder) => {
+        sort: true,
+        onSort: (field: any, sortOrder) => {
           if (!sortingOrder) {
-            setSortOrder(item.propertyLabel, sortOrder);
+            setSortOrder(item.propertyLabel, sortOrder === "asc" ? "ascend" : "descend");
             sortingOrder = true;
           }
         },
-        sortOrder: (searchOptions.sortOrder.length && (searchOptions.sortOrder[0].propertyName === item.propertyLabel)
-          && searchOptions.sortOrder[0].hasOwnProperty("sortDirection")) ? (searchOptions.sortOrder[0].sortDirection === "ascending") ? "ascend" : "descend" : null,
+        defaultSortOrder: (searchOptions.sortOrder.length && (searchOptions.sortOrder[0].propertyName === item.propertyLabel)
+          && searchOptions.sortOrder[0].hasOwnProperty("sortDirection")) ? (searchOptions.sortOrder[0].sortDirection === "ascending") ? "asc" : "desc" : null,
       } : "");
 
   const updatedTableHeader = () => {
     let header = tableHeaderRender(selectedTableColumns);
     let detailView = {
+      table: "Detail View",
+      text: "Detail View",
       title: "Detail View",
-      dataIndex: "detailView",
-      key: "0-d"
+      dataField: "detailView",
+      key: "0-d",
+      headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
     };
     header.length > 0 && header.push(detailView);
     return header;
@@ -492,17 +491,19 @@ const ResultsTabularView = (props) => {
         </div> : ""}
       </div>
       <div className={styles.tabular}>
-        <MLTable bordered
+        {tableHeaders.length > 0 && <HCTable
           data-testid="result-table"
           rowKey="uri"
-          dataSource={props.isLoading ? [] : dataSource}
+          className={`resultTableMain`}
+          data={props.isLoading ? [] : dataSource}
           columns={tableHeaders}
-          onChange={handleChange}
+          onTableChange={handleChange}
           expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : undefined}
           pagination={false}
-          // defaultShowEmbeddedTableBodies={true}
-          loading={props.isLoading}
-        />
+          showExpandIndicator={true}
+          bordered
+          dynamicSortColumns
+        />}
       </div>
     </>
   );

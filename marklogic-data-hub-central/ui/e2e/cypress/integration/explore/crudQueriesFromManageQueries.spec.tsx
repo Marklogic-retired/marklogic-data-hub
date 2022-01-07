@@ -34,7 +34,7 @@ describe("manage queries modal scenarios, developer role", () => {
   it("Create Queries", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
@@ -60,7 +60,7 @@ describe("manage queries modal scenarios, developer role", () => {
   it("manage queries, edit, apply, delete query", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     //edit query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
@@ -153,7 +153,7 @@ describe("manage queries modal scenarios, developer role", () => {
     //switch to explorer zero state page
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     //open record instance view for the first document
     cy.get("#instance").first().click({force: true});
     cy.waitForAsyncRequest();
@@ -208,7 +208,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
 
     //check table rows
-    browsePage.getTableRows().should("have.length", 1);
+    browsePage.getHCTableRows().should("have.length", 1);
     //check table columns
     browsePage.getTableColumns().should("have.length", 6);
     //Check query facet is applied
@@ -266,7 +266,7 @@ describe("manage queries modal scenarios, developer role", () => {
   it("verify editing previously saved query, updates the currently applied query name in browse page", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     //browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("personQuery");

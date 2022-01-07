@@ -113,7 +113,7 @@ describe("Run Tile tests", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
 
     //Verify detail page renders with expected content
     browsePage.getSelectedEntity().should("contain", "Person");
@@ -143,7 +143,7 @@ describe("Run Tile tests", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
 
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("eq", 2);

@@ -14,8 +14,12 @@ class BrowsePage {
     cy.waitUntil(() => this.getSpinner().should("have.length", 0));
   }
 
-  waitForTableToLoad() {
-    cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
+  waitForHCTableToLoad() {
+    this.getHCTableRows().should("have.length.gt", 0);
+  }
+
+  noDataHCTable() {
+    return cy.get(`react-bs-table-no-data`);
   }
 
   waitForCardToLoad() {
@@ -282,7 +286,7 @@ class BrowsePage {
   //table, facet view
   clickFacetView() {
     this.waitForSpinnerToDisappear();
-    this.waitForTableToLoad();
+    this.waitForHCTableToLoad();
     cy.get("[data-cy=facet-view]").click().trigger("mouseout", {force: true});
   }
 
@@ -300,7 +304,7 @@ class BrowsePage {
 
   clickTableView() {
     this.waitForSpinnerToDisappear();
-    this.waitForTableToLoad();
+    this.waitForHCTableToLoad();
     return cy.get("[data-cy=table-view]").click();
   }
 
@@ -310,20 +314,21 @@ class BrowsePage {
 
   //table
   getColumnTitle(index: number) {
-    return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke("text");
+    return cy.get(`.table.table-bordered thead th:nth-child(${index}) .resultsTableHeaderColumn`).invoke("text");
+
   }
 
   clickColumnTitle(index: number) {
     cy.wait(500);
-    return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).click();
+    return cy.get(`.table.table-bordered th:nth-child(${index}) .resultsTableHeaderColumn`).click();
   }
 
   getSortIndicatorAsc() {
-    return cy.get(`.ant-table-column-sorter-up.on`);
+    return cy.get(`[aria-label="icon: caret-up"]`);
   }
 
   getSortIndicatorDesc() {
-    return cy.get(`.ant-table-column-sorter-down.on`);
+    return cy.get(`[aria-label="icon: caret-down"]`);
   }
 
   //TODO: Refactor - is duplicated
@@ -340,11 +345,11 @@ class BrowsePage {
   }
 
   getTableViewInstanceIcon() {
-    return cy.get(".ant-table-row:last-child [data-cy=instance]");
+    return cy.get(".hc-table_row:last-child [data-cy=instance]");
   }
 
   getTableViewSourceIcon() {
-    return cy.getAttached(".ant-table-row:last-child [data-cy=source]");
+    return cy.getAttached(".hc-table_row:last-child [data-cy=source]");
   }
 
   getExpandableTableView() {
@@ -352,15 +357,15 @@ class BrowsePage {
   }
 
   getExpandable() {
-    return cy.get(".ant-table-row-expand-icon-cell");
+    return cy.get(`[class^="hc-table_iconIndicator"]`);
   }
 
   getTableColumns() {
-    return cy.get(".ant-table-header-column");
+    return cy.get(".resultsTableHeaderColumn");
   }
 
   getTableCell(rowIndex: number, columnIndex: number) {
-    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke("text");
+    return cy.get(`.hc-table_row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke("text");
   }
 
   getTableUriCell(rowIndex: number) {
