@@ -26,7 +26,7 @@ class Search {
 
     let entityTypeIds = searchParams.entityTypeIds;
     entityTypeIds = entityTypeIds.map(i => 'Collection:' + i);
-    const collectionConstraint = entityTypeIds.join(" ");
+    const collectionConstraint = "(" + entityTypeIds.join(" OR ") + ")";
 
     let facets = searchParams.selectedFacets;
     let keys = Object.keys(facets);
