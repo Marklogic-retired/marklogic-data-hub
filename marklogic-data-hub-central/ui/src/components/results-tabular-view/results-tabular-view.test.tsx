@@ -62,6 +62,7 @@ describe("Results Table view component", () => {
           entityDefArray={[]}
           columns={[]}
           hasStructured={false}
+          selectedEntities={[]}
         />
       </Router>
     );

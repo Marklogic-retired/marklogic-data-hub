@@ -150,7 +150,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.clickTableView();
     browsePage.getTotalDocuments().should("be.gte", 5);
     //check table rows
-    browsePage.getTableRows().should("have.length", 5);
+    browsePage.getHCTableRows().should("have.length", 5);
     //check table columns
     browsePage.getTableColumns().should("have.length", 6);
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");

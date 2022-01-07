@@ -140,6 +140,10 @@
     .hc-table_row:not(:last-child) {
         border-bottom: 1px solid #e8e8e8;
     }
+    .table-bordered {
+        border: 1px solid #e8e8e8;
+        border-top-left-radius: 4px;
+    }
 }
 
 .document-table-demo, .expandable-table-view {
@@ -167,9 +171,8 @@
     }
 }
 
-
 .exploreInternalTable {
-    padding: 30px 20px 30px 8px;
+    padding: 30px 20px 30px 100px;
     margin: 0;
     table {
         thead {
@@ -211,6 +214,21 @@
                     }
                 }
             }
+        }
+    }
+}
+
+.resultTableMain {
+    td {
+        vertical-align: top !important;
+    }
+    .nestedColumn {
+        padding: 0 !important;
+        vertical-align: top;
+        & > div {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e8e8e8;
+            background-color: #fafafa;
         }
     }
 }

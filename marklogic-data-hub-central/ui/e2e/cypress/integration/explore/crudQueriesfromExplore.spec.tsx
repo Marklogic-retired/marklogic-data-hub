@@ -34,7 +34,7 @@ describe("save/manage queries scenarios, developer role", () => {
   it("Apply facet search,open save modal, save new query", () => {
     toolbar.getExploreToolbarIcon().should("be.visible").click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
     browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
@@ -408,7 +408,7 @@ describe("save/manage queries scenarios, developer role", () => {
 
   xit("verify export array/structured data warning", () => {
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     // TODO DHFPROD-7711 skip since fails for Ant Design Table component
     // TODO selecting "Order" leads to blank screen and error in browser
     // browsePage.selectEntity("Order");
@@ -448,7 +448,7 @@ describe("save/manage queries scenarios, developer role", () => {
   it("Verify facets checked on sidebar", () => {
     browsePage.selectEntity("All Entities");
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
     browsePage.getFacetItemCheckbox("collection", "Person").click();
     browsePage.getFacetItemCheckbox("collection", "Person").should("be.checked");
     browsePage.getGreySelectedFacets("Person").should("exist");

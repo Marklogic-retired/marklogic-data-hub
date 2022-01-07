@@ -25,7 +25,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
   });
   afterEach(() => {
     cy.resetTestUser();
@@ -53,7 +53,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     //check table rows
-    browsePage.getTableRows().should("have.length", 20);
+    browsePage.getHCTableRows().should("have.length", 20);
     //check table columns
     browsePage.getTableColumns().should("have.length", 5);
   });
@@ -65,7 +65,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should("be.greaterThan", 5);
     //check table rows
-    browsePage.getTableRows().should("have.length", 14);
+    browsePage.getHCTableRows().should("have.length", 14);
     //check table columns
     browsePage.getTableColumns().should("to.have.length.of.at.most", 6);
   });
@@ -74,7 +74,7 @@ describe("json scenario for table on browse documents page", () => {
   it("search for a simple text/query and verify content", () => {
     browsePage.search("Alice");
     browsePage.getTotalDocuments().should("be.equal", 1);
-    browsePage.getTableRows().should("have.length", 1);
+    browsePage.getHCTableRows().should("have.length", 1);
   });
 
   it("verify instance view of the document without pk", () => {

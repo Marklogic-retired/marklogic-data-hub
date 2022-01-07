@@ -29,12 +29,12 @@ describe("Validate table and column selector in explore", () => {
   it("Navigate to Explore", () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     browsePage.waitForSpinnerToDisappear();
-    browsePage.waitForTableToLoad();
+    browsePage.waitForHCTableToLoad();
   });
   it("Validate the table and expandable rows", () => {
     browsePage.getSelectedEntity().should("contain", "All Entities");
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
-    browsePage.getTableRows().should("have.length", 20);
+    browsePage.getHCTableRows().should("have.length", 20);
     browsePage.getTableColumns().should("be.visible");
     browsePage.getExpandable().should("be.visible");
   });
