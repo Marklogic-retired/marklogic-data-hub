@@ -13,8 +13,8 @@ describe("Custom Ingestion", () => {
     cy.loginAsTestUserWithRoles("hub-central-load-reader", "hub-central-step-runner").withRequest();
     LoginPage.postLogin();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.stepName("ingestion-step").should("be.visible");
   });
   after(() => {
     cy.resetTestUser();
@@ -26,7 +26,7 @@ describe("Custom Ingestion", () => {
     const loadStep = "ingestion-step";
     // create load step
     toolbar.getLoadToolbarIcon().click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    loadPage.stepName("ingestion-step").should("be.visible");
     // open settings
     loadPage.editStepInCardView(loadStep).click();
     loadPage.switchEditAdvanced().click(); // Advanced tab
@@ -35,8 +35,8 @@ describe("Custom Ingestion", () => {
     loadPage.cancelSettings(loadStep).click();
     toolbar.getRunToolbarIcon().click();
     //Run the ingest with JSON
-    cy.waitUntil(() => cy.findByText(flowName).closest("div")).click();
-    cy.waitUntil(() => cy.contains("Custom"));
+    cy.findByText(flowName).closest("div").click();
+    cy.contains("Custom");
     cy.waitForAsyncRequest();
     runPage.runStep(loadStep, flowName);
     cy.uploadFile("input/test-1.json");

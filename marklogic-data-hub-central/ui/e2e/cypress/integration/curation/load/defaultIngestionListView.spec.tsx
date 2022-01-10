@@ -31,8 +31,8 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
   });
   it("Verify Cancel", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.loadView("table").click();
     loadPage.addNewButton("list").click();
     loadPage.stepNameInput().type(stepName);
@@ -96,13 +96,13 @@ describe("Validate CRUD functionality from list view", () => {
     loadPage.setCustomHook("loadTile/customHook");
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
-    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
+    loadPage.saveSettings(stepName).click({force: true});
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
     loadPage.stepName(stepName).click();
     loadPage.stepDescriptionInput().clear().type("UPDATE2");
     loadPage.switchEditAdvanced().click();
-    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
+    loadPage.saveSettings(stepName).click({force: true});
     cy.waitForAsyncRequest();
   });
   it("Verify that change was saved", () => {
@@ -129,20 +129,20 @@ describe("Validate CRUD functionality from list view", () => {
     cy.findByText("New Flow").should("be.visible");
     loadPage.confirmationOptions("Cancel").click();
     //should route user back to load page list view
-    cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
+    loadPage.addNewButton("list").should("be.visible");
   });
   // NOTE Moved testing of adding step to a new flow and running the step to RTL unit tests
   // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Create a new flow and navigate back to load step", () => {
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
-    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    toolbar.getRunToolbarIcon().click();
+    runPage.getFlowName("personJSON").should("be.visible");
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().click();
     loadPage.loadView("table").click();
-    cy.waitUntil(() => loadPage.addNewButton("list").should("be.visible"));
+    loadPage.addNewButton("list").should("be.visible");
   });
   it("Verify Run in an existing flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.loadView("table").click();
@@ -167,14 +167,14 @@ describe("Validate CRUD functionality from list view", () => {
   // SEE https://project.marklogic.com/jira/browse/DHFPROD-7109
   it("Verify Run in Flow popup, create new flow and add step", {defaultCommandTimeout: 120000}, () => {
     // check Run in Flow popup
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     // Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
     // cancel (instead of letting run)
     cy.findByLabelText("Cancel").click({force: true});
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    toolbar.getRunToolbarIcon().click();
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
@@ -189,8 +189,8 @@ describe("Validate CRUD functionality from list view", () => {
   });
 
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.loadView("table")).click();
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();
@@ -201,7 +201,7 @@ describe("Validate CRUD functionality from list view", () => {
     tiles.closeRunMessage();
   });
   it("Add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().click();
     loadPage.loadView("table").click();
     loadPage.addStepToNewFlowListView(stepName);
     cy.waitForAsyncRequest();
@@ -212,7 +212,7 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName2);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
@@ -236,14 +236,14 @@ describe("Validate CRUD functionality from list view", () => {
     cy.waitForAsyncRequest();
     runPage.getFlowName(flowName2).should("not.exist");
     //Verify Delete
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    toolbar.getLoadToolbarIcon().click();
     loadPage.loadView("table").click();
     loadPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("No").click();
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
     loadPage.deleteStep(stepName).click();
-    cy.waitUntil(() => loadPage.confirmationOptions("Yes")).click();
+    loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("not.exist");
   });

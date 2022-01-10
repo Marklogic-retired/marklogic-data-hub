@@ -15,8 +15,8 @@ describe("Verify ingestion for all filetypes", () => {
   });
   beforeEach(() => {
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.stepName("ingestion-step").should("be.visible");
     cy.waitForAsyncRequest();
     cy.intercept("/api/jobs/**").as("getJobs");
   });

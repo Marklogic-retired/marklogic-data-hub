@@ -102,7 +102,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.setCustomHook("");
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
-    cy.waitUntil(() => loadPage.saveSettings(stepName)).click({force: true});
+    loadPage.saveSettings(stepName).click({force: true});
     cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
   });
@@ -113,7 +113,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("Cancel").click();
     cy.waitForAsyncRequest();
     //should route user back to load page card view
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    loadPage.addNewButton("card").should("be.visible");
   });
   it("Verify Add to New Flow", () => {
     loadPage.addStepToNewFlow(stepName);
@@ -131,8 +131,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.deleteStep(stepName, flowName).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.addNewButton("card").should("be.visible");
   });
   it("Verify Run Load step in an Existing Flow", {defaultCommandTimeout: 120000}, () => {
     loadPage.runStep(stepName).click();
@@ -164,13 +164,13 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.wait(1000);
   });
   it("Verify Run Load step in a New Flow", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click({force: true});
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click({force: true});
+    loadPage.addNewButton("card").should("be.visible");
     loadPage.runStep(stepName).click();
     //Just deleted flow should not be visible on flows list
     cy.findByText(flowName).should("not.exist");
     loadPage.confirmationOptions("Close").click();
-    cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
+    toolbar.getRunToolbarIcon().click();
     runPage.createFlowButton().click();
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName1);
@@ -189,8 +189,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     tiles.closeRunMessage();
   });
   it("Verify Run Load step in flow where step exists, should run automatically", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.addNewButton("card").should("be.visible");
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
     loadPage.confirmContinueRun();
@@ -201,8 +201,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     tiles.closeRunMessage();
   });
   it("add step to a new flow and Verify Run Load step where step exists in multiple flows", {defaultCommandTimeout: 120000}, () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.addNewButton("card").should("be.visible");
     loadPage.addStepToNewFlow(stepName);
     cy.waitForAsyncRequest();
     cy.findByText("New Flow").should("be.visible");
@@ -212,8 +212,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Load", stepName, flowName2);
     //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.addNewButton("card").should("be.visible");
     loadPage.runStep(stepName).click();
     loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName1);
@@ -227,8 +227,8 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.deleteStep(stepName, flowName1).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.addNewButton("card").should("be.visible");
   });
   it("Verify Add to Existing Flow after changing source/target format to TEXT", {defaultCommandTimeout: 120000}, () => {
     loadPage.loadView("th-large").click();
