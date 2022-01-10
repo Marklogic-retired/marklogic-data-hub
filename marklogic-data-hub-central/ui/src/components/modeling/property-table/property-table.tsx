@@ -868,10 +868,10 @@ const PropertyTable: React.FC<Props> = (props) => {
             if (parentDefinitionName) {
               let parentTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === parentDefinitionName) || DEFAULT_ENTITY_DEFINITION;
               piiValue = parentTypeDefinition?.pii?.some(value => value === property.name) ? property.name : "";
-              addValue = property.name + "," + parentDefinitionName + "," + structuredType.name;
+              addValue = property?.name + "," + parentDefinitionName + "," + structuredType?.name;
             }
             return {
-              key: property.name + "," + index + counter,
+              key: property.name,
               structured: structuredType?.name,
               propertyName: property.name,
               multiple: property.multiple ? property.name : "",
