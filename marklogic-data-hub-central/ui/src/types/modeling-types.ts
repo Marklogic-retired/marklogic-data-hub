@@ -46,6 +46,8 @@ export interface Property {
 
 export interface EntityDefinitionPayload {
   [entityName: string]: {
+    namespace?: string,
+    namespacePrefix?: string,
     primaryKey?: string,
     pii?: string[],
     required?: string[],

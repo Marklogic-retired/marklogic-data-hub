@@ -125,16 +125,6 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
     propertyTable.getProperty("newId").should("not.exist");
   });
-  it("Edit a different entity", () => {
-    entityTypeTable.getExpandEntityIcon("Customer");
-    propertyTable.editProperty("nicknames");
-    propertyModal.clickCheckbox("facetable");
-    propertyModal.clickCheckbox("sortable");
-    propertyModal.getSubmitButton().click();
-    propertyTable.getFacetIcon("nicknames").should("exist");
-    propertyTable.getSortIcon("nicknames").should("exist");
-    modelPage.getEntityModifiedAlert().should("exist");
-  });
   it("edit property name with Related Entity type", () => {
     propertyTable.editProperty("user");
     propertyModal.clearPropertyName();
@@ -148,10 +138,18 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });
-  it("Save new Buyer entity", {defaultCommandTimeout: 120000}, () => {
-    cy.publishEntityModel();
+  it("Edit a different entity", () => {
+    entityTypeTable.getExpandEntityIcon("Customer");
+    propertyTable.editProperty("nicknames");
+    propertyModal.clickCheckbox("facetable");
+    propertyModal.clickCheckbox("sortable");
+    propertyModal.getSubmitButton().click();
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
+    modelPage.getEntityModifiedAlert().should("exist");
+  });
+  it("Save new and updated entities", {defaultCommandTimeout: 120000}, () => {
+    cy.publishEntityModel();
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
   it("Validate the entity in explore page", () => {

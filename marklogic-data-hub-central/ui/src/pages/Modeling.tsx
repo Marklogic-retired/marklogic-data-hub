@@ -116,7 +116,8 @@ const Modeling: React.FC = () => {
     }
   };
 
-  const saveAllEntitiesToServer = async (entitiesArray) => {
+  const saveAllEntitiesToServer = async (entitiesArray, errorHandler: Function|undefined) => {
+    let isSuccess = true;
     try {
       let response;
       if (entitiesArray.length > 0) {
@@ -128,11 +129,17 @@ const Modeling: React.FC = () => {
         await setEntityTypesFromServer();
       }
     } catch (error) {
-      handleError(error);
+      isSuccess = false;
+      if (errorHandler) {
+        await errorHandler(error);
+      } else {
+        handleError(error);
+      }
     } finally {
       toggleRelationshipModal(false);
       toggleConfirmModal(false);
     }
+    return isSuccess;
   };
 
   const publishDraftModelToServer = async () => {
