@@ -110,6 +110,42 @@ class MonitorPage {
   getColumnSelectorApplyButton() {
     return cy.get(`[data-testid="apply-column-selector"]`);
   }
+
+  get tableHeaders () {
+    return cy.get("#mainTable th");
+  }
+
+  get tableRows () {
+    return cy.get("#mainTable tr.hc-table_row");
+  }
+
+  getTableBodyColumnByIndex (index: number) {
+    return cy.get(`#mainTable tr.hc-table_row td:nth-child(${index})`);
+  }
+
+  /**
+
+   * It find an index by header description and apply the callback function in every cell in that column
+
+   * @param {String} header - Name of the Column header
+
+   * @param {Function} cb - callback function to execute in every cell that index match with header description
+
+   */
+  getTableElement (header: string, cb: Function) {
+    this.tableHeaders.each(($elem, index) => {
+      const headerValue = $elem.text();
+      if (headerValue.includes(header)) {
+        this.getTableBodyColumnByIndex(index + 1).then($column => {
+          cy.wrap($column).each($cell => cb($cell));
+        });
+      }
+    });
+  }
+
+  getUnapliedCustomButtonFacet(value: string) {
+    cy.get(`[data-testid="clear-grey-${value}"]`);
+  }
 }
 const monitorPage = new MonitorPage();
 export default monitorPage;
