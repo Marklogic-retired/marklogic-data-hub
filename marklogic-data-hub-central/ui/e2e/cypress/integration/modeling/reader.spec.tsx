@@ -107,8 +107,11 @@ describe("Entity Modeling: Reader Role", () => {
 
     //To verify cannot edit without permissions
     graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      cy.waitUntil(() => graphVis.getGraphVisCanvas().dblclick(edgePosition.x, edgePosition.y));
+      const canvas = graphVis.getGraphVisCanvas();
+      const trigger = canvas.trigger("mouseover", edgePosition.x, edgePosition.y);
+      trigger.click({force: true});
     });
+
     relationshipModal.getModalHeader().should("not.exist");
 
     //To verify properties tab should display property table
