@@ -51,7 +51,7 @@ const ModelingTooltips = {
   nameEntityProperty: 'Names must start with a letter and can contain letters, numbers, hyphens, and underscores. ' +
     'Property names cannot use the same name as the associated entity type or its existing properties.',
   descriptionEntityProperty: 'A description of this entity property.',
-  namespace: 'Use of entity type namespaces is optional. If you choose to use a namespace, you must specify both a namespace URI and a prefix in your entity type definition.',
+  namespace: 'You can use a namespace to differentiate between XML elements that use the same name. If you use a namespace, you must define both a namespace URI and prefix. If your record is in JSON format, the namespace will have no effect.',
 
   /* Form fields */
   joinProperty: 'Structured type properties, arrays, and unsaved properties cannot be used as join properties.',

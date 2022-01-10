@@ -4,7 +4,7 @@ import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
 import {onClosestTableRow} from "../../../util/test-utils";
-import {entityReferences, primaryEntityTypes} from "../../../api/modeling";
+import {entityReferences, primaryEntityTypes, updateEntityModels} from "../../../api/modeling";
 import curateData from "../../../assets/mock-data/curation/flows.data";
 import {ConfirmationType} from "../../../types/common-types";
 import {getSystemInfo} from "../../../api/environment";
@@ -12,6 +12,7 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadForeignKey} from "../../../assets/mock-data/modeling/modeling";
 import {entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
+import axiosMock from "axios";
 
 jest.mock("../../../api/modeling");
 jest.mock("../../../api/environment");
@@ -19,6 +20,18 @@ jest.mock("../../../api/environment");
 const mockEntityReferences = entityReferences as jest.Mock;
 const mockPrimaryEntityTypes = primaryEntityTypes as jest.Mock;
 const mockGetSystemInfo = getSystemInfo as jest.Mock;
+const mockUpdateEntityModels = updateEntityModels as jest.Mock;
+
+jest.mock("axios");
+
+beforeEach(() => {
+  axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+  cleanup();
+});
 
 describe("Entity Modeling Property Table Component", () => {
   window.scrollTo = jest.fn();
@@ -287,6 +300,8 @@ describe("Entity Modeling Property Table Component", () => {
   });
 
   test("can add sortable and facetable Property to the table", async () => {
+    mockUpdateEntityModels.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
+
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const {getByTestId, getByLabelText} =  render(
@@ -297,7 +312,7 @@ describe("Entity Modeling Property Table Component", () => {
           entityName={entityName}
           definitions={definitions}
           sidePanelView={false}
-          updateSavedEntity={jest.fn()}
+          updateSavedEntity={mockUpdateEntityModels}
         />
       </ModelingContext.Provider>
     );
@@ -330,6 +345,7 @@ describe("Entity Modeling Property Table Component", () => {
   test("can add a Property to the table and then edit it", async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
+    mockUpdateEntityModels.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
     const {getByTestId} =  render(
       <PropertyTable
         canReadEntityModel={true}
@@ -337,7 +353,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
-        updateSavedEntity={jest.fn()}
+        updateSavedEntity={mockUpdateEntityModels}
       />
     );
 
@@ -361,6 +377,7 @@ describe("Entity Modeling Property Table Component", () => {
   });
 
   test("can add a new structured type property to the table and then edit it", async () => {
+    mockUpdateEntityModels.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const {getByTestId} =  render(
@@ -370,7 +387,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
-        updateSavedEntity={jest.fn()}
+        updateSavedEntity={mockUpdateEntityModels}
       />
     );
 
@@ -403,6 +420,7 @@ describe("Entity Modeling Property Table Component", () => {
   test("can edit a property and change the type from basic to relationship", async () => {
     // Mock population of Join Property menu
     mockPrimaryEntityTypes.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
+    mockUpdateEntityModels.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
 
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
@@ -414,7 +432,7 @@ describe("Entity Modeling Property Table Component", () => {
           entityName={entityName}
           definitions={definitions}
           sidePanelView={false}
-          updateSavedEntity={jest.fn()}
+          updateSavedEntity={mockUpdateEntityModels}
         />
       </ModelingContext.Provider>
     );
@@ -488,6 +506,7 @@ describe("Entity Modeling Property Table Component", () => {
 
   test("can delete a basic property from the table", async () => {
     mockEntityReferences.mockResolvedValueOnce({status: 200, data: referencePayloadEmpty});
+    mockUpdateEntityModels.mockResolvedValue({status: 200, data: curateData.primaryEntityTypes.data});
 
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
@@ -498,7 +517,7 @@ describe("Entity Modeling Property Table Component", () => {
         entityName={entityName}
         definitions={definitions}
         sidePanelView={false}
-        updateSavedEntity={jest.fn()}
+        updateSavedEntity={mockUpdateEntityModels}
       />
     );
 

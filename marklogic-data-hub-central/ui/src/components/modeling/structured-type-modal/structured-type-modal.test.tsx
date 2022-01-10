@@ -1,5 +1,5 @@
 import React from "react";
-import {render} from "@testing-library/react";
+import {cleanup, render} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import StructuredTypeModal from "./structured-type-modal";
@@ -7,6 +7,17 @@ import {ModelingTooltips} from "../../../config/tooltips.config";
 import {entityDefinitionsArray} from "../../../assets/mock-data/modeling/modeling";
 import {ModelingContext} from "../../../util/modeling-context";
 import {entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
+import axiosMock from "axios";
+
+jest.mock("axios");
+beforeEach(() => {
+  axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({})));
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+  cleanup();
+});
 
 describe("Structured Type Modal Component", () => {
 
@@ -39,7 +50,6 @@ describe("Structured Type Modal Component", () => {
 
     userEvent.click(getByText("Add"));
     expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(1);
-    expect(toggleModal).toHaveBeenCalledTimes(1);
   });
 
   test("can do error handling for duplicate name and name regex validation ", () => {

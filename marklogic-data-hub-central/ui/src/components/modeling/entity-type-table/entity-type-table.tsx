@@ -23,7 +23,7 @@ type Props = {
   autoExpand: string;
   editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => void;
   updateEntities: () => void;
-  updateSavedEntity: (entity: EntityModified) => void;
+  updateSavedEntity: (entity: EntityModified, errorHandler: Function|undefined) => void;
   hubCentralConfig: any;
 }
 
