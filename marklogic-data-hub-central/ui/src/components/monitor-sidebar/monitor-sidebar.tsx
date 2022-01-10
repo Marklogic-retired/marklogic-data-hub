@@ -79,13 +79,13 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
     setAllMonitorGreyedOptions(updateFacets);
   };
 
-  const onDateChange = (dateVal, dateArray) => {
+  const onDateChange = (dateStart, dateEnd) => {
     let updateFacets = {...allSelectedFacets};
-    if (dateVal.length > 1) {
+    if (dateStart && dateEnd && dateStart.isValid() && dateEnd.isValid()) {
       updateFacets = {
-        ...updateFacets, startTime: [moment(dateArray[0]).format(timeFormat), moment(dateArray[1]).endOf("day").format(timeFormat), "Custom"]
+        ...updateFacets, startTime: [moment(dateStart).format(timeFormat), moment(dateEnd).endOf("day").format(timeFormat), "Custom"]
       };
-      setDatePickerValue([moment(dateArray[0]), moment(dateArray[1])]);
+      setDatePickerValue([moment(dateStart), moment(dateEnd)]);
     } else {
       delete updateFacets.startTime;
       setDatePickerValue([null, null]);
@@ -274,6 +274,13 @@ export const MonitorSidebar:  (React.FC<Props>) = (props) => {
             aria-label="date-select"
             options={selectTimeOptions}
             styles={reactSelectThemeConfig}
+            formatOptionLabel={({value, label}) => {
+              return (
+                <span data-testid={`${value}-option`}>
+                  {label}
+                </span>
+              );
+            }}
           />
         </div>
         <div className={styles.dateTimeWindow}>
