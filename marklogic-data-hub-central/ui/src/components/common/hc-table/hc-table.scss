@@ -219,6 +219,9 @@
 }
 
 .resultTableMain {
+    th {
+        white-space: nowrap;
+    }
     td {
         vertical-align: top !important;
     }
