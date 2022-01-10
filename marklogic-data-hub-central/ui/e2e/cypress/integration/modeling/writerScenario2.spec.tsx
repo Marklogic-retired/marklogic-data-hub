@@ -75,7 +75,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");
     //propertyTable.getWildcardIcon('street').should('exist');
@@ -95,7 +94,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
     propertyModal.getSubmitButton().click();
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.getMultipleIcon("zip").should("exist");
     propertyTable.getPiiIcon("zip").should("not.exist");
     //propertyTable.getWildcardIcon('zip').should('not.exist');
@@ -110,7 +108,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getForeignKey("nicknames").should("not.be.enabled");
     propertyModal.getForeignKey("customerId").click();
     propertyModal.getSubmitButton().click();
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.verifyRelationshipIcon("OrderedBy").should("exist");
     propertyTable.verifyForeignKeyIcon("OrderedBy").should("exist");
 
@@ -132,7 +129,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdown("More number types").click();
     propertyModal.getCascadedTypeFromDropdown("int").click();
     propertyModal.getSubmitButton().click();
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.getMultipleIcon("code").should("not.exist");
     propertyTable.getPiiIcon("code").should("not.exist");
     //propertyTable.getWildcardIcon('code').should('not.exist');
@@ -148,9 +144,8 @@ describe("Entity Modeling: Writer Role", () => {
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
-    cy.waitUntil(() => propertyTable.getExpandIcon("zip,02").click({force: true}));
+    cy.waitUntil(() => propertyTable.getExpandIcon("zip").click({force: true}));
     propertyTable.getAddPropertyToStructureType("Extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");
     propertyModal.openPropertyDropdown();
@@ -167,7 +162,6 @@ describe("Entity Modeling: Writer Role", () => {
     //propertyTable.getWildcardIcon('fourDigit').should('exist');
   });
   it("Edit Property Structured Property", () => {
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.editProperty("address-street");
     propertyModal.getToggleStepsButton().should("not.exist");
     propertyModal.clearPropertyName();
@@ -185,7 +179,6 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getNoRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
-    cy.waitUntil(() => propertyTable.getExpandIcon("address").click());
     propertyTable.getMultipleIcon("streetAlt").should("exist");
     propertyTable.getPiiIcon("streetAlt").should("not.exist");
     //propertyTable.getWildcardIcon('streetAlt').should('exist');
