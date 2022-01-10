@@ -56,6 +56,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -197,9 +199,18 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         DatabaseClient finalClient = hubConfig.newFinalClient();
 
         Path userModulesPath = hubConfig.getHubPluginsDir();
-        String baseDir = userModulesPath.normalize().toAbsolutePath().toString();
+        String baseDir = new String();
+        String EncodedBaseDir = userModulesPath.normalize().toAbsolutePath().toString();
         Path startPath = userModulesPath.resolve("entities");
 
+        try {
+            URLDecoder fileNameDecoder = new URLDecoder();
+            //This handles the decoding of special characters in a file location path.
+            baseDir = fileNameDecoder.decode(EncodedBaseDir, StandardCharsets.UTF_8.name());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         // load any user files under plugins/* int the modules database.
         // this will ignore REST folders under entities
         DefaultModulesLoader modulesLoader = getStagingModulesLoader(config);
@@ -220,7 +231,17 @@ public class LoadUserModulesCommand extends LoadModulesCommand {
         // deploy the auto-generated ES search options, but not if mlWatch is being run, as it will result in the same
         // options being generated and loaded over and over
         if (loadQueryOptions) {
-            Path entityConfigDir = Paths.get(hubConfig.getHubProject().getProjectDirString(), HubConfig.ENTITY_CONFIG_DIR);
+            String gerProjectDir = hubConfig.getHubProject().getProjectDirString();
+            String decodedFileName=new String();
+            try {
+                URLDecoder fileNameDecoder = new URLDecoder();
+                //This handles the decoding of special characters in a file location path
+                decodedFileName = fileNameDecoder.decode(gerProjectDir, StandardCharsets.UTF_8.name());
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            Path entityConfigDir = Paths.get(decodedFileName, HubConfig.ENTITY_CONFIG_DIR);
             if (!entityConfigDir.toFile().exists()) {
                 entityConfigDir.toFile().mkdirs();
             }
