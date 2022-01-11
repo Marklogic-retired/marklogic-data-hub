@@ -28,7 +28,7 @@ class BrowsePage {
 
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
-    cy.get("#entity-select-wrapper").click();
+    cy.get("#entity-select-wrapper", {timeout: 6000}).should("be.visible").click();
     cy.get(`#entity-select-MenuList [data-cy="entity-option-${entity}"]`).scrollIntoView().click({force: true});
     cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
