@@ -1,11 +1,10 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Checkbox} from "antd";
 import styles from "./pop-over-search.module.scss";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
 import {CheckSquare} from "react-bootstrap-icons";
-import {HCInput} from "@components/common";
+import {HCInput, HCCheckbox} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
 interface Props {
@@ -96,13 +95,14 @@ const PopOverSearch: React.FC<Props> = (props) => {
 
   const renderCheckBoxGroup = options.map((value, index) =>
     <div  key={index} >
-      <Checkbox
+      <HCCheckbox
+        id={`${value}-popover-checkbox`}
         value={value}
-        onClick={(e) => onSelectCheckboxes(e)}
+        handleClick={(e) => onSelectCheckboxes(e)}
         checked={checkedValues.includes(value)}
         data-testid={`${value}-popover-checkbox`}
       >{value}
-      </Checkbox>
+      </HCCheckbox>
     </div>
   );
 

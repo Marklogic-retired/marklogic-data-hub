@@ -247,10 +247,6 @@ class MappingStepDetail {
     return cy.findByTestId(`${entityName}-entity-settings`);
   }
 
-  getTargetPermissions(entityName: string) {
-    return cy.findByTestId(`${entityName}-targetPermissions`);
-  }
-
   getSaveSettings(entityName: string) {
     return cy.findByLabelText(`${entityName}-save-settings`);
   }
@@ -281,6 +277,10 @@ class MappingStepDetail {
 
   customerEntity() {
     return cy.findByTestId("Customer");
+  }
+
+  editTargetPermissions(entityName: string, str: string) {
+    cy.get("#targetPermissions").focus().clear().type(str);
   }
 
   XPathInfoIcon() {

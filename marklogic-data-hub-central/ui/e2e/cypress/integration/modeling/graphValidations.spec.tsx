@@ -67,7 +67,7 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("be.visible");
     graphViewSidePanel.getEntityDescription().clear();
-    graphViewSidePanel.getEntityNamespace().type("http://example.org/test");
+    graphViewSidePanel.getEntityNamespace().clear().type("http://example.org/test");
     graphViewSidePanel.getEntityDescription().click();
     cy.findByText("Invalid model: Namespace property must be a valid absolute URI. Value is test.").should("not.exist");
     graphViewSidePanel.getEditEntityTypeColor().click();
@@ -92,8 +92,8 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getEntityTypeTab().should("exist");
     graphViewSidePanel.getDeleteIcon("BabyRegistry").should("exist");
   });
-
-  it("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
+  /* TODO: Graph context menu (DHFPROD-8284) */
+  it.skip("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     cy.wait(500);
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {

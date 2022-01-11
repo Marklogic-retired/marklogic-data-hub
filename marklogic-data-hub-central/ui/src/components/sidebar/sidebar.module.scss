@@ -22,18 +22,24 @@
 
 .titleBaseEntities,
 .titleCheckbox {
+
   span {
     font-size: 15px;
     color: #979797 !important;;
     text-transform: uppercase;
     font-weight: bold;
+    display: flex;
+    input {
+      padding-right: 3px;
+    }
   }
 }
 
 .titleCheckbox {
-  span{
-    padding-right: 0px;
-    padding-left: 1px;
+  .panelTitle{
+    div{
+      padding-right: 2px;
+    }
   }
 }
 
@@ -143,8 +149,9 @@
 }
 
 .clearQuery {
-  padding-left: 10px;
+  padding-left: 16px;
   padding-bottom: 10px;
+  color:  #5B69AF;
   svg {
     margin-right: 5px;
     font-size: 14px;
@@ -155,9 +162,6 @@
   padding-bottom: 10px;
   padding-left: 16px;
   padding-right: 16px;
-  input {
-    height: 30px;
-  }
 }
 
 .searchIcon {
@@ -184,4 +188,49 @@
 
 .switchToggleDataHubArtifacts {
   font-size: 1.2em;
+}
+
+.dropdownMenu {
+
+  padding: 0 !important;
+  border: 0 !important;
+  background-color: transparent;
+}
+
+.dropdownMenuItem {
+  background-color: transparent !important;
+  height: 15px;
+}
+
+.sourceDrop { 
+  cursor: pointer;
+  width: 22px;
+  height: 20px;
+  padding: 0 !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  svg {
+    margin-top: 0 !important;
+  }
+ }
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  margin-left: 3rem !important;
+}
+
+.menuContainer{
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(12, 12, 12, 0.15);
+  z-index: 1000;
+  background-color: #fff;
+  position: absolute;
+  border-radius: 3px;
+  padding: 5px 0;
+  right: 15px ;
+}
+.navTabs {
+  margin-left: 0;
 }

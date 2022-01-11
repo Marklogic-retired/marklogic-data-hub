@@ -1,23 +1,22 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Icon, Input, Menu, Dropdown, Button, Checkbox} from "antd";
 import moment from "moment";
+import Select from "react-select";
+import {ButtonGroup, Dropdown, Accordion, FormCheck} from "react-bootstrap";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCopy, faEllipsisV, faInfoCircle, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
 import {facetParser} from "../../util/data-conversion";
 import hubPropertiesConfig from "../../config/hub-properties.config";
 import tooltipsConfig from "../../config/explorer-tooltips.config";
 import styles from "./sidebar.module.scss";
-import {faCopy, faEllipsisV, faInfoCircle, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NumericFacet from "../numeric-facet/numeric-facet";
 import DateFacet from "../date-facet/date-facet";
 import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
-import {Accordion, FormCheck} from "react-bootstrap";
-import Select from "react-select";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
-import {HCDateTimePicker, HCTooltip} from "@components/common";
 import QueriesDropdown from "../queries/saving/queries-dropdown/queries-dropdown";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
@@ -66,18 +65,18 @@ const Sidebar: React.FC<Props> = (props) => {
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
-  const [currentQueryName, setCurrentQueryName] = useState(searchOptions.sidebarQuery);
+  const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER);
+
 
   let integers = ["int", "integer", "short", "long"];
   let decimals = ["decimal", "double", "float"];
   const dateRangeOptions = ["Today", "This Week", "This Month", "Custom"];
   const [activeKey, setActiveKey] = useState<any[]>([]);
   const [userPreferences, setUserPreferences] = useState({});
-  const [indeterminate, setIndeterminate] = React.useState(false);
-  const [checkAll, setCheckAll] = React.useState(true);
+  const [checkAll, setCheckAll] = useState(true);
 
   useEffect(() => {
-    setCurrentQueryName(searchOptions.sidebarQuery);
+    searchOptions.sidebarQuery && setCurrentQueryName(searchOptions.sidebarQuery);
   }, [searchOptions.sidebarQuery]);
 
   useEffect(() => {
@@ -92,13 +91,11 @@ const Sidebar: React.FC<Props> = (props) => {
 
 
   const onSettingCheckedList = (list) => {
-    setIndeterminate(!!list.length && list.length < props.currentRelatedEntities.size);
     setCheckAll(list.length === props.currentRelatedEntities.size);
   };
 
   const onCheckAllChanges = ({target}) => {
     const {checked} = target;
-    setIndeterminate(false);
     setCheckAll(checked);
     let final = new Map();
     Array.from(props.currentRelatedEntities.values()).forEach(entity => {
@@ -556,33 +553,28 @@ const Sidebar: React.FC<Props> = (props) => {
     updateUserPreferences(user.name, options);
   };
 
-  const menu = (
-    <Menu>
-      <Menu.Item key="0">
-        <span>
-          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
-          Edit query details
-        </span>
-      </Menu.Item>
-      <Menu.Item key="1">
-        <span>
-          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon} />
-          Revert query to saved state
-        </span>
-      </Menu.Item>
-      <Menu.Item key="2">
-        <span>
-          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
-          Save query as
-        </span>
-      </Menu.Item>
-      <Menu.Item key="3">
-        <span style={{color: "#B32424"}}>
-          <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon} />
-          Delete query
-        </span>
-      </Menu.Item>
-    </Menu>
+  const menu = (<div className={styles.menuContainer}>
+    <Dropdown.Item
+    ><span>
+        <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
+        Edit query details
+      </span></Dropdown.Item>
+    <Dropdown.Item
+    ><span>
+        <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon} />
+        Revert query to saved state
+      </span></Dropdown.Item>
+    <Dropdown.Item
+    ><span>
+        <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
+        Save query as
+      </span></Dropdown.Item>
+    <Dropdown.Item
+    ><span style={{color: "#B32424"}}>
+        <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon} />
+        Delete query
+      </span></Dropdown.Item>
+  </div>
   );
 
   const panelTitle = (title, tooltipTitle) => {
@@ -609,24 +601,31 @@ const Sidebar: React.FC<Props> = (props) => {
           currentQueryName={currentQueryName}
         />
         {currentQueryName !== PLACEHOLDER &&
-          <div className={`d-flex ms-5`}>
+          <div className={styles.iconContainer}>
             <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query"/>
-            <Dropdown overlay={menu} trigger={["click"]}>
-              <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
+            <Dropdown as={ButtonGroup}>
+              <Dropdown.Toggle className={styles.sourceDrop}>
+
+                <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
+              </Dropdown.Toggle>
+              <Dropdown.Menu  flip={false} className={styles.dropdownMenu}>
+                {menu}
+
+              </Dropdown.Menu>
             </Dropdown>
           </div>
         }
       </div>
       {currentQueryName !== PLACEHOLDER &&
         <div className={styles.clearQuery}>
-          <Button size="small" type={"link"} onClick={clearSelectedQuery} >
+          <span onClick={clearSelectedQuery} >
             <FontAwesomeIcon icon={faWindowClose} size="sm" />
             Clear query
-          </Button>
+          </span>
         </div>
       }
       <div className={styles.searchInput}>
-        <Input aria-label="graph-view-filter-input" suffix={<Icon className={styles.searchIcon} type="search" theme="outlined" />} placeholder="Search" size="small" />
+        <HCInput id="graph-view-filter-input" suffix={<FontAwesomeIcon icon={faSearch} size="sm" className={styles.searchIcon}/>} placeholder="Search" size="sm" />
       </div>
       <div className={"m-3 switch-button-group"}>
         <span>
@@ -719,7 +718,7 @@ const Sidebar: React.FC<Props> = (props) => {
           <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
             <div className={"p-0 d-flex"}>
               <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                panelTitle(<Checkbox indeterminate={indeterminate} onChange={onCheckAllChanges} checked={checkAll}> related entities types </Checkbox>, exploreSidebar.relatedEntities)}</Accordion.Button>
+                panelTitle(<span><HCCheckbox id="check-all" value="check-all" handleClick={onCheckAllChanges} checked={checkAll} />related entities types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
             </div>
             <Accordion.Body>
               <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>

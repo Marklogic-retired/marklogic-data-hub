@@ -8,7 +8,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NodeSvg from "./node-svg";
 import graphConfig from "../../../../config/graph-vis.config";
 import AddEditRelationship from "../relationship-modal/add-edit-relationship";
-import {Dropdown, Menu} from "antd";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
 import * as _ from "lodash";
 
@@ -69,7 +68,7 @@ const GraphVis: React.FC<Props> = (props) => {
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
-  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false); //eslint-disable-line @typescript-eslint/no-unused-vars
   const [clickedNode, setClickedNode] = useState(undefined);
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
@@ -609,7 +608,7 @@ const GraphVis: React.FC<Props> = (props) => {
     },
   };
 
-  const menuClick = async (event) => {
+  const menuClick = async (event) => { // eslint-disable-line @typescript-eslint/no-unused-vars
     setContextMenuVisible(false);
     if (event.key === "1") {
       if (network) {
@@ -623,14 +622,14 @@ const GraphVis: React.FC<Props> = (props) => {
     }
   };
 
-  const menu = () => {
+  const menu = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
     return (
-      <Menu id="contextMenu" onClick={menuClick}>
-        { clickedNode &&
-      <Menu.Item key="1" data-testid={`centerOnEntityType-${clickedNode}`}>
-        Center on entity type
-      </Menu.Item> }
-        {/*{ clickedEdge &&
+      // <Menu id="contextMenu" onClick={menuClick}>
+      //   { clickedNode &&
+      // <Menu.Item key="1" data-testid={`centerOnEntityType-${clickedNode}`}>
+      //   Center on entity type
+      // </Menu.Item> }
+      {/*{ clickedEdge &&
       <Menu.Item key="2">
         {"Edit relationship "}
       </Menu.Item> }
@@ -638,7 +637,7 @@ const GraphVis: React.FC<Props> = (props) => {
           {"Explore " + clickedNode + " instances"}
         </Link> </Menu.Item>
       <Menu.Item key="4">3rd menu item</Menu.Item>*/}
-      </Menu>
+      // </Menu>
     );
   };
 
@@ -806,20 +805,14 @@ const GraphVis: React.FC<Props> = (props) => {
 
   return (
     <div id="graphVis">
-      <Dropdown
-        overlay={menu}
-        trigger={["contextMenu"]}
-        visible={contextMenuVisible}
-      >
-        <div>
-          <Graph
-            graph={graphData}
-            options={options}
-            events={events}
-            getNetwork={initNetworkInstance}
-          />
-        </div>
-      </Dropdown>
+      <div /* onContextMenuCapture={handleContextMenucapture} */ style={{position: "relative"}}>
+        <Graph
+          graph={graphData}
+          options={options}
+          events={events}
+          getNetwork={initNetworkInstance}
+        />
+      </div>
       <AddEditRelationship
         openRelationshipModal={openRelationshipModal}
         setOpenRelationshipModal={setOpenRelationshipModal}

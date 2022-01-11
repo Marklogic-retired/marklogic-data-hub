@@ -56,6 +56,16 @@
     height: 30px;
 }
 
+.dropdownTrigger {
+  background-color: #fafafa !important;
+  border: none !important;
+  border-radius: 0 !important;
+  color: #333333 !important;
+  height: 100%;
+  display: flex !important;
+  padding: 0 5px !important;
+}
+
 .horizontalLine {
     pointer-events: none;
     width: 185px;
@@ -80,8 +90,19 @@
 .questionCircle {
     font-size: 12px;
     vertical-align: top;
-    margin-top: 6px;
     margin: auto;
+    margin-left: 6px;
+}
+
+.cardContainer {
+  height: 100%;
+  margin: 0;
+  border-radius: 0 !important;
+}
+.cardBody {
+  position: relative;
+  padding: 24px !important;
+
 }
 
 .foreignKeyQuestionCircle {
@@ -186,7 +207,6 @@
     background-color: #fafafa !important;
     color: $text-color !important;
     border: none !important;
-
     &:hover,
     &:active,
     &:focus{
@@ -194,7 +214,12 @@
       box-shadow: none !important;
     }
 }
-
+.dropdownMenu {
+  width: 212px;
+  border: none !important;
+  position:absolute;
+  left: -194px !important;
+}
 .oneToManyIcon {
     padding-bottom: 3px;
 }

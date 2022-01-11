@@ -40,11 +40,11 @@ class AdvancedSettingsDialog {
   }
 
   getTargetPermissions() {
-    return cy.get("#targetPermissions");
+    return cy.get(`#targetPermissions`);
   }
 
   setTargetPermissions(permissions: string) {
-    cy.get("#targetPermissions").clear({force: true}).type(permissions);
+    cy.get(`#targetPermissions`).clear({force: true}).type(permissions);
   }
 
   /**
