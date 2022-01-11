@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import {Row, Col, Card, Menu, Dropdown, Collapse, Icon, Switch} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlusSquare} from "@fortawesome/free-solid-svg-icons";
@@ -105,6 +105,7 @@ const MatchingStepDetail: React.FC = () => {
   const [thresholdItems, setThresholdItems] = useState<any []>([]);
   const [displayRulesetTimeline, toggleDisplayRulesetTimeline] = useState(false);
   const [displayThresholdTimeline, toggleDisplayThresholdTimeline] = useState(false);
+  const refMatchingRuleset = useRef<any[]>();
 
   const menu = (
     <Menu>
@@ -158,6 +159,10 @@ const MatchingStepDetail: React.FC = () => {
       toggleDisplayRulesetTimeline(false);
     }*/
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
+
+  useEffect(() => {
+    refMatchingRuleset.current! = matchingStep.matchRulesets;
+  }, [matchingStep]);
 
   const handleMatchingActivity = async (matchStepName) => {
     let matchActivity = await calculateMatchingActivity(matchStepName);
@@ -668,9 +673,9 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const onRuleSetTimelineItemClicked = (event) => {
-    let updateStepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
     let index = event.item;
-    let editMatchRuleset = updateStepArtifactRulesets[index];
+    let currentRuleset = refMatchingRuleset.current!;
+    let editMatchRuleset = currentRuleset[index];
     setEditRuleset({...editMatchRuleset, index});
     if (editMatchRuleset) {
       if (editMatchRuleset.hasOwnProperty("rulesetType") && editMatchRuleset["rulesetType"] === "multiple") {
