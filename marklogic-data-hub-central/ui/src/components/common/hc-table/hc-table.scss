@@ -58,7 +58,7 @@
             cursor: pointer;
         }
     }
-    #lowerTable th {
+    #subTable th {
         display: none;
     }
 
@@ -144,6 +144,16 @@
         border: 1px solid #e8e8e8;
         border-top-left-radius: 4px;
     }
+}
+
+
+.mappingSettingRow {
+  td {
+    background-image: url("../../../assets/grey-for-white-bg.png") !important;
+  }
+  &:hover {
+    background-image: url("../../../assets/grey-for-white-bg.png") !important;
+  }
 }
 
 .document-table-demo, .expandable-table-view {

@@ -21,7 +21,7 @@
     &.hasExpandedRowXML {
       background-color: #e8e8e8 !important;
       color: #333;
-      width: 185px !important;
+      // width: 185px !important;
     }
     &.subTableHeader {
         background: #e0e0e0 !important;
@@ -157,14 +157,11 @@
     }
 }
 
-.childElementText {
-}
-
 .childrenIndentElementCell {
     display: table-cell;
+    vertical-align: middle;
 }
 .childrenIndentSelectCell {
     display: table-cell;
     width: 50px !important;
 }
-// border-top-left-radius: 4px;

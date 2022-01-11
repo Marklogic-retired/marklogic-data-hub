@@ -1004,11 +1004,11 @@ const MappingStepDetail: React.FC = () => {
   const headerColumns = [
     {
       text: "Name",
-      headerFormatter: () => <div className={styles.nameHeader}><span data-testid="sourceTableKey" className={sourceFormat === "xml" ? styles.nameHeaderTextXML : styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-srcName`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
+      headerFormatter: () => <div className={sourceFormat === "xml" ? styles.nameHeaderXML : styles.nameHeader }><span data-testid="sourceTableKey" className={sourceFormat === "xml" ? styles.nameHeaderTextXML : styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-srcName`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
       dataField: "key",
       key: "rowKey",
       // sorter: (a: any, b: any) => a.key?.localeCompare(b.key),
-      width: 185,
+      width: sourceFormat === "xml" ? "55%" : 185,
       formatter: (text, row, index, extraData) => {
         let textToSearchInto = text?.split(":").length > 1 ? text?.split(":")[0] + ": " + text?.split(":")[1] : text;
         let valueToDisplay = sourceFormat === "xml" && row.rowKey === 1 ? <div>
@@ -1024,7 +1024,7 @@ const MappingStepDetail: React.FC = () => {
       key: "val",
       // ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
-      width: 160,
+      width: sourceFormat === "xml" ? "45%" : 160,
       formatter: (text, row) => (<div data-testid={row.key + "-srcValue"} className={styles.sourceValue}>{(text || text === "") ? getTextforSourceValue(text, row) : ""}</div>)
     }
   ];

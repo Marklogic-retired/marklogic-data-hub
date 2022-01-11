@@ -1298,7 +1298,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("suffix")).toBeInTheDocument();
 
     //Check if indentation is right
-    expect(getByText("suffix").parentElement.parentElement).toHaveStyle(`padding-left: 25.5px`);
+    expect(getByText("suffix").parentElement.parentElement).toHaveStyle(`padding-left: 45px`);
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnSource);
@@ -1344,7 +1344,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByText("artCraft")).toBeInTheDocument();
 
     //Check if indentation is right
-    expect(getByText("artCraft").parentElement.parentElement.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 59.49999999999999px`);
+    expect(getByText("artCraft").parentElement.parentElement.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 63.699999999999996px`);
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
@@ -1391,9 +1391,9 @@ describe("RTL Source-to-entity map tests", () => {
     let firstName = getByText("FirstNamePreferred");
     let lastName = getByText("LastName");
     expect(firstName).toBeInTheDocument();
-    expect(firstName.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 32px`); // Check if the indentation is right
+    expect(firstName.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 38.400000000000006px`); // Check if the indentation is right
     expect(lastName).toBeInTheDocument();
-    expect(lastName.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 32px`); // Check if the indentation is right
+    expect(lastName.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 38.400000000000006px`); // Check if the indentation is right
 
     //Collapsing back to the default view (root and 1st level)
     fireEvent.click(collapseBtnSource);
