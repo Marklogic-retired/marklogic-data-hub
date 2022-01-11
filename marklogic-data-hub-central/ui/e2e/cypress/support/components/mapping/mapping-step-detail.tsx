@@ -235,6 +235,10 @@ class MappingStepDetail {
     return cy.get("#dataPresent");
   }
 
+  entityData() {
+    return cy.get("#lowerTable");
+  }
+
   successMessage() {
     return cy.findByTestId("successMessage");
   }

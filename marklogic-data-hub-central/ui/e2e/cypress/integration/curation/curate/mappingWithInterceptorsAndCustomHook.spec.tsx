@@ -204,7 +204,8 @@ describe("Create and verify load steps, map step and flows with interceptors & c
 
   it("verify Map step settings change from within map step details page", () => {
     //Check that the source data is visible
-    cy.waitUntil(() => curatePage.dataPresent().should("exist"));
+    curatePage.dataPresent().should("exist");
+    mappingStepDetail.entityData().should("exist");
     // Open step settings and switch to Advanced tab in step settings
     mappingStepDetail.stepSettingsLink().click();
     createEditMappingDialog.getMappingDescriptionInput().should("have.value", "An order mapping with custom interceptors");
@@ -236,6 +237,7 @@ describe("Create and verify load steps, map step and flows with interceptors & c
     advancedSettingsDialog.setTargetPermissions("data-hub-common,read");
     advancedSettingsDialog.saveEntitySettings();
 
+    mappingStepDetail.entityData().should("exist");
     mappingStepDetail.entitySettingsLink().click();
     advancedSettingsDialog.getTargetPermissions().should("have.value", "data-hub-common,read");
     advancedSettingsDialog.setTargetPermissions("data-hub-common,read,data-hub-common,update");
