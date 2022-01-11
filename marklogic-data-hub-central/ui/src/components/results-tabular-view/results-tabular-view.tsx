@@ -475,6 +475,7 @@ const ResultsTabularView = (props) => {
         onExpand={onExpand}
         childrenIndent={true}
         className={`exploreInternalTable`}
+        component={"explore"}
         baseIndent={25}
       />
     );

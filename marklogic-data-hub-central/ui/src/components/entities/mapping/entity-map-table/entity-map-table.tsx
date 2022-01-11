@@ -20,6 +20,7 @@ import {QuestionCircleFill, XLg, ChevronDown, ChevronRight, Search} from "react-
 import {DropDownWithSearch, HCButton, HCInput, HCTooltip, HCTable} from "@components/common";
 import Popover from "react-bootstrap/Popover";
 import {OverlayTrigger} from "react-bootstrap";
+
 interface Props {
   setScrollRef: any;
   executeScroll: any;
@@ -222,7 +223,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
   const mapExpressionStyle = (propName, isProperty) => {
     const mapStyle: CSSProperties = {
-      width: "22vw",
+      width: "21vw",
       verticalAlign: "top",
       justifyContent: "top",
       borderColor: checkFieldInErrors(propName, isProperty) ? "red" : ""
@@ -1312,7 +1313,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       headerFormatter: () => <div><span data-testid="entityTableName" className={styles.nameHeaderText}>Name</span><OverlayTrigger placement="bottom" show={popoverVisibility} overlay={renderFilter()} trigger="click"><i><FontAwesomeIcon className={styles.filterIcon} data-testid={`filterIcon-${props.entityTypeTitle}-entity`} icon={faSearch} size="lg" onClick={() => togglePopover()}/></i></OverlayTrigger></div>,
       dataField: "name",
       key: "name",
-      width: "18%",
+      width: props.isRelatedEntity ? "18%" : "20%",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {colSpan: `4`};
@@ -1380,7 +1381,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       headerFormatter: () => <span data-testid="entityTableType">Type</span>,
       dataField: "type",
       key: "type",
-      width: "16%",
+      width: props.isRelatedEntity ? "14.4%" : "16%",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {hidden: true};
@@ -1465,7 +1466,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
 
       dataField: "key",
       key: "key",
-      width: "45%",
+      width: "40%",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {hidden: true};
@@ -1846,19 +1847,14 @@ const EntityMapTable: React.FC<Props> = (props) => {
       <HCTable
         pagination={false}
         className={tableCSS}
-        // indentSize={28}
-        //defaultExpandAllRows={true}
-        // expandIcon={(props) => customExpandIcon(props)}
+        rowClassName={"mappingSettingRow"}
         onExpand={(expanded, record) => toggleRowExpanded(expanded, record, "key")}
         expandedRowKeys={props.entityExpandedKeys}
         columns={getColumnsForEntityTable("upper")}
         data={filterApplied ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}] : entityProperties.length > 1 ? props.isRelatedEntity ? [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0], entityProperties[1]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}, entityProperties[0]] : [{key: props.firstRowTableKeyIndex, name: topRowDetails, type: "", parentVal: ""}]}
-        // tableLayout="unset"
         rowKey={"key"}
-        keyUtil={"rowKey"}
-        // getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
+        keyUtil={"key"}
         showHeader={!props.isRelatedEntity}
-        // rowClassName={(record, index) => getRowClassName(record, index)}
       />
     </div>
     {entityProperties.length ?
@@ -1871,18 +1867,13 @@ const EntityMapTable: React.FC<Props> = (props) => {
           expandedRowKeys={props.entityExpandedKeys}
           childrenIndent={true}
           subTableHeader={true}
-          baseIndent={50}
-          // indentSize={28}
-          //defaultExpandAllRows={true}
+          baseIndent={70}
           columns={getColumnsForEntityTable("lower")}
           data={filterApplied ? filteredEntityProperties : props.isRelatedEntity ? entityProperties.slice(2, entityProperties.length) : entityProperties.slice(1, entityProperties.length)}
-          // tableLayout="unset"
           rowKey={"key"}
           keyUtil={"key"}
-          // getPopupContainer={() => document.getElementById("entityTableContainer") || document.body}
           showHeader={false}
           nestedParams={{headerColumns: entityColumns, iconCellList: ["Name", "Type", "XPath Expression", "Value"], state: [props.entityExpandedKeys, props.setEntityExpandedKeys]}}
-          // rowClassName={(record, index) => getRowClassName(record, index)}
         />
       </div>
       : null

@@ -105,15 +105,6 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.getEntityTypeTab().should("be.visible");
     graphViewSidePanel.getDeleteIcon("Customer").should("be.visible");
 
-    //To verify cannot edit without permissions
-    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
-      const canvas = graphVis.getGraphVisCanvas();
-      const trigger = canvas.trigger("mouseover", edgePosition.x, edgePosition.y);
-      trigger.click({force: true});
-    });
-
-    relationshipModal.getModalHeader().should("not.exist");
-
     //To verify properties tab should display property table
     graphViewSidePanel.getPropertyTableHeader("propertyName").should("be.visible");
     graphViewSidePanel.getPropertyTableHeader("type").should("be.visible");
@@ -149,8 +140,17 @@ describe("Entity Modeling: Reader Role", () => {
     graphViewSidePanel.closeSidePanel();
     graphViewSidePanel.getSelectedEntityHeading("Customer").should("not.exist");
 
+    //To verify cannot edit without permissions
+    graphVis.getPositionOfEdgeBetween("Customer,BabyRegistry").then((edgePosition: any) => {
+      const canvas = graphVis.getGraphVisCanvas();
+      const trigger = canvas.trigger("mouseover", edgePosition.x, edgePosition.y);
+      trigger.click({force: true});
+    });
+
+    relationshipModal.getModalHeader().should("not.exist");
+
     //To test graph view model png is downloaded successfully
-    graphView.getExportGraphIcon().click().then(
+    graphView.getExportGraphIcon().scrollIntoView().click({force: true}).then(
       () => {
         cy.readFile("./cypress/downloads/graph-view-model.png", "base64").then(
           (downloadPng) => {

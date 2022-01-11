@@ -1047,6 +1047,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               keyUtil={"key"}
               baseIndent={20}
               pagination={false}
+              component={"property"}
               showExpandIndicator={{bordered: true}}
               childrenIndent={true}
               subTableHeader={!props.sidePanelView}
