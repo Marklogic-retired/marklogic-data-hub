@@ -72,6 +72,7 @@ const ResultsTabularView = (props) => {
   const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
   const [primaryKey, setPrimaryKey] = useState<string>("");
   const [expandedNestedTableRows, setExpandedNestedTableRows] = useState<string[]>([]);
+  const [expandedNestedTableColumn, setExpandedNestedTableColumn] = useState<string[]>([]);
 
   const {
     searchOptions,
@@ -111,6 +112,90 @@ const ResultsTabularView = (props) => {
 
   let dataWithSelectedTableColumns = generateTableDataWithSelectedColumns(props.selectedPropertyDefinitions);
 
+
+  const handleSubHeaderClick = (key) => {
+    if (expandedNestedTableColumn.includes(key)) {
+      const filterExpandedColumn = expandedNestedTableColumn.filter(e => e !== key);
+      setExpandedNestedTableColumn([...filterExpandedColumn]);
+    } else {
+      setExpandedNestedTableColumn([...expandedNestedTableColumn, key]);
+    }
+  };
+
+  const renderStructuredProperty = (properties, cell) => {
+    let dataToRender = cell.map((item, indicator) => {
+      const row = properties.map((property, index) => {
+        const {propertyPath} = property;
+        if (!property.hasOwnProperty("properties")) {
+          return (
+            <td key={index}>
+              <div className={styles.columData} key={`${index}`}>{item[propertyPath]}</div>
+            </td>
+          );
+        }
+        if (expandedNestedTableColumn.includes(property.propertyPath)) {
+          return (
+            <td className={styles.innerTableContainer} key={`table${propertyPath}`}>
+              {
+                renderStructuredProperty(property.properties, item[propertyPath])
+              }
+            </td>
+          );
+        }
+        return (<td key={`${property.propertyPath}-${index}`} className={styles.nestedColumn}>
+          {
+            property?.properties?.map((col, index) => <HCTooltip
+              key={col.propertyPath}
+              text={col.propertyLabel}
+              id={`title-tooltip-${indicator}-${index}`}
+              placement="top">
+              <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
+            </HCTooltip>)
+          }
+        </td>);
+      });
+      return (
+        <tr key={indicator}>
+          {row}
+        </tr>
+      );
+    });
+
+    const render = (
+      <table key={`table-${Math.random()}`} className={styles.innerColumnTable}>
+        <thead>
+          <tr>
+            {
+              properties?.map((col, index) => {
+                const canClick = col.hasOwnProperty("properties");
+                return (<th key={col.propertyPath}>
+                  {
+                    <HCTooltip
+                      text={col.propertyLabel}
+                      id={`title-tooltip-${index}`}
+                      placement="top">
+                      {canClick ? <div className={styles.columHeaderClicked} onClick={() => { handleSubHeaderClick(col.propertyPath); }}>{col.propertyLabel}</div> : <div className={styles.columHeader}>{col.propertyLabel}</div>}
+                    </HCTooltip>
+                  }
+                </th>);
+              })
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            dataToRender.length !== 0 ? dataToRender : <tr>{
+              properties?.map((col, index) => <td key={`${col?.propertyPath}-${index}`} className={styles.noData}></td>)
+            }</tr>
+          }
+        </tbody>
+      </table>
+    );
+
+
+    return render;
+  };
+
   let sortingOrder = false;
   const tableHeaderRender = (selectedTableColumns) => {
     const columns = selectedTableColumns.map((item) => {
@@ -119,22 +204,34 @@ const ResultsTabularView = (props) => {
           dataField: item.propertyPath,
           key: item.propertyPath,
           text: item.propertyLabel,
+          headerEvents: {
+            onClick: (_, column) => {
+              const {key} = column;
+              handleSubHeaderClick(key);
+            }
+          },
           className: "nestedColumn",
+          formatExtraData: {
+            key: item.propertyPath,
+            properties: item.properties
+          },
+          headerStyle: {
+            cursor: "pointer"
+          },
           headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
-          type: item.datatype,
-          formatter: (cell) => {
-            const innerHeaders = Object.keys(cell[0])?.reduce((acc: any, elem) => {
-              if (elem === "key") return acc;
-              const value = elem.split(".").pop();
-              return [...acc, value];
-            }, []);
-            return (innerHeaders?.map((col, index) => <HCTooltip
-              key={col}
-              text={col}
-              id={`title-tooltip-${index}`}
-              placement="top">
-              <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col}</div>
-            </HCTooltip>));
+          formatter: (cell, row, colIndex, formatExtraData) => {
+            const {key, properties} = formatExtraData;
+            if (expandedNestedTableColumn.includes(key)) {
+              return renderStructuredProperty(properties, cell);
+            } else {
+              return (properties?.map((col, index) => <HCTooltip
+                key={col.propertyPath}
+                text={col.propertyLabel}
+                id={`title-tooltip-${index}`}
+                placement="top">
+                <div style={{textOverflow: "ellipsis", overflow: "hidden"}}>{col.propertyLabel}</div>
+              </HCTooltip>));
+            }
           },
           onCell: () => {
             return {
@@ -152,7 +249,6 @@ const ResultsTabularView = (props) => {
           key: item.propertyPath,
           text: item.propertyLabel,
           headerFormatter: (_, $, {sortElement}) => <><span className="resultsTableHeaderColumn" data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>{sortElement}</>,
-          type: item.datatype,
           ...setSortOptions(item),
           formatter: (value) => {
             if (!Array.isArray(value)) return (<div>{value}</div>);
@@ -193,7 +289,6 @@ const ResultsTabularView = (props) => {
     let detailView = {
       table: "Detail View",
       text: "Detail View",
-      title: "Detail View",
       dataField: "detailView",
       key: "0-d",
       headerFormatter: (column) => <span className="resultsTableHeaderColumn" >{column.text}</span>,
@@ -361,6 +456,7 @@ const ResultsTabularView = (props) => {
         entity.primaryKey && setPrimaryKey(entity.primaryKey);
       }
       setExpandedNestedTableRows([]);
+      setExpandedNestedTableColumn([]);
     }));
   }, [props.selectedEntities, searchOptions.selectedTableProperties]);
 
@@ -368,7 +464,6 @@ const ResultsTabularView = (props) => {
     const nestedColumns = [
       {
         text: "Property",
-        title: "Property",
         dataField: "property",
         width: "33%",
         formatter: (_, row) => {
@@ -377,7 +472,6 @@ const ResultsTabularView = (props) => {
       },
       {
         text: "Value",
-        title: "Value",
         dataField: "value",
         width: "calc(34% - 50px)",
         formatter: (_, row) => {
@@ -386,7 +480,6 @@ const ResultsTabularView = (props) => {
       },
       {
         text: "View",
-        title: "View",
         dataField: "view",
         width: "33%",
         formatter: (_, row) => {
