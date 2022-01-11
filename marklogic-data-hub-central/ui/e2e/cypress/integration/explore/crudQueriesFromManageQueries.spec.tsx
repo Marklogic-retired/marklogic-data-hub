@@ -151,7 +151,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     //browsePage.getManageQueryCloseIcon().click();
     //switch to explorer zero state page
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    toolbar.getExploreToolbarIcon().should("be.visible", {timeout: 6000}).click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.waitForHCTableToLoad();
     //open record instance view for the first document
