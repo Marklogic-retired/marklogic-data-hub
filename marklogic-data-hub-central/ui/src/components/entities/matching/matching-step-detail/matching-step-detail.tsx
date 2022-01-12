@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import {useHistory} from "react-router-dom";
 import {Row, Col, Accordion, Card, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -104,6 +104,7 @@ const MatchingStepDetail: React.FC = () => {
   const [thresholdItems, setThresholdItems] = useState<any[]>([]);
   const [displayRulesetTimeline, toggleDisplayRulesetTimeline] = useState(false);
   const [displayThresholdTimeline, toggleDisplayThresholdTimeline] = useState(false);
+  const refMatchingRuleset = useRef<any[]>();
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -139,6 +140,10 @@ const MatchingStepDetail: React.FC = () => {
       toggleDisplayRulesetTimeline(false);
     }*/
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
+
+  useEffect(() => {
+      refMatchingRuleset.current! = matchingStep.matchRulesets;
+  }, [matchingStep]);
 
   useEffect(() => { setColourElementAdded(false); }, [uriContent]);
   useEffect(() => { setColourElementAdded2(false); }, [uriContent2]);
@@ -657,9 +662,9 @@ const MatchingStepDetail: React.FC = () => {
   };
 
   const onRuleSetTimelineItemClicked = (event) => {
-    let updateStepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
     let index = event.item;
-    let editMatchRuleset = updateStepArtifactRulesets[index];
+    let currentRuleset = refMatchingRuleset.current!;
+    let editMatchRuleset = currentRuleset[index];
     setEditRuleset({...editMatchRuleset, index});
     if (editMatchRuleset) {
       if (editMatchRuleset.hasOwnProperty("rulesetType") && editMatchRuleset["rulesetType"] === "multiple") {
