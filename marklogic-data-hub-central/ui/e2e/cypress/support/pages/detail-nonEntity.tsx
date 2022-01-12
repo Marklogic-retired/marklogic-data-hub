@@ -13,7 +13,7 @@ class DetailPageNonEntity {
   }
 
   getSourceTable() {
-    return cy.findByTestId("sources-table");
+    return cy.get(`[class*="detail-page-non-entity_sourcesMetadataTable"] table`);
   }
 
   getDocumentRecordType() {
@@ -29,7 +29,7 @@ class DetailPageNonEntity {
   }
 
   getHistoryTable() {
-    return cy.findByTestId("history-table");
+    return cy.get(`[class*="detail-page-non-entity_historyMetadataTable"] table`);
   }
 
   getDocumentQuality() {
@@ -37,15 +37,15 @@ class DetailPageNonEntity {
   }
 
   getDocumentCollections() {
-    return cy.findByTestId("collections-table");
+    return cy.get(`[class*="detail-page-non-entity_collectionsTable"] table`);
   }
 
   getDocumentPermissions() {
-    return cy.findByTestId("record-permissions-table");
+    return cy.get(`[class*="detail-page-non-entity_recordPermissionsTable"] table`);
   }
 
   getDocumentMetadataValues() {
-    return cy.findByTestId("record-metadata-table");
+    return cy.get(`[class*="detail-page-non-entity_recordMetadataTable"] table`);
   }
 
   getDocumentProperties() {
