@@ -105,7 +105,10 @@
 
         & thead > tr > th {
             color: #44499c;
-            background-color: #e7e7e8;
+            background-color: #e7e7e8 !important;
+            &:hover {
+                background-color: #e0e0e0 !important;
+            }
         }
     }
 
@@ -113,8 +116,45 @@
         padding-top: 5px;
         & thead > tr > th {
             color: #44499c;
-            background-color: #e7e7e8;
+            background-color: #e7e7e8 !important;
+            &:hover {
+                background-color: #e0e0e0 !important;
+            }
         }
+    }
+    .collectionsTable {
+        padding-top: 5px;
+        & thead > tr > th {
+            color: #44499c;
+            background-color: #e7e7e8 !important;
+            &:hover {
+                background-color: #e0e0e0 !important;
+            }
+        }
+    }
+    .recordPermissionsTable {
+        padding-top: 5px;
+        & thead > tr > th {
+            color: #44499c;
+            background-color: #e7e7e8 !important;
+            &:hover {
+                background-color: #e0e0e0 !important;
+            }
+        }
+    }
+    .recordMetadataTable {
+        padding-top: 5px;
+        & thead > tr > th {
+            color: #44499c;
+            background-color: #e7e7e8 !important;
+            &:hover {
+                background-color: #e0e0e0 !important;
+            }
+        }
+    }
+    a[class="page-link"],
+    span[class="page-link"] {
+        background: transparent !important;
     }
 }
 

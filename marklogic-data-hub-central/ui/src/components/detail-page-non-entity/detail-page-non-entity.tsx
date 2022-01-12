@@ -1,6 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
 import {Row, Col, Tab, Tabs} from "react-bootstrap";
-import {Table} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -12,7 +11,7 @@ import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
 import {getRecord} from "../../api/record";
 import {HCTooltip} from "@components/common";
 import {ArrowLeftShort, Download} from "react-bootstrap-icons";
-import {HCSider} from "@components/common";
+import {HCSider, HCTable} from "@components/common";
 
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
@@ -36,32 +35,40 @@ const DetailPageNonEntity = (props) => {
 
   const sourcesColumns = [
     {
-      title: "Source Name",
+      text: "Source Name",
       dataIndex: "sourceName",
+      dataField: "sourceName",
       width: "50%",
-      sorter: (a: any, b: any) => a.sourceName?.localeCompare(b.sourceName),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <span className={styles.validValue}>{text}</span>
+      sort: true,
+      sortFunc: (a: any, b: any) => a.sourceName?.localeCompare(b.sourceName),
+      formatter: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <span className={styles.validValue}>{text}</span>
     },
     {
-      title: "Source Type",
+      text: "Source Type",
       dataIndex: "sourceType",
+      dataField: "sourceType",
       width: "50%",
-      sorter: (a: any, b: any) => a.sourceType?.localeCompare(b.sourceType),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <span className={styles.validValue}>{text}</span>
+      sort: true,
+      sortFunc: (a: any, b: any) => a.sourceType?.localeCompare(b.sourceType),
+      formatter: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <span className={styles.validValue}>{text}</span>
     }
   ];
 
   const historyColumns = [
     {
-      title: "Time Stamp",
+      text: "Time Stamp",
       dataIndex: "updatedTime",
+      dataField: "updatedTime",
+      key: "updatedTime",
       width: "25%",
-      sorter: (a: any, b: any) => a.updatedTime?.localeCompare(b.updatedTime),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <span>{text}</span>
+      sort: true,
+      sortFunc: (a: any, b: any) => a.updatedTime?.localeCompare(b.updatedTime),
+      formatter: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <span>{text}</span>
     },
     {
-      title: "Flow",
+      text: "Flow",
       dataIndex: "flow",
+      dataField: "flow",
       width: "25%",
       onCell: () => {
         return {
@@ -71,8 +78,9 @@ const DetailPageNonEntity = (props) => {
           }
         };
       },
-      sorter: (a: any, b: any) => a.flow?.localeCompare(b.flow),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
+      sort: true,
+      sortFunc: (a: any, b: any) => a.flow?.localeCompare(b.flow),
+      formatter: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
         key={text}
         text={text}
         id="history-flow-tooltip"
@@ -81,8 +89,10 @@ const DetailPageNonEntity = (props) => {
       </HCTooltip>
     },
     {
-      title: "Step",
+      text: "Step",
       dataIndex: "step",
+      dataField: "step",
+      key: "step",
       width: "25%",
       onCell: () => {
         return {
@@ -92,8 +102,9 @@ const DetailPageNonEntity = (props) => {
           }
         };
       },
-      sorter: (a: any, b: any) => a.step?.localeCompare(b.step),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
+      sort: true,
+      sortFunc: (a: any, b: any) => a.step?.localeCompare(b.step),
+      formatter: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
         key={text}
         text={text}
         id="history-step-tooltip"
@@ -102,9 +113,12 @@ const DetailPageNonEntity = (props) => {
       </HCTooltip>
     },
     {
-      title: "User",
+      text: "User",
       dataIndex: "user",
+      dataField: "user",
+      key: "user",
       width: "25%",
+      sort: true,
       onCell: () => {
         return {
           style: {
@@ -113,8 +127,8 @@ const DetailPageNonEntity = (props) => {
           }
         };
       },
-      sorter: (a: any, b: any) => a.user?.localeCompare(b.user),
-      render: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
+      sortFunc: (a: any, b: any) => a.user?.localeCompare(b.user),
+      formatter: text => text === "none" ? <span className={styles.noneValue}>{text}</span> : <HCTooltip
         key={text}
         text={text}
         id="history-user-tooltip"
@@ -126,34 +140,39 @@ const DetailPageNonEntity = (props) => {
 
   const collectionColumns = [
     {
-      title: "Collection",
+      text: "Collection",
       dataIndex: "collection",
+      dataField: "collection",
       key: "collection",
     }
   ];
 
   const recordMetadataColumns = [
     {
-      title: "Property",
+      text: "Property",
       dataIndex: "property",
+      dataField: "property",
       key: "property",
     },
     {
-      title: "Value",
+      text: "Value",
       dataIndex: "value",
+      dataField: "value",
       key: "value",
     }
   ];
 
   const recordPermissionsColumns = [
     {
-      title: "Role",
+      text: "Role",
       dataIndex: "role",
+      dataField: "role",
       key: "role",
     },
     {
-      title: "Capability",
+      text: "Capability",
       dataIndex: "capability",
+      dataField: "capability",
       key: "capability",
     }
   ];
@@ -269,11 +288,12 @@ const DetailPageNonEntity = (props) => {
           <div>Document Quality: <span className={styles.quality} data-testid="non-entity-document-quality">{props.docQuality}</span></div>
           <div className={styles.sourcesMetadataTableContainer}>
             <div className={styles.metadataTableLabel} data-testid="non-entity-sources-label">Sources</div>
-            <Table
+            <HCTable
               bordered
               className={styles.sourcesMetadataTable}
               rowKey="key"
-              dataSource={props.sourcesTableData}
+              keyUtil={"key"}
+              data={props.sourcesTableData}
               columns={sourcesColumns}
               pagination={false}
               data-testid="sources-table"
@@ -281,11 +301,12 @@ const DetailPageNonEntity = (props) => {
           </div>
           <div className={styles.historyMetadataTableContainer}>
             <div className={styles.metadataTableLabel} data-testid="non-entity-history-label">History</div>
-            <Table
+            <HCTable
               bordered
               className={styles.historyMetadataTable}
               rowKey="key"
-              dataSource={props.historyData}
+              keyUtil={"key"}
+              data={props.historyData}
               columns={historyColumns}
               pagination={false}
               data-testid="history-table"
@@ -293,24 +314,24 @@ const DetailPageNonEntity = (props) => {
           </div>
           {
             (props.collections) &&
-              <div className={styles.collectionsTableContainer}>
-                <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
-                <Table bordered dataSource={props.collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" />
-              </div>
+            <div className={styles.collectionsTableContainer}>
+              <div className={styles.collectionsTableLabel} data-testid="entity-collections-label">Collections</div>
+              <HCTable bordered keyUtil={"key"} rowKey="key" data={props.collections} columns={collectionColumns} className={styles.collectionsTable} data-testid="collections-table" pagination={true} />
+            </div>
           }
           {
             (props.recordPermissions) &&
-              <div className={styles.recordPermissionsTableContainer}>
-                <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
-                <Table bordered dataSource={props.recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" />
-              </div>
+            <div className={styles.recordPermissionsTableContainer}>
+              <div className={styles.recordPermissionsTableLabel} data-testid="entity-record-permissions-label">Permissions</div>
+              <HCTable bordered keyUtil={"key"} rowKey="key" data={props.recordPermissions} columns={recordPermissionsColumns} className={styles.recordPermissionsTable} data-testid="record-permissions-table" pagination={true} />
+            </div>
           }
           {
             (props.recordMetadata) &&
-              <div className={styles.recordMetadataTableContainer}>
-                <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
-                <Table bordered dataSource={props.recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
-              </div>
+            <div className={styles.recordMetadataTableContainer}>
+              <div className={styles.recordMetadataTableLabel} data-testid="entity-record-metadata-label">Metadata Values</div>
+              <HCTable bordered keyUtil={"key"} rowKey="key" data={props.recordMetadata} columns={recordMetadataColumns} className={styles.recordMetadataTable} data-testid="record-metadata-table" />
+            </div>
           }
           <div className={styles.documentPropertiesContainer}>
             <div className={styles.documentPropertiesLabel} data-testid="entity-record-properties-label">Document Properties</div>
