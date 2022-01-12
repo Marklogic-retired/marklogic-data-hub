@@ -61,18 +61,45 @@ const SearchPagination: React.FC<Props> = (props) => {
     }
   };
 
-  const renderPages = () => {
-    const items = Array.from(Array(totalPage).keys());
-    const result = items.map((element) => {
-      const item = element + 1;
-      return <Pagination.Item key={item} data-testid={`pagination-item-${item}`} id={`pagination-item-${item}`} active={props.pageNumber === item} onClick={() => onPageChange(item)}>{item}</Pagination.Item>;
-    });
-    return result;
-  };
+  let isPageNumberOutOfRange;
+
+  const renderPages = [...new Array(totalPage)].map((_, index) => {
+    const {pageNumber: currentPage} = props;
+    const pageNumber = index + 1;
+    const isPageNumberFirst = pageNumber === 1;
+    const isPageNumberLast = pageNumber === totalPage;
+    const isCurrentPageWithinTwoPageNumbers =
+      Math.abs(pageNumber - currentPage) <= 2;
+
+    if (
+      isPageNumberFirst ||
+      isPageNumberLast ||
+      isCurrentPageWithinTwoPageNumbers
+    ) {
+      isPageNumberOutOfRange = false;
+      return (
+        <Pagination.Item
+          key={pageNumber}
+          data-testid={`pagination-item-${pageNumber}`}
+          id={`pagination-item-${pageNumber}`}
+          active={props.pageNumber === pageNumber}
+          onClick={() => onPageChange(pageNumber)}>
+          {pageNumber}
+        </Pagination.Item>
+      );
+    }
+
+    if (!isPageNumberOutOfRange) {
+      isPageNumberOutOfRange = true;
+      return <Pagination.Ellipsis key={pageNumber} className="muted" />;
+    }
+
+    return null;
+  });
 
   const renderOptions = () => {
-    const options = pageSizeOptions.map(item => {
-      return <option className={+item === +props.pageSize ? styles.optionSelected : ""} value={item}>{item} / page</option>;
+    const options = pageSizeOptions.map((item, index) => {
+      return <option key={index} className={+item === +props.pageSize ? styles.optionSelected : ""} value={item}>{item} / page</option>;
     });
     return options;
   };
@@ -81,7 +108,7 @@ const SearchPagination: React.FC<Props> = (props) => {
     <div className={styles.paginationContainer}>
       <Pagination data-testid="pagination" id="pagination" className={styles.paginationWrapper}>
         <Pagination.Prev onClick={handlePrev} disabled={props.pageNumber === 1} className={`${props.pageNumber === 1 && styles.disable} ${styles.corner}`} />
-        {renderPages()}
+        {renderPages}
         <Pagination.Next onClick={handleNext} disabled={props.pageNumber === totalPage} className={`${props.pageNumber === totalPage && styles.disable} ${styles.corner}`} />
       </Pagination>
       <Form.Select data-testid="pageSizeSelect" color="secondary" id="pageSizeSelect" value={props.pageSize} onChange={onPageSizeChange} className={styles.select}>
