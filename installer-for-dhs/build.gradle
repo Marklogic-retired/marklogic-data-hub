@@ -75,4 +75,6 @@ publishing {
     }
 
 }
+publishMavenPublicationToMavenRepository.dependsOn shadowJar
+publishMavenPublicationToMavenLocal.dependsOn shadowJar
 
