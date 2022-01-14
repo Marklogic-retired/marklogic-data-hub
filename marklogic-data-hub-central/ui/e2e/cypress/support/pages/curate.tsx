@@ -56,7 +56,7 @@ class CuratePage {
   }
 
   getExistingFlowFromDropdown_OldWay(flowName: string) {
-    return cy.findByTitle(`${flowName}`).find(".ant-select-selection__choice__remove").click();
+    return cy.findByTitle(`${flowName}`).find(`[aria-label^="Remove"]`).click();
   }
   /**
    * Select an existing flow from a match step dropdown
@@ -110,7 +110,7 @@ class CuratePage {
   }
 
   editStep(stepName: string) {
-    return cy.findByTestId(`${stepName}-edit`);
+    return cy.get(`[data-testid="${stepName}-edit"]`);
   }
 
   switchEditAdvanced() {
@@ -232,7 +232,9 @@ class CuratePage {
   }
 
   mergeTargetCollection(collection: string) {
-    return cy.get(`[data-row-key=${collection}] [class^="advanced-target-collections_preWrap"]`);
+    // ToDo: we could refactor this when react-bootstrap-table2 supports row attributes
+    // and go back to data-row-key
+    return cy.get(`[data-coll-event=${collection}] [class^="advanced-target-collections_preWrap"]`);
   }
 }
 

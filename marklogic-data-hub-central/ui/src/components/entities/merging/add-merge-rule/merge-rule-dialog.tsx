@@ -653,7 +653,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
         <button type="button" className="btn-close" aria-label="Close" onClick={onCancel}></button>
       </Modal.Header>
       <Modal.Body>
-        {validationWarnings.length > 0 ? (
+        {validationWarnings && validationWarnings.length > 0 ? (
           validationWarnings.map((warning, index) => {
             let description = "Please set max values for property to 1 on merge to avoid an invalid entity instance.";
             return (

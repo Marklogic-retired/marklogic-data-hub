@@ -178,7 +178,7 @@ describe("Steps settings component", () => {
     await wait(() => {
       expect(getByLabelText("additionalColl-select-onMerge")).toBeInTheDocument();
     });
-    let collectionInput = getByLabelText("additionalColl-select-onMerge").getElementsByTagName("input").item(0)!;
+    let collectionInput = getByLabelText("additionalColl-select-onMerge")!;
     fireEvent.input(collectionInput, {target: {value: "newCollection"}});
     fireEvent.keyDown(collectionInput, {keyCode: 13, key: "Enter"});
     fireEvent.click(getByTestId("onMerge-keep"));
