@@ -1288,6 +1288,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     let expandBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-expand");
     let collapseBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse");
+    let collapseButtons = document.querySelectorAll(`[data-testid="collapseBtn"]`)!;//document.querySelectorAll(`[data-testid="collapseBtn"]`)!;
 
     // Validating the default button state
     expect(expandBtnSource).not.toBeChecked();
@@ -1302,9 +1303,11 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnSource);
-    await waitFor(() => expect(queryByText("suffix")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("LastName")).not.toBeInTheDocument());
+    expect(collapseButtons).toHaveLength(2);
+    fireEvent.click(collapseButtons[1]);
+    expect(queryByText("suffix")).not.toBeInTheDocument();
+    expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument();
+    expect(queryByText("LastName")).not.toBeInTheDocument();
   });
 
   test("CollapseAll/Expand All feature in JSON Entity table", async () => {
@@ -1348,9 +1351,9 @@ describe("RTL Source-to-entity map tests", () => {
 
     //Collapsing all child levels
     fireEvent.click(collapseBtnEntity);
-    await waitFor(() => expect(queryByText("artCraft")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("itemTypes")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("itemCategory")).not.toBeInTheDocument());
+    expect(queryByText("artCraft")).not.toBeInTheDocument();
+    expect(queryByText("itemTypes")).not.toBeInTheDocument();
+    expect(queryByText("itemCategory")).not.toBeInTheDocument();
   });
 
   test("CollapseAll/Expand All feature in XML Source data table", async () => {
@@ -1381,7 +1384,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     let expandBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-expand");
     let collapseBtnSource = within(getByTestId("srcContainer")).getByLabelText("radio-button-collapse");
-
+    let collapseButtons = document.querySelectorAll(`[data-testid="collapseBtn"]`)!;
     // Validating the default button state
     expect(expandBtnSource).not.toBeChecked();
     expect(collapseBtnSource).not.toBeChecked();
@@ -1396,9 +1399,11 @@ describe("RTL Source-to-entity map tests", () => {
     expect(lastName.parentElement.parentElement.parentElement).toHaveStyle(`padding-left: 32px`); // Check if the indentation is right
 
     //Collapsing back to the default view (root and 1st level)
+    expect(collapseButtons).toHaveLength(2);
     fireEvent.click(collapseBtnSource);
-    await waitFor(() => expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument());
-    await waitFor(() => expect(queryByText("LastName")).not.toBeInTheDocument());
+    fireEvent.click(collapseButtons[1]);
+    expect(queryByText("FirstNamePreferred")).not.toBeInTheDocument();
+    expect(queryByText("LastName")).not.toBeInTheDocument();
   });
 
   test("Function selector dropdown in entity table", async () => {

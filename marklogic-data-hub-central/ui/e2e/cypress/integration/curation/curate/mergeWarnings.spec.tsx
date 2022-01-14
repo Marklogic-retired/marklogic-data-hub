@@ -50,7 +50,7 @@ describe("Validate Merge warnings", () => {
   });
   it("Navigate to merge step and validate warning messages", () => {
     cy.waitUntil(() => curatePage.editStep(mergeStep).click({force: true}));
-    curatePage.switchEditAdvanced().click();
+    cy.waitUntil(() => curatePage.switchEditAdvanced().click());
     advancedSettings.setTargetCollection("onMerge", "match-person");
     advancedSettings.keepTargetCollection("onMerge");
     curatePage.saveSettings(mergeStep).click();

@@ -1,11 +1,13 @@
 class AdvancedSettings {
 
   setTargetCollection(event: string, value: string) {
-    cy.findByTestId(`${event}-edit`).click();
-    cy.findByLabelText(`additionalColl-select-${event}`)
-      .find("input")
-      .first()
-      .type(value)
+    cy.get(`[data-testid="${event}-edit"]`).click();
+    cy.get(`[aria-label="additionalColl-select-${event}"]`)
+      .parent()
+      .click();
+    cy.get(`[aria-label="additionalColl-select-${event}"]`)
+      .should("exist")
+      .type(value, {force: true})
       .type("{enter}");
   }
 

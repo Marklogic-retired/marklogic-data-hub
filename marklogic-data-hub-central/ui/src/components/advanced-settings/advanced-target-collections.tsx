@@ -1,12 +1,11 @@
-import {
-  Select,
-  Table
-} from "antd";
 import React, {useState, useEffect} from "react";
+import {components as SelectComponents} from "react-select";
+import CreatableSelect from "react-select/creatable";
+import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import styles from "./advanced-target-collections.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCheck, faTimes, faSquare} from "@fortawesome/free-solid-svg-icons";
-import {HCTooltip} from "@components/common";
+import {HCTooltip, HCTable} from "@components/common";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 
 export const breakLine = "\u000A";
@@ -14,48 +13,90 @@ export const breakLine = "\u000A";
 const events = new Set<string>(["onMerge", "onNoMatch", "onArchive", "onNotification"]);
 const eventLabels = {"onMerge": "Merge", "onNoMatch": "No Match", "onArchive": "Archive", "onNotification": "Notification"};
 
+const MenuList  = (selector, props) => (
+  <div id={`${selector}-select-MenuList`} aria-label={"select-MenuList"}>
+    <SelectComponents.MenuList {...props} />
+  </div>
+);
+const MultiValueRemove = props => {
+  return (
+    <SelectComponents.MultiValueRemove {...props}>
+      <span aria-label="icon: close">
+        <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z"></path></svg>
+      </span>
+    </SelectComponents.MultiValueRemove>
+  );
+};
+const MultiValueContainer = props => {
+  return (
+    <span aria-label={"multioption-container"} title={props.data.value}>
+      <SelectComponents.MultiValueContainer {...props} />
+    </span>
+  );
+};
+
 const defaultTargetCollectionHeaders = [
   {
-    title: "Event",
-    dataIndex: "event",
+    text: "Event",
+    dataField: "event",
     key: "event",
     visible: true,
-    render: eventPropertyName => eventLabels[eventPropertyName]
+    formatter: eventPropertyName => eventLabels[eventPropertyName],
+    formatExtraData: {eventLabels},
   },
   {
-    title: <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
-    dataIndex: "defaultCollections",
+    text: "Default Collections",
+    headerFormatter: () => <span>Default Collections <HCTooltip text="Collection tags that are added to the resulting records by default." id="additional-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    dataField: "defaultCollections",
     visible: true,
-    render: collectionArray => <div className={styles.preWrap}>{collectionArray.join(breakLine)}</div>
+    attrs: (_, row, index) => {
+      return {"data-coll-event": row.event};
+    },
+    formatter: collectionArray => <div className={styles.preWrap}>{collectionArray.join(breakLine)}</div>
   },
   {
-    title: <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
-    dataIndex: "additionalCollectionsField",
+    text: "Additional Collections",
+    headerFormatter: () => <span>Additional Collections <HCTooltip text="Collection tags that you specify to be added to the resulting records." id="default-collections-tooltip" placement="top"><QuestionCircleFill color="#7F86B5" size={13} className={styles.questionCircle}/></HCTooltip></span>,
+    dataField: "additionalCollectionsField",
     visible: true,
-    render: additionalCollectionsField => additionalCollectionsField.mode === "edit" ? <Select
-      id={`additionalColl-${additionalCollectionsField.event}`}
-      mode="tags"
-      autoFocus={true}
-      autoClearSearchValue={true}
-      placeholder="Please add target collections"
-      value={additionalCollectionsField.values}
-      onSelect={(collection) => additionalCollectionsField.values.push(collection)}
-      onDeselect={(collection) => {
-        const index = additionalCollectionsField.values.indexOf(collection);
-        if (index > -1) {
-          additionalCollectionsField.values.splice(index, 1);
-        }
-        additionalCollectionsField.toggleRefresh();
-      }}
-      aria-label={"additionalColl-select-" + additionalCollectionsField.event}
-    ></Select> : <div className={styles.preWrap}>{additionalCollectionsField.values.join(breakLine)}</div>
+    attrs: (_, row, index) => {
+      return {"data-coll-event": row.event};
+    },
+    formatter: additionalCollectionsField => additionalCollectionsField.mode === "edit" ?
+      <CreatableSelect
+        id={`additionalColl-${additionalCollectionsField.event}-select-wrapper`}
+        inputId={`additionalColl-${additionalCollectionsField.event}`}
+        components={{MultiValueContainer, MultiValueRemove, MenuList: internProps => MenuList(`additionalColl-${additionalCollectionsField.event}`, internProps)}}
+        isMulti
+        isClearable={false}
+        placeholder="Please add target collections"
+        value={additionalCollectionsField.values.map(d => ({value: d, label: d}))}
+        onChange={(values) => {
+          additionalCollectionsField.values = values.map(option => option.value);
+          additionalCollectionsField.toggleRefresh();
+        }}
+        onCreateOption={values => {
+          additionalCollectionsField.values = additionalCollectionsField.values.concat(values);
+          additionalCollectionsField.toggleRefresh();
+        }}
+        aria-label={"additionalColl-select-" + additionalCollectionsField.event}
+        options={additionalCollectionsField.values.map(d => ({value: d, label: d}))}
+        styles={reactSelectThemeConfig}
+        formatOptionLabel={({value, label}) => {
+          return (
+            <span data-testid={`additionalColl-${value}-option`}>
+              {label}
+            </span>
+          );
+        }}
+      /> : <div className={styles.preWrap}>{additionalCollectionsField.values.join(breakLine)}</div>
   },
   {
-    title: "",
-    dataIndex: "action",
+    text: "",
+    dataField: "action",
     key: "action",
     visible: true,
-    render: action => {
+    formatter: action => {
       if (action.event) {
         if (action.mode === "edit") {
           return <div className={styles.keepDiscard}>
@@ -132,11 +173,12 @@ const AdvancedTargetCollections = (props) => {
   }, [props.targetCollections, props.defaultTargetCollections, eventEditModes, refresh]);
 
   return <div aria-label="advanced-target-collections">
-    <Table
+    <HCTable
       rowKey="event"
-      dataSource={rowDataset}
+      data={rowDataset}
       columns={defaultTargetCollectionHeaders}
       pagination={false}
+      subTableHeader
     />
   </div>;
 };

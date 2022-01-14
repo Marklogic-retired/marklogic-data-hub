@@ -221,7 +221,7 @@ describe("Advanced step settings", () => {
 
     // Can edit the additional collections
     fireEvent.click(getByTestId("onMerge-edit"));
-    let collectionInput = getByLabelText("additionalColl-select-onMerge").getElementsByTagName("input").item(0)!;
+    let collectionInput = getByLabelText("additionalColl-select-onMerge")!;
     // test discarding a collection update
     fireEvent.input(collectionInput, {target: {value: "discardedMergeCollection"}});
     expect(collectionInput).toHaveValue("discardedMergeCollection");
@@ -232,7 +232,7 @@ describe("Advanced step settings", () => {
 
     // test keeping a collection update
     fireEvent.click(getByTestId("onMerge-edit"));
-    collectionInput = getByLabelText("additionalColl-select-onMerge").getElementsByTagName("input").item(0)!;
+    collectionInput = getByLabelText("additionalColl-select-onMerge")!;
     fireEvent.input(collectionInput, {target: {value: "keptMergeCollection"}});
     expect(collectionInput).toHaveValue("keptMergeCollection");
     fireEvent.keyDown(collectionInput, {keyCode: 13, key: "Enter"});
