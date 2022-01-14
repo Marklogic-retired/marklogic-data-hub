@@ -10,24 +10,23 @@ import {HCDivider} from "@components/common";
 import * as Icons from "@fortawesome/free-solid-svg-icons";
 import {MINIMUM_ENTITIES} from "../../config/exploreSidebar";
 
-const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
-const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
-const SPORTS = {name: "Sports", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
-const WORK = {name: "Work", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
-const CUSTOMERS = {name: "Customers", color: "#D5D3DD", amount: 100, filter: 1, icon: "faShoppingCart"};
-const EMPLOYEE = {name: "Employee", color: "#F0F6D9", amount: 340, icon: "faBell"};
+const PERSON = {name: "Person", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
+const BABY_REGISTRY = {name: "Baby Registry", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
+const PRODUCT_DETAIL = {name: "Product Detail", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
+const CLIENT = {name: "Client", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
+const CUSTOMERS = {name: "Customer", color: "#BEDDDF", amount: 100, filter: 1, icon: "faShoppingCart"};
+const BUYER = {name: "Buyer", color: "#F0F6D9", amount: 340, icon: "faBell"};
 const ITEM = {name: "Item", color: "#D9F5F0", amount: 40, icon: "faBox"};
-const ORDERS = {name: "Orders", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
+const ORDERS = {name: "Order", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
 
 const ENTITIES = [
-  {...ADDRESS, relatedEntities: []},
-  {...BACK_ACCOUNT, relatedEntities: []},
-  {...SPORTS, relatedEntities: []},
-  {...WORK, relatedEntities: []},
-  {...CUSTOMERS, relatedEntities: [ADDRESS, BACK_ACCOUNT, SPORTS, WORK, EMPLOYEE, ITEM, ORDERS]},
-  {...EMPLOYEE, relatedEntities: []},
-  {...ITEM, relatedEntities: [ADDRESS, WORK, ORDERS]},
-  {...ORDERS, relatedEntities: []}
+  {...PERSON, relatedEntities: []},
+  {...BABY_REGISTRY, relatedEntities: []},
+  {...PRODUCT_DETAIL, relatedEntities: []},
+  {...CLIENT, relatedEntities: []},
+  {...CUSTOMERS, relatedEntities: [PERSON, BABY_REGISTRY, PRODUCT_DETAIL, CLIENT, BUYER, ITEM, ORDERS]},
+  {...BUYER, relatedEntities: []},
+  {...ORDERS, relatedEntities: [PERSON, CUSTOMERS, ORDERS]}
 ];
 
 interface Props {
@@ -108,7 +107,6 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       <Select
         id="entitiesSidebar-select-wrapper"
         inputId="entitiesSidebar-select"
-        placeholder="Please select target database"
         isMulti
         isClearable={false}
         value={entities?.map(d => ({value: d, label: d}))}

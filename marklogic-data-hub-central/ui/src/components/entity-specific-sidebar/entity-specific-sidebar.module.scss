@@ -1,10 +1,15 @@
 @import "../../theme/HCVariables.scss";
 
+.specificSidebar {
+    padding-inline: 15px;
+}
+
 .entityHeader {
-    padding: 8px;
+    padding-block: 8px;
     color: $secondary-gray;
     font-weight: bold;
     display: flex;
+    flex-direction: row;
     font-size: 24px;
 }
 
@@ -15,4 +20,8 @@
 .entityHeaderName {
     align-self: flex-end;
     font-size: 14px;
+}
+
+.entitySearchText {
+    padding-bottom: 8px;
 }
