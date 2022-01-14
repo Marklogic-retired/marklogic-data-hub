@@ -308,7 +308,7 @@ const MappingStepDetail: React.FC = () => {
 
   const updateMappingWithNamespaces = async (mapDataLocal) => {
     let {lastUpdated, ...dataPayload} = mapDataLocal;
-    dataPayload["namespaces"] = nmspaces;
+    dataPayload["namespaces"] = Object.assign({}, mapDataLocal.namespaces, nmspaces);
     setMapData({...dataPayload});
   };
 
@@ -1211,6 +1211,7 @@ const MappingStepDetail: React.FC = () => {
     } else {
       dataPayload = {...dataPayload, uriExpression: updatedUri, properties: obj};
     }
+    dataPayload.namespaces = Object.assign({}, dataPayload.namespaces, namespaces);
     let mapSavedResult = await updateMappingArtifact(dataPayload);
     if (mapSavedResult) {
       setErrorInSaving("noError");
