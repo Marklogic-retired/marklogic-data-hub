@@ -16,7 +16,7 @@ type SearchContextInterface = {
   selectedQuery: string,
   sidebarQuery: string,
   selectedTableProperties: any,
-  view: JSX.Element|null,
+  view: JSX.Element | null,
   tileId: string,
   sortOrder: any,
   database: string,
@@ -65,7 +65,7 @@ interface ISearchContextInterface {
   clearRangeFacet: (range: string) => void;
   clearGreyDateFacet: () => void;
   clearGreyRangeFacet: (range: string) => void;
-  resetSearchOptions: (tileIconClicked?:boolean) => void;
+  resetSearchOptions: (tileIconClicked?: boolean) => void;
   setAllSearchFacets: (facets: any) => void;
   greyedOptions: SearchContextInterface;
   setAllGreyedOptions: (facets: any) => void;
@@ -77,7 +77,7 @@ interface ISearchContextInterface {
   setSelectedQuery: (query: string) => void;
   setSidebarQuery: (query: string) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
-  setView: (tileId:string, viewId: JSX.Element| null) => void;
+  setView: (tileId: string, viewId: JSX.Element | null) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
   savedQueries: any;
@@ -138,7 +138,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setBaseEntities: () => { },
 });
 
-const SearchProvider: React.FC<{ children: any }> = ({children}) => {
+const SearchProvider: React.FC<{children: any}> = ({children}) => {
 
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
@@ -385,7 +385,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
 
-  const resetSearchOptions = (tileIconClicked=false) => {
+  const resetSearchOptions = (tileIconClicked = false) => {
     if (tileIconClicked) { setSearchOptions({...defaultSearchOptions, tileId: "explore", view: searchOptions.view, nextEntityType: "All Entities"}); } else { setSearchOptions({...defaultSearchOptions}); }
   };
 
@@ -498,7 +498,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       selectedFacets: query.selectedFacets,
       query: query.searchText,
       entityTypeIds: query.entityTypeIds,
-      nextEntityType: query.entityTypeIds.length ? query.entityTypeIds[0]:"All Entities",
+      nextEntityType: query.entityTypeIds.length ? query.entityTypeIds[0] : "All Entities",
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
       selectedQuery: query.selectedQuery,
@@ -533,7 +533,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
 
-  const setView = (tileId:string, viewId: JSX.Element|null) => {
+  const setView = (tileId: string, viewId: JSX.Element | null) => {
     setSearchOptions({
       ...searchOptions,
       view: viewId,
@@ -542,7 +542,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     });
   };
 
-  const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => {
+  const setPageWithEntity = (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => {
     setSearchOptions({
       ...searchOptions,
       entityTypeIds: option,
@@ -602,9 +602,14 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const setDatasource = (datasource: string) => {
+    let nextEntityType = "All Data";
+    if (datasource === "entities") {
+      nextEntityType = "All Entities";
+    }
     setSearchOptions({
       ...searchOptions,
-      datasource
+      datasource,
+      nextEntityType
     });
   };
 
