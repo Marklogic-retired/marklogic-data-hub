@@ -1,3 +1,3 @@
 export enum BaseEntityTypes {
-    ADDRESS = "Address"
+    CUSTOMER = "Customer"
 }

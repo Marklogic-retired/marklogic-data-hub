@@ -30,17 +30,36 @@ describe("Test '/Explore' left sidebar", () => {
     cy.log(`**Go to Explore section?**`);
     toolbar.getExploreToolbarIcon().click();
 
-    cy.log(`**Selecting 'Address' base entity**`);
-    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.ADDRESS);
+    cy.log(`**Selecting 'Customer' base entity**`);
+    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
     browsePage.getSearchField().should("not.exist");
-    entitiesSidebar.getEntityTitle(BaseEntityTypes.ADDRESS).should("be.visible");
+    entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
 
     cy.log("**Base entity icon is displayed on the entity icons list**");
-    entitiesSidebar.getEntityIconFromList(BaseEntityTypes.ADDRESS).should("be.visible");
+    entitiesSidebar.getEntityIconFromList(BaseEntityTypes.CUSTOMER).should("be.visible");
 
     cy.log("**Returning to main sidebar and confirming it's visible**");
     entitiesSidebar.backToMainSidebarButton.should("be.visible").click();
     browsePage.getSearchField().should("be.visible");
-    entitiesSidebar.getEntityTitle(BaseEntityTypes.ADDRESS).should("not.exist");
+    entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("not.exist");
+  });
+
+  it("Validate facets", () => {
+    cy.log("Selecting Customer entity");
+    entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
+
+    cy.log("Testing search input");
+    entitiesSidebar.getInputSearch().type("Test search");
+    entitiesSidebar.getInputSearch().should("have.value", "Test search");
+
+    cy.log("Testing checkbox facet");
+    entitiesSidebar.clickFacetCheckbox("Adams Cole");
+    entitiesSidebar.getFacetCheckbox("Adams Cole").should("be.checked");
+
+    cy.log("Testing date facet");
+    entitiesSidebar.getDateFacet().should("have.text", "birthDate");
+    entitiesSidebar.selectDateRange({time: "facet-datetime-picker-date"});
+    entitiesSidebar.getDateFacet().should("not.be.empty");
+
   });
 });

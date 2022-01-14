@@ -11,7 +11,7 @@ import SearchSummary from "../components/search-summary/search-summary";
 import SearchResults from "../components/search-results/search-results";
 import {ExploreToolTips, ModelingMessages} from "../config/tooltips.config";
 import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
-import {entityFromJSON, entityParser, getTableProperties} from "../util/data-conversion";
+import {entityFromJSON, entityParser, facetParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
@@ -31,24 +31,23 @@ import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-sp
 import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
 
 //TODO: remove this, it's just for mocking porpouses and show default data en specif sidebar when non entity was selected
-const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
-const BACK_ACCOUNT = {name: "Bank Account", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
-const SPORTS = {name: "Sports", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
-const WORK = {name: "Work", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
-const CUSTOMERS = {name: "Customers", color: "#D5D3DD", amount: 100, filter: 1, icon: "faShoppingCart"};
-const EMPLOYEE = {name: "Employee", color: "#F0F6D9", amount: 340, icon: "faBell"};
+const PERSON = {name: "Person", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
+const BABY_REGISTRY = {name: "Baby Registry", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
+const PRODUCT_DETAIL = {name: "Product Detail", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
+const CLIENT = {name: "Client", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
+const CUSTOMERS = {name: "Customer", color: "#BEDDDF", amount: 100, filter: 1, icon: "faShoppingCart"};
+const BUYER = {name: "Buyer", color: "#F0F6D9", amount: 340, icon: "faBell"};
 const ITEM = {name: "Item", color: "#D9F5F0", amount: 40, icon: "faBox"};
-const ORDERS = {name: "Orders", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
+const ORDERS = {name: "Order", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
 
 const ENTITIES = [
-  {...ADDRESS, relatedEntities: []},
-  {...BACK_ACCOUNT, relatedEntities: []},
-  {...SPORTS, relatedEntities: []},
-  {...WORK, relatedEntities: []},
-  {...CUSTOMERS, relatedEntities: [ADDRESS, BACK_ACCOUNT, SPORTS, WORK, EMPLOYEE, ITEM, ORDERS]},
-  {...EMPLOYEE, relatedEntities: []},
-  {...ITEM, relatedEntities: [ADDRESS, WORK, ORDERS]},
-  {...ORDERS, relatedEntities: []}
+  {...PERSON, relatedEntities: []},
+  {...BABY_REGISTRY, relatedEntities: []},
+  {...PRODUCT_DETAIL, relatedEntities: []},
+  {...CLIENT, relatedEntities: []},
+  {...CUSTOMERS, relatedEntities: [PERSON, BABY_REGISTRY, PRODUCT_DETAIL, CLIENT, BUYER, ITEM, ORDERS]},
+  {...BUYER, relatedEntities: []},
+  {...ORDERS, relatedEntities: [PERSON, CUSTOMERS]},
 ];
 
 
@@ -107,14 +106,37 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
 
+  const setEntitySpecificFacets = (entity) => {
+    const {name} = entity;
+    const parsedFacets = facetParser(facets);
+    let entityFacets: any[] = [];
+    let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === entity.name);
+    const entityDef = entityDefArray.find(entity => entity.name === name);
+    if (newEntityFacets) {
+      for (let i in newEntityFacets) {
+        newEntityFacets[i].referenceType = "path";
+        newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
+        newEntityFacets[i].propertyPath = newEntityFacets[i]["facetName"].substring(newEntityFacets[i]["facetName"].indexOf(".") + 1);
+      }
+    }
+    entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
+    return entityFacets;
+  };
+
   const handleEntitySelected = (entity: any) => {
-    setEntitySpecificPanel(entity);
+    const entityFacets = setEntitySpecificFacets(entity);
+    setEntitySpecificPanel({entity, entityFacets});
     setShowEntitySpecificPanel(true);
     if (currentBaseEntities.length > 0) {
       setCurrentEntitiesIcons(currentBaseEntities);
     } else {
       setCurrentEntitiesIcons(ENTITIES.slice(0, 5));
     }
+  };
+
+  const onSetEntitySpecificPanel = (entity) => {
+    const entityFacets = setEntitySpecificFacets(entity);
+    setEntitySpecificPanel({entity, entityFacets});
   };
 
   const updateVisibility = (status: boolean) => {
@@ -512,7 +534,7 @@ const Browse: React.FC<Props> = ({location}) => {
             currentBaseEntities={currentEntitiesIcons}
             onClose={closeSpecificSidebar}
             currentRelatedEntities={currentRelatedEntities}
-            updateSelectedEntity={setEntitySpecificPanel}
+            updateSelectedEntity={onSetEntitySpecificPanel}
           />
         </HCSider>
         : <HCSider placement="left" show={showMainSidebar} footer={<SidebarFooter />}>
@@ -536,7 +558,7 @@ const Browse: React.FC<Props> = ({location}) => {
         </HCSider>
       }
       {entitySpecificPanel &&
-        <HCSider color={entitySpecificPanel.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
+        <HCSider color={entitySpecificPanel.entity.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
           <EntitySpecificSidebar
             entitySelected={entitySpecificPanel}
           />

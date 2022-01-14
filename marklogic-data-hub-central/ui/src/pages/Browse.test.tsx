@@ -84,11 +84,11 @@ describe("Explorer Browse page tests ", () => {
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    const baseEntity = getByLabelText("base-entities-Bank Account");
+    const baseEntity = getByLabelText("base-entities-Person");
     userEvent.click(baseEntity);
-    expect(getByLabelText("specif-sidebar-Bank Account")).toBeInTheDocument();
+    expect(getByLabelText("specif-sidebar-Person")).toBeInTheDocument();
     const close = getByLabelText("base-entity-icons-list-close");
     userEvent.click(close);
-    expect(queryByText("base-entities-Bank Account")).toBeNull();
+    expect(queryByText("base-entities-Person")).toBeNull();
   });
 });
