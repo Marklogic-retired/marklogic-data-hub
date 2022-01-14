@@ -46,6 +46,7 @@ interface Props {
 const PLACEHOLDER: string = "Select a saved query";
 
 const Sidebar: React.FC<Props> = (props) => {
+
   const {
     searchOptions,
     clearConstraint,

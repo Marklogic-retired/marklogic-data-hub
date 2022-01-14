@@ -26,11 +26,10 @@ import {CSSProperties} from "react";
 import GraphViewExplore from "../components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery} from "../api/queries";
-import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-specific-sidebar";
-import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
 import {getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import SelectedFacets from "@components/selected-facets/selected-facets";
-
+import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
+import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-icons-sidebar";
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -80,6 +79,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [showNoDefinitionAlertMessage, setShowNoDefinitionAlertMessage] = useState(false);
   const [coords, setCoords] = useState<any>(undefined);
   const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
+  const [facetsSpecificPanel, setFacetsEntitySpecificPanel] = useState<any>(undefined);
   const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
   const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
   const [graphView, setGraphView] = useState(state && state.graphView ? true : JSON.parse(getUserPreferences(user.name)).graphView);
@@ -88,12 +88,12 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
   const [applyClicked, toggleApplyClicked] = useState(false);
   const [showApply, toggleApply] = useState(false);
-  const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false);
   const [isAllEntitiesSelected, setIsAllEntitiesSelected] = useState(true);
+  const [parsedFacets, setParsedFacets] = React.useState<any[]>([]);
 
   const setEntitySpecificFacets = (entity) => {
     const {name} = entity;
-    const parsedFacets = facetParser(facets);
     let entityFacets: any[] = [];
     let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split(".")[0] === entity.name);
     const entityDef = entityDefArray.find(entity => entity.name === name);
@@ -110,7 +110,8 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const handleEntitySelected = (entity: any) => {
     const entityFacets = setEntitySpecificFacets(entity);
-    setEntitySpecificPanel({entity, entityFacets});
+    setEntitySpecificPanel(entity);
+    setFacetsEntitySpecificPanel(entityFacets);
     setShowEntitySpecificPanel(true);
     if (currentBaseEntities.length > 0) {
       setCurrentEntitiesIcons(currentBaseEntities);
@@ -121,7 +122,8 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const onSetEntitySpecificPanel = (entity) => {
     const entityFacets = setEntitySpecificFacets(entity);
-    setEntitySpecificPanel({entity, entityFacets});
+    setEntitySpecificPanel(entity);
+    setFacetsEntitySpecificPanel(entityFacets);
   };
 
   const updateVisibility = (status: boolean) => {
@@ -131,12 +133,19 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const closeSpecificSidebar = () => {
     setEntitySpecificPanel(undefined);
+    setFacetsEntitySpecificPanel(undefined);
     setShowEntitySpecificPanel(false);
   };
 
   const [graphSearchData, setGraphSearchData] = useState<any[]>([]);
   const [hubCentralConfig, sethubCentralConfig] = useState({});
 
+  useEffect(() => {
+    if (entitySpecificPanel) {
+      const entityFacets = setEntitySpecificFacets(entitySpecificPanel);
+      setFacetsEntitySpecificPanel(entityFacets);
+    }
+  }, [parsedFacets]);
 
   const getGraphSearchResult = async (allEntities: any[]) => {
     try {
@@ -204,7 +213,10 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
+
   const getSearchResults = async (allEntities: string[]) => {
+    let searchText = searchOptions.query;
+    let entityTypeIds = cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities;
     try {
       handleUserPreferences();
       setIsLoading(true);
@@ -213,8 +225,8 @@ const Browse: React.FC<Props> = ({location}) => {
         url: `/api/entitySearch?database=${searchOptions.database}`,
         data: {
           query: {
-            searchText: searchOptions.query,
-            entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            searchText,
+            entityTypeIds,
             selectedFacets: searchOptions.selectedFacets,
             hideHubArtifacts: cardView ? hideDataHubArtifacts : true
           },
@@ -243,6 +255,8 @@ const Browse: React.FC<Props> = ({location}) => {
         }
 
         setFacets(response.data.facets);
+        const formatterFacets: any = facetParser(response.data.facets);
+        setParsedFacets(formatterFacets);
         setTotalDocuments(response.data.total);
 
         if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
@@ -276,9 +290,9 @@ const Browse: React.FC<Props> = ({location}) => {
   const fetchUpdatedSearchResults = () => {
     let entityTypesExistOrNoEntityTypeIsSelected = (entities.length > 0 || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined));
     let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (entities.length > 0 || cardView);
-    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && !cardView && entities.length > 0);
-    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && cardView);
-    let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType);
+    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && !cardView && entities.length > 0 && !entitySpecificPanel);
+    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && cardView && !entitySpecificPanel);
+    let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType || entitySpecificPanel);
     let notSelectingCardViewWhenNoEntities = !cardView && (!entities.length && !searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
 
     if (entityTypesExistOrNoEntityTypeIsSelected &&
@@ -315,7 +329,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
     fetchUpdatedSearchResults();
     getGraphSearchResult(entities);
-  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
+  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts, entitySpecificPanel]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -488,6 +502,9 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);
+    if (updateSpecificFacets) {
+      setUpdateSpecificFacets(false);
+    }
   };
 
   const updateCheckedFacets = (facets) => {
@@ -585,9 +602,13 @@ const Browse: React.FC<Props> = ({location}) => {
         </HCSider>
       }
       {entitySpecificPanel &&
-        <HCSider color={entitySpecificPanel.entity.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
+        <HCSider color={entitySpecificPanel.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
           <EntitySpecificSidebar
             entitySelected={entitySpecificPanel}
+            entityFacets={facetsSpecificPanel}
+            checkFacetRender={updateCheckedFacets}
+            facetRender={updateSelectedFacets}
+            updateSpecificFacets={updateSpecificFacets}
           />
         </HCSider>
       }

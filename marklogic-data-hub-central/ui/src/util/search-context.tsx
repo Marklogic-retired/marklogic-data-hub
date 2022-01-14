@@ -23,7 +23,7 @@ type SearchContextInterface = {
   database: string,
   entityInstanceId: any,
   datasource: string,
-  baseEntities: string[]
+  baseEntities: string[],
 }
 
 const defaultSearchOptions = {
@@ -153,6 +153,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
   const [savedQueries, setSavedQueries] = useState<any>([]);
   const [savedNode, setSavedNode] = useState<any>();
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
+
   const {user} = useContext(UserContext);
 
   const setSearchFromUserPref = (username: string) => {
@@ -696,7 +697,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       setGraphViewOptions,
       setDatasource,
       setBaseEntities,
-      setSearchOptions
+      setSearchOptions,
     }}>
       {children}
     </SearchContext.Provider>
