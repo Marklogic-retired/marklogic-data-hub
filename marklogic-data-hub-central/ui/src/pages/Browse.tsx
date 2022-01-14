@@ -26,11 +26,10 @@ import {CSSProperties} from "react";
 import GraphViewExplore from "../components/explore/graph-view-explore";
 import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery} from "../api/queries";
-import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-specific-sidebar";
-import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
 import {getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import SelectedFacets from "@components/selected-facets/selected-facets";
-
+import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
+import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-icons-sidebar";
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -44,6 +43,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const {
     searchOptions,
     greyedOptions,
+    entitySpecificSearch,
     setEntityClearQuery,
     setLatestJobFacet,
     resetSearchOptions,
@@ -139,13 +139,19 @@ const Browse: React.FC<Props> = ({location}) => {
 
 
   const getGraphSearchResult = async (allEntities: any[]) => {
+    let searchText = searchOptions.query;
+    let entityTypeIds = searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities;
+    if (entitySpecificPanel) {
+      searchText = entitySpecificSearch;
+      entityTypeIds = [entitySpecificPanel.entity.name];
+    }
     try {
       let payload = {
         "database": searchOptions.database,
         "data": {
           "query": {
-            "searchText": searchOptions.query,
-            "entityTypeIds": searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            "searchText": searchText,
+            "entityTypeIds": entityTypeIds,
             "selectedFacets": searchOptions.selectedFacets,
             "relatedEntityTypeIds": [] //Should be updated once the mock data is removed in the side panels
           },
@@ -205,6 +211,12 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const getSearchResults = async (allEntities: string[]) => {
+    let searchText = searchOptions.query;
+    let entityTypeIds = cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities;
+    if (entitySpecificPanel) {
+      searchText = entitySpecificSearch;
+      entityTypeIds = [entitySpecificPanel.entity.name];
+    }
     try {
       handleUserPreferences();
       setIsLoading(true);
@@ -213,8 +225,8 @@ const Browse: React.FC<Props> = ({location}) => {
         url: `/api/entitySearch?database=${searchOptions.database}`,
         data: {
           query: {
-            searchText: searchOptions.query,
-            entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            searchText,
+            entityTypeIds,
             selectedFacets: searchOptions.selectedFacets,
             hideHubArtifacts: cardView ? hideDataHubArtifacts : true
           },
@@ -276,9 +288,9 @@ const Browse: React.FC<Props> = ({location}) => {
   const fetchUpdatedSearchResults = () => {
     let entityTypesExistOrNoEntityTypeIsSelected = (entities.length > 0 || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined));
     let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (entities.length > 0 || cardView);
-    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && !cardView && entities.length > 0);
-    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && cardView);
-    let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType);
+    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && !cardView && entities.length > 0 && !entitySpecificPanel);
+    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && cardView && !entitySpecificPanel);
+    let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType || entitySpecificPanel);
     let notSelectingCardViewWhenNoEntities = !cardView && (!entities.length && !searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
 
     if (entityTypesExistOrNoEntityTypeIsSelected &&
@@ -315,7 +327,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
     fetchUpdatedSearchResults();
     getGraphSearchResult(entities);
-  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
+  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts, entitySpecificPanel]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -488,6 +500,9 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);
+    if (updateSpecificFacets) {
+      setUpdateSpecificFacets(false);
+    }
   };
 
   const updateCheckedFacets = (facets) => {
@@ -588,6 +603,9 @@ const Browse: React.FC<Props> = ({location}) => {
         <HCSider color={entitySpecificPanel.entity.color} placement="left" show={showEntitySpecificPanel} footer={<SidebarFooter />} updateVisibility={updateVisibility}>
           <EntitySpecificSidebar
             entitySelected={entitySpecificPanel}
+            checkFacetRender={updateCheckedFacets}
+            facetRender={updateSelectedFacets}
+            updateSpecificFacets={updateSpecificFacets}
           />
         </HCSider>
       }

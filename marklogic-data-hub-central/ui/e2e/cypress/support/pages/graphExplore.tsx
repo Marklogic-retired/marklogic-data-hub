@@ -15,6 +15,13 @@ class GraphExplore {
     })));
   }
 
+  getAllNodes() {
+    return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
+      let nodesInCanvas = win.graphVisExploreApi.getNodePositions();
+      return nodesInCanvas;
+    })));
+  }
+
   focusNode(nodeId: any) {
     return new Cypress.Promise((resolve) => resolve(cy.window().then((win: any) => {
       win.graphVisExploreApi.focus(nodeId);

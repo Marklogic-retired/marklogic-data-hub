@@ -115,7 +115,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         stopStabilization: () => { network.stopSimulation(); },
       };
     }
-  }, [network]);
+  }, [network, graphData]);
 
   const iconExistsForEntity = (entityName) => {
     return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
