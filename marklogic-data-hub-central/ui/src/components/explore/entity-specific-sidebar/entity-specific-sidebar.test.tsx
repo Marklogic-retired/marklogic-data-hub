@@ -51,7 +51,11 @@ describe("Entity Specific Sidebar component", () => {
 
     const {getByLabelText, getByText} =  render(
       <EntitySpecificSidebar
-        entitySelected={ADDRESS}
+        entitySelected={ADDRESS.entity}
+        entityFacets={ADDRESS.entityFacets}
+        checkFacetRender={jest.fn()}
+        facetRender={jest.fn()}
+        updateSpecificFacets={false}
       />
     );
     expect(getByLabelText("specif-sidebar-Address")).toBeInTheDocument();
@@ -63,7 +67,11 @@ describe("Entity Specific Sidebar component", () => {
   it("Empty facets", () => {
     const {getByLabelText} =  render(
       <EntitySpecificSidebar
-        entitySelected={CUSTOMER}
+        entitySelected={CUSTOMER.entity}
+        entityFacets={CUSTOMER.entityFacets}
+        checkFacetRender={jest.fn()}
+        facetRender={jest.fn()}
+        updateSpecificFacets={false}
       />
     );
     expect(getByLabelText("no-facets-Customer")).toBeInTheDocument();
@@ -72,7 +80,11 @@ describe("Entity Specific Sidebar component", () => {
   it("Display entity facets", () => {
     const {getByTestId} =  render(
       <EntitySpecificSidebar
-        entitySelected={ADDRESS}
+        entitySelected={ADDRESS.entity}
+        entityFacets={ADDRESS.entityFacets}
+        checkFacetRender={jest.fn()}
+        facetRender={jest.fn()}
+        updateSpecificFacets={false}
       />
     );
     expect(getByTestId("facet-date-time-picker")).toBeInTheDocument();
@@ -83,7 +95,11 @@ describe("Entity Specific Sidebar component", () => {
   it("Display search field", () => {
     const {getByLabelText} =  render(
       <EntitySpecificSidebar
-        entitySelected={ADDRESS}
+        entitySelected={ADDRESS.entity}
+        entityFacets={ADDRESS.entityFacets}
+        checkFacetRender={jest.fn()}
+        facetRender={jest.fn()}
+        updateSpecificFacets={false}
       />
     );
 

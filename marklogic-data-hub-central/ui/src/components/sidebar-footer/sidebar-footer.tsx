@@ -21,7 +21,6 @@ const SidebarFooter: React.FC = () => {
     clearAllMonitorGreyFacets,
   } = useContext(MonitorContext);
 
-
   const applyFacets = () => {
     let facets = {...greyedOptions.selectedFacets};
     if (Object.keys(facets).length !== 0) {
@@ -70,10 +69,29 @@ const SidebarFooter: React.FC = () => {
     <div>
       <HCDivider style={{"backgroundColor": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
       <div className={styles.facetFooter}>
-        <HCButton variant="outline-light" size="sm" aria-label="clear-facets-button" disabled={searchOptions.tileId === "explore" ?
-          (Object.keys(searchOptions.selectedFacets).length === 0 && Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === "")
-          : (Object.keys(monitorOptions.selectedFacets).length === 0 && Object.keys(monitorGreyedOptions.selectedFacets).length === 0)} onClick={searchOptions.tileId === "explore" ? () => clearFacets() : () => clearAllMonitorFacets()}>Clear All Facets</HCButton>
-        <HCButton className={styles.button} size="sm" aria-label="apply-facets-button" disabled={searchOptions.tileId === "explore" ? (Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === searchOptions.query) : Object.keys(monitorGreyedOptions.selectedFacets).length === 0} onClick={searchOptions.tileId === "explore" ? () => applyFacets() : () => applyMonitorFacets()} variant="primary" >Apply Facets</HCButton>
+        <HCButton
+          variant="outline-light"
+          size="sm"
+          aria-label="clear-facets-button"
+          disabled={searchOptions.tileId === "explore"
+            ? (Object.keys(searchOptions.selectedFacets).length === 0 && Object.keys(greyedOptions.selectedFacets).length === 0 && greyedOptions.query === "")
+            : (Object.keys(monitorOptions.selectedFacets).length === 0 && Object.keys(monitorGreyedOptions.selectedFacets).length === 0)}
+          onClick={searchOptions.tileId === "explore" ? () => clearFacets() : () => clearAllMonitorFacets()}>
+          Clear Selection
+        </HCButton>
+        <HCButton
+          className={styles.button}
+          size="sm"
+          aria-label="apply-facets-button"
+          disabled={searchOptions.tileId === "explore"
+            ? Object.keys(greyedOptions.selectedFacets).length === 0  && greyedOptions.query === searchOptions.query
+            : Object.keys(monitorGreyedOptions.selectedFacets).length === 0}
+          onClick={searchOptions.tileId === "explore"
+            ? () => applyFacets()
+            : () => applyMonitorFacets()}
+          variant="primary" >
+            Search
+        </HCButton>
       </div>
     </div>
   );

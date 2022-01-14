@@ -341,6 +341,15 @@ class BrowsePage {
     return cy.get("#sidebar-collapse-icon");
   }
 
+  clickOnBaseEntitiesDropdown() {
+    return cy.get("#entitiesSidebar-select-wrapper").should("be.visible").click();
+  }
+
+  selectBaseEntity(entity: string) {
+    this.clickOnBaseEntitiesDropdown();
+    cy.get(`[aria-label='base-option-${entity}']`).scrollIntoView().click();
+  }
+
   //table
   getColumnTitle(index: number) {
     return cy.get(`.table.table-bordered thead th:nth-child(${index}) .resultsTableHeaderColumn`).invoke("text");
