@@ -1,12 +1,13 @@
 import {faCode, faExternalLinkAlt, faThList} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import {getDetails} from "../../../api/record";
 import {Tab, Tabs} from "react-bootstrap";
 import {ChevronRight, XLg} from "react-bootstrap-icons";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../../util/search-context";
 import styles from "./graph-explore-side-panel.module.scss";
+import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../../../util/record-parser";
 import TableView from "@components/table-view/table-view";
 
 type Props = {
@@ -15,8 +16,8 @@ type Props = {
 };
 
 const DEFAULT_TAB = "instance";
-const INSTANCE_TITLE =  <span><i><FontAwesomeIcon icon={faThList} size="sm" /></i> Instance</span>;
-const RECORD_TITLE =  <span><i><FontAwesomeIcon icon={faCode} size="sm" /></i> Record</span>;
+const INSTANCE_TITLE =  <span aria-label="instanceTab"><i><FontAwesomeIcon icon={faThList} size="sm" /></i> Instance</span>;
+const RECORD_TITLE =  <span aria-label="recordTab"><i><FontAwesomeIcon icon={faCode} size="sm" /></i> Record</span>;
 
 const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const {onCloseSidePanel, graphView} = props;
@@ -31,11 +32,20 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
   const [details, setDetails] = useState<any>(null);
   const entityInstanceTitle = group ? group.split("/").pop() : entityName;
   const [currentLabel, setCurrentLabel] = useState<string>("");
+
+  //To view record info on graph instance view side panel
+  const [content, setContent] = useState<any>(null);
+  const [contentType, setContentType] = useState<string>("");
+  const [xml, setXml] = useState();
+  const data = useRef<any[]>();
+
   useEffect(() => {
     if (docUri && label !== currentLabel) {
       setCurrentLabel(label);
       const getNodeData = async (docUri, database) => {
         const result = await getDetails(docUri, database);
+        data.current! = result.data;
+        setContentData();
         const {entityInstanceProperties} = result.data;
         setDetails(entityInstanceProperties);
       };
@@ -47,7 +57,28 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     setCurrentTab(key);
   };
 
+  //To set the respective record type data(json, xml and text)
+  const setContentData = () => {
+    const info = data.current!;
+    let recordType=info["recordType"];
+    if (recordType === "json") {
+      setContentType("json");
+      setContent(info);
+    } else if (recordType === "xml") {
+      setContentType("xml");
+      let xmlData=info["data"];
+      const decodedXml = xmlDecoder(xmlData);
+      const document = xmlParser(decodedXml);
+      setContent(document);
+      setXml(xmlData);
+    } else {
+      setContentType("text");
+      setContent(info["data"]);
+    }
+  };
+
   const displayPanelContent = () => {
+    let block;
     if (currentTab === DEFAULT_TAB) {
       return (
         <div aria-label="instance-view">
@@ -55,7 +86,14 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
         </div>
       );
     } else {
-      return <div>Record tab</div>;
+      if (contentType === "json") {
+        block = (content) && <pre data-testid="graphView-json-container">{jsonFormatter(content["data"])}</pre>;
+      } else if (contentType === "xml") {
+        block = (xml) && <pre data-testid="graphView-xml-container">{xmlFormatter(xml)}</pre>;
+      } else {
+        block = (content) && <pre data-testid="graphView-text-container">{content}</pre>;
+      }
+      return block;
     }
   };
 
