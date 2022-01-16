@@ -54,5 +54,18 @@ class GraphExplore {
   getExpandRows() {
     return cy.get("button[aria-label='Expand row']");
   }
+
+  getRecordTab() {
+    return cy.findByLabelText("recordTab");
+  }
+
+  getInstanceTab() {
+    return cy.findByLabelText("instanceTab");
+  }
+
+  getJsonRecordData() {
+    return cy.findByTestId("graphView-json-container");
+  }
+
 }
 export default new GraphExplore();

@@ -42,10 +42,14 @@ describe("Test '/Explore' graph right panel", () => {
       const canvas = graphExplore.getGraphVisCanvas();
       const trigger = canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y);
       trigger.click({force: true});
-      trigger.click({force: true});
     });
 
+    cy.log("**View json record type information**");
+    graphExplore.getRecordTab().click();
+    graphExplore.getJsonRecordData().should("be.visible");
+
     cy.log("**Inspect instance tab content**");
+    graphExplore.getInstanceTab().click();
     const headers = graphExplore.getTableHeaders();
     headers.should("have.length", 2);
     headers.each((item, i) => {
