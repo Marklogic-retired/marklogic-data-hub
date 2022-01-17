@@ -32,18 +32,13 @@ describe("Entity Modeling: Graph View", () => {
   });
   //login with valid account
   beforeEach(() => {
-    cy.visit("/");
-    cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-mapping-writer", "hub-central-saved-query-user").withRequest();
-    LoginPage.postLogin();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
-    cy.waitForAsyncRequest();
-    modelPage.selectView("table");
-    cy.wait(1000);
-    entityTypeTable.waitForTableToLoad();
   });
-  afterEach(() => {});
+  afterEach(() => {
+    cy.resetTestUser();
+    cy.waitForAsyncRequest();
+  });
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.resetTestUser();
@@ -312,7 +307,7 @@ describe("Entity Modeling: Graph View", () => {
     graphView.getAddButton().click();
     graphView.addNewRelationship().click();
     graphView.verifyEditInfoMessage().should("exist");
-
+    modelPage.scrollPageBottom();
     graphVis.getPositionsOfNodes().then((nodePositions: any) => {
       let PersonCoordinates: any = nodePositions["Person"];
       let ClientCoordinates: any = nodePositions["Client"];
@@ -347,6 +342,7 @@ describe("Entity Modeling: Graph View", () => {
     modelPage.scrollPageTop();
     modelPage.selectView("table");
     entityTypeTable.waitForTableToLoad();
+    entityTypeTable.getExpandEntityIcon("Person");
     propertyTable.editProperty("referredBy");
     propertyModal.getYesRadio("multiple").should("be.checked");
     propertyModal.verifyPropertyType("Relationship: Client");
