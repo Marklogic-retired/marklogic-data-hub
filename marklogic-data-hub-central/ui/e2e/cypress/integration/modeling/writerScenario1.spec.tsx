@@ -157,7 +157,7 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getProperty("username").should("exist");
     propertyTable.getMultipleIcon("username").should("exist");
     // check edited entity description
-    entityTypeTable.getEntity("Buyer").click();
+    entityTypeTable.getEntity("Buyer").scrollIntoView().click();
     entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
     entityTypeModal.getCancelButton().click();
   });
