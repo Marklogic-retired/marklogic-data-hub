@@ -34,9 +34,14 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.resetTestUser();
     cy.waitForAsyncRequest();
   });
+  it("Verify Load tile is visible after navigation", () => {
+    toolbar.getLoadToolbarIcon().click();
+    cy.log("DHFPROD-8332: Every tile is getting rendered blank after navigation from Home");
+    loadPage.getContainerTitle().should("be.visible");
+  });
   it("Verify Cancel", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-    cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
+    toolbar.getLoadToolbarIcon().click();
+    loadPage.stepName("ingestion-step").should("be.visible");
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);

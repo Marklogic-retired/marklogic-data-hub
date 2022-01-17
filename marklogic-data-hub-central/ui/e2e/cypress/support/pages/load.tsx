@@ -305,6 +305,9 @@ class LoadPage {
     cy.findByLabelText(`${flowName}-option`).click();
   }
 
+  getContainerTitle() {
+    return cy.get(`[aria-label="title-load"]`);
+  }
 }
 
 const loadPage = new LoadPage();
