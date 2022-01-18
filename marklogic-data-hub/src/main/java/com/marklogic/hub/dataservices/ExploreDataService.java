@@ -51,7 +51,7 @@ public interface ExploreDataService {
 
             private ExploreDataServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
-                this.baseProxy = new BaseProxy("/data-hub/5/data-services/ml-exp-search/", servDecl);
+                this.baseProxy = new BaseProxy("/explore-data/data-services/ml-exp-search/", servDecl);
 
                 this.req_searchAndTransform = this.baseProxy.request(
                     "searchAndTransform.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
