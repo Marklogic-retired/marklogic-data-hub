@@ -14,13 +14,32 @@
  limitations under the License.
  */
 'use strict';
+const Search = require("/explore-data/search-lib/search.sjs");
 
-var searchParams;
+class ConfigurableSearch extends Search {
+  constructor() {
+    super();
+  }
 
-const ConfigurableSearch = require("/data-hub/5/ml-exp-search/configurable-search-lib.sjs");
-const configurableSearch = new ConfigurableSearch();
+  getSearchResults(searchParams) {
+    return super.getSearchResults(searchParams);
+  }
 
-const searchResults = configurableSearch.getSearchResults(searchParams.toObject());
+  getSnippetResults(searchResults) {
+    return super.getSnippetResults(searchResults);
+  }
 
-const combinedResponse = {searchResults};
-combinedResponse;
+  getDocument(uri) {
+    return super.getDocument();
+  }
+
+  getEntityModels() {
+    return super.getEntityModels();
+  }
+
+  getEntityModel(modelName) {
+    return super.getEntityModel(modelName);
+  }
+}
+
+module.exports = ConfigurableSearch;
