@@ -30,12 +30,14 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     private final String username;
     private String password;
+    private boolean isDataHubInstalled;
 
-    public AuthenticationToken(String username, String password, Collection<GrantedAuthority> authorities) {
+    public AuthenticationToken(String username, String password, Collection<GrantedAuthority> authorities, boolean isDataHubInstalled) {
         super(authorities);
         super.setAuthenticated(true);
         this.username = username;
         this.password = password;
+        this.isDataHubInstalled = isDataHubInstalled;
     }
 
     public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
@@ -57,6 +59,10 @@ public class AuthenticationToken extends AbstractAuthenticationToken {
 
     public Object getPrincipal() {
         return this.username;
+    }
+
+    public boolean isDataHubInstalled() {
+        return this.isDataHubInstalled;
     }
 
 }
