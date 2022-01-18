@@ -27,7 +27,7 @@ at "/MarkLogic/json/json.xqy";
 declare function expsearch:get-search-results($search-constraints as xs:string) {
   let $options := xdmp:eval("doc('/options/search-options.xml')",  (),
     <options xmlns="xdmp:eval">
-      <database>{xdmp:database("data-hub-MODULES")}</database>
+      <database>{xdmp:modules-database()}</database>
     </options>)
 
   let $result := search:search($search-constraints, $options/*)

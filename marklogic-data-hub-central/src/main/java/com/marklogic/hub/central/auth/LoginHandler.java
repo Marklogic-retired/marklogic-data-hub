@@ -60,10 +60,9 @@ public class LoginHandler implements AuthenticationSuccessHandler {
             }
         });
 
-        if (!hasLoginAuthority[0]) {
+        if (token.isDataHubInstalled() && !hasLoginAuthority[0]) {
             sendUnauthorizedResponse(httpResponse);
-        }
-        else{
+        } else{
             jsonResponse.putArray("authorities").addAll(authorities);
             clearAuthenticationAttributes(request);
             httpResponse.setContentType("application/json");

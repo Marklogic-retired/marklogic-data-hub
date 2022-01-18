@@ -29,6 +29,7 @@ public class HubClientImpl implements HubClient {
     private String username;
     private DatabaseClient stagingClient;
     private DatabaseClient finalClient;
+    private DatabaseClient client;
     private DatabaseClient jobsClient;
     private DatabaseClient modulesClient;
     private Map<DatabaseKind, String> databaseNames;
@@ -68,6 +69,17 @@ public class HubClientImpl implements HubClient {
     @Override
     public DatabaseClient getFinalClient() {
         return finalClient;
+    }
+
+    @Override
+    public DatabaseClient getNewClient() {
+        return client;
+    }
+
+    @Override
+    public DatabaseClient setNewClient(int port) {
+        this.client = hubClientConfig.newClient(null, port);
+        return this.client;
     }
 
     @Override
