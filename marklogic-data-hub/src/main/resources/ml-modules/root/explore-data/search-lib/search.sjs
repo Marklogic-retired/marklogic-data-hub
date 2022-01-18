@@ -14,7 +14,7 @@
  limitations under the License.
  */
 'use strict';
-const searchImpl = require("/data-hub/5/ml-exp-search/search-impl.xqy");
+const searchImpl = require("/explore-data/search-lib/search-impl.xqy");
 
 class Search {
   constructor() {

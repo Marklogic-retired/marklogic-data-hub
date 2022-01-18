@@ -17,10 +17,13 @@ package com.marklogic.hub.central.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.HubCentralService;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -45,6 +48,11 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 
     private HubCentral hubCentral;
     private HttpSessionHubClientProvider hubClientProvider;
+    private Environment environment;
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 
     public AuthenticationFilter(HubCentral hubCentral, HttpSessionHubClientProvider hubClientProvider) {
         super(new AntPathRequestMatcher("/api/login", "POST"));
@@ -60,6 +68,10 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
         }
 
         final LoginInfo loginInfo = new ObjectMapper().readValue(request.getInputStream(), LoginInfo.class);
+        if(loginInfo.username.isEmpty() && loginInfo.password.isEmpty() && !request.getHeader("userid").isEmpty()) {
+            loginInfo.username = environment.getProperty("mlUsername");
+            loginInfo.password = environment.getProperty("mlPassword");
+        }
         AuthenticationToken token = authenticateUser(loginInfo.username, loginInfo.password);
         token.setDetails(authenticationDetailsSource.buildDetails(request));
         return token;
@@ -97,8 +109,16 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
                 }
                 //In case user can't read the getAuthorities.sjs module, return an empty 'authorities' object
                 if(fre.getServerStatusCode() == 404 || fre.getServerStatusCode() == 403){
-                    return new AuthenticationToken(username, password, authorities);
+                    return new AuthenticationToken(username, password, authorities, false);
                 }
+            } else if(e instanceof MarkLogicIOException && e.getMessage().contains("Failed to connect to")) {
+                DatabaseClient client = hubClientProvider.getHubClient().setNewClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
+                DatabaseClient.ConnectionResult result = client.checkConnection();
+                if (result.getStatusCode() == 401) {
+                    throw new BadCredentialsException("Unauthorized");
+                }
+                logger.info("Created client for host: " + client.getHost());
+                return new AuthenticationToken(username, password, authorities, false);
             }
             throw e;
         }
@@ -107,6 +127,6 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
             String authority = node.asText();
             authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
         });
-        return new AuthenticationToken(username, password, authorities);
+        return new AuthenticationToken(username, password, authorities, true);
     }
 }

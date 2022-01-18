@@ -35,7 +35,7 @@
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
       <search:element name="status" ns="" xmlns:es="http://marklogic.com/entity-services"/>
       <search:facet-option>limit=25</search:facet-option>
-    </search:range>:q!
+    </search:range>
   </search:constraint>
   <search:constraint name="email">
     <search:range collation="http://marklogic.com/collation/codepoint" facet="true" type="xs:string">
