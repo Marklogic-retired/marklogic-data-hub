@@ -36,6 +36,10 @@ public interface HubClient {
 
     DatabaseClient getFinalClient();
 
+    DatabaseClient getNewClient();
+
+    DatabaseClient setNewClient(int port);
+
     DatabaseClient getJobsClient();
 
     DatabaseClient getModulesClient();

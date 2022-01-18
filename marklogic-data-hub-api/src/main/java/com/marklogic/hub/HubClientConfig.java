@@ -213,6 +213,24 @@ public class HubClientConfig {
         return configuredDatabaseClientFactory.newDatabaseClient(config);
     }
 
+    public DatabaseClient newClient(String dbName, int port) {
+        DatabaseClientConfig config = new DatabaseClientConfig(host, port, username, password);
+        if (dbName != null) {
+            config.setDatabase(dbName);
+        }
+        config.setSecurityContextType(SecurityContextType.valueOf(finalAuthMethod.toUpperCase()));
+        config.setSslHostnameVerifier(finalSslHostnameVerifier);
+        config.setSslContext(finalSslContext);
+        config.setCertFile(finalCertFile);
+        config.setCertPassword(finalCertPassword);
+        config.setExternalName(finalExternalName);
+        config.setTrustManager(finalTrustManager);
+        if (isHostLoadBalancer) {
+            config.setConnectionType(DatabaseClient.ConnectionType.GATEWAY);
+        }
+        return configuredDatabaseClientFactory.newDatabaseClient(config);
+    }
+
     public DatabaseClient newJobDbClient() {
         DatabaseClientConfig config = new DatabaseClientConfig(host, jobPort, username, password);
         config.setSecurityContextType(SecurityContextType.valueOf(jobAuthMethod.toUpperCase()));

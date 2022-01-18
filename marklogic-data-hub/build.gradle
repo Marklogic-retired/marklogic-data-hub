@@ -29,6 +29,7 @@ group = 'com.marklogic'
 ext {
     dataServicesGroup = "Data Services"
     dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
+    exploredataServicesPath = "src/main/resources/ml-modules/root/explore-data/data-services"
 
     thirdPartySourcePath = "src/main/resources/ml-modules/root/data-hub/third-party"
 }
@@ -172,6 +173,15 @@ new File("src/main/resources/ml-modules/root/data-hub/5/data-services").listFile
         task "generate${file.getName()}Interface"(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
             description = "Must run this from the ./marklogic-data-hub directory"
             serviceDeclarationFile = dataServicesPath + "/${file.getName()}/service.json"
+        }
+    }
+}
+
+new File("src/main/resources/ml-modules/root/explore-data/data-services").listFiles().each { file ->
+    if (file.isDirectory() && new File(file, "service.json").exists()) {
+        task "generate${file.getName()}Interface"(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+            description = "Must run this from the ./marklogic-data-hub directory"
+            serviceDeclarationFile = exploredataServicesPath + "/${file.getName()}/service.json"
         }
     }
 }
