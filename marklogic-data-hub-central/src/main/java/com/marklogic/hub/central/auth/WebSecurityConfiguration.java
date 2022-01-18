@@ -51,12 +51,14 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(hubCentral, hubClientProvider);
+        authenticationFilter.setEnvironment(environment);
         http
             .headers().frameOptions().disable()
             .and()
             // Adds the custom filter for authenticating a user. Check the startup logging to see where this ends up in
             // the Spring Security filter chain.
-            .addFilterAfter(new AuthenticationFilter(hubCentral, hubClientProvider), LogoutFilter.class)
+            .addFilterAfter(authenticationFilter, LogoutFilter.class)
             .csrf().disable()
             // Need to setStatus, sendError causes issues. see https://stackoverflow.com/a/34911131
             .exceptionHandling().authenticationEntryPoint(((request, response, authException) -> {
@@ -108,7 +110,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/assets/**",
             "/static/**",
             "/img/**",
-            "/favicon.ico"
+            "/favicon.ico",
+            "/api/explore/twizzlers/login"
         };
     }
 }

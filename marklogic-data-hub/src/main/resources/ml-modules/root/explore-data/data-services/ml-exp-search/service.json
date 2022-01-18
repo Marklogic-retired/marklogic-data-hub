@@ -1,4 +1,4 @@
 {
-  "endpointDirectory": "/data-hub/5/data-services/ml-exp-search/",
+  "endpointDirectory": "/explore-data/data-services/ml-exp-search/",
   "$javaClass": "com.marklogic.hub.dataservices.ExploreDataService"
 }
