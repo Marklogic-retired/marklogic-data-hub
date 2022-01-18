@@ -14,6 +14,10 @@
   color: $trash-icon;
 }
 
+.iconContainer {
+  text-align: left;
+}
+
 .iconRevertReadOnly, .iconTrashReadOnly {
   font-size: 21px;
   cursor: not-allowed;

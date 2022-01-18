@@ -44,7 +44,7 @@ describe("EntityTypeModal Component", () => {
 
   test("Modal is not visible", () => {
     const {queryByText} = render(
-      <EntityTypeModal {...defaultModalOptions} isVisible={false} color=""/>
+      <EntityTypeModal {...defaultModalOptions} isVisible={false} color="" icon=""/>
     );
     expect(queryByText("Add Entity Type")).toBeNull();
   });
@@ -53,7 +53,7 @@ describe("EntityTypeModal Component", () => {
     axiosMock.post["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 201, data: createModelResponse})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
-      <EntityTypeModal {...defaultModalOptions} color=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
     );
 
     let url = "/api/models";
@@ -86,7 +86,7 @@ describe("EntityTypeModal Component", () => {
 
   test("Adding an invalid Entity name shows error message", async () => {
     const {getByText, getByPlaceholderText} = render(
-      <EntityTypeModal {...defaultModalOptions} color=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
     );
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
@@ -105,7 +105,7 @@ describe("EntityTypeModal Component", () => {
       Promise.reject({response: {status: 400, data: createModelErrorResponse}})));
 
     const {getByText, getByPlaceholderText, getByLabelText} = render(
-      <EntityTypeModal {...defaultModalOptions} color=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
     );
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
@@ -126,30 +126,34 @@ describe("EntityTypeModal Component", () => {
 
   test("Edit modal is not visible", () => {
     const {queryByText} = render(
-      <EntityTypeModal {...defaultModalOptions} isVisible={false} isEditModal={true} color=""/>
+      <EntityTypeModal {...defaultModalOptions} isVisible={false} isEditModal={true} color="" icon=""/>
     );
     expect(queryByText("Edit Entity Type")).toBeNull();
   });
 
   test("Edit modal is visible", async () => {
-    const {getByText, getByDisplayValue, queryByText, getByTestId} = render(
+    const {getByText, getByDisplayValue, queryByText, getByTestId, getByLabelText} = render(
       <EntityTypeModal {...defaultModalOptions} isEditModal={true}
-        name={"ModelName"} description={"Model description"} color="#CEE0ED"/>
+        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon="FaUserAlt"/>
     );
 
     expect(getByText("Edit Entity Type")).toBeInTheDocument();
     expect(queryByText("*")).toBeNull();
     expect(getByText("ModelName")).toBeInTheDocument();
     expect(getByDisplayValue("Model description")).toBeInTheDocument();
+
+    //proper color and icon is displayed
     expect(getByTestId("ModelName-color")).toHaveStyle("background: #CEE0ED");
+
+    expect(getByLabelText("ModelName-FaUserAlt-icon")).toBeInTheDocument();
   });
 
-  test("Entity description, namespace, and prefix are updated", async () => {
+  test("Entity description, namespace, prefix, color and icon selection are updated", async () => {
     axiosMock.put["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200})));
 
     const {getByText, getByPlaceholderText, getByTestId, getByTitle} = render(
       <EntityTypeModal {...defaultModalOptions} isEditModal={true}
-        name={"ModelName"} description={"Model description"} color="#CEE0ED"/>
+        name={"ModelName"} description={"Model description"} color="#CEE0ED" icon=""/>
     );
 
     let url = "/api/models/ModelName/info";
@@ -185,7 +189,7 @@ describe("EntityTypeModal Component", () => {
       Promise.reject({response: {status: 400, data: createModelErrorResponseNamespace}})));
 
     const {getByText, getByPlaceholderText} = render(
-      <EntityTypeModal {...defaultModalOptions} color=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
     );
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 
@@ -211,7 +215,7 @@ describe("EntityTypeModal Component", () => {
       Promise.reject({response: {status: 400, data: createModelErrorResponsePrefix}})));
 
     const {getByText, getByPlaceholderText} = render(
-      <EntityTypeModal {...defaultModalOptions} color=""/>
+      <EntityTypeModal {...defaultModalOptions} color="" icon=""/>
     );
     expect(getByText("Add Entity Type")).toBeInTheDocument();
 

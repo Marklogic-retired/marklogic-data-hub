@@ -1,8 +1,6 @@
 import React, {useContext, useEffect, useState, useRef, useCallback} from "react";
 import {Row, Col, Modal, Form, FormLabel} from "react-bootstrap";
 import styles from "./entity-type-modal.module.scss";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../../util/user-context";
 import {ModelingTooltips, ErrorTooltips} from "../../../config/tooltips.config";
 import {createEntityType, updateModelInfo} from "../../../api/modeling";
@@ -11,6 +9,7 @@ import graphConfig from "../../../config/graph-vis.config";
 import {defaultHubCentralConfig} from "../../../config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCButton, HCInput, HCTooltip} from "@components/common";
+import {IconPicker} from "react-fa-icon-picker";
 
 type Props = {
   isVisible: boolean;
@@ -20,6 +19,7 @@ type Props = {
   namespace: string;
   prefix: string;
   color: string;
+  icon: string;
   toggleModal: (isVisible: boolean) => void;
   updateEntityTypesAndHideModal: (entityName: string, description: string) => void;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
@@ -42,6 +42,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [loading, toggleLoading] = useState(false);
   const [colorSelected, setColorSelected] = useState("#EEEFF1");
   const [colorTouched, setisColorTouched] = useState(false);
+  const [iconSelected, setIconSelected] = useState<any>("");
+  const [iconTouched, setIsIconTouched] = useState<any>("");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [eventValid, setEventValid] = useState(false);
   const node: any = useRef();
@@ -54,6 +56,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setNamespace(props.namespace);
         setPrefix(props.prefix);
         setColorSelected(props.color);
+        setIconSelected(props.icon);
       } else {
         // Add Modal
         setName("");
@@ -61,6 +64,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setNamespace("");
         setPrefix("");
         setColorSelected("#EEEFF1");
+        setIconSelected("FaShapes");
       }
       setErrorName("");
       setErrorServer("");
@@ -161,10 +165,10 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     }
   };
 
-  const updateHubCentralConfig = async (entityName, color) => {
-    let colorPayload = defaultHubCentralConfig;
-    colorPayload.modeling.entities[entityName] = {color: color};
-    props.updateHubCentralConfig(colorPayload);
+  const updateHubCentralConfig = async (entityName, color, icon) => {
+    let updatedPayload = defaultHubCentralConfig;
+    updatedPayload.modeling.entities[entityName] = {color: color, icon: icon};
+    props.updateHubCentralConfig(updatedPayload);
   };
 
   const addNewEntityType = async (name: string, description: string) => {
@@ -178,7 +182,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       const response = await createEntityType(payload);
       if (response["status"] === 201) {
         props.updateEntityTypesAndHideModal(name, description);
-        await updateHubCentralConfig(name, colorSelected);
+        await updateHubCentralConfig(name, colorSelected, iconSelected);
       }
     } catch (error) {
       if (error.response.status === 400) {
@@ -203,8 +207,8 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       if (entityPropertiesEdited()) {
         await updateEntityDescription(name, description, namespace, prefix);
       }
-      if (colorTouched) {
-        await updateHubCentralConfig(name, colorSelected);
+      if (colorTouched || iconTouched) {
+        await updateHubCentralConfig(name, colorSelected, iconSelected);
       }
     } catch (error) {
       if (error.response.status === 400) {
@@ -220,6 +224,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         props.toggleModal(false);
       }
     }
+    setName("");
   };
 
   const onOk = (event) => {
@@ -241,6 +246,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
   const onCancel = () => {
     props.toggleModal(false);
+    setName("");
   };
 
   const handleEditColorMenu = () => {
@@ -255,6 +261,15 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       setisColorTouched(false);
     }
     setColorSelected(color.hex);
+  };
+
+  const handleIconChange = async (iconSelected) => {
+    setIconSelected(iconSelected);
+    if (iconSelected !== props.icon) {
+      setIsIconTouched(true);
+    } else {
+      setIsIconTouched(false);
+    }
   };
 
   return (<Modal
@@ -349,15 +364,27 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Color:"}</FormLabel>
+          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex"}>
             <div className={styles.colorContainer}>
-              <div data-testid={`${name}-color`} style={{width: "26px", height: "26px", background: colorSelected, marginTop: "4px"}}></div>
-              <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"}/></span>
+              <div className={styles.colorPickerBorder} onClick={handleEditColorMenu} data-testid={"edit-color-icon"}><div data-testid={`${name}-color`} aria-label={`${name}-${colorSelected}-color`} style={{width: "32px", height: "30px", background: colorSelected, margin: "8px"}}></div></div>
             </div>
             <div className={"p-2 ps-3 d-flex align-items-center"}>
-              <HCTooltip id="select-color-tooltip" text={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity type throughout your project</span> : <span>The selected color will be associated with this entity type throughout your project</span>} placement={"right"}>
+              <HCTooltip id="select-color-tooltip" text={props.isEditModal ? <span>The selected color will be associated with the <b>{name}</b> entity throughout your project</span> : <span>The selected color will be associated with this entity throughout your project</span>} placement={"right"}>
                 <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13}/>
+              </HCTooltip>
+            </div>
+          </Col>
+        </Row>
+        <Row className={"mb-3"}>
+          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon in Explore:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <div className={styles.iconContainer} data-testid={`${name}-icon-selector`} aria-label={`${name}-${iconSelected}-icon`}>
+              <IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)} />
+            </div>
+            <div className={"p-2 ps-3 d-flex align-items-center"}>
+              <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{name}</b> entity in the Explore screen.</span>} placement="right">
+                <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.questionCircle} />
               </HCTooltip>
             </div>
           </Col>

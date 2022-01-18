@@ -45,6 +45,31 @@ class ModelPage {
   scrollPageTop() {
     return cy.get(".mosaic-window > :nth-child(2)").scrollTo("top");
   }
+
+  openIconSelector(entityName: string) {
+    return cy.get(`[data-testid="${entityName}-icon-selector"]`).click();
+  }
+
+  selectNthIcon(order: number) {
+    return cy.get(`.sc-gsDKAQ > :nth-child(${order}) > svg > path`).click();
+  }
+
+  getIconSelected(entityName:string, iconName: string) {
+    return cy.get(`[aria-label="${entityName}-${iconName}-icon"]`);
+  }
+
+  getColorSelected(entityName:string, color:string) {
+    return cy.get(`[aria-label="${entityName}-${color}-color"]`);
+  }
+
+  toggleColorSelector() {
+    return cy.findByTestId("edit-color-icon").click();
+  }
+
+  selectColorFromPicker(color: string) {
+    return cy.findByTitle(`${color}`);
+  }
+
 }
 
 const modelPage = new ModelPage();

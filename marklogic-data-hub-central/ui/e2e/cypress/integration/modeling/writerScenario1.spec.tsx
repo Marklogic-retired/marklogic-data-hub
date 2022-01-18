@@ -48,8 +48,20 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName("Buyer");
     entityTypeModal.newEntityDescription("An entity for buyers");
+    modelPage.openIconSelector("Buyer");
+    modelPage.selectNthIcon(3);
+    modelPage.toggleColorSelector();
+    modelPage.selectColorFromPicker("#D5D3DD").click();
+    modelPage.toggleColorSelector();
+    modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
+
+    modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
     entityTypeModal.getAddButton().click();
     propertyTable.getAddPropertyButton("Buyer").should("be.visible").click();
+
+    //verify color and icon is reflected in the table
+    modelPage.getColorSelected("Buyer", "#d5d3dd").should("exist");
+    modelPage.getIconSelected("Buyer", "FaAccessibleIcon").should("exist");
   });
   it("Add a Multiple Value property", () => {
     propertyModal.newPropertyName("user");

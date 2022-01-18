@@ -1,9 +1,10 @@
-import React, {useState, useEffect, useContext, useLayoutEffect} from "react";
+import React, {useState, useEffect, useContext, useLayoutEffect, createElement} from "react";
 import Graph from "react-graph-vis";
 import graphConfig from "../../../config/graph-vis.config";
 import * as _ from "lodash";
-import entityIcon from "../../../assets/Entity-Services.png";
 import {SearchContext} from "../../../util/search-context";
+import {renderToStaticMarkup} from "react-dom/server";
+import * as FontIcon from "react-icons/fa";
 
 type Props = {
   entityTypeInstances: any;
@@ -12,6 +13,7 @@ type Props = {
   graphView: any;
   coords: any[];
   setCoords: (coords: any[]) => void;
+  hubCentralConfig: any;
 };
 
 const GraphVisExplore: React.FC<Props> = (props) => {
@@ -107,6 +109,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     }
   }, [network]);
 
+  const iconExistsForEntity = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
+  };
+
+  const colorExistsForEntity = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
+  };
 
   const selectedEntityExists = () => {
     return props.entityTypeInstances?.nodes?.some(e => e.entityName === searchOptions.entityInstanceId.split("-")[0]);
@@ -146,7 +155,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let nodes;
     nodes = props.entityTypeInstances && props.entityTypeInstances?.nodes?.map((e) => {
       let entityType = e.group.split("/").pop();
-      let entity = graphConfig.sampleMetadata["modeling"]["entities"][entityType];
+      let entity = props.hubCentralConfig?.modeling?.entities[entityType];
       let nodeId = e.id;
       let nodeLabel = e.label.length > 9 ? e.label.substring(0, 6) + "..." : e.label;
       let positionX = undefined;
@@ -160,12 +169,13 @@ const GraphVisExplore: React.FC<Props> = (props) => {
         shape: "custom",
         title: e.label,
         label: nodeLabel,
-        color: entity["color"],
+        color: colorExistsForEntity(entityType) ? entity["color"] : "#EEEFF1",
         x: positionX,
         y: positionY,
         ctxRenderer: ({ctx, x, y, state: {selected, hover}, style, label}) => {
           const r = style.size;
           const color = style.color;
+          let iconName = iconExistsForEntity(entityType) ? entity.icon : "FaShapes";
           const drawNode = () => {
             let scale = graphConfig.sampleMetadata?.modeling?.scale ? graphConfig.sampleMetadata?.modeling?.scale : 0.5;
             if (network) {
@@ -193,12 +203,12 @@ const GraphVisExplore: React.FC<Props> = (props) => {
             }
             if (scale > 0.3 && scale < 0.6) {
               let img = new Image();   // Create new img element
-              img.src = entity["icon"] ? entity["icon"] : entityIcon;
+              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaShapes"])))}`;
               //Drawing the image on canvas
               ctx.drawImage(img, x-12, imagePositionY, 24, 24);
             } else if (scale > 0.6) {
               let img = new Image();   // Create new img element
-              img.src = entity["icon"] ? entity["icon"] : entityIcon;
+              img.src = FontIcon[iconName] ? `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon[iconName])))}` : `data:image/svg+xml,${encodeURIComponent(renderToStaticMarkup(createElement(FontIcon["FaShapes"])))}`;
               //Drawing the image on canvas
               ctx.drawImage(img, x-12, imagePositionY, 24, 24);
               ctx.fillText(nodeLabel, x, y+10);

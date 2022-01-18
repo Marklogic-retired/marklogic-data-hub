@@ -5,7 +5,6 @@ import {QuestionCircleFill, XLg} from "react-bootstrap-icons";
 import {HCTooltip, HCInput} from "@components/common";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./side-panel.module.scss";
-import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {ModelingTooltips, SecurityTooltips} from "../../../../config/tooltips.config";
 import {ModelingContext} from "../../../../util/modeling-context";
@@ -15,6 +14,7 @@ import {UserContext} from "../../../../util/user-context";
 import graphConfig from "../../../../config/graph-vis.config";
 import {EntityModified} from "../../../../types/modeling-types";
 import {defaultHubCentralConfig} from "../../../../config/modeling.config";
+import {IconPicker} from "react-fa-icon-picker";
 
 type Props = {
   entityTypes: any;
@@ -27,6 +27,7 @@ type Props = {
   hubCentralConfig: any;
   updateHubCentralConfig: (hubCentralConfig: any) => void;
   getColor: any;
+  getIcon: any;
 };
 
 const DEFAULT_TAB = "properties";
@@ -46,6 +47,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
   const [colorSelected, setColorSelected] = useState("#EEEFF1");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
   const [eventValid, setEventValid] = useState(false);
+  const [iconSelected, setIconSelected] = useState<any>("");
   const node: any = useRef();
 
   const [selectedEntityInfo, setSelectedEntityInfo] = useState<any>({});
@@ -68,7 +70,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
               setSelectedEntityNamespace(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespace);
               setSelectedEntityNamespacePrefix(entity !== undefined && selectedEntityDetails.model.definitions[entity].namespacePrefix);
             }
-            initializeEntityColor();
+            initializeEntityColorIcon();
           } else {
             // Entity type not found, may have been deleted, unset
             setSelectedEntity(undefined);
@@ -80,12 +82,20 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     }
   };
 
-  const initializeEntityColor = () => {
+  const initializeEntityColorIcon = () => {
     let entColor = props.getColor(modelingOptions.selectedEntity);
+    let entIcon = props.getIcon(modelingOptions.selectedEntity);
+
     if (entColor) {
       setColorSelected(entColor);
     } else {
       setColorSelected("#EEEFF1");
+    }
+
+    if (entIcon) {
+      setIconSelected(entIcon);
+    } else {
+      setIconSelected("FaShapes");
     }
   };
 
@@ -195,7 +205,7 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
     if (modelingOptions.selectedEntity) {
       setErrorServer("");
       getEntityInfo();
-      initializeEntityColor();
+      initializeEntityColorIcon();
     }
   }, [modelingOptions.selectedEntity]);
 
@@ -211,6 +221,26 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
         let colorPayload = defaultHubCentralConfig;
         colorPayload.modeling.entities[modelingOptions.selectedEntity] = {color: color.hex};
         props.updateHubCentralConfig(colorPayload);
+        setErrorServer("");
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        if (error.response.data.hasOwnProperty("message")) {
+          setErrorServer(error["response"]["data"]["message"]);
+        }
+      } else {
+        handleError(error);
+      }
+    }
+  };
+
+  const handleIconChange = async (iconSelected) => {
+    setIconSelected(iconSelected);
+    try {
+      if (modelingOptions.selectedEntity !== undefined) {
+        let iconPayload = defaultHubCentralConfig;
+        iconPayload.modeling.entities[modelingOptions.selectedEntity] = {icon: iconSelected};
+        props.updateHubCentralConfig(iconPayload);
         setErrorServer("");
       }
     } catch (error) {
@@ -296,14 +326,26 @@ const GraphViewSidePanel: React.FC<Props> = (props) => {
           </Col>
         </Row>
         <Row className={"mb-3"}>
-          <FormLabel column lg={3}>{"Color:"}</FormLabel>
+          <FormLabel column lg={3} style={{marginTop: "10px"}}>{"Color:"}</FormLabel>
           <Col className={"d-flex align-items-center"}>
             <div className={styles.colorContainer}>
-              <div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "26px", height: "26px", background: colorSelected}}></div>
+              <div className={styles.colorPickerBorder} onClick={handleEditColorMenu} data-testid={"edit-color-icon"}><div data-testid={`${modelingOptions.selectedEntity}-color`} style={{width: "32px", height: "30px", background: colorSelected, margin: "8px"}}></div></div>
               <div className={"d-flex align-items-center"}>
-                <span className={styles.editIconContainer}><FontAwesomeIcon icon={faPencilAlt} size="sm" onClick={handleEditColorMenu} className={styles.editIcon} data-testid={"edit-color-icon"} /></span>
-                <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity type throughout your project.</span>} placement="right">
+                <HCTooltip id="colo-selector" text={<span>Select a color to associate it with the <b>{modelingOptions.selectedEntity}</b> entity throughout your project.</span>} placement="right">
                   <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.colorsIcon} />
+                </HCTooltip>
+              </div>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <FormLabel column lg={3} style={{marginTop: "11px"}}>{"Icon in Explore:"}</FormLabel>
+          <Col className={"d-flex align-items-center"}>
+            <div className={styles.iconContainer}>
+              <div data-testid={`${modelingOptions.selectedEntity}-icon-selector`} aria-label={`${modelingOptions.selectedEntity}-${iconSelected}-icon`}><IconPicker value={iconSelected} onChange={(value) => handleIconChange(value)}/></div>
+              <div className={"d-flex align-items-center"}>
+                <HCTooltip id="icon-selector" text={<span>Select an icon to associate it with the <b>{modelingOptions.selectedEntity}</b> entity in the Explore screen.</span>} placement="right">
+                  <QuestionCircleFill aria-label="icon: question-circle" color="#7F86B5" size={13} className={styles.iconPickerTooltip} />
                 </HCTooltip>
               </div>
             </div>

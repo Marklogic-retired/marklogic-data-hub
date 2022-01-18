@@ -29,6 +29,9 @@ import {HCTooltip, HCSider} from "@components/common";
 import {graphSearchQuery} from "../api/queries";
 import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
+import {updateHubCentralConfig, getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import {hubCentralConfig} from "../types/modeling-types"; // eslint-disable-line @typescript-eslint/no-unused-vars
+
 
 //TODO: remove this, it's just for mocking porpouses and show default data en specif sidebar when non entity was selected
 const ADDRESS = {name: "Address", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
@@ -128,6 +131,7 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
   const [graphSearchData, setGraphSearchData] = useState<any[]>([]);
+  const [hubCentralConfig, sethubCentralConfig] = useState({});
 
 
   const getGraphSearchResult = async (allEntities: any[]) => {
@@ -153,6 +157,19 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
+
+  const setHubCentralConfigFromServer = async () => {
+    try {
+      const response = await getHubCentralConfig();
+      if (response["status"] === 200) {
+        sethubCentralConfig(response.data);
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+
   const getEntityModel = async () => {
     try {
       const response = await axios(`/api/models`);
@@ -165,6 +182,7 @@ const Browse: React.FC<Props> = ({location}) => {
         setEntityDefinitionsArray(parsedEntityDef);
         setEntitiesData(response.data);
         getGraphSearchResult(entityArray);
+        setHubCentralConfigFromServer();
       }
     } catch (error) {
       handleError(error);
@@ -656,6 +674,7 @@ const Browse: React.FC<Props> = ({location}) => {
                           graphView={graphView}
                           coords={coords}
                           setCoords={setCoords}
+                          hubCentralConfig={hubCentralConfig}
                         />
                       </div> :
                       cardView ?

@@ -194,10 +194,15 @@ const GraphView: React.FC<Props> = (props) => {
     return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
   };
 
+  const iconExistsForEntityName = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
+  };
+
   const getColor = (entityName) => {
     let color = "#EEEFF1";
     if (colorExistsForEntity(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
-      if (filterMenuSuggestions && filterMenuSuggestions.includes(entityName)) {
+      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj["entityName"] === entityName; }).length > 0;
+      if (filterMenuSuggestions && entityDisplayed) {
         color = props.hubCentralConfig.modeling.entities[entityName]["color"];
       } else {
         color = "#F5F5F5";
@@ -208,6 +213,24 @@ const GraphView: React.FC<Props> = (props) => {
       color = "#EEEFF1";
     }
     return color;
+  };
+
+  const getIcon = (entityName) => {
+    let icon = "FaShapes";
+
+    if (iconExistsForEntityName(entityName) && filterMenuSuggestions.length > 0 && !filterMenuSuggestions.includes("a")) {
+      let entityDisplayed = filterMenuSuggestions.filter(function (obj) { return obj["entityName"] === entityName; }).length > 0;
+      if (filterMenuSuggestions && entityDisplayed) {
+        icon = props.hubCentralConfig.modeling.entities[entityName]["icon"];
+      } else {
+        icon = "FaShapes";
+      }
+    } else if (iconExistsForEntityName(entityName)) {
+      icon = props.hubCentralConfig.modeling.entities[entityName]["icon"];
+    } else {
+      icon = "FaShapes";
+    }
+    return icon;
   };
 
   const graphViewMainPanel =
@@ -273,6 +296,7 @@ const GraphView: React.FC<Props> = (props) => {
             hubCentralConfig={props.hubCentralConfig}
             updateHubCentralConfig={props.updateHubCentralConfig}
             getColor={getColor}
+            getIcon={getIcon}
           />
         </div>
       </SplitPane>

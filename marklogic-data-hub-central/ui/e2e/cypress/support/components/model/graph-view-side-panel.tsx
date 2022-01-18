@@ -24,17 +24,8 @@ class GraphViewSidePanel {
   getEntityTypeDescription() {
     return cy.get("#description");
   }
-
-  getEditEntityTypeColor() {
-    return cy.findByTestId("edit-color-icon");
-  }
-
-  selectColorFromPicker(color: string) {
-    return cy.findByTitle(`${color}`);
-  }
-
   getEntityTypeColor(entityName: string) {
-    return cy.findByTestId(`${entityName}-color`);
+    return cy.get(`[data-testid="${entityName}-color"]`);
   }
 
   getPropertyTableHeader(headerName: string) {
