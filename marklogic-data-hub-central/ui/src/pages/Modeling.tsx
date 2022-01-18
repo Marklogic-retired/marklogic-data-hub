@@ -34,6 +34,8 @@ const Modeling: React.FC = () => {
   const [namespace, setNamespace] = useState("");
   const [prefix, setPrefix] = useState("");
   const [color, setColor] = useState("");
+  const [icon, setIcon] = useState("");
+
   const [autoExpand, setAutoExpand] = useState("");
   //const [revertAllEntity, toggleRevertAllEntity] = useState(false);
   const [width, setWidth] = React.useState(window.innerWidth);
@@ -177,7 +179,7 @@ const Modeling: React.FC = () => {
     }));
   };
 
-  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => {
+  const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string, entityTypeIcon: string) => {
     if (canWriteEntityModel) {
       toggleIsEditModal(true);
       toggleShowEntityModal(true);
@@ -186,6 +188,7 @@ const Modeling: React.FC = () => {
       setNamespace(entityTypeNamespace);
       setPrefix(entityTypePrefix);
       setColor(entityTypeColor);
+      setIcon(entityTypeIcon);
     }
   };
 
@@ -446,6 +449,7 @@ const Modeling: React.FC = () => {
           namespace={namespace}
           prefix={prefix}
           color={color}
+          icon={icon}
           updateHubCentralConfig={publishHubCentralConfig}
         />
       </div>

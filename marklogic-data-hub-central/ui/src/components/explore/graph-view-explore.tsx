@@ -16,6 +16,7 @@ type Props = {
   graphView: any;
   coords: any[];
   setCoords: (coords: any[]) => void;
+  hubCentralConfig: any;
 };
 
 const GraphViewExplore: React.FC<Props> = (props) => {
@@ -80,6 +81,7 @@ const GraphViewExplore: React.FC<Props> = (props) => {
             graphView={props.graphView}
             coords={props.coords}
             setCoords={props.setCoords}
+            hubCentralConfig={props.hubCentralConfig}
           />
         </div>
       </div>

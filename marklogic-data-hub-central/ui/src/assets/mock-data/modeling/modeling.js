@@ -1115,25 +1115,32 @@ export const hubCentralConfig = {
   "modeling": {
     "entities": {
       "AnotherModel": {
-        "color": "#D5D3DD"
+        "color": "#D5D3DD",
+        "icon": "FaUserAlt"
       },
       "Order": {
-        "color": "#CEE0ED"
+        "color": "#CEE0ED",
+        "icon": "FaShapes"
       },
       "Protein": {
-        "color": "#D9F5F0"
+        "color": "#D9F5F0",
+        "icon": "FaAccessibleIcon"
       },
       "Product": {
-        "color": "#C9EBC4"
+        "color": "#C9EBC4",
+        "icon": "FaApple"
       },
       "Provider": {
-        "color": "#E7B8B2"
+        "color": "#E7B8B2",
+        "icon": "FaKaaba"
       },
       "TestEntityForMapping": {
-        "color": "#FFF0A3"
+        "color": "#FFF0A3",
+        "icon": "FaChild"
       },
       "Customer": {
-        "color": "#F6D4A7"
+        "color": "#F6D4A7",
+        "icon": "FaRegMoon"
       }
     }
   }

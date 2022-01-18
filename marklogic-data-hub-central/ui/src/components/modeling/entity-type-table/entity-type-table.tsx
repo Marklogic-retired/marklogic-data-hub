@@ -4,7 +4,7 @@ import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./entity-type-table.module.scss";
-
+import DynamicIcons from "../../common/dynamic-icons/dynamic-icons";
 import PropertyTable from "../property-table/property-table";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 import {entityReferences, deleteEntity} from "../../../api/modeling";
@@ -22,7 +22,7 @@ type Props = {
   canReadEntityModel: boolean;
   canWriteEntityModel: boolean;
   autoExpand: string;
-  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string) => void;
+  editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string, entityTypeNamespace: string, entityTypePrefix: string, entityTypeColor: string, entityTypeIcon: string) => void;
   updateEntities: () => void;
   updateSavedEntity: (entity: EntityModified) => void;
   hubCentralConfig: any;
@@ -42,7 +42,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [arrayValues, setArrayValues] = useState<string[]>([]);
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.DeleteEntity);
-
 
   useEffect(() => {
     if (props.autoExpand) {
@@ -167,7 +166,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                       getEntityTypeProp(entityName, "description"),
                       getEntityTypeProp(entityName, "namespace"),
                       getEntityTypeProp(entityName, "namespacePrefix"),
-                      getEntityTypeProp(entityName, "color")
+                      getEntityTypeProp(entityName, "color"),
+                      getEntityTypeProp(entityName, "icon")
                     );
                   }}>
                   {entityName}</span>
@@ -267,8 +267,27 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let entityName = parseText[0];
         let color = parseText[1];
         return (
-          <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> entity type throughout your project.</span>}>
-            <div style={{width: "24px", height: "26px", background: color, marginLeft: "45%"}} data-testid={`${entityName}-${color}-color`}></div>
+          <HCTooltip placement="top" id="color-tooltip" text={<span>This color is associated with the <b>{entityName}</b> entity throughout your project.</span>}>
+            <div style={{width: "30px", height: "32px", background: color, marginLeft: "3%"}} data-testid={`${entityName}-${color}-color`} aria-label={`${entityName}-${color}-color`}></div>
+          </HCTooltip>
+        );
+      }
+    },
+    {
+      text: "Icon",
+      dataField: "icon",
+      className: styles.actions,
+      width: 100,
+      headerFormatter: () => <span data-testid="icon">Icon</span>,
+      formatter: text => {
+        let parseText = text.split(",");
+        let entityName = parseText[0];
+        let icon = parseText[1];
+        return (
+          <HCTooltip placement="top" id="icon-tooltip" text={<span>This icon is associated with the <b>{entityName}</b> entity in the Explore screen.</span>}>
+            <div style={{width: "30px", height: "32px", marginLeft: "3%", fontSize: "24px", marginTop: "-11%"}} data-testid={`${entityName}-${icon}-icon`} aria-label={`${entityName}-${icon}-icon`}>
+              <DynamicIcons name={icon}/>
+            </div>
           </HCTooltip>
         );
       }
@@ -316,6 +335,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     if (prop === "color") {
       return colorExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: "#EEEFF1";
     }
+    if (prop === "icon") {
+      return iconExistsForEntity(entityName) ? props.hubCentralConfig.modeling.entities[entityName][prop]: "FaShapes";
+    }
     return (entity.hasOwnProperty("model") &&
       entity.model.hasOwnProperty("definitions") &&
       entity.model.definitions.hasOwnProperty(entity.entityName) &&
@@ -350,12 +372,17 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     return (!props.hubCentralConfig?.modeling?.entities[entityName]?.color ? false : true);
   };
 
+  const iconExistsForEntity = (entityName) => {
+    return (!props.hubCentralConfig?.modeling?.entities[entityName]?.icon ? false : true);
+  };
+
   const renderTableData = allEntityTypes.map((entity, index) => {
     let result = {
       entityName: entity.entityName,
       instances: entity.entityName + "," + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + "," + entity.latestJobId + "," + entity.latestJobDateTime,
       color: colorExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].color) : (entity.entityName + "," + "#EEEEFF1"),
+      icon: iconExistsForEntity(entity.entityName) ? (entity.entityName + "," + props.hubCentralConfig.modeling.entities[entity.entityName].icon) : (entity.entityName + "," + "FaShapes"),
       actions: entity.entityName,
       definitions: entity.model.definitions,
     };

@@ -55,6 +55,7 @@ describe("EntityTypeModal Component", () => {
     expect(getByText("Instances")).toBeInTheDocument();
     expect(getByText("Last Processed")).toBeInTheDocument();
     expect(getByText("Color")).toBeInTheDocument();
+    expect(getByText("Icon")).toBeInTheDocument();
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
@@ -92,7 +93,7 @@ describe("EntityTypeModal Component", () => {
 
     expect(getByLabelText("AnotherModel-add-property")).toBeDisabled();
 
-    //Verify individual colors are rendered for each entity in table view
+    //Verify individual colors and icons are rendered for each entity in table view
     expect(getByTestId("AnotherModel-#D5D3DD-color")).toBeInTheDocument();
     expect(getByTestId("Order-#CEE0ED-color")).toBeInTheDocument();
     expect(getByTestId("Protein-#D9F5F0-color")).toBeInTheDocument();
@@ -100,6 +101,14 @@ describe("EntityTypeModal Component", () => {
     expect(getByTestId("Provider-#E7B8B2-color")).toBeInTheDocument();
     expect(getByTestId("TestEntityForMapping-#FFF0A3-color")).toBeInTheDocument();
     expect(getByTestId("Customer-#F6D4A7-color")).toBeInTheDocument();
+
+    expect(getByTestId("AnotherModel-FaUserAlt-icon")).toBeInTheDocument();
+    expect(getByTestId("Order-FaShapes-icon")).toBeInTheDocument();
+    expect(getByTestId("Protein-FaAccessibleIcon-icon")).toBeInTheDocument();
+    expect(getByTestId("Product-FaApple-icon")).toBeInTheDocument();
+    expect(getByTestId("Provider-FaKaaba-icon")).toBeInTheDocument();
+    expect(getByTestId("TestEntityForMapping-FaChild-icon")).toBeInTheDocument();
+    expect(getByTestId("Customer-FaRegMoon-icon")).toBeInTheDocument();
 
     //Verify sorting works as expected in entity table
     let entityTable = document.querySelectorAll(".ant-table-row-level-0");
