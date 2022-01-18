@@ -63,8 +63,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const authorityService = useContext(AuthoritiesContext);
   let tableView = detailPagePreferences.hasOwnProperty("tableView") ? detailPagePreferences["tableView"] : true;
   let graphView = false;
-  if (location.state) {
-    graphView = !!location.state["graphView"];
+  if (state) {
+    graphView = !!state["graphView"];
   }
   if (graphView) {
     tableView = false;
@@ -471,9 +471,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
                   </div>;
               } else if (selected === "instance") {
                 contentType === "json" ?
-                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />
+                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={state ? state["id"] : {}} isEntityInstance={entityInstanceDocument} />
                   :
-                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />;
+                  block = (entityInstance) && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={state ? state["id"] : {}} isEntityInstance={entityInstanceDocument} />;
               } else if (selected === "metadata") {
                 block =
                   <div id="metadata-view">
