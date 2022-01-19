@@ -63,13 +63,13 @@ if(query == null) {
 }
 
 let queryObj = JSON.parse(query);
-var relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
-var allEntityTypeIRIs = [];
-var entityTypeIRIs = [];
+let relatedEntityTypeIds = queryObj.relatedEntityTypeIds;
+let allEntityTypeIRIs = [];
+let entityTypeIRIs = [];
 start = start || 0;
 pageLength = pageLength || 1000;
-var hashmapPredicate = new Map();
-var qrySearch;
+let hashmapPredicate = new Map();
+let qrySearch;
 if(structuredQuery !== undefined && structuredQuery.toString().length > 0) {
   structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
   queryOptions = fn.head(xdmp.unquote(queryOptions)).root;
@@ -160,15 +160,16 @@ result.map(item => {
         hasRelationships = graphUtils.relatedObjHasRelationships(objectId, hashmapPredicate);
     }
     //Override if count is more than 1. We will have a node with badge.
+    let edge = {};
     if (item.nodeCount > 1) {
       let entityType = objectIRIArr[objectIRIArr.length - 2];
-      objectIRI = entityType;
       objectLabel =  entityType;
       objectUri = null;
       objectId = item.subjectIRI.toString() + "-" + objectIRIArr[objectIRIArr.length - 2];
+      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + entityType;
+    } else {
+      edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
     }
-    let edge = {};
-    edge.id = "edge-" + item.subjectIRI + "-" + item.predicateIRI + "-" + objectIRI;
     let predicateArr = item.predicateIRI.toString().split("/");
     let edgeLabel = predicateArr[predicateArr.length - 1];
     edge.label = edgeLabel;
@@ -177,11 +178,12 @@ result.map(item => {
     edges.push(edge);
     if (!nodes[objectId]) {
       let objectNode = {};
-      objectNode.id = item.firstObjectIRI;
-      objectNode.docUri = objectUri;
+      objectNode.id = objectId;
+      if (item.nodeCount === 1) {
+        objectNode.docUri = objectUri;
+      }
       objectNode.label = objectLabel;
       objectNode.group = objectGroup;
-      objectNode.docUri = objectUri;
       objectNode.isConcept = false;
       objectNode.count = item.nodeCount;
       objectNode.hasRelationships = hasRelationships;
@@ -200,8 +202,11 @@ result.map(item => {
   }
 })
 
-
-const totalEstimate = cts.estimate(cts.andQuery([ctsQuery, cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs.concat(relatedEntityTypeIRIs))]));
+let finalQuery = cts.andQuery([ctsQuery, cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), entityTypeIRIs)]);
+if (relatedEntityTypeIRIs.length) {
+  finalQuery = cts.orQuery([finalQuery, cts.tripleRangeQuery(null, sem.curieExpand("rdf:type"), relatedEntityTypeIRIs)]);
+}
+const totalEstimate = cts.estimate(finalQuery);
 const nodesValues = hubUtils.getObjectValues(nodes)
 const response = {
   'total': totalEstimate,

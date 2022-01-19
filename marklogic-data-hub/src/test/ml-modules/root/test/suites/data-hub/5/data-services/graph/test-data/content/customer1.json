@@ -9,15 +9,7 @@
       "createdOn": "2021-11-22T01:35:36.267443-08:00",
       "createdBy": "admin"
     },
-    "triples": [
-      {
-        "triple": {
-          "subject": "http://example.org/Customer-0.0.1/Customer/301",
-          "predicate": "http://example.org/Customer-0.0.1/Customer/301/hasOffice",
-          "object": "http://example.org/Office-0.0.1/Office/1"
-        }
-      }
-    ],
+    "triples": [],
     "instance": {
       "info": {
         "title": "Customer",

@@ -278,23 +278,16 @@ declare function extraction-template-generate(
 
 
                  for $property-name in map:keys($properties)
-                     let $property-info :=
-                         if (map:contains(map:get($properties, $property-name), "items"))
-                         then map:get(map:get($properties, $property-name), "items")
-                         else map:get($properties, $property-name)
-                         let $is-related-entity-type := map:contains($property-info, "relatedEntityType" )
-                         let $related-entity-type := map:get($property-info, "relatedEntityType" )
-                   (: let $is-related-entity-type := map:contains( map:get($properties, $property-name), "relatedEntityType" )
-                    let $related-entity-type := map:get( map:get($properties, $property-name), "relatedEntityType" ):)
-                    where exists($related-entity-type)
-                    return(
+                 let $property-info :=map:get($properties, $property-name)
+                 let $is-related-entity-type := map:contains($property-info, "relatedEntityType" )
+                 let $related-entity-type := map:get($property-info, "relatedEntityType" )
+                 where exists($related-entity-type)
+                 return
                      <tde:triple>
                        <tde:subject><tde:val>$subject-iri</tde:val></tde:subject>
                        <tde:predicate><tde:val>sem:iri("{ model-graph-prefix($model) }/{ $entity-type-name }/{ $property-name}")</tde:val></tde:predicate>
                        <tde:object><tde:val>sem:iri(concat("{ $related-entity-type}/", fn:encode-for-uri(xs:string(./{ $property-name}))))</tde:val></tde:object>
                      </tde:triple>
-                     )
-
                   }
 
                 </tde:triples>
