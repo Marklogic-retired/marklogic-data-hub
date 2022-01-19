@@ -697,23 +697,24 @@ const Sidebar: React.FC<Props> = (props) => {
         </Accordion.Item>
       </Accordion>
 
-      <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
-        <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
-          <div className={"p-0 d-flex"}>
-            <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
-          </div>
-          <Accordion.Body>
-            <BaseEntitiesFacet
-              setCurrentBaseEntities={props.setCurrentBaseEntities}
-              setEntitySpecificPanel={props.setEntitySpecificPanel}
-              currentBaseEntities={props.currentBaseEntities}
-              setActiveAccordionRelatedEntities={setActiveAccordion}
-              activeKey={activeKey}
-            />
-          </Accordion.Body>
-        </Accordion.Item>
-      </Accordion>
-      {props.currentRelatedEntities.size > 0 &&
+      {(searchOptions.datasource && searchOptions.datasource !== "all-data") && <>
+        <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
+          <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
+            <div className={"p-0 d-flex"}>
+              <Accordion.Button className={`after-indicator ${styles.titleBaseEntities}`} onClick={() => setActiveAccordion("baseEntities")}>{panelTitle(<span>base entities</span>, exploreSidebar.baseEntities)}</Accordion.Button>
+            </div>
+            <Accordion.Body>
+              <BaseEntitiesFacet
+                setCurrentBaseEntities={props.setCurrentBaseEntities}
+                setEntitySpecificPanel={props.setEntitySpecificPanel}
+                currentBaseEntities={props.currentBaseEntities}
+                setActiveAccordionRelatedEntities={setActiveAccordion}
+                activeKey={activeKey}
+              />
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        {props.currentRelatedEntities.size > 0 &&
         <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
           <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
             <div className={"p-0 d-flex"}>
@@ -725,7 +726,8 @@ const Sidebar: React.FC<Props> = (props) => {
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
-      }
+        }
+      </>}
 
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
         <FormCheck
