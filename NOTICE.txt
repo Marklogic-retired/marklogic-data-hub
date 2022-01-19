@@ -1,6 +1,6 @@
 MarkLogic® Data Hub
 
-Copyright © 2021 MarkLogic Corporation. MarkLogic and the MarkLogic logo are trademarks or registered trademarks of MarkLogic Corporation in the United States and other countries.  All other trademarks are the property of their respective owners.
+Copyright © 2022 MarkLogic Corporation. MarkLogic and the MarkLogic logo are trademarks or registered trademarks of MarkLogic Corporation in the United States and other countries.  All other trademarks are the property of their respective owners.
 
 This project is licensed under the Apache License, Version 2.0 (the "License"); you may not use this project except in compliance with the License. You may obtain a copy of the License at
 
@@ -10,9 +10,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 To the extent required by the applicable open source license, a complete machine-readable copy of the source code corresponding to such code is available upon request. This offer is valid to anyone in receipt of this information and shall expire three years following the date of the final distribution of this product version by MarkLogic. To obtain such source code, send an email to legal@marklogic.com. Please specify the product and version for which you are requesting source code.
 
-The following software may be included in this project (last updated September 17, 2021):
+The following software may be included in this project (last updated January 15, 2022):
 
- 
 @angular-mdl/core 6.0.1
 Attribution Statements
 http://mseemann.io/angular2-mdl/
@@ -555,6 +554,17 @@ License Text (http://spdx.org/licenses/Apache-2.0)
 Made available under the Apache License 2.0. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/apache/httpcomponents-client
+Apache HttpComponents™ HttpClient 4.5.13
+Attribution Statements
+http://hc.apache.org/httpcomponents-client
+
+Copyright Statements
+Copyright (C) 2021, The Apache Software Foundation
+
+License Text (http://www.apache.org/licenses/LICENSE-2.0.txt)
+Made available under the Apache License 2.0. See Appendix for full text.
+
+Source materials are available for download at: https://github.com/apache/httpcomponents-client
 Apache HttpComponents™ HttpClient 4.5.3
 Attribution Statements
 https://hc.apache.org/httpcomponents-client-ga/index.html
@@ -667,7 +677,7 @@ License Text (http://spdx.org/licenses/Apache-2.0)
 Made available under the Apache License 2.0. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/apache/jena/tree/master/jena-iri
-Apache Log4j 2™ 2.11
+Apache Log4j 2™ 2.17.1
 Attribution Statements
 https://logging.apache.org/log4j/2.x/
 
@@ -687,7 +697,7 @@ picocli (http://picocli.info)
 Copyright 2017 Remko Popma
 
 Copyright Statements
-Copyright (C) 2018, The Apache Software Foundation
+Copyright (C) 2022, The Apache Software Foundation
 
 License Text (http://spdx.org/licenses/Apache-2.0.html)
 Made available under the Apache License 2.0. See Appendix for full text.
@@ -1738,7 +1748,7 @@ Copyright (c) 2009-2014 Luaj.org.
 Copyright Statements
 Axel Kramer
 
-License Text (http:// https://spdx.org/licenses/EPL-1.0.html)
+License Text (https://spdx.org/licenses/EPL-1.0.html)
 Made available under the Eclipse Public License 1.0. See Appendix for full text.
 
 Source materials are available for download at: https://bitbucket.org/axelclk/info.bliki.wiki/src
@@ -1787,6 +1797,17 @@ License Text (http://spdx.org/licenses/MIT)
 Made available under the MIT License. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/trentm/node-bunyan
+Cascader
+Attribution Statements
+https://github.com/react-component/cascader
+
+Copyright Statements
+Copyright (c) 2014-present alipay.com
+
+License Text (http://spdx.org/licenses/MIT)
+Made available under the MIT License. See Appendix for full text.
+
+Source materials are available for download at: https://github.com/react-component/cascader
 Chai 4.2.0
 Attribution Statements
 https://www.chaijs.com/
@@ -1992,6 +2013,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Source materials are available for download at: https://github.com/dom4j/dom4j
+duplexify
+Attribution Statements
+https://github.com/mafintosh/duplexify
+
+Copyright Statements
+Copyright (c) 2014 Mathias Buus
+
+License Text (http://spdx.org/licenses/MIT)
+Made available under the MIT License. See Appendix for full text.
+
+Source materials are available for download at: https://github.com/mafintosh/duplexify
 EasyMock 3.4
 Attribution Statements
 http://easymock.org/
@@ -2951,7 +2983,18 @@ Copyright ©2009 FasterXML, LLC
 License Text (http://spdx.org/licenses/Apache-2.0)
 Made available under the Apache License 2.0. See Appendix for full text.
 
-Source materials are available for download at: http://github.com/FasterXML/jackson
+Source materials are available for download at: https://github.com/FasterXML/jackson-annotations
+Jackson Annotations 2.11.0
+Attribution Statements
+http://wiki.fasterxml.com/JacksonHome
+
+Copyright Statements
+Copyright ©2009 FasterXML, LLC
+
+License Text (http://spdx.org/licenses/Apache-2.0)
+Made available under the Apache License 2.0. See Appendix for full text.
+
+Source materials are available for download at: https://github.com/FasterXML/jackson-annotations
 Jackson Core 2.10.3
 Attribution Statements
 http://wiki.fasterxml.com/JacksonHome
@@ -5706,6 +5749,17 @@ License Text (http://spdx.org/licenses/MIT)
 Made available under the MIT License. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/qos-ch/slf4j/tree/master/slf4j-api
+SLF4J 1.7.32
+Attribution Statements
+http://www.slf4j.org
+
+Copyright Statements
+Copyright (c) 2004-2007 QOS.ch. All rights reserved.
+
+License Text (http://spdx.org/licenses/MIT)
+Made available under the MIT License. See Appendix for full text.
+
+Source materials are available for download at: https://github.com/qos-ch/slf4j/tree/master/slf4j-api
 SockJS-client 1.3.0
 Attribution Statements
 http://sockjs.org
@@ -5762,6 +5816,17 @@ License Text (http://spdx.org/licenses/Apache-2.0)
 Made available under the Apache License 2.0. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/spring-projects/spring-framework
+Stream to Array
+Attribution Statements
+https://github.com/stream-utils/stream-to-array#readme
+
+Copyright Statements
+Copyright (c) 2014 Jonathan Ong me@jongleberry.com
+
+License Text (http://spdx.org/licenses/MIT)
+Made available under the MIT License. See Appendix for full text.
+
+Source materials are available for download at: https://github.com/stream-utils/stream-to-array#readme
 Sunlight 1.22.0
 Attribution Statements
 http://sunlightjs.com/
@@ -6250,6 +6315,7 @@ Made available under the MIT License. See Appendix for full text.
 
 Source materials are available for download at: https://github.com/angular/zone.js
 
+
  
 Appendix
 
@@ -6575,17 +6641,17 @@ Creative Commons may be contacted at http://creativecommons.org/.
 Do What The F*ck You Want To Public License
 https://spdx.org/licenses/WTFPL.html
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
+DO WHAT THE F*CK YOU WANT TO PUBLIC LICENSE 
 Version 2, December 2004
 
 Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
 
 Everyone is permitted to copy and distribute verbatim or modified copies of this license document, and changing it is allowed as long as the name is changed.
 
-DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
+DO WHAT THE F*CK YOU WANT TO PUBLIC LICENSE 
 TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
-0. You just DO WHAT THE FUCK YOU WANT TO.
+0. You just DO WHAT THE F*CK YOU WANT TO.
 
  
 Eclipse Public License 1.0
