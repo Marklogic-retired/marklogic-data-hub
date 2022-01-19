@@ -19,4 +19,5 @@
 - ##### Reviewer:
 
 - [ ] Reviewed Tests
+- [ ] Added Release Notes
 
