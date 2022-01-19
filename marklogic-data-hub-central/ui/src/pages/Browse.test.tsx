@@ -25,7 +25,8 @@ describe("Explorer Browse page tests ", () => {
     selectedTableProperties: [],
     view: null,
     sortOrder: [],
-    database: "final"
+    database: "final",
+    datasource: "entities"
   };
 
   afterEach(() => {
