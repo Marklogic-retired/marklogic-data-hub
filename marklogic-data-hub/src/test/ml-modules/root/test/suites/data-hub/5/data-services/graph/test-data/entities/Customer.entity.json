@@ -2,8 +2,8 @@
   "info": {
     "title": "Customer",
     "version": "0.0.1",
-"baseUri": "http://example.org/",
-"draft": false
+    "baseUri": "http://example.org/",
+    "draft": false
   },
   "definitions": {
     "Customer": {
@@ -77,15 +77,15 @@
             "$ref": "http://example.org/Order-0.0.1/Order"
           }
         }
+      },
+      "description": ""
     },
-"description": ""
-},
     "Address": {
-      "required": [ ],
-      "pii": [ ],
-      "elementRangeIndex": [ ],
-      "rangeIndex": [ ],
-      "wordLexicon": [ ],
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [],
+      "rangeIndex": [],
+      "wordLexicon": [],
       "properties": {
         "street": {
           "datatype": "array",
@@ -108,7 +108,7 @@
       }
     },
     "Zip": {
-      "required": [ ],
+      "required": [],
       "properties": {
         "fiveDigit": {
           "datatype": "string",
@@ -120,5 +120,5 @@
         }
       }
     }
-}
+  }
 }
