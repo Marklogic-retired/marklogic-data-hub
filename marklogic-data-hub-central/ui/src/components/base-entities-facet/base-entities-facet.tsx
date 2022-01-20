@@ -2,56 +2,42 @@ import React, {useContext, useEffect, useState}  from "react";
 import Select from "react-select";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
 import {SearchContext} from "../../util/search-context";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./base-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {entitiesSorting} from "../../util/entities-sorting";
 import {HCDivider} from "@components/common";
-import * as Icons from "@fortawesome/free-solid-svg-icons";
 import {MINIMUM_ENTITIES} from "../../config/exploreSidebar";
-
-const PERSON = {name: "Person", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
-const BABY_REGISTRY = {name: "Baby Registry", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
-const PRODUCT_DETAIL = {name: "Product Detail", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
-const CLIENT = {name: "Client", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
-const CUSTOMERS = {name: "Customer", color: "#BEDDDF", amount: 100, filter: 1, icon: "faShoppingCart"};
-const BUYER = {name: "Buyer", color: "#F0F6D9", amount: 340, icon: "faBell"};
-const ITEM = {name: "Item", color: "#D9F5F0", amount: 40, icon: "faBox"};
-const ORDERS = {name: "Order", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
-
-const ENTITIES = [
-  {...PERSON, relatedEntities: []},
-  {...BABY_REGISTRY, relatedEntities: []},
-  {...PRODUCT_DETAIL, relatedEntities: []},
-  {...CLIENT, relatedEntities: []},
-  {...CUSTOMERS, relatedEntities: [PERSON, BABY_REGISTRY, PRODUCT_DETAIL, CLIENT, BUYER, ITEM, ORDERS]},
-  {...BUYER, relatedEntities: []},
-  {...ORDERS, relatedEntities: [PERSON, CUSTOMERS, ORDERS]}
-];
+import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 interface Props {
   currentBaseEntities: any;
   setCurrentBaseEntities: (entities: any[]) => void;
+  allBaseEntities: any[];
   setActiveAccordionRelatedEntities: (entity: string)=>void;
   activeKey:any[]
   setEntitySpecificPanel: (entity: any) => void;
+    setIsAllEntitiesSelected: (isSelected: boolean) => void;
 }
 
 const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
-  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities} = props;
+  const {setCurrentBaseEntities, setEntitySpecificPanel, currentBaseEntities, allBaseEntities, setIsAllEntitiesSelected} = props;
 
   const {
     searchOptions: {baseEntities},
     setBaseEntities,
   } = useContext(SearchContext);
 
-  const [entities, setEntities] = useState<string[]>(baseEntities);
-  const [entitiesList, setEntitiesList] = useState<any[]>(entitiesSorting(ENTITIES));
-  const [displayList, setDisplayList] = useState<any[]>(ENTITIES);
+  const [entityNames, setEntityNames] = useState<string[]>(baseEntities);
+  const [displayList, setDisplayList] = useState<any[]>(entitiesSorting(currentBaseEntities));
   const [showMore, setShowMore] = useState<boolean>(false);
 
-  const childrenOptions = ENTITIES.map(element => ({value: element.name, label: element.name, isDisabled: false}));
+
+  useEffect(() => {
+    setDisplayList(currentBaseEntities);
+  }, [currentBaseEntities]);
+
+  const childrenOptions = allBaseEntities.map(element => ({value: element.name, label: element.name, isDisabled: false}));
   childrenOptions.unshift({
     value: "-",
     label: "-",
@@ -64,17 +50,18 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
   });
 
   const handleChange = (selection) => {
+    setShowMore(false);
     const selectedItems = selection.map(element => element.value);
-    if (selectedItems.length === 0) {
-      setEntities(["All Entities"]);
-      setEntitiesList(ENTITIES);
-      setCurrentBaseEntities([]);
+    if (selectedItems.length === 0 || selectedItems[selectedItems.length -1] === "All Entities") {
+      setIsAllEntitiesSelected(true);
+      setEntityNames(["All Entities"]);
+      setCurrentBaseEntities(allBaseEntities);
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
-      const filteredEntities = ENTITIES.filter(entity => clearSelection.includes(entity.name));
-      setEntities(clearSelection);
-      setEntitiesList(filteredEntities);
+      const filteredEntities = allBaseEntities.filter(entity => clearSelection.includes(entity.name));
+      setIsAllEntitiesSelected(false);
+      setEntityNames(clearSelection);
       setCurrentBaseEntities(filteredEntities);
       setBaseEntities(clearSelection);
       if (props.activeKey.indexOf("related-entities") === -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
@@ -83,20 +70,18 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
 
   const showFilter= (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
 
-  useEffect(() => {
+  const updateDisplayList = () => {
     if (!showMore) {
-      const entitiesListSlice = entitiesList.slice(0, MINIMUM_ENTITIES);
+      const entitiesListSlice = currentBaseEntities.slice(0, MINIMUM_ENTITIES);
       setDisplayList(entitiesListSlice);
     } else {
-      setDisplayList(entitiesList);
-    }
-  }, [showMore, entitiesList]);
-
-  useEffect(() => {
-    if (currentBaseEntities.length > 0) {
       setDisplayList(currentBaseEntities);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    updateDisplayList();
+  }, [showMore, currentBaseEntities]);
 
   const onShowMore = () => {
     setShowMore(!showMore);
@@ -109,7 +94,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         inputId="entitiesSidebar-select"
         isMulti
         isClearable={false}
-        value={entities?.map(d => ({value: d, label: d}))}
+        value={entityNames?.map(d => ({value: d, label: d}))}
         onChange={handleChange}
         isSearchable={false}
         aria-label="base-entities-dropdown-list"
@@ -141,16 +126,19 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       />
       <div aria-label="base-entities-selection">
         {displayList.map(({name, color, filter, amount, icon}) => {
-          const entityIcon = Icons[icon];
+          let finalIcon = icon ? icon : "FaShapes";
+          let finalColor = color ? color : "#EEEFF1";
           return (
             <div
               key={name}
               aria-label={`base-entities-${name}`}
-              style={{backgroundColor: color}}
+              style={{backgroundColor: finalColor}}
               className={styles.entityItem}
-              onClick={() => setEntitySpecificPanel({name, color, icon})}
+              onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}
             >
-              <FontAwesomeIcon icon={entityIcon} className={styles.entityIcon}/>
+              <span className={styles.entityIcon}>
+                <DynamicIcons name={finalIcon}/>
+              </span>
               <span className={styles.entityName}>{name}</span>
               <span className={styles.entityChevron}>
                 <ChevronDoubleRight/>
@@ -165,8 +153,8 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         )}
       </div>
 
-      <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (entitiesList.length > MINIMUM_ENTITIES) ? "block" : "none"}}>
-        {(showMore) ? "<< less" : "more >>"}
+      <div className={styles.more} onClick={onShowMore} data-cy="show-more-base-entities" style={{display: (currentBaseEntities.length > MINIMUM_ENTITIES) ? "block" : "none"}}>
+        {(showMore) ?  "<< less" : "more >>"}
       </div>
     </>
   );

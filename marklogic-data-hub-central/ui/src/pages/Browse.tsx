@@ -34,27 +34,6 @@ import {hubCentralConfig} from "../types/modeling-types"; // eslint-disable-line
 import SelectedFacets from "@components/selected-facets/selected-facets";
 
 
-//TODO: remove this, it's just for mocking porpouses and show default data en specif sidebar when non entity was selected
-const PERSON = {name: "Person", color: "#CEE0ED", amount: 10, filter: 2, icon: "faUser"};
-const BABY_REGISTRY = {name: "Baby Registry", color: "#FDC7D4", amount: 10, filter: 2, icon: "faPiggyBank"};
-const PRODUCT_DETAIL = {name: "Product Detail", color: "#E3DEEB", amount: 599, icon: "faVolleyballBall"};
-const CLIENT = {name: "Client", color: "#C9EBC4", amount: 9000, icon: "faPrint"};
-const CUSTOMERS = {name: "Customer", color: "#BEDDDF", amount: 100, filter: 1, icon: "faShoppingCart"};
-const BUYER = {name: "Buyer", color: "#F0F6D9", amount: 340, icon: "faBell"};
-const ITEM = {name: "Item", color: "#D9F5F0", amount: 40, icon: "faBox"};
-const ORDERS = {name: "Order", color: "#EDD9C5", amount: 10, filter: 2, icon: "faPaperclip"};
-
-const ENTITIES = [
-  {...PERSON, relatedEntities: []},
-  {...BABY_REGISTRY, relatedEntities: []},
-  {...PRODUCT_DETAIL, relatedEntities: []},
-  {...CLIENT, relatedEntities: []},
-  {...CUSTOMERS, relatedEntities: [PERSON, BABY_REGISTRY, PRODUCT_DETAIL, CLIENT, BUYER, ITEM, ORDERS]},
-  {...BUYER, relatedEntities: []},
-  {...ORDERS, relatedEntities: [PERSON, CUSTOMERS]},
-];
-
-
 interface Props extends RouteComponentProps<any> {
 }
 
@@ -111,6 +90,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
   const [applyClicked, toggleApplyClicked] = useState(false);
   const [showApply, toggleApply] = useState(false);
+  const [updateSpecificFacets, setUpdateSpecificFacets] = useState<boolean>(false); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isAllEntitiesSelected, setIsAllEntitiesSelected] = useState(true);
 
   const setEntitySpecificFacets = (entity) => {
     const {name} = entity;
@@ -136,7 +117,7 @@ const Browse: React.FC<Props> = ({location}) => {
     if (currentBaseEntities.length > 0) {
       setCurrentEntitiesIcons(currentBaseEntities);
     } else {
-      setCurrentEntitiesIcons(ENTITIES.slice(0, 5));
+      setCurrentEntitiesIcons(entityDefArray);
     }
   };
 
@@ -183,11 +164,22 @@ const Browse: React.FC<Props> = ({location}) => {
   };
 
 
-  const setHubCentralConfigFromServer = async () => {
+  const setHubCentralConfigFromServer = async (parsedEntityDef) => {
     try {
       const response = await getHubCentralConfig();
       if (response["status"] === 200) {
         sethubCentralConfig(response.data);
+
+        const {data: {modeling: {entities}}} = response;
+        let entitiesDef = parsedEntityDef.map(entity => {
+          if (entities[entity.name]) {
+            entity.icon = entities[entity.name].icon;
+            entity.color = entities[entity.name].color;
+          }
+          return entity;
+        });
+        setEntityDefArray(entitiesDef);
+        setCurrentBaseEntities(entitiesDef);
       }
     } catch (error) {
       handleError(error);
@@ -197,17 +189,16 @@ const Browse: React.FC<Props> = ({location}) => {
 
   const getEntityModel = async () => {
     try {
-      const response = await axios(`/api/models`);
+      const response = await axios.get(`/api/models`);
       if (componentIsMounted.current) {
         const parsedModelData = entityFromJSON(response.data);
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
         let parsedEntityDef = entityParser(parsedModelData);
         setEntites(entityArray);
-        setEntityDefArray(parsedEntityDef);
+        setHubCentralConfigFromServer(parsedEntityDef);
         setEntityDefinitionsArray(parsedEntityDef);
         setEntitiesData(response.data);
         getGraphSearchResult(entityArray);
-        setHubCentralConfigFromServer();
       }
     } catch (error) {
       handleError(error);
@@ -305,6 +296,9 @@ const Browse: React.FC<Props> = ({location}) => {
         setFacets({});
         setTotalDocuments(0);
       }
+    }
+    if (entitySpecificPanel) {
+      setUpdateSpecificFacets(true);
     }
   };
 
@@ -595,6 +589,8 @@ const Browse: React.FC<Props> = ({location}) => {
               setCurrentBaseEntities={setCurrentBaseEntities}
               currentRelatedEntities={currentRelatedEntities}
               setCurrentRelatedEntities={setCurrentRelatedEntities}
+              isAllEntitiesSelected={isAllEntitiesSelected}
+              setIsAllEntitiesSelected={setIsAllEntitiesSelected}
             />
           </>
         </HCSider>

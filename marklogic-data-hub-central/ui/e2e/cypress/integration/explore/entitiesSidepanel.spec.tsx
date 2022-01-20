@@ -31,6 +31,7 @@ describe("Test '/Explore' left sidebar", () => {
     toolbar.getExploreToolbarIcon().click();
 
     cy.log(`**Selecting 'Customer' base entity**`);
+    entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
     browsePage.getSearchField().should("not.exist");
     entitiesSidebar.getEntityTitle(BaseEntityTypes.CUSTOMER).should("be.visible");
@@ -46,6 +47,7 @@ describe("Test '/Explore' left sidebar", () => {
 
   it("Validate facets", () => {
     cy.log("Selecting Customer entity");
+    entitiesSidebar.showMoreEntities().click();
     entitiesSidebar.clickOnBaseEntity(BaseEntityTypes.CUSTOMER);
 
     cy.log("Testing search input");

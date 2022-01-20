@@ -46,7 +46,8 @@ export const entityFromJSON = (data: any) => {
               name: "",
               datatype: "",
               ref: "",
-              collation: ""
+              collation: "",
+              related: ""
             };
             property.name = properties;
             property.collation = item["definitions"][definition][entityKeys][properties]["collation"];
@@ -59,6 +60,11 @@ export const entityFromJSON = (data: any) => {
                 } else {
                   property.ref = "";
                 }
+                if (item["definitions"][definition][entityKeys][properties]["items"]["relatedEntityType"]) {
+                  property.related = item["definitions"][definition][entityKeys][properties]["items"]["relatedEntityType"].split("/").pop();
+                }
+              } else if (item["definitions"][definition][entityKeys][properties]["relatedEntityType"]) {
+                property.related = item["definitions"][definition][entityKeys][properties]["relatedEntityType"].split("/").pop();
               }
 
             } else if (item["definitions"][definition][entityKeys][properties]["$ref"]) {
@@ -89,11 +95,18 @@ export const entityParser = (data: any) => {
   return data.map((entity) => {
     let parsedEntity = {};
     let properties = [];
+    let relatedEntities: string[] = [];
     let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
 
     for (let prop in entity.definitions) {
       if (entity.definitions[prop]["name"] === entity.info["title"]) {
         properties = entity.definitions[prop]["properties"];
+      }
+    }
+
+    for (let i = 0; i < Object.keys(properties).length; i++) {
+      if (properties[i]["related"]) {
+        relatedEntities.push(properties[i]["related"]);
       }
     }
 
@@ -103,6 +116,7 @@ export const entityParser = (data: any) => {
         info: entity.info,
         primaryKey: entityDefinition.hasOwnProperty("primaryKey") ? entityDefinition["primaryKey"] : "",
         properties: properties,
+        relatedEntities: relatedEntities,
       };
     }
 

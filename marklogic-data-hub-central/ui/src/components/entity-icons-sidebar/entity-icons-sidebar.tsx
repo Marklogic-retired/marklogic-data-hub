@@ -1,9 +1,8 @@
 import React from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import * as Icons from "@fortawesome/free-solid-svg-icons";
 import styles from "./entity-icons-sidebar.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import {HCTooltip} from "@components/common";
+import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 interface Props {
   currentBaseEntities: any[];
@@ -36,16 +35,16 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
         </HCTooltip>
         {currentBaseEntities.map(({color, icon, name}, index) =>
           <div key={name} aria-label={`base-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>
-            <FontAwesomeIcon icon={Icons[icon]}/>
+            {icon ? <DynamicIcons name={icon}/> : <DynamicIcons name="FaShapes"/>}
           </div>
         )}
       </div>
-      <div className={styles.separator}></div>
+      {currentRelatedEntitiesArray.length > 0 &&<div className={styles.separator}></div> }
       {currentRelatedEntitiesArray.length > 0 &&
         <div className={styles.relatedEntityIconList} aria-label="related-entity-icons-list">
           {currentRelatedEntitiesArray.map(({color, icon, name}, index) =>
             <div key={name} aria-label={`related-entity-icon-${name}`}  style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleRelatedEntityClicked(index)}>
-              <FontAwesomeIcon icon={Icons[icon]}/>
+              {icon ? <DynamicIcons name={icon}/> : <DynamicIcons name="FaShapes"/>}
             </div>
           )}
         </div>
