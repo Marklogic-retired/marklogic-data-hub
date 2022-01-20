@@ -141,7 +141,7 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
         </span>
       </div>
       <div>
-        {docUri && <span className={styles.selectedNodeUri} data-testid="uriLabel">URI: {docUri}</span>}
+        {docUri && <span className={styles.selectedNodeUri} data-testid="uriLabel" aria-label={docUri}>URI: {docUri}</span>}
       </div>
       <Tabs defaultActiveKey={DEFAULT_TAB} activeKey={currentTab} onSelect={handleTabChange} className={styles.tabsContainer}>
         <Tab

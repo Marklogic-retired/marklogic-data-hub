@@ -120,8 +120,18 @@
   padding-top: 3vh;
   padding-left: 2vw;
 }
+
 .borderBelowHeader {
   width: 100%;
   border-top: 1px solid #CCCCCC;
   margin-top: -10px;
+}
+
+.graphViewSearchSummary {
+  margin-top: 1vh !important;
+  margin-left: -2.2vw !important;
+}
+
+.searchSummaryGraphView {
+  margin-left: -1vw !important;
 }

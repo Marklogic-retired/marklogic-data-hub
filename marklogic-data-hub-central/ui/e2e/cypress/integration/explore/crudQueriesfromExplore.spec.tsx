@@ -235,7 +235,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getEllipsisButton().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardNoButton().click();
-    browsePage.getSearchText().should("have.value", "Bates");
+    browsePage.getSearchBar().should("have.value", "Bates");
     browsePage.getSortIndicatorAsc().should("have.css", "background-color", "rgba(0, 0, 0, 0)");
   });
   it("Switching between queries when making changes to saved query", () => {

@@ -31,7 +31,7 @@ const EntityIconsSidebar: React.FC<Props> = (props) => {
     <>
       <div className={styles.entityIconList} aria-label="base-entity-icons-list">
         <HCTooltip id="reference-tooltip" text="Return to the main side panel." placement="top">
-          <ChevronDoubleRight className={styles.chevronBack} onClick={closeSpecificSidebar} aria-label="base-entity-icons-list-close"/>
+          <ChevronDoubleRight aria-label="base-entity-icons-list-close" className={styles.chevronBack} onClick={closeSpecificSidebar}/>
         </HCTooltip>
         {currentBaseEntities.map(({color, icon, name}, index) =>
           <div key={name} aria-label={`base-entity-icon-${name}`} style={{backgroundColor: color}} className={styles.entityIconListItem} onClick={() => handleBaseEntityClicked(index)}>

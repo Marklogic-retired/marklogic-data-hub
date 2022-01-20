@@ -246,8 +246,8 @@ class BrowsePage {
 
   //search bar
   search(str: string) {
-    cy.get("[data-cy=search-bar]").clear().type(str);
-    cy.get("[data-testid='hc-inputSearch-btn']").click();
+    cy.findByPlaceholderText("Enter text to search for").clear().type(str);
+    cy.findByTestId("hc-inputSearch-btn").click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -258,7 +258,11 @@ class BrowsePage {
   }
 
   getSearchText() {
-    return cy.get("[data-cy=search-bar]");
+    return cy.findByPlaceholderText("Enter text to search for").clear();
+  }
+
+  getSearchBar() {
+    return cy.findByPlaceholderText("Enter text to search for");
   }
 
   getShowMoreLink(facet: string) {
@@ -706,6 +710,26 @@ class BrowsePage {
 
   getSearchField() {
     return cy.get(`#graph-view-filter-input`);
+  }
+
+  getTableViewResults(text:string) {
+    return cy.findByTestId(text).should("have.length.gt", 0);
+  }
+
+  getSnippetView() {
+    return cy.get("#snippetView");
+  }
+
+  getGraphSearchSummary() {
+    return cy.findByLabelText("graph-view-searchSummary");
+  }
+
+  getDetailViewURI(uri:string) {
+    return cy.findByLabelText(uri);
+  }
+
+  getSnippetViewResults(text:string) {
+    return cy.findByLabelText(text);
   }
 }
 
