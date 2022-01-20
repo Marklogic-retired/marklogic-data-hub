@@ -15,6 +15,10 @@ class RunPage {
     return cy.findByText(flowName);
   }
 
+  isFlowNotVisible(flowName: string) {
+    return cy.findByText(flowName).should("have.length.lt", 1);
+  }
+
   editSave() {
     return cy.findByLabelText("Save");
   }

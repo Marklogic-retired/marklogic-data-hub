@@ -1,7 +1,7 @@
 class BaseEntitySidebar {
   //Elements
   get backToMainSidebarButton() {
-    return cy.get(`[aria-label="base-entity-icons-list-close"]`);
+    return cy.findByLabelText("base-entity-icons-list-close");
   }
   getBaseEntity(entity: string) {
     return cy.get(`div[aria-label="base-entities-${entity}"]`);
@@ -35,6 +35,14 @@ class BaseEntitySidebar {
     this.getDateFacetPicker(options).click();
     cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child").click({force: true});
     cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child").click({force: true});
+  }
+
+  getMainPanelSearchInput() {
+    return cy.get("#graph-view-filter-input");
+  }
+
+  getApplyFacetsButton() {
+    return cy.findByLabelText("apply-facets-button");
   }
 
   //Actions

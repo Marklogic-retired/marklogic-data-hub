@@ -101,7 +101,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getClearFacetSearchSelection("Alice").should("exist");
-    browsePage.getSearchText().should("have.value", "Alice");
+    browsePage.getSearchBar().should("have.value", "Alice");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
 
   });
@@ -145,7 +145,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getAppliedFacets("coleadams39@nutralab.com").should("exist");
     browsePage.getAppliedFacetName("adamscole@nutralab.com").should("be.equal", "email: adamscole@nutralab.com");
     browsePage.getAppliedFacetName("coleadams39@nutralab.com").should("be.equal", "email: coleadams39@nutralab.com");
-    browsePage.getSearchText().should("have.value", "Adams Cole");
+    browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
 
     //Navigating to detail view
@@ -178,7 +178,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
-    browsePage.getSearchText().should("have.value", "Adams Cole");
+    browsePage.getSearchBar().should("have.value", "Adams Cole");
     browsePage.getTableView().should("have.css", "color", "rgb(57, 68, 148)");
   });
 

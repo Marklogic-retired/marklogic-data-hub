@@ -160,7 +160,7 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
     cy.wait(500);
-    runPage.getFlowName(flowName).should("not.exist");
+    runPage.isFlowNotVisible(flowName);
     cy.wait(1000);
   });
   it("Verify Run Load step in a New Flow", {defaultCommandTimeout: 120000}, () => {

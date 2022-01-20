@@ -9,13 +9,12 @@ import SearchBar from "../components/search-bar/search-bar";
 import SearchPagination from "../components/search-pagination/search-pagination";
 import SearchSummary from "../components/search-summary/search-summary";
 import SearchResults from "../components/search-results/search-results";
-import {ExploreToolTips, ModelingMessages} from "../config/tooltips.config";
+import {ModelingMessages} from "../config/tooltips.config";
 import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
 import {entityFromJSON, entityParser, facetParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStream, faTable, faProjectDiagram} from "@fortawesome/free-solid-svg-icons";
-import {QuestionCircleFill} from "react-bootstrap-icons";
 import Query from "../components/queries/queries";
 import {AuthoritiesContext} from "../util/authorities";
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
@@ -530,17 +529,6 @@ const Browse: React.FC<Props> = ({location}) => {
     return style;
   };
 
-  const helpIcon = () => (
-    <span>
-      <HCTooltip text={ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
-        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
-      </HCTooltip>
-    </span>
-  );
-
-  const numberOfResultsBanner = <span>Viewing 100 of 1000 results {helpIcon()}</span>;
-
-
   return (
     <div className={styles.layout}>
       {showEntitySpecificPanel ?
@@ -617,7 +605,7 @@ const Browse: React.FC<Props> = ({location}) => {
                 {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
                   <span className="d-flex justify-content-between">
                     {!graphView &&
-                      <div>
+                      <div className={styles.searchSummaryGraphView}>
                         <SearchSummary
                           total={totalDocuments}
                           start={searchOptions.start}
@@ -629,7 +617,14 @@ const Browse: React.FC<Props> = ({location}) => {
 
                     <div className={styles.spinViews}>
                       <div style={switchViewsGraphStyle()}>
-                        {graphView ? numberOfResultsBanner : ""}
+                        {graphView && <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
+                          <SearchSummary
+                            total={totalDocuments}
+                            start={searchOptions.start}
+                            length={searchOptions.pageLength}
+                            pageSize={searchOptions.pageSize}
+                          />
+                        </div>}
                         {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
                         {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
                           <div className={"switch-button-group outline"}>

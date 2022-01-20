@@ -57,6 +57,7 @@ const Sidebar: React.FC<Props> = (props) => {
     setAllGreyedOptions,
     setSidebarQuery,
     setDatasource,
+    setQueryGreyedOptions,
   } = useContext(SearchContext);
   const {
     user
@@ -66,6 +67,7 @@ const Sidebar: React.FC<Props> = (props) => {
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
+  const [searchBox, setSearchBox] = useState(searchOptions.query);
   const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 
@@ -563,7 +565,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className={styles.panelTitle}>
         {title}
         <HCTooltip text={tooltipTitle} id="entities-tooltip" placement="right">
-          <i><FontAwesomeIcon className={styles.entitiesInfoIcon} icon={faInfoCircle} size="sm"  /></i>
+          <i><FontAwesomeIcon className={styles.entitiesInfoIcon} icon={faInfoCircle} size="sm" /></i>
         </HCTooltip>
       </div>
     );
@@ -574,10 +576,20 @@ const Sidebar: React.FC<Props> = (props) => {
 
   const selectTimeOptions = dateRangeOptions.map(timeBucket => ({value: timeBucket, label: timeBucket}));
 
+  useEffect(() => {
+    setSearchBox(searchOptions.query);
+    searchOptions.query && setQueryGreyedOptions(searchOptions.query);
+  }, [searchOptions]);
+
+  const handleSearchBox = (e) => {
+    setQueryGreyedOptions(e.target.value);
+    setSearchBox(e.target.value);
+  };
+
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
       <div className={styles.searchInput}>
-        <HCInput id="graph-view-filter-input" suffix={<FontAwesomeIcon icon={faSearch} size="sm" className={styles.searchIcon}/>} placeholder="Search" size="sm" />
+        <HCInput id="graph-view-filter-input" dataCy="search-bar" dataTestid="search-bar" value={searchBox} onChange={handleSearchBox} suffix={<FontAwesomeIcon icon={faSearch} size="sm" className={styles.searchIcon} />} placeholder="Search" size="sm" />
       </div>
       <div className={"m-3 switch-button-group"}>
         <span>
@@ -648,7 +660,6 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-
       {(searchOptions.datasource && searchOptions.datasource !== "all-data") && <>
         <Accordion id="baseEntities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("baseEntities") ? "baseEntities" : ""} defaultActiveKey={activeKey.includes("baseEntities") ? "baseEntities" : ""}>
           <Accordion.Item eventKey="baseEntities" className={"bg-transparent"}>
@@ -669,19 +680,19 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Item>
         </Accordion>
         {props.currentRelatedEntities.size > 0 &&
-        <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
-          <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
-            <div className={"p-0 d-flex"}>
-              <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
-                panelTitle(<span><HCCheckbox id="check-all" value="check-all" handleClick={onCheckAllChanges} checked={checkAll} />related entities types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
-            </div>
-            <Accordion.Body>
-              <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>
-            </Accordion.Body>
-          </Accordion.Item>
-        </Accordion>
-        }
-      </>}
+          <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
+            <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
+              <div className={"p-0 d-flex"}>
+                <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
+                  panelTitle(<span><HCCheckbox id="check-all" value="check-all" handleClick={onCheckAllChanges} checked={checkAll} />related entities types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
+              </div>
+              <Accordion.Body>
+                <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel} />
+              </Accordion.Body>
+            </Accordion.Item>
+          </Accordion>
+        }</>
+      }
 
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
         <FormCheck

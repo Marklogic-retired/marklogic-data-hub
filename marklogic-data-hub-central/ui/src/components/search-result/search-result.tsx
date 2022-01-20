@@ -88,7 +88,7 @@ const SearchResult: React.FC<Props> = (props) => {
         {show ? <ChevronDown className={styles.expandableIcon} aria-label="icon: chevron-down" data-cy="expandable-icon" data-testid="expandable-icon"/> : <ChevronRight className={styles.expandableIcon} aria-label="icon: chevron-right" data-cy="expandable-icon" data-testid="expandable-icon" />}
         <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>
         {primaryKey && <span data-cy="primary-key" data-testid={"primary-key"} className={styles.primaryKey}>{primaryKey}:</span>}
-        <span data-cy="primary-key-value">{primaryKeyValue}</span>
+        <span data-cy="primary-key-value" aria-label={itemEntityName + "-" + primaryKeyValue}>{primaryKeyValue}</span>
         <div className={`ms-auto ${styles.redirectIcons}`}>
           <Link to={{pathname: "/tiles/explore/detail", state: {selectedValue: "instance",
             entity: searchOptions.entityTypeIds,

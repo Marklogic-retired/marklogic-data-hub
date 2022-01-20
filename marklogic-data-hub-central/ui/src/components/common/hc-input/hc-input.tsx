@@ -39,7 +39,7 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
 
   const [showIconClear, setShowIconClear] = useState(false);
   const [count, setCount] = useState(0);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(props.value || "");
   const [focusedInput, setFocusedInput] = useState(false);
 
   const handleKeyPressEnter = (event) => {
@@ -60,6 +60,9 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
   };
   useEffect(() => { }, [message]);
   useEffect(() => { }, [count]);
+  useEffect(() => {
+    if (props.value !== message) setMessage(props.value);
+  }, [props.value]);
 
   const handleOnFocus = (event, onFocus) => {
     if (event) { setFocusedInput(true); }
@@ -127,7 +130,7 @@ const HCInput = React.forwardRef<HTMLInputElement, Props>((props, ref?) => {
           style={{backgroundColor: "white", padding: props?.suffix ? 2 : ""}}
           className={[props.classNameFull, styles.noBorders].join(" ")}
         >
-          {props?.error && !showIconClear? <XCircleFill className={styles.warningIcon} />
+          {props?.error && !showIconClear ? <XCircleFill className={styles.warningIcon} />
             : null}</InputGroup.Text>
         }
 
