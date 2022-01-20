@@ -286,6 +286,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
   const options = {
     ...graphConfig.defaultOptions,
     height: networkHeight,
+    autoResize: true,
     layout: {
       //hierarchical: true
       //randomSeed: "0.7696:1625099255200",
