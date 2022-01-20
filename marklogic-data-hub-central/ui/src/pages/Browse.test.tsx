@@ -5,12 +5,19 @@ import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
 import {SearchContext} from "../util/search-context";
 import userEvent from "@testing-library/user-event";
+import axiosMock from "axios";
+import {act} from "react-dom/test-utils";
+import {getHubCentralConfig} from "../api/modeling";
+import {mockHubCentralConfig} from "../../src/assets/mock-data/modeling/modeling";
+import {exploreModelResponse} from "../../src/assets/mock-data/explore/model-response";
 
 jest.mock("axios");
 jest.setTimeout(30000);
-
+jest.mock("../api/modeling");
+const mockGetHubCentralConfig = getHubCentralConfig as jest.Mock;
 
 describe("Explorer Browse page tests ", () => {
+
   const defaultSearchOptions = {
     query: "",
     entityTypeIds: [],
@@ -28,6 +35,17 @@ describe("Explorer Browse page tests ", () => {
     database: "final",
     datasource: "entities"
   };
+
+  beforeEach(() => {
+    axiosMock.get["mockImplementation"]((url) => {
+      switch (url) {
+      case "/api/models":
+        return Promise.resolve({status: 200, data: exploreModelResponse});
+      default:
+        return Promise.resolve([]);
+      }
+    });
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -74,22 +92,32 @@ describe("Explorer Browse page tests ", () => {
     expect(document.querySelector("#switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
 
-  it("can close entity icon sidebar", () => {
-    const {getByLabelText, queryByText} = render(<MemoryRouter>
-      <SearchContext.Provider value={{
-        searchOptions: defaultSearchOptions,
-        greyedOptions: defaultSearchOptions,
-        setEntity: jest.fn(),
-        applySaveQuery: jest.fn()
-      }}>
-        <Browse />
-      </SearchContext.Provider></MemoryRouter>);
+  test("can close entity icon sidebar", async () => {
+    mockGetHubCentralConfig.mockResolvedValueOnce({status: 200, data: mockHubCentralConfig});
 
-    const baseEntity = getByLabelText("base-entities-Person");
+    let getByLabelText;
+    let queryByText;
+    await act(async () => {
+      const result = render(<MemoryRouter>
+        <SearchContext.Provider value={{
+          searchOptions: defaultSearchOptions,
+          greyedOptions: defaultSearchOptions,
+          setEntity: jest.fn(),
+          applySaveQuery: jest.fn()
+        }}>
+          <Browse />
+        </SearchContext.Provider></MemoryRouter>);
+
+      getByLabelText = result.getByLabelText;
+      queryByText = result.queryByText;
+
+    });
+    expect(axiosMock.get).toHaveBeenCalledWith("/api/models");
+    const baseEntity = getByLabelText("base-entities-Customer");
     userEvent.click(baseEntity);
-    expect(getByLabelText("specif-sidebar-Person")).toBeInTheDocument();
+    expect(getByLabelText("specif-sidebar-Customer")).toBeInTheDocument();
     const close = getByLabelText("base-entity-icons-list-close");
     userEvent.click(close);
-    expect(queryByText("base-entities-Person")).toBeNull();
+    expect(queryByText("base-entities-Customer")).toBeNull();
   });
 });

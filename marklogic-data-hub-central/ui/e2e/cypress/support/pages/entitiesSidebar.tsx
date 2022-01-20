@@ -22,6 +22,10 @@ class BaseEntitySidebar {
     return cy.get("[data-testid='facet-date-picker']");
   }
 
+  showMoreEntities() {
+    return cy.get(`[data-cy="show-more-base-entities"]`);
+  }
+
   getDateFacetPicker(options?: { time?: string }) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"]`);

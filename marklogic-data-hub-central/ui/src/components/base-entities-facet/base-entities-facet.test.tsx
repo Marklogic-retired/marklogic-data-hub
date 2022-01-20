@@ -5,12 +5,23 @@ import BaseEntitiesFacet from "./base-entities-facet";
 
 describe("Base Entities Facet", () => {
 
+  const entities = [
+    {name: "Person", color: "#CEE0ED", icon: "faUser", relatedEntities: []}
+  ];
+
   afterEach(cleanup);
 
   test("Render base entities", () => {
 
     const {getByLabelText} = render(
-      <BaseEntitiesFacet currentBaseEntities={[]} setCurrentBaseEntities={jest.fn()} setActiveAccordionRelatedEntities={jest.fn()} activeKey={["baseEntities"]} setEntitySpecificPanel={jest.fn()}/>
+      <BaseEntitiesFacet
+        currentBaseEntities={[]}
+        setCurrentBaseEntities={jest.fn()}
+        setActiveAccordionRelatedEntities={jest.fn()}
+        activeKey={["baseEntities"]}
+        setEntitySpecificPanel={jest.fn()}
+        allBaseEntities={entities}
+        setIsAllEntitiesSelected={jest.fn()}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     expect(dropdown).toBeInTheDocument();
@@ -18,7 +29,14 @@ describe("Base Entities Facet", () => {
 
   test("Render base entities dropdown options", () => {
     const {getByLabelText} = render(
-      <BaseEntitiesFacet currentBaseEntities={[]} setCurrentBaseEntities={jest.fn()} setActiveAccordionRelatedEntities={jest.fn()} activeKey={["baseEntities"]} setEntitySpecificPanel={jest.fn()}/>
+      <BaseEntitiesFacet
+        currentBaseEntities={entities}
+        setCurrentBaseEntities={jest.fn()}
+        setActiveAccordionRelatedEntities={jest.fn()}
+        activeKey={["baseEntities"]}
+        setEntitySpecificPanel={jest.fn()}
+        allBaseEntities={entities}
+        setIsAllEntitiesSelected={jest.fn()}/>
     );
     const dropdown = getByLabelText("base-entities-dropdown-list");
     fireEvent.keyDown(dropdown, {key: "ArrowDown"});

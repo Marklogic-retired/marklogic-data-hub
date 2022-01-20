@@ -3,7 +3,7 @@ import {render, fireEvent, waitForElement} from "@testing-library/react";
 import SearchResult from "./search-result";
 import {BrowserRouter as Router} from "react-router-dom";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
-import modelResponse from "../../assets/mock-data/explore/model-response";
+import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import searchPayloadResults from "../../assets/mock-data/explore/search-payload-results";
 import {SearchContext} from "../../util/search-context";
 

@@ -39,7 +39,11 @@ interface Props {
   setCurrentBaseEntities: (entity: any[]) => void;
   currentRelatedEntities: Map<string, any>;
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
+  isAllEntitiesSelected: boolean;
+  setIsAllEntitiesSelected: (isAllEntitiesSelected: boolean) => void;
 }
+
+const PLACEHOLDER: string = "Select a saved query";
 
 const Sidebar: React.FC<Props> = (props) => {
   const {
@@ -51,6 +55,7 @@ const Sidebar: React.FC<Props> = (props) => {
     clearGreyRangeFacet,
     greyedOptions,
     setAllGreyedOptions,
+    setSidebarQuery,
     setDatasource,
   } = useContext(SearchContext);
   const {
@@ -61,6 +66,7 @@ const Sidebar: React.FC<Props> = (props) => {
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
+  const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER); // eslint-disable-line @typescript-eslint/no-unused-vars
 
 
   let integers = ["int", "integer", "short", "long"];
@@ -71,13 +77,20 @@ const Sidebar: React.FC<Props> = (props) => {
   const [checkAll, setCheckAll] = useState(true);
 
   useEffect(() => {
-    let final = new Map();
-    props.currentBaseEntities.forEach(base => {
-      base.relatedEntities.map(entity => {
-        final.set(entity.name, {...entity, checked: true});
+    searchOptions.sidebarQuery && setCurrentQueryName(searchOptions.sidebarQuery);
+  }, [searchOptions.sidebarQuery]);
+
+  useEffect(() => {
+    let relatedEntitiesList = new Map();
+    if (!props.isAllEntitiesSelected) {
+      props.currentBaseEntities.forEach(base => {
+        base.relatedEntities.map(entityName => {
+          const relEntity = props.entityDefArray.find(entity => entity.name === entityName);
+          relatedEntitiesList.set(entityName, {...relEntity, checked: true});
+        });
       });
-    });
-    props.setCurrentRelatedEntities(final);
+    }
+    props.setCurrentRelatedEntities(relatedEntitiesList);
   }, [props.currentBaseEntities]);
 
 
@@ -88,11 +101,17 @@ const Sidebar: React.FC<Props> = (props) => {
   const onCheckAllChanges = ({target}) => {
     const {checked} = target;
     setCheckAll(checked);
-    let final = new Map();
+    let relatedEntitiesList = new Map();
     Array.from(props.currentRelatedEntities.values()).forEach(entity => {
-      final.set(entity.name, {...entity, checked});
+      relatedEntitiesList.set(entity.name, {...entity, checked});
     });
-    props.setCurrentRelatedEntities(final);
+    props.setCurrentRelatedEntities(relatedEntitiesList);
+  };
+
+
+  const clearSelectedQuery = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
+    setCurrentQueryName(PLACEHOLDER);
+    setSidebarQuery(PLACEHOLDER);
   };
 
   useEffect(() => {
@@ -642,6 +661,8 @@ const Sidebar: React.FC<Props> = (props) => {
                 setEntitySpecificPanel={props.setEntitySpecificPanel}
                 currentBaseEntities={props.currentBaseEntities}
                 setActiveAccordionRelatedEntities={setActiveAccordion}
+                allBaseEntities={props.entityDefArray}
+                setIsAllEntitiesSelected={props.setIsAllEntitiesSelected}
                 activeKey={activeKey}
               />
             </Accordion.Body>

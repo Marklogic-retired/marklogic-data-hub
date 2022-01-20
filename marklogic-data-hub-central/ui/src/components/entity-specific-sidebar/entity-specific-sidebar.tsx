@@ -1,12 +1,12 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import * as Icons from "@fortawesome/free-solid-svg-icons";
 import styles from "./entity-specific-sidebar.module.scss";
 import Facet from "@components/facet/facet";
 import DateFacet from "@components/date-facet/date-facet";
 import DateTimeFacet from "@components/date-time-facet/date-time-facet";
 import {HCInput} from "@components/common";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
 
 interface Props {
   entitySelected: any;
@@ -14,12 +14,13 @@ interface Props {
 
 const EntitySpecificSidebar: React.FC<Props> = (props) => {
   const {entitySelected: {entity: {name, icon}, entityFacets}} = props;
-  const entityIcon = Icons[icon];
 
   return (
     <div aria-label={`specif-sidebar-${name}`} className={styles.specificSidebar}>
       <div className={styles.entityHeader}>
-        <FontAwesomeIcon aria-label={`specif-icon-${name}`} icon={entityIcon} className={styles.entityHeaderIcon}/>
+        <span aria-label={`specif-icon-${name}`} className={styles.entityHeaderIcon}>
+          <DynamicIcons name={icon}/>
+        </span>
         <span className={styles.entityHeaderName} aria-label={`specif-title-${name}`}>{name}</span>
       </div>
       <div className={styles.entitySearchText} aria-label="specif-search-field">

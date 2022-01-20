@@ -3,7 +3,7 @@ import {fireEvent, render} from "@testing-library/react";
 import Sidebar from "./sidebar";
 import searchPayloadFacets from "../../assets/mock-data/explore/search-payload-facets";
 import {entityFromJSON, entityParser} from "../../util/data-conversion";
-import modelResponse from "../../assets/mock-data/explore/model-response";
+import {modelResponse} from "../../assets/mock-data/explore/model-response";
 import userEvent from "@testing-library/user-event";
 
 describe("Sidebar createdOn face time window dropdown", () => {
