@@ -40,8 +40,13 @@ describe("Test '/Explore' graph right panel", () => {
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
       let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
       const canvas = graphExplore.getGraphVisCanvas();
-      const trigger = canvas.trigger("mouseover", orderCoordinates.x, orderCoordinates.y);
-      trigger.click({force: true});
+      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+    });
+
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
+      const canvas = graphExplore.getGraphVisCanvas();
+      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
     });
 
     cy.log("**View json record type information**");
