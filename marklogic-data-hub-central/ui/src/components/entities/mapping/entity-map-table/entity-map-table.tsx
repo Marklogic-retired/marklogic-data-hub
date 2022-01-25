@@ -1467,6 +1467,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       dataField: "key",
       key: "key",
       width: "40%",
+      className: "overflow-visible",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {hidden: true};
@@ -1492,7 +1493,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={styles.genericTextArea}
                 />
-                <span>{sourceDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
             } else if (row.name === "URI" && !row.isProperty) {
@@ -1507,9 +1508,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   onBlur={handleExpSubmit}
                   disabled={!props.canReadWrite}
                   className={styles.genericTextArea} />
-                <span>{sourceDropdown(row)}</span>
-                <span>{functionDropdown(row)}</span>
-                <span>{refDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
             } else {
@@ -1525,9 +1526,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={styles.genericTextArea}
                 />
-                <span>{sourceDropdown(row)}</span>
-                <span>{functionDropdown(row)}</span>
-                <span>{refDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>;
             }
@@ -1721,6 +1722,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
       dataField: "key",
       key: "key",
       width: "45%",
+      className: "overflow-visible",
       attrs: (text, row, index) => {
         if (row.key <= 100 && index === 0) {
           return {hidden: true};
@@ -1746,7 +1748,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={styles.genericTextArea}
                 />
-                <span>{sourceDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
             } else if (row.name === "URI" && !row.isProperty) {
@@ -1761,9 +1763,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   onBlur={handleExpSubmit}
                   disabled={!props.canReadWrite}
                   className={styles.genericTextArea} />
-                <span>{sourceDropdown(row)}</span>
-                <span>{functionDropdown(row)}</span>
-                <span>{refDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, false) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, false)}</div> : ""}</div>;
             } else {
@@ -1779,9 +1781,9 @@ const EntityMapTable: React.FC<Props> = (props) => {
                   disabled={!props.canReadWrite}
                   className={styles.genericTextArea}
                 />
-                <span>{sourceDropdown(row)}</span>
-                <span>{functionDropdown(row)}</span>
-                <span>{refDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{sourceDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{functionDropdown(row)}</span>
+                <span data-cy="dropdown-button" onClick={e => e.stopPropagation()}>{refDropdown(row)}</span>
               </div>
               {checkFieldInErrors(row.name, true) ? <div id="errorInExp" data-testid={row.name + "-expErr"} className={styles.validationErrors}>{displayResp(row.name, true)}</div> : ""}</div>;
             }
