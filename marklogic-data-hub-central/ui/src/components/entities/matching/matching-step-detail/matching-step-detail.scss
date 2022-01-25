@@ -1,9 +1,6 @@
 #testMatchedUriDataPanel .ant-collapse-content-inactive{
     display: none;
 }
-#uriData .ant-table-thead{
-    display: none;
-}
 #testMatchedPanel .ant-collapse-content-inactive{
     display: none !important;
 }
@@ -24,9 +21,6 @@
 }
 #testMatchedPanel .ant-collapse-content{
     border-top: transparent;
-}
-.ant-table-row-expand-icon-cell{
-    color: #5b69af;
 }
 
 #addDataRadio .ant-radio-wrapper{
@@ -57,4 +51,8 @@
 
 #uriMatchedDataTable th:nth-child(1) {
     text-align-last: left;
+}
+
+.sub-table .table tbody {
+    border-top: none !important;
 }

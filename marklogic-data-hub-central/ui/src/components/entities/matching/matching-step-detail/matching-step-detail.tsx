@@ -25,6 +25,7 @@ import {QuestionCircleFill} from "react-bootstrap-icons";
 import styles from "./matching-step-detail.module.scss";
 import {DropdownButton, Dropdown} from "react-bootstrap";
 import {HCButton, HCCard, HCInput, HCTooltip, HCTable} from "@components/common";
+import "./matching-step-detail.scss";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: "",
@@ -881,8 +882,8 @@ const MatchingStepDetail: React.FC = () => {
                   keyUtil="key"
                   baseIndent={0}
                   rowKey="key"
-                  // id="uriData"
                   pagination={false}
+                  showHeader={false}
                 /> : ""}
               </div>
             </label>
@@ -931,8 +932,8 @@ const MatchingStepDetail: React.FC = () => {
                 keyUtil="key"
                 baseIndent={0}
                 rowKey="key"
-                // id="uriData"
                 pagination={false}
+                showHeader={false}
               /> : ""}
             </div>
           </label>
