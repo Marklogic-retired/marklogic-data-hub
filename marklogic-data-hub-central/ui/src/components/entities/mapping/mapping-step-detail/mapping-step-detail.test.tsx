@@ -2241,7 +2241,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     fireEvent.click(sourceSelector);
     await (waitForElement(() => getAllByRole("option"), {"timeout": 200}));
     let proteinDogOption = (getAllByTestId("nutFree:proteinDog-option"));
-    expect(proteinDogOption.length).toEqual(1);
+    expect(proteinDogOption.length).toEqual(2);
     fireEvent.click(proteinDogOption[0]);
     mapExp = getByTestId("items-mapexpression");
     expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog");
