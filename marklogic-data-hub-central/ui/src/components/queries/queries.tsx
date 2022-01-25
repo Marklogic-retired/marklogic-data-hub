@@ -1,13 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal} from "react-bootstrap";
+import {ButtonGroup, Dropdown, Modal} from "react-bootstrap";
 import {UserContext} from "../../util/user-context";
 import {SearchContext} from "../../util/search-context";
-import SelectedFacets from "../../components/selected-facets/selected-facets";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt, faSave, faCopy, faUndo, faWindowClose} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faSave, faCopy, faUndo, faWindowClose, faEllipsisV, faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import SaveQueryModal from "../../components/queries/saving/save-query-modal/save-query-modal";
 import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
-import {fetchQueries, creatNewQuery, fetchQueryById} from "../../api/queries";
+import {fetchQueries, creatNewQuery, fetchQueryById, removeQuery} from "../../api/queries";
 import styles from "./queries.module.scss";
 import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
@@ -31,6 +30,8 @@ interface Props {
   database: string;
   setCardView: any;
   cardView: boolean;
+  toggleApply: (value: boolean) => void;
+  toggleApplyClicked: (value: boolean) => void;
 }
 
 const Query: React.FC<Props> = (props) => {
@@ -50,11 +51,8 @@ const Query: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
 
   const [openSaveModal, setOpenSaveModal] = useState(false);
-  const [showApply, toggleApply] = useState(false);
-  const [applyClicked, toggleApplyClicked] = useState(false);
   const [openEditDetail, setOpenEditDetail] = useState(false);
   const [currentQuery, setCurrentQuery] = useState<any>({});
-  const [hoverOverDropdown, setHoverOverDropdown] = useState(false);
   const [showSaveNewIcon, toggleSaveNewIcon] = useState(false);
   const [showSaveChangesIcon, toggleSaveChangesIcon] = useState(false);
   const [openSaveChangesModal, setOpenSaveChangesModal] = useState(false);
@@ -70,6 +68,7 @@ const Query: React.FC<Props> = (props) => {
   const [resetQueryIcon, setResetQueryIcon] = useState(true); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [showResetQueryNewConfirmation, toggleResetQueryNewConfirmation] = useState(false);
   const [showResetQueryEditedConfirmation, toggleResetQueryEditedConfirmation] = useState(false);
+  const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
 
   const [existingQueryYesClicked, toggleExistingQueryYesClicked] = useState(false);
   const [resetYesClicked, toggleResetYesClicked] = useState(false);
@@ -109,6 +108,90 @@ const Query: React.FC<Props> = (props) => {
     }
   };
 
+
+  const deleteQuery = async () => {
+    try {
+      await removeQuery(currentQuery);
+    } catch (error) {
+      handleError(error);
+    }
+    getSaveQueries();
+  };
+  const onDeleteQuery = () => {
+    setDeleteModalVisibility(true);
+  };
+  const onDeleteOk = () => {
+    deleteQuery();
+    resetIconClicked();
+    setDeleteModalVisibility(false);
+  };
+  const menu = (<div className={styles.menuContainer}>
+    {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+      <Dropdown.Item onClick={() => setOpenEditDetail(true)}>
+        <span>
+          <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
+          Edit query details
+        </span>
+      </Dropdown.Item>
+    }
+    {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
+      <Dropdown.Item onClick={() => setOpenDiscardChangesModal(true)}>
+        <span>
+          <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon} />
+          Revert query to saved state
+        </span>
+      </Dropdown.Item>
+    }
+    {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+      <Dropdown.Item onClick={() => setOpenSaveCopyModal(true)}>
+        <span>
+          <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
+          Save query as
+        </span>
+      </Dropdown.Item>
+    }
+    <Dropdown.Item onClick={onDeleteQuery}>
+      <span style={{color: "#B32424"}}>
+        <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon} />
+        Delete query
+      </span>
+    </Dropdown.Item>
+  </div>
+  );
+  const ellipsisMenu = (
+    <Dropdown as={ButtonGroup}>
+      <Dropdown.Toggle aria-label="ellipsisButton" className={styles.ellipsisButton}>
+        <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
+      </Dropdown.Toggle>
+      <Dropdown.Menu flip={false} className={styles.dropdownMenu}>
+        {menu}
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+
+
+  const deleteConfirmation = <Modal
+    show={deleteModalVisibility}
+  >
+    <Modal.Header className={"bb-none"}>
+      <button type="button" className="btn-close" aria-label="Close" onClick={() => setDeleteModalVisibility(false)}></button>
+    </Modal.Header>
+    <Modal.Body className={"pt-0 px-4"}>
+      <span style={{fontSize: "16px"}} data-testid="deleteConfirmationText">
+        Are you sure you would like to delete the <b>{currentQueryName}</b> query? This action cannot be undone.
+      </span>
+      <div className={"d-flex justify-content-center pt-4 pb-2"}>
+        <HCButton className={"me-2"} variant="outline-light" aria-label={"No"} onClick={() => setDeleteModalVisibility(false)}>
+          {"No"}
+        </HCButton>
+        <HCButton aria-label={"Yes"} variant="primary" type="submit" onClick={() => onDeleteOk()}>
+          {"Yes"}
+        </HCButton>
+      </div>
+    </Modal.Body>
+  </Modal>;
+
+
   const getSaveQueryWithId = async (key) => {
     try {
       const response = await fetchQueryById(key);
@@ -128,7 +211,7 @@ const Query: React.FC<Props> = (props) => {
           if (props.greyFacets.length > 0) {
             clearAllGreyFacets();
           }
-          toggleApply(false);
+          props.toggleApply(false);
           if (response.data.savedQuery.hasOwnProperty("description") && response.data.savedQuery.description) {
             setCurrentQueryDescription(response.data.savedQuery.description);
           } else {
@@ -354,11 +437,9 @@ const Query: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== "select a query") {
-      setHoverOverDropdown(true);
       setCurrentQueryName(currentQuery.hasOwnProperty("name") ? currentQuery["name"] : currentQuery["savedQuery"]["name"]);
       setCurrentQueryDescription(currentQuery.hasOwnProperty("description") ? currentQuery["description"] : currentQuery["savedQuery"]["description"]);
     } else {
-      setHoverOverDropdown(false);
       setCurrentQueryDescription("");
     }
   }, [currentQuery]);
@@ -388,7 +469,7 @@ const Query: React.FC<Props> = (props) => {
                   savedQueryList={props.queries}
                   setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
                   greyFacets={props.greyFacets}
-                  toggleApply={(clicked) => toggleApply(clicked)}
+                  toggleApply={(clicked) => props.toggleApply(clicked)}
                   currentQueryName={currentQueryName}
                   setCurrentQueryName={setCurrentQueryName}
                   currentQuery={currentQuery}
@@ -424,8 +505,8 @@ const Query: React.FC<Props> = (props) => {
                         setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
                         saveNewQuery={saveNewQuery}
                         greyFacets={props.greyFacets}
-                        toggleApply={(clicked) => toggleApply(clicked)}
-                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                        toggleApply={(clicked) => props.toggleApply(clicked)}
+                        toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
                         currentQueryName={currentQueryName}
                         setCurrentQueryName={setCurrentQueryName}
                         currentQueryDescription={currentQueryDescription}
@@ -436,6 +517,7 @@ const Query: React.FC<Props> = (props) => {
                       />}
                   </div>
                 </div>}
+
               {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
                 <div>
                   <HCTooltip text="Save changes" id="save-changes-tooltip" placement="top">
@@ -455,8 +537,8 @@ const Query: React.FC<Props> = (props) => {
                         setSaveChangesModalVisibility={() => setOpenSaveChangesModal(false)}
                         setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
                         greyFacets={props.greyFacets}
-                        toggleApply={(clicked) => toggleApply(clicked)}
-                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                        toggleApply={(clicked) => props.toggleApply(clicked)}
+                        toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
                         currentQuery={currentQuery}
                         currentQueryName={currentQueryName}
                         setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
@@ -473,70 +555,46 @@ const Query: React.FC<Props> = (props) => {
                       />}
                   </div>
                 </div>}
+              {searchOptions.selectedQuery !== "select a query" &&
+                <div>{ellipsisMenu}</div>
+              }
+              {
+                deleteConfirmation
+              }
               {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
                 <div>
-                  <HCTooltip text="Discard changes" id="discard-changes-tooltip" placement="top">
-                    <i><FontAwesomeIcon
-                      icon={faUndo}
-                      className={styles.iconHover}
-                      title="discard-changes"
-                      onClick={() => setOpenDiscardChangesModal(true)}
-                      size="lg"
-                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    /></i>
-                  </HCTooltip>
-                  <div>
-                    {openDiscardChangesModal &&
-                      <DiscardChangesModal
-                        setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
-                        savedQueryList={props.queries}
-                        toggleApply={(clicked) => toggleApply(clicked)}
-                        toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-                      />}
-                  </div>
+                  {openDiscardChangesModal &&
+                    <DiscardChangesModal
+                      setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
+                      savedQueryList={props.queries}
+                      toggleApply={(clicked) => props.toggleApply(clicked)}
+                      toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
+                    />}
                 </div>}
 
-              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div>
-                {hoverOverDropdown && <HCTooltip text="Edit query details" id="edit-query-details-tooltip" placement="top">
-                  <i><FontAwesomeIcon
-                    icon={faPencilAlt}
-                    className={styles.iconHover}
-                    title="edit-query"
-                    size="lg"
-                    onClick={() => setOpenEditDetail(true)}
-                    style={{width: "16px", color: "#5b69af", cursor: "pointer"}}
-                  /></i>
-                </HCTooltip>}
-                {openEditDetail &&
-                  <EditQueryDetails
-                    setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
-                    currentQuery={currentQuery}
-                    currentQueryName={currentQueryName}
-                    setCurrentQueryName={setCurrentQueryName}
-                    currentQueryDescription={currentQueryDescription}
-                    setCurrentQueryDescription={setCurrentQueryDescription}
-                  />
-                }
-              </div>}
               {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
                 <div>
-                  {hoverOverDropdown && <HCTooltip text="Save a copy" id="save-copy-tooltip" placement="top">
-                    <i><FontAwesomeIcon
-                      icon={faCopy}
-                      className={styles.iconHover}
-                      size="lg"
-                      onClick={() => setOpenSaveCopyModal(true)}
-                      style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
-                    /></i>
-                  </HCTooltip>}
+                  {openEditDetail &&
+                    <EditQueryDetails
+                      setEditQueryDetailVisibility={() => setOpenEditDetail(false)}
+                      currentQuery={currentQuery}
+                      currentQueryName={currentQueryName}
+                      setCurrentQueryName={setCurrentQueryName}
+                      currentQueryDescription={currentQueryDescription}
+                      setCurrentQueryDescription={setCurrentQueryDescription}
+                    />
+                  }
+                </div>}
+              {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
+                <div>
                   {openSaveCopyModal &&
                     <SaveQueryModal
                       setSaveModalVisibility={() => setOpenSaveCopyModal(false)}
                       setSaveNewIconVisibility={(visibility) => toggleSaveNewIcon(visibility)}
                       saveNewQuery={saveNewQuery}
                       greyFacets={props.greyFacets}
-                      toggleApply={(clicked) => toggleApply(clicked)}
-                      toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                      toggleApply={(clicked) => props.toggleApply(clicked)}
+                      toggleApplyClicked={(clicked) => props.toggleApplyClicked(clicked)}
                       currentQueryName={currentQueryName}
                       setCurrentQueryName={setCurrentQueryName}
                       currentQueryDescription={currentQueryDescription}
@@ -546,46 +604,9 @@ const Query: React.FC<Props> = (props) => {
                       existingQueryYesClicked={existingQueryYesClicked}
                     />}
                 </div>}
-              {resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
-                <div>
-                  <HCTooltip text="Clear query" id="clear-query-tooltip" placement="top">
-                    <i><FontAwesomeIcon
-                      className={styles.iconHover}
-                      icon={faWindowClose}
-                      title={"reset-changes"}
-                      size="lg"
-                      onClick={() => resetIconClicked()}
-                      style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
-                      id="reset-changes"
-                    /></i>
-                  </HCTooltip>
-                  <Modal
-                    show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
-                  >
-                    <Modal.Header className={"bb-none"}>
-                      <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
-                    </Modal.Header>
-                    <Modal.Body className={"pt-0 px-4"}>
-                      {showResetQueryEditedConfirmation &&
-                        <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
-                          <p>Would you like to save the changes before switching to another query?</p>
-                        </div>}
-                      {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
-                      <div className={"d-flex justify-content-center mt-4 mb-2"}>
-                        <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" className={"me-2"} onClick={() => onNoResetClick()}>
-                          No
-                        </HCButton>
-                        <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
-                          Yes
-                        </HCButton>
-                      </div>
-                    </Modal.Body>
-                  </Modal>
-                </div>}
             </div>
           </div>
-
-          <div id="selected-query-description" style={{marginTop: "-36px"}}
+          <div id="selected-query-description"
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
             <HCTooltip text={currentQueryDescription} id="current-query-description-tooltip" placement="top">
               <span>{
@@ -594,17 +615,44 @@ const Query: React.FC<Props> = (props) => {
               }</span>
             </HCTooltip>
           </div>
+          {resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
+            <div>
+              <span id="reset-changes" className={styles.clearQueryLink} onClick={() => resetIconClicked()}>
+                <i><FontAwesomeIcon
+                  className={styles.iconHover}
+                  icon={faWindowClose}
+                  title={"reset-changes"}
+                  size="lg"
+                  style={{width: "18px", color: "#5b69af", cursor: "pointer"}}
+                /></i>
+                <span className="text-info ps-2">Clear query</span>
+              </span>
+              <Modal
+                show={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
+              >
+                <Modal.Header className={"bb-none"}>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={onResetCancel}></button>
+                </Modal.Header>
+                <Modal.Body className={"pt-0 px-4"}>
+                  {showResetQueryEditedConfirmation &&
+                    <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
+                      <p>Would you like to save the changes before switching to another query?</p>
+                    </div>}
+                  {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
+                  <div className={"d-flex justify-content-center mt-4 mb-2"}>
+                    <HCButton variant="outline-light" key="back" id="reset-confirmation-no-button" className={"me-2"} onClick={() => onNoResetClick()}>
+                      No
+                    </HCButton>
+                    <HCButton key="submit" id="reset-confirmation-yes-button" variant="primary" onClick={() => onResetOk()}>
+                      Yes
+                    </HCButton>
+                  </div>
+                </Modal.Body>
+              </Modal>
+            </div>
+          }
+
         </div>}
-        <div className={styles.selectedFacets}>
-          <SelectedFacets
-            selectedFacets={props.selectedFacets}
-            greyFacets={props.greyFacets}
-            applyClicked={applyClicked}
-            showApply={showApply}
-            toggleApply={(clicked) => toggleApply(clicked)}
-            toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
-          />
-        </div>
         <Modal
           show={showEntityConfirmation}
         >

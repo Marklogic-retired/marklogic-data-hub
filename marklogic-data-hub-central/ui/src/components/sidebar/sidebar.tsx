@@ -1,9 +1,9 @@
 import React, {useState, useEffect, useContext} from "react";
 import moment from "moment";
 import Select from "react-select";
-import {ButtonGroup, Dropdown, Accordion, FormCheck} from "react-bootstrap";
+import {Accordion, FormCheck} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCopy, faEllipsisV, faInfoCircle, faPencilAlt, faSave, faTrashAlt, faUndo, faWindowClose, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faInfoCircle, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {HCDateTimePicker, HCTooltip, HCInput, HCCheckbox} from "@components/common";
 import Facet from "../facet/facet";
 import {SearchContext} from "../../util/search-context";
@@ -17,7 +17,6 @@ import DateTimeFacet from "../date-time-facet/date-time-facet";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 import reactSelectThemeConfig from "../../config/react-select-theme.config";
-import QueriesDropdown from "../queries/saving/queries-dropdown/queries-dropdown";
 import BaseEntitiesFacet from "../base-entities-facet/base-entities-facet";
 import RelatedEntitiesFacet from "../related-entities-facet/related-entities-facet";
 
@@ -42,8 +41,6 @@ interface Props {
   setCurrentRelatedEntities: (entity: Map<string, any>) => void;
 }
 
-const PLACEHOLDER: string = "Select a saved query";
-
 const Sidebar: React.FC<Props> = (props) => {
   const {
     searchOptions,
@@ -54,7 +51,6 @@ const Sidebar: React.FC<Props> = (props) => {
     clearGreyRangeFacet,
     greyedOptions,
     setAllGreyedOptions,
-    setSidebarQuery,
     setDatasource,
   } = useContext(SearchContext);
   const {
@@ -65,7 +61,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
   const [datePickerValue, setDatePickerValue] = useState<any[]>([null, null]);
   const [dateRangeValue, setDateRangeValue] = useState<string>();
-  const [currentQueryName, setCurrentQueryName] = useState(PLACEHOLDER);
 
 
   let integers = ["int", "integer", "short", "long"];
@@ -74,10 +69,6 @@ const Sidebar: React.FC<Props> = (props) => {
   const [activeKey, setActiveKey] = useState<any[]>([]);
   const [userPreferences, setUserPreferences] = useState({});
   const [checkAll, setCheckAll] = useState(true);
-
-  useEffect(() => {
-    searchOptions.sidebarQuery && setCurrentQueryName(searchOptions.sidebarQuery);
-  }, [searchOptions.sidebarQuery]);
 
   useEffect(() => {
     let final = new Map();
@@ -102,12 +93,6 @@ const Sidebar: React.FC<Props> = (props) => {
       final.set(entity.name, {...entity, checked});
     });
     props.setCurrentRelatedEntities(final);
-  };
-
-
-  const clearSelectedQuery = () => {
-    setCurrentQueryName(PLACEHOLDER);
-    setSidebarQuery(PLACEHOLDER);
   };
 
   useEffect(() => {
@@ -553,29 +538,6 @@ const Sidebar: React.FC<Props> = (props) => {
     updateUserPreferences(user.name, options);
   };
 
-  const menu = (<div className={styles.menuContainer}>
-    <Dropdown.Item
-    ><span>
-        <FontAwesomeIcon icon={faPencilAlt} className={styles.queryMenuItemIcon} />
-        Edit query details
-      </span></Dropdown.Item>
-    <Dropdown.Item
-    ><span>
-        <FontAwesomeIcon icon={faUndo} className={styles.queryMenuItemIcon} />
-        Revert query to saved state
-      </span></Dropdown.Item>
-    <Dropdown.Item
-    ><span>
-        <FontAwesomeIcon icon={faCopy} className={styles.queryMenuItemIcon} />
-        Save query as
-      </span></Dropdown.Item>
-    <Dropdown.Item
-    ><span style={{color: "#B32424"}}>
-        <FontAwesomeIcon icon={faTrashAlt} className={styles.queryMenuItemIcon} />
-        Delete query
-      </span></Dropdown.Item>
-  </div>
-  );
 
   const panelTitle = (title, tooltipTitle) => {
     return (
@@ -595,35 +557,6 @@ const Sidebar: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.sideBarContainer} id={"sideBarContainer"}>
-      <div className={`d-flex ms-2 me-3 mb-3 ${styles.query}`}>
-        <QueriesDropdown
-          savedQueryList={[{name: "active clients"}, {name: "disabled customers"}]}
-          currentQueryName={currentQueryName}
-        />
-        {currentQueryName !== PLACEHOLDER &&
-          <div className={styles.iconContainer}>
-            <FontAwesomeIcon className={styles.queryIconsSave} icon={faSave} title={"reset-changes"} size="lg" id="save-query"/>
-            <Dropdown as={ButtonGroup}>
-              <Dropdown.Toggle className={styles.sourceDrop}>
-
-                <FontAwesomeIcon className={styles.queryIconsEllipsis} icon={faEllipsisV} size="lg" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu  flip={false} className={styles.dropdownMenu}>
-                {menu}
-
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-        }
-      </div>
-      {currentQueryName !== PLACEHOLDER &&
-        <div className={styles.clearQuery}>
-          <span onClick={clearSelectedQuery} >
-            <FontAwesomeIcon icon={faWindowClose} size="sm" />
-            Clear query
-          </span>
-        </div>
-      }
       <div className={styles.searchInput}>
         <HCInput id="graph-view-filter-input" suffix={<FontAwesomeIcon icon={faSearch} size="sm" className={styles.searchIcon}/>} placeholder="Search" size="sm" />
       </div>

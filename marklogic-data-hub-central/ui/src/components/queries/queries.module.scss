@@ -1,55 +1,79 @@
 .description {
-  margin-left: 10px;
-  font-size: 12px;
-  color: #777777;
+    margin-left: 10px;
+    font-size: 12px;
+    color: #777777;
 }
 
 .longDescription {
-  margin-left: 10px;
-  font-size: 12px;
-  color: #777777;
-  text-overflow: ellipsis;
+    margin-left: 10px;
+    font-size: 12px;
+    color: #777777;
+    text-overflow: ellipsis;
 }
 
-.iconHover:hover{
-  color: var(--hoverColor) !important;
+.iconHover:hover {
+    color: var(--hoverColor) !important;
 }
 
 .disabledSaveIcon {
-  color: grey;
-  opacity: 0.5;
-  cursor: not-allowed;
-  marginBottom: 9px;
+    color: grey;
+    opacity: 0.5;
+    cursor: not-allowed;
+    margin-bottom: 9px;
 }
 
 .enabledSaveIcon {
-  cursor: pointer;
-  color: #5b69af;
-  marginBottom: 9px;
+    cursor: pointer;
+    color: #5b69af;
+    margin-bottom: 9px;
 }
 
 .queryBar {
-  // maximum percentage of screen width allocated to dropdown + icons
-  max-width: 80%;
-  // positioning
-  position: relative;
-  top: -39px;
-  right: -10px;
-  margin: 0 0 43px;
-  // lines up icons with dropdown (do not touch)
-  display: flex;
+    // maximum percentage of screen width allocated to dropdown + icons
+    // positioning
+    position: relative;
+    // lines up icons with dropdown (do not touch)
+    display: flex;
+    justify-content: space-between;
+    div[id="dropdownList-select-wrapper"] {
+        span {
+            + div {
+              background-color: transparent !important;
+                div:first-child {
+                    background-color: transparent !important;
+                }
+            }
+        }
+    }
 }
 .saveDropdown {
-  clear: both;
-  // limits the size of the dropdown to 80% of the screen width (config in .queryBar)
-  max-width: 100%;
+    clear: both;
+    // limits the size of the dropdown to 80% of the screen width (config in .queryBar)
+    max-width: 100%;
 }
 .iconBar {
-  // horizontally aligns icons (do not touch)
-  display: flex;
-  align-items: center;
-  position: relative;
-  div {
-    margin: 0px 4px; // governs horizontal spacing between icons
-  }
+    // horizontally aligns icons (do not touch)
+    display: flex;
+    align-items: center;
+    position: relative;
+    div {
+        // margin: 0px 4px; // governs horizontal spacing between icons
+    }
+}
+.ellipsisButton {
+    background-color: transparent !important;
+    border: 0 !important;
+    padding: 0 10px !important;
+}
+.queryIconsEllipsis {
+    color: #777777;
+}
+.queryMenuItemIcon {
+    margin-right: 10px;
+}
+.clearQueryLink {
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+    padding-left: 10px;
 }

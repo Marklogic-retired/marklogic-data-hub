@@ -43,7 +43,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.clickColumnTitle(2);
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
     browsePage.getSaveQueryName().type("new-query");
@@ -58,6 +58,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueriesDropdown().should("be.visible");
   });
   it("Editing a previous query", () => {
+    browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailDesc().clear();
     browsePage.getEditQueryDetailDesc().type("new-query description edited");
@@ -65,6 +66,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQueryDescription().should("contain", "new-query description edited");
   });
   it("Saving a copy of previous query", () => {
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().type("new-query-2");
     browsePage.getSaveQueryDescription().type("new-query-2 description");
@@ -74,7 +76,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").scrollIntoView().click({force: true});
     browsePage.getGreySelectedFacets("mapCustomersJSON").should("exist");
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getRadioOptionSelected();
     browsePage.getEditSaveChangesButton().click();
     browsePage.getSelectedQueryDescription().should("contain", "new-query-2 description");
@@ -95,7 +97,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
     // clicking on save changes icon
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesFormName().clear();
     browsePage.getEditSaveChangesFormName().type("new-query");
@@ -103,19 +105,23 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking save modal icon
-    browsePage.getSaveModalIcon().click();
+    browsePage.getEllipsisButton().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking edit modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save a copy modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
     browsePage.getSaveQueryCancelButton().click();
   });
   it("Edit queries with duplicate query name", () => {
+    browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailFormName().clear();
@@ -124,19 +130,22 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save modal icon
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking edit modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save a copy modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
     browsePage.getSaveQueryCancelButton().click();
   });
   it("Clicking on save a copy icon", () => {
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().clear();
     browsePage.getSaveQueryName().type("new-query");
@@ -144,14 +153,16 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getErrorMessage().should("contain", "You already have a saved query with a name of new-query");
     browsePage.getSaveQueryCancelButton().click();
     // checking previous query name is set clicking save modal icon
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.getEditSaveChangesFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking edit modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().click();
     browsePage.getEditQueryDetailFormName().invoke("val").should("contain", "new-query-2");
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save a copy modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
     browsePage.getSaveQueryCancelButton().click();
@@ -179,18 +190,20 @@ describe("save/manage queries scenarios, developer role", () => {
     queryComponent.getEditCancelButton().click();
     queryComponent.getManageQueryModal().find(".btn-close").click();
     // checking previous query name is set clicking save modal icon
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     cy.get("@qName").then((qName) => {
       browsePage.getEditSaveChangesFormName().invoke("val").should("contain", qName);
     });
     browsePage.getEditSaveChangesCancelButton().click();
     // checking previous query name is set clicking edit modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getEditQueryModalIcon().first().click();
     cy.get("@qName").then((qName) => {
       browsePage.getEditQueryDetailFormName().invoke("val").should("contain", qName);
     });
     browsePage.getEditQueryDetailCancelButton().click();
     // checking previous query name is set clicking save a copy modal icon
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().invoke("val").should("be.empty");
     browsePage.getSaveQueryCancelButton().click();
@@ -204,7 +217,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedFacets().should("exist");
     browsePage.getGreySelectedFacets("Bates").should("exist");
     browsePage.getFacetApplyButton().click();
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().type("person-query");
     browsePage.getSaveQueryDescription().type("person-query description");
@@ -213,11 +226,13 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "person-query");
     browsePage.search("Bates");
     browsePage.clickColumnTitle(4);
+    browsePage.getEllipsisButton().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardYesButton().click();
     browsePage.getAppliedFacets("Bates").should("exist");
     browsePage.search("Bates");
     browsePage.clickColumnTitle(4);
+    browsePage.getEllipsisButton().click();
     browsePage.getDiscardChangesIcon().click();
     browsePage.getDiscardNoButton().click();
     browsePage.getSearchText().should("have.value", "Bates");
@@ -234,7 +249,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getFacetItemCheckbox("collection", "mapCustomersJSON").click({force: true});
     browsePage.getFacetApplyButton().click();
     browsePage.search("Adams Cole");
-    browsePage.getSaveModalIcon().click();
+    browsePage.getSaveModalIcon().scrollIntoView().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().type("query-1");
     browsePage.getSaveQueryDescription().type("query-1 description");
@@ -243,6 +258,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "query-1");
     browsePage.getSelectedQueryDescription().should("contain", "query-1 description");
     // creating query 2 using save a copy
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().type("query-2");
     browsePage.getSaveQueryButton().click();
@@ -430,7 +446,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox("fname", "Bob").click();
     browsePage.getFacetItemCheckbox("fname", "Bob").should("be.checked");
-    browsePage.getSaveModalIcon().click({force: true});
+    browsePage.getSaveModalIcon().scrollIntoView().click({force: true});
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
     browsePage.getSaveQueryName().type("check-query");
