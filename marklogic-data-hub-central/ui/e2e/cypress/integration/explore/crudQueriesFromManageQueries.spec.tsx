@@ -52,6 +52,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
     // Creating another query
+    browsePage.getEllipsisButton().click();
     browsePage.getSaveACopyModalIcon().click();
     browsePage.getSaveQueryName().clear();
     browsePage.getSaveQueryName().type("newQuery-1");

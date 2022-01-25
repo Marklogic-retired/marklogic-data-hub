@@ -459,6 +459,10 @@ class BrowsePage {
     return cy.get("#dropdownList");
   }
 
+  getEllipsisButton() {
+    return cy.get(`[aria-label="ellipsisButton"]`);
+  }
+
   getEditQueryModalIcon() {
     return cy.get("svg[data-icon=\"pencil-alt\"]");
   }

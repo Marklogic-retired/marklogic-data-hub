@@ -31,6 +31,7 @@ import EntitySpecificSidebar from "@components/entity-specific-sidebar/entity-sp
 import EntityIconsSidebar from "@components/entity-icons-sidebar/entity-icons-sidebar";
 import {updateHubCentralConfig, getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typescript-eslint/no-unused-vars
 import {hubCentralConfig} from "../types/modeling-types"; // eslint-disable-line @typescript-eslint/no-unused-vars
+import SelectedFacets from "@components/selected-facets/selected-facets";
 
 
 //TODO: remove this, it's just for mocking porpouses and show default data en specif sidebar when non entity was selected
@@ -108,6 +109,8 @@ const Browse: React.FC<Props> = ({location}) => {
   const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
+  const [applyClicked, toggleApplyClicked] = useState(false);
+  const [showApply, toggleApply] = useState(false);
 
   const setEntitySpecificFacets = (entity) => {
     const {name} = entity;
@@ -289,12 +292,12 @@ const Browse: React.FC<Props> = ({location}) => {
     let notSelectingCardViewWhenNoEntities = !cardView && (!entities.length && !searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
 
     if (entityTypesExistOrNoEntityTypeIsSelected &&
-            (
-              defaultOptionsForPageRefresh ||
-                selectingAllEntitiesOption ||
-                selectingAllDataOption ||
-                selectingEntityType
-            )) {
+      (
+        defaultOptionsForPageRefresh ||
+        selectingAllEntitiesOption ||
+        selectingAllDataOption ||
+        selectingEntityType
+      )) {
       getSearchResults(entities);
     } else {
       if (notSelectingCardViewWhenNoEntities) {
@@ -365,16 +368,16 @@ const Browse: React.FC<Props> = ({location}) => {
         state["targetDatabase"]);
       state["tableView"] ? toggleTableView(true) : toggleTableView(false);
     } else if (state
-            && state.hasOwnProperty("entityName")
-            && state.hasOwnProperty("targetDatabase")
-            && state.hasOwnProperty("jobId")
-            && state.hasOwnProperty("Collection")) {
+      && state.hasOwnProperty("entityName")
+      && state.hasOwnProperty("targetDatabase")
+      && state.hasOwnProperty("jobId")
+      && state.hasOwnProperty("Collection")) {
       setCardView(false);
       setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"], state["Collection"]);
     } else if (state
-            && state.hasOwnProperty("entityName")
-            && state.hasOwnProperty("targetDatabase")
-            && state.hasOwnProperty("jobId")) {
+      && state.hasOwnProperty("entityName")
+      && state.hasOwnProperty("targetDatabase")
+      && state.hasOwnProperty("jobId")) {
       setCardView(false);
       setLatestJobFacet(state["jobId"], state["entityName"], state["targetDatabase"]);
     } else if (state && state.hasOwnProperty("entityName") && state.hasOwnProperty("jobId")) {
@@ -556,23 +559,44 @@ const Browse: React.FC<Props> = ({location}) => {
           />
         </HCSider>
         : <HCSider placement="left" show={showMainSidebar} footer={<SidebarFooter />}>
-          <Sidebar
-            facets={facets}
-            selectedEntities={searchOptions.entityTypeIds}
-            entityDefArray={entityDefArray}
-            facetRender={updateSelectedFacets}
-            checkFacetRender={updateCheckedFacets}
-            setDatabasePreferences={setDatabasePreferences}
-            greyFacets={greyFacets}
-            setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
-            hideDataHubArtifacts={hideDataHubArtifacts}
-            cardView={cardView}
-            setEntitySpecificPanel={handleEntitySelected}
-            currentBaseEntities={currentBaseEntities}
-            setCurrentBaseEntities={setCurrentBaseEntities}
-            currentRelatedEntities={currentRelatedEntities}
-            setCurrentRelatedEntities={setCurrentRelatedEntities}
-          />
+          <>
+            <div className="p-2">
+              <Query queries={queries || []}
+                setQueries={setQueries}
+                isSavedQueryUser={isSavedQueryUser}
+                columns={columns}
+                setIsLoading={setIsLoading}
+                entities={entities}
+                selectedFacets={selectedFacets}
+                greyFacets={greyFacets}
+                isColumnSelectorTouched={isColumnSelectorTouched}
+                setColumnSelectorTouched={setColumnSelectorTouched}
+                entityDefArray={entityDefArray}
+                database={searchOptions.database}
+                setCardView={setCardView}
+                cardView={cardView}
+                toggleApplyClicked={toggleApplyClicked}
+                toggleApply={toggleApply}
+              />
+            </div>
+            <Sidebar
+              facets={facets}
+              selectedEntities={searchOptions.entityTypeIds}
+              entityDefArray={entityDefArray}
+              facetRender={updateSelectedFacets}
+              checkFacetRender={updateCheckedFacets}
+              setDatabasePreferences={setDatabasePreferences}
+              greyFacets={greyFacets}
+              setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
+              hideDataHubArtifacts={hideDataHubArtifacts}
+              cardView={cardView}
+              setEntitySpecificPanel={handleEntitySelected}
+              currentBaseEntities={currentBaseEntities}
+              setCurrentBaseEntities={setCurrentBaseEntities}
+              currentRelatedEntities={currentRelatedEntities}
+              setCurrentRelatedEntities={setCurrentRelatedEntities}
+            />
+          </>
         </HCSider>
       }
       {entitySpecificPanel &&
@@ -595,7 +619,7 @@ const Browse: React.FC<Props> = ({location}) => {
 
                 {!graphView ? <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences} /> : ""}
                 {showNoDefinitionAlertMessage ? <div aria-label="titleNoDefinition" className={styles.titleNoDefinition}>{ModelingMessages.titleNoDefinition}</div> :
-                  <span>
+                  <span className="d-flex justify-content-between">
                     {!graphView &&
                       <div>
                         <SearchSummary
@@ -670,79 +694,74 @@ const Browse: React.FC<Props> = ({location}) => {
                       </div>
                     </div></span>}
               </div>
-              <Query queries={queries || []}
-                setQueries={setQueries}
-                isSavedQueryUser={isSavedQueryUser}
-                columns={columns}
-                setIsLoading={setIsLoading}
-                entities={entities}
-                selectedFacets={selectedFacets}
-                greyFacets={greyFacets}
-                isColumnSelectorTouched={isColumnSelectorTouched}
-                setColumnSelectorTouched={setColumnSelectorTouched}
-                entityDefArray={entityDefArray}
-                database={searchOptions.database}
-                setCardView={setCardView}
-                cardView={cardView}
-              />
+              <div className="mt-4">
+                <SelectedFacets
+                  selectedFacets={selectedFacets}
+                  greyFacets={greyFacets}
+                  applyClicked={applyClicked}
+                  showApply={showApply}
+                  toggleApply={(clicked) => toggleApply(clicked)}
+                  toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                />
+              </div>
             </div>
             {!showNoDefinitionAlertMessage &&
-                <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
-                  <div>
-                    {graphView ?
-                      <div>
-                        <GraphViewExplore
-                          entityTypesInstances={graphSearchData}
-                          graphView={graphView}
-                          coords={coords}
-                          setCoords={setCoords}
-                          hubCentralConfig={hubCentralConfig}
-                        />
-                      </div> :
-                      cardView ?
-                        <RecordCardView
-                          data={data}
-                          entityPropertyDefinitions={entityPropertyDefinitions}
-                          selectedPropertyDefinitions={selectedPropertyDefinitions}
-                        />
-                        : (tableView ?
-                          <div className={styles.tableViewResult}>
-                            <ResultsTabularView
-                              data={data}
-                              entityPropertyDefinitions={entityPropertyDefinitions}
-                              selectedPropertyDefinitions={selectedPropertyDefinitions}
-                              entityDefArray={entityDefArray}
-                              columns={columns}
-                              selectedEntities={searchOptions.entityTypeIds}
-                              setColumnSelectorTouched={setColumnSelectorTouched}
-                              tableView={tableView}
-                              isLoading={isLoading}
-                              handleViewChange={handleViewChange}
-                            />
-                          </div>
-                          : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
-                            handleViewChange={handleViewChange}
-                            entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
-                        )}
-                  </div>
-                  <br />
-                </div>}
-            {!showNoDefinitionAlertMessage && !graphView &&
+              <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
                 <div>
-                  <SearchSummary
-                    total={totalDocuments}
-                    start={searchOptions.start}
-                    length={searchOptions.pageLength}
-                    pageSize={searchOptions.pageSize}
-                  />
-                  <SearchPagination
-                    total={totalDocuments}
-                    pageNumber={searchOptions.pageNumber}
-                    pageSize={searchOptions.pageSize}
-                    pageLength={searchOptions.pageLength}
-                    maxRowsPerPage={searchOptions.maxRowsPerPage}
-                  />
-                </div>}
+                  {graphView ?
+                    <div>
+                      <GraphViewExplore
+                        entityTypesInstances={graphSearchData}
+                        graphView={graphView}
+                        coords={coords}
+                        setCoords={setCoords}
+                        hubCentralConfig={hubCentralConfig}
+                      />
+                    </div> :
+                    cardView ?
+                      <RecordCardView
+                        data={data}
+                        entityPropertyDefinitions={entityPropertyDefinitions}
+                        selectedPropertyDefinitions={selectedPropertyDefinitions}
+                      />
+                      : (tableView ?
+                        <div className={styles.tableViewResult}>
+                          <ResultsTabularView
+                            data={data}
+                            entityPropertyDefinitions={entityPropertyDefinitions}
+                            selectedPropertyDefinitions={selectedPropertyDefinitions}
+                            entityDefArray={entityDefArray}
+                            columns={columns}
+                            selectedEntities={searchOptions.entityTypeIds}
+                            setColumnSelectorTouched={setColumnSelectorTouched}
+                            tableView={tableView}
+                            isLoading={isLoading}
+                            handleViewChange={handleViewChange}
+                          />
+                        </div>
+                        : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data}
+                          handleViewChange={handleViewChange}
+                          entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                      )}
+                </div>
+                <br />
+              </div>}
+            {!showNoDefinitionAlertMessage && !graphView &&
+              <div>
+                <SearchSummary
+                  total={totalDocuments}
+                  start={searchOptions.start}
+                  length={searchOptions.pageLength}
+                  pageSize={searchOptions.pageSize}
+                />
+                <SearchPagination
+                  total={totalDocuments}
+                  pageNumber={searchOptions.pageNumber}
+                  pageSize={searchOptions.pageSize}
+                  pageLength={searchOptions.pageLength}
+                  maxRowsPerPage={searchOptions.maxRowsPerPage}
+                />
+              </div>}
           </>
         }
       </div>
