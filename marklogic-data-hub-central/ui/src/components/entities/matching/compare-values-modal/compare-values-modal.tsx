@@ -422,6 +422,7 @@ const CompareValuesModal: React.FC<Props> = (props) => {
           keyUtil="key"
           baseIndent={0}
           rowKey="key"
+          showHeader={false}
         />
       </div>
     </Modal.Body>

@@ -6,7 +6,7 @@ import {
   multiSlider,
   confirmYesNo
 } from "../../../support/components/common/index";
-import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleModal} from "../../../support/components/matching/index";
+import {matchingStepDetail, rulesetSingleModal, thresholdModal, rulesetMultipleModal, compareValuesModal} from "../../../support/components/matching/index";
 import curatePage from "../../../support/pages/curate";
 import LoginPage from "../../../support/pages/login";
 
@@ -323,6 +323,7 @@ describe("Matching", () => {
     matchingStepDetail.getUriInputField().type("/test/Uri1");
     matchingStepDetail.getAddUriIcon().click();
     cy.findByText("/test/Uri1").should("be.visible");
+    matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
     matchingStepDetail.getUriDeleteIcon().click();
     cy.findByText("/test/Uri1").should("not.exist");
     matchingStepDetail.getTestMatchUriButton();
@@ -334,6 +335,7 @@ describe("Matching", () => {
     cy.findByText("This URI has already been added.").should("be.visible");
     matchingStepDetail.getUriInputField().clear().type("/test/Uri2");
     matchingStepDetail.getAddUriIcon().click();
+    matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
     cy.findByText("This URI has already been added.").should("not.exist");
     cy.findByText("The minimum of two URIs are required.").should("not.exist");
     cy.waitUntil(() => cy.visit("/tiles"));
@@ -377,6 +379,7 @@ describe("Matching", () => {
       matchingStepDetail.getAddUriIcon().click();
     }
 
+    matchingStepDetail.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
     matchingStepDetail.getTestMatchUriButton();
     cy.waitForAsyncRequest();
     cy.wait(3000);
@@ -429,6 +432,7 @@ describe("Matching", () => {
       cy.findAllByLabelText(compareValuesData[i].uriValue1).should("have.length.gt", 0);
       cy.findAllByLabelText(compareValuesData[i].uriValue2).should("have.length.gt", 0);
     }
+    compareValuesModal.getTableHeader().should("not.be.visible"); // Added as per DHFPROD-8322
 
     // To test highlighted matched rows
     cy.findByTitle("fname").should("have.css", "background-color", "rgb(133, 191, 151)");

@@ -87,6 +87,10 @@ class MatchingStepDetail {
   getAddUriOnlyIcon() {
     return cy.findByLabelText("addUriOnlyIcon");
   }
+
+  getTableHeader() {
+    return cy.get(".react-bootstrap-table #subTable thead");
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();
