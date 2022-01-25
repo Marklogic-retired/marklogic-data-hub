@@ -465,28 +465,29 @@ const LoadCard: React.FC<Props> = (props) => {
 
                   <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
-                    {selectVisible ? <HCTooltip id="missing-permission-tooltip" text={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
-                      <Select
-                        id={`${elem.name}-flowsList-select-wrapper`}
-                        inputId={`${elem.name}-flowsList`}
-                        components={{MenuList: props => MenuList(`${elem.name}-flowsList`, props)}}
-                        placeholder="Select Flow"
-                        value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[elem.name]) : undefined}
-                        onChange={(option) => handleSelect({flowName: option.value, loadName: elem.name})}
-                        isSearchable={false}
-                        isDisabled={!props.canWriteFlow}
-                        aria-label={`${elem.name}-flowsList`}
-                        options={flowOptions}
-                        styles={reactSelectThemeConfig}
-                        formatOptionLabel={({value, label}) => {
-                          return (
-                            <span aria-label={`${value}-option`}>
-                              {label}
-                            </span>
-                          );
-                        }}
-                      />
-                    </div></div></HCTooltip> : null}
+                    {selectVisible ? <HCTooltip id={`${elem.name}missing-permission-tooltip`} show={props?.canWriteFlow ? !props?.canWriteFlow: undefined}
+                      text={"Load: "+SecurityTooltips.missingPermission} placement={"bottom"}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
+                        <Select
+                          id={`${elem.name}-flowsList-select-wrapper`}
+                          inputId={`${elem.name}-flowsList`}
+                          components={{MenuList: props => MenuList(`${elem.name}-flowsList`, props)}}
+                          placeholder="Select Flow"
+                          value={Object.keys(flowOptions).length > 0 ? flowOptions.find(oItem => oItem.value === selected[elem.name]) : undefined}
+                          onChange={(option) => handleSelect({flowName: option.value, loadName: elem.name})}
+                          isSearchable={false}
+                          isDisabled={!props.canWriteFlow}
+                          aria-label={`${elem.name}-flowsList`}
+                          options={flowOptions}
+                          styles={reactSelectThemeConfig}
+                          formatOptionLabel={({value, label}) => {
+                            return (
+                              <span aria-label={`${value}-option`}>
+                                {label}
+                              </span>
+                            );
+                          }}
+                        />
+                      </div></div></HCTooltip> : null}
                   </div>
                 </div>
               </HCCard>
