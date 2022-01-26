@@ -21,16 +21,16 @@ export const createModelErrorResponse = {
 
 export const createModelErrorResponseNamespace = {
   "code": 400,
-  "message": "Invalid model: Namespace property must be a valid absolute URI. Value is badURI.",
+  "message": "Invalid syntax: Namespace property must be a valid absolute URI. Example: http://example.org/es/gs",
   "suggestion": "Resend the request in the correct format.",
-  "details": "Invalid model: Namespace property must be a valid absolute URI. Value is badURI."
+  "details": "Invalid syntax: Namespace property must be a valid absolute URI. Example: http://example.org/es/gs"
 };
 
 export const createModelErrorResponsePrefix = {
   "code": 400,
-  "message": "Invalid model: Namespace prefix xml is not valid. It is a reserved pattern.",
+  "message": "You cannot use a reserved prefix. Examples: xml, xs, xsi",
   "suggestion": "Resend the request in the correct format.",
-  "details": "Invalid model: Namespace prefix xml is not valid. It is a reserved pattern."
+  "details": "You cannot use a reserved prefix. Examples: xml, xs, xsi."
 };
 
 export const getEntityTypes = [

@@ -90,6 +90,21 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.verifySameNamePropertyError("A property is already using the name street. A structured type cannot use the same name as an existing property.");
     structuredTypeModal.clearName();
     structuredTypeModal.newName("Zip");
+    // test namespace validation
+    structuredTypeModal.newNamespace("http://example.org/test");
+    structuredTypeModal.getAddButton().click();
+    structuredTypeModal.verifyPrefixNameError();
+    structuredTypeModal.newPrefix("xml");
+    structuredTypeModal.getAddButton().click();
+    structuredTypeModal.verifyPrefixNameError();
+    structuredTypeModal.clearNamespace();
+    structuredTypeModal.clearPrefix();
+    structuredTypeModal.newPrefix("test");
+    structuredTypeModal.getAddButton().click();
+    structuredTypeModal.verifyNamespaceError();
+    // reset namespace information
+    structuredTypeModal.clearNamespace();
+    structuredTypeModal.clearPrefix();
     structuredTypeModal.getAddButton().click();
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();

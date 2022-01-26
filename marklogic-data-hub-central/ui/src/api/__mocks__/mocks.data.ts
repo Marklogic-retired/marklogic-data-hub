@@ -66,9 +66,13 @@ const curateAPI = (axiosMock) => {
     switch (url) {
     case "/api/flows":
       return Promise.resolve(curateData.flows);
+    case "/api/flows/testFlow/latestJobInfo":
+      return Promise.resolve({status: 200, data: {}});
     case "/api/steps":
       return Promise.resolve(curateData.steps);
     case "/api/models/primaryEntityTypes":
+      return Promise.resolve(curateData.primaryEntityTypes);
+    case "/api/models/primaryEntityTypes?includeDrafts=true":
       return Promise.resolve(curateData.primaryEntityTypes);
     case "/api/steps/ingestion":
       return Promise.resolve(loadData.loads);
@@ -82,6 +86,10 @@ const curateAPI = (axiosMock) => {
       return Promise.resolve({status: 200, data: {}});
     case "/api/artifacts/matching":
       return Promise.resolve(curateData.matchings);
+    case "/api/steps/matching":
+      return Promise.resolve(curateData.matchings);
+    case "/api/steps/merging":
+      return Promise.resolve({status: 200, data: []});
     case "/api/steps/custom":
       return Promise.resolve(curateData.customSteps);
     case "/api/steps/custom/customJSON":

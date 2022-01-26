@@ -2,7 +2,6 @@ import React from "react";
 import axios from "axios";
 import {render, wait} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
 import EntityTypeModal from "./entity-type-modal";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {

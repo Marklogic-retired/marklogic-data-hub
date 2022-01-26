@@ -74,6 +74,24 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyModal.getSubmitButton().click();
     propertyTable.getMultipleIcon("user").should("exist");
   });
+  it("edit entity description then edit property name with Related Entity type", () => {
+    entityTypeTable.getEntity("Buyer").click();
+    entityTypeModal.clearEntityDescription();
+    entityTypeModal.newEntityDescription("Description has changed");
+    entityTypeModal.getAddButton().click();
+    entityTypeModal.getAddButton().should("not.exist");
+    propertyTable.editProperty("user");
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName("username");
+    propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("user").should("not.exist");
+    propertyTable.getProperty("username").should("exist");
+    propertyTable.getMultipleIcon("username").should("exist");
+    // check edited entity description
+    entityTypeTable.getEntity("Buyer").click();
+    entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
+    entityTypeModal.getCancelButton().click();
+  });
   it("Add cascaded type with identifer", () => {
     propertyTable.getAddPropertyButton("Buyer").click();
     propertyModal.clearPropertyName();
@@ -125,13 +143,20 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getPiiIcon("user-id").should("not.exist");
     //propertyTable.getWildcardIcon('user-id').should('not.exist');
   });
-  it("Edit entity decription, property name and delete the property", () => {
-    entityTypeTable.getEntity("Buyer").click();
-    entityTypeModal.clearEntityDescription();
-    entityTypeModal.newEntityDescription("Description has changed");
-    entityTypeModal.getAddButton().click();
-    entityTypeModal.getAddButton().should("not.exist");
-    //entityTypeTable.getExpandEntityIcon("Buyer");
+  it("edit property name with Related Entity type", () => {
+    propertyTable.editProperty("user-id");
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName("buyer-id");
+    propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("buyer-id").should("not.exist");
+    propertyTable.getProperty("buyer-id").should("exist");
+    propertyTable.getMultipleIcon("buyer-id").should("exist");
+    // check edited entity description
+    entityTypeTable.getEntity("Buyer").scrollIntoView().click();
+    entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
+    entityTypeModal.getCancelButton().click();
+  });
+  it("Edit property name and delete the property", () => {
     propertyTable.editProperty("newId");
     propertyModal.getDeleteIcon("newId").click();
     confirmationModal.getDeletePropertyWarnText().should("exist");
@@ -148,23 +173,8 @@ describe("Entity Modeling Senario 1: Writer Role", () => {
     propertyTable.getSortIcon("nicknames").should("exist");
     modelPage.getEntityModifiedAlert().should("exist");
   });
-  it("edit property name with Related Entity type", () => {
-    propertyTable.editProperty("user");
-    propertyModal.clearPropertyName();
-    propertyModal.newPropertyName("username");
-    propertyModal.getSubmitButton().click();
-    propertyTable.getProperty("user").should("not.exist");
-    propertyTable.getProperty("username").should("exist");
-    propertyTable.getMultipleIcon("username").should("exist");
-    // check edited entity description
-    entityTypeTable.getEntity("Buyer").scrollIntoView().click();
-    entityTypeModal.getEntityDescription().should("have.value", "Description has changed");
-    entityTypeModal.getCancelButton().click();
-  });
-  it("Save new Buyer entity", {defaultCommandTimeout: 120000}, () => {
+  it("Save new and updated entities", {defaultCommandTimeout: 120000}, () => {
     cy.publishEntityModel();
-    propertyTable.getFacetIcon("nicknames").should("exist");
-    propertyTable.getSortIcon("nicknames").should("exist");
     modelPage.getEntityModifiedAlert().should("not.exist");
   });
   it("Validate the entity in explore page", () => {

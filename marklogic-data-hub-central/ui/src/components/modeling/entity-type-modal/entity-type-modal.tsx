@@ -38,7 +38,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [namespaceTouched, setisNamespaceTouched] = useState(false);
   const [prefix, setPrefix] = useState("");
   const [prefixTouched, setisPrefixTouched] = useState(false);
-  const [errorServer, setErrorServer] = useState(""); // Uncategorized errors from backend
+  const [errorMessage, setErrorMessage] = useState(""); // Uncategorized errors from backend
   const [loading, toggleLoading] = useState(false);
   const [colorSelected, setColorSelected] = useState("#EEEFF1");
   const [colorTouched, setisColorTouched] = useState(false);
@@ -67,7 +67,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setIconSelected("FaShapes");
       }
       setErrorName("");
-      setErrorServer("");
+      setErrorMessage("");
       toggleIsNameDisabled(true);
       toggleLoading(false);
     }
@@ -128,20 +128,31 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     };
   });
 
+  const getErrorMessage = () => {
+    if (errorMessage) {
+      if (errorMessage.includes("valid absolute URI")) {
+        return <span data-testid="namespace-error">Invalid syntax: Namespace property must be a valid absolute URI. Example: http://example.org/es/gs</span>;
+      } else if (errorMessage.includes("prefix without specifying")) {
+        return <span data-testid="namespace-error">You must define a namespace URI because you defined a prefix.</span>;
+      } else if (errorMessage.includes("reserved pattern")) {
+        return <span data-testid="prefix-error">You cannot use a reserved prefix. Examples: xml, xs, xsi</span>;
+      } else if (errorMessage.includes("must specify a prefix")) {
+        return <span data-testid="prefix-error">You must define a prefix because you defined a namespace URI.</span>;
+      }
+    }
+    return errorMessage;
+  };
+
   // Parse server error message to determine its type
   // TODO Server should categorize the error messages it returns so parsing is not needed
   const isErrorOfType = (type: string) => {
     let result = false;
-    if (errorServer) {
-      if (errorServer.includes("type already exists")) {
+    if (errorMessage) {
+      if (errorMessage.includes("type already exists")) {
         result = type === "name";
-      } else if (errorServer.includes("valid absolute URI")) {
+      } else if (errorMessage.includes("valid absolute URI") || errorMessage.includes("prefix without specifying")) {
         result = type === "namespace";
-      } else if (errorServer.includes("prefix without specifying")) {
-        result = type === "namespace";
-      } else if (errorServer.includes("reserved pattern")) {
-        result = type === "namespacePrefix";
-      } else if (errorServer.includes("must specify a prefix")) {
+      } else if (errorMessage.includes("reserved pattern") || errorMessage.includes("must specify a prefix")) {
         result = type === "namespacePrefix";
       }
     }
@@ -157,7 +168,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
-          setErrorServer(error["response"]["data"]["message"]);
+          setErrorMessage(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
@@ -187,9 +198,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message") && error.response.data["message"] === ErrorTooltips.entityErrorServerResp(name)) {
-          setErrorServer("name-error");
+          setErrorMessage("name-error");
         } else {
-          setErrorServer(error["response"]["data"]["message"]);
+          setErrorMessage(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
@@ -213,7 +224,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
     } catch (error) {
       if (error.response.status === 400) {
         if (error.response.data.hasOwnProperty("message")) {
-          setErrorServer(error["response"]["data"]["message"]);
+          setErrorMessage(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
@@ -229,7 +240,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
   const onOk = (event) => {
     setErrorName("");
-    setErrorServer("");
+    setErrorMessage("");
     event.preventDefault();
     if (props.isEditModal) {
       toggleLoading(true);
@@ -306,7 +317,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 </div>
               </Col>
               <Col xs={12} className={styles.validationError}>
-                {errorName || (errorServer === "name-error" && (<p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>))}
+                {errorName || (errorMessage === "name-error" && (<p aria-label="entity-name-error" className={styles.errorServer}>An entity type is already using the name <strong>{name}</strong>. An entity type cannot use the same name as an existing entity type.</p>))}
               </Col>
             </Row>
           </Col>
@@ -358,7 +369,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
                 </div>
               </Col>
               <Col  xs={12} className={styles.validationError}>
-                {errorName || ((errorServer !== "name-error") && (errorServer !== "")) ? (<p className={styles.errorServer}>{errorServer}</p>) : null}
+                {errorName || ((errorMessage !== "name-error") && (errorMessage !== "")) ? (<p className={styles.errorServer}>{getErrorMessage()}</p>) : null}
               </Col>
             </Row>
           </Col>

@@ -453,9 +453,25 @@ const PropertyTable: React.FC<Props> = (props) => {
     setTableData(renderTableData);
   };
 
-  const addStructuredTypeToDefinition = async (structuredTypeName: string) => {
+  const saveAndUpdateModifiedEntity = async (newDefinitions: Definition, entityModified: EntityModified, errorHandler: Function|undefined) => {
+    try {
+      if (props.updateSavedEntity) {
+        const response = await props.updateSavedEntity([entityModified], errorHandler);
+        if (response["status"] === 200) {
+          updateEntityModified(entityModified);
+          updateEntityDefinitionsAndRenderTable(newDefinitions);
+        }
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
+
+  const addStructuredTypeToDefinition = async (structuredTypeName: string, namespace: string|undefined, namespacePrefix: string|undefined, errorHandler: Function|undefined) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName]: {
+        namespace,
+        namespacePrefix,
         properties: {}
       }
     };
@@ -465,11 +481,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       modelDefinition: newDefinitions
     };
 
-    updateEntityModified(entityModified);
-    if (props.updateSavedEntity) {
-      await props.updateSavedEntity([entityModified]);
-    }
-    updateEntityDefinitionsAndRenderTable(newDefinitions);
+    await saveAndUpdateModifiedEntity(newDefinitions, entityModified, errorHandler);
   };
 
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
@@ -578,11 +590,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       modelDefinition: updatedDefinitions
     };
 
-    updateEntityModified(entityModified);
-    if (props.updateSavedEntity) {
-      await props.updateSavedEntity([entityModified]);
-    }
-    updateEntityDefinitionsAndRenderTable(updatedDefinitions);
+    await saveAndUpdateModifiedEntity(updatedDefinitions, entityModified, undefined);
     setNewRowKey(newRowKey);
   };
 
@@ -740,11 +748,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       modelDefinition: updatedDefinitions
     };
 
-    updateEntityModified(entityModified);
-    updateEntityDefinitionsAndRenderTable(updatedDefinitions);
-    if (props.updateSavedEntity) {
-      await props.updateSavedEntity([entityModified]);
-    }
+    await saveAndUpdateModifiedEntity(updatedDefinitions, entityModified, undefined);
   };
 
   const deletePropertyShowModal = async (text: string, record: any, definitionName: string) => {
