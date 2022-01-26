@@ -93,7 +93,7 @@ describe("Graph Validations", () => {
     graphViewSidePanel.getDeleteIcon("BabyRegistry").should("exist");
   });
   /* TODO: Graph context menu (DHFPROD-8284) */
-  it.skip("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
+  it("can center on entity type in graph view", {defaultCommandTimeout: 120000}, () => {
     modelPage.selectView("project-diagram");
     cy.wait(500);
     graphVis.getPositionsOfNodes("Person").then((nodePositions: any) => {

@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useContext, useLayoutEffect, useCallback} from "react";
 import Graph from "react-graph-vis";
 import "./graph-vis.scss";
+import styles from "./graph-vis.module.scss";
 import {ModelingContext} from "../../../../util/modeling-context";
 import ReactDOMServer from "react-dom/server";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
@@ -68,8 +69,9 @@ const GraphVis: React.FC<Props> = (props) => {
   let testingMode = true; // Should be used further to handle testing only in non-production environment
   const [openRelationshipModal, setOpenRelationshipModal] = useState(false);
   const [selectedRelationship, setSelectedRelationship] = useState<any>({});
-  const [contextMenuVisible, setContextMenuVisible] = useState(false); //eslint-disable-line @typescript-eslint/no-unused-vars
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
+  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   const [newRelationship, setNewRelationship] = useState(false);
   const [escKeyPressed, setEscKeyPressed] = useState(false);
   //const [saveAllCoords, setSaveAllCoords] = useState(false);
@@ -608,28 +610,26 @@ const GraphVis: React.FC<Props> = (props) => {
     },
   };
 
-  const menuClick = async (event) => { // eslint-disable-line @typescript-eslint/no-unused-vars
+  const centerOnEntity = async (event) => {
     setContextMenuVisible(false);
-    if (event.key === "1") {
-      if (network) {
-        await network.focus(clickedNode, {offset: {x: 0, y: (modelingOptions.selectedEntity ? -200 : -60)}});
-        let viewPosition: any = await network.getViewPosition();
-        setClickedNode(undefined);
-        let viewPositionPayload = defaultHubCentralConfig;
-        viewPositionPayload.modeling["viewPosition"] =  viewPosition;
-        props.updateHubCentralConfig(viewPositionPayload);
-      }
+    if (network) {
+      await network.focus(clickedNode, {offset: {x: 0, y: (modelingOptions.selectedEntity ? -200 : -60)}});
+      let viewPosition: any = await network.getViewPosition();
+      setClickedNode(undefined);
+      let viewPositionPayload = defaultHubCentralConfig;
+      viewPositionPayload.modeling["viewPosition"] =  viewPosition;
+      props.updateHubCentralConfig(viewPositionPayload);
     }
   };
 
-  const menu = () => { // eslint-disable-line @typescript-eslint/no-unused-vars
+  const menu = () => {
     return (
-      // <Menu id="contextMenu" onClick={menuClick}>
-      //   { clickedNode &&
-      // <Menu.Item key="1" data-testid={`centerOnEntityType-${clickedNode}`}>
-      //   Center on entity type
-      // </Menu.Item> }
-      {/*{ clickedEdge &&
+      <div id="contextMenu" className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
+        {clickedNode &&
+        <div key="1" className={styles.contextMenuItem} data-testid={`centerOnEntityType-${clickedNode}`} onClick={centerOnEntity}>
+          Center on entity type
+        </div>}
+        {/*{ clickedEdge &&
       <Menu.Item key="2">
         {"Edit relationship "}
       </Menu.Item> }
@@ -637,7 +637,7 @@ const GraphVis: React.FC<Props> = (props) => {
           {"Explore " + clickedNode + " instances"}
         </Link> </Menu.Item>
       <Menu.Item key="4">3rd menu item</Menu.Item>*/}
-      // </Menu>
+      </div>
     );
   };
 
@@ -765,6 +765,7 @@ const GraphVis: React.FC<Props> = (props) => {
       let nodeId = network.getNodeAt(event.pointer.DOM);
       if (nodeId) {
         event.event.preventDefault();
+        setMenuPosition({x: event.event.offsetX, y: event.event.offsetY});
         setClickedNode(nodeId);
       } else {
         setClickedNode(undefined);
@@ -805,13 +806,14 @@ const GraphVis: React.FC<Props> = (props) => {
 
   return (
     <div id="graphVis">
-      <div /* onContextMenuCapture={handleContextMenucapture} */ style={{position: "relative"}}>
+      <div className={styles.graphContainer}>
         <Graph
           graph={graphData}
           options={options}
           events={events}
           getNetwork={initNetworkInstance}
         />
+        {contextMenuVisible && menu()}
       </div>
       <AddEditRelationship
         openRelationshipModal={openRelationshipModal}
