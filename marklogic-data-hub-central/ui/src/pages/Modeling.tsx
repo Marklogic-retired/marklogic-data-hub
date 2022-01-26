@@ -280,8 +280,8 @@ const Modeling: React.FC = () => {
   };
 
   const publishButton = <span className={styles.publishButtonParent}><HCButton
-    className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
-    disabled={!modelingOptions.isModified}
+    className={canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
+    disabled={canWriteEntityModel ? !modelingOptions.isModified : true}
     aria-label="publish-to-database"
     variant="outline-light"
     onClick={() => {
@@ -382,7 +382,7 @@ const Modeling: React.FC = () => {
                         </span>
                       </HCTooltip>
                       :
-                      <HCTooltip id="publis-disabled-tooltip" text={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess} placement="top" className={styles.tooltipOverlay}>
+                      <HCTooltip id="publish-disabled-tooltip" text={ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess} placement="top" className={styles.tooltipOverlay}>
                         <span className={styles.disabledCursor}>{publishButton}</span>
                       </HCTooltip>
                     }

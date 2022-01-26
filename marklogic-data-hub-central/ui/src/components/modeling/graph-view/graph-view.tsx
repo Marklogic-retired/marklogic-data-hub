@@ -124,8 +124,8 @@ const GraphView: React.FC<Props> = (props) => {
   );
 
   const publishButton = <HCButton
-    className={!modelingOptions.isModified ? styles.disabledPointerEvents : ""}
-    disabled={!modelingOptions.isModified}
+    className={props.canWriteEntityModel ? (!modelingOptions.isModified ? styles.disabledPointerEvents : "") : styles.disabledPointerEvents}
+    disabled={props.canWriteEntityModel ? !modelingOptions.isModified : true}
     aria-label="publish-to-database"
     size="sm"
     variant="outline-light"

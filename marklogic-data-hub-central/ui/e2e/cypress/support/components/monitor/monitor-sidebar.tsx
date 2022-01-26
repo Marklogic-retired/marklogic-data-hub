@@ -13,11 +13,11 @@ class MonitorSidebar {
   }
 
   getTodayItemInDateRangePicker() {
-    return cy.get(".table-condensed tbody td.today");
+    return cy.get(".table-condensed:nth-child(1) tbody td.today");
   }
 
   getAllAvailableDaysInDateRangePicker() {
-    return cy.get(".table-condensed tbody td.available");
+    return cy.get(".table-condensed:nth-child(1) tbody td.available");
   }
 }
 const monitorSidebar = new MonitorSidebar();

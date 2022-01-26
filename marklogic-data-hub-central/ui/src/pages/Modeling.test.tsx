@@ -129,6 +129,7 @@ describe("Modeling Page", () => {
     fireEvent.mouseOver(getByText("Publish"));
     await wait(() => expect(getByText(ModelingTooltips.publish + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     expect(queryByLabelText("entity-modified-alert")).toBeNull();
+    expect(getByLabelText("publish-to-database")).toBeDisabled();
   });
 
   test("Modeling: can not see data if user does not have entity model reader role", async () => {

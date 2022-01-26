@@ -80,4 +80,28 @@ describe("Graph View Component", () => {
     //Closing side panel
     userEvent.click(getByLabelText("closeGraphViewSidePanel"));
   });
+
+  test("Publish button should be disabled when user don't have permission to write entity model", async () => {
+
+    const mockDeleteEntity = jest.fn();
+
+    const {getByLabelText} =  render(
+      <ModelingContext.Provider value={isModified}>
+        <GraphView
+          entityTypes={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={false}
+          deleteEntityType={mockDeleteEntity}
+          relationshipModalVisible={false}
+          toggleRelationshipModal={jest.fn()}
+          updateSavedEntity={jest.fn()}
+          setEntityTypesFromServer={jest.fn()}
+          hubCentralConfig={hubCentralConfig}
+          updateHubCentralConfig={jest.fn()}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByLabelText("publish-to-database")).toBeDisabled();
+  });
 });
