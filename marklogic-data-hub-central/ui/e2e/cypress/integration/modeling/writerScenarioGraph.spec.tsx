@@ -98,20 +98,7 @@ describe("Entity Modeling: Graph View", () => {
       propertyTable.getProperty("personType").should("exist");
     });
 
-    //Add second property to Patients Entity and delete it
-    propertyTable.getAddPropertyButton("Patients").click();
-    propertyModal.newPropertyName("patientId");
-    propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown("More number types").click();
-    propertyModal.getCascadedTypeFromDropdown("byte").click();
-    propertyModal.getSubmitButton().click();
-    propertyTable.editProperty("patientId");
-    propertyModal.getDeleteIcon("patientId").click();
-    confirmationModal.getDeletePropertyWarnText().should("exist");
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn);
-    propertyTable.getProperty("patientId").should("not.exist");
-
-    //Add third property to Patients Entity, publish the changes
+    //Add second property to Patients Entity, publish the changes
     propertyTable.getAddPropertyButton("Patients").click();
     propertyModal.newPropertyName("health");
     propertyModal.openPropertyDropdown();

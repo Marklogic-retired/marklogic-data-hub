@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from "react";
 import {Row, Col, Modal, Form, FormLabel, FormCheck} from "react-bootstrap";
 import Select, {components as SelectComponents} from "react-select";
 import reactSelectThemeConfig from "../../../config/react-select-theme.config";
-import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import styles from "./property-modal.module.scss";
 import StructuredTypeModal from "../structured-type-modal/structured-type-modal";
@@ -17,20 +17,15 @@ import "rc-cascader/assets/index.less";
 
 
 
-import {
-  StructuredTypeOptions,
-  PropertyOptions,
-  EditPropertyOptions,
-  PropertyType
-} from "../../../types/modeling-types";
+import {EditPropertyOptions, PropertyOptions, PropertyType, StructuredTypeOptions} from "../../../types/modeling-types";
 import {ConfirmationType} from "../../../types/common-types";
 
 import {
   COMMON_PROPERTY_TYPES,
-  MORE_STRING_TYPES,
-  MORE_NUMBER_TYPES,
+  DROPDOWN_PLACEHOLDER,
   MORE_DATE_TYPES,
-  DROPDOWN_PLACEHOLDER
+  MORE_NUMBER_TYPES,
+  MORE_STRING_TYPES
 } from "../../../config/modeling.config";
 import {QuestionCircleFill} from "react-bootstrap-icons";
 import {HCAlert, HCButton, HCTooltip, HCInput} from "@components/common";
@@ -43,7 +38,7 @@ type Props = {
   structuredTypeOptions: StructuredTypeOptions;
   toggleModal: (isVisible: boolean) => void;
   addPropertyToDefinition: (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => void;
-  addStructuredTypeToDefinition: (structuredTypeName: string) => void;
+  addStructuredTypeToDefinition: (structuredTypeName: string, namespace: string|undefined, prefix: string|undefined, errorHandler: Function|undefined) => void;
   editPropertyUpdateDefinition: (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => void;
   deletePropertyFromDefinition: (definitionName: string, propertyName: string) => void;
 };
@@ -138,7 +133,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
   const [showSteps, toggleSteps] = useState(false);
 
-  const [typeDisplayValue, setTypeDisplayValue] = useState<string[]>([]);
+  const [typeDisplayValue, setTypeDisplayValue] = useState<any[] | undefined>(undefined);
   const [typeErrorMessage, setTypeErrorMessage] = useState("");
 
   const [showJoinProperty, toggleShowJoinProperty] = useState(false);
@@ -188,7 +183,6 @@ const PropertyModal: React.FC<Props> = (props) => {
     } else {
       typeDisplayValueAux = ["Select the property type"];
     }
-
     return typeDisplayValueAux;
   }
 
@@ -260,7 +254,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         setModalTitle(modalTitle);
         setName("");
         setErrorMessage("");
-        setTypeDisplayValue([]);
+        setTypeDisplayValue(undefined);
         setJoinDisplayValue(undefined);
         setRadioValues([]);
         toggleShowConfigurationOptions(false);
@@ -413,7 +407,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
           // Ensure correct types for related case
           if (selectedPropertyOptions.propertyType === "relatedEntity") {
-            selectedPropertyOptions.type = typeDisplayValue[1];
+            selectedPropertyOptions.type = typeDisplayValue ? typeDisplayValue[1] : "";
             selectedPropertyOptions.joinPropertyType = joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName) ? joinProperties.find(prop => prop.value === selectedPropertyOptions.joinPropertyName).type : "string";
           }
 
@@ -478,9 +472,11 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   };
 
-  const addStructuredType = (name: string) => {
+  const addStructuredType = async (name: string, namespace: string|undefined, namespacePrefix: string|undefined, errorHandler: Function|undefined) => {
     let newStructuredDefinitionObject = {
-      name: name,
+      name,
+      namespace,
+      namespacePrefix,
       primaryKey: "",
       elementRangeIndex: [],
       pii: [],
@@ -520,12 +516,19 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_DATE_TYPES
       ]);
     }
-
-    props.addStructuredTypeToDefinition(name);
     setTypeDisplayValue(["structured", name]);
     setSelectedPropertyOptions({...selectedPropertyOptions, type: name});
     setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1, 3));
     toggleShowConfigurationOptions(false);
+
+    await props.addStructuredTypeToDefinition(name, namespace, namespacePrefix, (error) => {
+      if (errorHandler) {
+        errorHandler(error);
+      }
+      updateTypeDropdown();
+      setTypeDisplayValue(["structured", "newPropertyType"]);
+      setSelectedPropertyOptions({...selectedPropertyOptions, propertyType: PropertyType.Structured, identifier: "", type: "newPropertyType"});
+    });
   };
 
   const updateTypeDropdown = () => {
@@ -949,6 +952,7 @@ const PropertyModal: React.FC<Props> = (props) => {
                       return label[label.length - 1];
                     }
                   }}
+                  value={typeDisplayValue}
                   onChange={onPropertyTypeChange}
                   className={placeHolderColor && placeHolderOrEditValue ? styles.placeholderColor : styles.input}
                   style={{"width": "520px"}}

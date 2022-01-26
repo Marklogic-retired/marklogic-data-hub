@@ -20,6 +20,24 @@
   color: $danger;
 }
 
+.modal {
+  width: 680px;
+}
+
+.prefixLabel {
+  display: inline-block;
+  width: 40px;
+  line-height: 32px;
+  margin-left: 20px;
+  margin-right: 6px;
+}
+
+.namespaceError {
+  float: left;
+  color: #B32424;
+  width: 250px;
+}
+
 .modalFooter {
   display: flex;
   justify-content: flex-end;
