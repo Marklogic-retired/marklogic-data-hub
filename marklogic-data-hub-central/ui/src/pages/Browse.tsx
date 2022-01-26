@@ -105,7 +105,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [entitySpecificPanel, setEntitySpecificPanel] = useState<any>(undefined);
   const [showMainSidebar, setShowMainSidebar] = useState<boolean>(true);
   const [showEntitySpecificPanel, setShowEntitySpecificPanel] = useState<boolean>(false);
-  const [graphView, setGraphView] = useState(state && state.graphView ? true : false);
+  const [graphView, setGraphView] = useState(state && state.graphView ? true : JSON.parse(getUserPreferences(user.name)).graphView);
   const [currentBaseEntities, setCurrentBaseEntities] = useState<any[]>([]);
   const [currentEntitiesIcons, setCurrentEntitiesIcons] = useState<any[]>([]);
   const [currentRelatedEntities, setCurrentRelatedEntities] = useState<Map<string, any>>(new Map());
@@ -430,6 +430,7 @@ const Browse: React.FC<Props> = ({location}) => {
       propertiesToDisplay: searchOptions.selectedTableProperties,
       sortOrder: searchOptions.sortOrder,
       cardView: cardView,
+      graphView: view ? (view === "graph" ? true : false) : graphView,
       database: searchOptions.database
     };
     updateUserPreferences(user.name, preferencesObject);
@@ -643,6 +644,7 @@ const Browse: React.FC<Props> = ({location}) => {
                                 id="switch-view-graph"
                                 name="switch-view-radiogroup"
                                 value={"graph"}
+                                defaultChecked={graphView}
                                 onChange={e => handleViewChange(e.target.value)}
                               />
                               <HCTooltip text="Graph View" id="graph-view-tooltip" placement="top">
@@ -660,7 +662,7 @@ const Browse: React.FC<Props> = ({location}) => {
                                 id="switch-view-table"
                                 name="switch-view-radiogroup"
                                 value={"table"}
-                                defaultChecked={tableView}
+                                defaultChecked={tableView && !graphView}
                                 onChange={e => handleViewChange(e.target.value)}
                               />
                               <HCTooltip text="Table View" id="table-view-tooltip" placement="top">
@@ -678,7 +680,7 @@ const Browse: React.FC<Props> = ({location}) => {
                                 id="switch-view-snippet"
                                 name="switch-view-radiogroup"
                                 value={"snippet"}
-                                defaultChecked={!tableView}
+                                defaultChecked={!tableView && !graphView}
                                 onChange={e => handleViewChange(e.target.value)}
                               />
                               <HCTooltip text="Snippet View" id="snippet-view-tooltip" placement="top">
@@ -708,23 +710,23 @@ const Browse: React.FC<Props> = ({location}) => {
             {!showNoDefinitionAlertMessage &&
               <div className={graphView ? styles.viewGraphContainer : styles.viewContainer} >
                 <div>
-                  {graphView ?
-                    <div>
-                      <GraphViewExplore
-                        entityTypesInstances={graphSearchData}
-                        graphView={graphView}
-                        coords={coords}
-                        setCoords={setCoords}
-                        hubCentralConfig={hubCentralConfig}
-                      />
-                    </div> :
-                    cardView ?
-                      <RecordCardView
-                        data={data}
-                        entityPropertyDefinitions={entityPropertyDefinitions}
-                        selectedPropertyDefinitions={selectedPropertyDefinitions}
-                      />
-                      : (tableView ?
+                  {cardView ?
+                    <RecordCardView
+                      data={data}
+                      entityPropertyDefinitions={entityPropertyDefinitions}
+                      selectedPropertyDefinitions={selectedPropertyDefinitions}
+                    />
+                    : graphView ?
+                      <div>
+                        <GraphViewExplore
+                          entityTypesInstances={graphSearchData}
+                          graphView={graphView}
+                          coords={coords}
+                          setCoords={setCoords}
+                          hubCentralConfig={hubCentralConfig}
+                        />
+                      </div> :
+                      (tableView ?
                         <div className={styles.tableViewResult}>
                           <ResultsTabularView
                             data={data}

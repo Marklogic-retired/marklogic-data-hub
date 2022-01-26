@@ -42,6 +42,27 @@ class BrowsePage {
     });
   }
 
+  getAllDataButton() {
+    return cy.get(`[aria-label="switch-datasource-all-data"]`);
+  }
+  getEntities() {
+    return cy.get(`[aria-label="switch-datasource-entities"]`);
+  }
+
+  viewSelector(view: string) {
+    return cy.get(`[aria-label="switch-view-${view}"]`);
+  }
+
+  getGraphVisExploreContainer() {
+    return cy.get(`#graphVisExplore`);
+  }
+  getMainTableContainer() {
+    return cy.get(`.resultTableMain`);
+  }
+  getSnippetContainer() {
+    return cy.get(`#snippetViewResult`);
+  }
+
   clickPaginationItem(index: number) {
     return cy.get(`#pagination-item-${index}`).click();
   }
@@ -179,7 +200,7 @@ class BrowsePage {
     return cy.get("[data-cy=clear-all-grey-button]");
   }
 
-  getDateFacetPicker(options?: { time?: string }) {
+  getDateFacetPicker(options?: {time?: string}) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"]`);
   }
@@ -188,7 +209,7 @@ class BrowsePage {
     return cy.get("#selected-facets > button").contains(facet);
   }
 
-  selectDateRange(options?: { time?: string }) {
+  selectDateRange(options?: {time?: string}) {
     this.getDateFacetPicker(options).click();
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:first-child > td:first-child")).click({force: true});
     cy.waitUntil(() => cy.get(".drp-calendar.left > .calendar-table tr:last-child > td:last-child")).click({force: true});
@@ -198,7 +219,7 @@ class BrowsePage {
     }
   }
 
-  getDateFacetClearIcon(options?: { time?: string }) {
+  getDateFacetClearIcon(options?: {time?: string}) {
     const pickerTestId = options && options.time ? options.time : "facet-datetime-picker-date";
     return cy.get(`[data-testid="${pickerTestId}"] ~ svg[data-testid="datetime-picker-reset"]`);
   }
