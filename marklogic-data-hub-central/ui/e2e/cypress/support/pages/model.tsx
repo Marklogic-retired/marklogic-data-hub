@@ -26,6 +26,10 @@ class ModelPage {
     return cy.findByLabelText("publish-to-database");
   }
 
+  getPublishButtonDisabledTooltip() {
+    return cy.get(`[id="publish-disabled-tooltip"]`);
+  }
+
   getEntityModifiedAlert() {
     return cy.findByLabelText("entity-modified-alert");
   }

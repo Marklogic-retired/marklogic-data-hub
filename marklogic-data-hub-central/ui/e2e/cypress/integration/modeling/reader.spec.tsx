@@ -15,7 +15,6 @@ import {Application} from "../../support/application.config";
 import LoginPage from "../../support/pages/login";
 import graphVis from "../../support/components/model/graph-vis";
 import "cypress-wait-until";
-import {ConfirmationType} from "../../support/types/modeling-types";
 
 describe("Entity Modeling: Reader Role", () => {
   //login with valid account
@@ -59,8 +58,7 @@ describe("Entity Modeling: Reader Role", () => {
     entityTypeModal.getAddButton().should("not.exist");
 
     modelPage.getPublishButton().click({force: true});
-    confirmationModal.getSaveAllEntityText().should("exist");
-    confirmationModal.getNoButton(ConfirmationType.PublishAll).click();
+    modelPage.getPublishButtonDisabledTooltip().should("exist");
 
     entityTypeTable.getEntity("Customer").click({force: true});
     propertyModal.getSubmitButton().should("not.exist");
