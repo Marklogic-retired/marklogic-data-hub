@@ -1,5 +1,8 @@
 import "cypress-wait-until";
 class MonitorPage {
+  getMonitorContainer() {
+    return cy.get(`#monitorContent`);
+  }
   getTableRows() {
     return cy.get(".hc-table_row");
   }
@@ -22,7 +25,7 @@ class MonitorPage {
       let facet = $btn.val();
       cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]").should("exist");
       cy.get(".hc-table_row").then(($row) => {
-        for (let i=0; i < $row.length; i++) {
+        for (let i = 0; i < $row.length; i++) {
           cy.get(".hc-table_row").eq(i).should("contain.text", facet);
         }
       });
@@ -111,15 +114,15 @@ class MonitorPage {
     return cy.get(`[data-testid="apply-column-selector"]`);
   }
 
-  get tableHeaders () {
+  get tableHeaders() {
     return cy.get("#mainTable th");
   }
 
-  get tableRows () {
+  get tableRows() {
     return cy.get("#mainTable tr.hc-table_row");
   }
 
-  getTableBodyColumnByIndex (index: number) {
+  getTableBodyColumnByIndex(index: number) {
     return cy.get(`#mainTable tr.hc-table_row td:nth-child(${index})`);
   }
 
@@ -132,7 +135,7 @@ class MonitorPage {
    * @param {Function} cb - callback function to execute in every cell that index match with header description
 
    */
-  getTableElement (header: string, cb: Function) {
+  getTableElement(header: string, cb: Function) {
     this.tableHeaders.each(($elem, index) => {
       const headerValue = $elem.text();
       if (headerValue.includes(header)) {
