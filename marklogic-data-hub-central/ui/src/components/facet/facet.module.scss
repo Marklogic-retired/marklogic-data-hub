@@ -70,6 +70,12 @@
     display: flex;
     justify-content: space-between;
     height: 23px;
+    label {
+      max-width: 200px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
   }
 
   .value {
