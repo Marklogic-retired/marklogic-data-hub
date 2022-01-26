@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext, useLayoutEffect, createElement} from "react";
+import styles from "./graph-vis-explore.module.scss";
 import Graph from "react-graph-vis";
 import graphConfig from "../../../config/graph-vis.config";
 import * as _ from "lodash";
@@ -23,9 +24,9 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     let coordsExist = !!props.coords;
     return coordsExist;
   };
-
+  const [menuPosition, setMenuPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
   const [physicsEnabled, setPhysicsEnabled] = useState(!coordinatesExist());
-  //const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [clickedNode, setClickedNode] = useState(undefined);
   const [hasStabilized, setHasStabilized] = useState(false);
   const {
@@ -313,38 +314,33 @@ const GraphVisExplore: React.FC<Props> = (props) => {
     },
   };
 
-  /* TODO: Graph context menu (DHFPROD-8284) */
-
-  /*   const menuClick = async (event) => {
+  const dummyClick = async (event) => {
     setContextMenuVisible(false);
-    if (event.key === "1") {
-      if (network) {
-        //add logic for menu selection here
-      }
+    if (network) {
+      //add logic for menu selection here
     }
-  }; */
+  };
 
-  /*   const menu = () => {
+  const menu = () => {
     return (
-      <Menu id="contextMenu" onClick={menuClick}>
+      <div id="contextMenu"  className={styles.contextMenu} style={{left: menuPosition.x, top: menuPosition.y}}>
         { clickedNode &&
-
-        <Menu.Item key="1">
+        <div key="1" className={styles.contextMenuItem} onClick={dummyClick}>
         Dummy option
-        </Menu.Item>
+        </div>
         }
-      </Menu>
+      </div>
     );
-  }; */
+  };
 
-  /*  useEffect(() => {
+  useEffect(() => {
     if (clickedNode) {
       setContextMenuVisible(true);
     } else {
       setContextMenuVisible(false);
     }
   }, [clickedNode]);
- */
+
   const handleZoom = _.debounce((event, scale) => {
     //Zoom logic goes here
   }, 400);
@@ -426,6 +422,7 @@ const GraphVisExplore: React.FC<Props> = (props) => {
       let nodeId = network.getNodeAt(event.pointer.DOM);
       if (nodeId) {
         event.event.preventDefault();
+        setMenuPosition({x: event.event.offsetX, y: event.event.offsetY});
         setClickedNode(nodeId);
       } else {
         setClickedNode(undefined);
@@ -445,20 +442,15 @@ const GraphVisExplore: React.FC<Props> = (props) => {
 
   return (
     <div id="graphVisExplore">
-      {/* <Dropdown
-        overlay={menu}
-        trigger={["contextMenu"]}
-        visible={contextMenuVisible}
-      > */}
-      <div>
+      <div className={styles.graphContainer}>
         <Graph
           graph={graphData}
           options={options}
           events={events}
           getNetwork={initNetworkInstance}
         />
+        {contextMenuVisible && menu()}
       </div>
-      {/*   </Dropdown> */}
     </div>
   );
 };
