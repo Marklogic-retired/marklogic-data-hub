@@ -23,6 +23,8 @@ import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
 import com.marklogic.hub.dataservices.HubCentralService;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -123,10 +125,21 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
             throw e;
         }
 
+        if(!environment.getProperty("mlContentServerPort").isEmpty()) {
+            hubClientProvider.getHubClient().setNewClient(Integer.parseInt(environment.getProperty("mlContentServerPort")));
+        }
         response.get("authorities").iterator().forEachRemaining(node -> {
             String authority = node.asText();
             authorities.add(new SimpleGrantedAuthority("ROLE_" + authority));
         });
         return new AuthenticationToken(username, password, authorities, true);
+    }
+
+    // Work in progress
+    private ManageClient getManageClient() {
+        String markLogicHost = hubClientProvider.getHubClient().getNewClient().getHost();
+        hubClientProvider.getHubClient().getManageClient();
+        ManageConfig config = new ManageConfig(markLogicHost, 8002, "marklogicUsername", "marklogicPassword");
+        return new ManageClient(config);
     }
 }
