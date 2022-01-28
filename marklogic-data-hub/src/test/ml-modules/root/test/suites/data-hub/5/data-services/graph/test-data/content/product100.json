@@ -18,8 +18,8 @@
         "baseUri": "http://example.org/"
       },
       "Product": {
-        "productId": 50,
-        "productName": "Alepo Baby Beanie Hat, Infant Newborn Toddler Kids Winter Warm Knit Cap for Boys Girls"
+        "productId": 100,
+        "productName": "product 100"
       }
     },
     "attachments": {
