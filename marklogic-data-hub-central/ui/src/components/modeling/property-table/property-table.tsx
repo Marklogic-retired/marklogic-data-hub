@@ -995,7 +995,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   >Add Property</HCButton>;
 
   return (
-    <div>
+    <div className="ms-5 mt-3 me-2">
       <div className={styles.extraButtonContainer} id="extraButtonsContainer">
         {props.sidePanelView && !titleNoDefinition() ?
           <span className={styles.expandCollapseBtns}><ExpandCollapse handleSelection={(id) => handleSourceExpandCollapse(id)} currentSelection={""} /></span> : ""
