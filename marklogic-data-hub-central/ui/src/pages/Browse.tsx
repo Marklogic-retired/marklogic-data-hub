@@ -9,7 +9,7 @@ import SearchBar from "../components/search-bar/search-bar";
 import SearchPagination from "../components/search-pagination/search-pagination";
 import SearchSummary from "../components/search-summary/search-summary";
 import SearchResults from "../components/search-results/search-results";
-import {ModelingMessages} from "../config/tooltips.config";
+import {ExploreToolTips, ModelingMessages} from "../config/tooltips.config";
 import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
 import {entityFromJSON, entityParser, facetParser, getTableProperties} from "../util/data-conversion";
 import styles from "./Browse.module.scss";
@@ -30,6 +30,8 @@ import {getHubCentralConfig} from "../api/modeling"; // eslint-disable-line @typ
 import SelectedFacets from "@components/selected-facets/selected-facets";
 import EntitySpecificSidebar from "@components/explore/entity-specific-sidebar/entity-specific-sidebar";
 import EntityIconsSidebar from "@components/explore/entity-icons-sidebar/entity-icons-sidebar";
+import {QuestionCircleFill} from "react-bootstrap-icons";
+
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -137,7 +139,7 @@ const Browse: React.FC<Props> = ({location}) => {
     setShowEntitySpecificPanel(false);
   };
 
-  const [graphSearchData, setGraphSearchData] = useState<any[]>([]);
+  const [graphSearchData, setGraphSearchData] = useState({});
   const [hubCentralConfig, sethubCentralConfig] = useState({});
 
   useEffect(() => {
@@ -159,7 +161,7 @@ const Browse: React.FC<Props> = ({location}) => {
             "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
           "start": 0,
-          "pageLength": 100,
+          "pageLength": 1000,
         }
       };
       const response = await graphSearchQuery(payload);
@@ -170,7 +172,6 @@ const Browse: React.FC<Props> = ({location}) => {
       handleError(error);
     }
   };
-
 
   const setHubCentralConfigFromServer = async (parsedEntityDef) => {
     try {
@@ -238,7 +239,7 @@ const Browse: React.FC<Props> = ({location}) => {
           sortOrder: searchOptions.sortOrder
         }
       });
-      if (!["All Data"].includes(searchOptions.nextEntityType)) {
+      if (!["All Data"].includes(searchOptions.nextEntityType) && searchOptions.nextEntityType !== "") {
         setShowNoDefinitionAlertMessage(titleNoDefinition(searchOptions.nextEntityType));
       } else {
         setShowNoDefinitionAlertMessage(false);
@@ -330,8 +331,18 @@ const Browse: React.FC<Props> = ({location}) => {
       setCardView(false);
     }
     fetchUpdatedSearchResults();
-    getGraphSearchResult(entities);
-  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts, entitySpecificPanel]);
+  }, [searchOptions, entities, user.error.type, hideDataHubArtifacts]);
+
+  useEffect(() => {
+    let noBaseEntitiesSelected = Object.keys(searchOptions.baseEntities).length === 0;
+    let noRelatedEntities = Object.keys(searchOptions.relatedEntityTypeIds).length === 0;
+    if ((noBaseEntitiesSelected && noRelatedEntities) || !noBaseEntitiesSelected) {
+      getGraphSearchResult(entities);
+    }
+    return () => {
+      setGraphSearchData({});
+    };
+  }, [searchOptions.baseEntities, searchOptions.relatedEntityTypeIds, searchOptions.database, searchOptions.query, searchOptions.selectedFacets, entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
     let state: any = location.state;
@@ -548,6 +559,17 @@ const Browse: React.FC<Props> = ({location}) => {
     return style;
   };
 
+  const helpIcon = () => (
+    <span>
+      <HCTooltip text={ExploreToolTips.numberOfResults} id="asterisk-help-tooltip" placement="right">
+        <QuestionCircleFill color="#7F86B5" className={styles.questionCircle} size={13} />
+      </HCTooltip>
+    </span>
+  );
+
+  const numberOfResultsBanner = <span>Viewing {graphSearchData["limit"]} of {graphSearchData["total"]} results {helpIcon()}</span>;
+
+
   return (
     <div className={styles.layout}>
       {showEntitySpecificPanel ?
@@ -642,12 +664,7 @@ const Browse: React.FC<Props> = ({location}) => {
                     <div className={styles.spinViews}>
                       <div style={switchViewsGraphStyle()}>
                         {graphView && <div className={styles.graphViewSearchSummary} aria-label={"graph-view-searchSummary"}>
-                          <SearchSummary
-                            total={totalDocuments}
-                            start={searchOptions.start}
-                            length={searchOptions.pageLength}
-                            pageSize={searchOptions.pageSize}
-                          />
+                          {numberOfResultsBanner}
                         </div>}
                         {isLoading && <div className={styles.spinnerContainer}><Spinner animation="border" data-testid="spinner" variant="primary" /></div>}
                         {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
@@ -733,7 +750,7 @@ const Browse: React.FC<Props> = ({location}) => {
                     : graphView ?
                       <div>
                         <GraphViewExplore
-                          entityTypesInstances={graphSearchData}
+                          entityTypeInstances={graphSearchData}
                           graphView={graphView}
                           coords={coords}
                           setCoords={setCoords}

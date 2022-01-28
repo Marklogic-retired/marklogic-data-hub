@@ -27,7 +27,8 @@ const GraphExploreSidePanel: React.FC<Props> = (props) => {
     savedNode
   } = useContext(SearchContext);
   const  {database, entityTypeIds, selectedFacets, query, sortOrder} = searchOptions;
-  const {entityName, group, primaryKey, docUri, sources, entityInstance, label} = savedNode;
+  const {entityName, group, primaryKey, sources, entityInstance, label} = savedNode;
+  const docUri = savedNode["docURI"] || savedNode["docUri"];
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [details, setDetails] = useState<any>(null);
   const entityInstanceTitle = group ? group.split("/").pop() : entityName;

@@ -21,7 +21,6 @@ type SearchContextInterface = {
   tileId: string,
   sortOrder: any,
   database: string,
-  entityInstanceId: any,
   datasource: string,
   baseEntities: string[],
 }
@@ -44,7 +43,6 @@ const defaultSearchOptions = {
   tileId: "",
   sortOrder: [],
   database: "final",
-  entityInstanceId: undefined,
   datasource: "entities",
   baseEntities: [],
 };
@@ -90,12 +88,13 @@ interface ISearchContextInterface {
   setLatestDatabase: (option: string, jobId: string) => void;
   entityDefinitionsArray: any;
   setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
-  setGraphViewOptions: (entityInstanceId: any) => void;
+  setGraphViewOptions: (entityInstanceId: string | undefined) => void;
   setDatasource: (option: string) => void;
   setBaseEntities: (baseEntities: string[]) => void;
   savedNode: any,
   setSavedNode: (node: any) => void;
   setSearchOptions: (searchOptions: SearchContextInterface) => void;
+  entityInstanceId: string | undefined;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -105,6 +104,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSavedQueries: () => { },
   savedNode: undefined,
   setSavedNode: () => { },
+  entityInstanceId: undefined,
   entityDefinitionsArray: [],
   setEntityDefinitionsArray: () => { },
   setSearchFromUserPref: () => { },
@@ -152,6 +152,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
   const [savedNode, setSavedNode] = useState<any>();
+  const [entityInstanceId, setEntityInstanceId] = useState(undefined);
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
 
   const {user} = useContext(UserContext);
@@ -620,10 +621,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
   };
 
   const setGraphViewOptions = (entityInstanceId) => {
-    setSearchOptions({
-      ...searchOptions,
-      entityInstanceId: entityInstanceId
-    });
+    setEntityInstanceId(entityInstanceId);
   };
 
   const setDatasource = (datasource: string) => {
@@ -659,6 +657,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       setSavedQueries,
       savedNode,
       setSavedNode,
+      entityInstanceId,
       entityDefinitionsArray,
       setEntityDefinitionsArray,
       setSearchFromUserPref,
