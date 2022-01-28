@@ -16,8 +16,8 @@ const productQuery = {
 const resultsTest1 = searchNodes(productQuery);
 
 let assertions = [
-  test.assertEqual(2, resultsTest1.total),
-  test.assertEqual(2, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
+  test.assertEqual(6, resultsTest1.total),
+  test.assertEqual(6, resultsTest1.nodes.length, xdmp.toJsonString(resultsTest1)),
   test.assertEqual(0, resultsTest1.edges.length)
 ];
 
@@ -41,9 +41,9 @@ const multipleQuery = {
 const resultsTest3 = searchNodes(multipleQuery);
 
 assertions.concat([
-  test.assertEqual(3, resultsTest3.total),
-  test.assertEqual(3, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
-  test.assertEqual(2, resultsTest3.edges.length),
+  test.assertEqual(7, resultsTest3.total),
+  test.assertEqual(7, resultsTest3.nodes.length, xdmp.toJsonString(resultsTest3)),
+  test.assertEqual(6, resultsTest3.edges.length),
   test.assertFalse(resultsTest3.nodes[0].hasRelationships),
   test.assertFalse(resultsTest3.nodes[1].hasRelationships),
   test.assertFalse(resultsTest3.nodes[2].hasRelationships)
@@ -59,7 +59,7 @@ const withRelatedQuery = {
 const resultsTest4 = searchNodes(withRelatedQuery);
 
 assertions.concat([
-  test.assertEqual(4, resultsTest4.total, `results: ${xdmp.toJsonString(resultsTest4)}`),
+  test.assertEqual(8, resultsTest4.total, `results: ${xdmp.toJsonString(resultsTest4)}`),
   test.assertEqual(3, resultsTest4.nodes.length, `results: ${xdmp.toJsonString(resultsTest4)}`),
   test.assertEqual(2, resultsTest4.edges.length, `results: ${xdmp.toJsonString(resultsTest4)}`),
   test.assertFalse(resultsTest4.nodes[0].hasRelationships, `results: ${xdmp.toJsonString(resultsTest4)}`),
@@ -90,8 +90,8 @@ const searchTextQuery = {
 const resultsTestSearchBy = searchNodes(searchTextQuery);
 
 assertions.concat([
-  test.assertEqual(2, resultsTestSearchBy.total),
-  test.assertEqual(2, resultsTestSearchBy.nodes.length),
+  test.assertEqual(6, resultsTestSearchBy.total),
+  test.assertEqual(6, resultsTestSearchBy.nodes.length),
   test.assertEqual(0, resultsTestSearchBy.edges.length),
   test.assertFalse(resultsTestSearchBy.nodes[0].hasRelationships),
   test.assertEqual(resultsTestSearchBy.nodes[0].group, "http://example.org/Product-1.0.0/Product"),

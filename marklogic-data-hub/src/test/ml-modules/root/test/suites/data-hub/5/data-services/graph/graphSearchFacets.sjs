@@ -27,12 +27,12 @@ const productQuery = {
 const resultsTest = searchNodes(productQuery);
 
 let assertions = [
-  test.assertEqual(2, resultsTest.total),
-  test.assertEqual(2, resultsTest.nodes.length),
+  test.assertEqual(6, resultsTest.total),
+  test.assertEqual(6, resultsTest.nodes.length),
   test.assertEqual(0, resultsTest.edges.length),
   test.assertFalse(resultsTest.nodes[0].hasRelationships),
-  test.assertEqual(resultsTest.nodes[0].docUri, "/content/product50.json"),
-  test.assertEqual(resultsTest.nodes[1].docUri, "/content/product60.json"),
+  test.assertEqual(resultsTest.nodes[0].docUri, "/content/product100.json"),
+  test.assertEqual(resultsTest.nodes[1].docUri, "/content/product50.json"),
 ];
 
 assertions;
