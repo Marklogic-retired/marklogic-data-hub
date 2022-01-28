@@ -122,3 +122,8 @@ export const getSavedQueryPreview = async (id, database) => {
 export const graphSearchQuery = async (graphSearchPayload: any) => {
   return await axios.post(`/api/entitySearch/graph?database=${graphSearchPayload.database}`, graphSearchPayload.data);
 };
+
+export const expandGroupNode = async (payload: any, limit?: number) => {
+  let url = !limit ? `/api/entitySearch/nodeExpand?database=${payload.database}` : `/api/entitySearch/nodeExpand?database=${payload.database}&limit=${limit}`;
+  return await axios.post(url, payload.data);
+};

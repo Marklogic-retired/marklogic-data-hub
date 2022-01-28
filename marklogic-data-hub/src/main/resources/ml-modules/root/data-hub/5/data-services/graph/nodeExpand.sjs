@@ -155,7 +155,7 @@ if (isByEntityType) {
       //creating additional node
       additionalNode.id = nodeToExpand;
       additionalNode.docURI = null;
-      additionalNode.label = entityIdSplit[2];
+      additionalNode.label = entityIdSplit[1];
       additionalNode.group = group;
       additionalNode.additionalProperties = null;
       additionalNode.isConcept = false;
