@@ -163,6 +163,7 @@ describe("Entity Modeling: Reader Role", () => {
           });
       });
 
+    modelPage.scrollPageTop();
     // To verify modeling info is rendered properly in graph view
     modelPage.clickModelingInfoIcon();
     modelPage.verifyModelingInfo();

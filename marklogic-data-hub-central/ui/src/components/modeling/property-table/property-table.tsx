@@ -107,6 +107,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [sourceExpandedKeys, setSourceExpandedKeys] = useState<any[]>([]);
   const [expandedSourceFlag, setExpandedSourceFlag] = useState(false);
   const [expandedNestedRows, setExpandedNestedRows] = useState<string[]>([]);
+  const [parentTopProperty, setParentTopProperty] = useState<string | null>(null);
 
   useEffect(() => {
     updateEntityDefinitionsAndRenderTable(props.definitions);
@@ -370,7 +371,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       headerAttrs: {
         "aria-label": "add-header",
       },
-      formatter: text => {
+      formatter: (text, _, index) => {
         let textParse = text && text.split(",");
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
 
@@ -385,10 +386,15 @@ const PropertyTable: React.FC<Props> = (props) => {
                   setStructuredTypeOptions({
                     isStructured: true,
                     name: text,
-                    propertyName: ""
+                    propertyName: "",
                   });
                   setEditPropertyOptions({...editPropertyOptions, isEdit: false});
                   toggleShowPropertyModal(true);
+
+                  const parsedTopProperty = index && text && text.split(",");
+                  if (parsedTopProperty && parsedTopProperty.length === 2) {
+                    setParentTopProperty(text);
+                  }
                 }}
               />
             </i>
@@ -433,18 +439,40 @@ const PropertyTable: React.FC<Props> = (props) => {
       let row = renderTableData.find(row => row.propertyName === structuredTypeOptions.propertyName);
       if (!row) {
         let structuredNames = structuredTypeOptions.name.split(",").slice(1);
-        row = renderTableData.find(row => row.type === structuredNames[0]);
+        let [structuredPropertyName, structuredPropertyType] = structuredTypeOptions.name.split(",");
+        let findPredicate = row => row.type === structuredPropertyType && row.propertyName === structuredPropertyName;
+
+        if (parentTopProperty) {
+          findPredicate = row => row.type === structuredPropertyType && row.propertyName === parentTopProperty.split(",")[0];
+        }
+        row = renderTableData.find(findPredicate);
+
         if (row) {
           let childRow = row["children"].find(childRow => childRow.type === structuredNames[1]);
+
           if (childRow && childRow.hasOwnProperty("key")) {
-            setExpandedRows([row.key, childRow.key]);
+            if (props.sidePanelView) {
+              setSourceExpandedKeys([row.key, childRow.key]);
+            } else {
+              setExpandedRows([row.key, childRow.key]);
+              setExpandedNestedRows([childRow.key]);
+            }
           } else {
-            setExpandedRows([row.key]);
+            if (props.sidePanelView) {
+              setSourceExpandedKeys([row.key]);
+            } else {
+              setExpandedRows([row.key]);
+              setExpandedNestedRows([]);
+            }
           }
         }
 
       } else {
-        setExpandedRows([row.key]);
+        if (props.sidePanelView) {
+          setSourceExpandedKeys([row.key]);
+        } else {
+          setExpandedRows([row.key]);
+        }
       }
     }
 
@@ -920,9 +948,11 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (expanded) {
       if (newExpandedRows.indexOf(record.propertyName) === -1) {
         newExpandedRows.push(record.propertyName);
+        setParentTopProperty(record.propertyName);
       }
     } else {
       newExpandedRows = newExpandedRows.filter(row => row !== record.propertyName);
+      setParentTopProperty(null);
     }
 
     setExpandedRows(newExpandedRows);
@@ -945,6 +975,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const toggleSourceRowExpanded = (record, expanded, rowKey) => {
     if (!sourceExpandedKeys.includes(record.key)) {
+      setParentTopProperty(record.key);
       setSourceExpandedKeys(prevState => {
         let finalKeys = prevState.concat([record["key"]]);
         setExpandedSourceFlag(true);
@@ -952,6 +983,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       });
 
     } else {
+      setParentTopProperty(null);
       setSourceExpandedKeys(prevState => {
         let finalKeys = prevState.filter(item => item !== record["key"]);
         setExpandedSourceFlag(false);
