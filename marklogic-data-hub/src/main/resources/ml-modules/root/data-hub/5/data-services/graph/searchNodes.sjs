@@ -70,6 +70,7 @@ start = start || 0;
 pageLength = pageLength || 1000;
 let hashmapPredicate = new Map();
 let qrySearch;
+
 if(structuredQuery !== undefined && structuredQuery.toString().length > 0) {
   structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
   queryOptions = fn.head(xdmp.unquote(queryOptions)).root;

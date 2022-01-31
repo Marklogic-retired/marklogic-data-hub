@@ -166,6 +166,11 @@ declare function hent:fix-options($nodes as node()*)
               <search:field name="datahubCreatedByStep"/>
             </search:value>
           </search:constraint>,
+          <search:constraint name="relatedTo">
+            <search:custom facet="false">
+              <search:parse apply="parse" ns="http://marklogic.com/data-hub/entities/constraint/relatedTo" at="/data-hub/5/entities/constraint/relatedTo.xqy"/>
+            </search:custom>
+          </search:constraint>,
           hent:fix-options($n/node())
         }
       case element(search:additional-query) return ()
@@ -334,6 +339,11 @@ declare private function build-static-explorer-constraints() as element(search:c
         <facet-option>frequency-order</facet-option>
         <facet-option>descending</facet-option>
       </range>
+    </constraint>
+    <constraint name="relatedTo">
+      <custom facet="false">
+        <parse apply="parse" ns="http://marklogic.com/data-hub/entities/constraint/relatedTo" at="/data-hub/5/entities/constraint/relatedTo.xqy"/>
+      </custom>
     </constraint>
   </wrapper>/element()
 };

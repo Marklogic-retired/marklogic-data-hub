@@ -87,7 +87,7 @@ function getEntityNodesWithRelated(entityTypeIRIs, relatedEntityTypeIRIs, ctsQue
                       ?objectIRI @labelIRI ?objectLabel.
                     }
                   }`).where(ctsQuery);
-    fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn));
+    fullPlan = fullPlan.union(subjectPlan.joinLeftOuter(otherEntityIRIs, joinOn).limit(limit));
   }
 
   return fullPlan.result(null, {entityTypeIRIs, entityTypeOrConceptIRI: relatedEntityTypeIRIs.concat(getRdfConceptTypes()), labelIRI: getOrderedLabelPredicates()}).toArray();
