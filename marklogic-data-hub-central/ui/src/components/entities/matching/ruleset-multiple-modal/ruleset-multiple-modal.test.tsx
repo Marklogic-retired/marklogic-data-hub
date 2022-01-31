@@ -662,7 +662,7 @@ describe("Matching Multiple Rulesets Modal component", () => {
     });
   });
   // ToDo: Fix rowKey=key or another approach, propertyPath currently doesn't work
-  it.skip("can expand all/collapse all entity structured properties using the expand all/collapse all buttons", async () => {
+  it("can expand all/collapse all entity structured properties using the expand all/collapse all buttons", async () => {
     mockMatchingUpdate.mockResolvedValue({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 

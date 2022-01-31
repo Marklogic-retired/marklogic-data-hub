@@ -884,7 +884,8 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       attrs: (cell, row, rowIndex, colIndex) => {
         if (row.hasChildren) {
           return {
-            colspan: 4,
+            colSpan: 4,
+            key: "name",
           };
         }
       }
@@ -893,12 +894,16 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
       ellipsis: true,
       text: "Match Type",
       width: "15%",
+      dataField: "matchType",
       headerFormatter: () => <span data-testid="matchTypeTitle">Match Type</span>,
       style: (cell, row) => {
         if (row.hasChildren) {
           return {display: "none"};
         }
         return "";
+      },
+      attrs: {
+        key: "matchTypeTitle"
       },
       formatter: (text, row, extraData) => {
         return !row.hasOwnProperty("children") ? <div className={styles.typeContainer}>
@@ -938,7 +943,11 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
     {
       text: "Match Type Details",
       //width: "58%",
+      dataField: "matchTypeDetails",
       headerFormatter: () => <span data-testid="matchTypeDetailsTitle">Match Type Details</span>,
+      attrs: {
+        key: "matchTypeDetails"
+      },
       formatter: (text, row, extraData) => {
         switch (matchTypes[row.propertyPath]) {
         case "synonym": return renderSynonymOptions(row.propertyPath);
@@ -1154,6 +1163,7 @@ const MatchRulesetMultipleModal: React.FC<Props> = (props) => {
         generateExpandRowKeys(obj["children"], allKeysToExpand);
       }
     });
+
     return allKeysToExpand;
   };
 
