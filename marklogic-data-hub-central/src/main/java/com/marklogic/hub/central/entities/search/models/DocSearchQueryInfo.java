@@ -39,12 +39,15 @@ public class DocSearchQueryInfo {
 
     private Map<String, FacetData> selectedFacets;
 
+    private RelatedData relatedDocument;
+
     public DocSearchQueryInfo() {
         this.hideHubArtifacts = true;
         this.searchText = "";
         this.entityTypeIds = new ArrayList<>();
         this.relatedEntityTypeIds = new ArrayList<>();
         this.selectedFacets = new HashMap<>();
+        this.relatedDocument = null;
     }
 
     /**
@@ -98,6 +101,10 @@ public class DocSearchQueryInfo {
         return hideHubArtifacts;
     }
 
+    public boolean isEmpty() {
+        return getSelectedFacets().isEmpty() && getRelatedDocument() == null;
+    }
+
     public void setHideHubArtifacts(boolean hideHubArtifacts) {
         this.hideHubArtifacts = hideHubArtifacts;
     }
@@ -132,6 +139,40 @@ public class DocSearchQueryInfo {
 
     public void setSelectedFacets(Map<String, FacetData> selectedFacets) {
         this.selectedFacets = selectedFacets;
+    }
+
+    public RelatedData getRelatedDocument() {
+        return relatedDocument;
+    }
+
+    public void setRelatedDocument(RelatedData relatedDocument) {
+        this.relatedDocument = relatedDocument;
+    }
+
+    public final static class RelatedData {
+        private String docIRI;
+        private String predicate;
+
+        public RelatedData() {
+            this.docIRI = null;
+            this.predicate = null;
+        }
+
+        public String getDocIRI() {
+            return docIRI;
+        }
+
+        public void setDocIRI(String docIRI) {
+            this.docIRI = docIRI;
+        }
+
+        public String getPredicate() {
+            return predicate;
+        }
+
+        public void setPredicate(String predicate) {
+            this.predicate = predicate;
+        }
     }
 
     public final static class FacetData {

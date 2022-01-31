@@ -20,6 +20,7 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.RawStructuredQueryDefinition;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.central.entities.search.EntitySearchManager;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
@@ -153,10 +154,12 @@ public class EntitySearchController extends BaseController {
     @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
         response = EntitySearchResponseSchema.class)
     public JsonNode graphSearch(@RequestBody SearchQuery searchQuery, @RequestParam(defaultValue = "final") String database) {
-        StructuredQueryDefinition structuredQueryDefinition = newEntitySearchManager(database).graphSearchQuery(searchQuery);
+        RawStructuredQueryDefinition structuredQueryDefinition = newEntitySearchManager(database).graphSearchQuery(searchQuery);
         String structuredQuery = null;
         String queryOptions = null;
         if (structuredQueryDefinition != null) {
+            logger.info("structuredDefinition found!");
+            logger.info(structuredQueryDefinition.serialize());
             structuredQuery = structuredQueryDefinition.serialize();
             queryOptions =  newEntitySearchManager(database).getQueryOptions();
         }

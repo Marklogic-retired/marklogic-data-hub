@@ -284,7 +284,9 @@ const Query: React.FC<Props> = (props) => {
   }, [props.queries]);
 
   useEffect(() => {
-    getSaveQueries();
+    if (!searchOptions.relatedToData) {
+      getSaveQueries();
+    }
   }, [searchOptions.entityTypeIds]);
 
   useEffect(() => {

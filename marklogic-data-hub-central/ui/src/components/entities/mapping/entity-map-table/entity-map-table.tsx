@@ -69,7 +69,7 @@ const EntityMapTable: React.FC<Props> = (props) => {
   const [mapExp, setMapExp] = useState({});
   //Dummy ref node to simulate a click event
   const dummyNode = props.dummyNode;
-  let searchInput: any;
+  let searchInput: any; // eslint-disable-line @typescript-eslint/no-unused-vars
   let tempMapExp: any = {};
   let mapExpUI: any = {};
   let tempSourceContext: any = {};
