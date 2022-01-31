@@ -145,9 +145,9 @@ const Browse: React.FC<Props> = ({location}) => {
         "data": {
           "query": {
             "searchText": searchOptions.query,
-            "entityTypeIds": searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            "entityTypeIds": searchOptions.baseEntities && searchOptions.baseEntities.length ? searchOptions.baseEntities : allEntities,
             "selectedFacets": searchOptions.selectedFacets,
-            "relatedEntityTypeIds": [] //Should be updated once the mock data is removed in the side panels
+            "relatedEntityTypeIds": searchOptions.relatedEntityTypeIds
           },
           "start": 0,
           "pageLength": 100,

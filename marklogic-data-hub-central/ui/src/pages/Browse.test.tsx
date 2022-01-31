@@ -21,6 +21,7 @@ describe("Explorer Browse page tests ", () => {
   const defaultSearchOptions = {
     query: "",
     entityTypeIds: [],
+    relatedEntityTypeIds: [],
     nextEntityType: "",
     start: 1,
     pageNumber: 1,
@@ -56,6 +57,7 @@ describe("Explorer Browse page tests ", () => {
       <SearchContext.Provider value={{
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
+        setRelatedEntityTypeIds: jest.fn(),
         setEntity: jest.fn(),
         applySaveQuery: jest.fn()
       }}>
@@ -74,6 +76,7 @@ describe("Explorer Browse page tests ", () => {
       <SearchContext.Provider value={{
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
+        setRelatedEntityTypeIds: jest.fn(),
         setEntity: jest.fn(),
         applySaveQuery: jest.fn()
       }}>
@@ -102,6 +105,7 @@ describe("Explorer Browse page tests ", () => {
         <SearchContext.Provider value={{
           searchOptions: defaultSearchOptions,
           greyedOptions: defaultSearchOptions,
+          setRelatedEntityTypeIds: jest.fn(),
           setEntity: jest.fn(),
           applySaveQuery: jest.fn()
         }}>
