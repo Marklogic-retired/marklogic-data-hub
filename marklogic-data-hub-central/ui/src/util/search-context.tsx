@@ -6,6 +6,7 @@ import {QueryOptions} from "../types/query-types";
 type SearchContextInterface = {
   query: string,
   entityTypeIds: string[],
+  relatedEntityTypeIds: any[],
   nextEntityType: string,
   start: number,
   pageNumber: number,
@@ -28,6 +29,7 @@ type SearchContextInterface = {
 const defaultSearchOptions = {
   query: "",
   entityTypeIds: [],
+  relatedEntityTypeIds: [],
   nextEntityType: "",
   start: 1,
   pageNumber: 1,
@@ -57,6 +59,7 @@ interface ISearchContextInterface {
   setSearchFacets: (constraint: string, vals: string[]) => void;
   setEntity: (option: string) => void;
   setNextEntity: (option: string) => void;
+  setRelatedEntityTypeIds: (option: any[]) => void;
   setEntityClearQuery: (option: string) => void;
   setLatestJobFacet: (vals: string, entityName: string, targetDatabase?: string, collectionVals?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
@@ -111,6 +114,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSearchFacets: () => { },
   setEntity: () => { },
   setNextEntity: () => { },
+  setRelatedEntityTypeIds: () => { },
   setEntityClearQuery: () => { },
   setLatestJobFacet: () => { },
   clearFacet: () => { },
@@ -266,6 +270,13 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
     setGreyedOptions({
       ...greyedOptions,
       nextEntityType: option,
+    });
+  };
+
+  const setRelatedEntityTypeIds = (option: any[]) => {
+    setSearchOptions({
+      ...searchOptions,
+      relatedEntityTypeIds: option
     });
   };
 
@@ -656,6 +667,7 @@ const SearchProvider: React.FC<{children: any}> = ({children}) => {
       setSearchFacets,
       setEntity,
       setNextEntity,
+      setRelatedEntityTypeIds,
       setEntityClearQuery,
       clearFacet,
       clearAllFacets,

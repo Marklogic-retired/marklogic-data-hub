@@ -14,9 +14,9 @@ interface Props {
   setCurrentBaseEntities: (entities: any[]) => void;
   allBaseEntities: any[];
   setActiveAccordionRelatedEntities: (entity: string)=>void;
-  activeKey:any[]
+  activeKey:any[];
   setEntitySpecificPanel: (entity: any) => void;
-    setIsAllEntitiesSelected: (isSelected: boolean) => void;
+  setIsAllEntitiesSelected: (isSelected: boolean) => void;
 }
 
 const {MINIMUM_ENTITIES} = exploreSidebar;
@@ -39,7 +39,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
     setDisplayList(currentBaseEntities);
   }, [currentBaseEntities]);
 
-  const childrenOptions = allBaseEntities.map(element => ({value: element.name, label: element.name, isDisabled: false}));
+  const childrenOptions = allBaseEntities.map(element => ({value: element.name, label: element.name, isDisabled: false})).filter(obj => obj.value && obj.label);
   childrenOptions.unshift({
     value: "-",
     label: "-",
@@ -58,6 +58,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
       setIsAllEntitiesSelected(true);
       setEntityNames(["All Entities"]);
       setCurrentBaseEntities(allBaseEntities);
+      setBaseEntities([]);
       if (props.activeKey.indexOf("related-entities") !== -1) { props.setActiveAccordionRelatedEntities("related-entities"); }
     } else {
       const clearSelection = selectedItems.filter(entity => entity !== "All Entities").map((entity => entity));
@@ -96,7 +97,7 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         inputId="entitiesSidebar-select"
         isMulti
         isClearable={false}
-        value={entityNames?.map(d => ({value: d, label: d}))}
+        value={entityNames ? entityNames.map(d => ({value: d, label: d})) : [{value: "All Entities", label: "All Entities"}]}
         onChange={handleChange}
         isSearchable={false}
         aria-label="base-entities-dropdown-list"
@@ -130,27 +131,29 @@ const BaseEntitiesFacet: React.FC<Props> = (props) => {
         {displayList.map(({name, color, filter, amount, icon}) => {
           let finalIcon = icon ? icon : "FaShapes";
           let finalColor = color ? color : "#EEEFF1";
-          return (
-            <div
-              key={name}
-              aria-label={`base-entities-${name}`}
-              style={{backgroundColor: finalColor}}
-              className={styles.entityItem}
-              onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}
-            >
-              <span className={styles.entityIcon}>
-                <DynamicIcons name={finalIcon}/>
-              </span>
-              <span className={styles.entityName}>{name}</span>
-              <span className={styles.entityChevron}>
-                <ChevronDoubleRight/>
-              </span>
-              <span className={styles.entityAmount}>
-                {filter && showFilter(filter)}
-                {amount}
-              </span>
-            </div>
-          );
+          if (name) {
+            return (
+              <div
+                key={name}
+                aria-label={`base-entities-${name}`}
+                style={{backgroundColor: finalColor}}
+                className={styles.entityItem}
+                onClick={() => setEntitySpecificPanel({name, color: finalColor, icon: finalIcon})}
+              >
+                <span className={styles.entityIcon}>
+                  <DynamicIcons name={finalIcon}/>
+                </span>
+                <span className={styles.entityName}>{name}</span>
+                <span className={styles.entityChevron}>
+                  <ChevronDoubleRight/>
+                </span>
+                <span className={styles.entityAmount}>
+                  {filter && showFilter(filter)}
+                  {amount}
+                </span>
+              </div>
+            );
+          }
         }
         )}
       </div>

@@ -30,6 +30,7 @@ const HCCheckbox: React.FC<Props> = (props) => {
       value={value}
       checked={checked}
       onChange={(e) => handleClick(e)}
+      onClick={(e) => e.stopPropagation()}
       data-testid={dataTestId}
       aria-label={ariaLabel}
       style={{marginTop: "0", verticalAlign: "middle"}}

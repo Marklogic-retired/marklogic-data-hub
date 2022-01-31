@@ -22,6 +22,15 @@ class BaseEntitySidebar {
     return cy.get("[data-testid='facet-date-picker']");
   }
 
+  getBaseEntityDropdown() {
+    return cy.get("#entitiesSidebar-select-wrapper");
+  }
+
+  selectBaseEntityOption(entityName: string) {
+    return cy.get(`[aria-label="base-option-${entityName}"]`).click();
+  }
+
+
   showMoreEntities() {
     return cy.get(`[data-cy="show-more-base-entities"]`);
   }

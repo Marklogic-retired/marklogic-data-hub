@@ -284,7 +284,6 @@ const GraphVisExplore: React.FC<Props> = (props) => {
           };
         }
       };
-
     });
 
     return nodes;

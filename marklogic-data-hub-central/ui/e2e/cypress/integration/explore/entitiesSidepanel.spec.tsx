@@ -67,7 +67,47 @@ describe("Test '/Explore' left sidebar", () => {
     entitiesSidebar.backToMainSidebarButton.should("be.visible").click();
   });
 
+  it("Base Entity Filtering in side panel", () => {
+    cy.log("Navigate to Graph View and verify all entities displayed");
+    browsePage.clickGraphView().click();
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      expect(custCoordinates).to.not.equal(undefined);
+    });
+    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
+      expect(orderCoordinates).to.not.equal(undefined);
+    });
+
+    cy.log("Select Order Entity from dropdown and verify Customer node is gone");
+    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.selectBaseEntityOption("Order");
+    cy.wait(1000);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      expect(custCoordinates).to.equal(undefined);
+    });
+    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
+      expect(orderCoordinates).to.not.equal(undefined);
+    });
+
+    cy.log("Select Customer Entity and verify both Customer and Order nodes are present");
+    entitiesSidebar.getBaseEntityDropdown().click();
+    entitiesSidebar.selectBaseEntityOption("Customer");
+    cy.wait(1000);
+    graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
+      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      expect(custCoordinates).to.not.equal(undefined);
+    });
+    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
+      expect(orderCoordinates).to.not.equal(undefined);
+    });
+  });
+
   it("Searching main search side panel", () => {
+    browsePage.getTableView().click();
     cy.log("Typing Adams in search bar and click on apply facets");
     entitiesSidebar.getMainPanelSearchInput().type("Adams");
     entitiesSidebar.getApplyFacetsButton().click();
@@ -86,18 +126,24 @@ describe("Test '/Explore' left sidebar", () => {
     browsePage.clickGraphView().click();
     browsePage.getGraphSearchSummary().should("have.length.gt", 0);
 
+    cy.log("verify search filtered on top of base entity selections and Order is now gone");
+    graphExplore.nodeInCanvas(ExploreGraphNodes.ORDER_10258).then((nodePositions: any) => {
+      let orderCoordinates: any = nodePositions[ExploreGraphNodes.ORDER_10258];
+      expect(orderCoordinates).to.equal(undefined);
+    });
+
     cy.log("Find and click on Customer-102 node");
     graphExplore.focusNode(ExploreGraphNodes.CUSTOMER_102);
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.click(custCoordinates.x, custCoordinates.y, {force: true});
     });
 
     graphExplore.getPositionsOfNodes(ExploreGraphNodes.CUSTOMER_102).then((nodePositions: any) => {
-      let orderCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
+      let custCoordinates: any = nodePositions[ExploreGraphNodes.CUSTOMER_102];
       const canvas = graphExplore.getGraphVisCanvas();
-      canvas.click(orderCoordinates.x, orderCoordinates.y, {force: true});
+      canvas.click(custCoordinates.x, custCoordinates.y, {force: true});
     });
 
     browsePage.getDetailViewURI("/json/customers/Cust2.json").should("be.visible");

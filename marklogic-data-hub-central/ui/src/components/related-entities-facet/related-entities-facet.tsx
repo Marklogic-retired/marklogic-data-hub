@@ -1,10 +1,11 @@
-import React, {useEffect, useState}  from "react";
+import React, {useEffect, useState, useContext}  from "react";
 import styles from "./related-entities-facet.module.scss";
 import {ChevronDoubleRight} from "react-bootstrap-icons";
 import HCCheckbox from "../common/hc-checkbox/hc-checkbox";
 import {entitiesSorting} from "../../util/entities-sorting";
 import {exploreSidebar} from "../../config/explore.config";
 import DynamicIcons from "@components/common/dynamic-icons/dynamic-icons";
+import {SearchContext} from "../../util/search-context";
 
 const SHOW_MINIMUM = (values) => values.length >= MINIMUM_ENTITIES ? MINIMUM_ENTITIES: values.length;
 const SHOW_FILTER = (filter) => filter === 1 ? `(${filter} filter)  ` : `(${filter} filters)  `;
@@ -18,6 +19,9 @@ interface Props {
 
 const RelatedEntitiesFacet: React.FC<Props> = (props) => {
 
+  const {
+    setRelatedEntityTypeIds
+  } = useContext(SearchContext);
   const {currentRelatedEntities, onSettingCheckedList, setCurrentRelatedEntities, setEntitySpecificPanel} = props;
   const [entitiesList, setEntitiesList] = useState<any[]>([]);
   const [showMore, setShowMore] = useState<boolean>(false);
@@ -51,6 +55,8 @@ const RelatedEntitiesFacet: React.FC<Props> = (props) => {
     const checkedValues = values.filter(({checked}) => checked);
     onSettingCheckedList(checkedValues);
     setCheckedList(checkedValues);
+    let relatedEntityIds = checkedValues.map(function(i) { return i.name; });
+    setRelatedEntityTypeIds(relatedEntityIds);
   };
 
   return (

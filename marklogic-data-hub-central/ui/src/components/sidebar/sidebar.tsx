@@ -58,6 +58,7 @@ const Sidebar: React.FC<Props> = (props) => {
     setSidebarQuery,
     setDatasource,
     setQueryGreyedOptions,
+    setRelatedEntityTypeIds
   } = useContext(SearchContext);
   const {
     user
@@ -92,6 +93,9 @@ const Sidebar: React.FC<Props> = (props) => {
         });
       });
     }
+    const values = Array.from(relatedEntitiesList.values());
+    const checkedValues = values.filter(({checked}) => checked);
+    setRelatedEntityTypeIds(checkedValues.map(function(i) { return i.name; }));
     props.setCurrentRelatedEntities(relatedEntitiesList);
   }, [props.currentBaseEntities]);
 
@@ -107,6 +111,9 @@ const Sidebar: React.FC<Props> = (props) => {
     Array.from(props.currentRelatedEntities.values()).forEach(entity => {
       relatedEntitiesList.set(entity.name, {...entity, checked});
     });
+    const values = Array.from(relatedEntitiesList.values());
+    const checkedValues = values.filter(({checked}) => checked);
+    setRelatedEntityTypeIds(checkedValues.map(function(i) { return i.name; }));
     props.setCurrentRelatedEntities(relatedEntitiesList);
   };
 
@@ -680,19 +687,19 @@ const Sidebar: React.FC<Props> = (props) => {
           </Accordion.Item>
         </Accordion>
         {props.currentRelatedEntities.size > 0 &&
-          <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
-            <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
-              <div className={"p-0 d-flex"}>
-                <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() => setActiveAccordion("related-entities")}>{
-                  panelTitle(<span><HCCheckbox id="check-all" value="check-all" handleClick={onCheckAllChanges} checked={checkAll} />related entities types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
-              </div>
-              <Accordion.Body>
-                <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel} />
-              </Accordion.Body>
-            </Accordion.Item>
-          </Accordion>
-        }</>
-      }
+        <Accordion id="related-entities" className={"w-100 accordion-sidebar"} flush activeKey={activeKey.includes("related-entities") ? "related-entities" : ""} defaultActiveKey={activeKey.includes("related-entities") ? "related-entities" : ""}>
+          <Accordion.Item eventKey="related-entities" className={"bg-transparent"}>
+            <div className={"p-0 d-flex"}>
+              <Accordion.Button className={`after-indicator ${styles.titleCheckbox}`} onClick={() =>  setActiveAccordion("related-entities")}>{
+                panelTitle(<span><HCCheckbox id="check-all" value="check-all" handleClick={onCheckAllChanges} checked={checkAll} />related entity types</span>, exploreSidebar.relatedEntities)}</Accordion.Button>
+            </div>
+            <Accordion.Body>
+              <RelatedEntitiesFacet currentRelatedEntities={props.currentRelatedEntities} setCurrentRelatedEntities={props.setCurrentRelatedEntities} onSettingCheckedList={onSettingCheckedList} setEntitySpecificPanel={props.setEntitySpecificPanel}/>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
+        }
+      </>}
 
       {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
         <FormCheck
