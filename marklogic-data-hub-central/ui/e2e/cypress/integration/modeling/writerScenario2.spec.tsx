@@ -75,6 +75,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("pii").click();
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("address-street"); // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("street").should("not.exist");
     propertyTable.getPiiIcon("street").should("exist");
     //propertyTable.getWildcardIcon('street').should('exist');
@@ -109,6 +110,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getYesRadio("multiple").click();
     propertyModal.getNoRadio("pii").click();
     propertyModal.getSubmitButton().click();
+    propertyTable.getProperty("zip-zip"); // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("zip").should("exist");
     propertyTable.getPiiIcon("zip").should("not.exist");
     //propertyTable.getWildcardIcon('zip').should('not.exist');
@@ -144,6 +146,8 @@ describe("Entity Modeling: Writer Role", () => {
     propertyModal.getTypeFromDropdown("More number types").click();
     propertyModal.getCascadedTypeFromDropdown("int").click();
     propertyModal.getSubmitButton().click();
+    cy.waitUntil(() => propertyTable.getExpandIcon("zip").click({force: true}));
+    propertyTable.getProperty("zip-fiveDigit");  // DHFPROD-8325: added check for expanded structured property
     propertyTable.getMultipleIcon("code").should("not.exist");
     propertyTable.getPiiIcon("code").should("not.exist");
     //propertyTable.getWildcardIcon('code').should('not.exist');
@@ -159,8 +163,8 @@ describe("Entity Modeling: Writer Role", () => {
     structuredTypeModal.getAddButton().click();
     propertyModal.getSubmitButton().click();
     cy.waitForAsyncRequest();
-    cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom");
-    cy.waitUntil(() => propertyTable.getExpandIcon("zip").click({force: true}));
+    cy.waitUntil(() => cy.get(".mosaic-window > :nth-child(2)").scrollTo("bottom"));
+    propertyTable.getProperty("extra-extra");
     propertyTable.getAddPropertyToStructureType("Extra").scrollIntoView().click();
     propertyModal.newPropertyName("fourDigit");
     propertyModal.openPropertyDropdown();

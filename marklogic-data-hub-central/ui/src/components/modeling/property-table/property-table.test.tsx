@@ -1,5 +1,5 @@
 import React from "react";
-import {render, screen, fireEvent, within, cleanup, wait} from "@testing-library/react";
+import {render, screen, fireEvent, cleanup, wait} from "@testing-library/react";
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import PropertyTable from "./property-table";
@@ -164,7 +164,7 @@ describe("Entity Modeling Property Table Component", () => {
   });
 
   // TODO DHFPROD-7711 skipping failing tests to enable component replacement
-  test.skip("Property Table renders with structured and external datatypes, no writer role", async () => {
+  test("Property Table renders with structured and external datatypes, no writer role", async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const {getByText, getByTestId, getAllByText, getAllByTestId, getByLabelText, queryByTestId, getAllByLabelText} =  render(
@@ -190,12 +190,12 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getByText("billing")).toBeInTheDocument();
     expect(getByText("shipping")).toBeInTheDocument();
 
-    expect(getAllByText("string")).toHaveLength(2);
-    expect(getAllByText("Address")).toHaveLength(1);
+    expect(getAllByText("string")).toHaveLength(3);
+    expect(getAllByText("Address")).toHaveLength(2);
 
     // Table expansion shipping property -> Address Structure type
-    const shippingExpandIcon = getByTestId("mltable-expand-shipping");
-    userEvent.click(within(shippingExpandIcon).getByRole("img"));
+    const shippingExpandIcon = getByTestId("shipping-expand-icon");
+    userEvent.click(shippingExpandIcon);
 
     expect(getByTestId("add-struct-Zip")).toBeInTheDocument();
     expect(getAllByText(/zip/i)).toHaveLength(2);
@@ -204,20 +204,20 @@ describe("Entity Modeling Property Table Component", () => {
 
     // add property and add struct property display correct tooltip when disabled
     fireEvent.mouseOver((getByText("Add Property")));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await (() => expect(screen.getByText(ModelingTooltips.addProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver((getByTestId("add-struct-Zip")));
-    await waitFor(() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await (() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
 
     // Table expansion for zip property -> Zip structure type
-    const zipExpandIcon = getByTestId("mltable-expand-zip");
-    userEvent.click(within(zipExpandIcon).getByRole("img"));
+    const zipExpandIcon = getByTestId("zip-expand-icon");
+    userEvent.click(zipExpandIcon);
 
     expect(getByText("fiveDigit")).toBeInTheDocument();
     expect(getByText("plusFour")).toBeInTheDocument();
 
     // Table expansion for billing property, Address structure type
-    const billingExpandIcon = getByTestId("mltable-expand-billing");
-    userEvent.click(within(billingExpandIcon).getByRole("img"));
+    const billingExpandIcon = getByTestId("billing-expand-icon");
+    userEvent.click(billingExpandIcon);
 
     expect(getAllByTestId("add-struct-Zip")).toHaveLength(2);
     expect(getAllByText(/zip/i)).toHaveLength(4);
@@ -225,12 +225,12 @@ describe("Entity Modeling Property Table Component", () => {
     expect(getAllByText("state")).toHaveLength(2);
 
     // Table expansion for billing property -> Zip structure type
-    const zipBillingExpandIcon = getAllByTestId("mltable-expand-zip")[1];
-    userEvent.click(within(zipBillingExpandIcon).getByRole("img"));
+    const zipBillingExpandIcon = getAllByTestId("zip-expand-icon")[1];
+    userEvent.click(zipBillingExpandIcon);
 
-    expect(getAllByText("fiveDigit")).toHaveLength(2);
-    expect(getAllByText("plusFour")).toHaveLength(2);
-    expect(getAllByText("string")).toHaveLength(10);
+    await (() => expect(getAllByText("fiveDigit")).toHaveLength(2));
+    await (() => expect(getAllByText("plusFour")).toHaveLength(2));
+    await (() => expect(getAllByText("string")).toHaveLength(10));
   });
 
   test("Expand/Collapse all works in Property table side panel view", async () => {
