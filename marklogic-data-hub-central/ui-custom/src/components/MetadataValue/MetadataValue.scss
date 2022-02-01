@@ -1,0 +1,44 @@
+.MetadataValue {
+    .hasPopover {
+        cursor: pointer;
+    }
+}
+
+.popover-header {
+    font-weight: bold !important;
+    background-color: white !important;
+    border-bottom: 0px !important;
+    padding: 5px 10px 2px 15px !important;
+    font-size: 14px !important;
+}
+
+.popover-body {
+    padding: 2px 10px 5px 10px !important;
+    font-size: 15px !important;
+    table {
+        margin-bottom: 3px;
+        td {
+            border-bottom-width: 0;
+            padding: 0;
+            padding-bottom: 4px;
+            padding-right: 10px;
+        }
+        td:last-child {
+            padding-right: 0;
+        }
+        td.chiclet span {
+            display: inline-block;
+            padding: 1px 6px;
+            background-color: #cfe3e9;
+            border-radius: 4px;
+            margin-left: 6px;
+            font-size: 13px;
+        }
+        td.datetime {
+            position: relative;
+            top: 3px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+    }
+}

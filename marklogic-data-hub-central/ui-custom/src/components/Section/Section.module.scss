@@ -1,0 +1,18 @@
+.section {
+    margin-top: 20px;
+    border: solid 1px #ddd;
+    border-radius: 4px;
+    display: inline-block;
+    header {
+        height: 40px;
+        padding: 7px 20px;
+        background-color: #f1f1f1;
+        span {
+            font-weight: bold;
+            color: #333
+        }
+    }
+    main {
+        padding: 20px;
+    }
+}
