@@ -1,0 +1,27 @@
+.metric {
+    border: solid 1px;
+    border-left: solid 20px;
+    border-radius: 4px;
+    padding: 15px;
+    margin-right: 20px;
+    position: relative;
+    flex-grow: 1;
+    &:last-child {
+        margin-right: 0;
+    }
+    .value {
+        position: relative;
+        width: 100%;
+        text-align: left;
+        font-size: 32px;
+        padding-bottom: 5px;
+        color: #333;
+    }
+    .title {
+        position: relative;
+        width: 100%;
+        text-align: right;
+        font-size: 16px;
+        color: #333;
+    }
+}
